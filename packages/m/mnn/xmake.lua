@@ -25,7 +25,7 @@ package("mnn")
 
     add_deps("cmake")
 
-    on_load("windows|!arm*", "linux", "macosx", "android", function (package)
+    on_load("windows|!arm*", "linux", "macosx", "android", "iphoneos|!x86_64", function (package)
         local mnn_path = package:installdir("include")
         local mnn_lib_dir = string.sub(mnn_path, 1, string.len(mnn_path) - 7) .. "lib"
         if package:config("shared") then
@@ -62,7 +62,7 @@ package("mnn")
         end
     end)
 
-    on_install("windows|!arm*", "linux", "macosx", "android", function (package)
+    on_install("windows|!arm*", "linux", "macosx", "android", "iphoneos|!x86_64", function (package)
         local configs = {"-DMNN_BUILD_TEST=OFF",
                          "-DMNN_BUILD_DEMO=OFF",
                          "-DMNN_SUPPORT_TFLITE_QUAN=ON",
@@ -94,6 +94,11 @@ package("mnn")
         if package:is_plat("android") then
             table.insert(configs, "-DMNN_USE_SSE=OFF")
             table.insert(configs, "-DMNN_BUILD_FOR_ANDROID_COMMAND=ON")
+        end
+        if package:is_plat("iphoneos") then
+            table.insert(configs, '-DARCHS=arm64')
+            table.insert(configs, "-DENABLE_BITCODE=0")
+            table.insert(configs, "-DMNN_ARM82=ON")
         end
         import("package.tools.cmake").install(package, configs, {buildir = "bd"})
         if package:is_plat("windows") then
