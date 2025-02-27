@@ -14,6 +14,10 @@ package("tinycthread")
                 set_kind("$(kind)")
                 add_files("source/*.c")
                 add_headerfiles("source/*.h")
+
+                if is_kind("shared") then
+                    add_rules("utils.symbols.export_all")
+                end
         ]])
         import("package.tools.xmake").install(package)
     end)
