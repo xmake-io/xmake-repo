@@ -7,6 +7,7 @@ package("cinatra")
     add_urls("https://github.com/qicosmos/cinatra/archive/refs/tags/$(version).tar.gz",
              "https://github.com/qicosmos/cinatra.git")
 
+    add_versions("0.9.5", "f21448332f56484af76347a3da30099dcd155d31ac9d3098faf7e9d6cb1e0c34")
     add_versions("0.9.4", "2b8b4e264f8083674554db55ca137998f02c528730cf9565697234fec9de3378")
     add_versions("0.9.1", "d1a8018e41caabbda2c380175b632e3c9c10b519727f6b998eda4e3f4ede84bd")
     add_versions("v0.8.9", "007dc38aceedf42d03a9c05dc9aa6d2f303456ae7ce1100800df7a565b83b510")
