@@ -11,6 +11,7 @@ package("libebur128")
     add_deps("cmake")
 
     on_install(function (package)
+        io.replace("ebur128/ebur128.c", [[#warning "manual FTZ is being used, please enable SSE2 (-msse2 -mfpmath=sse)"]], "", {plain = true})
         local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
