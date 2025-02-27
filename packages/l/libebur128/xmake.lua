@@ -10,19 +10,12 @@ package("libebur128")
 
     add_deps("cmake")
 
-    on_install("!windows or windows|!arm64", function (package)
+    on_install(function (package)
+        io.replace("ebur128/ebur128.c", [[#warning "manual FTZ is being used, please enable SSE2 (-msse2 -mfpmath=sse)"]], "", {plain = true})
         local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        if package:is_plat("windows") then
-            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
-        end
         import("package.tools.cmake").install(package, configs)
-
-        if package:is_plat("windows") and package:is_debug() then
-            local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.trycp(path.join(package:buildir(), "ebur128.pdb"), dir)
-        end
     end)
 
     on_test(function (package)
