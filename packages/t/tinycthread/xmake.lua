@@ -7,6 +7,10 @@ package("tinycthread")
 
     add_versions("2016.09.30", "6957fc8383d6c7db25b60b8c849b29caab1caaee")
 
+    if is_plat("linux", "bsd", "cross") then
+        add_syslinks("pthread")
+    end
+
 	on_install(function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
