@@ -8,7 +8,7 @@ package("tinycthread")
 	on_install("windows", "linux", "macos", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
-            target("tiny-c-thread")
+            target("tinycthread")
                 set_kind("static")
                 add_files("source/*.c")
                 add_headerfiles("source/*.h")
