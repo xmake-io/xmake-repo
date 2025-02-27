@@ -25,10 +25,9 @@ package("tinycthread")
                 (void) arg;
                 return 0;
             }
-                    
             void test() {
                 thrd_t t;
-                if (thrd_create(&t, HelloThread, (void*)0) == thrd_success) {
+                if (thrd_create(&t, thread_entrypoint, (void*)0) == thrd_success) {
                     thrd_join(t, NULL);
                 }
             }
