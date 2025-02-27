@@ -79,7 +79,7 @@ package("botan")
 
         if not package:is_plat("windows") then
             -- Patch to support versions of ar that don't support response files (which are first used in 3.6.0)
-            package:add("patches", ">=3.6.0", "patches/3.6.0/ar-response-files.patch", "30c9b46e077a07f3070b398eae3fb11e99621361d16a0157047712d8b693a2fd")
+            package:add("patches", ">=3.6.0", "patches/3.6.0/ar-response-files.patch", "864443a77921d9da970cebe5b413e8ee18c60205011364b7bb422a65193ecb5f")
         end
     end)
 
