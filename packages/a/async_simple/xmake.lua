@@ -27,10 +27,7 @@ package("async_simple")
             "file(GLOB coro_header \"coro/*.h\")\nfile(GLOB executors_header \"executors/*.h\")", {plain = true})
         end
 
-        local configs = {
-            "-DASYNC_SIMPLE_ENABLE_TESTS=OFF",
-            "-DASYNC_SIMPLE_BUILD_DEMO_EXAMPLE=OFF"
-        }
+        local configs = {"-DASYNC_SIMPLE_ENABLE_TESTS=OFF", "-DASYNC_SIMPLE_BUILD_DEMO_EXAMPLE=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DASYNC_SIMPLE_DISABLE_AIO=" .. (package:config("aio") and "OFF" or "ON"))
         table.insert(configs, "-DASYNC_SIMPLE_BUILD_MODULES=" .. (package:config("modules") and "ON" or "OFF"))
