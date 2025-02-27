@@ -1,0 +1,28 @@
+diff --git a/src/build-data/ninja.in b/src/build-data/ninja.in
+index 414663a..b983a95 100644
+--- a/src/build-data/ninja.in
++++ b/src/build-data/ninja.in
+@@ -59,7 +59,7 @@ default all
+ rule link_static
+   rspfile = %{response_file_dir}/static.txt
+   rspfile_content = $in
+-  command = %{ar_command} %{ar_options} %{ar_output_to}$out @%{response_file_dir}/static.txt
++  command = xargs %{ar_command} %{ar_options} %{ar_output_to}$out < %{response_file_dir}/static.txt
+ 
+ build %{out_dir}/%{static_lib_name}: link_static %{join lib_objs}
+ 
+@@ -86,12 +86,12 @@ build %{out_dir}/%{soname_patch}: symlink %{out_dir}/%{shared_lib_name}
+ rule link_cli
+   rspfile = %{response_file_dir}/cli_${cli_name}.txt
+   rspfile_content = $in
+-  command = ${EXE_LINK_CMD} ${ABI_FLAGS} @%{response_file_dir}/cli_${cli_name}.txt ${BUILD_DIR_LINK_PATH} ${LANG_EXE_FLAGS} ${LDFLAGS} ${EXE_LINKS_TO} %{output_to_exe}$out
++  command = xargs ${EXE_LINK_CMD} ${ABI_FLAGS} ${BUILD_DIR_LINK_PATH} ${LANG_EXE_FLAGS} ${LDFLAGS} ${EXE_LINKS_TO} %{output_to_exe}$out < %{response_file_dir}/cli_${cli_name}.txt
+ 
+ rule link_tests
+   rspfile = %{response_file_dir}/tests.txt
+   rspfile_content = $in
+-  command = ${EXE_LINK_CMD} ${ABI_FLAGS} @%{response_file_dir}/tests.txt ${BUILD_DIR_LINK_PATH} ${LANG_EXE_FLAGS} ${LDFLAGS} %{test_exe_extra_ldflags} ${EXE_LINKS_TO} %{output_to_exe}$out
++  command = xargs ${EXE_LINK_CMD} ${ABI_FLAGS} ${BUILD_DIR_LINK_PATH} ${LANG_EXE_FLAGS} ${LDFLAGS} %{test_exe_extra_ldflags} ${EXE_LINKS_TO} %{output_to_exe}$out < %{response_file_dir}/tests.txt
+ 
+ # Executable targets
+ 
