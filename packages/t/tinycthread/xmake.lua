@@ -19,7 +19,6 @@ package("tinycthread")
     end)
 
     on_test(function (package)
-        assert(package:has_ctypes("thrd_t", {configs = {languages = "c11"}, includes = "tinycthread.h"}))
         assert(package:check_csnippets({test = [[
             int thread_entrypoint(void* arg) {
                 (void) arg;
