@@ -108,13 +108,13 @@ package("mnn")
         package:addenv("PATH", "bin")
     end)
 
-    -- on_test(function (package)
-    --     assert(package:check_cxxsnippets({test = [[
-    --         #include <MNN/Interpreter.hpp>
-    --         #include <assert.h>
-    --         static void test() {
-    --             MNN::Interpreter* session = MNN::Interpreter::createFromFile(nullptr);
-    --             assert(session == nullptr);
-    --         }
-    --     ]]}, {configs = {languages = "c++11"}, includes = "MNN/Interpreter.hpp"}))
-    -- end)
+    on_test(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            #include <MNN/Interpreter.hpp>
+            #include <assert.h>
+            static void test() {
+                MNN::Interpreter* session = MNN::Interpreter::createFromFile(nullptr);
+                assert(session == nullptr);
+            }
+        ]]}, {configs = {languages = "c++11"}, includes = "MNN/Interpreter.hpp"}))
+    end)
