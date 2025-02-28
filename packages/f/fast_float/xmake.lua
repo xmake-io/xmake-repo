@@ -6,7 +6,7 @@ package("fast_float")
 
     add_urls("https://github.com/fastfloat/fast_float/archive/refs/tags/$(version).tar.gz",
              "https://github.com/fastfloat/fast_float.git")
-    add_versions("v7.0.0", "d2a08e722f461fe699ba61392cd29e6b23be013d0f56e50c7786d0954bffcb17")
+
     add_versions("v3.4.0", "a242877d2fae81ca412033f5ebf5dbc43cb029c56b4af78e33106b9a69f8f58e")
     add_versions("v3.5.1", "8558bf9c66ccd2f7d03c94461a107f49ad9cf6e4f6c0c84e148fec0aa32b4dd9")
     add_versions("v3.10.1", "d162c21c1dc538dbc6b3bb6d1317a7808f2eccef78638445630533f5bed902ee")
@@ -19,6 +19,8 @@ package("fast_float")
     add_versions("v6.1.4", "12cb6d250824160ca16bcb9d51f0ca7693d0d10cb444f34f1093bc02acfce704")
     add_versions("v6.1.5", "597126ff5edc3ee59d502c210ded229401a30dafecb96a513135e9719fcad55f")
     add_versions("v6.1.6", "4458aae4b0eb55717968edda42987cabf5f7fc737aee8fede87a70035dba9ab0")
+    add_versions("v7.0.0", "d2a08e722f461fe699ba61392cd29e6b23be013d0f56e50c7786d0954bffcb17")
+    add_versions("v8.0.0", "f312f2dc34c61e665f4b132c0307d6f70ad9420185fa831911bc24408acf625d")
 
     if is_plat("wasm") then
         add_patches("v3.4.0", path.join(os.scriptdir(), "patches", "emscripten_fix.patch"), "482705431f67e6f0a375ed7bfe87d6856e7d13f071db6157e1d5659834b0eb50")
