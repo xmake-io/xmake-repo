@@ -22,7 +22,7 @@ package("async_simple")
 
     on_install(function (package)
         if package:is_plat("linux") and package:is_arch("arm.*") then
-            io.replace("CMakeLists.txt", [[list(APPEND CXX_FLAGS "-m]], "", {plain = true})
+            io.replace("CMakeLists.txt", [[list(APPEND CXX_FLAGS "-m]], [[#list(APPEND CXX_FLAGS "-m]], {plain = true})
         end
 
         if package:version():le("1.3") then
