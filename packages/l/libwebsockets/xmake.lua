@@ -58,7 +58,12 @@ package("libwebsockets")
             io.replace("CMakeLists.txt", [[CHECK_LIBRARY_EXISTS(cap cap_set_flag "" LWS_HAVE_LIBCAP)]], "", {plain = true})
         end
 
-        local configs = {"-DDISABLE_WERROR=ON", "-DLWS_WITH_MINIMAL_EXAMPLES=OFF", "-DLWS_WITHOUT_TESTAPPS=ON"}
+        local configs = {
+            "-DDISABLE_WERROR=ON",
+            "-DLWS_WITH_MINIMAL_EXAMPLES=OFF",
+            "-DLWS_WITHOUT_TESTAPPS=ON",
+            "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
+        }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DLWS_WITH_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
@@ -70,8 +75,6 @@ package("libwebsockets")
         table.insert(configs, "-DLWS_WITH_LIBUV=" .. (package:config("libuv") and "ON" or "OFF"))
         table.insert(configs, "-DLWS_WITH_LIBEVENT=" .. (package:config("libevent") and "ON" or "OFF"))
         table.insert(configs, "-DLWS_WITH_GLIB=" .. (package:config("glib") and "ON" or "OFF"))
-
-        os.mkdir(path.join(package:buildir(), "lib", "pdb"))
         import("package.tools.cmake").install(package, configs)
     end)
 
