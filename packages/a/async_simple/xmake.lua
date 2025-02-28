@@ -21,11 +21,8 @@ package("async_simple")
     end)
 
     on_install(function (package)
-        if package:is_plat("linux") then
-            io.replace("CMakeLists.txt", [[if(NOT CMAKE_CXX_COMPILER_ID MATCHES "MSVC")]], "if(1)", {plain = true})
-            io.replace("CMakeLists.txt", [[if(NOT CMAKE_CXX_COMPILER_ID MATCHES "MSVC")]], 
-            "set(X86_PROCESSORS i386 x86_64)\nif((NOT CMAKE_CXX_COMPILER_ID MATCHES \"MSVC\") AND (CMAKE_SYSTEM_PROCESSOR IN_LIST X86_PROCESSORS))",
-            {plain = true})
+        if package:is_plat("linux") and package:is_arch("arm.*") then
+            io.replace("CMakeLists.txt", [[list(APPEND CXX_FLAGS "-m]], "", {plain = true})
         end
 
         if package:version():le("1.3") then
