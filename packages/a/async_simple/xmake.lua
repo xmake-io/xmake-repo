@@ -21,9 +21,12 @@ package("async_simple")
     end)
 
     on_install(function (package)
-        io.replace("CMakeLists.txt", [[if(NOT CMAKE_CXX_COMPILER_ID MATCHES "MSVC")]], 
-        "set(X86_PROCESSORS i386 x86_64)\nif((NOT CMAKE_CXX_COMPILER_ID MATCHES \"MSVC\") AND (CMAKE_SYSTEM_PROCESSOR IN_LIST X86_PROCESSORS))",
-        {plain = true})
+        if package:is_plat("linux") then
+            io.replace("CMakeLists.txt", [[if(NOT CMAKE_CXX_COMPILER_ID MATCHES "MSVC")]], 
+            "set(X86_PROCESSORS i386 x86_64)\nif((NOT CMAKE_CXX_COMPILER_ID MATCHES \"MSVC\") AND (CMAKE_SYSTEM_PROCESSOR IN_LIST X86_PROCESSORS))",
+            {plain = true})
+        end
+
         if package:version():le("1.3") then
             io.replace("async_simple/CMakeLists.txt",
             [[file(GLOB coro_header "coro/*.h")]],
@@ -31,7 +34,7 @@ package("async_simple")
         end
 
         local configs = {
-            "-DASYNC_SIMPLE_ENABLE_TESTS=OFF", 
+            "-DASYNC_SIMPLE_ENABLE_TESTS=OFF",
             "-DASYNC_SIMPLE_BUILD_DEMO_EXAMPLE=OFF"
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
