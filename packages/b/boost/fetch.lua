@@ -60,22 +60,24 @@ function main(package, opt)
         local found
         libs.for_each(function (libname)
             local sub_libs = sub_libs_map[libname]
-            if sub_libs then
-                for _, sub_libname in ipairs(sub_libs) do
-                    local linkinfo = find_library("boost_" .. sub_libname, paths, opt)
-                    if linkinfo then
-                        _add_info(linkinfo, result)
-                        found = true
-                    end
-                end
-            else
-                local linkinfo = find_library("boost_" .. libname, paths, opt)
+            for _, sub_libname in ipairs(sub_libs or {libname}) do
+                local linkinfo = find_library("boost_" .. sub_libname, paths, opt)
                 if linkinfo then
                     _add_info(linkinfo, result)
                     found = true
                 end
             end
         end)
+
+        -- Link python if boost_python is found
+        for _, libname in ipairs(sub_libs_map.python or {}) do
+            if libname:startswith("python") and table.contains(result.links, "boost_" .. libname) then
+                local py_linkinfo = find_library("python3", paths) or find_library("python", paths)
+                if py_linkinfo then
+                    _add_info(py_linkinfo, result)
+                end
+            end
+        end
 
         if found then
             result.linkdirs = table.unique(result.linkdirs)
