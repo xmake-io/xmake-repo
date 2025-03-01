@@ -77,7 +77,7 @@ package("tbox")
                 configs[name] = true
             end
         end
-        if package:config("cosmocc") or package:toolchain("cosmocc") ~= nil then
+        if package:config("cosmocc") or get_config("toolchain") == "cosmocc" then
             configs.cosmocc = true
         end
         import("package.tools.xmake").install(package, configs)
