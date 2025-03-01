@@ -23,6 +23,7 @@ package("tbox")
     add_configs("micro",      {description = "Compile micro core library for the embed system.", default = false, type = "boolean"})
     add_configs("float",      {description = "Enable or disable the float type.", default = true, type = "boolean"})
     add_configs("force-utf8", {description = "Forcely regard all tb_char* as utf-8.", default = false, type = "boolean"})
+    add_configs("cosmocc", {description = "Use cosmocc toolchain to build once and run anywhere.", default = false, type = "boolean"})
     for _, name in ipairs({"xml", "zip", "hash", "regex", "object", "charset", "database", "coroutine"}) do
         add_configs(name, {description = "Enable the " .. name .. " module.", default = false, type = "boolean"})
     end
@@ -75,6 +76,9 @@ package("tbox")
             if package:config(name) then
                 configs[name] = true
             end
+        end
+        if package:config("cosmocc") or package:toolchain("cosmocc") ~= nil then
+            configs.cosmocc = true
         end
         import("package.tools.xmake").install(package, configs)
     end)
