@@ -9,7 +9,7 @@ package("criterion")
     add_versions("v2.4.1", "56f8f1a4d06eb144d1b7c6a26619ab6adff9fdc8")
     add_versions("v2.4.0", "0f65b45162689752003f277bca30a427b9ffbc5a")
 
-    add_deps("meson", "ninja")
+    add_deps("meson", "ninja", "boxfort", "debugbreak", "klib", "libgit2", "libffi", "nanomsg", "nanopb")
     on_install(function (package)
         import("package.tools.meson").install(package)
     end)
