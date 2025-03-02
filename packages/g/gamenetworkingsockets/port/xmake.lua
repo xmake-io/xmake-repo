@@ -502,6 +502,7 @@ target("gns") -- we need limit path length
 
         add_defines("VALVE_CRYPTO_25519_OPENSSL",
                 "VALVE_CRYPTO_25519_OPENSSLEVP",
+                "VALVE_CRYPTO_OPENSSL",
                 "ENABLE_OPENSSLCONNECTION")
     end
 
