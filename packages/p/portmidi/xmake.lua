@@ -7,7 +7,7 @@ package("portmidi")
 
     add_versions("v2.0.4", "64893e823ae146cabd3ad7f9a9a9c5332746abe7847c557b99b2577afa8a607c")
 
-    if is_plat("linux", "bsd", "macosx") then
+    if is_plat("linux", "bsd") then
         add_configs("sndio", {description = "Use sndio", default = false, type = "boolean"})
     end
 
@@ -25,7 +25,7 @@ package("portmidi")
         add_deps("alsa-lib")    
     end
 
-    on_load("linux", "bsd", "macosx", function (package)
+    on_load("linux", "bsd", function (package)
         if package:config("sndio") then
             package:add("deps", "libsndio")
         end
