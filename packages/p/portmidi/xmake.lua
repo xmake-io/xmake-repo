@@ -26,7 +26,9 @@ package("portmidi")
     end
 
     on_load("linux", "bsd", "macosx", function (package)
-        package:add("deps", "libsndio")
+        if package:config("sndio") then
+            package:add("deps", "libsndio")
+        end
     end)
 
     on_install("!android and !iphoneos and !cross and !wasm", function (package)
