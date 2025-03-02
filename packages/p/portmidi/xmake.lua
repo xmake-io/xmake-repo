@@ -31,7 +31,7 @@ package("portmidi")
         end
     end)
 
-    on_install("!android and !iphoneos and !cross and !wasm and !bsd", function (package)
+    on_install("windows", "linux", "macosx", "mingw",  function (package)
         io.replace("pm_common/CMakeLists.txt", [[MSVC_RUNTIME_LIBRARY]], "", {plain = true})
         io.replace("pm_common/CMakeLists.txt", [["MultiThreaded$<$<CONFIG:Debug>:Debug>${MSVCRT_DLL}"]], "", {plain = true})
         io.replace("pm_win/pmwinmm.c", "midi->fill_offset_ptr = &(hdr->dwBytesRecorded);", "midi->fill_offset_ptr = (uint32_t *) &(hdr->dwBytesRecorded);", {plain = true})
