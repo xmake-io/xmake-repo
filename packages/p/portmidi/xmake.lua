@@ -8,7 +8,7 @@ package("portmidi")
     add_versions("v2.0.4", "64893e823ae146cabd3ad7f9a9a9c5332746abe7847c557b99b2577afa8a607c")
 
     if is_plat("linux", "bsd") then
-        add_configs("sndio", {description = "Use sndio", default = is_plat("bsd"), type = "boolean"})
+        add_configs("sndio", {description = "Use sndio", default = false, type = "boolean"})
     end
 
     if is_plat("windows", "mingw") then
@@ -31,7 +31,7 @@ package("portmidi")
         end
     end)
 
-    on_install("!android and !iphoneos and !cross and !wasm", function (package)
+    on_install("!android and !iphoneos and !cross and !wasm and !bsd", function (package)
         io.replace("pm_common/CMakeLists.txt", [[MSVC_RUNTIME_LIBRARY]], "", {plain = true})
         io.replace("pm_common/CMakeLists.txt", [["MultiThreaded$<$<CONFIG:Debug>:Debug>${MSVCRT_DLL}"]], "", {plain = true})
         io.replace("pm_win/pmwinmm.c", "midi->fill_offset_ptr = &(hdr->dwBytesRecorded);", "midi->fill_offset_ptr = (uint32_t *) &(hdr->dwBytesRecorded);", {plain = true})
