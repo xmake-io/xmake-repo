@@ -6,7 +6,9 @@ package("alsa-lib")
     add_urls("http://www.alsa-project.org/files/pub/lib/alsa-lib-$(version).tar.bz2", {alias = "home"})
     add_urls("https://github.com/alsa-project/alsa-lib/archive/refs/tags/v$(version).tar.gz", {alias = "github"})
     add_versions("home:1.2.10", "c86a45a846331b1b0aa6e6be100be2a7aef92efd405cf6bac7eef8174baa920e")
+    add_versions("home:1.2.13", "8c4ff37553cbe89618e187e4c779f71a9bb2a8b27b91f87ed40987cc9233d8f6")
     add_versions("github:1.2.10", "f55749847fd98274501f4691a2d847e89280c07d40a43cdac43d6443f69fc939")
+    add_versions("github:1.2.13", "e296a2e8fa165855e2c8f263ff6bc0b0ea21a3bece4404135f3a181d1a03e63a")
 
     add_configs("versioned", {description = "pass flag --without-versioned", default = true, type = "boolean"})
 
@@ -19,7 +21,7 @@ package("alsa-lib")
         add_deps("autoconf", "automake", "libtool", "m4")
     end
 
-    on_install("linux", function (package)
+    on_install("linux", "bsd", function (package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
