@@ -31,6 +31,9 @@ package("alsa-lib")
         if package:config("versioned")then
             table.insert(configs, "--without-versioned")
         end
+        if not package:config("shared") then
+            table.insert(configs, "--without-pic")
+        end
         import("package.tools.autoconf").install(package, configs)
     end)
 
