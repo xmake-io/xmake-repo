@@ -1,6 +1,7 @@
 package("p11-kit")
     set_homepage("https://p11-glue.github.io/p11-glue/p11-kit.html")
     set_description("Provides a way to load and enumerate PKCS#11 modules.")
+    set_license("BSD-3-Clause")
 
     add_urls("https://github.com/p11-glue/p11-kit/releases/download/$(version)/p11-kit-$(version).tar.xz",
              "https://github.com/p11-glue/p11-kit.git")
@@ -18,9 +19,11 @@ package("p11-kit")
     add_deps("meson", "ninja")
     add_deps("libffi", "libtasn1")
 
-    on_load("linux", "mingw", "macosx", "iphoneos", "bsd", "cross", function (package)
+    on_load(function (package)
         if package:is_cross() then
             package:add("deps", "libtasn1~host", {host = true, private = true})
+        else
+            package:addenv("PATH", "bin")
         end
     end)
 
@@ -29,9 +32,6 @@ package("p11-kit")
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         import("package.tools.meson").install(package, configs)
         os.trymv(package:installdir("include", "p11-kit-1", "*"), package:installdir("include"))
-        if not package:is_cross() then
-            package:addenv("PATH", "bin")
-        end
     end)
 
     on_test(function (package)
