@@ -21,7 +21,7 @@ package("ispc")
         elseif is_arch("arm64") then
             add_urls("https://github.com/ispc/ispc/releases/download/v$(version)/ispc-v$(version)-macOS.arm64.tar.gz",
                      "https://github.com/ispc/ispc.git")
-            add_versions("1.25.3", "a2bc150402bb9523261063d45f0f0deae50900c62238ae031cf9b9530393a4ac")
+            add_versions("1.25.3", "a2bc150402bb9523261063d45a0f0deae50900c62238ae031cf9b9530393a4ac")
             add_versions("1.26.0", "02f29de79643875fa4ba42eb46fc27bf6f36d931c8f11d6e9ae18a013388ab5d")
         else
             add_urls("https://github.com/ispc/ispc/releases/download/v$(version)/ispc-v$(version)-macOS.universal.tar.gz",
