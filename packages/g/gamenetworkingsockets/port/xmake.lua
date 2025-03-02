@@ -492,18 +492,18 @@ target("gns") -- we need limit path length
 
         add_defines("ED25519_HASH_BCRYPT",
                 "VALVE_CRYPTO_25519_DONNA",
-                "VALVE_CRYPTO_BCRYPT")
+                "VALVE_CRYPTO_BCRYPT",
+                "STEAMNETWORKINGSOCKETS_CRYPTO_BCRYPT")
     else
         add_files(  "src/common/crypto_openssl.cpp",
                     "src/common/crypto_25519_openssl.cpp",
-                    "src/common/crypto_digest_opensslevp.cpp",
-                    "src/common/crypto_symmetric_opensslevp.cpp",
                     "src/common/opensslwrapper.cpp")
 
         add_defines("VALVE_CRYPTO_25519_OPENSSL",
                 "VALVE_CRYPTO_25519_OPENSSLEVP",
                 "VALVE_CRYPTO_OPENSSL",
-                "ENABLE_OPENSSLCONNECTION")
+                "ENABLE_OPENSSLCONNECTION",
+                "STEAMNETWORKINGSOCKETS_CRYPTO_VALVEOPENSSL")
     end
 
     add_files("src/common/steamnetworkingsockets_messages_certs.proto",
