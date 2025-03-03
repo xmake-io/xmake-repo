@@ -22,7 +22,7 @@ package("gl2ps")
     end
 
     if is_plat("macosx", "linux", "bsd") then
-        add_deps("libx11", "libxext")
+        add_deps("libx11")
     end
 
     if is_plat("linux", "bsd") then
@@ -40,6 +40,10 @@ package("gl2ps")
     end)
 
     on_load(function (package)
+        if package:is_plat("windows") then
+            package:add("deps", "ninja")
+            package:set("policy", "package.cmake_generator.ninja", true)
+        end
         if package:config("zlib") then
             package:add("deps", "zlib")
         end
@@ -48,7 +52,7 @@ package("gl2ps")
         end
     end)
 
-    on_install("!wasm", function (package)
+    on_install("windows", "linux", "macosx", "mingw", function (package)
         io.replace("CMakeLists.txt", "if(GLUT_FOUND)", "if(0)", {plain = true})
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
