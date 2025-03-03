@@ -6,6 +6,7 @@ package("zstd")
     set_urls("https://github.com/facebook/zstd/archive/refs/tags/$(version).tar.gz",
              "https://github.com/facebook/zstd.git")
 
+    add_versions("v1.5.7", "37d7284556b20954e56e1ca85b80226768902e2edabd3b649e9e72c0c9012ee3")
     add_versions("v1.4.5", "734d1f565c42f691f8420c8d06783ad818060fc390dee43ae0a89f86d0a4f8c2")
     add_versions("v1.5.0", "0d9ade222c64e912d6957b11c923e214e2e010a18f39bec102f572e693ba2867")
     add_versions("v1.5.2", "f7de13462f7a82c29ab865820149e778cbfe01087b3a55b5332707abf9db4a6e")
