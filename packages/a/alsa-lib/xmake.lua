@@ -22,6 +22,7 @@ package("alsa-lib")
     end
 
     on_install("linux", "bsd", function (package)
+        io.replace("configure.ac", "AM_PROG_LIBTOOL", "LT_INIT([])", {plain = true})
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
