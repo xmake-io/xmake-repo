@@ -15,6 +15,10 @@ package("gl2ps")
 
     add_deps("freeglut", "opengl")
 
+    if is_plat("macosx", "linux", "bsd") then
+        add_deps("libx11", "libxext")
+    end
+
     if is_plat("linux", "bsd") then
         add_syslinks("m")
     elseif is_plat("macosx") then
@@ -31,6 +35,7 @@ package("gl2ps")
     end)
 
     on_install(function (package)
+        io.replace("CMakeLists.txt", "if(GLUT_FOUND)", "if(0)", {plain = true})
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
