@@ -8,7 +8,7 @@ package("gl2ps")
         return version:gsub("%.", "_")
     end})
 
-    add_versions("1.4.2", "469313d28bd22bcbf7b7ea300dddb9b6c13854455d297f4d51a944e378b0a9d7")
+    add_versions("1.4.2", "afb6f4a8df9c7639449546a79aabd1baaccacc4360fc23741c6485138512ff72")
 
     add_configs("zlib", {description = "Enable compression using ZLIB", default = true, type = "boolean"})
     add_configs("png", {description = "Enable PNG support", default = true, type = "boolean"})
