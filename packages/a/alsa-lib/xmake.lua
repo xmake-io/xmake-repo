@@ -28,13 +28,14 @@ package("alsa-lib")
         if package:is_debug() then
             table.insert(configs, "--enable-debug")
         end
-        if package:config("versioned")then
+        if package:config("versioned") then
             table.insert(configs, "--without-versioned")
         end
-        if package:config("pic") ~= false then
-            table.insert(configs, "--with-pic")
+        local cxflags = {}
+        if package:config("pic") ~= false and package:config("shared") then
+            table.insert(cxflags, "-fPIC")
         end
-        import("package.tools.autoconf").install(package, configs)
+        import("package.tools.autoconf").install(package, configs, {cxflags = cxflags}))
     end)
 
     on_test(function (package)
