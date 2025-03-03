@@ -40,6 +40,13 @@ package("icu4c")
     end
 
     on_load(function (package)
+        if package:is_cross() then
+            if not package:is_plat("windows") then
+                package:add("deps", "icu4c~host", {host = true, private = true})
+            end
+        else
+            package:addenv("PATH", "bin")
+        end
         if package:is_plat("windows") then
             if package:config("tools") then
                 package:add("deps", "python 3.x", {kind = "binary"})
@@ -114,10 +121,9 @@ package("icu4c")
         os.vcp("include", package:installdir())
         os.vcp("bin" .. suffix .. "/*", package:installdir("bin"))
         os.vcp("lib" .. suffix .. "/*", package:installdir("lib"))
-        package:addenv("PATH", "bin")
     end)
 
-    on_install("macosx", "linux", "mingw@msys", function (package)
+    on_install("!windows and !wasm", function (package)
         import("package.tools.autoconf")
 
         os.cd("source")
@@ -136,7 +142,9 @@ package("icu4c")
         if package:is_plat("mingw") then
             table.insert(configs, "--with-data-packaging=dll")
         end
-
+        if package:is_cross() then
+            table.insert(configs, "--with-cross-build=" .. package:dep("icu4c"):installdir())
+        end
 
         local envs = {}
         local cxxflags = "-std=gnu++17"
@@ -148,7 +156,11 @@ package("icu4c")
         -- suppress ar errors when passing --toolchain=clang
         envs.ARFLAGS = nil
         autoconf.install(package, configs, {envs = envs})
-        package:addenv("PATH", "bin")
+        if not package:is_cross() then
+            os.trycp("config/icucross.mk", package:installdir("config"))
+            os.trycp("config/icucross.inc", package:installdir("config"))
+            os.trycp("bin/icupkg*", package:installdir("bin"))
+        end
     end)
 
     on_test(function (package)
