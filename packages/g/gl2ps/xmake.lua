@@ -15,10 +15,6 @@ package("gl2ps")
 
     add_deps("opengl")
 
-    if is_plat("windows") then
-        add_deps("pkgconf", "ninja 1.11.1")
-    end
-
     if is_plat("linux", "windows", "mingw") then
         add_deps("freeglut")
     else
@@ -44,9 +40,6 @@ package("gl2ps")
     end)
 
     on_load(function (package)
-        if package:is_plat("windows") then
-            package:set("policy", "package.cmake_generator.ninja", true)
-        end
         if package:config("zlib") then
             package:add("deps", "zlib")
         end
