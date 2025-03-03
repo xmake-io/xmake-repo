@@ -64,25 +64,21 @@ package("openssl")
         end
     end)
 
-    if on_check then
-        on_check(function (package)
-            local working_dir = try {function() return os.iorunv("perl", {"-MFile::Spec::Functions=rel2abs", "-e", "print rel2abs('.')"}) end}
-            assert(working_dir, "package(openssl): perl not found!")
-            -- Check if Perl is using Unix-style paths
-            local unix_perl = working_dir:find("/") == 1
-            if (unix_perl and package:is_plat("windows")) or (not unix_perl and not package:is_plat("windows")) then
-                wprint("package(openssl): Detected Perl may not match your build platform. "..
-                "If you encounter build issues, ensure you have the correct Perl installed "..
-                "and it takes priority in your system.")
-            end
-
-            if package:version():le("1.1.0") then
-                wprint("package(openssl): Building OpenSSL versions earlier than 1.1.1 may fail due to unresolved bugs. If you encounter build issues, please consider using a newer version.")
-            end
-        end)
-    end
-
     on_install("windows", function (package)
+        local working_dir = try {function() return os.iorunv("perl", {"-MFile::Spec::Functions=rel2abs", "-e", "print rel2abs('.')"}) end}
+        assert(working_dir, "package(openssl): perl not found!")
+        -- Check if Perl is using Unix-style paths
+        local unix_perl = working_dir:find("/") == 1
+        if (unix_perl and package:is_plat("windows")) or (not unix_perl and not package:is_plat("windows")) then
+            wprint("package(openssl): Detected Perl may not match your build platform. "..
+            "If you encounter build issues, ensure you have the correct Perl installed "..
+            "and it takes priority in your system.")
+        end
+
+        if package:version():le("1.1.0") then
+            wprint("package(openssl): Building OpenSSL versions earlier than 1.1.1 may fail due to unresolved bugs. If you encounter build issues, please consider using a newer version.")
+        end
+
         import("package.tools.jom", {try = true})
         import("package.tools.nmake")
         local configs = {"Configure"}
