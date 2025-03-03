@@ -13,7 +13,13 @@ package("gl2ps")
     add_configs("zlib", {description = "Enable compression using ZLIB", default = true, type = "boolean"})
     add_configs("png", {description = "Enable PNG support", default = true, type = "boolean"})
 
-    add_deps("freeglut", "opengl")
+    add_deps("opengl")
+
+    if is_plat("linux", "windows", "mingw")
+        add_deps("freeglut")
+    else
+        add_deps("glut")
+    end
 
     if is_plat("macosx", "linux", "bsd") then
         add_deps("libx11", "libxext")
@@ -25,6 +31,14 @@ package("gl2ps")
         add_frameworks("Cocoa", "OpenGL")
     end
 
+    on_check("windows", function (package)
+        local msvc = package:toolchain("msvc")
+        if msvc and package:is_arch("arm.*") then
+            local vs = msvc:config("vs")
+            assert(vs and tonumber(vs) >= 2022, "package(gl2ps): requires Visual Studio 2022 and later for arm targets")
+        end
+    end)
+
     on_load(function (package)
         if package:config("zlib") then
             package:add("deps", "zlib")
@@ -34,7 +48,7 @@ package("gl2ps")
         end
     end)
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         io.replace("CMakeLists.txt", "if(GLUT_FOUND)", "if(0)", {plain = true})
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
