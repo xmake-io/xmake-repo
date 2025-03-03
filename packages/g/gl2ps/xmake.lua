@@ -16,7 +16,7 @@ package("gl2ps")
     add_deps("opengl")
 
     if is_plat("windows") then
-        add_deps("pkg-config")
+        add_deps("pkgconf")
     end
 
     if is_plat("linux", "windows", "mingw") then
