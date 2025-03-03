@@ -31,11 +31,9 @@ package("alsa-lib")
         if package:config("versioned") then
             table.insert(configs, "--without-versioned")
         end
-        local cxflags = {}
-        if package:config("pic") ~= false and package:config("shared") then
-            table.insert(cxflags, "-fPIC")
-        end
-        import("package.tools.autoconf").install(package, configs, {cxflags = cxflags})
+        table.insert(configs, "--enable-pic=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--disable-pic=" .. (package:config("shared") and "no" or "yes"))
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)
