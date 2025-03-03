@@ -35,7 +35,7 @@ package("alsa-lib")
         if package:config("pic") ~= false and package:config("shared") then
             table.insert(cxflags, "-fPIC")
         end
-        import("package.tools.autoconf").install(package, configs, {cxflags = cxflags}))
+        import("package.tools.autoconf").install(package, configs, {cxflags = cxflags})
     end)
 
     on_test(function (package)
