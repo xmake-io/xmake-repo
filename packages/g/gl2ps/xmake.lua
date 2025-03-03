@@ -15,7 +15,7 @@ package("gl2ps")
 
     add_deps("opengl")
 
-    if is_plat("linux", "windows", "mingw")
+    if is_plat("linux", "windows", "mingw") then
         add_deps("freeglut")
     else
         add_deps("glut")
