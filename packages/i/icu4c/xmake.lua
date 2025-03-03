@@ -41,12 +41,15 @@ package("icu4c")
 
     on_load(function (package)
         if package:is_cross() then
-            if not package:is_plat("windows") then
-                package:add("deps", "icu4c~host", {host = true, private = true})
-            end
+            package:add("deps", "icu4c~host", {kind = "binary", private = true})
         else
             package:addenv("PATH", "bin")
         end
+
+        if not is_plat("windows") and (is_subhost("windows") and os.arch() == "x64") then
+            package:add("deps", "msys2", {msystem = "MINGW64", base_devel = true})
+        end
+
         if package:is_plat("windows") then
             if package:config("tools") then
                 package:add("deps", "python 3.x", {kind = "binary"})
@@ -70,24 +73,6 @@ package("icu4c")
     on_install("windows", function (package)
         import("package.tools.msbuild")
 
-        local projectfiles = os.files("source/**.vcxproj")
-        local sln = path.join("source", "allinone", "allinone.sln")
-        table.join2(projectfiles, sln, os.files("source/**.props"))
-
-        if package:is_cross() then
-            -- icu build requires native tools
-            local configs = {
-                sln,
-                "/p:Configuration=Release",
-                "/target:pkgdata,genrb"
-            }
-
-            local arch_prev = package:arch()
-            package:arch_set(os.arch())
-            msbuild.build(package, configs, {upgrade = projectfiles})
-            package:arch_set(arch_prev)
-        end
-
         if package:has_runtime("MT", "MTd") then
             local files = {
                 "source/common/common.vcxproj",
@@ -102,6 +87,36 @@ package("icu4c")
             end
         end
 
+        local projectfiles = os.files("source/**.vcxproj")
+        local sln = path.join("source", "allinone", "allinone.sln")
+        table.join2(projectfiles, sln, os.files("source/**.props"))
+
+        local suffix = package:is_arch("arm.*") and "ARM" or ""
+        if package:is_arch64() then
+            suffix = suffix .. "64"
+        end
+
+        if package:is_binary() then
+            local configs = {
+                sln,
+                "/p:Configuration=Release",
+                "/target:pkgdata,genrb"
+            }
+
+            msbuild.build(package, configs, {upgrade = projectfiles})
+            os.vcp("bin" .. suffix .. "/*", package:installdir("bin"))
+            return
+        elseif package:is_cross() then
+            local arch_prev = package:arch()
+            package:arch_set(os.arch())
+            local host_suffix = package:is_arch("arm.*") and "ARM" or ""
+            if package:is_arch64() then
+                host_suffix = host_suffix .. "64"
+            end
+            package:arch_set(arch_prev)
+            os.vcp(package:dep("icu4c"):installdir("bin/*"), "bin" .. host_suffix .. "/")
+        end
+
         local configs = {
             sln,
             "/p:SkipUWP=True",
@@ -112,11 +127,6 @@ package("icu4c")
             table.insert(configs, "/target:common,i18n,uconv,io,stubdata")
         end
         msbuild.build(package, configs, {upgrade = projectfiles})
-
-        local suffix = package:is_arch("arm.*") and "ARM" or ""
-        if package:is_arch(".*64") then
-            suffix = suffix .. "64"
-        end
 
         os.vcp("include", package:installdir())
         os.vcp("bin" .. suffix .. "/*", package:installdir("bin"))
@@ -156,6 +166,7 @@ package("icu4c")
         -- suppress ar errors when passing --toolchain=clang
         envs.ARFLAGS = nil
         autoconf.install(package, configs, {envs = envs})
+
         if not package:is_cross() then
             os.trycp("config/icucross.mk", package:installdir("config"))
             os.trycp("config/icucross.inc", package:installdir("config"))
@@ -164,5 +175,7 @@ package("icu4c")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("ucnv_convert", {includes = "unicode/ucnv.h"}))
+        if package:is_library() then
+            assert(package:has_cfuncs("ucnv_convert", {includes = "unicode/ucnv.h"}))
+        end
     end)
