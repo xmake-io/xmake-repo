@@ -16,7 +16,7 @@ package("gl2ps")
     add_deps("opengl")
 
     if is_plat("windows") then
-        add_deps("pkgconf", "ninja v1.11.1")
+        add_deps("pkgconf", "ninja 1.11.1")
     end
 
     if is_plat("linux", "windows", "mingw") then
