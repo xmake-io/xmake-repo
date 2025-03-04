@@ -13,13 +13,7 @@ package("gl2ps")
     add_configs("zlib", {description = "Enable compression using ZLIB", default = true, type = "boolean"})
     add_configs("png", {description = "Enable PNG support", default = true, type = "boolean"})
 
-    add_deps("opengl")
-
-    if is_plat("linux", "windows", "mingw") then
-        add_deps("freeglut")
-    else
-        add_deps("glut")
-    end
+    add_deps("opengl", "glut")
 
     if is_plat("macosx", "linux", "bsd") then
         add_deps("libx11")
