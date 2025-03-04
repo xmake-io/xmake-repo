@@ -25,7 +25,7 @@ package("liquid-dsp")
     end)
 
     on_install("!windows", function (package)
-        -- if crosscompile do not check for FindSIMD.cmake
+        -- if crosscompile do not include FindSIMD.cmake
         io.replace("CMakeLists.txt", [[# check for hardware acceleration]], [[if(NOT CMAKE_CROSSCOMPILING)]], {plain = true})
         io.replace("CMakeLists.txt", [[# TODO: check for FFTW]], [[endif()]], {plain = true})
 
@@ -33,7 +33,7 @@ package("liquid-dsp")
         io.replace("CMakeLists.txt", [[lib/static]], [[lib]], {plain = true})
         io.replace("CMakeLists.txt", [[add_library(${LIBNAME} SHARED]], [[add_library(${LIBNAME}]], {plain = true})
 
-        -- avoid sh script
+        -- gather version from package not from .sh script
         io.replace("CMakeLists.txt", [[execute_process(COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/version.sh]], "", {plain = true})
         io.replace("CMakeLists.txt", [[WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}]], "", {plain = true})
         io.replace("CMakeLists.txt", [[OUTPUT_VARIABLE LIQUID_VERSION)]], "set(LIQUID_VERSION " .. package:version_str():sub(2) .. ")", {plain = true})
