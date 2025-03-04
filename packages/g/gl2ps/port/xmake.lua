@@ -24,7 +24,8 @@ if not has_config("HAVE_VSNPRINTF") then
     add_defines("HAVE_NO_VSNPRINTF")
 end
 
-add_requires("opengl", "glut")
+add_requires("opengl", {optional = true})
+add_requires("glut")
 if has_config("zlib") then
     add_requires("zlib")
     add_defines("HAVE_ZLIB")
