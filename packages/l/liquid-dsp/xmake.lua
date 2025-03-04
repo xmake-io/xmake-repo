@@ -10,9 +10,7 @@ package("liquid-dsp")
 
     add_configs("simd", {description = "Build SIMD extensions", default = false, type = "boolean"})
 
-    if is_plat("windows") then
-        add_cxxflags("/Zc:__cplusplus")
-    elseif is_plat("linux", "bsd") then
+    if is_plat("linux", "bsd") then
         add_syslinks("m")
     elseif is_plat("android") then
         add_syslinks("m", "c")
@@ -26,25 +24,23 @@ package("liquid-dsp")
         assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(liquid-dsp): need ndk api level > 21")
     end)
 
-    on_install(function (package)
+    on_install("!windows", function (package)
         -- if crosscompile do not check for FindSIMD.cmake
         io.replace("CMakeLists.txt", [[# check for hardware acceleration]], [[if(NOT CMAKE_CROSSCOMPILING)]], {plain = true})
         io.replace("CMakeLists.txt", [[# TODO: check for FFTW]], [[endif()]], {plain = true})
 
+        -- fix install path and lib kind
         io.replace("CMakeLists.txt", [[lib/static]], [[lib]], {plain = true})
         io.replace("CMakeLists.txt", [[add_library(${LIBNAME} SHARED]], [[add_library(${LIBNAME}]], {plain = true})
+
+        -- avoid sh script
         io.replace("CMakeLists.txt", [[execute_process(COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/version.sh]], "", {plain = true})
         io.replace("CMakeLists.txt", [[WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}]], "", {plain = true})
         io.replace("CMakeLists.txt", [[OUTPUT_VARIABLE LIQUID_VERSION)]], "set(LIQUID_VERSION " .. package:version_str():sub(2) .. ")", {plain = true})
+
         local configs = {"-DBUILD_EXAMPLES=OFF", "-DBUILD_AUTOTESTS=OFF", "-DBUILD_BENCHMARKS=OFF", "-DBUILD_SANDBOX=OFF", "-DBUILD_DOC=OFF", "-DCOVERAGE=OFF"}
         if is_plat("mingw") then
             io.replace("CMakeLists.txt", [[target_link_libraries(${LIBNAME} c m)]], "target_link_libraries(${LIBNAME} m)", {plain = true})
-        end
-        if is_plat("windows") then
-            io.replace("CMakeLists.txt", [[target_link_libraries(${LIBNAME} c m)]], "", {plain = true})
-        end
-        if is_plat("windows") and package:config("shared") then
-            table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
