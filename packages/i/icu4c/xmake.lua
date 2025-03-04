@@ -5,7 +5,7 @@ package("icu4c")
     add_urls("https://github.com/unicode-org/icu/releases/download/release-$(version)-src.tgz", {version = function (version)
             return (version:gsub("%.", "-")) .. "/icu4c-" .. (version:gsub("%.", "_"))
         end})
-    add_versions("76.1", "dfacb46bfe4747410472ce3e1144bf28a102feeaa4e3875bac9b4c6cf30f4f3e")
+    -- add_versions("76.1", "dfacb46bfe4747410472ce3e1144bf28a102feeaa4e3875bac9b4c6cf30f4f3e")
     add_versions("75.1", "cb968df3e4d2e87e8b11c49a5d01c787bd13b9545280fc6642f826527618caef")
     add_versions("73.2", "818a80712ed3caacd9b652305e01afc7fa167e6f2e94996da44b90c2ab604ce1")
     add_versions("73.1", "a457431de164b4aa7eca00ed134d00dfbf88a77c6986a10ae7774fc076bb8c45")
@@ -42,13 +42,15 @@ package("icu4c")
 
     on_load(function (package)
         if package:is_cross() then
-            package:add("deps", "icu4c~host", {kind = "binary", private = true})
+            package:add("deps", "icu4c~host", {kind = "binary", private = true, configs = {tools = true}})
         else
-            package:addenv("PATH", "bin")
+            if package:config("tools") then
+                package:addenv("PATH", "bin")
+            end
         end
 
         if not is_plat("windows") and (is_subhost("windows") and os.arch() == "x64") then
-            package:add("deps", "msys2", {msystem = "MINGW64", base_devel = true})
+            package:add("deps", "msys2", {configs = {msystem = "MINGW64", base_devel = true}})
         end
 
         if package:is_plat("windows") then
@@ -162,8 +164,13 @@ package("icu4c")
         if package:is_plat("mingw") then
             table.insert(configs, "--with-data-packaging=dll")
         end
+        if package:config("tools") then
+            table.insert(configs, "--enable-tools")
+        else
+            table.insert(configs, "--disable-tools")
+        end
         if package:is_cross() then
-            table.insert(configs, "--with-cross-build=" .. package:dep("icu4c"):installdir())
+            table.insert(configs, "--with-cross-build=" .. path.unix(package:dep("icu4c"):installdir()))
         end
 
         local envs = {}
@@ -175,6 +182,9 @@ package("icu4c")
         end
         -- suppress ar errors when passing --toolchain=clang
         envs.ARFLAGS = nil
+        if package:is_cross() and not envs.CXX then
+            envs.CXX = path.unix(package:build_getenv("cxx"))
+        end
         autoconf.install(package, configs, {envs = envs})
 
         if not package:is_cross() then
