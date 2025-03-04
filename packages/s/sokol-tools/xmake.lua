@@ -30,7 +30,7 @@ package("sokol-tools")
         if fipsdir then
             os.cp(fipsdir, "../fips")
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").build(package, configs)
         os.cp("../fips-deploy/sokol-tools/*", package:installdir("bin"))
     end)
 
