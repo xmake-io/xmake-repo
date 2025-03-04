@@ -21,11 +21,11 @@ if not has_config("HAVE_VSNPRINTF") then
 end
 
 add_requires("opengl", "glut")
-if has_config("enable_zlib") then
+if has_config("zlib") then
     add_requires("zlib")
     add_defines("HAVE_ZLIB")
 end
-if has_config("enable_png") then
+if has_config("png") then
     add_requires("libpng")
     add_defines("HAVE_PNG")
 end
