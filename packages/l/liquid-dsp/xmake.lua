@@ -17,6 +17,7 @@ package("liquid-dsp")
     add_deps("cmake", "fftw")
 
     on_install(function (package)
+        io.replace("CMakeLists.txt", [[lib/static]], [[lib]], {plain = true})
         io.replace("CMakeLists.txt", [[add_library(${LIBNAME} SHARED]], [[add_library(${LIBNAME}]], {plain = true})
         io.replace("CMakeLists.txt", [[execute_process(COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/version.sh]], "", {plain = true})
         io.replace("CMakeLists.txt", [[WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}]], "", {plain = true})
