@@ -15,7 +15,11 @@ set_configvar("GL2PS_PATCH_VERSION", 2)
 set_configvar("GL2PS_EXTRA_VERSION", "")
 set_configvar("GL2PS_OS", is_plat("macosx") and "MacOSX" or (is_plat("windows", "mingw") and "Windows" or "Linux"))
 
-configvar_check_cfuncs("HAVE_VSNPRINTF", "vsnprintf", {includes = "stdio.h"})
+option("HAVE_VSNPRINTF")
+    add_cfuncs("vsnprintf")
+    add_cincludes("stdio.h")
+option_end()
+
 if not has_config("HAVE_VSNPRINTF") then
     add_defines("HAVE_NO_VSNPRINTF")
 end
