@@ -138,6 +138,15 @@ package("icu4c")
         import("package.tools.autoconf")
 
         os.cd("source")
+        if is_host("macosx") then
+            -- On Mac OS X, the echo command does not support the -n option
+            -- @see https://unicode-org.atlassian.net/browse/ICU-22418
+            local mkfiles = {"Makefile.in"}
+            table.join2(mkfiles, os.files("config/mh-*"))
+            for _, mkfile in ipairs(mkfiles) do
+                io.replace(mkfile, "@echo%s+-n%s+\"", "@printf \"") -- replace @echo -n with @printf
+            end
+        end
         local configs = {"--disable-samples", "--disable-tests"}
         if package:debug() then
             table.insert(configs, "--enable-debug")
