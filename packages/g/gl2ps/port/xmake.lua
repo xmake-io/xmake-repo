@@ -35,7 +35,7 @@ if has_config("png") then
 end
 
 if is_plat("linux", "macosx") then
-    add_links("m")
+    add_syslinks("m")
 end
 
 if is_plat("macosx") then
