@@ -10,13 +10,21 @@ package("liquid-dsp")
 
     add_configs("simd", {description = "Build SIMD extensions", default = false, type = "boolean"})
 
-    if is_plat("linux", "bsd") then
+    if is_plat("windows") then
+        add_cxxflags("/Zc:__cplusplus")
+    elseif is_plat("linux", "bsd") then
         add_syslinks("m")
     elseif is_plat("android") then
         add_syslinks("m", "c")
     end
 
     add_deps("cmake", "fftw")
+
+    on_check("android", function (package)
+        local ndk = package:toolchain("ndk")
+        local ndk_sdkver = ndk:config("ndk_sdkver")
+        assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(liquid-dsp): need ndk api level > 21")
+    end)
 
     on_install(function (package)
         -- if crosscompile do not check for FindSIMD.cmake
