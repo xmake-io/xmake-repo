@@ -43,13 +43,8 @@ package("gl2ps")
     end)
 
     on_install("windows", "linux", "macosx", "mingw", function (package)
-        io.replace("CMakeLists.txt", "if(GLUT_FOUND)", "if(0)", {plain = true})
-        local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DENABLE_ZLIB=" .. (package:config("zlib") and "ON" or "OFF"))
-        table.insert(configs, "-DENABLE_PNG=" .. (package:config("png") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
