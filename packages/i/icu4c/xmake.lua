@@ -42,11 +42,9 @@ package("icu4c")
 
     on_load(function (package)
         if package:is_cross() then
-            package:add("deps", "icu4c~host", {kind = "binary", private = true, configs = {tools = true}})
+            package:add("deps", "icu4c~host", {kind = "binary", private = true})
         else
-            if package:config("tools") then
-                package:addenv("PATH", "bin")
-            end
+            package:addenv("PATH", "bin")
         end
 
         if not is_plat("windows") and (is_subhost("windows") and os.arch() == "x64") then
@@ -164,12 +162,8 @@ package("icu4c")
         if package:is_plat("mingw") then
             table.insert(configs, "--with-data-packaging=dll")
         end
-        if package:config("tools") then
-            table.insert(configs, "--enable-tools")
-        else
-            table.insert(configs, "--disable-tools")
-        end
         if package:is_cross() then
+            table.insert(configs, "--disable-tools")
             table.insert(configs, "--with-cross-build=" .. path.unix(package:dep("icu4c"):installdir()))
         end
 
