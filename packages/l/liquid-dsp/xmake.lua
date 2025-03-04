@@ -12,6 +12,8 @@ package("liquid-dsp")
 
     if is_plat("linux", "bsd") then
         add_syslinks("m")
+    elseif is_plat("android") then
+        add_syslinks("m", "c")
     end
 
     add_deps("cmake", "fftw")
