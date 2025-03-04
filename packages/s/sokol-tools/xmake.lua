@@ -7,33 +7,25 @@ package("sokol-tools")
     add_urls("https://github.com/floooh/sokol-tools.git")
     add_versions("2025.02.10", "227e74250e853c0e02e8c77accbe8b31111410be")
 
-    add_deps("cmake", "python 3.x")
+    add_resources(">=2025.02", "fips", "https://github.com/floooh/fips.git", "3fb2f75b8735552c4aae96d4c83d9aa18e6a2800")
 
-    on_install("@macosx", "@linux", "@windows|x64", function (package)
-        if os.isdir("fips-build") then
+    add_deps("cmake")
+
+    on_install("@macosx", "@linux", "@windows", function (package)
+        local configs = {}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        local fipsdir = package:resourcefile("fips")
+        if os.isdir("sokol-tools") then
             os.tryrm("./fips-deploy")
-            os.tryrm("./fips-build")
             os.tryrm("./fips")
             os.cd("sokol-tools")
             package:set("sourcedir", "sokol-tools")
         end
-        if package:is_plat("macosx") then
-            os.vrunv("./fips", {"set", "config", "osx-xcode-release"}, {shell = true})
-            os.vrunv("./fips", {"build"}, {shell = true})
-            os.cp("../fips-deploy/sokol-tools/osx-xcode-release/*", package:installdir("bin"))
-        elseif package:is_plat("linux") then
-            io.replace("src/shdc/CMakeLists.txt", "-static", "", {plain = true})
-            os.vrunv("./fips", {"set", "config", "linux-make-release"}, {shell = true})
-            os.vrunv("./fips", {"build"}, {shell = true})
-            os.cp("../fips-deploy/sokol-tools/linux-make-release/*", package:installdir("bin"))
-        elseif package:is_plat("windows") then
-            os.vrunv("fips.cmd", {"set", "config", "win64-vstudio-release"})
-            os.vrunv("fips.cmd", {"build"})
-            os.cp("../fips-deploy/sokol-tools/win64-vstudio-release/*", package:installdir("bin"))
+        if fipsdir then
+            os.cp(fipsdir, "../fips")
         end
-        os.tryrm("../fips-deploy")
-        os.tryrm("../fips-build")
-        os.tryrm("../fips")
+        import("package.tools.cmake").install(package, configs)
+        os.cp("../fips-deploy/sokol-tools/*", package:installdir("bin"))
     end)
 
     on_test(function (package)
