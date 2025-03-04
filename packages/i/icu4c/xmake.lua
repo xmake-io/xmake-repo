@@ -134,7 +134,7 @@ package("icu4c")
         os.vcp("lib" .. suffix .. "/*", package:installdir("lib"))
     end)
 
-    on_install("!windows and !wasm", function (package)
+    on_install("@!windows and !wasm and !iphoneos", function (package)
         import("package.tools.autoconf")
 
         os.cd("source")
