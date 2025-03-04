@@ -30,6 +30,9 @@ package("sokol-tools")
         if fipsdir then
             os.cp(fipsdir, "../fips")
         end
+        if package:is_plat("linux") then
+            io.replace("src/shdc/CMakeLists.txt", "-static", "", {plain = true})
+        end
         import("package.tools.cmake").build(package, configs)
         os.cp("../fips-deploy/sokol-tools/*", package:installdir("bin"))
     end)
