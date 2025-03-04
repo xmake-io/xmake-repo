@@ -27,16 +27,14 @@ package("liquid-dsp")
         io.replace("CMakeLists.txt", [[WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}]], "", {plain = true})
         io.replace("CMakeLists.txt", [[OUTPUT_VARIABLE LIQUID_VERSION)]], "set(LIQUID_VERSION " .. package:version_str():sub(2) .. ")", {plain = true})
         local configs = {"-DBUILD_EXAMPLES=OFF", "-DBUILD_AUTOTESTS=OFF", "-DBUILD_BENCHMARKS=OFF", "-DBUILD_SANDBOX=OFF", "-DBUILD_DOC=OFF", "-DCOVERAGE=OFF"}
-        if is_host("windows") then
-            if package:config("shared") then
+        if is_plat("mingw") then
+            io.replace("CMakeLists.txt", [[target_link_libraries(${LIBNAME} c m)]], "target_link_libraries(${LIBNAME} m)", {plain = true})
+        end
+        if is_plat("windows") then
+            io.replace("CMakeLists.txt", [[target_link_libraries(${LIBNAME} c m)]], "", {plain = true})
+        end
+        if is_plat("windows") and package:config("shared") then
                 table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
-            end
-            if is_plat("mingw") then
-                io.replace("CMakeLists.txt", [[target_link_libraries(${LIBNAME} c m)]], "target_link_libraries(${LIBNAME} m)", {plain = true})
-            end
-            if is_plat("windows") then
-                io.replace("CMakeLists.txt", [[target_link_libraries(${LIBNAME} c m)]], "", {plain = true})
-            end
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
