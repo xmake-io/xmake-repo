@@ -17,6 +17,10 @@ package("liquid-dsp")
     add_deps("cmake", "fftw")
 
     on_install(function (package)
+        -- if crosscompile do not check for FindSIMD.cmake
+        io.replace("CMakeLists.txt", [[# check for hardware acceleration]], [[if(NOT CMAKE_CROSSCOMPILING))]], {plain = true})
+        io.replace("CMakeLists.txt", [[# TODO: check for FFTW]], [[endif()]], {plain = true})
+
         io.replace("CMakeLists.txt", [[lib/static]], [[lib]], {plain = true})
         io.replace("CMakeLists.txt", [[add_library(${LIBNAME} SHARED]], [[add_library(${LIBNAME}]], {plain = true})
         io.replace("CMakeLists.txt", [[execute_process(COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/version.sh]], "", {plain = true})
