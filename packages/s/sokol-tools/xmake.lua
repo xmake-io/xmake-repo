@@ -11,6 +11,12 @@ package("sokol-tools")
 
     add_deps("cmake")
 
+    on_load(function (package)
+        if not package:is_precompiled() then
+            package:add("deps", "python 3.x")
+        end
+    end)
+
     on_install("@macosx", "@linux", "@windows", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
