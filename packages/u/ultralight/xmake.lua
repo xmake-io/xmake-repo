@@ -60,7 +60,7 @@ package("ultralight")
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
     on_check(function (package)
-        if is_plat("macosx", "linux") and is_arch("arm64") then
+        if package:is_plat("macosx", "linux") and package:is_arch("arm64") then
             if package:version():eq("1.3.0") then
                 assert(false, "package(ultralight 1.3.0): Unsupported version on macosx/linux|arm64")
             end
@@ -68,7 +68,7 @@ package("ultralight")
     end)
 
     on_load(function (package)
-        if is_plat("linux") then
+        if package:is_plat("linux") then
             package:add("deps", "gtk3")
         end
     end)
