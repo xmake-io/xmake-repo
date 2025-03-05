@@ -76,6 +76,9 @@ package("ultralight")
         os.cp("include", package:installdir())
         os.trycp("lib", package:installdir())
         os.trycp("bin", package:installdir())
+
+        os.trycp("bin/*.dylib", package:installdir("lib"))
+        os.trycp("bin/*.so", package:installdir("lib"))
     end)
 
     on_test(function (package)
