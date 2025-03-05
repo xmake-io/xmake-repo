@@ -68,8 +68,8 @@ package("ultralight")
     end)
 
     on_load(function (package)
-        if is_plat("linux") and package:config("shared") then
-            package:add("deps", "gtk3", {configs = {shared = true}})
+        if is_plat("linux") then
+            package:add("deps", "gtk3")
         end
     end)
 
