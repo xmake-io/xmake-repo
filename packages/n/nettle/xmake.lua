@@ -16,7 +16,11 @@ package("nettle")
         add_extsources("apt::nettle-dev")
     end
 
-    on_install("macosx", "linux", function (package)
+    on_install("@!windows and !wasm", function (package)
+        if package:is_plat("iphoneos") then
+            io.replace("configure", "#define gid_t int", "")
+            io.replace("configure", "#define uid_t int", "")
+        end
         local configs = {"--disable-openssl", "--disable-documentation", "--enable-pic"}
         if package:config("shared") then
             table.insert(configs, "--enable-shared")
