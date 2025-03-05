@@ -47,10 +47,6 @@ package("icu4c")
             package:addenv("PATH", "bin")
         end
 
-        if not is_plat("windows") and (is_subhost("windows") and os.arch() == "x64") then
-            package:add("deps", "msys2", {configs = {msystem = "MINGW64", base_devel = true}})
-        end
-
         if package:is_plat("windows") then
             if package:config("tools") then
                 package:add("deps", "python 3.x", {kind = "binary"})
@@ -163,7 +159,6 @@ package("icu4c")
             table.insert(configs, "--with-data-packaging=dll")
         end
         if package:is_cross() then
-            table.insert(configs, "--disable-tools")
             table.insert(configs, "--with-cross-build=" .. path.unix(package:dep("icu4c"):installdir()))
         end
 
