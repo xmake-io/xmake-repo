@@ -28,5 +28,21 @@ package("nettle")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("sha1_init", {includes = "nettle/sha1.h"}))
+        assert(package:check_csnippets([[
+            void sha1_test(void) {
+                struct sha1_ctx ctx;
+                sha1_init(&ctx);
+                uint8_t const buffer[] = "test";
+                sha1_update(&ctx, sizeof(buffer), buffer);
+                uint8_t digest[SHA1_DIGEST_SIZE];
+                sha1_digest(&ctx, SHA1_DIGEST_SIZE, digest);
+            }
+        ]], {includes = "nettle/sha1.h"}))
+        assert(package:check_csnippets([[
+            void rsa_test(void) {
+                struct rsa_public_key pub;
+                rsa_public_key_init(&pub);
+                rsa_public_key_clear(&pub);
+            }
+        ]], {includes = "nettle/rsa.h"}))
     end)
