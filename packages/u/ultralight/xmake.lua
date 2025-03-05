@@ -15,7 +15,7 @@ package("ultralight")
         add_versions("1.4.0-beta", "6749c3d1aef49ba1c4ca783a453fe2f68b827b5935534751b68623b4b0eb91f1")
     elseif is_plat("linux") then
         if os.arch() == "arm64" then
-            add_urls("https://github.com/ultralight-ux/Ultralight/releases/download/v$(version)/ultralight-sdk-$(version)-linux-arm64.7z", {version = function(version)
+            add_urls("https://github.com/ultralight-ux/Ultralight/releases/download/v$(version)", {version = function(version)
                 if version:endswith("beta") then
                     return version .. "/ultralight-sdk-" .. version:sub(1, -6) .. "b-linux-arm64.7z"
                 else
@@ -24,7 +24,7 @@ package("ultralight")
             end})
             add_versions("1.4.0-beta", "efa8f6c8b351daa42570f11bcb162f280cca2ce8e167f854a5e0687db854f268")
         else
-            add_urls("https://github.com/ultralight-ux/Ultralight/releases/download/v$(version)/ultralight-sdk-$(version)-linux-x64.7z", {version = function(version)
+            add_urls("https://github.com/ultralight-ux/Ultralight/releases/download/v$(version)", {version = function(version)
                 if version:endswith("beta") then
                     return version .. "/ultralight-sdk-" .. version:sub(1, -6) .. "b-linux-x64.7z"
                 else
@@ -36,7 +36,7 @@ package("ultralight")
         end
     elseif is_host("macosx") then
         if os.arch() == "arm64" then
-            add_urls("https://github.com/ultralight-ux/Ultralight/releases/download/v$(version)/ultralight-sdk-$(version)-mac-x64.7z", {version = function(version)
+            add_urls("https://github.com/ultralight-ux/Ultralight/releases/download/v$(version)", {version = function(version)
                 if version:endswith("beta") then
                     return version .. "/ultralight-sdk-" .. version:sub(1, -6) .. "b-mac-x64.7z"
                 else
@@ -45,7 +45,7 @@ package("ultralight")
             end})
             add_versions("1.4.0-beta", "3b8c71cf8e403738dcdb12cacc233838c168d48322c31d40ec1c6fcaa761a016")
         else
-            add_urls("https://github.com/ultralight-ux/Ultralight/releases/download/v$(version)/ultralight-sdk-$(version)-mac-x64.7z", {version = function(version)
+            add_urls("https://github.com/ultralight-ux/Ultralight/releases/download/v$(version)", {version = function(version)
                 if version:endswith("beta") then
                     return version .. "/ultralight-sdk-" .. version:sub(1, -6) .. "b-mac-x64.7z"
                 else
