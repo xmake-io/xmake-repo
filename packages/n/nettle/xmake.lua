@@ -11,6 +11,7 @@ package("nettle")
     add_versions("3.10.1", "b0fcdd7fc0cdea6e80dcf1dd85ba794af0d5b4a57e26397eee3bc193272d9132")
 
     add_deps("m4")
+    add_deps("gmp")
     if is_plat("linux") then
         add_extsources("apt::nettle-dev")
     end
@@ -24,7 +25,9 @@ package("nettle")
             table.insert(configs, "--disable-shared")
             table.insert(configs, "--enable-static")
         end
-        import("package.tools.autoconf").install(package, configs)
+        import("package.tools.autoconf")
+        local envs = autoconf.buildenvs(package, {packagedeps = {"gmp"}})
+        autoconf.install(package, configs, {envs = envs})
     end)
 
     on_test(function (package)
