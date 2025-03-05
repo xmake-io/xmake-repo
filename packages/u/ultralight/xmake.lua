@@ -14,7 +14,7 @@ package("ultralight")
         add_versions("1.3.0", "cc8bfc66a4c40c88fa02691febe6f21c248a2a30d17cfe5470fccc3a461ce49e")
         add_versions("1.4.0-beta", "6749c3d1aef49ba1c4ca783a453fe2f68b827b5935534751b68623b4b0eb91f1")
     elseif is_plat("linux") then
-        if os.arch() == "arm64" then
+        if is_arch("arm64") then
             add_urls("https://github.com/ultralight-ux/Ultralight/releases/download/v$(version)", {version = function(version)
                 if version:endswith("beta") then
                     return version .. "/ultralight-sdk-" .. version:sub(1, -6) .. "b-linux-arm64.7z"
@@ -32,10 +32,10 @@ package("ultralight")
                 end
             end})
             add_versions("1.3.0", "1de6298b5ed3c5e0c22ac27e0e30fcb0ba6d195467a58ee44ef4e13dd1a6d352")
-            add_versions("1.4.0-beta", "1a72c567f2a33b5d6f7ba2cb253d39a78730bbe316ee5649e5e697e0e4b6ca1b")
+            add_versions("1.4.0-beta", "1d5092bfd7d96417547872a5c5b5950207f495ea299d713fa105314f4185c760")
         end
-    elseif is_host("macosx") then
-        if os.arch() == "arm64" then
+    elseif is_plat("macosx") then
+        if is_arch("arm64") then
             add_urls("https://github.com/ultralight-ux/Ultralight/releases/download/v$(version)", {version = function(version)
                 if version:endswith("beta") then
                     return version .. "/ultralight-sdk-" .. version:sub(1, -6) .. "b-mac-x64.7z"
@@ -58,6 +58,14 @@ package("ultralight")
     end
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+
+    on_check(function (package)
+        if is_plat("macosx", "linux") and is_arch("arm64") then
+            if package:version():eq("1.3.0") then
+                assert(false, "package(ultralight 1.3.0): Unsupported version on macosx/linux|arm64")
+            end
+        end
+    end)
 
     on_install("windows|x64", "linux", "macosx", function (package)
         if package:is_plat("linux") then
