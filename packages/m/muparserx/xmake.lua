@@ -18,7 +18,7 @@ package("muparserx")
 
     on_install(function (package)
         io.replace("parser/mpTypes.h", [[#include "mpMatrix.h"]], "#include \"mpMatrix.h\"\n#include <cstdint>", {plain = true})
-        local configs = {"-DBUILD_EXAMPLES=OFF"}
+        local configs = {"-DBUILD_EXAMPLES=OFF", "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         if package:config("shared") and package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
