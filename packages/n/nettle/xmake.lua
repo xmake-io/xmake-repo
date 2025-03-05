@@ -8,6 +8,7 @@ package("nettle")
              "https://ftp.gnu.org/gnu/nettle/nettle-$(version).tar.gz")
     add_versions("3.6", "d24c0d0f2abffbc8f4f34dcf114b0f131ec3774895f3555922fe2f40f3d5e3f1")
     add_versions("3.9.1", "ccfeff981b0ca71bbd6fbcb054f407c60ffb644389a5be80d6716d5b550c6ce3")
+    add_versions("3.10.1", "b0fcdd7fc0cdea6e80dcf1dd85ba794af0d5b4a57e26397eee3bc193272d9132")
 
     add_deps("m4")
     if is_plat("linux") then
