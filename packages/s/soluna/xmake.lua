@@ -17,6 +17,7 @@ package("soluna")
         end
         io.replace("src/file.c", "#include <string.h>",
             "#include <string.h>\n#include <stdlib.h>", {plain = true})
+        io.replace("src/entry.c", "#define SOKOL_D3D11", "", {plain = true})
         os.rm("3rd/lua", "3rd/sokol", "3rd/stb", "3rd/datalist")
         import("package.tools.xmake").install(package)
     end)

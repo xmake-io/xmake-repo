@@ -42,16 +42,24 @@ rule("datalist2c")
 target("soluna")
     set_kind("binary")
     add_rules("lua2c", "glsl2c", "datalist2c")
+
     add_files("src/*.c")
+    add_files("3rd/datalist/datalist.c")
+    add_files("3rd/ltask/src/*.c")
+
     add_files("src/*.glsl")
     add_files("src/data/*.dl")
     add_files("3rd/ltask/lualib/*.lua")
     add_files("3rd/ltask/service/*.lua")
     add_files("src/lualib/*.lua")
     add_files("src/service/*.lua")
+
     add_packages("lua", "stb", "sokol", "sokol-tools")
     if is_plat("macosx") then
        add_defines("SOKOL_METAL")
        add_cflags("-x objective-c", {force = true})
+       add_frameworks("QuartzCore", "Foundation", "Metal", "MetalKit", "CoreFoundation", "CoreGraphics", "AppKit")
+    elseif is_plat("windows") then
+        add_defines("SOKOL_D3D11")
     end
 
