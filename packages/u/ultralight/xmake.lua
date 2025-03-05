@@ -67,12 +67,19 @@ package("ultralight")
         end
     end)
 
+    on_load(function (package)
+        if is_plat("linux") and package:config("shared") then
+            package:add("deps", "gtk3", {configs = {shared = true}})
+        end
+    end)
+
     on_install("windows|x64", "linux", "macosx", function (package)
         if package:is_plat("linux") then
             if linuxos.name() ~= "ubuntu" and linuxos.name() ~= "debian" or (linuxos.version():major() < 9 and linuxos.version():minor() < 5) then
                 print("Ultralight is officially supported on Ubuntu/Debian 9.5+. use it at your own risks")
             end
         end
+
         os.cp("include", package:installdir())
         os.trycp("lib", package:installdir())
         os.trycp("bin", package:installdir())
