@@ -28,6 +28,9 @@ package("nettle")
         import("package.tools.autoconf")
         local envs = autoconf.buildenvs(package, {packagedeps = {"gmp"}})
         autoconf.install(package, configs, {envs = envs})
+        if os.isfile(package:installdir("lib64", "pkgconfig", "nettle.pc")) then
+            package:add("linkdirs", "lib64")
+        end
     end)
 
     on_test(function (package)
