@@ -4,13 +4,15 @@ package("at-spi2-core")
     set_description("contains the DBus interface definitions for AT-SPI - the core of an accessibility stack for free software systems.")
     set_license("LGPL-2.1")
 
-    add_urls("https://gitlab.gnome.org/GNOME/at-spi2-core/-/archive/AT_SPI2_CORE_$(version)/at-spi2-core-AT_SPI2_CORE_$(version).tar.gz", {version = function (version)
+    add_urls("https://gitlab.gnome.org/GNOME/at-spi2-core/-/archive/AT_SPI2_CORE_$(version)/at-spi2-core-AT_SPI2_CORE_$(version).tar.gz", {alias = "archive", version = function (version)
         return version:gsub("%.", "_")
     end})
-    add_urls("https://gitlab.gnome.org/GNOME/at-spi2-core/-/archive/$(version)/at-spi2-core-$(version).tar.gz")
 
-    add_versions("2.53.90", "6b0a7c15b5fceb69f501e8b6b8bebe9896c35b9edb1ee08fe0b202d488a71363")
-    add_versions("2.55.90", "f99a1dc25a0556c9ec58b7049f8c76f002ee3f50f10aae677fc49ac6c143b2a2")
+    add_urls("https://gitlab.gnome.org/GNOME/at-spi2-core/-/archive/$(version)/at-spi2-core-$(version).tar.gz", {alias = "archive_new"})
+
+    add_versions("archive:2.53.90", "6b0a7c15b5fceb69f501e8b6b8bebe9896c35b9edb1ee08fe0b202d488a71363")
+
+    add_versions("archive_new:2.55.90", "f99a1dc25a0556c9ec58b7049f8c76f002ee3f50f10aae677fc49ac6c143b2a2")
 
     add_includedirs("include", "include/at-spi-2.0", "include/atk-1.0", "include/at-spi2-atk/2.0")
 
