@@ -20,7 +20,8 @@ package("at-spi2-core")
 
     add_deps("meson", "ninja", "glib", "pkg-config", "dbus", "libx11", "libxtst", "libxi", "libxml2")
     on_install("linux", function (package)
-        local configs = {}
+        io.replace("meson.build", "subdir('tests')", "", {plain = true})
+        local configs = {"-Dintrospection=disabled", "-Ddocs=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         import("package.tools.meson").install(package, configs, {packagedeps = {"glib", "libiconv", "libx11", "libxtst", "libxi", "dbus"}})
         local atspi_pkgconfig_dir = package:installdir("lib/pkgconfig/atspi-2.pc")
