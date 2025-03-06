@@ -6,6 +6,7 @@ package("plfit")
     add_urls("https://github.com/ntamas/plfit/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ntamas/plfit.git")
 
+    add_versions("1.0.1", "523868c283f334329084df457739baf29b0a21e679830e5326965b0d128db1d4")
     add_versions("1.0.0", "b64eff580c721809d32be69c43070c37c9200ca02e5169d9ae7972fbd759977e")
 
     add_configs("sse", {description = "Use SSE/SSE2 optimizations if available", default = false, type = "boolean"})
