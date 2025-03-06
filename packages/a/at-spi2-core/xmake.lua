@@ -17,7 +17,7 @@ package("at-spi2-core")
     on_install("linux", function (package)
         local configs = {}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-        import("package.tools.meson").install(package, configs, {packagedeps = {"glib", "libiconv", "libx11", "libxtst", "libxi", "dbus"}})
+        import("package.tools.meson").install(package, configs, {packagedeps = {"glib", "libiconv", "libx11", "libxtst", "libxi", "dbus", "libxml2"}})
         local atspi_pkgconfig_dir = package:installdir("lib/pkgconfig/atspi-2.pc")
         io.replace(atspi_pkgconfig_dir, [[-DG_LOG_DOMAIN="dbind"]], [[-DG_LOG_DOMAIN=\"dbind\"]])
     end)
