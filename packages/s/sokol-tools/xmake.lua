@@ -32,6 +32,8 @@ package("sokol-tools")
         end
         if package:is_plat("linux") then
             io.replace("src/shdc/CMakeLists.txt", "-static", "", {plain = true})
+        elseif package:is_plat("windows") then
+            io.replace("../fips/cmake-toolchains/windows.cmake", "/WX", "", {plain = true})
         end
         import("package.tools.cmake").build(package, configs)
         os.cp("../fips-deploy/sokol-tools/*", package:installdir("bin"))
