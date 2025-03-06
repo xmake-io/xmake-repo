@@ -5,7 +5,7 @@ package("ggml")
 
     add_urls("https://github.com/ggml-org/ggml.git", {submodules = false})
 
-    add_versions("2025.02.04", "5734b97d896ec744ea9ea288571308cca2285149")
+    add_versions("2025.03.05", "d013aa56cdcccefd9086ac93a58951256c84ff16")
 
     add_configs("openmp", {description = "use OpenMP", default = false, type = "boolean"})
     add_configs("cuda", {description = "use CUDA", default = false, type = "boolean"})
