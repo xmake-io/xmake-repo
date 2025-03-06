@@ -18,8 +18,13 @@ package("at-spi2-core")
 
     add_links("atk-bridge-2.0", "atspi", "atk-1.0")
 
+    if is_plat("linux") then
+        add_syslinks("dl", "resolv", "pthread")
+    end
+
     add_deps("meson", "ninja", "glib", "pkg-config", "dbus", "libx11", "libxtst", "libxi", "libxml2")
     on_install("linux", function (package)
+        io.replace("meson.build", "warning_level=1", "warning_level=3", {plain = true})
         io.replace("meson.build", "subdir('tests')", "", {plain = true})
         local configs = {"-Dintrospection=disabled", "-Ddocs=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
