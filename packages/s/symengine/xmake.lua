@@ -21,11 +21,17 @@ package("symengine")
     add_deps("cmake")
 
     on_load(function (package)
-        -- Unsupported gmp
-        if package:is_plat("windows") then
-            package:config_set("integer_class", "boost")
+        local integer_class = package:config("integer_class")
+        if is_subhost("windows") and integer_class == "gmp" then
+            raise("Unsupported integer_class(gmp) config on windows subhost")
         end
-        package:add("deps", package:config("integer_class"))
+
+        local opt = {configs = {}}
+        if integer_class == "boost" then
+            opt.configs.serialization = true
+            opt.configs.iostreams = true
+        end
+        package:add("deps", integer_class, opt)
     end)
 
     on_install("windows", "linux", "macosx", "bsd", "mingw", "cross", function (package)
