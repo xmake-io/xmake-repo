@@ -32,6 +32,16 @@ package("matplotplusplus")
         add_syslinks("user32", "shell32", "gdi32")
     end
 
+    if on_check then
+        on_check("linux", function (package)
+            if package:version() and package:version():eq("1.2.2") then
+                if package:is_debug() then
+                    raise("package(matplotplusplus 1.2.2) unsupported debug build type")
+                end
+            end
+        end)
+    end
+
     on_load(function (package)
         for config, dep in pairs(configdeps) do
             if package:config(config) then
