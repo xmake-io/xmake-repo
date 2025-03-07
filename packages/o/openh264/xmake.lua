@@ -6,6 +6,7 @@ package("openh264")
     set_urls("https://github.com/cisco/openh264/archive/refs/tags/$(version).tar.gz",
              "https://github.com/cisco/openh264.git")
 
+    add_versions("v2.6.0", "558544ad358283a7ab2930d69a9ceddf913f4a51ee9bf1bfb9e377322af81a69")
     add_versions("v2.5.0", "94c8ca364db990047ec4ec3481b04ce0d791e62561ef5601443011bdc00825e3")
     add_versions("v2.4.1", "8ffbe944e74043d0d3fb53d4a2a14c94de71f58dbea6a06d0dc92369542958ea")
     add_versions("v2.1.1", "af173e90fce65f80722fa894e1af0d6b07572292e76de7b65273df4c0a8be678")
