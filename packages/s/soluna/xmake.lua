@@ -24,3 +24,4 @@ package("soluna")
 
     on_test(function (package)
     end)
+
