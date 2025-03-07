@@ -36,6 +36,7 @@ package("ormpp")
         else
             os.vcp("ormpp/*", package:installdir("include"))
             os.vcp("iguana", package:installdir("include"))
+            os.vcp("frozen", package:installdir("include"))
         end
     end)
 
