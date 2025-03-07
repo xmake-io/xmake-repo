@@ -15,7 +15,11 @@ package("ormpp")
     add_configs("postgresql", {description = "Using postgresql", default = false, type = "boolean"})
     add_configs("sqlite3", {description = "Using sqlite3", default = false, type = "boolean"})
 
-    on_load(function(package) 
+    on_load(function (package)
+        local iguana_vers = {
+            ["0.1.3"] = "1.0.5",
+        }
+        package:add("deps", "iguana " .. iguana_vers[package:version_str()])
         local configs = {
             mysql = "ORMPP_ENABLE_MYSQL",
             postgresql = "ORMPP_ENABLE_PG",
@@ -35,8 +39,6 @@ package("ormpp")
             os.vcp("include/*", package:installdir("include"))
         else
             os.vcp("ormpp/*", package:installdir("include"))
-            os.vcp("iguana", package:installdir("include"))
-            os.vcp("frozen", package:installdir("include"))
         end
     end)
 
