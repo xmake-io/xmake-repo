@@ -18,6 +18,8 @@ package("ormpp")
     on_load(function (package)
         local iguana_vers = {
             ["0.1.3"] = "1.0.5",
+            ["v0.1.2"] = "1.0.5",
+            ["v0.1.1"] = "1.0.5",
         }
         package:add("deps", "iguana " .. iguana_vers[package:version_str()])
         local configs = {
