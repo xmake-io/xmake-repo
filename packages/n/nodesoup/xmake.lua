@@ -16,6 +16,7 @@ package("nodesoup")
 
     on_install(function (package)
         if package:config("cmake") then
+            io.replace("CMakeLists.txt", "ARCHIVE DESTINATION lib", "ARCHIVE DESTINATION lib\nRUNTIME DESTINATION bin", {plain = true})
             io.replace("src/CMakeLists.txt", "nodesoup PROPERTIES POSITION_INDEPENDENT_CODE ON", "nodesoup PROPERTIES", {plain = true})
             local configs = {"-DBUILD_DEMO=OFF"}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
