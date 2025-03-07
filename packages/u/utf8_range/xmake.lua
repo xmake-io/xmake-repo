@@ -5,6 +5,7 @@ package("utf8_range")
 
     add_urls("https://github.com/protocolbuffers/utf8_range.git")
     add_versions("2022.11.15", "72c943dea2b9240cd09efde15191e144bc7c7d38")
+    add_versions("2023.11.10", "1d1ea7e3fedf482d4a12b473c1ed25fe0f371a45")
 
     add_deps("cmake", "abseil")
 
