@@ -28,6 +28,7 @@ package("symengine")
 
         local opt = {configs = {}}
         if integer_class == "boost" then
+            opt.configs.cmake = false
             opt.configs.serialization = true
             opt.configs.iostreams = true
         end
