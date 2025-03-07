@@ -20,10 +20,10 @@ package("libfswatch")
 
     if on_check then
         on_check(function (package)
-            if package:version() and package:version():eq("1.18.2") then
+            if package:version() and package:version():ge("1.18.2") then
                 if package:is_plat("bsd") then
                     -- libfswatch/src/libfswatch/c++/kqueue_monitor.cpp:134:29: error: unknown type name '__darwin_time_t'; did you mean '__sbintime_t'
-                    raise("package(libfswatch 1.18.2) unsupported current platform")
+                    raise("package(libfswatch >=1.18.2) unsupported platform")
                 end
             end
         end)
