@@ -2,51 +2,41 @@ add_rules("mode.debug", "mode.release")
 
 add_requires("lua 5.4.x", "stb", "sokol", "sokol-tools")
 
-rule("lua2c")
-    set_extensions(".lua")
-    before_build_file(function(target, sourcefile)
-        local headerdir = path.join(target:autogendir(), "lua2c", "include")
+rule("autogen")
+    set_extensions(".lua", ".glsl", ".dl")
+    on_load(function (target)
+        local headerdir = path.join(target:autogendir(), "include")
         if not os.isdir(headerdir) then
             os.mkdir(headerdir)
         end
-        local headerfile = path.join(headerdir, path.filename(sourcefile) .. ".h")
-        os.vrunv("lua", {"script/lua2c.lua", sourcefile, path.unix(headerfile)})
-        target:add("includedirs", headerdir, {public = true})
+        target:add("includedirs", headerdir)
     end)
-
-rule("glsl2c")
-    set_extensions(".glsl")
-    before_build_file(function(target, sourcefile)
-        local headerdir = path.join(target:autogendir(), "glsl", "include")
-        if not os.isdir(headerdir) then
-            os.mkdir(headerdir)
-        end
+    before_buildcmd_file(function(target, batchcmds, sourcefile, opt)
+        local headerdir = path.join(target:autogendir(), "include")
         local headerfile = path.join(headerdir, path.filename(sourcefile) .. ".h")
-        os.vrunv("sokol-shdc", {"--input", sourcefile, "--output", headerfile,
-            "--slang", "hlsl4", "--format", "sokol"})
-        target:add("includedirs", headerdir, {public = true})
-    end)
-
-rule("datalist2c")
-    set_extensions(".dl")
-    before_build_file(function(target, sourcefile)
-        local headerdir = path.join(target:autogendir(), "datalist2c", "include")
-        if not os.isdir(headerdir) then
-            os.mkdir(headerdir)
+        local extension = path.extension(sourcefile)
+        batchcmds:show_progress(opt.progress, "${color.build.object}generating%s %s", extension, sourcefile)
+        if extension == ".lua" then
+            batchcmds:vrunv("lua", {"script/lua2c.lua", sourcefile, path.unix(headerfile)})
+        elseif extension == ".dl" then
+            batchcmds:vrunv("lua", {"script/datalist2c.lua", sourcefile, path.unix(headerfile)})
+        elseif extension == ".glsl" then
+            batchcmds:vrunv("sokol-shdc", {"--input", sourcefile, "--output", headerfile,
+                "--slang", "hlsl4", "--format", "sokol"})
         end
-        local headerfile = path.join(headerdir, path.filename(sourcefile) .. ".h")
-        os.vrunv("lua", {"script/datalist2c.lua", sourcefile, path.unix(headerfile)})
-        target:add("includedirs", headerdir, {public = true})
+        batchcmds:add_depfiles(sourcefile)
+        batchcmds:set_depmtime(os.mtime(headerfile))
+        batchcmds:set_depcache(target:dependfile(headerfile))
     end)
 
 target("soluna")
     set_kind("binary")
-    add_rules("lua2c", "glsl2c", "datalist2c")
 
     add_files("src/*.c")
     add_files("3rd/datalist/datalist.c")
     add_files("3rd/ltask/src/*.c")
 
+    add_rules("autogen")
     add_files("src/*.glsl")
     add_files("src/data/*.dl")
     add_files("3rd/ltask/lualib/*.lua")
