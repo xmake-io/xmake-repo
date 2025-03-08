@@ -1,5 +1,5 @@
 add_rules("mode.debug", "mode.release")
-set_languages("c11")
+set_languages("c99")
 add_requires("openssl")
 
 includes("@builtin/check")
@@ -59,7 +59,7 @@ target("libp11")
             add_defines("USE_CYGWIN")
         end
     elseif is_plat("linux", "bsd", "android") then
-        add_defines("HAVE_PTHREAD", "_POSIX_C_SOURCE=199506L")
+        add_defines("HAVE_PTHREAD", "_POSIX_C_SOURCE=200809L")
         add_syslinks("pthread", "dl")
     end
 
