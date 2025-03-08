@@ -44,17 +44,6 @@ target("libp11")
     set_kind("$(kind)")
     add_files("src/*.c")
     add_headerfiles("src/libp11.h", "src/p11_err.h", "src/util.h")
-    add_includedirs("src")
-    add_packages("openssl")
-
-    if is_plat("windows") and is_kind("shared") then
-        add_rules("utils.symbols.export_all")
-    end
-
-    if is_plat("windows", "mingw") then
-        add_configfiles("src/libp11.rc.in")
-        add_configfiles("src/pkcs11.rc.in")
-    end
 
     if is_plat("windows", "mingw", "cygwin") then
         add_defines("WIN32_LEAN_AND_MEAN", "_WIN32_WINNT=0x0600")
@@ -65,4 +54,16 @@ target("libp11")
     elseif is_plat("linux", "bsd", "android") then
         add_syslinks("pthread", "dl")
         add_configfiles("src/(config.h.in)", {filename = "config.h"})
+    end
+
+    add_includedirs("src")
+    add_packages("openssl")
+
+    if is_plat("windows") and is_kind("shared") then
+        add_rules("utils.symbols.export_all")
+    end
+
+    if is_plat("windows", "mingw") then
+        add_configfiles("src/libp11.rc.in")
+        add_configfiles("src/pkcs11.rc.in")
     end
