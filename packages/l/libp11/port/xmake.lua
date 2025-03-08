@@ -18,10 +18,6 @@ void test() {
     return i; 
 }]])
 
-add_configfiles("(src/config.h.in)", {filename = "config.h"})
-
-
-
 target("libp11")
     set_kind("$(kind)")
     add_files("src/*.c")
@@ -46,4 +42,5 @@ target("libp11")
         end
     elseif is_plat("linux", "bsd", "android") then
         add_syslinks("pthread", "dl")
+        add_configfiles("(src/config.h.in)", {filename = "config.h"})
     end
