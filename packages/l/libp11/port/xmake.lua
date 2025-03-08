@@ -2,6 +2,26 @@ add_rules("mode.debug", "mode.release")
 set_languages("c11")
 add_requires("openssl")
 
+configvar_check_cfuncs("HAVE_X509_GET0_NOTBEFORE", "X509_get0_notBefore", {includes = "openssl/x509.h"})
+configvar_check_cfuncs("HAVE_X509_GET0_NOTAFTER", "X509_get0_notAfter", {includes = "openssl/x509.h"})
+
+if is_plat("android") then
+    configvar_check_cfuncs("HAVE_PTHREAD", "pthread_create", {includes = "pthread.h"})
+else
+    configvar_check_links("HAVE_PTHREAD", "pthread")
+end
+
+configvar_check_csnippets("HAVE_PTHREAD_PRIO_INHERIT", [[
+#include <pthread.h>
+void test() {
+    int i = PTHREAD_PRIO_INHERIT;
+    return i; 
+}]])
+
+add_configfiles("(src/config.h.in)", {filename = "config.h"})
+
+includes("@builtin/check")
+
 target("libp11")
     set_kind("$(kind)")
     add_files("src/*.c")
@@ -24,6 +44,6 @@ target("libp11")
         if is_plat("cygwin") then
             add_defines("USE_CYGWIN")
         end
-    elseif is_plat("linux", "bsd") then
+    elseif is_plat("linux", "bsd", "android") then
         add_syslinks("pthread", "dl")
     end
