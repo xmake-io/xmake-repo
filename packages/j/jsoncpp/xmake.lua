@@ -38,6 +38,7 @@ package("jsoncpp")
         assert(package:check_cxxsnippets({
             test = [[
                 #include <iostream>
+                #include <memory>
                 #include <assert.h>
                 static void test() {
                     const std::string rawJson = R"({"Age": 20, "Name": "colin"})";
