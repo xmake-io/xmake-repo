@@ -42,6 +42,13 @@ void test() {
 
 target("libp11")
     set_kind("$(kind)")
+
+    add_packages("openssl")
+
+    set_configdir("src")
+    add_configfiles("src/(config.h.in)", {filename = "config.h"})
+
+    add_includedirs("src")
     add_files("src/*.c")
     add_headerfiles("src/libp11.h", "src/p11_err.h", "src/util.h")
 
@@ -53,11 +60,7 @@ target("libp11")
         end
     elseif is_plat("linux", "bsd", "android") then
         add_syslinks("pthread", "dl")
-        add_configfiles("src/(config.h.in)", {filename = "config.h"})
     end
-
-    add_includedirs("src")
-    add_packages("openssl")
 
     if is_plat("windows") and is_kind("shared") then
         add_rules("utils.symbols.export_all")
