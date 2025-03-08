@@ -42,5 +42,5 @@ target("libp11")
         end
     elseif is_plat("linux", "bsd", "android") then
         add_syslinks("pthread", "dl")
-        add_configfiles("(src/config.h.in)", {filename = "config.h"})
+        add_configfiles("src/(config.h.in)", {filename = "config.h"})
     end
