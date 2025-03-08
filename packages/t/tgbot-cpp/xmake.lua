@@ -14,7 +14,7 @@ package("tgbot-cpp")
     add_configs("curl", {description = "Use curl-based http client CurlHttpClient", default = false, type = "boolean"})
 
     add_deps("openssl", "zlib")
-    add_deps("boost", {configs = {system = true, container = true}})
+    add_deps("boost", {configs = {system = true, container = true, asio = true}})
 
     on_load(function (package)
         if package:config("curl") then
