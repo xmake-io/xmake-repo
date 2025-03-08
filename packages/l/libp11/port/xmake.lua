@@ -59,7 +59,7 @@ target("libp11")
             add_defines("USE_CYGWIN")
         end
     elseif is_plat("linux", "bsd", "android") then
-        add_defines("HAVE_PTHREAD", "_POSIX_C_SOURCE=200809L")
+        add_defines("HAVE_PTHREAD", "_POSIX_C_SOURCE=199506L")
         add_syslinks("pthread", "dl")
     end
 
