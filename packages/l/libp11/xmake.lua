@@ -12,6 +12,7 @@ package("libp11")
 
     on_install(function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        os.cp(path.join(package:scriptdir(), "port", "config.h.in"), "src/config.h.in")
         import("package.tools.xmake").install(package)
     end)
 

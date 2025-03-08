@@ -1,7 +1,29 @@
 add_rules("mode.debug", "mode.release")
 set_languages("c11")
 add_requires("openssl")
+
 includes("@builtin/check")
+
+configvar_check_cincludes("HAVE_DLFCN_H", "dlfcn.h")
+configvar_check_cincludes("HAVE_ERRNO_H", "errno.h")
+configvar_check_cincludes("HAVE_FCNTL_H", "fcntl.h")
+configvar_check_cincludes("HAVE_GETOPT_H", "getopt.h")
+configvar_check_cincludes("HAVE_INTTYPES_H", "inttypes.h")
+configvar_check_cincludes("HAVE_LOCALE_H", "locale.h")
+configvar_check_cincludes("HAVE_MALLOC_H", "malloc.h")
+
+configvar_check_cincludes("HAVE_STDINT_H", "stdint.h")
+configvar_check_cincludes("HAVE_STDIO_H", "stdio.h")
+configvar_check_cincludes("HAVE_STDLIB_H", "stdlib.h")
+configvar_check_cincludes("HAVE_STRINGS_H", "strings.h")
+configvar_check_cincludes("HAVE_STRING_H", "string.h")
+configvar_check_cincludes("HAVE_SYS_STAT_H", "sys/stat.h")
+configvar_check_cincludes("HAVE_SYS_TIME_H", "sys/time.h")
+configvar_check_cincludes("HAVE_SYS_TYPES_H", "sys/types.h")
+configvar_check_cincludes("HAVE_SYS_WAIT_H", "sys/wait.h")
+configvar_check_cincludes("HAVE_UNISTD_H", "unistd.h")
+configvar_check_cincludes("HAVE_UTMP_H", "utmp.h")
+
 configvar_check_cfuncs("HAVE_X509_GET0_NOTBEFORE", "X509_get0_notBefore", {includes = "openssl/x509.h"})
 configvar_check_cfuncs("HAVE_X509_GET0_NOTAFTER", "X509_get0_notAfter", {includes = "openssl/x509.h"})
 
