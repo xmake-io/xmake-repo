@@ -1,7 +1,7 @@
 add_rules("mode.debug", "mode.release")
 set_languages("c11")
 add_requires("openssl")
-
+includes("@builtin/check")
 configvar_check_cfuncs("HAVE_X509_GET0_NOTBEFORE", "X509_get0_notBefore", {includes = "openssl/x509.h"})
 configvar_check_cfuncs("HAVE_X509_GET0_NOTAFTER", "X509_get0_notAfter", {includes = "openssl/x509.h"})
 
@@ -20,7 +20,7 @@ void test() {
 
 add_configfiles("(src/config.h.in)", {filename = "config.h"})
 
-includes("@builtin/check")
+
 
 target("libp11")
     set_kind("$(kind)")
