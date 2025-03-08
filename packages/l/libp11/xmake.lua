@@ -13,6 +13,7 @@ package("libp11")
     on_install("!wasm" , function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         os.cp(path.join(package:scriptdir(), "port", "config.h.in"), "src/config.h.in")
+        io.gsub("src/config.h.in", "# ?undef (.-)\n", "${define %1}\n")
         import("package.tools.xmake").install(package)
     end)
 
