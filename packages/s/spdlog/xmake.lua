@@ -36,8 +36,8 @@ package("spdlog")
 
     if is_plat("windows") then
         add_configs("wchar",  {description = "Support wchar api.", default = false, type = "boolean"})
-        add_configs("wchar_filename",  {description = "Support wchar api.", default = false, type = "boolean"})
-        add_configs("wchar_console",  {description = "Support wchar api.", default = false, type = "boolean"})
+        add_configs("wchar_filenames",  {description = "Support wchar filenames.", default = false, type = "boolean"})
+        add_configs("wchar_console",  {description = "Support wchar output to console.", default = false, type = "boolean"})
     elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
@@ -65,7 +65,7 @@ package("spdlog")
         if package:config("wchar") then
             package:add("defines", "SPDLOG_WCHAR_TO_UTF8_SUPPORT")
         end
-        if package:config("wchar_filename") then
+        if package:config("wchar_filenames") then
             package:add("defines", "SPDLOG_WCHAR_FILENAMES")
         end
         if package:config("wchar_console") then
@@ -91,7 +91,7 @@ package("spdlog")
         table.insert(configs, "-DSPDLOG_FMT_EXTERNAL_HO=" .. (package:config("fmt_external_ho") and "ON" or "OFF"))
         table.insert(configs, "-DSPDLOG_NO_EXCEPTIONS=" .. (package:config("noexcept") and "ON" or "OFF"))
         table.insert(configs, "-DSPDLOG_WCHAR_SUPPORT=" .. (package:config("wchar") and "ON" or "OFF"))
-        table.insert(configs, "-DSPDLOG_WCHAR_FILENAMES=" .. (package:config("wchar_filename") and "ON" or "OFF"))
+        table.insert(configs, "-DSPDLOG_WCHAR_FILENAMES=" .. (package:config("wchar_filenames") and "ON" or "OFF"))
         table.insert(configs, "-DSPDLOG_UTF8_TO_WCHAR_CONSOLE=" .. (package:config("wchar_console") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
