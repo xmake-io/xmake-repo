@@ -15,9 +15,13 @@ package("ormpp")
     add_configs("postgresql", {description = "Using postgresql", default = false, type = "boolean"})
     add_configs("sqlite3", {description = "Using sqlite3", default = false, type = "boolean"})
 
-    add_deps("iguana <=1.0.5")
-
-    on_load(function(package) 
+    on_load(function (package)
+        local iguana_vers = {
+            ["0.1.3"] = "1.0.5",
+            ["v0.1.2"] = "1.0.5",
+            ["v0.1.1"] = "1.0.5",
+        }
+        package:add("deps", "iguana " .. iguana_vers[package:version_str()])
         local configs = {
             mysql = "ORMPP_ENABLE_MYSQL",
             postgresql = "ORMPP_ENABLE_PG",
@@ -50,12 +54,12 @@ package("ormpp")
             #include <algorithm>
             #include <dbng.hpp>
             using namespace ormpp;
-            struct student {
-                std::string name;
-                int age;
-                int id;
+            struct person {
+              std::string name;
+              int age;
+              int id;
             };
-            REGISTER_AUTO_KEY(student, id)
-            REFLECTION_WITH_NAME(student, "t_student", id, name, age)
+            REGISTER_AUTO_KEY(person, id)
+            YLT_REFL(person, id, name, age)
         ]]}, {configs = {languages = languages}}))
     end)
