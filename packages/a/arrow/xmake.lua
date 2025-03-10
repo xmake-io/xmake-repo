@@ -26,9 +26,9 @@ package("arrow")
     add_configs("orc",      {description = "Build the Arrow ORC adapter", default = true , type = "boolean"})
     add_configs("parquet",  {description =  "Build the Parquet libraries", default = true , type = "boolean"})
     add_configs("filesystem",   {description = "Build the Arrow Filesystem Layer", default = true , type = "boolean"})
-    add_configs("cuda",   {description = "Build the Arrow CUDA extensions (requires CUDA toolkit)", default = true, type = "boolean"})
-    add_configs("flight",   {description = "Build the Arrow Flight RPC System (requires GRPC, Protocol Buffers)", default = true , type = "boolean"})
-    add_configs("flight_sql",   {description = "Build the Arrow Flight SQL extension", default = true, type = "boolean"})
+    add_configs("cuda",   {description = "Build the Arrow CUDA extensions (requires CUDA toolkit)", default = false, type = "boolean"})
+    add_configs("flight",   {description = "Build the Arrow Flight RPC System (requires GRPC, Protocol Buffers)", default = false , type = "boolean"})
+    add_configs("flight_sql",   {description = "Build the Arrow Flight SQL extension", default = false, type = "boolean"})
     add_configs("shared_dep", {description = "Use shared library for dependency", default = false, type = "boolean"})
 
 
