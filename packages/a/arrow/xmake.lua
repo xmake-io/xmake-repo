@@ -31,7 +31,7 @@ package("arrow")
     add_configs("flight",   {description = "Build the Arrow Flight RPC System (requires GRPC, Protocol Buffers)", default = true , type = "boolean"})
     add_configs("flight_sql",   {description = "Build the Arrow Flight SQL extension", default = true, type = "boolean"})
     add_configs("shared_dep", {description = "Use shared library for dependency", default = false, type = "boolean"})
-    
+
 
     add_deps("cmake",
              "xsimd",
@@ -66,7 +66,6 @@ package("arrow")
     if is_plat("linux", "macosx", "bsd") then 
         add_deps("jemalloc")
     end
-
     on_load(function (package)
         if not package:config("shared") then 
             package:add("links", "arrow_bundled_dependencies")
@@ -111,6 +110,7 @@ package("arrow")
             package:add("links", "arrow_cuda")
             package:add("deps", "cuda", {system=true})
         end
+
     end)
 
     on_install("windows", "linux", "macosx", "bsd", function (package)
@@ -189,14 +189,6 @@ package("arrow")
                 table.insert(configs, "-DLZ4_MSVC_LIB_PREFIX=")
                 table.insert(configs, "-DZSTD_MSVC_STATIC_LIB_SUFFIX=")
             end
-            --After installed in Windows you should download TZdata
-            ----https://data.iana.org/time-zones/releases/tzdata2021e.tar.gz
-            --and unzip to  %USERPROFILE%\Downloads\tzdata manually:
-            ----See https://arrow.apache.org/docs/developers/cpp/windows.html#downloading-the-timezone-database
-            ----See https://arrow.apache.org/docs/cpp/build_system.html#download-timezone-database
-            --Also need Windows timezone mapping: download
-            ----https://raw.githubusercontent.com/unicode-org/cldr/master/common/supplemental/windowsZones.xml
-            --to: %USERPROFILE%\Downloads\tzdata\windowsZones.xml
         end
         if package:is_plat("linux", "macosx", "bsd") then 
             table.insert(configs, "-DARROW_JEMALLOC=ON")
