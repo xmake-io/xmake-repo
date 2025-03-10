@@ -18,7 +18,7 @@ package("arrow")
     add_patches(">=18.1.0", "patches/0007-fix-path.patch", "77ca553ecfc92eb6f71692863c56c023fee6b256b831234b759bc8d22f539ab4") 
     add_patches(">=18.1.0", "patches/0008-arrow-parquet-size-statistics-include.patch", "540c16d52f512832a1de5c074d7e6a87ef427aee72b4f94051472e0dbf95a17d") 
 
-    --Modules gcs, s3, azure, HDFS, SUBSTRAIT, tensorflow and gandiva support is not implemented yet
+    --Modules gcs, s3, azure, HDFS, SUBSTRAIT, Skyhooks,  tensorflow and gandiva support is not implemented yet
     add_configs("csv",      {description = "Build the Arrow CSV Parser Module", default = true, type = "boolean"})
     add_configs("json",     {description = "Build Arrow with JSON support (requires RapidJSON)" , default = true, type = "boolean"})
     add_configs("compute",   {description = "Build all Arrow Compute kernels", default = true , type = "boolean"})
@@ -66,12 +66,19 @@ package("arrow")
     if is_plat("linux", "macosx", "bsd") then 
         add_deps("jemalloc")
     end
+
     on_load(function (package)
         if not package:config("shared") then 
             package:add("links", "arrow_bundled_dependencies")
             package:add("defines", "ARROW_STATIC")
+            package:add("defines", "ARROW_DS_STATIC")
+            package:add("defines","ARROW_ACERO_STATIC")
             package:add("defines", "ARROW_FLIGHT_STATIC")
             package:add("defines", "ARROW_FLIGHT_SQL_STATIC")
+            package:add("defines", "PARQUET_STATIC")
+            package:add("defines", "ARROW_ENGINE_STATIC")
+            package:add("defines", "GANDIVA_STATIC")
+            package:add("defines", "ARROW_ENGINE_STATIC")
         end
         package:add("links", "arrow", "arrow_bundled_dependencies") 
         if package:config("flight") then
@@ -101,9 +108,9 @@ package("arrow")
             package:add("links", "parquet")
         end
         if package:config("cuda") then
+            package:add("links", "arrow_cuda")
             package:add("deps", "cuda", {system=true})
         end
-
     end)
 
     on_install("windows", "linux", "macosx", "bsd", function (package)
