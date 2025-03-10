@@ -1,6 +1,6 @@
 package("arrow")
     set_homepage("https://arrow.apache.org/")
-    set_description("ORC is a self-describing type-aware columnar file format designed for Hadoop workloads.")
+    set_description("Apache Arrow is a multi-language toolbox for accelerated data interchange and in-memory processing.")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/apache/arrow/archive/refs/tags/apache-arrow-$(version).tar.gz",
