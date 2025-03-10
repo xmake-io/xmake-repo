@@ -6,6 +6,7 @@ package("blake3")
     add_urls("https://github.com/BLAKE3-team/BLAKE3/archive/refs/tags/$(version).tar.gz",
              "https://github.com/BLAKE3-team/BLAKE3.git")
 
+    add_versions("1.6.1", "1f2fbd93790694f1ad66eef26e23c42260a1916927184d78d8395ff1a512d285")
     add_versions("1.5.5", "6feba0750efc1a99a79fb9a495e2628b5cd1603e15f56a06b1d6cb13ac55c618")
     add_versions("1.5.4", "ddd24f26a31d23373e63d9be2e723263ac46c8b6d49902ab08024b573fd2a416")
     add_versions("1.5.3", "ec9114480857334858e73b727199c573bfdbed6138a83be573f076d37e671fc1")
