@@ -54,12 +54,12 @@ package("ormpp")
             #include <algorithm>
             #include <dbng.hpp>
             using namespace ormpp;
-            struct student {
-                std::string name;
-                int age;
-                int id;
+            struct person {
+              std::string name;
+              int age;
+              int id;
             };
-            REGISTER_AUTO_KEY(student, id)
-            REFLECTION_WITH_NAME(student, "t_student", id, name, age)
+            REGISTER_AUTO_KEY(person, id)
+            YLT_REFL(person, id, name, age)
         ]]}, {configs = {languages = languages}}))
     end)
