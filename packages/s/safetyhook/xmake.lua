@@ -6,6 +6,7 @@ package("safetyhook")
     add_urls("https://github.com/cursey/safetyhook/archive/refs/tags/$(version).tar.gz",
              "https://github.com/cursey/safetyhook.git")
 
+    add_versions("v0.6.5", "453e6c200fa9c5384ea3351f1e655759744909b3436d31bf00c003af8212352c")
     add_versions("v0.6.4", "57c2a7e23e9e0857eb0f5c6322d97d75147b579ae2b8831c821e6dbf6da04298")
 
     add_deps("cmake", "zydis 4.1.0")
