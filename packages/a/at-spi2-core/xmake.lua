@@ -22,7 +22,8 @@ package("at-spi2-core")
         add_syslinks("dl", "resolv", "pthread")
     end
 
-    add_deps("meson", "ninja", "glib", "pkg-config", "dbus", "libx11", "libxtst", "libxi", "libxml2")
+    add_deps("glib", {system = false})
+    add_deps("meson", "ninja", "pkg-config", "dbus", "libx11", "libxtst", "libxi", "libxml2")
     on_install("linux", function (package)
         io.replace("meson.build", "warning_level=1", "warning_level=3", {plain = true})
         io.replace("meson.build", "subdir('tests')", "", {plain = true})
