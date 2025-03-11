@@ -20,7 +20,7 @@ package("mpfr")
         package:add("deps", "gmp", { configs = {shared = package:config("shared")} })
     end)
 
-    on_install("macosx", "linux", function (package)
+    on_install("@!windows and !wasm", function (package)
         local configs = {"--disable-dependency-tracking"}
         table.insert(configs, "--with-gmp=" .. package:dep("gmp"):installdir())
         if package:config("shared") then
