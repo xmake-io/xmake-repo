@@ -16,7 +16,10 @@ package("mpfr")
         add_extsources("brew::mpfr")
     end
 
-    add_deps("gmp")
+    on_load(function (package)
+        package:add("deps", "gmp", { configs = {shared = package:config("shared")} })
+    end)
+
     on_install("macosx", "linux", function (package)
         local configs = {"--disable-dependency-tracking"}
         table.insert(configs, "--with-gmp=" .. package:dep("gmp"):installdir())
