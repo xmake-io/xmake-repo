@@ -21,6 +21,9 @@ package("mpfr")
     end)
 
     on_install("@!windows and !wasm", function (package)
+        if is_host("windows") then
+            io.replace("configure", "LIBTOOL='$(SHELL) $(top_builddir)/libtool'", "LIBTOOL='\"$(SHELL)\" $(top_builddir)/libtool'", {plain = true})
+        end
         local configs = {"--disable-dependency-tracking"}
         table.insert(configs, "--with-gmp=" .. package:dep("gmp"):installdir())
         if package:config("shared") then
