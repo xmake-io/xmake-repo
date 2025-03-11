@@ -36,7 +36,12 @@ package("mpfr")
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
-        import("package.tools.autoconf").install(package, configs)
+        import("package.tools.autoconf")
+        local envs = autoconf.buildenvs(package)
+        if envs.ARFLAGS and envs.ARFLAGS:match("^%s*$") then
+            envs.ARFLAGS = nil
+        end
+        autoconf.install(package, configs, {envs = envs})
     end)
 
     on_test(function (package)
