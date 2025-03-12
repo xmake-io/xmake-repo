@@ -30,10 +30,10 @@ package("libsdl3_ttf")
     on_load(function (package)
         package:add("deps", "libsdl3", { configs = { shared = package:config("shared") }})
         if package:config("harfbuzz") then
-          package:add("deps", "harfbuzz") then
+            package:add("deps", "harfbuzz")
         end
         if package:config("plutosvg") then
-          package:add("deps", "plutosvg") then
+            package:add("deps", "plutosvg")
         end
     end)
 
