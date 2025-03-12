@@ -54,11 +54,12 @@ package("ispc")
     on_check(function (package)
         assert(not package:is_plat("iphoneos"), "ISPC not support iphoneos")
         assert(not package:is_plat("android"), "ISPC not support android")
+        assert(not package:is_plat("wasm"), "ISPC not support wasm")
         if package:version():eq("1.26.0") then
             assert(not package:is_plat("mingw"), "ISPC v1.26.0 not support mingw")
             assert(not package:is_plat("macos"), "ISPC v1.26.0 not support macos")
             assert(not (package:is_plat("linux") and package:is_arch("aarch64")), "ISPC v1.26.0 not support aarch64@linux")
-        elseif package:version():eq("1.17.0") 
+        elseif package:version():eq("1.17.0") then
             assert(not package:is_plat("macos"), "ISPC v1.17.0 not support macos")
             assert(not (package:is_plat("linux") and package:is_arch("aarch64")), "ISPC v1.17.0 not support aarch64@linux")
         end
