@@ -3,9 +3,10 @@ package("harfbuzz")
     set_description("HarfBuzz is a text shaping library.")
     set_license("MIT")
 
-    add_urls("https://github.com/harfbuzz/harfbuzz/archive/refs/tags/$(version).tar.gz", {excludes = "README"})
+    add_urls("https://github.com/harfbuzz/harfbuzz/archive/refs/tags/$(version).tar.gz", {excludes = "**/README", "**/test"})
     add_urls("https://github.com/harfbuzz/harfbuzz.git")
-    
+
+    add_versions("10.4.0", "0d25a3f74af4e8744700ac19050af5a80ae330378a5802a5cd71e523bb6fda1f")
     add_versions("10.3.0", "39cd3df7217f2477cf31f3c9d3a002e4d5ef0ba6822151e82ea6b46e42ea1cb2")
     add_versions("10.2.0", "11749926914fd488e08e744538f19329332487a6243eec39ef3c63efa154a578")
     add_versions("10.1.0", "c758fdce8587641b00403ee0df2cd5d30cbea7803d43c65fddd76224f7b49b88")
@@ -31,14 +32,11 @@ package("harfbuzz")
     add_configs("freetype", {description = "Enable freetype interop helpers.", default = true, type = "boolean"})
     add_configs("glib", {description = "Enable glib unicode functions.", default = false, type = "boolean"})
 
-    if is_plat("android") then
-        add_deps("cmake")
-    else
-        add_deps("meson", "ninja")
-        if is_plat("windows") then
-            add_deps("pkgconf")
-        end
+    add_deps("meson", "ninja")
+    if is_plat("windows") then
+        add_deps("pkgconf")
     end
+
     add_includedirs("include", "include/harfbuzz")
     if is_plat("macosx") then
         add_frameworks("CoreText", "CoreFoundation", "CoreGraphics")
