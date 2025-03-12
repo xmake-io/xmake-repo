@@ -84,7 +84,7 @@ package("harfbuzz")
             if os.isdir(pkgconfig) then
                 opt.envs.PKG_CONFIG_PATH = pkgconfig
             end
-            pkgconfig = path.join(dep:installdir(), "share", "pkgconfig")
+            pkgconfig = path.join(freetype:installdir(), "share", "pkgconfig")
             if os.isdir(pkgconfig) then
                 opt.envs.PKG_CONFIG_PATH = table.join2(opt.envs.PKG_CONFIG_PATH or {}, pkgconfig)
             end
