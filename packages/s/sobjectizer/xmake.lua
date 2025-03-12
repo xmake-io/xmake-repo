@@ -6,6 +6,7 @@ package("sobjectizer")
         {version = function (version) return "v." .. version end})
     add_urls("https://github.com/Stiffstream/sobjectizer.git")
 
+    add_versions("5.8.4", "09ebbec6bdafa4298c146056aef2070f0a3e56781a5dda1d7deece546c5b2b72")
     add_versions("5.8.0", "de2b4ae0e817a108dae6d6787c79ed84c33bd447842b5fdcb780f6697b4c2d49")
 
     if is_plat("linux", "bsd") then

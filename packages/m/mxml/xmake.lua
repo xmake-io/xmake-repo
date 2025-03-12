@@ -1,11 +1,12 @@
 package("mxml")
-
     set_homepage("https://www.msweet.org/mxml/")
     set_description("Mini-XML is a tiny XML library that you can use to read and write XML and XML-like data files in your application without requiring large non-standard libraries.")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/michaelrsweet/mxml/releases/download/v$(version)/mxml-$(version).zip")
     add_urls("https://github.com/michaelrsweet/mxml.git")
+
+    add_versions("4.0.4", "01778f753d18df9284d0ffa8eab42beda5adcfc2aba5ab8552a741c42eb3a744")
     add_versions("4.0.3", "a6201ad26ff3d14a84bc0027646ee89aeee858f0c9e69c166bb9705ba1eb55e7")
     add_versions("4.0.2", "7506c88640ae4bcf9b2f50edc6eb32c47b367df9da3dfa24654456b3b45be3a9")
     add_versions("3.3.1", "ca6b05725184866b9e5874329e98be22cbbdc1e733789e08b55b088be207484a")
@@ -14,6 +15,7 @@ package("mxml")
     if is_plat("macosx", "linux") then
         add_syslinks("pthread")
     end
+
     on_install("windows", "macosx", "linux", function (package)
         io.gsub("config.h.in", "#undef (.-)\n", "${define %1}\n")
         io.writefile("xmake.lua", [[
@@ -37,6 +39,9 @@ package("mxml")
                 add_headerfiles("mxml.h")
                 if is_plat("macosx", "linux") then
                     add_syslinks("pthread")
+                end
+                if is_plat("windows") and is_kind("shared") then
+                    add_rules("utils.symbols.export_all")
                 end
         ]])
         import("package.tools.xmake").install(package)
