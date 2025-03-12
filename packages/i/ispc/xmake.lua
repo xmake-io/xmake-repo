@@ -6,13 +6,13 @@ package("ispc")
 
     -- add_configs("oneapi", {description = "Use the OneAPI version on Linux", default = false, type = "boolean"})
 
-    if is_host("windows") then
+    if is_plat("windows") then
         add_urls("https://github.com/ispc/ispc/releases/download/v$(version)/ispc-v$(version)-windows.zip",
                  "https://github.com/ispc/ispc.git")
         add_versions("1.17.0", "e9a7cc98f69357482985bcbf69fa006632cee7b3606069b4d5e16dc62092d660")
         add_versions("1.25.3", "3a97e325f236c34a68013bf56fcb4e23c811b404207a60c010dc38fa24e60c55")
         add_versions("1.26.0", "cffe9904d32260994fa264f8fca60eac7be9f8995c122bacf456a1c66ac72987")
-    elseif is_host("macosx") then
+    elseif is_plat("macosx") then
         if is_arch("x86_64") then
             add_urls("https://github.com/ispc/ispc/releases/download/v$(version)/ispc-v$(version)-macOS.x86_64.tar.gz",
                      "https://github.com/ispc/ispc.git")
@@ -29,7 +29,7 @@ package("ispc")
             add_versions("1.25.3", "c6a83d1d0c37698f3bba7fd1a44835af0236248efdaf2b4a32b768e9cbd04163")
             add_versions("1.26.0", "fbe99daaade7baac941dd593aa0e442b8f2ed453b21a3d54bd8c9dbe46bc693")
         end
-    elseif is_host("linux") then
+    elseif is_plat("linux") then
         if is_arch("aarch64") then
             add_urls("https://github.com/ispc/ispc/releases/download/v$(version)/ispc-v$(version)-linux.aarch64.tar.gz",
                      "https://github.com/ispc/ispc.git")
