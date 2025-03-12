@@ -8,7 +8,7 @@ package("libsdl3_ttf")
     elseif is_plat("linux") then
         add_extsources("pacman::sdl3_ttf", "apt::libsdl3-ttf-dev")
     elseif is_plat("macosx") then
-        add_extsources("brew::sdl2_ttf")
+        add_extsources("brew::sdl3_ttf")
     end
 
     add_urls("https://www.libsdl.org/projects/SDL_ttf/release/SDL3_ttf-$(version).zip",
@@ -28,7 +28,8 @@ package("libsdl3_ttf")
     end
 
     on_load(function (package)
-        package:add("deps", "libsdl3", { configs = { shared = package:config("shared") }})
+        -- libsdl3_ttf 3.2.0 requires libsdl3 >= 3.2.6
+        package:add("deps", "libsdl3 >=3.2.6", { configs = { shared = package:config("shared") }})
         if package:config("harfbuzz") then
             package:add("deps", "harfbuzz")
         end
