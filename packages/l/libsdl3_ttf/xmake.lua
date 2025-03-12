@@ -34,7 +34,7 @@ package("libsdl3_ttf")
             package:add("deps", "harfbuzz")
         end
         if package:config("plutosvg") then
-            package:add("deps", "plutosvg")
+            package:add("deps", "plutosvg", "plutovg")
         end
     end)
 
@@ -44,7 +44,7 @@ package("libsdl3_ttf")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSDLTTF_HARFBUZZ=" .. (package:config("harfbuzz") and "ON" or "OFF"))
         table.insert(configs, "-DSDLTTF_PLUTOSVG=" .. (package:config("plutosvg") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps="plutovg"})
     end)
 
     on_test(function (package)
