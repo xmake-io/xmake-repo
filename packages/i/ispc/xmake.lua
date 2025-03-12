@@ -51,6 +51,14 @@ package("ispc")
         -- end)
     end
 
+    on_check(function (package)
+        if package:version():eq("1.26.0") then
+            assert(not (package:is_plat("mingw"), "ISPC v1.26.0 not support mingw"))
+            assert(not (package:is_plat("macos"), "ISPC v1.26.0 not support macos"))
+            assert(not (package:is_plat("linux") and package:is_arch("aarch64")), "ISPC v1.26.0 not support aarch64@linux")
+        end
+    end)
+
     on_install("@windows", "@macosx", "@linux", function (package)
         -- os.run("python scripts/quick-start-build.py") Fail to build from source. Need more 
         os.cp("*", package:installdir())
