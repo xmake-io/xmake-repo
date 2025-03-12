@@ -1,5 +1,4 @@
 package("harfbuzz")
-
     set_homepage("https://harfbuzz.github.io/")
     set_description("HarfBuzz is a text shaping library.")
     set_license("MIT")
@@ -43,8 +42,6 @@ package("harfbuzz")
     add_includedirs("include", "include/harfbuzz")
     if is_plat("macosx") then
         add_frameworks("CoreText", "CoreFoundation", "CoreGraphics")
-    elseif is_plat("bsd", "android") then
-        add_configs("freetype", {description = "Enable freetype interop helpers.", default = false, type = "boolean", readonly = true})
     elseif is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
@@ -67,15 +64,6 @@ package("harfbuzz")
                 package:add("deps", "libiconv")
             end
         end
-    end)
-
-    on_install("android", function (package)
-        local configs = {"-DHB_HAVE_GLIB=OFF", "-DHB_HAVE_GOBJECT=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DHB_HAVE_FREETYPE=" .. (package:config("freetype") and "ON" or "OFF"))
-        table.insert(configs, "-DHB_HAVE_ICU=" .. (package:config("icu") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
     end)
 
     on_install(function (package)
