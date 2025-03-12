@@ -74,7 +74,22 @@ package("harfbuzz")
         table.insert(configs, "-Dfreetype=" .. (package:config("freetype") and "enabled" or "disabled"))
         table.insert(configs, "-Dglib=" .. (package:config("glib") and "enabled" or "disabled"))
         table.insert(configs, "-Dgobject=" .. (package:config("glib") and "enabled" or "disabled"))
-        import("package.tools.meson").install(package, configs, {packagedeps = {"libintl", "libiconv", "pcre2"}})
+        local opt = {}
+        opt.packagedeps = {"libintl", "libiconv", "pcre2"}
+        local freetype = package:dep("freetype")
+        if freetype and not freetype:is_system() then
+            opt.envs = {}
+            opt.envs.CMAKE_PREFIX_PATH = freetype:installdir()
+            local pkgconfig = path.join(freetype:installdir(), "lib", "pkgconfig")
+            if os.isdir(pkgconfig) then
+                opt.envs.PKG_CONFIG_PATH = pkgconfig
+            end
+            pkgconfig = path.join(dep:installdir(), "share", "pkgconfig")
+            if os.isdir(pkgconfig) then
+                opt.envs.PKG_CONFIG_PATH = table.join2(opt.envs.PKG_CONFIG_PATH or {}, pkgconfig)
+            end
+        end
+        import("package.tools.meson").install(package, configs, opt)
     end)
 
     on_test(function (package)
