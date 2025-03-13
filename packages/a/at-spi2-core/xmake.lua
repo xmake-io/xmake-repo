@@ -29,7 +29,21 @@ package("at-spi2-core")
         io.replace("meson.build", "subdir('tests')", "", {plain = true})
         local configs = {"-Dintrospection=disabled", "-Ddocs=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-        import("package.tools.meson").install(package, configs, {packagedeps = {"glib", "libiconv", "libx11", "libxtst", "libxi", "dbus"}})
+        try
+        {
+            -- try 代码块
+            function ()
+                import("package.tools.meson").install(package, configs, {packagedeps = {"glib", "libiconv", "libx11", "libxtst", "libxi", "dbus"}})
+            end,
+            -- catch 代码块
+            catch
+            {
+                -- 发生异常后，被执行
+                function (errors)
+                    io.cat(path.join(package:buildir(), "meson-logs/meson-log.txt"))
+                end
+            }
+        }
         local atspi_pkgconfig_dir = package:installdir("lib/pkgconfig/atspi-2.pc")
         io.replace(atspi_pkgconfig_dir, [[-DG_LOG_DOMAIN="dbind"]], [[-DG_LOG_DOMAIN=\"dbind\"]])
     end)
