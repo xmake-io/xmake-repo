@@ -21,7 +21,12 @@ package("ormpp")
             ["v0.1.2"] = "1.0.5",
             ["v0.1.1"] = "1.0.5",
         }
-        package:add("deps", "iguana " .. iguana_vers[package:version_str()])
+        if package:gitref() then
+            package:add("deps", "iguana")
+        else
+            package:add("deps", "iguana " .. iguana_vers[package:version_str()])
+        end
+
         local configs = {
             mysql = "ORMPP_ENABLE_MYSQL",
             postgresql = "ORMPP_ENABLE_PG",
@@ -50,16 +55,33 @@ package("ormpp")
             languages = "c++20"
         end
 
-        assert(package:check_cxxsnippets({test = [[
-            #include <algorithm>
-            #include <dbng.hpp>
-            using namespace ormpp;
-            struct person {
-              std::string name;
-              int age;
-              int id;
-            };
-            REGISTER_AUTO_KEY(person, id)
-            YLT_REFL(person, id, name, age)
-        ]]}, {configs = {languages = languages}}))
+        local snippets
+        if package:gitref() or package:version():gt("0.1.3") then
+            snippets = [[
+                #include <algorithm>
+                #include <dbng.hpp>
+                using namespace ormpp;
+                struct person {
+                    std::string name;
+                    int age;
+                    int id;
+                };
+                REGISTER_AUTO_KEY(person, id)
+                YLT_REFL(person, id, name, age)
+            ]]
+        else
+            snippets = [[
+                #include <algorithm>
+                #include <dbng.hpp>
+                using namespace ormpp;
+                struct student {
+                    std::string name;
+                    int age;
+                    int id;
+                };
+                REGISTER_AUTO_KEY(student, id)
+                REFLECTION_WITH_NAME(student, "t_student", id, name, age)
+            ]]
+        end
+        assert(package:check_cxxsnippets({test = snippets}, {configs = {languages = languages}}))
     end)
