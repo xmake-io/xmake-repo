@@ -5,6 +5,7 @@ package("libbpf")
 
     add_urls("https://github.com/libbpf/libbpf/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libbpf/libbpf.git")
+    add_versions("v1.5.0", "53492aff6dd47e4da04ef5e672d753b9743848bdb38e9d90eafbe190b7983c44")
     add_versions("v0.3", "c168d84a75b541f753ceb49015d9eb886e3fb5cca87cdd9aabce7e10ad3a1efc")
 
     add_deps("libelf", "zlib")
