@@ -14,7 +14,7 @@ package("at-spi2-core")
 
     add_versions("archive_new:2.55.90", "f99a1dc25a0556c9ec58b7049f8c76f002ee3f50f10aae677fc49ac6c143b2a2")
 
-    add_includedirs("include", "include/at-spi-2.0", "include/atk-1.0", "include/at-spi2-atk/2.0")
+    add_includedirs("include", "include/at-spi-2.0", "include/atk-1.0", "include/at-spi2-atk/2.0", "include/at-spi2-atk/2.0")
 
     add_links("atk-bridge-2.0", "atspi", "atk-1.0")
 
