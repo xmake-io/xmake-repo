@@ -86,23 +86,38 @@ package("harfbuzz")
         local freetype = package:dep("freetype")
         if freetype and not freetype:is_system() then
             local envs = import("package.tools.meson").buildenvs(package, opt)
+            print("buildenvs", envs)
             -- harfbuzz search for freetype using cmake and pkgconfig
+            local PKG_CONFIG_PATH = {}
+            for _, dep in ipairs(freetype:librarydeps({private = true})) do
+                local pkgconfig = path.join(dep:installdir(), "lib", "pkgconfig")
+                if os.isdir(pkgconfig) then
+                    table.insert(PKG_CONFIG_PATH, pkgconfig)
+                end
+                pkgconfig = path.join(dep:installdir(), "share", "pkgconfig")
+                if os.isdir(pkgconfig) then
+                    table.insert(PKG_CONFIG_PATH, pkgconfig)
+                end
+            end
+            local pkgconfig = path.join(freetype:installdir(), "lib", "pkgconfig")
+            if os.isdir(pkgconfig) then
+                 table.insert(PKG_CONFIG_PATH, pkgconfig)
+            end
+            pkgconfig = path.join(freetype:installdir(), "share", "pkgconfig")
+            if os.isdir(pkgconfig) then
+                table.insert(PKG_CONFIG_PATH, pkgconfig)
+            end
+            envs.PKG_CONFIG_PATH = path.joinenv(PKG_CONFIG_PATH)
+
             envs.CMAKE_PREFIX_PATH = freetype:installdir()
             local fetchinfo = freetype:fetch()
             if fetchinfo then
                 envs.CMAKE_LIBRARY_PATH = fetchinfo.linkdirs
                 envs.CMAKE_INCLUDE_PATH = fetchinfo.sysincludedirs or fetchinfo.includedirs
             end
-            local pkgconfig = path.join(freetype:installdir(), "lib", "pkgconfig")
-            if os.isdir(pkgconfig) then
-                envs.PKG_CONFIG_PATH = pkgconfig
-            end
-            pkgconfig = path.join(freetype:installdir(), "share", "pkgconfig")
-            if os.isdir(pkgconfig) then
-                envs.PKG_CONFIG_PATH = table.join2(opt.envs.PKG_CONFIG_PATH or {}, pkgconfig)
-            end
             opt.envs = envs
         end
+        print("opt", opt)
         import("package.tools.meson").install(package, configs, opt)
     end)
 
