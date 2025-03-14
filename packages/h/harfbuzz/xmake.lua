@@ -79,10 +79,17 @@ package("harfbuzz")
         local freetype = package:dep("freetype")
         if freetype and not freetype:is_system() then
             opt.envs = import("package.tools.meson").buildenvs(package, opt)
-            -- harfbuzz search for freetype using cmake
+            -- harfbuzz search for freetype using cmake and pkgconfig
             opt.envs.CMAKE_PREFIX_PATH = freetype:installdir()
+            local pkgconfig = path.join(freetype:installdir(), "lib", "pkgconfig")
+            if os.isdir(pkgconfig) then
+                opt.envs.PKG_CONFIG_PATH = pkgconfig
+            end
+            pkgconfig = path.join(freetype:installdir(), "share", "pkgconfig")
+            if os.isdir(pkgconfig) then
+                opt.envs.PKG_CONFIG_PATH = table.join2(opt.envs.PKG_CONFIG_PATH or {}, pkgconfig)
+            end
         end
-        print(opt)
         import("package.tools.meson").install(package, configs, opt)
     end)
 
