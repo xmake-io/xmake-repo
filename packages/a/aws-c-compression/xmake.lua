@@ -21,7 +21,7 @@ package("aws-c-compression")
 
     on_install("!mingw or mingw|!i386", function (package)
         if package:is_plat("windows") and package:config("shared") then
-            package:add("defines", "WIN32", "AWS_COMPRESSION_USE_IMPORT_EXPORT")
+            package:add("defines", "USE_WINDOWS_DLL_SEMANTICS", "AWS_COMPRESSION_USE_IMPORT_EXPORT")
         end
 
         local cmakedir = package:dep("aws-c-common"):installdir("lib/cmake")

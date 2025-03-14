@@ -21,7 +21,7 @@ package("aws-c-http")
 
     on_install("!wasm and (!mingw or mingw|!i386)", function (package)
         if package:is_plat("windows") and package:config("shared") then
-            package:add("defines", "WIN32", "AWS_HTTP_USE_IMPORT_EXPORT")
+            package:add("defines", "USE_WINDOWS_DLL_SEMANTICS", "AWS_HTTP_USE_IMPORT_EXPORT")
         end
 
         local cmakedir = package:dep("aws-c-common"):installdir("lib/cmake")
