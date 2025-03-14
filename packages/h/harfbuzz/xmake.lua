@@ -83,7 +83,7 @@ package("harfbuzz")
         table.insert(configs, "-Dgobject=" .. (package:config("glib") and "enabled" or "disabled"))
         local opt = {}
         opt.packagedeps = {"freetype", "libintl", "libiconv", "pcre2"}
-        local freetype = package:dep("freetype")
+        --[[local freetype = package:dep("freetype")
         if freetype and not freetype:is_system() then
             local envs = import("package.tools.meson").buildenvs(package, opt)
             print("buildenvs", envs)
@@ -122,7 +122,7 @@ package("harfbuzz")
             end
             opt.envs = envs
         end
-        print("opt", opt)
+        print("opt", opt)]]
         import("package.tools.meson").install(package, configs, opt)
     end)
 
