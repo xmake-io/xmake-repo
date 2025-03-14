@@ -18,18 +18,26 @@ package("aws-c-s3")
     add_versions("v0.5.7", "2f2eab9bf90a319030fd3525953dc7ac00c8dc8c0d33e3f0338f2a3b554d3b6a")
     add_versions("v0.3.17", "72fd93a2f9a7d9f205d66890da249944b86f9528216dc0321be153bf19b2ecd5")
 
-    add_configs("asan", {description = "Enable Address Sanitize.", default = false, type = "boolean"})
     add_configs("assert_lock_help", {description = "Enable ASSERT_SYNCED_DATA_LOCK_HELD for checking thread issue", default = false, type = "boolean"})
 
-    add_deps("cmake", "aws-c-common", "aws-checksums", "aws-c-io", "aws-c-http", "aws-c-auth")
+    add_deps("cmake")
+    add_deps("aws-checksums", "aws-c-io", "aws-c-http", "aws-c-auth")
 
-    on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", "msys", "cross", function (package)
+    on_install("!wasm and (!mingw or mingw|!i386)", function (package)
+        if package:is_plat("windows") and package:config("shared") then
+            package:add("defines", "WIN32", "AWS_S3_USE_IMPORT_EXPORT")
+        end
+
         local cmakedir = package:dep("aws-c-common"):installdir("lib", "cmake")
-        if package:is_plat("windows") then
+        if is_host("windows") then
             cmakedir = cmakedir:gsub("\\", "/")
         end
 
-        local configs = {"-DBUILD_TESTING=OFF", "-DCMAKE_MODULE_PATH=" .. cmakedir}
+        local configs = {
+            "-DBUILD_TESTING=OFF",
+            "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
+            "-DCMAKE_MODULE_PATH=" .. cmakedir,
+        }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_SANITIZERS=" .. (package:config("asan") and "ON" or "OFF"))
