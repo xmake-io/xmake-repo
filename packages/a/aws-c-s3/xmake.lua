@@ -28,7 +28,7 @@ package("aws-c-s3")
             package:add("defines", "WIN32", "AWS_S3_USE_IMPORT_EXPORT")
         end
 
-        local cmakedir = package:dep("aws-c-common"):installdir("lib", "cmake")
+        local cmakedir = package:dep("aws-c-common"):installdir("lib/cmake")
         if is_host("windows") then
             cmakedir = cmakedir:gsub("\\", "/")
         end
