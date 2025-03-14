@@ -7,6 +7,7 @@ package("gfx-timsort")
     add_urls("https://github.com/timsort/cpp-TimSort/archive/refs/tags/$(version).tar.gz",
              "https://github.com/timsort/cpp-TimSort.git")
 
+    add_versions("v3.0.1", "f44aa826f2add2f15cf44f6547ea1e233dae6638e3a5c502fe3b272e17efaaf2")
     add_versions("v3.0.0", "d61b92850996305e5248d1621c8ac437c31b474f74907e223019739e2e556b1f")
 
     add_deps("cmake")
