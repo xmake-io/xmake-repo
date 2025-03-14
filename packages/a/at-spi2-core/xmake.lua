@@ -31,11 +31,11 @@ package("at-spi2-core")
         os.cp("atk-adaptor/atk-bridge.h", package:installdir("include"))
 
         for _, header in ipairs({"atspi.h", "atspi-accessible.h", "atspi-action.h", "atspi-application.h", "atspi-collection.h", "atspi-component.h", "atspi-constants.h", "atspi-device.h", "atspi-device-a11y-manager.h", "atspi-device-legacy.h", "atspi-device-listener.h", "atspi-document.h", "atspi-editabletext.h", "atspi-event-listener.h", "atspi-gmain.h", "atspi-hyperlink.h", "atspi-hypertext.h", "atspi-image.h", "atspi-matchrule.h", "atspi-misc.h", "atspi-object.h", "atspi-registry.h", "atspi-relation.h", "atspi-selection.h", "atspi-stateset.h", "atspi-table.h", "atspi-table-cell.h", "atspi-text.h", "atspi-types.h", "atspi-value.h", "atspi-device-x11.h"}) do
-            os.cp("atspi/" .. header, path.join(package:installdir("include"), "atspi", header))
+            os.trycp("atspi/" .. header, path.join(package:installdir("include"), "atspi", header))
         end
 
         for _, header in ipairs({"atkaction.h", "atkcomponent.h", "atkdocument.h", "atkeditabletext.h", "atkgobjectaccessible.h", "atkhyperlink.h", "atkhyperlinkimpl.h", "atkhypertext.h", "atkimage.h", "atkmisc.h", "atknoopobject.h", "atknoopobjectfactory.h", "atkobject.h", "atkobjectfactory.h", "atkplug.h", "atkrange.h", "atkregistry.h", "atkrelation.h", "atkrelationtype.h", "atkrelationset.h", "atkselection.h", "atksocket.h", "atkstate.h", "atkstateset.h", "atkstreamablecontent.h", "atktable.h", "atktablecell.h", "atktext.h", "atkutil.h", "atkvalue.h", "atkwindow.h", "atk-autocleanups.h", "atk.h"}) do
-            os.cp("atk/" .. header, path.join(package:installdir("include"), "atk", header))
+            os.trycp("atk/" .. header, path.join(package:installdir("include"), "atk", header))
         end
 
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
