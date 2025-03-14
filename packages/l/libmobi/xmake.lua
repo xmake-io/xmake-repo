@@ -6,7 +6,7 @@ package("libmobi")
     set_urls("https://github.com/bfabiszewski/libmobi/archive/refs/tags/$(version).tar.gz",
              "https://github.com/bfabiszewski/libmobi.git")
 
-    add_versions("0.12", "78826d161c02ce93ff1cd62838b4d749df754f52185474b82e4093badf4689c1")
+    add_versions("v0.12", "78826d161c02ce93ff1cd62838b4d749df754f52185474b82e4093badf4689c1")
 
     add_configs("encryption", {description = "Enable encryption", default = false, type = "boolean"})
     add_configs("xmlwriter", {description = "Enable xmlwriter (for opf support)", default = false, type = "boolean"})
