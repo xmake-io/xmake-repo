@@ -81,7 +81,7 @@ package("harfbuzz")
         table.insert(configs, "-Dfreetype=" .. (package:config("freetype") and "enabled" or "disabled"))
         table.insert(configs, "-Dglib=" .. (package:config("glib") and "enabled" or "disabled"))
         table.insert(configs, "-Dgobject=" .. (package:config("glib") and "enabled" or "disabled"))
-        import("package.tools.meson").install(package, configs, {packagedeps={"freetype", "libintl", "libiconv", "pcre2"}})
+        import("package.tools.meson").install(package, configs, {packagedeps = {"freetype", "libintl", "libiconv", "pcre2"}})
     end)
 
     on_test(function (package)
