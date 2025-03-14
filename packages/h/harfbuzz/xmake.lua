@@ -79,9 +79,10 @@ package("harfbuzz")
         local freetype = package:dep("freetype")
         if freetype and not freetype:is_system() then
             opt.envs = import("package.tools.meson").buildenvs(package, opt)
-            -- harfbuzz search for freetype using
+            -- harfbuzz search for freetype using cmake
             opt.envs.CMAKE_PREFIX_PATH = freetype:installdir()
         end
+        print(opt)
         import("package.tools.meson").install(package, configs, opt)
     end)
 
