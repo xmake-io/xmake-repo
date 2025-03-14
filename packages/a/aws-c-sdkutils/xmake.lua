@@ -19,21 +19,20 @@ package("aws-c-sdkutils")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    add_deps("cmake", "aws-c-common")
+    add_deps("cmake")
+    add_deps("aws-c-common")
 
     on_install("!mingw or mingw|!i386", function (package)
-        local aws_cmakedir = package:dep("aws-c-common"):installdir("lib", "cmake")
-        local aws_c_common_configdir = package:dep("aws-c-common"):installdir("lib", "aws-c-common", "cmake")
-        if is_host("windows") then
-            aws_cmakedir = aws_cmakedir:gsub("\\", "/")
-            aws_c_common_configdir = aws_c_common_configdir:gsub("\\", "/")
+        if package:is_plat("windows") and package:config("shared") then
+            package:add("defines", "USE_WINDOWS_DLL_SEMANTICS", "AWS_SDKUTILS_USE_IMPORT_EXPORT")
         end
 
-        local configs =
-        {
+        local cmakedir = path.unix(package:dep("aws-c-common"):installdir("lib", "cmake"))
+
+        local configs = {
             "-DBUILD_TESTING=OFF",
-            "-DCMAKE_MODULE_PATH=" .. aws_cmakedir,
-            "-Daws-c-common_DIR=" .. aws_c_common_configdir
+            "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
+            "-DCMAKE_MODULE_PATH=" .. cmakedir,
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))

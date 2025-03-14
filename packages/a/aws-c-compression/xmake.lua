@@ -12,26 +12,27 @@ package("aws-c-compression")
     add_versions("v0.2.18", "517c361f3b7fffca08efd5ad251a20489794f056eab0dfffacc6d5b341df8e86")
     add_versions("v0.2.17", "703d1671e395ea26f8b0b70d678ed471421685a89e127f8aa125e2b2ecedb0e0")
 
-    add_configs("asan", {description = "Enable Address Sanitize.", default = false, type = "boolean"})
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    add_deps("cmake", "aws-c-common")
+    add_deps("cmake")
+    add_deps("aws-c-common")
 
-    on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", "msys", "android", "iphoneos", "cross", "wasm", function (package)
-        local aws_cmakedir = package:dep("aws-c-common"):installdir("lib", "cmake")
-        local aws_c_common_configdir = package:dep("aws-c-common"):installdir("lib", "aws-c-common", "cmake")
-        if is_host("windows") then
-            aws_cmakedir = aws_cmakedir:gsub("\\", "/")
-            aws_c_common_configdir = aws_c_common_configdir:gsub("\\", "/")
+    on_install("!mingw or mingw|!i386", function (package)
+        if package:is_plat("windows") and package:config("shared") then
+            package:add("defines", "USE_WINDOWS_DLL_SEMANTICS", "AWS_COMPRESSION_USE_IMPORT_EXPORT")
         end
 
-        local configs =
-        {
+        local cmakedir = package:dep("aws-c-common"):installdir("lib/cmake")
+        if is_host("windows") then
+            cmakedir = cmakedir:gsub("\\", "/")
+        end
+
+        local configs = {
             "-DBUILD_TESTING=OFF",
-            "-DCMAKE_MODULE_PATH=" .. aws_cmakedir,
-            "-Daws-c-common_DIR=" .. aws_c_common_configdir
+            "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
+            "-DCMAKE_MODULE_PATH=" .. cmakedir,
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
