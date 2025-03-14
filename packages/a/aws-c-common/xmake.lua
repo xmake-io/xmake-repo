@@ -6,6 +6,7 @@ package("aws-c-common")
     add_urls("https://github.com/awslabs/aws-c-common/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-common.git")
 
+    add_versions("v0.12.0", "765ca1be2be9b62a63646cb1f967f2aa781071f7780fdb5bbc7e9acfea0a1f35")
     add_versions("v0.11.3", "efcd2fb20f3149752fed87fa7901e933f3b1a64dfa4ac989f869ded87891bb3c")
     add_versions("v0.11.1", "b442cc59f507fbe232c0ae433c836deff83330270a58fa13bf360562efda368a")
     add_versions("v0.10.6", "d0acbabc786035d41791c3a2f45dbeda31d9693521ee746dc1375d6380eb912b")
@@ -50,11 +51,6 @@ package("aws-c-common")
             table.insert(configs, "-DAWS_STATIC_MSVC_RUNTIME_LIBRARY=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
-
-        if package:is_plat("windows") and package:is_debug() then
-            local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.vcp(path.join(package:buildir(), "*.pdb"), dir)
-        end
     end)
 
     on_test(function (package)
