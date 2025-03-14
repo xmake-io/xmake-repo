@@ -18,9 +18,16 @@ package("libavif")
     add_deps("libyuv")
 
     if on_check then
-        on_check("android", function (package)
-            local ndk = package:toolchain("ndk"):config("ndkver")
-            assert(ndk and tonumber(ndk) > 22, "package(libavif): library deps libyuv need ndk version > 22")
+        on_check(function (package)
+            if package:is_plat("android") then
+                local ndk = package:toolchain("ndk"):config("ndkver")
+                assert(ndk and tonumber(ndk) > 22, "package(libavif): library deps libyuv need ndk version > 22")
+            elseif package:is_plat("windows") then
+                if package:version() and package:version():eq("1.2.0") then
+                    local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+                    assert(vs_toolset and semver.new(vs_toolset):minor() >= 30, "package(libavif) requires vs_toolset >= v143")
+                end
+            end
         end)
     end
 
