@@ -33,7 +33,7 @@ package("harfbuzz")
     add_configs("glib", {description = "Enable glib unicode functions.", default = false, type = "boolean"})
 
     add_deps("meson", "ninja")
-    if is_plat("windows") then
+    if is_host("windows") then
         add_deps("pkgconf")
     end
 
