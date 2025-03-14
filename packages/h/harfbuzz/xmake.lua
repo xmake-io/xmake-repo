@@ -81,7 +81,31 @@ package("harfbuzz")
         table.insert(configs, "-Dfreetype=" .. (package:config("freetype") and "enabled" or "disabled"))
         table.insert(configs, "-Dglib=" .. (package:config("glib") and "enabled" or "disabled"))
         table.insert(configs, "-Dgobject=" .. (package:config("glib") and "enabled" or "disabled"))
-        import("package.tools.meson").install(package, configs, {packagedeps = {"freetype", "libintl", "libiconv", "pcre2"}})
+
+        local envs
+        -- meson may use cmake to find dependencies
+        if xmake.version():lt("2.9.9") then
+            local CMAKE_LIBRARY_PATH = {}
+            local CMAKE_INCLUDE_PATH = {}
+            local CMAKE_PREFIX_PATH  = {}
+            for _, dep in ipairs(package:librarydeps({private = true})) do
+                if dep:is_system() then
+                    local fetchinfo = dep:fetch()
+                    if fetchinfo then
+                        table.join2(CMAKE_LIBRARY_PATH, fetchinfo.linkdirs)
+                        table.join2(CMAKE_INCLUDE_PATH, fetchinfo.includedirs)
+                        table.join2(CMAKE_INCLUDE_PATH, fetchinfo.sysincludedirs)
+                    end
+                else
+                    table.join2(CMAKE_PREFIX_PATH, dep:installdir())
+                end
+            end
+            envs = import("package.tools.meson").buildenvs(package, opt)
+            envs.CMAKE_LIBRARY_PATH = path.joinenv(CMAKE_LIBRARY_PATH)
+            envs.CMAKE_INCLUDE_PATH = path.joinenv(CMAKE_INCLUDE_PATH)
+            envs.CMAKE_PREFIX_PATH  = path.joinenv(CMAKE_PREFIX_PATH)
+        end
+        import("package.tools.meson").install(package, configs, {envs = envs, packagedeps = {"freetype", "libintl", "libiconv", "pcre2"}})
     end)
 
     on_test(function (package)
