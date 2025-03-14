@@ -90,20 +90,25 @@ package("harfbuzz")
             -- harfbuzz search for freetype using cmake and pkgconfig
             local PKG_CONFIG_PATH = {}
             for _, dep in ipairs(freetype:librarydeps({private = true})) do
+                print("freetype dep", dep:name(), dep:installdir())
                 local pkgconfig = path.join(dep:installdir(), "lib", "pkgconfig")
+                print(pkgconfig, os.isdir(pkgconfig))
                 if os.isdir(pkgconfig) then
                     table.insert(PKG_CONFIG_PATH, pkgconfig)
                 end
                 pkgconfig = path.join(dep:installdir(), "share", "pkgconfig")
+                print(pkgconfig, os.isdir(pkgconfig))
                 if os.isdir(pkgconfig) then
                     table.insert(PKG_CONFIG_PATH, pkgconfig)
                 end
             end
             local pkgconfig = path.join(freetype:installdir(), "lib", "pkgconfig")
+            print(pkgconfig, os.isdir(pkgconfig))
             if os.isdir(pkgconfig) then
                  table.insert(PKG_CONFIG_PATH, pkgconfig)
             end
             pkgconfig = path.join(freetype:installdir(), "share", "pkgconfig")
+            print(pkgconfig, os.isdir(pkgconfig))
             if os.isdir(pkgconfig) then
                 table.insert(PKG_CONFIG_PATH, pkgconfig)
             end
