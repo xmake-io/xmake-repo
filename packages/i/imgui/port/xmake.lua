@@ -125,24 +125,14 @@ target("imgui")
     end
 
     if has_config("sdl3") then
-        if os.exists("backends/imgui_impl_sdl3.cpp") then
-            add_files("backends/imgui_impl_sdl3.cpp")
-            add_headerfiles("(backends/imgui_impl_sdl3.h)")
-        else
-            add_files("backends/imgui_impl_sdl.cpp")
-            add_headerfiles("(backends/imgui_impl_sdl.h)")
-        end
+        add_files("backends/imgui_impl_sdl3.cpp")
+        add_headerfiles("(backends/imgui_impl_sdl3.h)")
         add_packages("libsdl3")
     end
 
     if has_config("sdl3_renderer") then
-        if os.exists("backends/imgui_impl_sdlrenderer3.cpp") then
-            add_files("backends/imgui_impl_sdlrenderer3.cpp")
-            add_headerfiles("(backends/imgui_impl_sdlrenderer3.h)")
-        else
-            add_files("backends/imgui_impl_sdlrenderer.cpp")
-            add_headerfiles("(backends/imgui_impl_sdlrenderer.h)")
-        end
+        add_files("backends/imgui_impl_sdlrenderer3.cpp")
+        add_headerfiles("(backends/imgui_impl_sdlrenderer3.h)")
         add_packages("libsdl3")
     end
 
