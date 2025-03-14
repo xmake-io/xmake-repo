@@ -47,7 +47,7 @@ package("harfbuzz")
     if on_check then
         on_check("android", function (package)
             local ndk = package:toolchain("ndk"):config("ndkver")
-            assert(ndk and tonumber(ndk) > 22, "package(cnl) require ndk version > 22")
+            assert(ndk and tonumber(ndk) > 22, "package(harfbuzz) require ndk version > 22")
         end)
     end
 
