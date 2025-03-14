@@ -93,7 +93,6 @@ package("imgui")
     add_configs("sdl2_no_renderer", {description = "Enable the sdl2 backend without sdl2_renderer", default = false, type = "boolean"})
     add_configs("sdl2_renderer",    {description = "Enable the sdl2 renderer backend", default = false, type = "boolean"})
     add_configs("sdl3",             {description = "Enable the sdl3 backend with sdl3_renderer", default = false, type = "boolean"})
-    add_configs("sdl3_no_renderer", {description = "Enable the sdl3 backend without sdl3_renderer", default = false, type = "boolean"})
     add_configs("sdl3_renderer",    {description = "Enable the sdl3 renderer backend", default = false, type = "boolean"})
     add_configs("vulkan",           {description = "Enable the vulkan backend", default = false, type = "boolean"})
     add_configs("win32",            {description = "Enable the win32 backend", default = false, type = "boolean"})
@@ -118,9 +117,6 @@ package("imgui")
         -- begin: backwards compatibility
         if package:config("sdl2") or package:config("sdlrenderer") then
             package:config_set("sdl2_renderer", true)
-        end
-        if package:config("sdl3") or package:config("sdlrenderer") then
-            package:config_set("sdl3_renderer", true)
         end
         if package:config("glfw_opengl3") then
             package:config_set("glfw", true)
@@ -179,7 +175,7 @@ package("imgui")
             glad             = package:config("opengl3") and (not package:gitref() and package:version():lt("1.84")),
             sdl2             = package:config("sdl2") or package:config("sdl2_no_renderer"),
             sdl2_renderer    = package:config("sdl2_renderer"),
-            sdl3             = package:config("sdl3") or package:config("sdl3_no_renderer"),
+            sdl3             = package:config("sdl3"),
             sdl3_renderer    = package:config("sdl3_renderer"),
             vulkan           = package:config("vulkan"),
             win32            = package:config("win32"),
