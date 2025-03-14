@@ -89,6 +89,7 @@ package("harfbuzz")
                 opt.envs.PKG_CONFIG_PATH = table.join2(opt.envs.PKG_CONFIG_PATH or {}, pkgconfig)
             end
         end
+        print(import("package.tools.meson").buildenvs(package, opt))
         import("package.tools.meson").install(package, configs, opt)
     end)
 
