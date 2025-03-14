@@ -44,6 +44,13 @@ package("harfbuzz")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk"):config("ndkver")
+            assert(ndk and tonumber(ndk) > 22, "package(cnl) require ndk version > 22")
+        end)
+    end
+
     on_load(function (package)
         if package:config("icu") then
             package:add("deps", "icu4c")
@@ -75,7 +82,7 @@ package("harfbuzz")
         table.insert(configs, "-Dglib=" .. (package:config("glib") and "enabled" or "disabled"))
         table.insert(configs, "-Dgobject=" .. (package:config("glib") and "enabled" or "disabled"))
         local opt = {}
-        opt.packagedeps = {"libintl", "libiconv", "pcre2"}
+        opt.packagedeps = {"freetype", "libintl", "libiconv", "pcre2"}
         local freetype = package:dep("freetype")
         if freetype and not freetype:is_system() then
             opt.envs = import("package.tools.meson").buildenvs(package, opt)
