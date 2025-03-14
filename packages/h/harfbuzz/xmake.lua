@@ -81,49 +81,7 @@ package("harfbuzz")
         table.insert(configs, "-Dfreetype=" .. (package:config("freetype") and "enabled" or "disabled"))
         table.insert(configs, "-Dglib=" .. (package:config("glib") and "enabled" or "disabled"))
         table.insert(configs, "-Dgobject=" .. (package:config("glib") and "enabled" or "disabled"))
-        local opt = {}
-        opt.packagedeps = {"freetype", "libintl", "libiconv", "pcre2"}
-        --[[local freetype = package:dep("freetype")
-        if freetype and not freetype:is_system() then
-            local envs = import("package.tools.meson").buildenvs(package, opt)
-            print("buildenvs", envs)
-            -- harfbuzz search for freetype using cmake and pkgconfig
-            local PKG_CONFIG_PATH = {}
-            for _, dep in ipairs(freetype:librarydeps({private = true})) do
-                print("freetype dep", dep:name(), dep:installdir())
-                local pkgconfig = path.join(dep:installdir(), "lib", "pkgconfig")
-                print(pkgconfig, os.isdir(pkgconfig))
-                if os.isdir(pkgconfig) then
-                    table.insert(PKG_CONFIG_PATH, pkgconfig)
-                end
-                pkgconfig = path.join(dep:installdir(), "share", "pkgconfig")
-                print(pkgconfig, os.isdir(pkgconfig))
-                if os.isdir(pkgconfig) then
-                    table.insert(PKG_CONFIG_PATH, pkgconfig)
-                end
-            end
-            local pkgconfig = path.join(freetype:installdir(), "lib", "pkgconfig")
-            print(pkgconfig, os.isdir(pkgconfig))
-            if os.isdir(pkgconfig) then
-                 table.insert(PKG_CONFIG_PATH, pkgconfig)
-            end
-            pkgconfig = path.join(freetype:installdir(), "share", "pkgconfig")
-            print(pkgconfig, os.isdir(pkgconfig))
-            if os.isdir(pkgconfig) then
-                table.insert(PKG_CONFIG_PATH, pkgconfig)
-            end
-            envs.PKG_CONFIG_PATH = path.joinenv(PKG_CONFIG_PATH)
-
-            envs.CMAKE_PREFIX_PATH = freetype:installdir()
-            local fetchinfo = freetype:fetch()
-            if fetchinfo then
-                envs.CMAKE_LIBRARY_PATH = fetchinfo.linkdirs
-                envs.CMAKE_INCLUDE_PATH = fetchinfo.sysincludedirs or fetchinfo.includedirs
-            end
-            opt.envs = envs
-        end
-        print("opt", opt)]]
-        import("package.tools.meson").install(package, configs, opt)
+        import("package.tools.meson").install(package, configs, {packagedeps={"freetype", "libintl", "libiconv", "pcre2"}})
     end)
 
     on_test(function (package)
