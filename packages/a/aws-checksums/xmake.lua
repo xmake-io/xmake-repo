@@ -6,6 +6,7 @@ package("aws-checksums")
     add_urls("https://github.com/awslabs/aws-checksums/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-checksums.git")
 
+    add_versions("v0.2.3", "c688f311db8a1b70bb6d22f6e8f2817b39e1419546e339cf753d61340969eeb4")
     add_versions("v0.2.2", "96acfea882c06acd5571c845e4968892d6ffc0fae81b31a0b1565100049743b2")
     add_versions("v0.2.0", "aae619de7fb5908a52223eae3b80fae70260eed5919ad4c385b2d5a144a641f0")
     add_versions("v0.1.20", "12f80085993662b6d2cbd2d090b49b4350d19396b1d218d52323712cc8dee252")
@@ -17,7 +18,8 @@ package("aws-checksums")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    add_deps("cmake", "aws-c-common")
+    add_deps("cmake")
+    add_deps("aws-c-common")
 
     if on_check then
         on_check(function (package)
