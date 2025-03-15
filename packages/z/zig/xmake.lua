@@ -65,6 +65,8 @@ package("zig")
         end
     end
 
+    set_policy("package.precompiled", false)
+
     on_install("@macosx", "@linux", "@windows", "@msys", "@bsd", function (package)
         os.cp("*", package:installdir())
         package:addenv("PATH", ".")
