@@ -21,8 +21,8 @@ package("libsdl3_ttf")
 
     add_deps("cmake", "freetype")
 
-    add_configs("harfbuzz", {description = "Use harfbuzz to improve text shaping", default = true, type = "boolean"})
-    add_configs("plutosvg", {description = "Use plutosvg for color emoji support", default = true, type = "boolean"})
+    add_configs("harfbuzz", {description = "Use harfbuzz to improve text shaping", default = false, type = "boolean"})
+    add_configs("plutosvg", {description = "Use plutosvg for color emoji support", default = false, type = "boolean"})
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
