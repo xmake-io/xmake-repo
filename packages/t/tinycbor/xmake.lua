@@ -6,6 +6,7 @@ package("tinycbor")
 
     add_urls("https://github.com/intel/tinycbor/archive/refs/tags/$(version).tar.gz",
              "https://github.com/intel/tinycbor.git")
+    add_versions("v0.6.1", "0f9944496d1143935e9c996bc6233ca0dd5451299def33ef400a409942f8f34b")
     add_versions("v0.6.0", "512e2c9fce74f60ef9ed3af59161e905f9e19f30a52e433fc55f39f4c70d27e4")
 
     add_configs("float", {description = "Enable floating point data type.", default = true, type = "boolean"})
