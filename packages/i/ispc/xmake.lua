@@ -30,7 +30,7 @@ package("ispc")
             add_versions("1.26.0", "fbe99daaade7baac941dd593aa0e442b8f2ed453b21a3d54bd8c9dbe46bc693")
         end
     elseif is_plat("linux") then
-        if is_arch("aarch64") then
+        if is_arch("arm64") then
             add_urls("https://github.com/ispc/ispc/releases/download/v$(version)/ispc-v$(version)-linux.aarch64.tar.gz",
                      "https://github.com/ispc/ispc.git")
             add_versions("1.25.3", "990c509244f32189c7b6e4ea49793706a62445e727b41f10b0883d98fc66f696")
@@ -54,10 +54,9 @@ package("ispc")
     on_check("windows", "macosx", "linux", function (package)
         if package:version():eq("1.26.0") then
             assert(not package:is_plat("macos"), "ISPC v1.26.0 not support macos")
-            assert(not (package:is_plat("linux") and package:is_arch("aarch64")), "ISPC v1.26.0 not support aarch64@linux")
+            assert(not (package:is_plat("linux") and package:is_arch("arm64")), "ISPC v1.26.0 not support aarch64@linux")
         elseif package:version():eq("1.17.0") then
-            assert(not package:is_plat("macos"), "ISPC v1.17.0 not support macos")
-            assert(not (package:is_plat("linux") and package:is_arch("aarch64")), "ISPC v1.17.0 not support aarch64@linux")
+            assert(not (package:is_plat("linux") and package:is_arch("arm64")), "ISPC v1.17.0 not support aarch64@linux")
         end
         
     end)
