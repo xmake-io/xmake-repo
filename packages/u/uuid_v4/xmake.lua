@@ -9,6 +9,14 @@ package("uuid_v4")
 
     add_versions("v1.0.0", "0d858bc8e7466be693332f4f16768b29f605ff386443f37a07b1f872db29ff2d")
 
+    if on_check then
+        on_check(function (package)
+            if not package:is_arch("x64", "x86", "x86_64") then
+                raise("package(uuid_v4) only support x86 arch")
+            end
+        end)
+    end
+
     on_load(function (package)
         if package:gitref() or package:version():gt("1.0.0") then
             package:add("deps", "cmake")
