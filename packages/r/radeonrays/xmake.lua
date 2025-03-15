@@ -11,6 +11,7 @@ package("radeonrays")
     add_configs("dx12", {description = "Enable DX12 backend", default = false, type = "boolean"})
     add_configs("vulkan", {description = "Enable Vulkan backend", default = false, type = "boolean"})
     add_configs("embedded", {description = "Enable embedding kernels/shaders into library", default = false, type = "boolean"})
+    add_configs("tools", {description = "Build tools(bvh_analyzer)", default = false, type = "boolean"})
 
     add_deps("cmake")
     add_deps("spdlog <1.13.0", {configs = {header_only = false}})
@@ -29,8 +30,13 @@ package("radeonrays")
     end)
 
     on_install(function (package)
-        io.replace("CMakeLists.txt", "add_subdirectory(fuzz_test)", "", {plain = true})
-        io.replace("CMakeLists.txt", "add_subdirectory(bvh_analyzer)", "", {plain = true})
+        if not package:config("tools") then
+            io.replace("CMakeLists.txt", "add_subdirectory(bvh_analyzer)", "", {plain = true})
+        end
+        if not package:config("shared") then
+            io.replace("src/core/include/radeonrays.h", "__declspec(dllexport)", "", {plain = true})
+            io.replace("src/core/include/radeonrays.h", "__declspec(dllimport)", "", {plain = true})
+        end
 
         local file = io.open("CMakeLists.txt", "a")
         file:write([[
@@ -44,7 +50,7 @@ package("radeonrays")
         ]])
         file:close()
 
-        local configs = {"-DENABLE_TESTING=OFF"}
+        local configs = {"-DENABLE_TESTING=OFF", "-DENABLE_FUZZING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_VULKAN=" .. (package:config("vulkan") and "ON" or "OFF"))
