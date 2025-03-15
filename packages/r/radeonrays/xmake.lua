@@ -14,7 +14,7 @@ package("radeonrays")
     add_configs("tools", {description = "Build tools (bvh_analyzer)", default = false, type = "boolean"})
 
     add_deps("cmake")
-    add_deps("spdlog <1.13.0", {configs = {header_only = false}})
+    add_deps("spdlog", {configs = {header_only = false}}) -- require cmake config file
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
@@ -30,6 +30,8 @@ package("radeonrays")
     end)
 
     on_install(function (package)
+        -- After fmt 10, enum or enum class must have their own specialization (from spdlog)
+        io.replace("src/core/src/radeonrays.cpp", [["rrSetLogLevel({})", log_level]], [["rrSetLogLevel({})", (int)log_level]], {plain = true})
         if package:config("dx12") then
             io.replace("src/core/CMakeLists.txt",
 [[add_custom_command(
