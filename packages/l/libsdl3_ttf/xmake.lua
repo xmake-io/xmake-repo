@@ -27,6 +27,15 @@ package("libsdl3_ttf")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
+    if on_check then
+        on_check("android", function (package)
+            if package:config("harfbuzz") then
+                local ndk = package:toolchain("ndk"):config("ndkver")
+                assert(ndk and tonumber(ndk) > 22, "package(libsdl3_ttf) dep(harfbuzz) require ndk version > 22")
+            end
+        end)
+    end
+
     on_load(function (package)
         -- libsdl3_ttf 3.2.0 requires libsdl3 >= 3.2.6
         package:add("deps", "libsdl3 >=3.2.6", { configs = { shared = package:config("shared") }})
