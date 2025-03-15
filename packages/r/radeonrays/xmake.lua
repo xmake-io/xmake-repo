@@ -25,11 +25,25 @@ package("radeonrays")
             package:add("deps", "vulkansdk")
         end
         if package:config("dx12") then
-            package:add("deps", "directx-headers")
+            package:add("syslinks", "d3d12", "dxgi", "dxguid")
         end
     end)
 
     on_install(function (package)
+        if package:config("dx12") then
+            io.replace("src/core/CMakeLists.txt",
+[[add_custom_command(
+        TARGET radeonrays POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${PROJECT_SOURCE_DIR}/third_party/dxc/bin/dxcompiler.dll
+        "\$\(OutDir\)/dxcompiler.dll")]] , "", {plain = true})
+            io.replace("src/core/CMakeLists.txt",
+[[add_custom_command(
+        TARGET radeonrays POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${PROJECT_SOURCE_DIR}/third_party/dxc/bin/dxil.dll
+        "\$\(OutDir\)/dxil.dll")]] , "", {plain = true})
+        end
         if not package:config("tools") then
             io.replace("CMakeLists.txt", "add_subdirectory(bvh_analyzer)", "", {plain = true})
         end
