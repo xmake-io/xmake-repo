@@ -53,7 +53,7 @@ package("libsdl3_ttf")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSDLTTF_HARFBUZZ=" .. (package:config("harfbuzz") and "ON" or "OFF"))
         table.insert(configs, "-DSDLTTF_PLUTOSVG=" .. (package:config("plutosvg") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs, {packagedeps="plutovg"})
+        import("package.tools.cmake").install(package, configs, {packagedeps={"freetype", "plutovg"}})
     end)
 
     on_test(function (package)
