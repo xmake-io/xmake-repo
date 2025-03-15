@@ -1,10 +1,12 @@
 package("poco")
+    -- set_base("poco")
     set_homepage("https://pocoproject.org/")
-    set_description("The POCO C++ Libraries are powerful cross-platform C++ libraries for building network- and internet-based applications that run on desktop, server, mobile, IoT, and embedded systems.")
+    set_description(
+    "The POCO C++ Libraries are powerful cross-platform C++ libraries for building network- and internet-based applications that run on desktop, server, mobile, IoT, and embedded systems.")
     set_license("BSL-1.0")
 
     add_urls("https://github.com/pocoproject/poco/archive/refs/tags/poco-$(version)-release.tar.gz",
-             "https://github.com/pocoproject/poco.git")
+        "https://github.com/pocoproject/poco.git")
 
     add_versions("1.11.0", "8a7bfd0883ee95e223058edce8364c7d61026ac1882e29643822ce9b753f3602")
     add_versions("1.11.1", "2412a5819a239ff2ee58f81033bcc39c40460d7a8b330013a687c8c0bd2b4ac0")
@@ -15,67 +17,107 @@ package("poco")
     add_versions("1.12.4", "71ef96c35fced367d6da74da294510ad2c912563f12cd716ab02b6ed10a733ef")
     add_versions("1.12.5", "92b18eb0fcd2263069f03e7cc80f9feb43fb7ca23b8c822a48e42066b2cd17a6")
     add_versions("1.13.3", "9f074d230daf30f550c5bde5528037bdab6aa83b2a06c81a25e89dd3bcb7e419")
+    add_versions("1.14.0", "48e98bbc8ed9fcd8bec43538402181d33cc2abe7e19ac8aea4bc113c9ba8ef89")
     add_versions("1.14.1", "e711712d68d01e580be315e1cca21d2d10ce941fc3252c0402c0a5732f719445")
-    
-    add_configs("install_cpp_runtimes", {description = "Install c++ runtimes with Poco.", default = false, type = "boolean"})
+
     -- https://docs.pocoproject.org/current/00200-GettingStarted.html
-    add_configs("foundation", {description = "Build Foundation support library.", default = true, type = "boolean", readonly = true})
-    add_configs("xml", {description = "Build XML support library.", default = true, type = "boolean"})
-    add_configs("json", {description = "Build JSON support library.", default = false, type = "boolean"})
-    add_configs("net", {description = "Build Net support library.", default = false, type = "boolean"})
-    add_configs("netssl", {description = "Build NetSSL support library (Need installed openssl libraries).", default = false, type = "boolean"})
-    add_configs("crypto", {description = "Build Crypto support library (Need installed openssl libraries).", default = false, type = "boolean"})
-    add_configs("jwt", {description = "Build JWT (JSON Web Token) library (Need installed openssl libraries).", default = false, type = "boolean"})
-    add_configs("data", {description = "Build Data support library.", default = false, type = "boolean"})
-    add_configs("sqlite", {description = "Build Data SQlite support library.", default = false, type = "boolean"})
-    add_configs("mysql", {description = "Build Data MySQL or MariaDB support library (Need installed MySQL or MariaDB client libraries).", default = false, type = "boolean"})
-    add_configs("mariadb", {description = "Build Data MySQL or MariaDB support library (Need installed MySQL or MariaDB client libraries).", default = false, type = "boolean"})
-    add_configs("postgresql", {description = "Build SQL PosgreSQL support library (Need installed PostgreSQL client libraries).", default = false, type = "boolean"})
-    add_configs("sql_parser", {description = "Build SQL Parser support library.", default = false, type = "boolean"})
+    add_configs("use_bundled_libs", { description = "Using internal sqlite, zlib, pcre2, expat, libpng, ...", default = true, type = "boolean" })
+    add_configs("silence_deprecated", { description = "Silence deprecated warnings", default = false, type = "boolean" })
+    add_configs("foundation", { description = "Build Foundation support library.", default = true, type = "boolean", readonly = true })
+    add_configs("xml", { description = "Build XML support library.", default = true, type = "boolean" })
+    add_configs("json", { description = "Build JSON support library.", default = true, type = "boolean" })
+    add_configs("net", { description = "Build Net support library.", default = true, type = "boolean" })
+    add_configs("netssl", { description = "Build NetSSL support library (Need installed openssl libraries).", default = false, type = "boolean" })
+    add_configs("crypto", { description = "Build Crypto support library (Need installed openssl libraries).", default = false, type = "boolean" })
+    add_configs("jwt", { description = "Build JWT (JSON Web Token) library (Need installed openssl libraries).", default = false, type = "boolean" })
+    add_configs("data", { description = "Build Data support library.", default = false, type = "boolean" })
+    add_configs("sqlite", { description = "Build Data SQlite support library.", default = false, type = "boolean" })
+    add_configs("mysql", { description = "Build Data MySQL or MariaDB support library (Need installed MySQL or MariaDB client libraries).", default = false, type = "boolean" })
+    add_configs("mariadb", { description = "Build Data MySQL or MariaDB support library (Need installed MySQL or MariaDB client libraries).", default = false, type = "boolean" })
+    add_configs("postgresql", { description = "Build SQL PosgreSQL support library (Need installed PostgreSQL client libraries).", default = false, type = "boolean" })
+    add_configs("sql_parser", { description = "Build SQL Parser support library.", default = false, type = "boolean" })
     -- There is no odbc in xmake for now.
     -- Todo:
-    add_configs("odbc", {description = "Build Data ODBC support library (Need installed ODBC libraries).", default = false, type = "boolean", readonly = true})
-    add_configs("mongodb", {description = "Build MongoDB support library.", default = false, type = "boolean"})
-    add_configs("redis", {description = "Build Redis support library.", default = false, type = "boolean"})
-    add_configs("pdf", {description = "Build PDF support library.", default = false, type = "boolean"})
-    add_configs("util", {description = "Build Util support library.", default = false, type = "boolean"})
-    add_configs("zip", {description = "Build Zip support library.", default = true, type = "boolean"})
-    add_configs("sevenzip", {description = "Build 7Zip support library.", default = false, type = "boolean"})
+    add_configs("odbc", { description = "Build Data ODBC support library (Need installed ODBC libraries).", default = false, type = "boolean", readonly = true })
+    add_configs("mongodb", { description = "Build MongoDB support library.", default = false, type = "boolean" })
+    add_configs("redis", { description = "Build Redis support library.", default = false, type = "boolean" })
+    add_configs("pdf", { description = "Build PDF support library.", default = false, type = "boolean" })
+    add_configs("util", { description = "Build Util support library.", default = true, type = "boolean" })
+    add_configs("zip", { description = "Build Zip support library.", default = true, type = "boolean" })
+    add_configs("sevenzip", { description = "Build 7Zip support library.", default = false, type = "boolean" })
     -- There is no aprutil and apache2 in xmake for now.
     -- Todo:
-    add_configs("apache_connector", {description = "Build ApacheConnector support library (Need installed apache and apr libraries).", default = false, type = "boolean", readonly = true})
-    add_configs("cpp_parser", {description = "Build C++ parser library.", default = false, type = "boolean"})
-    add_configs("encodings", {description = "Build Encodings library.", default = false, type = "boolean"})
-    add_configs("encodings_compiler", {description = "Enable Encodings Compiler.", default = false, type = "boolean"})
-    add_configs("page_compiler", {description = "Build PageCompiler.", default = false, type = "boolean"})
-    add_configs("file2page", {description = "Build PageCompiler File2Page.", default = false, type = "boolean"})
-    
-    if is_plat("windows") then
-        add_configs("netssl_win", {description = "Build NetSSL support library(Need installed openssl libraries For Windows only).", default = false, type = "boolean"})
-    end
-    add_configs("prometheus", {description = "Enable Prometheus.", default = false, type = "boolean"})
-    add_configs("active_record", {description = "Enable ActiveRecord.", default = false, type = "boolean"})
-    add_configs("active_record_compiler", {description = "Enable ActiveRecord Compiler.", default = false, type = "boolean"})
+    add_configs("apache_connector", { description = "Build ApacheConnector support library (Need installed apache and apr libraries).", default = false, type = "boolean", readonly = true })
+    add_configs("cpp_parser", { description = "Build C++ parser library.", default = false, type = "boolean" })
+    add_configs("encodings", { description = "Build Encodings library.", default = true, type = "boolean" })
+    add_configs("encodings_compiler", { description = "Enable Encodings Compiler.", default = false, type = "boolean" })
+    add_configs("page_compiler", { description = "Build PageCompiler.", default = false, type = "boolean" })
+    add_configs("file2page", { description = "Build PageCompiler File2Page.", default = false, type = "boolean" })
 
-    add_configs("poco_doc", {description = "Build Poco Documentation Generator.", default = false, type = "boolean"})
-    add_configs("poco_test", {description = "Build Unit tests.", default = false, type = "boolean"})
+    if is_plat("windows") then
+        add_configs("netssl_win", { description = "Build NetSSL support library(Need installed openssl libraries For Windows only).", default = false, type = "boolean" })
+        add_configs("msvc_mp", { description = "Enable parallel build of POCO with MSVC", default = false, type = "boolean" })
+    end
+
+    add_configs("prometheus", { description = "Enable Prometheus.", default = false, type = "boolean" })
+    add_configs("active_record", { description = "Enable ActiveRecord.", default = false, type = "boolean" })
+    add_configs("active_record_compiler", { description = "Enable ActiveRecord Compiler.", default = false, type = "boolean" })
+
+    add_configs("poco_doc", { description = "Build Poco Documentation Generator.", default = false, type = "boolean" })
+    add_configs("poco_test", { description = "Build Unit tests.", default = false, type = "boolean" })
 
     add_deps("cmake")
-    add_deps("sqlite3", "expat", "zlib") -- required: sqlite3(No option sqlite, sqlite3 is also required), expat, zlib, pcre/pcre2
+
     add_defines("POCO_NO_AUTOMATIC_LIBS")
     if is_plat("windows") then
         add_syslinks("iphlpapi")
     end
 
-    on_load(function (package)
-        if package:version():ge("1.12.0") then
-            package:add("deps", "pcre2")
-        else
-            package:add("deps", "pcre")
+    on_load(function(package)
+        if package:version():ge("1.14.0") then
+            if package:config("silence_deprecated") then
+                package:add("defines", "POCO_SILENCE_DEPRECATED")
+            end
         end
-        if package:config("net") and package:is_plat("windows") then
-            package:add("syslinks", "ws2_32")
+
+        if not package:config("use_bundled_libs") then
+            package:add("deps", "zlib")
+
+            if package:config("sqlite") then
+                package:add("deps", "sqlite3")
+            end
+
+            if package:config("xml") then
+                package:add("deps", "expat")
+            end
+
+            if package:version():ge("1.12.0") then
+                package:add("deps", "pcre2")
+            else
+                package:add("deps", "pcre")
+            end
+
+            if package:version():ge("1.14.0") then
+                package:add("deps", "utf8proc")
+            end
         end
+
+        if package:is_plat("windows") then
+            if package:config("shared") then
+                package:config_set("runtimes", package:is_debug() and "MDd" or "MD")
+            else
+                package:config_set("runtimes", package:is_debug() and "MTd" or "MT")
+            end
+
+            if package:config("net") then
+                package:add("syslinks", "ws2_32")
+            end
+
+            if package:config("crypto") then
+                package:add("syslinks", "advapi32")
+            end
+        end
+
         if package:config("netssl") or package:config("crypto") or package:config("jwt") then
             package:add("deps", "openssl")
         end
@@ -98,15 +140,11 @@ package("poco")
             package:add("deps", "aprutil")
             package:add("deps", "apache2")
         end
-        if package:version():ge("1.14.0") then
-            package:add("deps", "utf8proc")
-        end
     end)
 
-    on_check(function (package)
-        assert(not (package:is_plat("mingw") and package:is_subhost("macos")), "Poco not support mingw@macos")
-        assert(not (package:is_plat("wasm")), "Poco not support wasm")
-
+    on_check(function(package)
+        assert(not (package:is_plat("mingw") and package:is_targetos("macosx")), "Poco not support mingw@macos")
+        assert(not (package:is_plat("wasm")), "Poco does not support wasm")
         assert(not (package:has_runtime("MT", "MTd") and package:config("shared")), "Poco cannot have both BUILD_SHARED_LIBS and POCO_MT")
         assert(not (package:config("mysql") and package:config("mariadb")), "Poco's options 'mysql' and 'mariadb' cannot exist together")
 
@@ -120,36 +158,37 @@ package("poco")
         end
 
         -- check option's dependencies
-        local dependencies = {xml                    = {"foundation"},
-                              json                   = {"foundation"},
-                              net                    = {"foundation"},
-                              netssl                 = {"foundation", "net", "util", "crypto"},
-                              crypto                 = {"foundation"},
-                              jwt                    = {"foundation", "json", "crypto"},
-                              data                   = {"foundation"},
-                              sqlite                 = {"foundation", "data"},
-                              mysql                  = {"foundation", "data"},
-                              mariadb                = {"foundation", "data"},
-                              postgresql             = {"foundation", "data"},
-                              sql_parser             = {"foundation"},
-                              odbc                   = {"foundation", "data"},
-                              mongodb                = {"foundation", "net"},
-                              redis                  = {"foundation", "net"},
-                              pdf                    = {"foundation", "xml", "json", "util"},
-                              util                   = {"foundation", "xml", "json"},
-                              zip                    = {"foundation", "xml"},
-                              sevenzip               = {"foundation", "xml"},
-                              apache_connector       = {"foundation", "xml", "json", "util", "net"},
-                              cpp_parser             = {"foundation"},
-                              encodings              = {"foundation"},
-                              encodings_compiler     = {"foundation", "xml", "json", "util", "net"},
-                              page_compiler          = {"foundation", "xml", "json", "util", "net"},
-                              file2page              = {"foundation", "xml", "json", "util", "net"},
-                              netssl_win             = {"foundation"},
-                              prometheus             = {"foundation", "net"},
-                              active_record          = {"foundation", "data", "sqlite"},
-                              active_record_compiler = {"foundation", "xml", "json", "util"}
-                            }
+        local dependencies = {
+            xml                    = { "foundation" },
+            json                   = { "foundation" },
+            net                    = { "foundation" },
+            netssl                 = { "foundation", "net", "util", "crypto" },
+            crypto                 = { "foundation" },
+            jwt                    = { "foundation", "json", "crypto" },
+            data                   = { "foundation" },
+            sqlite                 = { "foundation", "data" },
+            mysql                  = { "foundation", "data" },
+            mariadb                = { "foundation", "data" },
+            postgresql             = { "foundation", "data" },
+            sql_parser             = { "foundation" },
+            odbc                   = { "foundation", "data" },
+            mongodb                = { "foundation", "net" },
+            redis                  = { "foundation", "net" },
+            pdf                    = { "foundation", "xml", "json", "util" },
+            util                   = { "foundation", "xml", "json" },
+            zip                    = { "foundation", "xml" },
+            sevenzip               = { "foundation", "xml" },
+            apache_connector       = { "foundation", "xml", "json", "util", "net" },
+            cpp_parser             = { "foundation" },
+            encodings              = { "foundation" },
+            encodings_compiler     = { "foundation", "xml", "json", "util", "net" },
+            page_compiler          = { "foundation", "xml", "json", "util", "net" },
+            file2page              = { "foundation", "xml", "json", "util", "net" },
+            netssl_win             = { "foundation" },
+            prometheus             = { "foundation", "net" },
+            active_record          = { "foundation", "data", "sqlite" },
+            active_record_compiler = { "foundation", "xml", "json", "util" }
+        }
         for opt, deps in pairs(dependencies) do
             if package:config(opt) then
                 local flag = true
@@ -161,33 +200,38 @@ package("poco")
         end
     end)
 
-    on_install(function (package)
-        local configs = {"-DPOCO_UNBUNDLED=ON"} -- Using external dependencies
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. ((package:debug() or package:has_runtime("MTd", "MDd")) and "Debug" or "Release"))
-        table.insert(configs, "-DPOCO_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+    on_install(function(package)
+        local configs = {}
+        table.insert(configs, "-DPOCO_UNBUNDLED=" .. (package:config("use_bundled_libs") and "OFF" or "ON"))     -- Using external dependencies
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. ((package:is_debug() or package:has_runtime("MTd", "MDd")) and "Debug" or "Release"))
+
+        if package:version():lt("1.10.1") then
+            table.insert(configs, "-DPOCO_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
+            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        else
+            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        end
         if package:is_plat("windows") then
             table.insert(configs, "-DPOCO_MT=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
         end
 
         -- Todo: need to fix expat
         -- expat has a partial problem with the static library, resulting in missing macros in poco's xml module; the shared library has no problems
-        if not package:dep("expat"):config("shared") then
+        local expat = package:dep("expat")
+        if expat and not expat:config("shared") then
             io.replace("XML/CMakeLists.txt", "EXPAT REQUIRED", "EXPAT CONFIG REQUIRED")
             io.replace("XML/CMakeLists.txt", "EXPAT::EXPAT", "expat::expat")
             io.replace("XML/CMakeLists.txt", "PUBLIC POCO_UNBUNDLED", "PUBLIC POCO_UNBUNDLED XML_DTD XML_NS")
         end
         -- Todo: need to fix pcre2
         -- pcre2 has a partial problem with the static library, resulting in missing macros in poco's foundation module; the shared library has no problems
-        if package:version():ge("1.12.0") and not package:dep("pcre2"):config("shared") then
+        local pcre = package:dep("pcre2")
+        if pcre and not pcre:config("shared") then
             io.replace("Foundation/CMakeLists.txt", "PUBLIC POCO_UNBUNDLED", "PUBLIC POCO_UNBUNDLED PCRE_STATIC")
             io.replace("Foundation/CMakeLists.txt", "POCO_SOURCES%(SRCS RegExp.-%)", "")
-            io.replace("cmake/FindPCRE2.cmake", "NAMES pcre2-8", "NAMES pcre2-8-static pcre2-8", {plain = true})
-            io.replace("cmake/FindPCRE2.cmake", "IMPORTED_LOCATION \"${PCRE2_LIBRARY}\"", "IMPORTED_LOCATION \"${PCRE2_LIBRARY}\"\nINTERFACE_COMPILE_DEFINITIONS PCRE2_STATIC", {plain = true})
-        end
-
-        if not package:config("install_cpp_runtimes") then
-            io.replace("CMakeLists.txt", 'include(InstallRequiredSystemLibraries)', '', {plain = true})
+            io.replace("cmake/FindPCRE2.cmake", "NAMES pcre2-8", "NAMES pcre2-8-static pcre2-8", { plain = true })
+            io.replace("cmake/FindPCRE2.cmake", "IMPORTED_LOCATION \"${PCRE2_LIBRARY}\"",
+                "IMPORTED_LOCATION \"${PCRE2_LIBRARY}\"\nINTERFACE_COMPILE_DEFINITIONS PCRE2_STATIC", { plain = true })
         end
 
         table.insert(configs, "-DENABLE_XML=" .. (package:config("xml") and "ON" or "OFF"))
@@ -215,74 +259,88 @@ package("poco")
         table.insert(configs, "-DENABLE_ENCODINGS_COMPILER=" .. (package:config("encodings_compiler") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_PAGECOMPILER=" .. (package:config("page_compiler") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_PAGECOMPILER_FILE2PAGE=" .. (package:config("file2page") and "ON" or "OFF"))
+
         if package:is_plat("windows") then
             table.insert(configs, "-DENABLE_NETSSL_WIN=" .. (package:config("netssl_win") and "ON" or "OFF"))
         end
+
         table.insert(configs, "-DENABLE_PROMETHEUS=" .. (package:config("prometheus") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_ACTIVERECORD=" .. (package:config("active_record") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_ACTIVERECORD_COMPILER=" .. (package:config("active_record_compiler") and "ON" or "OFF"))
-
         table.insert(configs, "-DENABLE_POCODOC=" .. (package:config("poco_doc") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_TESTS=" .. (package:config("poco_test") and "ON" or "OFF"))
 
         if package:config("mariadb") then
             for _, file in ipairs(os.files("Data/MySQL/include/**")) do
-                io.replace(file, '#include <mysql/mysql.h>', '#include <mariadb/mysql.h>', {plain = true})
+                io.replace(file, '#include <mysql/mysql.h>', '#include <mariadb/mysql.h>', { plain = true })
             end
             for _, file in ipairs(os.files("Data/MySQL/src/**")) do
-                io.replace(file, '#include <mysql/mysql.h>', '#include <mariadb/mysql.h>', {plain = true})
+                io.replace(file, '#include <mysql/mysql.h>', '#include <mariadb/mysql.h>', { plain = true })
             end
         end
         if package:config("mysql") or package:config("mariadb") then
-            io.replace("Data/MySQL/include/Poco/Data/MySQL/MySQL.h", '#pragma comment(lib, "libmysql")', '', {plain = true})
-            io.replace("cmake/FindMySQL.cmake", 'find_path(MYSQL_INCLUDE_DIR mysql/mysql.h', 'find_path(MYSQL_INCLUDE_DIR mysql/mysql.h mariadb/mysql.h', {plain = true})
-            io.replace("cmake/FindMySQL.cmake", 'pkg_check_modules(PC_MARIADB QUIET mariadb)', 'pkg_check_modules(PC_MARIADB QUIET mariadb-connector-c)', {plain = true})
-            io.replace("cmake/FindMySQL.cmake", 'find_library(MYSQL_LIBRARY NAMES mysqlclient\n', 'find_library(MYSQL_LIBRARY NAMES mysqlclient libmariadb\n', {plain = true})
+            io.replace("Data/MySQL/include/Poco/Data/MySQL/MySQL.h", '#pragma comment(lib, "libmysql")', '', { plain = true })
+            io.replace("cmake/FindMySQL.cmake", 'find_path(MYSQL_INCLUDE_DIR mysql/mysql.h',
+                'find_path(MYSQL_INCLUDE_DIR mysql/mysql.h mariadb/mysql.h', { plain = true })
+            io.replace("cmake/FindMySQL.cmake", 'pkg_check_modules(PC_MARIADB QUIET mariadb)',
+                'pkg_check_modules(PC_MARIADB QUIET mariadb-connector-c)', { plain = true })
+            io.replace("cmake/FindMySQL.cmake", 'find_library(MYSQL_LIBRARY NAMES mysqlclient\n',
+                'find_library(MYSQL_LIBRARY NAMES mysqlclient libmariadb\n', { plain = true })
         end
-
+        local toolchain = table.wrap(package:config("toolchains"))
+        if package:is_plat("windows") and table.contains(toolchain, "msvc") then
+            -- https://learn.microsoft.com/en-us/cpp/build/reference/mp-build-with-multiple-processes?view=msvc-170
+            -- https://learn.microsoft.com/en-us/cpp/build/reference/cl-environment-variables?view=msvc-170
+            -- package:addenv("CL", package:config("msvc_mp") and "/MP" or "")
+            os.setenv("CL", package:config("msvc_mp") and "/MP" or "")
+        end
         import("package.tools.cmake").install(package, configs)
+        if package:is_plat("windows") and table.contains(toolchain, "msvc") then
+            os.setenv("CL", "")
+        end
     end)
 
-    on_test(function (package)
-        assert(package:has_cxxtypes("Poco::BasicEvent<int>", {configs = {languages = "c++14"}, includes = "Poco/BasicEvent.h"}))
+    on_test(function(package)
+        assert(package:has_cxxtypes("Poco::BasicEvent<int>",
+            { configs = { languages = "c++14" }, includes = "Poco/BasicEvent.h" }))
 
         -- option's test
-        local optiontests = {{"xml",                    "Poco::XML::Document",              "Poco/DOM/Document.h"},
-                             {"json",                   "Poco::JSON::Parser",               "Poco/JSON/Parser.h"},
-                             {"net",                    "Poco::Net::HTTPServer",            "Poco/Net/HTTPServer.h"},
-                             {"netssl",                 "Poco::Net::HTTPSStreamFactory",    "Poco/Net/HTTPSStreamFactory.h"},
-                             {"crypto",                 "Poco::Crypto::CipherFactory",      "Poco/Crypto/CipherFactory.h"},
-                             {"jwt",                    "Poco::JWT::Token",                 "Poco/JWT/Token.h"},
-                             {"data",                   "Poco::Data::Row",                  "Poco/Data/Row.h"},
-                             {"sqlite",                 "Poco::Data::SQLite::Connector",    "Poco/Data/SQLite/Connector.h"},
-                             {"mysql",                  "Poco::Data::MySQL::Connector",     "Poco/Data/MySQL/Connector.h"},
-                             {"mariadb",                "Poco::Data::MySQL::Connector",     "Poco/Data/MySQL/Connector.h"},
-                             {"postgresql",             "Poco::Data::PostgreSQL::Connector",    "Poco/Data/PostgreSQL/Connector.h"},
-                            --  {"sql_parser",             "Poco::XML::Document",              "Poco/DOM/Document.h"}, -- don't know how to check
-                             {"odbc",                   "Poco::Data::ODBC::Connector",      "Poco/Data/ODBC/Connector.h"},
-                             {"mongodb",                "Poco::MongoDB::Connection",        "Poco/MongoDB/Connection.h"},
-                             {"redis",                  "Poco::Redis::Client",              "Poco/Redis/Client.h"},
-                             {"pdf",                    "Poco::PDF::Document",              "Poco/PDF/Document.h"},
-                             {"util",                   "Poco::Util::Application",          "Poco/Util/Application.h"},
-                             {"zip",                    "Poco::Zip::Decompress",            "Poco/Zip/Decompress.h"},
-                             {"sevenzip",               "Poco::SevenZip::ArchiveEntry",     "Poco/SevenZip/ArchiveEntry.h"},
-                             {"apache_connector",       "Poco::ApacheConnector",            "Poco/ApacheConnector.h"},
-                             {"cpp_parser",             "Poco::CppParser::CppToken",        "Poco/CppParser/CppToken.h"},
-                             {"encodings",              "Poco::MacChineseSimpEncoding",     "Poco/MacChineseSimpEncoding.h"},
-                            --  {"encodings_compiler",     "Poco::XML::Document",              "Poco/DOM/Document.h"}, -- don't know how to check
-                            --  {"page_compiler",          "Poco::XML::Document",              "Poco/DOM/Document.h"}, -- don't know how to check
-                            --  {"file2page",              "Poco::XML::Document",              "Poco/DOM/Document.h"}, -- don't know how to check
-                             {"netssl_win",             "Poco::Net::HTTPSStreamFactory",    "Poco/Net/HTTPSStreamFactory.h"},
-                             {"prometheus",             "Poco::Prometheus::CounterSample",  "Poco/Prometheus/CounterSample.h"},
-                             {"active_record",          "Poco::ActiveRecord::DefaultStatementPlaceholderProvider", "Poco/ActiveRecord/ActiveRecord.h"}
-                            --  {"active_record_compiler", "Poco::XML::Document",              "Poco/DOM/Document.h"} -- don't know how to check
-                            }
+        local optiontests = { { "xml", "Poco::XML::Document",                            "Poco/DOM/Document.h" },
+            { "json",             "Poco::JSON::Parser",                                      "Poco/JSON/Parser.h" },
+            { "net",              "Poco::Net::HTTPServer",                                   "Poco/Net/HTTPServer.h" },
+            { "netssl",           "Poco::Net::HTTPSStreamFactory",                           "Poco/Net/HTTPSStreamFactory.h" },
+            { "crypto",           "Poco::Crypto::CipherFactory",                             "Poco/Crypto/CipherFactory.h" },
+            { "jwt",              "Poco::JWT::Token",                                        "Poco/JWT/Token.h" },
+            { "data",             "Poco::Data::Row",                                         "Poco/Data/Row.h" },
+            { "sqlite",           "Poco::Data::SQLite::Connector",                           "Poco/Data/SQLite/Connector.h" },
+            { "mysql",            "Poco::Data::MySQL::Connector",                            "Poco/Data/MySQL/Connector.h" },
+            { "mariadb",          "Poco::Data::MySQL::Connector",                            "Poco/Data/MySQL/Connector.h" },
+            { "postgresql",       "Poco::Data::PostgreSQL::Connector",                       "Poco/Data/PostgreSQL/Connector.h" },
+            --  {"sql_parser",             "Poco::XML::Document",              "Poco/DOM/Document.h"}, -- don't know how to check
+            { "odbc",             "Poco::Data::ODBC::Connector",                             "Poco/Data/ODBC/Connector.h" },
+            { "mongodb",          "Poco::MongoDB::Connection",                               "Poco/MongoDB/Connection.h" },
+            { "redis",            "Poco::Redis::Client",                                     "Poco/Redis/Client.h" },
+            { "pdf",              "Poco::PDF::Document",                                     "Poco/PDF/Document.h" },
+            { "util",             "Poco::Util::Application",                                 "Poco/Util/Application.h" },
+            { "zip",              "Poco::Zip::Decompress",                                   "Poco/Zip/Decompress.h" },
+            { "sevenzip",         "Poco::SevenZip::ArchiveEntry",                            "Poco/SevenZip/ArchiveEntry.h" },
+            { "apache_connector", "Poco::ApacheConnector",                                   "Poco/ApacheConnector.h" },
+            { "cpp_parser",       "Poco::CppParser::CppToken",                               "Poco/CppParser/CppToken.h" },
+            { "encodings",        "Poco::MacChineseSimpEncoding",                            "Poco/MacChineseSimpEncoding.h" },
+            --  {"encodings_compiler",     "Poco::XML::Document",              "Poco/DOM/Document.h"}, -- don't know how to check
+            --  {"page_compiler",          "Poco::XML::Document",              "Poco/DOM/Document.h"}, -- don't know how to check
+            --  {"file2page",              "Poco::XML::Document",              "Poco/DOM/Document.h"}, -- don't know how to check
+            { "netssl_win",       "Poco::Net::HTTPSStreamFactory",                           "Poco/Net/HTTPSStreamFactory.h" },
+            { "prometheus",       "Poco::Prometheus::CounterSample",                         "Poco/Prometheus/CounterSample.h" },
+            { "active_record",    "Poco::ActiveRecord::DefaultStatementPlaceholderProvider", "Poco/ActiveRecord/ActiveRecord.h" }
+            --  {"active_record_compiler", "Poco::XML::Document",              "Poco/DOM/Document.h"} -- don't know how to check
+        }
         for _, optiontest in ipairs(optiontests) do
             local name = optiontest[1]
             local test = optiontest[2]
             local file = optiontest[3]
             if package:config(name) then
-                assert(package:has_cxxtypes(test, {configs = {languages = "c++17"}, includes = file}))
+                assert(package:has_cxxtypes(test, { configs = { languages = "c++17" }, includes = file }))
             end
         end
     end)
