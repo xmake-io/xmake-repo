@@ -12,6 +12,8 @@ option("opengl3",          {showmenu = true,  default = false})
 option("glad",             {showmenu = true,  default = false})
 option("sdl2",             {showmenu = true,  default = false})
 option("sdl2_renderer",    {showmenu = true,  default = false})
+option("sdl3",             {showmenu = true,  default = false})
+option("sdl3_renderer",    {showmenu = true,  default = false})
 option("vulkan",           {showmenu = true,  default = false})
 option("win32",            {showmenu = true,  default = false})
 option("wgpu",             {showmenu = true,  default = false})
@@ -31,6 +33,9 @@ if has_config("sdl2_renderer") then
     add_requires("libsdl2 >=2.0.17")
 elseif has_config("sdl2") then
     add_requires("libsdl2")
+end
+if has_config("sdl3") or has_config("sdl3_renderer") then
+    add_requires("libsdl3")
 end
 
 if has_config("vulkan") then
@@ -117,6 +122,18 @@ target("imgui")
             add_headerfiles("(backends/imgui_impl_sdlrenderer.h)")
         end
         add_packages("libsdl2")
+    end
+
+    if has_config("sdl3") then
+        add_files("backends/imgui_impl_sdl3.cpp")
+        add_headerfiles("(backends/imgui_impl_sdl3.h)")
+        add_packages("libsdl3")
+    end
+
+    if has_config("sdl3_renderer") then
+        add_files("backends/imgui_impl_sdlrenderer3.cpp")
+        add_headerfiles("(backends/imgui_impl_sdlrenderer3.h)")
+        add_packages("libsdl3")
     end
 
     if has_config("vulkan") then
