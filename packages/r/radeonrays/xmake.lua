@@ -11,7 +11,7 @@ package("radeonrays")
     add_configs("dx12", {description = "Enable DX12 backend", default = false, type = "boolean"})
     add_configs("vulkan", {description = "Enable Vulkan backend", default = false, type = "boolean"})
     add_configs("embedded", {description = "Enable embedding kernels/shaders into library", default = false, type = "boolean"})
-    add_configs("tools", {description = "Build tools(bvh_analyzer)", default = false, type = "boolean"})
+    add_configs("tools", {description = "Build tools (bvh_analyzer)", default = false, type = "boolean"})
 
     add_deps("cmake")
     add_deps("spdlog <1.13.0", {configs = {header_only = false}})
@@ -56,12 +56,17 @@ package("radeonrays")
         file:write([[
             include(GNUInstallDirs)
             install(TARGETS radeonrays
-                RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-                LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-                ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                RUNTIME DESTINATION bin
+                LIBRARY DESTINATION lib
+                ARCHIVE DESTINATION lib
             )
-            install(DIRECTORY src/core/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+            install(DIRECTORY src/core/include/ DESTINATION include)
         ]])
+        if package:config("tools") then
+            file:write([[
+                install(TARGETS bvh_analyzer DESTINATION bin)
+            ]])
+        end
         file:close()
 
         local configs = {"-DENABLE_TESTING=OFF", "-DENABLE_FUZZING=OFF"}
