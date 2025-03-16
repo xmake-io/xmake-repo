@@ -57,6 +57,9 @@ package("fmt")
                 package:add("defines", "FMT_EXPORT")
             end
         end
+        if not package:config("unicode") then
+            package:add("defines", "FMT_UNICODE=0")
+        end
     end)
 
     on_install(function (package)
