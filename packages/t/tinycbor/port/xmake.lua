@@ -33,6 +33,9 @@ target("tinycbor")
     if not has_config("enable_float") then
         add_defines("CBOR_NO_FLOATING_POINT")
     end
+    if is_plat("mingw") and is_arch("i386") then
+        add_vectorexts("all")
+    end
 
     if is_plat("windows") and is_kind("shared") then
         add_defines("CBOR_API=__declspec(dllexport)")
