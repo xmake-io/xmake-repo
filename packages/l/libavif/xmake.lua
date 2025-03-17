@@ -6,6 +6,7 @@ package("libavif")
     add_urls("https://github.com/AOMediaCodec/libavif/archive/refs/tags/$(version).tar.gz",
              "https://github.com/AOMediaCodec/libavif.git")
 
+    add_versions("v1.2.0", "2182f4900d1a9617cee89746922a58dd825f2a3547f23907b8d78dc3685f7d8c")
     add_versions("v1.1.1", "914662e16245e062ed73f90112fbb4548241300843a7772d8d441bb6859de45b")
     add_versions("v1.1.0", "edb31951005d7a143be1724f24825809599a4832073add50eaf987733defb5c8")
     add_versions("v1.0.4", "dc56708c83a4b934a8af2b78f67f866ba2fb568605c7cf94312acf51ee57d146")
@@ -17,9 +18,16 @@ package("libavif")
     add_deps("libyuv")
 
     if on_check then
-        on_check("android", function (package)
-            local ndk = package:toolchain("ndk"):config("ndkver")
-            assert(ndk and tonumber(ndk) > 22, "package(libavif): library deps libyuv need ndk version > 22")
+        on_check(function (package)
+            if package:is_plat("android") then
+                local ndk = package:toolchain("ndk"):config("ndkver")
+                assert(ndk and tonumber(ndk) > 22, "package(libavif): library deps libyuv need ndk version > 22")
+            elseif package:is_plat("windows") then
+                if package:version() and package:version():eq("1.2.0") then
+                    local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+                    assert(vs_toolset and semver.new(vs_toolset):minor() >= 30, "package(libavif) requires vs_toolset >= v143")
+                end
+            end
         end)
     end
 
