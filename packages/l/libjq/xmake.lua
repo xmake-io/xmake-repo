@@ -7,11 +7,7 @@ package("libjq")
 
     add_versions("1.7.1" , "fc75b1824aba7a954ef0886371d951c3bf4b6e0a921d1aefc553f309702d6ed1")
 
-    if is_subhost("msys") then
-        add_deps("autotools")
-    else
-        add_deps("autoconf", "automake", "libtool")
-    end
+    add_deps("autoconf", "automake", "libtool")
 
     add_configs("oniguruma",    {description = "Build with oniguruma", default = true, type = "boolean"})
     add_configs("all_static",   {description = "link jq with static libraries only", default = false, type = "boolean"})
@@ -40,9 +36,12 @@ package("libjq")
         end
     end)
 
-    on_check(function (package)
-        assert(not (package:is_plat("android") and package:is_subhost("windows")), "package(libjq): does not support windows@android.")
-    end)
+    if on_check then
+        on_check(function (package)
+            assert(not (package:is_plat("android") and package:is_subhost("windows")), "package(libjq): does not support windows@android.")
+            assert(not (package:is_plat("mingw") and package:is_subhost("msys")), "package(libjq): does not support windows@mingw.")
+        end)
+    end
 
     on_install("!windows and !wasm", function (package)
         local configs = {"--enable-docs=no"}
