@@ -3,7 +3,8 @@ package("wayland")
     set_description("Wayland is a protocol for a compositor to talk to its clients as well as a C library implementation of that protocol.")
     set_license("MIT")
 
-    add_urls("https://gitlab.freedesktop.org/wayland/wayland/-/releases/$(version)/downloads/wayland-$(version).tar.xz")
+    add_urls("https://gitlab.freedesktop.org/wayland/wayland/-/releases/$(version)/downloads/wayland-$(version).tar.xz",
+             "https://fossies.org/linux/misc/wayland-$(version).tar.xz")
     add_versions("1.18.0", "4675a79f091020817a98fd0484e7208c8762242266967f55a67776936c2e294d")
     add_versions("1.19.0", "baccd902300d354581cd5ad3cc49daa4921d55fb416a5883e218750fef166d15")
     add_versions("1.23.0", "05b3e1574d3e67626b5974f862f36b5b427c7ceeb965cb36a4e6c2d342e45ab2")
