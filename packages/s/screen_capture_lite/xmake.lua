@@ -12,11 +12,15 @@ package("screen_capture_lite")
 
     if is_plat("windows") then
         add_syslinks("user32", "gdi32", "dwmapi")
-    elseif is_plat("linux") then
+    elseif is_plat("linux", "cross", "android", "bsd") then
         add_deps("libxtst", "libxinerama", "libx11", "libxfixes")
+    elseif is_plat("macosx", "iphoneos") then
+        add_frameworks("CoreFoundation", "CoreGraphics", "CoreVideo", "ApplicationServices")
+    elseif is_plat("mingw") then
+        add_syslinks("d3d11", "dxgi")
     end
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         local configs = {"-DBUILD_EXAMPLE=OFF", "-DBUILD_CSHARP=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
