@@ -70,5 +70,8 @@ package("libjq")
     end)
 
     on_test(function (package)
+        if not package:is_cross() then
+            os.vrun("jq --version")
+        end
         assert(package:has_cfuncs("jq_init" , {includes = "jq.h"}))
     end)
