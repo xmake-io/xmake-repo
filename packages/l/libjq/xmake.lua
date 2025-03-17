@@ -1,6 +1,7 @@
 package("libjq")
     set_homepage("https://jqlang.org")
     set_description("Command-line JSON processor")
+    set_license("MIT")
 
     add_urls("https://github.com/jqlang/jq/archive/refs/tags/jq-$(version).tar.gz",
              "https://github.com/jqlang/jq.git")
