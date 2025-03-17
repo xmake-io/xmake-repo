@@ -45,6 +45,9 @@ package("libjq")
     end
 
     on_install("!windows and !wasm", function (package)
+        if not package:is_cross() then
+            package:addenv("PATH", "bin")
+        end
         local configs = {"--enable-docs=no"}
         if package:config("shared") then
             table.insert(configs, "--enable-shared")
