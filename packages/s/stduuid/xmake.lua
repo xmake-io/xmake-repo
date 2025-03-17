@@ -11,6 +11,7 @@ package("stduuid")
 
     add_configs("system", {description = "Enable operating system uuid generator", default = false, type = "boolean"})
     add_configs("time", {description = "Enable experimental time-based uuid generator", default = false, type = "boolean"})
+    add_configs("span", {description = "Using span from std instead of gsl", default = false, type = "boolean"})
 
     add_deps("cmake")
 
@@ -26,13 +27,21 @@ package("stduuid")
         if package:config("time") then
             package:add("defines", "UUID_TIME_GENERATOR")
         end
+        if not package:config("span") then
+            package:add("deps", "microsoft-gsl")
+        end
     end)
 
     on_install(function (package)
         local configs = {"-DUUID_BUILD_TESTS=OFF", "-DUUID_ENABLE_INSTALL=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DUUID_USING_CXX20_SPAN=" .. (package:config("span") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
+
+        -- Remove bundle deps
+        os.tryrm(package:installdir("include/gsl"))
+        -- Support include/uuid.h or include/stduuid/uuid.h
+        os.vcp(path.join(package:installdir("include"), "uuid.h"), path.join(package:installdir("include/stduuid"), "uuid.h"))
     end)
 
     on_test(function (package)
