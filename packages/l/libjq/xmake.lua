@@ -10,7 +10,7 @@ package("libjq")
     add_deps("autoconf", "automake", "libtool")
 
     add_configs("oniguruma",    {description = "Build with oniguruma", default = true, type = "boolean"})
-    add_configs("all_static",   {description = "link jq with static libraries only", default = false, type = "boolean"})
+    add_configs("all_static",   {description = "Link jq with static libraries only", default = false, type = "boolean"})
 
     if not is_host("windows") then
         add_extsources("pkgconfig::libjq")
@@ -39,7 +39,7 @@ package("libjq")
     if on_check then
         on_check(function (package)
             assert(not (package:is_plat("android") and package:is_subhost("windows")), "package(libjq): does not support windows@android.")
-            assert(not (package:is_plat("mingw") and package:is_subhost("msys")), "package(libjq): does not support windows@mingw.")
+            assert(not (package:is_plat("mingw") and package:is_subhost("msys")), "package(libjq): does not support windows@msys.")
         end)
     end
 
