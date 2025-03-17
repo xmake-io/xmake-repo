@@ -15,6 +15,8 @@ package("stduuid")
 
     add_deps("cmake")
 
+    add_includedirs("include", "include/stduuid")
+
     on_load(function (package)
         if package:config("system") then
             package:add("defines", "UUID_SYSTEM_GENERATOR")
@@ -33,6 +35,8 @@ package("stduuid")
     end)
 
     on_install(function (package)
+        io.replace("CMakeLists.txt", "install(FILES include/uuid.h DESTINATION include)", "install(FILES include/uuid.h DESTINATION include/stduuid)", {plain = true})
+
         local configs = {"-DUUID_BUILD_TESTS=OFF", "-DUUID_ENABLE_INSTALL=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DUUID_USING_CXX20_SPAN=" .. (package:config("span") and "ON" or "OFF"))
@@ -40,8 +44,6 @@ package("stduuid")
 
         -- Remove bundle deps
         os.tryrm(package:installdir("include/gsl"))
-        -- Support include/uuid.h or include/stduuid/uuid.h
-        os.vcp(path.join(package:installdir("include"), "uuid.h"), path.join(package:installdir("include/stduuid"), "uuid.h"))
     end)
 
     on_test(function (package)
