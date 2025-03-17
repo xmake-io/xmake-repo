@@ -29,5 +29,5 @@ package("screen_capture_lite")
             void test() {
                 bool can = SL::Screen_Capture::CanRequestScreenCapture();
             }
-        ]]}, {configs = {languages = "cxx11"}}))
+        ]]}, {configs = {languages = "cxx17"}}))
     end)
