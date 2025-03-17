@@ -15,10 +15,10 @@ package("screen_capture_lite")
     elseif is_plat("linux", "bsd") then
         add_deps("libxtst", "libxinerama", "libx11", "libxfixes")
     elseif is_plat("macosx") then
-        add_frameworks("CoreFoundation", "CoreGraphics", "CoreVideo", "CoreMedia", "ApplicationServices", "AVFoundation")
+        add_frameworks("Foundation", "CoreFoundation", "CoreGraphics", "CoreVideo", "CoreMedia", "ApplicationServices", "AVFoundation")
     end
 
-    on_install("!wasm and !android and !cross and !iphoneos", function (package)
+    on_install("windows", "mingw", "linux", "bsd", "macosx", function (package)
         local configs = {"-DBUILD_EXAMPLE=OFF", "-DBUILD_CSHARP=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
