@@ -35,7 +35,12 @@ package("libjq")
         end
     end)
 
-    on_install("!windows and !msys and !wasm", function (package)
+    on_check(function (package)
+        assert(not (package:is_plat("android") and package:is_subhost("windows")), "package(libjq): does not support windows@android.")
+        assert(not (package:is_plat("mingw") and package:is_subhost("msys")), "package(libjq): does not support windows@mingw.")
+    end)
+
+    on_install("!windows and !wasm", function (package)
         local configs = {"--enable-docs=no"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
