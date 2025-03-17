@@ -7,9 +7,8 @@ package("libjq")
 
     add_versions("1.7.1" , "fc75b1824aba7a954ef0886371d951c3bf4b6e0a921d1aefc553f309702d6ed1")
 
-    add_deps("autoconf", "automake", "libtool")
-
-    add_configs("oniguruma", {description = "Build with oniguruma", default = true, type = "boolean"})
+    add_configs("oniguruma",    {description = "Build with oniguruma", default = true, type = "boolean"})
+    add_configs("all_static",   {description = "link jq with static libraries only", default = false, type = "boolean"})
 
     if not is_host("windows") then
         add_extsources("pkgconfig::libjq")
@@ -35,17 +34,22 @@ package("libjq")
         end
     end)
 
-    on_check(function (package)
-        assert(not (package:is_plat("android") and package:is_subhost("windows")), "package(libjq): does not support windows@android.")
-        assert(not (package:is_plat("mingw") and package:is_subhost("msys")), "package(libjq): does not support windows@mingw.")
-    end)
-
     on_install("!windows and !wasm", function (package)
         local configs = {"--enable-docs=no"}
-        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
-        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
-        if package:is_debug() then
+        if package:config("shared") then
+            table.insert(configs, "--enable-shared")
+            table.insert(configs, "--disable-static")
+        else
+            table.insert(configs, "--enable-static")
+            table.insert(configs, "--disable-shared")
+        end
+        if package:debug() then
             table.insert(configs, "--enable-debug")
+        else
+            table.insert(configs, "--disable-debug")
+        end
+        if package:config("all_static") then
+            table.insert(configs, "--enable-all-static")
         end
         local opt = {}
         if package:config("oniguruma") then
