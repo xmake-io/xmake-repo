@@ -35,15 +35,19 @@ package("libjq")
         end
     end)
 
-    on_install(function (package)
+    on_install("!windows and !msys and !wasm", function (package)
         local configs = {"--enable-docs=no"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:is_debug() then
             table.insert(configs, "--enable-debug")
         end
+        local opt = {}
+        if package:config("oniguruma") then
+            opt.packagedeps = "oniguruma"
+        end
         table.insert(configs, "--with-oniguruma=" .. (package:config("oniguruma") and "yes" or "no"))
-        import("package.tools.autoconf").install(package, configs, {packagedeps = "oniguruma"})
+        import("package.tools.autoconf").install(package, configs, opt)
     end)
 
     on_test(function (package)
