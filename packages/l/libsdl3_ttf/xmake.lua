@@ -13,7 +13,7 @@ package("libsdl3_ttf")
 
     add_urls("https://www.libsdl.org/projects/SDL_ttf/release/SDL3_ttf-$(version).zip",
              "https://github.com/libsdl-org/SDL_ttf/releases/download/release-$(version)/SDL3_ttf-$(version).zip", { alias = "archive" })
-    add_urls("https://github.com/libsdl-org/SDL_ttf", { alias = "github" })
+    add_urls("https://github.com/libsdl-org/SDL_ttf.git", { alias = "github" })
 
     add_versions("archive:3.2.0", "ea75fa02ab328cccdff8bf36d2ec891e445e94fa301cd0ef34c662e24d30b704")
 
@@ -53,7 +53,38 @@ package("libsdl3_ttf")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSDLTTF_HARFBUZZ=" .. (package:config("harfbuzz") and "ON" or "OFF"))
         table.insert(configs, "-DSDLTTF_PLUTOSVG=" .. (package:config("plutosvg") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs, {packagedeps={"freetype", "plutovg"}})
+        local freetype = package:dep("freetype")
+        if freetype then
+            local fetchinfo = freetype:fetch()
+            if fetchinfo then
+                local includedirs = table.wrap(fetchinfo.includedirs or fetchinfo.sysincludedirs)
+                if #includedirs > 0 then
+                    table.insert(configs, "-DFREETYPE_INCLUDE_DIRS=" .. table.concat(includedirs, ";"))
+                end
+                local libfiles = table.wrap(fetchinfo.libfiles)
+                if #libfiles > 0 then
+                    table.insert(configs, "-DFREETYPE_LIBRARY=" .. libfiles[1])
+                end
+                if not freetype:config("shared") then
+                    local libfiles = {}
+                    for _, dep in ipairs(freetype:librarydeps()) do
+                        local depinfo = dep:fetch()
+                        if depinfo then
+                            table.join2(libfiles, depinfo.libfiles)
+                        end
+                    end
+                    if #libfiles > 0 then
+                        local libraries = ""
+                        for _, libfile in ipairs(libfiles) do
+                            libraries = libraries .. " " .. (libfile:gsub("\\", "/"))
+                        end
+                        io.replace("CMakeLists.txt", "target_link_libraries(${sdl3_ttf_target_name} PRIVATE Freetype::Freetype)",
+                            "target_link_libraries(${sdl3_ttf_target_name} PRIVATE Freetype::Freetype " .. libraries .. ")", {plain = true})
+                    end
+                end
+            end
+        end
+        import("package.tools.cmake").install(package, configs, {packagedeps={"plutovg"}})
     end)
 
     on_test(function (package)
