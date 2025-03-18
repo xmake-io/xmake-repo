@@ -31,18 +31,16 @@ package("libjq")
         add_syslinks("shlwapi")
     end
 
+    on_check(function (package)
+        assert(not (package:is_plat("android") and is_subhost("windows")), "package(libjq): does not support windows@android.")
+        assert(not (package:is_plat("mingw") and is_subhost("msys")), "package(libjq): does not support mingw@msys.")
+    end)
+
     on_load(function (package)
         if package:config("oniguruma") then
             package:add("deps", "oniguruma")
         end
     end)
-
-    if on_check then
-        on_check(function (package)
-            assert(not (package:is_plat("android") and package:is_subhost("windows")), "package(libjq): does not support windows@android.")
-            assert(not (package:is_plat("mingw") and package:is_subhost("msys")), "package(libjq): does not support windows@msys.")
-        end)
-    end
 
     on_install("!windows and !wasm", function (package)
         if not package:is_cross() then
