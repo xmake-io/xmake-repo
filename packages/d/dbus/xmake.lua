@@ -6,6 +6,7 @@ package("dbus")
 
     add_urls("https://gitlab.freedesktop.org/dbus/dbus/-/archive/dbus-$(version)/dbus-dbus-$(version).tar.gz",
              "https://fossies.org/linux/misc/dbus-$(version).tar.gz")
+    add_versions("1.16.2", "1e8c5190e59f4b622031a134a9b97c9b5afbf5dc4e681504db2ff9dbf4e86d27")
     add_versions("1.14.2", "9ec5aad6310f79149aa04e8c6bd9e5e2cdca47cf3acec2d23ee9fe06ac7e7a62")
     add_versions("1.14.6", "2533742eb324fa7fbb093a3ed0ff436c7eb11861fd6a31e9b857fc4878f01831")
     add_versions("1.14.8", "273718fe5150a1a44fe77abcf442dc64082f7375fdc15fcbd80b84316f897326")
