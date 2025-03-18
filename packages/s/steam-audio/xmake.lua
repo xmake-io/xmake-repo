@@ -90,6 +90,12 @@ package("steam-audio")
         table.insert(configs, "-DSTEAMAUDIO_ENABLE_RADEONRAYS=" .. (package:config("radeonrays") and "ON" or "OFF"))
         table.insert(configs, "-DSTEAMAUDIO_ENABLE_TRUEAUDIONEXT=" .. (package:config("trueaudio_next") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
+
+        if package:is_plat("windows") and package:config("shared") then
+            os.mv(package:installdir("lib/*.dll"), package:installdir("bin"))
+            local phonon_h = path.join(package:installdir("include"), "phonon.h")
+            io.replace(phonon_h, "#define IPLAPI\n#endif", "#define IPLAPI __declspec(dllimport)\n#endif", {plain = true})
+        end
     end)
 
     on_test(function (package)
