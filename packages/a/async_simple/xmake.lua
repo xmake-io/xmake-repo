@@ -21,6 +21,10 @@ package("async_simple")
     end)
 
     on_install(function (package)
+        if package:is_plat("linux") and package:is_arch("arm.*") then
+            io.replace("CMakeLists.txt", [[list(APPEND CXX_FLAGS "-m]], [[#list(APPEND CXX_FLAGS "-m]], {plain = true})
+        end
+
         if package:version():le("1.3") then
             io.replace("async_simple/CMakeLists.txt",
             [[file(GLOB coro_header "coro/*.h")]],

@@ -5,6 +5,7 @@ package("spdlog")
 
     add_urls("https://github.com/gabime/spdlog/archive/refs/tags/$(version).zip",
              "https://github.com/gabime/spdlog.git")
+
     add_versions("v1.15.1", "322c144e24abee5d0326ddbe5bbc0e0c39c85ac8c2cb3c90d10290a85428327a")
     add_versions("v1.15.0", "076f3b4d452b95433083bcc66d07f79addba2d3fcb2b9177abeb7367d47aefbb")
     add_versions("v1.14.1", "429dfdf3afc1984feb59e414353c21c110bc79609f6d7899d52f6aa388646f6d")
@@ -34,8 +35,9 @@ package("spdlog")
     add_configs("noexcept",        {description = "Compile with -fno-exceptions. Call abort() on any spdlog exceptions.", default = false, type = "boolean"})
 
     if is_plat("windows") then
-        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
         add_configs("wchar",  {description = "Support wchar api.", default = false, type = "boolean"})
+        add_configs("wchar_filenames",  {description = "Support wchar filenames.", default = false, type = "boolean"})
+        add_configs("wchar_console",  {description = "Support wchar output to console.", default = false, type = "boolean"})
     elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
@@ -63,6 +65,12 @@ package("spdlog")
         if package:config("wchar") then
             package:add("defines", "SPDLOG_WCHAR_TO_UTF8_SUPPORT")
         end
+        if package:config("wchar_filenames") then
+            package:add("defines", "SPDLOG_WCHAR_FILENAMES")
+        end
+        if package:config("wchar_console") then
+            package:add("defines", "SPDLOG_UTF8_TO_WCHAR_CONSOLE")
+        end
     end)
 
     on_install(function (package)
@@ -83,6 +91,8 @@ package("spdlog")
         table.insert(configs, "-DSPDLOG_FMT_EXTERNAL_HO=" .. (package:config("fmt_external_ho") and "ON" or "OFF"))
         table.insert(configs, "-DSPDLOG_NO_EXCEPTIONS=" .. (package:config("noexcept") and "ON" or "OFF"))
         table.insert(configs, "-DSPDLOG_WCHAR_SUPPORT=" .. (package:config("wchar") and "ON" or "OFF"))
+        table.insert(configs, "-DSPDLOG_WCHAR_FILENAMES=" .. (package:config("wchar_filenames") and "ON" or "OFF"))
+        table.insert(configs, "-DSPDLOG_UTF8_TO_WCHAR_CONSOLE=" .. (package:config("wchar_console") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 

@@ -7,36 +7,81 @@ package("glpk")
 
     add_versions("5.0", "4a1013eebb50f728fc601bdd833b0b2870333c3b3e5a816eeba921d95bec6f15")
 
+    add_configs("dl", {description = "Eenable shared library support", default = nil, type = "string", values = {"ltdl", "dlfcn"}})
+    add_configs("gmp", {description = "Enable gmp support", default = false, type = "boolean"})
+    add_configs("mysql", {description = "enable MathProg MySQL support", default = false, type = "boolean", readonly = true})
+    add_configs("odbc", {description = "enable MathProg ODBC support", default = false, type = "boolean", readonly = true})
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     if is_plat("linux") then
         add_extsources("apt::libglpk-dev")
     end
 
-    on_install("macosx|x86_64", "linux", function (package)
+    add_deps("zlib")
+
+    on_load(function (package)
+        if package:config("gmp") then
+            package:add("deps", "gmp")
+        end
+        if package:config("mysql") then
+            package:add("deps", "mysql")
+        end
+        local dl = package:config("dl")
+        if dl == "ltdl" then
+            package:add("deps", "libtool", {kind = "library"})
+        elseif dl == "dlfcn" then
+            if package:is_plat("linux", "bsd") then
+                package:add("syslinks", "dl")
+            end
+            -- src/env/dlsup.c will use LoadLibrary/GetProcAddress/FreeLibrary
+            -- if package:is_plat("windows") then
+            --     package:add("deps", "dlfcn-win32")
+            -- end
+        end
+    end)
+
+    on_install(function (package)
+        if package:is_plat("windows") and package:config("shared") then
+            local def = "glpk.def"
+            local version = package:version()
+            local arch_dir = package:is_arch64() and "w64" or "w32"
+            local basename = format("%s/glpk_%d_%d.def", arch_dir, version:major(), version:minor())
+            os.vcp(basename, def)
+            -- glp_netgen_prob is not defined, but should be disabled
+            -- see: https://www.mail-archive.com/bug-glpk@gnu.org/msg01020.html
+            io.replace(def, "glp_netgen_prob\n", "", {plain = true})
+        end
+
+        local configs = {
+            dl = package:config("dl"),
+            gmp = package:config("gmp"),
+            mysql = package:config("mysql"),
+            odbc = package:config("odbc"),
+        }
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        import("package.tools.xmake").install(package, configs)
+    end)
+
+    on_install("macosx", "linux", function (package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
-        import("package.tools.autoconf").install(package, configs)
-    end)
-
-    on_install("windows", function (package)
-        os.cd("w64") -- Makefiles are the same in w64 and w32 directory
-        os.cp("config_VC", "config.h")
-        local version = package:version()
-        local basename = string.format("glpk_%d_%d", version:major(), version:minor())
-         -- glp_netgen_prob is not defined, but should be disabled
-         -- see: https://www.mail-archive.com/bug-glpk@gnu.org/msg01020.html
-        io.replace(basename .. ".def", "glp_netgen_prob\n", "", {plain = true})
-        import("package.tools.nmake").build(package, {"/f", package:config("shared") and "makefile_VC_DLL" or "makefile_VC"})
-
-        if package:config("shared") then
-            os.cp(basename .. ".dll", package:installdir("bin"))
-            os.cp(basename .. ".lib", package:installdir("lib"))
+        table.insert(configs, "--enable-mysql=" .. (package:config("mysql") and "yes" or "no"))
+        table.insert(configs, "--enable-odbc=" .. (package:config("odbc") and "yes" or "no"))
+        local dl = package:config("dl")
+        if dl then
+            table.insert(configs, "--enable-dl=" .. dl)
         else
-            os.cp("glpk.lib", package:installdir("lib"))
+            table.insert(configs, "--disable-dl")
         end
-
-        os.cd("..")
-        os.cp("src/glpk.h", package:installdir("include"))
+        if package:config("gmp") then
+            table.insert(configs, "--with-gmp")
+        else
+            table.insert(configs, "--without-gmp")
+        end
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)

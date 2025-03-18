@@ -71,26 +71,17 @@ package("ffmpeg")
     end
 
     on_fetch("mingw", "linux", "macosx", function (package, opt)
-        import("lib.detect.find_tool")
         if opt.system then
             local result
             for _, name in ipairs({"libavcodec", "libavdevice", "libavfilter", "libavformat", "libavutil", "libpostproc", "libswresample", "libswscale"}) do
                 local pkginfo = package:find_package("pkgconfig::" .. name, opt)
-                if pkginfo then
-                    pkginfo.version = nil
-                    if not result then
-                        result = pkginfo
-                    else
-                        result = result .. pkginfo
-                    end
-                else
+                if not pkginfo then
                     return
                 end
+                result = (result and result .. pkginfo) or pkginfo
             end
-            local ffmpeg = find_tool("ffmpeg", {check = "-help", version = true, command = "-version", parse = "%d+%.?%d+%.?%d+", force = true})
-            if ffmpeg then
-                result.version = ffmpeg.version
-            end
+            local ffmpeg = package:find_tool("ffmpeg", {check = "-help", version = true, command = "-version", parse = "ffmpeg version%s+n*(%S+)", force = true})
+            result.version = ffmpeg and ffmpeg.version
             return result
         end
     end)

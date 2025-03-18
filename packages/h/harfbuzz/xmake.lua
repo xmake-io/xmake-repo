@@ -1,12 +1,12 @@
 package("harfbuzz")
-
     set_homepage("https://harfbuzz.github.io/")
     set_description("HarfBuzz is a text shaping library.")
     set_license("MIT")
 
-    add_urls("https://github.com/harfbuzz/harfbuzz/archive/refs/tags/$(version).tar.gz", {excludes = "README"})
+    add_urls("https://github.com/harfbuzz/harfbuzz/archive/refs/tags/$(version).tar.gz", {excludes = "**/README", "**/test"})
     add_urls("https://github.com/harfbuzz/harfbuzz.git")
-    
+
+    add_versions("10.4.0", "0d25a3f74af4e8744700ac19050af5a80ae330378a5802a5cd71e523bb6fda1f")
     add_versions("10.3.0", "39cd3df7217f2477cf31f3c9d3a002e4d5ef0ba6822151e82ea6b46e42ea1cb2")
     add_versions("10.2.0", "11749926914fd488e08e744538f19329332487a6243eec39ef3c63efa154a578")
     add_versions("10.1.0", "c758fdce8587641b00403ee0df2cd5d30cbea7803d43c65fddd76224f7b49b88")
@@ -32,21 +32,27 @@ package("harfbuzz")
     add_configs("freetype", {description = "Enable freetype interop helpers.", default = true, type = "boolean"})
     add_configs("glib", {description = "Enable glib unicode functions.", default = false, type = "boolean"})
 
-    if is_plat("android") then
-        add_deps("cmake")
-    else
-        add_deps("meson", "ninja")
-        if is_plat("windows") then
-            add_deps("pkgconf")
-        end
+    add_deps("meson", "ninja")
+    if is_host("windows") then
+        add_deps("pkgconf")
     end
+
+    if is_plat("linux", "bsd") then
+        add_syslinks("m")
+    end
+
     add_includedirs("include", "include/harfbuzz")
     if is_plat("macosx") then
         add_frameworks("CoreText", "CoreFoundation", "CoreGraphics")
-    elseif is_plat("bsd", "android") then
-        add_configs("freetype", {description = "Enable freetype interop helpers.", default = false, type = "boolean", readonly = true})
     elseif is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk"):config("ndkver")
+            assert(ndk and tonumber(ndk) > 22, "package(harfbuzz) require ndk version > 22")
+        end)
     end
 
     on_load(function (package)
@@ -69,15 +75,6 @@ package("harfbuzz")
         end
     end)
 
-    on_install("android", function (package)
-        local configs = {"-DHB_HAVE_GLIB=OFF", "-DHB_HAVE_GOBJECT=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DHB_HAVE_FREETYPE=" .. (package:config("freetype") and "ON" or "OFF"))
-        table.insert(configs, "-DHB_HAVE_ICU=" .. (package:config("icu") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
-    end)
-
     on_install(function (package)
         local configs = {"-Dtests=disabled", "-Ddocs=disabled", "-Dbenchmark=disabled", "-Dcairo=disabled"}
         if package:is_plat("macosx") then
@@ -88,7 +85,31 @@ package("harfbuzz")
         table.insert(configs, "-Dfreetype=" .. (package:config("freetype") and "enabled" or "disabled"))
         table.insert(configs, "-Dglib=" .. (package:config("glib") and "enabled" or "disabled"))
         table.insert(configs, "-Dgobject=" .. (package:config("glib") and "enabled" or "disabled"))
-        import("package.tools.meson").install(package, configs, {packagedeps = {"libintl", "libiconv", "pcre2"}})
+
+        local envs
+        -- meson may use cmake to find dependencies
+        if xmake.version():lt("2.9.9") then
+            local CMAKE_LIBRARY_PATH = {}
+            local CMAKE_INCLUDE_PATH = {}
+            local CMAKE_PREFIX_PATH  = {}
+            for _, dep in ipairs(package:librarydeps({private = true})) do
+                if dep:is_system() then
+                    local fetchinfo = dep:fetch()
+                    if fetchinfo then
+                        table.join2(CMAKE_LIBRARY_PATH, fetchinfo.linkdirs)
+                        table.join2(CMAKE_INCLUDE_PATH, fetchinfo.includedirs)
+                        table.join2(CMAKE_INCLUDE_PATH, fetchinfo.sysincludedirs)
+                    end
+                else
+                    table.join2(CMAKE_PREFIX_PATH, dep:installdir())
+                end
+            end
+            envs = import("package.tools.meson").buildenvs(package, opt)
+            envs.CMAKE_LIBRARY_PATH = path.joinenv(CMAKE_LIBRARY_PATH)
+            envs.CMAKE_INCLUDE_PATH = path.joinenv(CMAKE_INCLUDE_PATH)
+            envs.CMAKE_PREFIX_PATH  = path.joinenv(CMAKE_PREFIX_PATH)
+        end
+        import("package.tools.meson").install(package, configs, {envs = envs, packagedeps = {"freetype", "libintl", "libiconv", "pcre2"}})
     end)
 
     on_test(function (package)
