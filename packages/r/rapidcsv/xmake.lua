@@ -23,5 +23,5 @@ package("rapidcsv")
                 rapidcsv::Document doc("example.csv");
                 doc.GetColumn<float>("Example").size();
             }
-        ]]}, {includes = "rapidcsv.h", configs = {languages = "cxx11"}}))
+        ]]}, {includes = "rapidcsv.h", configs = {languages = "c++17"}}))
     end)
