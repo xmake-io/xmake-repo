@@ -19,6 +19,11 @@ package("tinycbor")
                 package:add("defines", "CBOR_STATIC_DEFINE")
             end
         end
+        if package:is_plat("mingw") and package:is_arch("i386") then
+            -- Only work with gcc >= 14
+            package:config_set("float", false)
+            wprint("package(tinycbor) disable config(float) on mingw/i386")
+        end
     end)
 
     on_install(function (package)
