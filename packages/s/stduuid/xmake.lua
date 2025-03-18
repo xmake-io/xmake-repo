@@ -11,7 +11,7 @@ package("stduuid")
 
     add_configs("system", {description = "Enable operating system uuid generator", default = false, type = "boolean"})
     add_configs("time", {description = "Enable experimental time-based uuid generator", default = false, type = "boolean"})
-    add_configs("span", {description = "Using span from std instead of gsl", default = true, type = "boolean"})
+    add_configs("span", {description = "Using span from std instead of gsl", default = false, type = "boolean"})
 
     add_deps("cmake")
 
