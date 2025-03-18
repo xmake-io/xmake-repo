@@ -13,8 +13,8 @@ package("obfusheader.h")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #incldue <cstddef>
-            #incldue <obfusheader.h>
+            #include <cstddef>
+            #include <obfusheader.h>
             void test() {
                 const char* str = OBF("test");
             }
