@@ -13,8 +13,10 @@ package("obfusheader.h")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+            #incldue <cstddef>
+            #incldue <obfusheader.h>
             void test() {
                 const char* str = OBF("test");
             }
-        ]]}, {configs = {languages = "c++14"}, includes = {"obfusheader.h"}}))
+        ]]}, {configs = {languages = "c++14"}}))
     end)
