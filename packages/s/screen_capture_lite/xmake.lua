@@ -11,7 +11,7 @@ package("screen_capture_lite")
     add_deps("cmake", "lodepng", "tinyjpeg")
 
     if is_plat("windows") then
-        add_syslinks("user32", "gdi32", "dwmapi")
+        add_syslinks("user32", "gdi32", "dwmapi", "d3d11", "dxgi")
     elseif is_plat("linux") then
         add_deps("libxtst", "libxinerama", "libx11", "libxfixes")
     elseif is_plat("macosx") then
@@ -29,7 +29,9 @@ package("screen_capture_lite")
         assert(package:check_cxxsnippets({test = [[
             #include <ScreenCapture.h>
             void test() {
-                bool can = SL::Screen_Capture::CanRequestScreenCapture();
+                SL::Screen_Capture::CanRequestScreenCapture();
+                SL::Screen_Capture::GetMonitors();
+                SL::Screen_Capture::GetWindows();
             }
         ]]}, {configs = {languages = "cxx17"}}))
     end)
