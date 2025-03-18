@@ -11,7 +11,7 @@ package("stduuid")
 
     add_configs("system", {description = "Enable operating system uuid generator", default = false, type = "boolean"})
     add_configs("time", {description = "Enable experimental time-based uuid generator", default = false, type = "boolean"})
-    add_configs("span", {description = "Using span from std instead of gsl", default = false, type = "boolean"})
+    add_configs("span", {description = "Using span from std instead of gsl", default = true, type = "boolean"})
 
     add_deps("cmake")
 
@@ -47,10 +47,16 @@ package("stduuid")
     end)
 
     on_test(function (package)
+        local languages
+        if package:config("span") then
+            languages = "c++20"
+        else
+            languages = "c++17"
+        end
         assert(package:check_cxxsnippets({test = [[
             using namespace uuids;
             void test() {
                 uuid empty;
             }
-        ]]}, {configs = {languages = "c++17"}, includes = "uuid.h"}))
+        ]]}, {configs = {languages = languages}, includes = "uuid.h"}))
     end)
