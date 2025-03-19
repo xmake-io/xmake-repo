@@ -43,34 +43,9 @@ package("steam-audio")
         end
     end)
 
-    on_install(function (package)
+    on_install("!bsd", function (package)
         os.cd("core")
-        io.replace("CMakeLists.txt", "$<$<AND:$<CONFIG:Debug>,$<BOOL:${STEAMAUDIO_STATIC_RUNTIME}>>:/MTd>", "", {plain = true})
-        io.replace("CMakeLists.txt", "$<$<AND:$<CONFIG:Debug>,$<NOT:$<BOOL:${STEAMAUDIO_STATIC_RUNTIME}>>>:/MDd>", "", {plain = true})
-        io.replace("CMakeLists.txt", "$<$<AND:$<NOT:$<CONFIG:Debug>>,$<BOOL:${STEAMAUDIO_STATIC_RUNTIME}>>:/MT>", "", {plain = true})
-        io.replace("CMakeLists.txt", "$<$<AND:$<NOT:$<CONFIG:Debug>>,$<NOT:$<BOOL:${STEAMAUDIO_STATIC_RUNTIME}>>>:/MD>", "", {plain = true})
-        io.replace("CMakeLists.txt", "$<$<CONFIG:Release>:/GL>", "", {plain = true})
-        io.replace("CMakeLists.txt", "$<IF:$<CONFIG:Debug>,_DEBUG,NDEBUG>", "", {plain = true})
-
-        io.replace("build/FindMySOFA.cmake", "set(ZLIB_ROOT ${CMAKE_HOME_DIRECTORY}/deps/zlib/lib/${IPL_BIN_SUBDIR}/release)", "", {plain = true})
-        io.replace("build/FindMySOFA.cmake", "set(ZLIB_INCLUDE_DIR ${CMAKE_HOME_DIRECTORY}/deps/zlib/include)", "", {plain = true})
-        -- https://github.com/ValveSoftware/steam-audio/pull/399
-        io.replace("src/core/profiler.h", [[#include "memory_allocator.h"]], [[
-            #include "memory_allocator.h"
-            #include <chrono>
-        ]], {plain = true})
-
-        io.replace("src/core/CMakeLists.txt", "get_bin_subdir(IPL_BIN_SUBDIR)", "set(IPL_BIN_SUBDIR )", {plain = true})
-        io.replace("src/core/CMakeLists.txt", 
-            "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/phonon.pdb",
-            path.unix(path.join("../../", package:buildir(), "pdb/phonon.pdb")), {plain = true})
-
-        io.replace("src/core/CMakeLists.txt", 
-[[    install(
-        FILES       ${CMAKE_HOME_DIRECTORY}/deps/trueaudionext/bin/windows-x64/$<LOWER_CASE:$<CONFIG>>/TrueAudioNext.dll
-                    ${CMAKE_HOME_DIRECTORY}/deps/trueaudionext/bin/windows-x64/$<LOWER_CASE:$<CONFIG>>/GPUUtilities.dll
-        DESTINATION lib/${IPL_BIN_SUBDIR}
-    )]], "", {plain = true})
+        import("patch")()
 
         local configs = {
             "-DSTEAMAUDIO_BUILD_TESTS=OFF",
