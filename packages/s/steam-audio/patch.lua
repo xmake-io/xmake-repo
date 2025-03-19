@@ -23,10 +23,15 @@ function main(package)
     ]], {plain = true})
 
     io.replace("src/core/CMakeLists.txt", "get_bin_subdir(IPL_BIN_SUBDIR)", "set(IPL_BIN_SUBDIR )", {plain = true})
-    -- remove pdb install command
+    -- remove symbol install command
     io.replace("src/core/CMakeLists.txt", 
 [[    install(
         FILES       ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/phonon.pdb
+        DESTINATION symbols/${IPL_BIN_SUBDIR}
+    )]], "", {plain = true})
+    io.replace("src/core/CMakeLists.txt", 
+[[    install(
+        FILES       ${CMAKE_CURRENT_BINARY_DIR}/libphonon.so.dbg
         DESTINATION symbols/${IPL_BIN_SUBDIR}
     )]], "", {plain = true})
 
