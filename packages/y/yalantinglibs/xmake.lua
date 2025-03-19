@@ -23,7 +23,17 @@ package("yalantinglibs")
     add_configs("struct_pack_unportable_type", {description = "enable struct_pack unportable type(like wchar_t)",  default = false, type = "boolean"})
     add_configs("struct_pack_unportable_optimize", {description = "enable struct_pack optimize(but cost more compile time)",  default = false, type = "boolean"})
 
+    add_deps("cmake")
     add_deps("cinatra", "iguana")
+
+    on_check("windows", function (package)
+        local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+        if vs_toolset then
+            local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
+            local minor = vs_toolset_ver:minor()
+            assert(minor and minor >= 30, "package(yalantinglibs) dep(cinatra) require vs_toolset >= 14.3")
+        end
+    end)
 
     on_load(function (package)
         if package:config("ssl") then
