@@ -3,7 +3,7 @@ package("duckdb")
     set_description("DuckDB is an in-process SQL OLAP Database Management System")
     set_license("MIT")
 
-    on_source(function(package)
+    on_source("windows", "macosx", "linux", function(package)
         local precompiled = false
         if package:is_plat("windows") then
             if package:is_arch("x64", "x86_64") then
@@ -71,13 +71,13 @@ package("duckdb")
         package:data_set("precompiled", precompiled)
     end)
 
-    on_load(function (package)
+    on_load("windows", "macosx", "linux", function (package)
         if not package:data("precompiled") then
             package:add("deps", "cmake")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows", "macosx", "linux", function (package)
         if package:data("precompiled") then
             os.trycp("*.dll", package:installdir("lib"))
             os.trycp("*.lib", package:installdir("lib"))
@@ -95,11 +95,11 @@ package("duckdb")
         table.insert(configs, "-DEXTENSION_STATIC_BUILD=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_UNITTESTS=0")
         table.insert(configs, "-DBUILD_SHELL=0")
-        
+
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_test(function (package)
+    on_test("windows", "macosx", "linux", function (package)
         assert(package:check_cxxsnippets({test = [[
             #include "duckdb.hpp"
             using namespace duckdb;
