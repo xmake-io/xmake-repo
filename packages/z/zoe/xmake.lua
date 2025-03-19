@@ -28,6 +28,9 @@ package("zoe")
     end)
 
     on_install("!bsd and !wasm", function (package)
+        if package:is_plat("cross", "android") then
+            io.replace("src/curl_utils.h", [[#include "curl/curl.h"]], "#include <curl/curl.h>/n#include <pthread.h>", {plain = true})
+        end
         io.replace("CMakeLists.txt", "set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)", "include(GNUInstallDirs)\nset(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})", {plain = true})
         io.replace("CMakeLists.txt", [[set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)]], [[set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})]], {plain = true})
         io.replace("CMakeLists.txt", [[set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)]], [[set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})]], {plain = true})
