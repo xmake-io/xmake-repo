@@ -1,4 +1,19 @@
+function _unsafe_patch(package)
+    if package:is_plat("macosx") then
+        io.replace("CMakeLists.txt", [[set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13")]], "", {plain = true})
+    end
+
+    -- clang unsupported this flag https://github.com/llvm/llvm-project/issues/25059
+    -- But build failed on ubuntu with libstdc++-13
+    io.replace("CMakeLists.txt", "add_compile_options(-fabi-version=6)", "", {plain = true})
+    if package:is_cross() then
+        io.replace("CMakeLists.txt", "add_compile_options(-m32 -mfpmath=sse -march=native)", "", {plain = true})
+    end
+end
+
 function main(package)
+    _unsafe_patch(package)
+
     if package:is_plat("mingw", "msys") then
         io.replace("CMakeLists.txt", "# Windows flags\nif (IPL_OS_WINDOWS)", "if(0)", {plain = true})
     else
