@@ -37,7 +37,7 @@ package("duckdb")
                     package:add("versions", "v1.2.1", "ab5d43238972cfb7ae1852f8890103a056d09ff5ce60623a8515729c49e1d6c0")
                 end
             end
-        elseif package:is_plat("macos") then
+        elseif package:is_plat("macosx") then
             if package:config("shared") then
                 precompiled = true
                 package:add("urls", "https://github.com/duckdb/duckdb/releases/download/$(version)/libduckdb-osx-universal.zip")
@@ -71,7 +71,7 @@ package("duckdb")
         package:data_set("precompiled", precompiled)
     end)
 
-    on_install(function (package)
+    on_install("windows", "macosx", "linux", function (package)
         if package:data("precompiled") then
             os.trycp("*.dll", package:installdir("lib"))
             os.trycp("*.lib", package:installdir("lib"))
