@@ -92,7 +92,10 @@ package("duckdb")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-
+        table.insert(configs, "-DEXTENSION_STATIC_BUILD=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DBUILD_UNITTESTS=0")
+        table.insert(configs, "-DBUILD_SHELL=0")
+        
         import("package.tools.cmake").install(package, configs)
     end)
 
