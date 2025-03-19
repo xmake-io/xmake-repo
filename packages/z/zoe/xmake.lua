@@ -18,6 +18,14 @@ package("zoe")
         add_syslinks("pthread")
     end
 
+    on_check(function (package)
+        if package:is_plat("android") then
+            local ndk = package:toolchain("ndk")
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(zoe) requires ndk api level >= 24")
+        end
+    end)
+
     on_load(function (package)
         if package:config("openssl") then
             package:add("deps", "openssl")
