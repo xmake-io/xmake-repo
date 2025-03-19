@@ -18,14 +18,6 @@ package("zoe")
         add_syslinks("pthread")
     end
 
-    on_check(function (package)
-        if package:is_plat("android") then
-            local ndk = package:toolchain("ndk")
-            local ndk_sdkver = ndk:config("ndk_sdkver")
-            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(zoe) requires ndk api level >= 24")
-        end
-    end)
-
     on_load(function (package)
         if package:config("openssl") then
             package:add("deps", "openssl")
@@ -37,6 +29,15 @@ package("zoe")
 
     on_install("!bsd and !wasm", function (package)
         if package:is_plat("cross", "android") then
+            if package:is_plat("android") then
+                local ndk = package:toolchain("ndk")
+                local ndk_sdkver = ndk:config("ndk_sdkver")
+                if tonumber(ndk_sdkver) < 24 then
+                    io.replace("src/file_util.cpp", "fseeko64", "fseeko", {plain = true})
+                    io.replace("src/file_util.cpp", "ftello64", "ftello", {plain = true})
+                end
+            end
+
             io.replace("src/curl_utils.h", [[#include "curl/curl.h"]], "#include <curl/curl.h>\n#include <pthread.h>", {plain = true})
             io.replace("src/slice.cpp", [[std::atomic_fetch_add(&disk_cache_capacity_, data_size);]], 
             [[std::atomic_fetch_add(&disk_cache_capacity_, static_cast<int64_t>(data_size));]], {plain = true})
