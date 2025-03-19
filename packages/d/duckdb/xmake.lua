@@ -71,13 +71,13 @@ package("duckdb")
         package:data_set("precompiled", precompiled)
     end)
 
-    on_load("windows", "macosx", "linux", function (package)
+    on_load(function (package)
         if not package:data("precompiled") then
             package:add("deps", "cmake")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install(function (package)
         if package:data("precompiled") then
             os.trycp("*.dll", package:installdir("lib"))
             os.trycp("*.lib", package:installdir("lib"))
@@ -96,7 +96,7 @@ package("duckdb")
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_test("windows", "macosx", "linux", function (package)
+    on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include "duckdb.hpp"
             using namespace duckdb;
@@ -105,5 +105,5 @@ package("duckdb")
                 DuckDB db(nullptr);
                 Connection con(db);
             }
-        ]]}, {configs = {languages = "cxx17"}}))
+        ]]}, {configs = {languages = "c++17"}}))
     end)
