@@ -56,7 +56,7 @@ package("duckdb")
         end
 
         if not precompiled then
-             package:add("urls", "https://github.com/duckdb/duckdb/archive/refs/tags/($version).zip",
+             package:add("urls", "https://github.com/duckdb/duckdb/archive/refs/tags/$(version).zip",
                                  "https://github.com/duckdb/duckdb.git")
             package:add("versions", "v1.2.1", "c7f21c12039e951dbb74e064ba218a4ca8b4b0a612d40c62d95a858ecaf2fb53")
             package:add("versions", "v1.1.3", "66beec9f299c56f508fec3d647faa86a596d39b2d4e26bd6991b29d07b818f83")
