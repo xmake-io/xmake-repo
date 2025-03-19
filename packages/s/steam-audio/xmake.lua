@@ -39,7 +39,7 @@ package("steam-audio")
         end
 
         if package:is_cross() then
-            package:add("deps", "flatbuffers~host", {kind = "binary"})
+            package:add("deps", "flatbuffers~host", {kind = "binary", private = true})
         end
     end)
 
@@ -66,8 +66,8 @@ package("steam-audio")
         table.insert(configs, "-DSTEAMAUDIO_ENABLE_TRUEAUDIONEXT=" .. (package:config("trueaudio_next") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
 
+        os.mv(package:installdir("lib/*.dll"), package:installdir("bin"))
         if package:is_plat("windows") and package:config("shared") then
-            os.mv(package:installdir("lib/*.dll"), package:installdir("bin"))
             local phonon_h = path.join(package:installdir("include"), "phonon.h")
             io.replace(phonon_h, "#define IPLAPI\n#endif", "#define IPLAPI __declspec(dllimport)\n#endif", {plain = true})
         end

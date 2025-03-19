@@ -16,6 +16,7 @@ function main(package)
     -- remove zlib hardcode
     io.replace("build/FindMySOFA.cmake", "set(ZLIB_ROOT ${CMAKE_HOME_DIRECTORY}/deps/zlib/lib/${IPL_BIN_SUBDIR}/release)", "", {plain = true})
     io.replace("build/FindMySOFA.cmake", "set(ZLIB_INCLUDE_DIR ${CMAKE_HOME_DIRECTORY}/deps/zlib/include)", "", {plain = true})
+
     -- https://github.com/ValveSoftware/steam-audio/pull/399
     io.replace("src/core/profiler.h", [[#include "memory_allocator.h"]], [[
         #include "memory_allocator.h"
