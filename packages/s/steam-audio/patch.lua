@@ -1,4 +1,4 @@
-function main()
+function main(package)
     if package:is_plat("mingw", "msys") then
         io.replace("CMakeLists.txt", "# Windows flags\nif (IPL_OS_WINDOWS)", "if(0)", {plain = true})
     else

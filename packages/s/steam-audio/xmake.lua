@@ -45,7 +45,7 @@ package("steam-audio")
 
     on_install("!bsd", function (package)
         os.cd("core")
-        import("patch")()
+        import("patch")(package)
 
         local configs = {
             "-DSTEAMAUDIO_BUILD_TESTS=OFF",
