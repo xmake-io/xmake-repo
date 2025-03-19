@@ -72,7 +72,7 @@ package("duckdb")
     end)
 
     on_load("windows", "macosx", "linux", function (package)
-        if package:data("precompiled") then
+        if not package:data("precompiled") then
             package:add("deps", "cmake")
         end
     end)
