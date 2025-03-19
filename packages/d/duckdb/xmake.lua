@@ -71,6 +71,12 @@ package("duckdb")
         package:data_set("precompiled", precompiled)
     end)
 
+    on_load("windows", "macosx", "linux", function (package)
+        if package:data("precompiled") then
+            package:add("deps", "cmake")
+        end
+    end)
+
     on_install("windows", "macosx", "linux", function (package)
         if package:data("precompiled") then
             os.trycp("*.dll", package:installdir("lib"))
