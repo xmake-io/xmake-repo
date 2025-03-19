@@ -96,7 +96,7 @@ package("duckdb")
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_test(function (package)
+    on_test("windows", "macosx", "linux", function (package)
         assert(package:check_cxxsnippets({test = [[
             #include "duckdb.hpp"
             using namespace duckdb;
