@@ -14,6 +14,8 @@ package("zoe")
 
     if is_plat("windows") then
         add_syslinks("ws2_32", "crypt32")
+    elseif is_plat("linux", "bsd", "cross") then
+        add_syslinks("pthread")
     end
 
     on_load(function (package)
@@ -25,7 +27,7 @@ package("zoe")
         end
     end)
 
-    on_install(function (package)
+    on_install("!bsd and !wasm", function (package)
         io.replace("CMakeLists.txt", "set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)", "include(GNUInstallDirs)\nset(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})", {plain = true})
         io.replace("CMakeLists.txt", [[set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)]], [[set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})]], {plain = true})
         io.replace("CMakeLists.txt", [[set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)]], [[set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})]], {plain = true})
