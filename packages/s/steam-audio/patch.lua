@@ -1,5 +1,6 @@
 function _unsafe_patch(package)
     if package:is_plat("macosx") then
+        io.replace("CMakeLists.txt", [[set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64")]], "", {plain = true})
         io.replace("CMakeLists.txt", [[set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13")]], "", {plain = true})
     end
 

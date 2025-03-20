@@ -43,7 +43,7 @@ package("steam-audio")
         end
     end)
 
-    on_install("!bsd and !mingw", function (package)
+    on_install("!bsd and !mingw and !cross", function (package)
         os.cd("core")
         import("patch")(package)
 
