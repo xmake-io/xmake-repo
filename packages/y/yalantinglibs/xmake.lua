@@ -7,6 +7,7 @@ package("yalantinglibs")
     set_urls("https://github.com/alibaba/yalantinglibs/archive/refs/tags/$(version).tar.gz",
              "https://github.com/alibaba/yalantinglibs.git")
 
+    add_versions("0.4.0", "35d88b5e329f88edb702c1c40a67dedb4438898774c96bb6f3f1704ab828257f")
     add_versions("0.3.11", "1766ca1ec977e2dd56dabdcad3172dc1b79c3bd1acd26ea2de019299fa7e888a")
     add_versions("0.3.9", "aea6c5c99297f9b875eac8cabdf846b8f8e792bf7ccb3da8e0afda90ea62f00b")
     add_versions("0.3.8", "a9966687a2ac1ed0b1a001a69e144db4cff4cdf77a5a80c00364e6ea687d3c52")
@@ -22,7 +23,17 @@ package("yalantinglibs")
     add_configs("struct_pack_unportable_type", {description = "enable struct_pack unportable type(like wchar_t)",  default = false, type = "boolean"})
     add_configs("struct_pack_unportable_optimize", {description = "enable struct_pack optimize(but cost more compile time)",  default = false, type = "boolean"})
 
+    add_deps("cmake")
     add_deps("cinatra", "iguana")
+
+    on_check("windows", function (package)
+        local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+        if vs_toolset then
+            local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
+            local minor = vs_toolset_ver:minor()
+            assert(minor and minor >= 30, "package(yalantinglibs) dep(cinatra) require vs_toolset >= 14.3")
+        end
+    end)
 
     on_load(function (package)
         if package:config("ssl") then
