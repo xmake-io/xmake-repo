@@ -23,40 +23,65 @@ package("llvm")
     add_configs("libcxxabi",         {description = "Enable libcxxabi runtime.", default = true, type = "boolean"})
     add_configs("openmp",            {description = "Enable openmp runtime.", default = false, type = "boolean"})
 
+    -- before adding a new version, make sure that the prebuild is containing llvm-config
     if on_source then
         on_source(function (package)
+            import("core.base.semver")
             local precompiled = false
-            if package:is_plat("windows") then
-                if package:is_arch("x86") then
-                    package:set("urls", "https://github.com/xmake-mirror/llvm-windows/releases/download/$(version)/clang+llvm-$(version)-win32.zip")
-                    package:add("versions", "11.0.0", "268043ae0b656cf6272ccb9b8e3f21f51170b74ed8997ddc0b99587983b821ca")
-                    package:add("versions", "14.0.0", "63afc3c472cb279978c5a7efc25b8783a700aeb416df67886b7057eba52a8742")
-                    package:add("versions", "15.0.7", "8dbabb2194404220f8641b4b18b24b36eca0ae751380c23fc7743097e205b95f")
-                    package:add("versions", "16.0.6", "5e1f560f75e7a4c7a6509cf7d9a28b4543e7afcb4bcf4f747e9f208f0efa6818")
-                    package:add("versions", "17.0.6", "ce78b510603cb3b347788d2f52978e971cf5f55559151ca13a73fd400ad80c41")
-                    package:add("versions", "18.1.1", "9f59dd99d45f64a5c00b00d27da8fe8b5f162905026f5c9ef0ade6e73ae18df3")
-                    precompiled = true
+            local latest = "18.1.8"
+            local requiredversion = (package:requireinfo() and package:requireinfo().version) or "latest" == "latest"
+            if requiredversion ~= "latest" and requiredversion ~= latest then
+                if semver.satisfies(latest, (package:requireinfo() and package:requireinfo().version) or latest) then
+                    requiredversion = semver.new(latest)
                 else
-                    package:set("urls", "https://github.com/xmake-mirror/llvm-windows/releases/download/$(version)/clang+llvm-$(version)-win64.zip")
-                    package:add("versions", "11.0.0", "db5b3a44f8f784ebc71f716b54eb63c0d8d21aead12449f36291ab00820271c7")
-                    package:add("versions", "14.0.0", "c1e1ddf11aa73c58073956d9217086550544328ed5e6ec64c1a709badb231711")
-                    package:add("versions", "15.0.7", "7d29ca82f8b73e9973209e90428ec9f3fbd3b01925bd26e34f59e959e9ea7eb3")
-                    package:add("versions", "16.0.6", "7adb1a630b6cc676a4b983aca9b01e67f770556c6e960e9ee9aa7752c8beb8a3")
-                    package:add("versions", "17.0.6", "c480a4c280234b91f7796a1b73b18134ae62fe7c88d2d0c33312d33cb2999187")
-                    package:add("versions", "18.1.1", "28a9fbcd18f1e7e736ece6d663726bc15649f025343c3004dcbfc2d367b9924c")
+                    requiredversion = semver.new(requiredversion)
+                end
+            else
+                requiredversion = semver.new(latest)
+            end
+            if package:is_plat("windows") then
+                if requiredversion:satisfies("18.1.8") then
+                    package:set("urls", "https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/clang+llvm-$(version)-x86_64-pc-windows-msvc.tar.xz")
+                    package:add("versions", "18.1.8", "22c5907db053026cc2a8ff96d21c0f642a90d24d66c23c6d28ee7b1d572b82e8")
                     precompiled = true
+                elseif requiredversion:major() ~= 16 and requiredversion:minor() ~= 0 and requiredversion:patch() ~= 5 then
+                    if package:is_arch("x86") then
+                        package:set("urls", "https://github.com/xmake-mirror/llvm-windows/releases/download/$(version)/clang+llvm-$(version)-win32.zip")
+                        -- package:add("versions", "11.0.0", "268043ae0b656cf6272ccb9b8e3f21f51170b74ed8997ddc0b99587983b821ca")
+                        package:add("versions", "14.0.0", "63afc3c472cb279978c5a7efc25b8783a700aeb416df67886b7057eba52a8742")
+                        package:add("versions", "15.0.7", "8dbabb2194404220f8641b4b18b24b36eca0ae751380c23fc7743097e205b95f")
+                        package:add("versions", "16.0.6", "5e1f560f75e7a4c7a6509cf7d9a28b4543e7afcb4bcf4f747e9f208f0efa6818")
+                        package:add("versions", "17.0.6", "ce78b510603cb3b347788d2f52978e971cf5f55559151ca13a73fd400ad80c41")
+                        package:add("versions", "18.1.1", "9f59dd99d45f64a5c00b00d27da8fe8b5f162905026f5c9ef0ade6e73ae18df3")
+                        precompiled = true
+                    else
+                        package:set("urls", "https://github.com/xmake-mirror/llvm-windows/releases/download/$(version)/clang+llvm-$(version)-win64.zip")
+                        -- package:add("versions", "11.0.0", "db5b3a44f8f784ebc71f716b54eb63c0d8d21aead12449f36291ab00820271c7")
+                        package:add("versions", "14.0.0", "c1e1ddf11aa73c58073956d9217086550544328ed5e6ec64c1a709badb231711")
+                        package:add("versions", "15.0.7", "7d29ca82f8b73e9973209e90428ec9f3fbd3b01925bd26e34f59e959e9ea7eb3")
+                        package:add("versions", "16.0.6", "7adb1a630b6cc676a4b983aca9b01e67f770556c6e960e9ee9aa7752c8beb8a3")
+                        package:add("versions", "17.0.6", "c480a4c280234b91f7796a1b73b18134ae62fe7c88d2d0c33312d33cb2999187")
+                        package:add("versions", "18.1.1", "28a9fbcd18f1e7e736ece6d663726bc15649f025343c3004dcbfc2d367b9924c")
+                        precompiled = true
+                    end
                 end
             end
             if not precompiled then
-                package:set("urls", "https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/llvm-project-$(version).src.tar.xz")
-                package:add("versions", "11.0.0", "b7b639fc675fa1c86dd6d0bc32267be9eb34451748d2efd03f674b773000e92b")
-                package:add("versions", "14.0.0", "35ce9edbc8f774fe07c8f4acdf89ec8ac695c8016c165dd86b8d10e7cba07e23")
-                package:add("versions", "15.0.7", "8b5fcb24b4128cf04df1b0b9410ce8b1a729cb3c544e6da885d234280dedeac6")
-                package:add("versions", "16.0.5", "37f540124b9cfd4680666e649f557077f9937c9178489cea285a672e714b2863")
-                package:add("versions", "16.0.6", "ce5e71081d17ce9e86d7cbcfa28c4b04b9300f8fb7e78422b1feb6bc52c3028e")
-                package:add("versions", "17.0.6", "58a8818c60e6627064f312dbf46c02d9949956558340938b71cf731ad8bc0813")
-                package:add("versions", "18.1.1", "8f34c6206be84b186b4b31f47e1b52758fa38348565953fad453d177ef34c0ad")
+                if requiredversion:satisfies("11.0.0") then
+                    package:set("urls", "https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/llvm-project-$(version).tar.xz")
+                    -- package:add("versions", "11.0.0", "b7b639fc675fa1c86dd6d0bc32267be9eb34451748d2efd03f674b773000e92b")
+                else
+                    package:set("urls", "https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/llvm-project-$(version).src.tar.xz")
+                    package:add("versions", "14.0.0", "35ce9edbc8f774fe07c8f4acdf89ec8ac695c8016c165dd86b8d10e7cba07e23")
+                    package:add("versions", "15.0.7", "8b5fcb24b4128cf04df1b0b9410ce8b1a729cb3c544e6da885d234280dedeac6")
+                    package:add("versions", "16.0.5", "37f540124b9cfd4680666e649f557077f9937c9178489cea285a672e714b2863")
+                    package:add("versions", "16.0.6", "ce5e71081d17ce9e86d7cbcfa28c4b04b9300f8fb7e78422b1feb6bc52c3028e")
+                    package:add("versions", "17.0.6", "58a8818c60e6627064f312dbf46c02d9949956558340938b71cf731ad8bc0813")
+                    package:add("versions", "18.1.1", "8f34c6206be84b186b4b31f47e1b52758fa38348565953fad453d177ef34c0ad")
+                    package:add("versions", "18.1.8", "0b58557a6d32ceee97c8d533a59b9212d87e0fc4d2833924eb6c611247db2f2a")
+                end
             end
+            package:data_set("precompiled", precompiled)
         end)
     else
         -- After xmake v2.9.5, we'll remove it.
@@ -64,7 +89,7 @@ package("llvm")
         if is_plat("windows") then
             if is_arch("x86") then
                 set_urls("https://github.com/xmake-mirror/llvm-windows/releases/download/$(version)/clang+llvm-$(version)-win32.zip")
-                add_versions("11.0.0", "268043ae0b656cf6272ccb9b8e3f21f51170b74ed8997ddc0b99587983b821ca")
+                -- add_versions("11.0.0", "268043ae0b656cf6272ccb9b8e3f21f51170b74ed8997ddc0b99587983b821ca")
                 add_versions("14.0.0", "63afc3c472cb279978c5a7efc25b8783a700aeb416df67886b7057eba52a8742")
                 add_versions("15.0.7", "8dbabb2194404220f8641b4b18b24b36eca0ae751380c23fc7743097e205b95f")
                 add_versions("16.0.6", "5e1f560f75e7a4c7a6509cf7d9a28b4543e7afcb4bcf4f747e9f208f0efa6818")
@@ -73,24 +98,26 @@ package("llvm")
                 precompiled = true
             else
                 set_urls("https://github.com/xmake-mirror/llvm-windows/releases/download/$(version)/clang+llvm-$(version)-win64.zip")
-                add_versions("11.0.0", "db5b3a44f8f784ebc71f716b54eb63c0d8d21aead12449f36291ab00820271c7")
+                -- add_versions("11.0.0", "db5b3a44f8f784ebc71f716b54eb63c0d8d21aead12449f36291ab00820271c7")
                 add_versions("14.0.0", "c1e1ddf11aa73c58073956d9217086550544328ed5e6ec64c1a709badb231711")
                 add_versions("15.0.7", "7d29ca82f8b73e9973209e90428ec9f3fbd3b01925bd26e34f59e959e9ea7eb3")
                 add_versions("16.0.6", "7adb1a630b6cc676a4b983aca9b01e67f770556c6e960e9ee9aa7752c8beb8a3")
                 add_versions("17.0.6", "c480a4c280234b91f7796a1b73b18134ae62fe7c88d2d0c33312d33cb2999187")
                 add_versions("18.1.1", "28a9fbcd18f1e7e736ece6d663726bc15649f025343c3004dcbfc2d367b9924c")
+                add_versions("18.1.8", "c9ff08a5267aa0a909d8aae9d4a08562853daa2eb85eac96eb9d3e33b0be1348")
                 precompiled = true
             end
-        end
-        if not precompiled then
-            set_urls("https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/llvm-project-$(version).src.tar.xz")
-            add_versions("11.0.0", "b7b639fc675fa1c86dd6d0bc32267be9eb34451748d2efd03f674b773000e92b")
-            add_versions("14.0.0", "35ce9edbc8f774fe07c8f4acdf89ec8ac695c8016c165dd86b8d10e7cba07e23")
-            add_versions("15.0.7", "8b5fcb24b4128cf04df1b0b9410ce8b1a729cb3c544e6da885d234280dedeac6")
-            add_versions("16.0.5", "37f540124b9cfd4680666e649f557077f9937c9178489cea285a672e714b2863")
-            add_versions("16.0.6", "ce5e71081d17ce9e86d7cbcfa28c4b04b9300f8fb7e78422b1feb6bc52c3028e")
-            add_versions("17.0.6", "58a8818c60e6627064f312dbf46c02d9949956558340938b71cf731ad8bc0813")
-            add_versions("18.1.1", "8f34c6206be84b186b4b31f47e1b52758fa38348565953fad453d177ef34c0ad")
+            if not precompiled then
+                set_urls("https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/llvm-project-$(version).src.tar.xz")
+                -- add_versions("11.0.0", "b7b639fc675fa1c86dd6d0bc32267be9eb34451748d2efd03f674b773000e92b")
+                add_versions("14.0.0", "35ce9edbc8f774fe07c8f4acdf89ec8ac695c8016c165dd86b8d10e7cba07e23")
+                add_versions("15.0.7", "8b5fcb24b4128cf04df1b0b9410ce8b1a729cb3c544e6da885d234280dedeac6")
+                add_versions("16.0.5", "37f540124b9cfd4680666e649f557077f9937c9178489cea285a672e714b2863")
+                add_versions("16.0.6", "ce5e71081d17ce9e86d7cbcfa28c4b04b9300f8fb7e78422b1feb6bc52c3028e")
+                add_versions("17.0.6", "58a8818c60e6627064f312dbf46c02d9949956558340938b71cf731ad8bc0813")
+                add_versions("18.1.1", "8f34c6206be84b186b4b31f47e1b52758fa38348565953fad453d177ef34c0ad")
+                add_versions("18.1.8", "3e46c24870921c85e3c747f7c422f41c1b7d2f92e066bb72274d6803ef0c63ba")
+            end
         end
     end
 
@@ -107,6 +134,9 @@ package("llvm")
             if package:config("openmp") then
                 package:add("deps", "libelf", {host = true})
             end
+        end
+        if package:is_plat("bsd", "macosx") then
+            package:add("deps", "ca-certificates", {host = true})
         end
         -- add components
         if package:is_library() then
@@ -127,6 +157,10 @@ package("llvm")
     end)
 
     on_install("linux", "macosx|x86_64", "bsd", function (package)
+        if package:data("precompiled") then
+            os.cp("*", package:installdir())
+            return
+        end
         local projects = {
             "bolt",
             "clang",
@@ -218,5 +252,11 @@ package("llvm")
             if package:config("clang") then
                 os.vrun("clang --version")
             end
+        end
+
+        if package:is_library() then
+            assert(package:check_cxxsnippets([[
+                void test() {}
+            ]], { includes = "clang-c/Index.h" }))
         end
     end)

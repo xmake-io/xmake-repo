@@ -1,5 +1,6 @@
 function get_links(package)
     local links = {
+        "libclang",
         "clang-cpp",
         "clang",
         "clangAPINotes",
