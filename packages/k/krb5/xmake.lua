@@ -15,7 +15,7 @@ package("krb5")
     add_links("k5crypto", "kdb5", "krad", "gssapi_krb5", "krb5support", "krb5", "gssrpc", "verto", "com_err")
     on_load("macosx", "linux", function (package)
         if package:config("tls") then
-            package:add("deps", "openssl")
+            package:add("deps", "openssl3")
         end
     end)
 
