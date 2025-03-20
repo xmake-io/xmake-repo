@@ -7,6 +7,7 @@ package("webthing-cpp")
     add_urls("https://github.com/bw-hro/webthing-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/bw-hro/webthing-cpp.git")
 
+    add_versions("v1.2.0", "95d527bf8e2cef9221a42519b4798fda7d0866abd7ccaf21d57a629168a94ccc")
     add_versions("v1.1.0", "7f32651813168b7a51f95005be626cfaf30868db134a5bf9ca491a9d07949f5a")
 
     add_configs("ssl", {description = "Build with SSL", default = true, type = "boolean"})
