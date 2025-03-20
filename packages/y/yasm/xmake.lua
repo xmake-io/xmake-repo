@@ -1,39 +1,32 @@
 package("yasm")
-
     set_kind("binary")
     set_homepage("https://yasm.tortall.net/")
     set_description("Modular BSD reimplementation of NASM.")
+    set_license("BSD-2-Clause")
 
-    if is_host("windows") then
-        if os.arch() == "x64" then
-            add_urls("https://github.com/yasm/yasm/releases/download/$(version)/vsyasm-$(version)-win64.zip",
-                     "http://www.tortall.net/projects/yasm/releases/vsyasm-$(version)-win64.zip")
-            add_versions("1.3.0", "6D991CA77E3827AADE0091C87C89CB4C9FA6AD097AFCEA95EA736482BAE707E2")
-        else
-            add_urls("https://github.com/yasm/yasm/releases/download/$(version)/vsyasm-$(version)-win32.zip",
-                     "http://www.tortall.net/projects/yasm/releases/vsyasm-$(version)-win32.zip")
-            add_versions("1.3.0", "FF4585E2A03E7015B0B1D406D4231267C2D3733968FFC6FC633E586C85C16DA5")
-        end
-    else
-        add_urls("https://www.tortall.net/projects/yasm/releases/yasm-$(version).tar.gz",
-                 "https://ftp.openbsd.org/pub/OpenBSD/distfiles/yasm-$(version).tar.gz")
-        add_versions("1.3.0", "3dce6601b495f5b3d45b59f7d2492a340ee7e84b5beca17e48f862502bd5603f")
+    add_urls("https://github.com/yasm/yasm/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/yasm/yasm.git")
+    add_versions("v1.3.0", "f708be0b7b8c59bc1dbe7134153cd2f31faeebaa8eec48676c10f972a1f13df3")
+
+    add_deps("cmake")
+
+    if is_subhost("mingw", "msys") then
+        add_deps("dlfcn-win32")
     end
 
-    on_install("@windows", "@mingw", "@msys", function (package)
-        os.mv("vsyasm.exe", "yasm.exe")
-        os.cp("*", package:installdir("bin"))
-    end)
-    
-    on_install("@linux", "@macosx", function (package)
-        local configs = {"--disable-python"}
-        if package:debug() then
-            table.insert(configs, "--enable-debug")
+    on_install("@windows", "@linux", "@macosx", "@msys", function (package)
+        local configs = {"-DYASM_BUILD_TESTS=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        local opt
+        if is_subhost("mingw", "msys") then
+            opt = {packagedeps = "dlfcn-win32"}
         end
-        import("package.tools.autoconf").install(package)
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
         os.vrun("yasm --version")
+        if package:is_plat("windows") then
+            os.vrun("vsyasm --version")
+        end
     end)
-    
