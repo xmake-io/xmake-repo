@@ -11,7 +11,12 @@ package("think-cell-library")
 
     add_deps("boost", {configs = {filesystem = true, container = true}})
 
-    on_install(function (package)
+    on_check("android", function (package)
+        local ndk = package:toolchain("ndk"):config("ndkver")
+        assert(ndk and tonumber(ndk) > 22, "package(think-cell-library) require ndk version > 22")
+    end)
+
+    on_install("!wasm", function (package)
         os.rm("tc/string/spirit")
         io.replace("tc/string/spirit.h", [[#include "spirit/x3.hpp"]], "#include <boost/spirit/home/x3.hpp>", {plain = true})
 
