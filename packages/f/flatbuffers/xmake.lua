@@ -17,14 +17,14 @@ package("flatbuffers")
     add_deps("cmake")
 
     on_install(function(package)
+        if not package:is_cross() then
+            package:addenv("PATH", "bin")
+        end
+
         io.replace("CMakeLists.txt", "/MT", "", {plain = true})
         io.replace("CMakeLists.txt",
             "RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}",
             "RUNTIME DESTINATION bin", {plain = true})
-
-        if not package:is_cross() then
-            package:addenv("PATH", "bin")
-        end
 
         local configs = {"-DFLATBUFFERS_BUILD_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
@@ -45,10 +45,6 @@ package("flatbuffers")
 
         if package:is_binary() then
             os.tryrm(package:installdir("include"))
-        end
-
-        if package:is_plat("windows") and package:is_debug() then
-            os.trymv(package:installdir("lib/flatc.pdb"), package:installdir("bin"))
         end
     end)
 
