@@ -1,26 +1,52 @@
 package("zasm")
-
     set_homepage("https://github.com/zyantific/zasm")
     set_description("x86-64 Assembler based on Zydis")
 
     set_urls("https://github.com/zyantific/zasm.git")
-    add_versions("2023.6.21", "19a642518eccbb1740865642eaf3ce79d5d5b884")
+
+    add_versions("2025.03.02", "c239a78b51c1b0060296193174d78b802f02a618")
+    add_versions("2024.05.14", "bea8af2c68f0cbe8a02e93ab79a8b5c596d2b232")
+    add_versions("2023.06.21", "19a642518eccbb1740865642eaf3ce79d5d5b884")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
-    add_deps("zydis v4.0.0")
+    on_load(function (package)
+        local map = {
+            ["2025.03.02"] = "4.1.0",
+            ["2024.05.14"] = "4.1.0",
+            ["2023.06.21"] = "4.0.0",
+        }
+        local zydis_version = map[package:version()]
+        if zydis_version then
+            package:add("deps", "zydis " .. zydis_version)
+        else
+            package:add("deps", "zydis")
+        end
+    end)
 
-    on_install("windows", "macosx", "linux", "bsd", "cross", "mingw", "android", function (package)
-        local configs = {}
-        io.writefile("xmake.lua", [[
+    on_install("!wasm and !iphoneos", function (package)
+        local src_include
+        if package:version() and package:version():lt("2024.05.14") then
+            src_include = [[
+                add_files("src/zasm/**.cpp")
+                add_includedirs("include", "src/zasm/src")
+                add_headerfiles("include/(**.hpp)")
+            ]]
+        else
+            src_include = [[
+                add_files("zasm/**.cpp")
+                add_includedirs("zasm/include")
+                add_headerfiles("zasm/include/(**.hpp)")
+            ]]
+        end
+
+        io.writefile("xmake.lua", format([[
             add_rules("mode.debug", "mode.release")
             add_requires("zydis v4.0.0")
             target("zasm")
                 set_kind("$(kind)")
                 set_languages("c++17")
-                add_files("src/zasm/**.cpp")
-                add_includedirs("include", "src/zasm/src")
-                add_headerfiles("include/(**.hpp)")
+                %s
                 if is_plat("windows") then
                     add_cxxflags("/bigobj", "/MP", "/W3", "/permissive-")
                     if is_kind("shared") then
@@ -28,11 +54,8 @@ package("zasm")
                     end
                 end
                 add_packages("zydis")
-        ]])
-        if package:config("shared") then
-            configs.kind = "shared"
-        end
-        import("package.tools.xmake").install(package, configs)
+        ]], src_include))
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
