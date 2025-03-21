@@ -65,7 +65,7 @@ package("sqrat")
 
             target("sq")
                 set_kind("binary")
-                add_deps("sqratimport")
+                add_deps("sqimport")
                 add_includedirs("include")
                 add_files("sq/sq.c")
                 add_packages("squirrel")
