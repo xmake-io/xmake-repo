@@ -12,5 +12,5 @@ package("rapidhash")
     end)
 
     on_test(function(package)
-        assert(package:has_cxxfuncs("rapidhash", {includes = "rapidhash.h"}))      
+        assert(package:has_cxxfuncs("rapidhash", {configs = {languages = "c++11"}, includes = "rapidhash.h"}))      
     end)
