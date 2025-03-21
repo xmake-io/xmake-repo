@@ -13,6 +13,7 @@ package("steam-audio")
     add_configs("embree", {description = "Enable Intel Embree support for ray tracing.", default = false, type = "boolean"})
     add_configs("radeonrays", {description = "Enable AMD Radeon Rays support for GPU-accelerated ray tracing.", default = false, type = "boolean"})
     add_configs("trueaudio_next", {description = "Enable AMD TrueAudio Next support for GPU-accelerated convolution.", default = false, type = "boolean", readonly = true})
+    add_configs("abi", {description = "Apply some unsafe patch for linux and macos build, maybe abi break", default = true, type = "boolean"})
 
     add_deps("cmake")
     add_deps("libmysofa", "flatbuffers")
