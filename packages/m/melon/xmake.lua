@@ -10,23 +10,13 @@ package("melon")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    on_check(function (package)
-        if is_plat("mingw") and is_subhost("msys") then
+    on_check("mingw", function (package)
+        if is_subhost("macos") or is_subhost("msys") then
             raise("package(melon) is unsupported on MinGW64/UCRT64. Use CLANG64 Shell.")
-        end
-        if is_plat("android") then
-            import("core.tool.toolchain")
-            local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
-            local ndk_sdkver = ndk:config("ndk_sdkver")
-            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 26, "package(melon): need ndk api level >= 26 for android")
         end
     end)
 
-    on_install(function (package)
-        io.replace("include/mln_utils.h", 
-        "#if defined(__APPLE__) || defined(MSVC) || defined(__wasm__) || defined(__FreeBSD__)", 
-        "#if defined(__APPLE__) || defined(MSVC) || defined(__wasm__) || defined(__FreeBSD__) || defined(__ANDROID_API__)", {plain = true})
-
+    on_install("!android", function (package)
         if is_plat("windows") then
             for _, file in ipairs(os.files("src/*.c")) do
                 io.replace(file, "!defined(MSVC)", "0", {plain = true})
