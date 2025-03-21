@@ -16,11 +16,6 @@ package("cryptopp")
     add_resources("8.5.0", "cryptopp_cmake", "https://github.com/noloader/cryptopp-cmake/archive/CRYPTOPP_8_5_0.tar.gz", "10685209405e676993873fcf638ade5f8f99d7949afa6b2045289ce9cc6d90ac")
     add_resources("8.4.0", "cryptopp_cmake", "https://github.com/noloader/cryptopp-cmake/archive/CRYPTOPP_8_4_0.tar.gz", "b850070141f6724fce640e4e2cfde433ec5b2d99d4386d29ba9255167bc4b4f0")
 
-    if is_plat("windows") then
-        -- cryptocpp_cmake does not support shared libraries as of 8.7
-        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-    end
-
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::crypto++")
     elseif is_plat("linux") then
@@ -36,6 +31,10 @@ package("cryptopp")
     add_deps("cmake")
 
     on_install("windows", "macosx", "linux", "bsd", "iphoneos", function (package)
+        if package:is_plat("windows") and package:config("shared") then
+            package:add("defines", "CRYPTOPP_IMPORTS")
+        end
+
         local cryptopp_cmake = package:resourcedir("cryptopp_cmake")
         os.cp(path.join(cryptopp_cmake, "*", "CMakeLists.txt"), ".")
         if package:version() and package:version():le("8.6") then
@@ -48,15 +47,18 @@ package("cryptopp")
         end
         -- fix unresolved external symbol PadLastBlock
         -- @see https://github.com/weidai11/cryptopp/issues/358
-        io.replace("iterhash.h", "CRYPTOPP_NO_VTABLE", "CRYPTOPP_DLL CRYPTOPP_NO_VTABLE")
+        io.replace("iterhash.h", "CRYPTOPP_NO_VTABLE", "CRYPTOPP_DLL CRYPTOPP_NO_VTABLE", {plain = true})
+        -- remove CRYPTOPP_BUILD_SHARED hardcore
+        io.replace("cryptopp/CMakeLists.txt", "set(BUILD_SHARED_LIBS ${CRYPTOPP_BUILD_SHARED})", "", {plain = true})
 
         local configs = {
+            -- Don't auto fetch source code
             "-DCRYPTOPP_SOURCES=" .. path.unix(os.curdir()),
             "-DBUILD_TESTING=OFF",
             "-DCRYPTOPP_BUILD_TESTING=OFF",
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DCRYPTOPP_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DBUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
 
