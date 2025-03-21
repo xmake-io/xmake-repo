@@ -6,7 +6,20 @@ package("melon")
     add_urls("https://github.com/Water-Melon/Melon.git")
     add_versions("2025.01.18", "9df92922ab384295380d4414493e69983671dbf5")
 
+    if is_plat("mingw") then
+        add_deps("mman_win32")    
+    end
+
     on_install(function (package)
+        io.replace("include/mln_utils.h", 
+        "#if defined(__APPLE__) || defined(MSVC) || defined(__wasm__) || defined(__FreeBSD__)", 
+        "#if defined(__APPLE__) || defined(MSVC) || defined(__wasm__) || defined(__FreeBSD__) || defined(__MINGW32__) || defined(__MINGW64__) || defined(__ANDROID_API__)", {plain = true})
+        if is_plat("mingw") then
+            io.replace("src/mln_bignum.c", "#include <stdlib.h>", "#include <pthread.h>\n#include <stdlib.h>", {plain = true})
+
+            io.replace("include/mln_event.h", "#if defined(MSVC)", "#if 1", {plain = true})
+            io.replace("include/mln_connection.h", "#if defined(MSVC)", "#if 1", {plain = true})
+        end
         if is_plat("windows") then
             for _, file in ipairs(os.files("src/*.c")) do
                 io.replace(file, "!defined(MSVC)", "0", {plain = true})
@@ -27,7 +40,14 @@ package("melon")
 
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
+            if is_plat("mingw") then
+                add_requires("mman_win32")    
+            end
             target("melon")
+                if is_plat("mingw") then
+                    add_packages("mman_win32")
+                    add_defines("_DEFAULT_SOURCE", "_POSIX_C_SOURCE=200809L")
+                end
                 if is_plat("windows") then
                     set_languages("c11")
                 else
