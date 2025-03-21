@@ -11,6 +11,9 @@ package("melon")
     end
 
     on_check("mingw", function (package)
+        if is_subhost("macosx") then
+            raise("package(melon) is unsupported on Mac OS X subhost.")
+        end
         local msystem = os.getenv("MSYSTEM")
         if msystem then
             if msystem ~= "CLANG64" or msystem ~= "CLANGARM64" then 
