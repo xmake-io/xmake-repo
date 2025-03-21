@@ -7,6 +7,7 @@ package("rapidjson")
     set_urls("https://github.com/Tencent/rapidjson/archive/$(version).zip",
              "https://github.com/Tencent/rapidjson.git")
 
+    add_versions("2025.02.05", "24b5e7a8b27f42fa16b96fc70aade9106cf7102f")
     add_versions("2024.08.16", "7c73dd7de7c4f14379b781418c6e947ad464c818")
     add_versions("2023.12.6", "6089180ecb704cb2b136777798fa1be303618975")
     add_versions("2022.7.20", "27c3a8dc0e2c9218fe94986d249a12b5ed838f1d")
