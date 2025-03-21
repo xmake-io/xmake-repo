@@ -6,6 +6,10 @@ package("melon")
     add_urls("https://github.com/Water-Melon/Melon.git")
     add_versions("2025.01.18", "9df92922ab384295380d4414493e69983671dbf5")
 
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     on_check(function (package)
         if is_plat("mingw") and is_subhost("msys") then
             raise("package(melon) is unsupported on MinGW64/UCRT64. Use CLANG64 Shell.")
@@ -52,9 +56,6 @@ package("melon")
                 add_files("src/*.c")
                 add_headerfiles("include/*.h")
                 add_includedirs("include")
-                if is_plat("windows") and is_kind("shared") then
-                    add_rules("utils.symbols.export_all")
-                end
                 if is_plat("linux", "bsd") then
                     add_syslinks("dl", "pthread")
                 end
