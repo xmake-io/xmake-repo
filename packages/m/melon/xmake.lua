@@ -1,6 +1,6 @@
 package("melon")
     set_homepage("http://doc.melonc.io")
-    set_description(" A generic cross-platform C library that includes many commonly used components and frameworks, and a new scripting language interpreter. It currently supports C99 and Aspect-Oriented Programming (AOP).")
+    set_description("A generic cross-platform C library that includes many commonly used components and frameworks, and a new scripting language interpreter. It currently supports C99 and Aspect-Oriented Programming (AOP).")
     set_license("BSD-3-Clause")
 
     add_urls("https://github.com/Water-Melon/Melon.git")
@@ -17,7 +17,7 @@ package("melon")
     end)
 
     on_install("!android", function (package)
-        if is_plat("windows") then
+        if package:is_plat("windows") then
             for _, file in ipairs(os.files("src/*.c")) do
                 io.replace(file, "!defined(MSVC)", "0", {plain = true})
                 io.replace(file, "defined(MSVC)", "1", {plain = true})
