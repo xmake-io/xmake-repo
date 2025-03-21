@@ -30,7 +30,7 @@ package("cryptopp")
 
     add_deps("cmake")
 
-    on_install("windows", "macosx", "linux", "bsd", "iphoneos", function (package)
+    on_install(function (package)
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "CRYPTOPP_IMPORTS")
         end
