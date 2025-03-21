@@ -49,6 +49,7 @@ package("cryptopp")
         -- @see https://github.com/weidai11/cryptopp/issues/358
         io.replace("iterhash.h", "CRYPTOPP_NO_VTABLE", "CRYPTOPP_DLL CRYPTOPP_NO_VTABLE", {plain = true})
 
+        io.replace("cryptopp/CMakeLists.txt", [[target_compile_definitions(cryptopp PRIVATE "CRYPTOPP_EXPORTS")]], "", {plain = true})
         io.replace("cryptopp/CMakeLists.txt",
             "set(BUILD_SHARED_LIBS ${CRYPTOPP_BUILD_SHARED})",
             format("set(CRYPTOPP_BUILD_SHARED %s)", package:config("shared") and "ON" or "OFF"), {plain = true})
