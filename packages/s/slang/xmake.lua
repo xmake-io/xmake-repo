@@ -3,10 +3,11 @@ package("slang")
     set_description("Making it easier to work with shaders")
     set_license("MIT")
 
-    add_urls("https://github.com/shader-slang/slang/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/shader-slang/slang.git")
+    add_urls("https://github.com/shader-slang/slang.git")
 
-    add_versions("v2025.6.2", "024fc3de73598ef00222ec71ae59382afaf761fc97e47d63420dfc2ff4c1f761")
+    add_versions("v2025.6.2", "v2025.6.2")
+    add_versions("v2024.1.18", "efdbb954c57b89362e390f955d45f90e59d66878")
+    add_versions("v2024.1.17", "62b7219e715bd4c0f984bcd98c9767fb6422c78f")
 
     add_configs("shared", { description = "Build shared library", default = true, type = "boolean", readonly = true })
     add_configs("embed_stdlib_source", { description = "Embed stdlib source in the binary", default = true, type = "boolean" })
