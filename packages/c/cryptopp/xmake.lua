@@ -49,13 +49,16 @@ package("cryptopp")
         -- @see https://github.com/weidai11/cryptopp/issues/358
         io.replace("iterhash.h", "CRYPTOPP_NO_VTABLE", "CRYPTOPP_DLL CRYPTOPP_NO_VTABLE", {plain = true})
 
+        io.replace("cryptopp/CMakeLists.txt", "set(CMAKE_CXX_VISIBILITY_PRESET hidden)", "", {plain = true})
+        io.replace("cryptopp/CMakeLists.txt", "set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)", "", {plain = true})
+        io.replace("cryptopp/CMakeLists.txt", "set(CMAKE_POSITION_INDEPENDENT_CODE 1)", "", {plain = true})
         io.replace("cryptopp/CMakeLists.txt", [[target_compile_definitions(cryptopp PRIVATE "CRYPTOPP_EXPORTS")]], "", {plain = true})
         io.replace("cryptopp/CMakeLists.txt",
             "set(BUILD_SHARED_LIBS ${CRYPTOPP_BUILD_SHARED})",
             format("set(CRYPTOPP_BUILD_SHARED %s)", package:config("shared") and "ON" or "OFF"), {plain = true})
 
         local configs = {
-            -- Don't auto fetch source code
+            -- Disable auto fetch source code
             "-DCRYPTOPP_SOURCES=" .. path.unix(os.curdir()),
             "-DBUILD_TESTING=OFF",
             "-DCRYPTOPP_BUILD_TESTING=OFF",
@@ -65,7 +68,7 @@ package("cryptopp")
         table.insert(configs, "-DBUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DBUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
 
-        if package:is_arch("arm", "arm64") then
+        if package:is_plat("windows") and package:is_arch("arm", "arm64") then
             table.insert(configs, "-DDISABLE_ASM=ON")
             table.insert(configs, "-DDISABLE_SSSE3=ON")
             table.insert(configs, "-DDISABLE_SSE4=ON")
