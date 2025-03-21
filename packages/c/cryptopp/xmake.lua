@@ -2,6 +2,7 @@ package("cryptopp")
     set_homepage("https://cryptopp.com/")
     set_description("free C++ class library of cryptographic schemes")
 
+    add_urls("https://github.com/weidai11/cryptopp.git")
     add_urls("https://github.com/weidai11/cryptopp/archive/refs/tags/CRYPTOPP_$(version).tar.gz", {version = function (version) return version:gsub("%.", "_") end})
     add_versions("8.9.0", "ab5174b9b5c6236588e15a1aa1aaecb6658cdbe09501c7981ac8db276a24d9ab")
     add_versions("8.7.0", "8d6a4064b8e9f34cd3e838f5a12c40067ee7b95ee37d9173ec273cb0913e7ca2")
@@ -15,6 +16,11 @@ package("cryptopp")
     add_resources("8.5.0", "cryptopp_cmake", "https://github.com/noloader/cryptopp-cmake/archive/CRYPTOPP_8_5_0.tar.gz", "10685209405e676993873fcf638ade5f8f99d7949afa6b2045289ce9cc6d90ac")
     add_resources("8.4.0", "cryptopp_cmake", "https://github.com/noloader/cryptopp-cmake/archive/CRYPTOPP_8_4_0.tar.gz", "b850070141f6724fce640e4e2cfde433ec5b2d99d4386d29ba9255167bc4b4f0")
 
+    if is_plat("windows") then
+        -- cryptocpp_cmake does not support shared libraries as of 8.7
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::crypto++")
     elseif is_plat("linux") then
@@ -23,17 +29,16 @@ package("cryptopp")
         add_extsources("brew::cryptopp")
     end
 
-    add_deps("cmake")
-
-    if is_plat("windows") then
-        -- cryptocpp_cmake does not support shared libraries as of 8.7
-        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    if is_plat("linux", "bsd") then
+        add_syslinks("pthread")
     end
+
+    add_deps("cmake")
 
     on_install("windows", "macosx", "linux", "bsd", "iphoneos", function (package)
         local cryptopp_cmake = package:resourcedir("cryptopp_cmake")
         os.cp(path.join(cryptopp_cmake, "*", "CMakeLists.txt"), ".")
-        if package:version():le("8.6") then
+        if package:version() and package:version():le("8.6") then
             os.cp(path.join(cryptopp_cmake, "*", "cryptopp-config.cmake"), ".")
         else
             os.cp(path.join(cryptopp_cmake, "*", "CMakePresets.json"), ".")
@@ -45,10 +50,26 @@ package("cryptopp")
         -- @see https://github.com/weidai11/cryptopp/issues/358
         io.replace("iterhash.h", "CRYPTOPP_NO_VTABLE", "CRYPTOPP_DLL CRYPTOPP_NO_VTABLE")
 
-        local configs = {"-DBUILD_TESTING=OFF"}
+        local configs = {
+            "-DCRYPTOPP_SOURCES=" .. path.unix(os.curdir()),
+            "-DBUILD_TESTING=OFF",
+            "-DCRYPTOPP_BUILD_TESTING=OFF",
+        }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCRYPTOPP_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DBUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
+
+        if package:is_arch("arm", "arm64") then
+            table.insert(configs, "-DDISABLE_ASM=ON")
+            table.insert(configs, "-DDISABLE_SSSE3=ON")
+            table.insert(configs, "-DDISABLE_SSE4=ON")
+            table.insert(configs, "-DDISABLE_AESNI=ON")
+            table.insert(configs, "-DDISABLE_CLMUL=ON")
+            table.insert(configs, "-DDISABLE_SHA=ON")
+            table.insert(configs, "-DDISABLE_AVX=ON")
+            table.insert(configs, "-DDISABLE_AVX2=ON")
+        end
 
         local cxflags
         if package:is_plat("windows") and package:config("shared") then
