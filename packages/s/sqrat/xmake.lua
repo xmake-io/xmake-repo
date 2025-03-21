@@ -43,6 +43,7 @@ package("sqrat")
             set_languages("c11", "c++11")
 
             target("sqratthread")
+                set_enabled(is_plat("windows"))
                 set_kind("$(kind)")
                 add_defines("SQRATTHREAD_EXPORTS")
                 add_files("sqratthread/sqratThread.cpp")
@@ -53,7 +54,7 @@ package("sqrat")
                     add_rules("utils.symbols.export_all", {export_classes = true})
                 end
 
-            target("sqimport")
+            target("sqratimport")
                 set_kind("$(kind)")
                 add_files("sqimport/sqratimport.cpp")
                 add_headerfiles("include/sqmodule.h", "include/sqratimport.h")
@@ -65,10 +66,13 @@ package("sqrat")
 
             target("sq")
                 set_kind("binary")
-                add_deps("sqimport")
+                add_deps("sqratimport")
                 add_includedirs("include")
                 add_files("sq/sq.c")
                 add_packages("squirrel")
+                if is_plat("linux", "bsd") then
+                    add_syslinks("m", "dl")
+                end
         ]])
         import("package.tools.xmake").install(package)
     end)
