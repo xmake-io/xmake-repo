@@ -11,7 +11,7 @@ package("melon")
     end
 
     on_check("mingw", function (package)
-        if is_subhost("macos") or is_subhost("msys") then
+        if is_subhost("macosx") or is_subhost("msys") then
             raise("package(melon) is unsupported on MinGW64/UCRT64. Use CLANG64 Shell.")
         end
     end)
