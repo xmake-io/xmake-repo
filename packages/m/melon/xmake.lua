@@ -13,8 +13,8 @@ package("melon")
     on_check("mingw", function (package)
         local msystem = os.getenv("MSYSTEM")
         if msystem then
-            if msystem != "CLANG64" or msystem != "CLANGARM64" then 
-                raise("package(melon) is unsupported on MinGW64/UCRT64. Use CLANG64 Shell.")
+            if msystem ~= "CLANG64" or msystem ~= "CLANGARM64" then 
+                raise("package(melon) is unsupported on MinGW64/UCRT64. Use CLANG64/CLANGARM64 Shell.")
             end
         end
     end)
