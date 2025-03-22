@@ -17,7 +17,7 @@ target("sfgui")
         add_defines("WIN32_LEAN_AND_MEAN", "NOMINMAX")
     end
 
-    if is_plat("windows") and is_kind("shared") then
+    if is_plat("windows", "mingw") and is_kind("shared") then
         add_defines("SFGUI_EXPORTS")
     end
 

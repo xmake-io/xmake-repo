@@ -20,7 +20,7 @@ package("sfgui")
     if is_plat("macosx", "iphoneos") then
         add_frameworks("CoreFoundation", "Foundation")
     end
-
+ 
     on_install("windows", "linux", "macosx", "mingw", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         local configs = {}
@@ -34,7 +34,7 @@ package("sfgui")
         assert(package:check_cxxsnippets({test = [[
             void test() {
                 sfg::Window::Ptr window = sfg::Window::Create();
-	            window->SetTitle( "Title" );      
+	            window->SetTitle( "Title" );
             }
         ]]}, {configs = {languages = "c++17", defines = not package:config("shared") and "SFGUI_STATIC" or nil}, includes = { "SFGUI/SFGUI.hpp", "SFGUI/Widgets.hpp" } }))
     end)
