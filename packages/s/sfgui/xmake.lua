@@ -27,6 +27,7 @@ package("sfgui")
     end
 
     on_install("windows", "linux", "macosx", "mingw", function (package)
+        io.replace("include/SFGUI/Config.hpp", "defined( SFGUI_STATIC )", not package:config("shared") and "1" or "0", {plain = true})
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)
     end)
@@ -37,5 +38,5 @@ package("sfgui")
                 sfg::Window::Ptr window = sfg::Window::Create();
 	            window->SetTitle( "Title" );
             }
-        ]]}, {configs = {languages = "c++17", defines = not package:config("shared") and "SFGUI_STATIC" or nil}, includes = { "SFGUI/SFGUI.hpp", "SFGUI/Widgets.hpp" } }))
+        ]]}, {configs = {languages = "c++17"}, includes = { "SFGUI/SFGUI.hpp", "SFGUI/Widgets.hpp" } }))
     end)
