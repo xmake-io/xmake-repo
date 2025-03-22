@@ -80,19 +80,21 @@ package("msvc")
             table.insert(argv, "--preview")
         end
         local msvc_version = package:version()
-        table.insert(argv, "--msvc-version=" .. format("%s.%s", msvc_version:patch(), msvc_version:build()))
+        table.insert(argv, "--msvc-version=" .. format("%s.%s", msvc_version:patch(), msvc_version:build()[1]))
         table.insert(argv, "--sdk-version=" .. (package:config("sdkver") or "10.0.26100"))
         table.insert(argv, "--architecture=" .. (package:config("target") or os.arch()))
         table.insert(argv, "--dest" .. package:installdir())
 
-        os.vrunv("./vsdownload.py", argv, {shell = true})
-        os.vrunv("./install.sh", {package:installdir()}, {shell = true})
+        local msvc_wine = package:dep("msvc-wine"):installdir()
+        os.vrunv("python3", table.join(path.join(msvc_wine, "bin/vsdownload.py"), argv))
+        os.vrunv(path.join("./", msvc_wine, "bin/install.sh"), {package:installdir()}, {shell = true})
     end)
 
     on_test(function (package)
         if is_host("windows") then
             assert(os.isfile(path.join(package:installdir(), "devcmd.bat")))
         elseif is_host("linux", "macosx") then
-            assert(os.isfile(path.join(package:installdir(), "bin/x64/cl.exe")))
+            local target = package:config("target") or os.arch()
+            assert(os.isfile(path.join(package:installdir(), format("bin/%s/cl.exe", target))))
         end
     end)
