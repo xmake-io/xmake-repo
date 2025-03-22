@@ -9,7 +9,7 @@ package("sqrat")
 
     add_versions("0.9.2", "b22ec2edc5cc5fba13280c6372e92a37fe31e74f0db924a41119f10c1130d725")
 
-    add_configs("headeronly", {description = "Install headerfiles only.", default = true, type = "boolean"})
+    add_configs("headeronly", {description = "Install headerfiles only.", default = false, type = "boolean"})
 
     add_deps("squirrel")
 
@@ -56,6 +56,7 @@ package("sqrat")
                         [[sq_getinstanceup(vm, idx, (SQUserPointer*)&instance, 0, SQFalse);]], {plain = true})
 
         os.cp("include", package:installdir())
+
         if not package:config("headeronly") then
             io.writefile("xmake.lua", [[
                 add_rules("mode.debug", "mode.release")
