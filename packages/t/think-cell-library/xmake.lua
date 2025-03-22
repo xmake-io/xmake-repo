@@ -19,17 +19,7 @@ package("think-cell-library")
     on_install("!wasm", function (package)
         os.rm("tc/string/spirit")
         io.replace("tc/string/spirit.h", [[#include "spirit/x3.hpp"]], "#include <boost/spirit/home/x3.hpp>", {plain = true})
-
-        io.writefile("xmake.lua", [[
-            add_rules("mode.release", "mode.debug")
-            set_languages("c++20")
-            add_requires("boost", {configs = {filesystem = true, container = true}})
-            target("think-cell-library")
-                set_kind("headeronly")
-                add_packages("boost")
-                add_headerfiles("(tc/**.h)")
-            ]])
-        import("package.tools.xmake").install(package)
+        os.cp("tc", path.join(package:installdir("include"), "tc"))
     end)
 
     on_test(function (package)
