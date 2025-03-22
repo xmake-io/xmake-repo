@@ -6,6 +6,7 @@ package("msvc")
         set_installtips("Do you accept the license agreement? https://go.microsoft.com/fwlink/?LinkId=2179911")
     end
 
+    add_versions("14.43.17+13", "dummy")
     add_versions("14.42.17+12", "dummy")
     add_versions("14.41.17+11", "dummy")
     add_versions("14.40.17+10", "dummy")
