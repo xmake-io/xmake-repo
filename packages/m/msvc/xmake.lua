@@ -87,7 +87,7 @@ package("msvc")
         if package:config("target") then
             table.insert(argv, "--architecture=" .. package:config("target"))
         end
-        table.insert(argv, "--dest" .. package:installdir())
+        table.insert(argv, "--dest=" .. package:installdir())
 
         local msvc_wine = package:dep("msvc-wine"):installdir()
         os.vrunv("python3", table.join(path.join(msvc_wine, "bin/vsdownload.py"), argv))
@@ -98,7 +98,7 @@ package("msvc")
         if is_host("windows") then
             assert(os.isfile(path.join(package:installdir(), "devcmd.bat")))
         elseif is_host("linux", "macosx") then
-            local target = package:config("target") or os.arch()
+            local target = package:config("target") or "x64"
             assert(os.isfile(path.join(package:installdir(), format("bin/%s/cl.exe", target))))
         end
     end)
