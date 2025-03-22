@@ -5,6 +5,7 @@ package("slang")
 
     add_urls("https://github.com/shader-slang/slang.git")
 
+    add_versions("v2025.6.2", "v2025.6.2")
     add_versions("v2024.1.18", "efdbb954c57b89362e390f955d45f90e59d66878")
     add_versions("v2024.1.17", "62b7219e715bd4c0f984bcd98c9767fb6422c78f")
 
@@ -33,7 +34,7 @@ package("slang")
         table.insert(configs, "-DSLANG_ENABLE_SLANGD=" .. (package:config("slangd") and "ON" or "OFF"))
         table.insert(configs, "-DSLANG_ENABLE_SLANGC=" .. (package:config("slangc") and "ON" or "OFF"))
         table.insert(configs, "-DSLANG_ENABLE_SLANGRT=" .. (package:config("slangrt") and "ON" or "OFF"))
-        table.insert(configs, "-DSLANG_ENABLE_SLANG_GLSLANG=" .. (package:config("slang_glslang") and "ON" or "OFF"))
+        --table.insert(configs, "-DSLANG_ENABLE_SLANG_GLSLANG=" .. (package:config("slang_glslang") and "ON" or "OFF"))
         table.insert(configs, "-DSLANG_SLANG_LLVM_FLAVOR=" .. package:config("slang_llvm_flavor"))
 
         import("package.tools.cmake").install(package, configs)
