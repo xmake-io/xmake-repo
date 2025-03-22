@@ -17,7 +17,7 @@ package("think-cell-library")
     end)
 
     on_install("!wasm", function (package)
-        os.rm("tc/string/spirit")
+        os.rm("**.cpp", "tc/string/spirit")
         io.replace("tc/string/spirit.h", [[#include "spirit/x3.hpp"]], "#include <boost/spirit/home/x3.hpp>", {plain = true})
         os.cp("tc", package:installdir("include"))
     end)
