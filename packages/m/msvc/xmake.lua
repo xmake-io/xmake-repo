@@ -38,6 +38,15 @@ package("msvc")
                 package:add("deps", "portable_build_tools")
             elseif is_host("linux", "macosx") then
                 package:add("deps", "msvc-wine")
+                if is_host("macosx") then
+                    package:add("deps", "brew::msitools", {private = true})
+                else
+                    if linuxos.name() == "archlinux" then
+                        package:add("deps", "pacman::msitools", {private = true})
+                    elseif linuxos.name() == "ubuntu" then
+                        package:add("deps", "apt::msitools", {private = true})
+                    end
+                end
             end
         end
     end)
