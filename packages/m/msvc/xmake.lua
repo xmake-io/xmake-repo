@@ -84,7 +84,7 @@ package("msvc")
         table.insert(argv, "--major")
         table.insert(argv, msvc_version:patch())
         table.insert(argv, "--msvc-version")
-        if msvc_version:patch() == "17" then
+        if msvc_version:patch() == 17 then
             table.insert(argv, "17.0")
         else
             table.insert(argv, format("%s.%s", msvc_version:patch(), msvc_version:build()[1]))
