@@ -21,7 +21,7 @@ package("sfgui")
         add_frameworks("CoreFoundation", "Foundation")
     end
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "mingw", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         local configs = {}
         if package:config("shared") then
