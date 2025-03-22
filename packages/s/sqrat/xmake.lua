@@ -22,7 +22,7 @@ package("sqrat")
             [[scfprintf(stdout,_SC("%s %s (%d bits)\n"),SQUIRREL_VERSION,SQUIRREL_COPYRIGHT,sizeof(SQInteger)*8);]],
             [[scfprintf(stdout,_SC("%s %s (%d bits)\n"),SQUIRREL_VERSION,SQUIRREL_COPYRIGHT,((int)(sizeof(SQInteger)*8)));]],
         {plain = true})
-        -- Adapt existing code to squirrel dependency
+        -- Adapt existing code to squirrel 3.2 dependency https://sourceforge.net/p/scrat/code/ci/6b75212d14fbf312c059e09cde3400035835c9dc/
         io.replace("include/sqmodule.h",
             "(*getclosureinfo)(HSQUIRRELVM v,SQInteger idx,SQUnsignedInteger *nparams,SQUnsignedInteger *nfreevars);",
             "(*getclosureinfo)(HSQUIRRELVM v,SQInteger idx,SQInteger *nparams,SQInteger *nfreevars);", {plain = true})
@@ -33,6 +33,13 @@ package("sqrat")
 
         io.replace("include/sqrat/sqratFunction.h", "SQUnsignedInteger nparams;", "SQInteger nparams;", {plain = true})
         io.replace("include/sqrat/sqratFunction.h", "SQUnsignedInteger nfreevars;", "SQInteger nfreevars;", {plain = true})
+
+        io.replace("include/sqrat/sqratClassType.h",
+                        [[if (SQ_FAILED(sq_getinstanceup(vm, idx, (SQUserPointer*)&instance, classType))) {]],
+                        [[if (SQ_FAILED(sq_getinstanceup(vm, idx, (SQUserPointer*)&instance, classType, SQTrue))) {]], {plain = true})
+        io.replace("include/sqrat/sqratClassType.h",
+                        [[sq_getinstanceup(vm, idx, (SQUserPointer*)&instance, 0);]],
+                        [[sq_getinstanceup(vm, idx, (SQUserPointer*)&instance, 0, SQFalse);]], {plain = true})
 
         os.cp("include/*.h", package:installdir("include"))
         os.cp("include/sqrat/*.h", package:installdir("include/sqrat"))
