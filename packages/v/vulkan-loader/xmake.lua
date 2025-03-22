@@ -70,8 +70,10 @@ package("vulkan-loader")
         else
             import("package.tools.cmake").install(package, configs)
         end
+        os.mkdir(path.join(package:installdir("include"), "vulkan"))
+        os.cp("loader/generated/*.h", path.join(package:installdir("include"), "vulkan"))
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("vkGetDeviceProcAddr", {includes = "vulkan/vulkan_core.h"}))
+        assert(package:has_ctypes("VkLayerInstanceDispatchTable", {includes = {"vulkan/vulkan.h", "vulkan/vk_layer_dispatch_table.h"}}))
     end)
