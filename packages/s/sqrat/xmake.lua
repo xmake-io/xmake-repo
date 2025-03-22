@@ -45,8 +45,7 @@ package("sqrat")
                         [[sq_getinstanceup(vm, idx, (SQUserPointer*)&instance, 0);]],
                         [[sq_getinstanceup(vm, idx, (SQUserPointer*)&instance, 0, SQFalse);]], {plain = true})
 
-        os.cp("include/*.h", package:installdir("include"))
-        os.cp("include/sqrat/*.h", package:installdir("include/sqrat"))
+        os.cp("include", package:installdir())
 
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
