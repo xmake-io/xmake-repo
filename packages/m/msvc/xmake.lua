@@ -35,8 +35,8 @@ package("msvc")
         if not package:is_precompiled() then
             if is_host("windows") then
                 package:add("deps", "portable_build_tools")
-            elseif is_host("linux") then
-                -- TODO use msvc-wine
+            elseif is_host("linux", "macosx") then
+                package:add("deps", "msvc-wine")
             end
         end
     end)
@@ -74,8 +74,25 @@ package("msvc")
         os.vrunv("PortableBuildTools.exe", argv)
     end)
 
-    on_test(function (package)
-        assert(os.isfile(path.join(package:installdir(), "devcmd.bat")))
+    on_install("@linux", "@macosx", function (package)
+        local argv = {"--accept-license"}
+        if package:config("preview") then
+            table.insert(argv, "--preview")
+        end
+        local msvc_version = package:version()
+        table.insert(argv, "--msvc-version=" .. format("%s.%s", msvc_version:patch(), msvc_version:build()))
+        table.insert(argv, "--sdk-version=" .. (package:config("sdkver") or "10.0.26100"))
+        table.insert(argv, "--architecture=" .. (package:config("target") or os.arch()))
+        table.insert(argv, "--dest" .. package:installdir())
+
+        os.vrunv("./vsdownload.py", argv, {shell = true})
+        os.vrunv("./install.sh", {package:installdir()}, {shell = true})
     end)
 
-
+    on_test(function (package)
+        if is_host("windows") then
+            assert(os.isfile(path.join(package:installdir(), "devcmd.bat")))
+        elseif is_host("linux", "macosx") then
+            assert(os.isfile(path.join(package:installdir(), "bin/x64/cl.exe")))
+        end
+    end)
