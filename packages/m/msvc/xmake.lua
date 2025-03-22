@@ -81,8 +81,12 @@ package("msvc")
         end
         local msvc_version = package:version()
         table.insert(argv, "--msvc-version=" .. format("%s.%s", msvc_version:patch(), msvc_version:build()[1]))
-        table.insert(argv, "--sdk-version=" .. (package:config("sdkver") or "10.0.26100"))
-        table.insert(argv, "--architecture=" .. (package:config("target") or os.arch()))
+        if package:config("sdkver") then
+            table.insert(argv, "--sdk-version=" .. package:config("sdkver"))
+        end
+        if package:config("target") then
+            table.insert(argv, "--architecture=" .. package:config("target"))
+        end
         table.insert(argv, "--dest" .. package:installdir())
 
         local msvc_wine = package:dep("msvc-wine"):installdir()
