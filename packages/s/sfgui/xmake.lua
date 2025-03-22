@@ -10,7 +10,12 @@ package("sfgui")
 
     add_configs("font", {description = "Include default font in library (DejaVuSans)", default = true, type = "boolean"})
 
-    add_deps("sfml", {configs = {graphics = true}})
+    if is_plat("mingw") then
+        add_deps("sfml", {configs = {graphics = true, shared = true}})
+    else
+        add_deps("sfml", {configs = {graphics = true}})
+    end
+
     add_deps("opengl")
 
     if is_plat("linux", "bsd", "cross") then
@@ -20,14 +25,10 @@ package("sfgui")
     if is_plat("macosx", "iphoneos") then
         add_frameworks("CoreFoundation", "Foundation")
     end
- 
+
     on_install("windows", "linux", "macosx", "mingw", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        local configs = {}
-        if package:config("shared") then
-            configs.kind = "shared"
-        end
-        import("package.tools.xmake").install(package, configs)
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)

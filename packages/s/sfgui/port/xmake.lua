@@ -1,7 +1,12 @@
 add_rules("mode.debug", "mode.release")
 set_languages("c++17")
 
-add_requires("sfml", {configs = {graphics = true}})
+if is_plat("mingw") then
+    add_requires("sfml", {configs = {graphics = true, shared = true}})
+else
+    add_requires("sfml", {configs = {graphics = true}})
+end
+
 add_requires("opengl")
 
 if is_plat("linux", "bsd", "cross") then
