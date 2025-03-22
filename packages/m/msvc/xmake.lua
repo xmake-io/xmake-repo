@@ -81,14 +81,24 @@ package("msvc")
             table.insert(argv, "--preview")
         end
         local msvc_version = package:version()
-        table.insert(argv, "--msvc-version=" .. format("%s.%s", msvc_version:patch(), msvc_version:build()[1]))
+        table.insert(argv, "--major")
+        table.insert(argv, msvc_version:patch())
+        table.insert(argv, "--msvc-version")
+        if msvc_version:patch() == "17" then
+            table.insert(argv, "17.0")
+        else
+            table.insert(argv, format("%s.%s", msvc_version:patch(), msvc_version:build()[1]))
+        end
         if package:config("sdkver") then
-            table.insert(argv, "--sdk-version=" .. package:config("sdkver"))
+            table.insert(argv, "--sdk-version")
+            table.insert(argv, package:config("sdkver"))
         end
         if package:config("target") then
-            table.insert(argv, "--architecture=" .. package:config("target"))
+            table.insert(argv, "--architecture")
+            table.insert(argv, package:config("target"))
         end
-        table.insert(argv, "--dest=" .. package:installdir())
+        table.insert(argv, "--dest")
+        table.insert(argv, package:installdir())
 
         local msvc_wine = package:dep("msvc-wine"):installdir()
         os.vrunv("python3", table.join(path.join(msvc_wine, "bin/vsdownload.py"), argv))
