@@ -18,15 +18,19 @@ package("sqrat")
             package:addenv("PATH", "bin")
         end
 
+        -- Adapt existing code to squirrel 3.2 recent changes https://github.com/albertodemichelis/squirrel/blob/f77074bdd6152d230609146a3d424c6f49e3770f/sq/sq.c#L279
         io.replace("sq/sq.c",
             [[scfprintf(stdout,_SC("%s %s (%d bits)\n"),SQUIRREL_VERSION,SQUIRREL_COPYRIGHT,sizeof(SQInteger)*8);]],
             [[scfprintf(stdout,_SC("%s %s (%d bits)\n"),SQUIRREL_VERSION,SQUIRREL_COPYRIGHT,((int)(sizeof(SQInteger)*8)));]],
         {plain = true})
+        io.replace("sq/sq.c",
+            [[scsprintf(sq_getscratchpad(v,MAXINPUT),_SC("return (%s)"),&buffer[1]);]], 
+            [[scsprintf(sq_getscratchpad(v,MAXINPUT),(size_t)MAXINPUT,_SC("return (%s)"),&buffer[1]);]], {plain = true})
+
         -- Adapt existing code to squirrel 3.2 dependency https://sourceforge.net/p/scrat/code/ci/6b75212d14fbf312c059e09cde3400035835c9dc/
         io.replace("include/sqmodule.h",
             "(*getclosureinfo)(HSQUIRRELVM v,SQInteger idx,SQUnsignedInteger *nparams,SQUnsignedInteger *nfreevars);",
             "(*getclosureinfo)(HSQUIRRELVM v,SQInteger idx,SQInteger *nparams,SQInteger *nfreevars);", {plain = true})
-
         io.replace("include/sqmodule.h",
             "(*getinstanceup)(HSQUIRRELVM v, SQInteger idx, SQUserPointer *p,SQUserPointer typetag);",
             "(*getinstanceup)(HSQUIRRELVM v, SQInteger idx, SQUserPointer *p,SQUserPointer typetag, SQBool throwerror);", {plain = true})
