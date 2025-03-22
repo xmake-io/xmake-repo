@@ -38,13 +38,14 @@ package("msvc")
                 package:add("deps", "portable_build_tools")
             elseif is_host("linux", "macosx") then
                 package:add("deps", "msvc-wine")
+                local opt = {private = true, kind = "binary"}
                 if is_host("macosx") then
-                    package:add("deps", "brew::msitools", {private = true})
+                    package:add("deps", "brew::msitools", opt)
                 else
                     if linuxos.name() == "archlinux" then
-                        package:add("deps", "pacman::msitools", {private = true})
+                        package:add("deps", "pacman::msitools", opt)
                     elseif linuxos.name() == "ubuntu" then
-                        package:add("deps", "apt::msitools", {private = true})
+                        package:add("deps", "apt::msitools", opt)
                     end
                 end
             end
@@ -111,7 +112,7 @@ package("msvc")
 
         local msvc_wine = package:dep("msvc-wine"):installdir()
         os.vrunv("python3", table.join(path.join(msvc_wine, "bin/vsdownload.py"), argv))
-        os.vrunv(path.join("./", msvc_wine, "bin/install.sh"), {package:installdir()}, {shell = true})
+        os.vrunv("sh", {path.join("./", msvc_wine, "bin/install.sh"), package:installdir()})
     end)
 
     on_test(function (package)

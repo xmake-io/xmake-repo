@@ -15,4 +15,5 @@ package("msvc-wine")
 
     on_test(function (package)
         assert(os.isfile(path.join(package:installdir("bin"), "vsdownload.py")))
+        assert(os.isfile(path.join(package:installdir("bin"), "install.sh")))
     end)
