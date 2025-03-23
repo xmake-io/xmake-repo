@@ -6,6 +6,7 @@ package("msvc")
         set_installtips("Do you accept the license agreement? https://go.microsoft.com/fwlink/?LinkId=2179911")
     end
 
+    add_versions("14.43.17+13", "dummy")
     add_versions("14.42.17+12", "dummy")
     add_versions("14.41.17+11", "dummy")
     add_versions("14.40.17+10", "dummy")
@@ -35,8 +36,11 @@ package("msvc")
         if not package:is_precompiled() then
             if is_host("windows") then
                 package:add("deps", "portable_build_tools")
-            elseif is_host("linux") then
-                -- TODO use msvc-wine
+            elseif is_host("linux", "macosx") then
+                package:add("deps", "python 3.x", {private = true, kind = "binary"})
+                package:add("deps", "msvc-wine")
+                -- package:add("deps", "msitools", {private = true, kind = "binary"})
+                wprint("If extracting the msi package fails, please install `msitools` first.")
             end
         end
     end)
@@ -74,8 +78,48 @@ package("msvc")
         os.vrunv("PortableBuildTools.exe", argv)
     end)
 
-    on_test(function (package)
-        assert(os.isfile(path.join(package:installdir(), "devcmd.bat")))
+    on_install("@linux", "@macosx", function (package)
+        local argv = {"--accept-license"}
+        if package:config("preview") then
+            table.insert(argv, "--preview")
+        end
+        local msvc_version = package:version()
+        if msvc_version:patch() == 17 then
+            wprint("Currently, only downloading the latest version of msvc is supported.")
+            -- use latest version first
+
+            -- FIXME:
+            -- Fetching https://aka.ms/vs/17/release/channel
+            -- Got toplevel manifest for 17.13.4
+            -- Loaded installer manifest for 17.13.4
+            -- Unsupported MSVC toolchain version 17.13
+        else
+            table.insert(argv, "--major")
+            table.insert(argv, msvc_version:patch())
+            table.insert(argv, "--msvc-version")
+            table.insert(argv, format("%s.%s", msvc_version:patch(), msvc_version:build()[1]))
+        end
+        if package:config("sdkver") then
+            table.insert(argv, "--sdk-version")
+            table.insert(argv, package:config("sdkver"))
+        end
+        if package:config("target") then
+            table.insert(argv, "--architecture")
+            table.insert(argv, package:config("target"))
+        end
+        table.insert(argv, "--dest")
+        table.insert(argv, package:installdir())
+
+        local msvc_wine = package:dep("msvc-wine"):installdir()
+        os.vrunv("python3", table.join(path.join(msvc_wine, "bin/vsdownload.py"), argv))
+        os.vrunv("sh", {path.join(msvc_wine, "bin/install.sh"), package:installdir()})
     end)
 
-
+    on_test(function (package)
+        if is_host("windows") then
+            assert(os.isfile(path.join(package:installdir(), "devcmd.bat")))
+        elseif is_host("linux", "macosx") then
+            local target = package:config("target") or "x64"
+            assert(os.isfile(path.join(package:installdir(), format("bin/%s/cl.exe", target))))
+        end
+    end)
