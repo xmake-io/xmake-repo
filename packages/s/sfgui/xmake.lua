@@ -27,7 +27,7 @@ package("sfgui")
     end
 
     on_install("windows", "linux", "macosx", "mingw", function (package)
-        io.replace("include/SFGUI/Config.hpp", "defined( SFGUI_STATIC )", not package:config("shared") and "1" or "0", {plain = true})
+        io.replace("include/SFGUI/Config.hpp", "!defined( SFGUI_STATIC )", not package:config("shared") and "0" or "1", {plain = true})
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)
     end)
