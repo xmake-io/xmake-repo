@@ -30,6 +30,7 @@ package("osip")
         local arch = package:is_arch("x64") and "x64" or "Win32"
         if package:is_arch("arm64") then
             arch = "ARM64"
+            io.replace("platform/vsnet/osip.sln", "|x64", "|ARM64", {plain = true})
         end
         local mode = package:debug() and "Debug" or "Release"
 
