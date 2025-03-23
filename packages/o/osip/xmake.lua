@@ -28,7 +28,7 @@ package("osip")
         import("package.tools.msbuild")
 
         local arch = package:is_arch("x64") and "x64" or "Win32"
-        if package:is_plat("arm64") then
+        if package:is_plat("arm.*") then
             arch = "ARM64"
         end
         local mode = package:debug() and "Debug" or "Release"
