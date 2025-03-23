@@ -14,6 +14,7 @@ option("sdl2",             {showmenu = true,  default = false})
 option("sdl2_renderer",    {showmenu = true,  default = false})
 option("sdl3",             {showmenu = true,  default = false})
 option("sdl3_renderer",    {showmenu = true,  default = false})
+option("sdl3_gpu",         {showmenu = true,  default = false})
 option("vulkan",           {showmenu = true,  default = false})
 option("win32",            {showmenu = true,  default = false})
 option("wgpu",             {showmenu = true,  default = false})
@@ -34,7 +35,7 @@ if has_config("sdl2_renderer") then
 elseif has_config("sdl2") then
     add_requires("libsdl2")
 end
-if has_config("sdl3") or has_config("sdl3_renderer") then
+if has_config("sdl3") or has_config("sdl3_renderer") or has_config("sdl3_gpu") then
     add_requires("libsdl3")
 end
 
@@ -133,6 +134,12 @@ target("imgui")
     if has_config("sdl3_renderer") then
         add_files("backends/imgui_impl_sdlrenderer3.cpp")
         add_headerfiles("(backends/imgui_impl_sdlrenderer3.h)")
+        add_packages("libsdl3")
+    end
+
+    if has_config("sdl3_gpu") then
+        add_files("backends/imgui_impl_sdlgpu3.cpp")
+        add_headerfiles("backends/imgui_impl_sdlgpu3.h","backends/imgui_impl_sdlgpu3_shaders.h")
         add_packages("libsdl3")
     end
 
