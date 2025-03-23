@@ -64,7 +64,8 @@ package("osip")
 
         for _, vcxproj in ipairs(files) do
             if package:is_arch("arm64") then
-                io.replace(vcxproj, "x64", "ARM64", {plain = true})
+                io.replace(vcxproj, "|x64", "|ARM64", {plain = true})
+                io.replace(vcxproj, "<Platform>x64", "<Platform>ARM64", {plain = true})
             end
             if not package:has_runtime("MT", "MTd") then
                 -- Allow MD, MDd
