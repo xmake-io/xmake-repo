@@ -19,6 +19,12 @@ package("osip")
     on_install("windows", function(package)
         os.cp("include/**.h", package:installdir("include"), {rootdir = "include"})
 
+        local name = path.filename(os.curdir())
+        os.cd("..")
+        local cur_dir = os.curdir() .. "\\"
+        os.mv(cur_dir .. name, cur_dir .. "\\osip")
+        os.cd(cur_dir .. "\\osip")
+
         import("package.tools.msbuild")
 
         local arch = package:is_arch("x64", "arm64") and "x64" or "Win32"
