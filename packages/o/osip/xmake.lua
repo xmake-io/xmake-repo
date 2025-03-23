@@ -62,7 +62,7 @@ package("osip")
         }
 
         for _, vcxproj in ipairs(files) do
-            if package:is_plat("arm64") then
+            if package:is_plat("arm.*") then
                 io.replace(vcxproj, "x64", "ARM64", {plain = true})
             end
             if not package:has_runtime("MT", "MTd") then
