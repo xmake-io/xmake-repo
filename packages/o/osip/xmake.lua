@@ -8,8 +8,74 @@ package("osip")
 
     add_versions("5.3.0", "593c9d61150b230f7e757b652d70d5fe336c84db7e4db190658f9ef1597d59ed")
 
-    add_deps("autoconf", "automake", "m4", "libtool")
+    if not is_plat("windows") then
+        add_deps("autoconf", "automake", "m4", "libtool")
+    else
+        add_syslinks("advapi32")
+    end
+
     add_links("osip2", "osipparser2")
+
+    on_install("windows", function(package)
+        os.cp("include/**.h", package:installdir("include"), {rootdir = "include"})
+
+        import("package.tools.msbuild")
+
+        local arch = package:is_arch("x64", "arm64") and "x64" or "Win32"
+        local mode = package:debug() and "Debug" or "Release"
+
+        local configs = { "osip.sln" }
+
+        table.insert(configs, "/property:Configuration=" .. mode)
+        table.insert(configs, "/property:Platform=" .. arch)
+
+        os.cd("platform/vsnet")
+
+        -- Add external symbols into .def file for .DLL library
+        local file = io.open("osip2.def", "a")
+        if file then
+            file:write("     osip_transaction_set_naptr_record @138\n")
+            file:close()
+        end
+
+        local filep = io.open("osipparser2.def", "a")
+        if filep then
+            filep:write("     osip_realloc @417\n")
+            filep:write("     osip_strcasestr @418\n")
+            filep:write("     __osip_uri_escape_userinfo @419\n")
+            filep:write("     osip_list_clone @420\n")
+            filep:close()
+        end
+
+        local files = {
+            "osip2.vcxproj",
+            "osipparser2.vcxproj"
+        }
+
+        for _, vcxproj in ipairs(files) do
+            if not package:has_runtime("MT", "MTd") then
+                -- Allow MD, MDd
+                io.replace(vcxproj, "MultiThreaded", "MultiThreadedDLL", {plain = true})
+                io.replace(vcxproj, "MultiThreadedDebug", "MultiThreadedDebugDLL", {plain = true})
+            end
+            if package:config("shared") then
+                -- Pass .def file
+                io.replace(vcxproj, "</ClCompile>",
+                    "</ClCompile><Link><ModuleDefinitionFile>$(ProjectDir)/$(TargetName).def</ModuleDefinitionFile></Link>", {plain = true})
+                -- Allow build shared lib
+                io.replace(vcxproj, "StaticLibrary", "DynamicLibrary", {plain = true})
+            end
+            -- Allow use another Win SDK
+            io.replace(vcxproj, "<WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>", "", {plain = true})
+        end
+
+        msbuild.build(package, configs)
+
+        os.cp("**.lib", package:installdir("lib"))
+        if package:config("shared") then
+            os.cp("**.dll", package:installdir("bin"))
+        end
+    end)
 
     on_install("linux", "macosx", function (package)
         local configs = {"--disable-trace"}
