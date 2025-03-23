@@ -39,6 +39,7 @@ package("msvc")
             elseif is_host("linux", "macosx") then
                 package:add("deps", "msvc-wine")
                 -- package:add("deps", "msitools", {private = true, kind = "binary"})
+                wprint("If extracting the MSI package fails, please install `msitools` first.")
             end
         end
     end)
@@ -86,7 +87,14 @@ package("msvc")
         table.insert(argv, msvc_version:patch())
         table.insert(argv, "--msvc-version")
         if msvc_version:patch() == 17 then
-            table.insert(argv, "17.0")
+            wprint("Currently, only downloading the latest version of msvc is supported.")
+            -- use latest version first
+
+            -- FIXME:
+            -- Fetching https://aka.ms/vs/17/release/channel
+            -- Got toplevel manifest for 17.13.4
+            -- Loaded installer manifest for 17.13.4
+            -- Unsupported MSVC toolchain version 17.13
         else
             table.insert(argv, format("%s.%s", msvc_version:patch(), msvc_version:build()[1]))
         end
