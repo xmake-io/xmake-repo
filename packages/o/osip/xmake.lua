@@ -28,7 +28,7 @@ package("osip")
         import("package.tools.msbuild")
 
         local arch = package:is_arch("x64") and "x64" or "Win32"
-        if package:is_plat("arm.*") then
+        if package:is_arch("arm64") then
             arch = "ARM64"
         end
         local mode = package:debug() and "Debug" or "Release"
@@ -62,7 +62,7 @@ package("osip")
         }
 
         for _, vcxproj in ipairs(files) do
-            if package:is_plat("arm.*") then
+            if package:is_arch("arm64") then
                 io.replace(vcxproj, "x64", "ARM64", {plain = true})
             end
             if not package:has_runtime("MT", "MTd") then
