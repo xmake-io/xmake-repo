@@ -1,4 +1,4 @@
-package("xapian")
+package("xapian-core")
     set_homepage("https://savannah.gnu.org/projects/osip")
     set_description("Xapian is an Open Source Search Engine Library, with bindings to allow use from Perl, Python 2, Python 3, PHP 5, PHP 7, Java, Tcl, C#, Ruby, Lua, Erlang, Node.js, R.")
     set_license("GPL-2.0-or-later")
