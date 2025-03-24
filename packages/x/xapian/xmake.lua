@@ -54,11 +54,11 @@ fi
 
         local deps = {"zlib"}
 
-        if is_plat("linux", "macosx", "bsd", "android", "iphoneos", "wasm", "cross") then
+        if package:is_plat("linux", "macosx", "bsd", "android", "iphoneos", "wasm", "cross") then
             table.insert(deps, "libuuid")
         end
     
-        if is_plat("mingw") then
+        if package:is_plat("mingw") then
             table.insert(deps, "ssp")
         end
 
