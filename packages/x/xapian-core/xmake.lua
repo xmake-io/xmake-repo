@@ -65,10 +65,15 @@ fi
         end
 
         if package:is_plat("iphoneos") then
-            configs.host = "aarch64-apple-darwin"
+            import("package.tools.autoconf")
+            local cflags = {}
+            table.insert(cflags, "--host=arm64-apple-darwin")
+            local envs = autoconf.buildenvs(package, {cflags = cflags})
+            envs.CC = package:build_getenv("cc") .. " -arch arm64"
+            autoconf.install(package, configs, {envs = envs, packagedeps = deps})
+        else
+            import("package.tools.autoconf").install(package, configs, {packagedeps = deps})
         end
-
-        import("package.tools.autoconf").install(package, configs, {packagedeps = deps})
     end)
 
     on_test(function (package)
