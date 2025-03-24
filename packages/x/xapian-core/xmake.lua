@@ -69,7 +69,7 @@ fi
             local cflags = {}
             table.insert(cflags, "--host=arm64-apple-darwin")
             local envs = autoconf.buildenvs(package, {cflags = cflags})
-            envs.CC = package:build_getenv("cc")
+            envs.CC = path.filename(package:build_getenv("cc"))
             autoconf.install(package, configs, {envs = envs, packagedeps = deps})
         else
             import("package.tools.autoconf").install(package, configs, {packagedeps = deps})
