@@ -21,14 +21,14 @@ package("xapian")
         add_syslinks("m")
     end
 
-    local deps = {"zlib"}
+    add_deps("zlib")
 
     if is_plat("linux", "macosx", "bsd", "android", "iphoneos", "wasm", "cross") then
-        table.insert(deps, "libuuid")
+        add_deps("libuuid")
     end
 
     if is_plat("mingw") then
-        table.insert(deps, "ssp")
+        add_deps("ssp")
     end
 
     on_install("!windows and !android@windows", function (package)
