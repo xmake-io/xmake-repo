@@ -35,7 +35,7 @@ package("xapian-core")
         end
     end)
 
-    on_install("linux", "macosx", "bsd", "mingw", "msys", "android@linux,macosx", "iphoneos", "cross", "wasm", function (package)
+    on_install("linux", "macosx", "bsd", "mingw", "msys", "android@linux,macosx", "cross", "wasm", function (package)
         io.replace("include/xapian/version_h.cc", "#elif defined _MSC_VER", "#elif 0", {plain = true})
 
         io.replace("configure.ac", "dnl Check for zlib.h.", [[
@@ -64,16 +64,7 @@ fi
             table.insert(deps, "libuuid")
         end
 
-        if package:is_plat("iphoneos") then
-            import("package.tools.autoconf")
-            local cflags = {}
-            table.insert(cflags, "--host=arm64-apple-darwin")
-            local envs = autoconf.buildenvs(package, {cflags = cflags})
-            envs.CC = path.filename(package:build_getenv("cc"))
-            autoconf.install(package, configs, {envs = envs, packagedeps = deps})
-        else
-            import("package.tools.autoconf").install(package, configs, {packagedeps = deps})
-        end
+        import("package.tools.autoconf").install(package, configs, {packagedeps = deps})
     end)
 
     on_test(function (package)
