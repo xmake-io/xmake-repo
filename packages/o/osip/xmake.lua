@@ -91,12 +91,22 @@ package("osip")
         end
     end)
 
-    on_install("linux", "macosx", function (package)
+    on_check(function (package)
+        assert(not (package:is_plat("android") and is_subhost("windows")), "package(osip): does not support windows@android.")
+    end)
+
+    on_install("!mingw", function (package)
         local configs = {"--disable-trace"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if not package:debug() then
             table.insert(configs, "--disable-debug")
+        end
+        if package:is_plat("android") then
+            table.insert(configs, "--enable-pthread=force")
+        end
+        if package:is_plat("wasm") then
+            io.replace("configure.ac", [[EXTRA_LIB="$EXTRA_LIB -lc_p"]], "", {plain = true})
         end
         import("package.tools.autoconf").install(package, configs)
     end)
