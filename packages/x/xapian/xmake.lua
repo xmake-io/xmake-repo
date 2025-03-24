@@ -21,17 +21,14 @@ package("xapian")
         add_syslinks("m")
     end
 
-    local deps = {"zlib"}
     add_deps("zlib")
 
     if is_plat("linux", "macosx", "bsd", "android", "iphoneos", "wasm", "cross") then
         add_deps("libuuid")
-        table.insert(deps, "libuuid")
     end
 
     if is_plat("mingw") then
         add_deps("ssp")
-        table.insert(deps, "ssp")
     end
 
     on_install("!windows and !android@windows", function (package)
@@ -54,6 +51,17 @@ fi
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+
+        local deps = {"zlib"}
+
+        if is_plat("linux", "macosx", "bsd", "android", "iphoneos", "wasm", "cross") then
+            table.insert(deps, "libuuid")
+        end
+    
+        if is_plat("mingw") then
+            table.insert(deps, "ssp")
+        end
+
         import("package.tools.autoconf").install(package, configs, {packagedeps = deps})
     end)
 
