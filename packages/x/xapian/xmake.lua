@@ -11,9 +11,7 @@ package("xapian")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    if not is_plat("msys", "mingw", "windows") then
-        add_deps("autoconf", "automake", "libtool")
-    end
+    add_deps("autotools")
 
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32", "rpcrt4")
@@ -67,7 +65,7 @@ fi
         end
 
         if package:is_plat("iphoneos") then
-            configs.host = package:arch() .. "-apple-darwin"
+            configs.host = ""
         end
 
         import("package.tools.autoconf").install(package, configs, {packagedeps = deps})
