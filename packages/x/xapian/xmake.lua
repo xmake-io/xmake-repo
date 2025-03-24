@@ -23,12 +23,10 @@ package("xapian")
 
     add_deps("zlib")
 
-    if is_plat("linux", "macosx", "bsd", "android", "iphoneos", "wasm", "cross") then
-        add_deps("libuuid")
-    end
-
     if is_plat("mingw") then
         add_deps("ssp")
+    else
+        add_deps("libuuid")
     end
 
     on_install("!windows and !android@windows", function (package)
@@ -54,12 +52,10 @@ fi
 
         local deps = {"zlib"}
 
-        if package:is_plat("linux", "macosx", "bsd", "android", "iphoneos", "wasm", "cross") then
-            table.insert(deps, "libuuid")
-        end
-
         if package:is_plat("mingw") then
             table.insert(deps, "ssp")
+        else
+            table.insert(deps, "libuuid")
         end
 
         import("package.tools.autoconf").install(package, configs, {packagedeps = deps})
