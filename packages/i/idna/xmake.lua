@@ -11,6 +11,15 @@ package("idna")
 
     add_deps("cmake")
 
+    if on_check then
+        on_check(function (package)
+            assert(package:check_cxxsnippets({test = [[
+                #include <ranges>
+                void test() {}
+            ]]}, {configs = {languages = "c++20"}}), "package(idna) require at least C++20.")
+        end)
+    end
+
     on_install(function (package)
         io.replace("CMakeLists.txt", "add_subdirectory(singleheader)", "", {plain = true})
 
