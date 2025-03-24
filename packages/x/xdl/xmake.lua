@@ -8,7 +8,7 @@ package("xdl")
 
     add_versions("v2.2.0", "fb28fe2805b3101ae85119bd1d5f78c9c519030ed8c7e2df0921532a673aae17")
 
-    on_install(function (package)
+    on_install("android", function (package)
         os.cd("xdl/src/main/cpp")
         io.writefile("xmake.lua", [[
             add_rules("mode.asan", "mode.release", "mode.debug")
@@ -27,6 +27,7 @@ package("xdl")
                     set_optimize("smallest")
                     add_cflags("-ffunction-sections", "-fdata-sections")
                     add_ldflags("-Wl,--exclude-libs,ALL", "-Wl,--gc-sections", "-Wl,--version-script=]] .. path.unix(path.join(os.curdir(), "xdl.map.txt")) .. [[")]] .. [[
+                
                 end
 
                 if is_arch("x64", "x86_64", "arm64.*", "aarch64") then
