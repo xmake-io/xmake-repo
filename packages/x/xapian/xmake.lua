@@ -7,6 +7,10 @@ package("xapian")
 
     add_versions("1.4.27", "bcbc99cfbf16080119c2571fc296794f539bd542ca3926f17c2999600830ab61")
 
+    if is_plat('wasm') then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     if not is_plat("msys", "mingw", "windows") then
         add_deps("autoconf", "automake", "libtool")
     end
@@ -30,13 +34,15 @@ package("xapian")
         table.insert(deps, "ssp")
     end
 
-    on_install("!windows", function (package)
+    on_install("!windows and !android@windows", function (package)
         io.replace("include/xapian/version_h.cc", "#elif defined _MSC_VER", "#elif 0", {plain = true})
+
         io.replace("configure.ac", "dnl Check for zlib.h.", [[
 enable_zlib_checks=no        
   if test "x$enable_zlib_checks" = "xyes"; then
   dnl Check for zlib.h.
         ]], {plain = true})
+
         io.replace("configure.ac", "dnl Find a way to generate UUIDs.", [[
 fi
   PKG_CHECK_MODULES([ZLIB], [zlib], [],[AC_MSG_ERROR([zlib library not found])])
@@ -44,12 +50,8 @@ fi
   LIBS="$ZLIB_LIBS $LIBS"
   dnl Find a way to generate UUIDs.
         ]], {plain = true})
-        io.cat("configure.ac")
+
         local configs = {}
-        if package:is_arch("arm.*") then
-            table.insert(configs, "--ac_cv_have_decl___popcnt=no")
-            table.insert(configs, "--eac_cv_have_decl___popcnt64=no")
-        end
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         import("package.tools.autoconf").install(package, configs, {packagedeps = deps})
