@@ -12,28 +12,24 @@ package("osip")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    if not is_plat("windows") then
-        add_deps("autoconf", "automake", "m4", "libtool")
-    else
+    if is_plat("windows") then
         add_syslinks("advapi32")
+    else
+        add_deps("autoconf", "automake", "m4", "libtool")
     end
 
     add_links("osip2", "osipparser2")
 
-    on_check("android", function (package)
-        assert(not is_subhost("windows"), "package(osip): does not support windows@android.")
-    end)
-
     on_install("windows", function(package)
-        os.cp("include/**.h", package:installdir("include"), {rootdir = "include"})
-        -- rename *source* directory to *osip* directory
-        local name = path.filename(os.curdir())
-        os.cd("..")
-        local cur_dir = os.curdir() .. "\\"
-        os.mv(cur_dir .. name, cur_dir .. "\\osip")
-        os.cd(cur_dir .. "\\osip")
-
         import("package.tools.msbuild")
+
+        os.cp("include/**.h", package:installdir("include"), {rootdir = "include"})
+
+        -- rename *source* directory to *osip* directory
+        local curdir = os.curdir()
+        os.cd("..")
+        os.mv(curdir, "osip")
+        os.cd("osip")
 
         local arch = package:is_arch("x64") and "x64" or "Win32"
         if package:is_arch("arm64") then
@@ -41,29 +37,24 @@ package("osip")
             io.replace("platform/vsnet/osip.sln", "|x64", "|ARM64", {plain = true})
         end
         local mode = package:debug() and "Debug" or "Release"
-
         local configs = { "osip.sln" }
-
         table.insert(configs, "/property:Configuration=" .. mode)
         table.insert(configs, "/property:Platform=" .. arch)
-
         os.cd("platform/vsnet")
 
         -- Add external symbols into .def file for .DLL library
-        local file = io.open("osip2.def", "a")
-        if file then
-            file:write("     osip_transaction_set_naptr_record @138\n")
-            file:close()
-        end
+        local osip2_def_content = io.readfile("osip2.def")
+        io.writefile("osip2.def", osip2_def_content .. [[
+            osip_transaction_set_naptr_record @138
+        ]])
 
-        local filep = io.open("osipparser2.def", "a")
-        if filep then
-            filep:write("     osip_realloc @417\n")
-            filep:write("     osip_strcasestr @418\n")
-            filep:write("     __osip_uri_escape_userinfo @419\n")
-            filep:write("     osip_list_clone @420\n")
-            filep:close()
-        end
+        local osipparser2_def_content = io.readfile("osipparser2.def")
+        io.writefile("osipparser2.def", osipparser2_def_content .. [[
+            osip_realloc @417
+            osip_strcasestr @418
+            __osip_uri_escape_userinfo @419
+            osip_list_clone @420
+        ]])
 
         local files = {
             "osip2.vcxproj",
@@ -99,7 +90,7 @@ package("osip")
         end
     end)
 
-    on_install("!mingw", function (package)
+    on_install("!mingw and !android@windows", function (package)
         local configs = {"--disable-trace"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
