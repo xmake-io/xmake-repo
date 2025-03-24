@@ -7,7 +7,7 @@ package("xapian")
 
     add_versions("1.4.27", "bcbc99cfbf16080119c2571fc296794f539bd542ca3926f17c2999600830ab61")
 
-    if is_plat('wasm') then
+    if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
@@ -22,15 +22,12 @@ package("xapian")
     end
 
     local deps = {"zlib"}
-    add_deps("zlib")
 
     if is_plat("linux", "macosx", "bsd", "android", "iphoneos", "wasm", "cross") then
-        add_deps("libuuid")
         table.insert(deps, "libuuid")
     end
 
     if is_plat("mingw") then
-        add_deps("ssp")
         table.insert(deps, "ssp")
     end
 
@@ -54,6 +51,17 @@ fi
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+
+        local deps = {"zlib"}
+
+        if package:is_plat("linux", "macosx", "bsd", "android", "iphoneos", "wasm", "cross") then
+            table.insert(deps, "libuuid")
+        end
+
+        if package:is_plat("mingw") then
+            table.insert(deps, "ssp")
+        end
+
         import("package.tools.autoconf").install(package, configs, {packagedeps = deps})
     end)
 
