@@ -11,15 +11,13 @@ package("xapian-core")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    add_deps("autotools")
-
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32", "rpcrt4")
     elseif is_plat("linux", "bsd") then
-        add_syslinks("rt", "m")
+        add_syslinks("m")
     end
 
-    add_deps("zlib")
+    add_deps("autotools", "zlib")
 
     if is_plat("mingw") then
         add_deps("ssp")
