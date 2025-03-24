@@ -10,6 +10,15 @@ package("boost_reflect")
     add_versions("v1.2.3", "583fe281c3b83f403b7fb18389e64bacc3ca0b30683d550f2ad6159cc0ebb6be")
     add_versions("v1.1.1", "49b20cbc0e5d9f94bcdc96056f8c5d91ee2e45d8642e02cb37e511079671ad48")
 
+    if on_check then
+        on_check("windows", function (package)
+            import("core.base.semver")
+
+            local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+            assert(vs_toolset and semver.new(vs_toolset):minor() >= 30, "package(boost_reflect) require vs_toolset >= v143")
+        end)
+    end
+
     on_install("windows", "mingw", "linux", function (package)
         os.cp("reflect", package:installdir("include"))
     end)
