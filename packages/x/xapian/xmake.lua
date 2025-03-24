@@ -29,7 +29,7 @@ package("xapian")
         add_deps("libuuid")
     end
 
-    on_install("!windows", function (package)
+    on_install("linux", "macosx", "bsd", "mingw", "msys", "android@linux,macosx", "iphoneos", "cross", "wasm", function (package)
         io.replace("include/xapian/version_h.cc", "#elif defined _MSC_VER", "#elif 0", {plain = true})
 
         io.replace("configure.ac", "dnl Check for zlib.h.", [[
@@ -56,6 +56,10 @@ fi
             table.insert(deps, "ssp")
         else
             table.insert(deps, "libuuid")
+        end
+
+        if package:is_plat("iphoneos") then
+            table.insert(configs, "--host=" .. package:arch() .. "-apple-darwin")
         end
 
         import("package.tools.autoconf").install(package, configs, {packagedeps = deps})
