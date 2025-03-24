@@ -23,7 +23,7 @@ package("osip")
     on_install("windows", function(package)
         import("package.tools.msbuild")
 
-        os.cp("include/**.h", package:installdir("include"), {rootdir = "include"})
+        os.cp("include", package:installdir())
 
         -- rename *source* directory to *osip* directory
         local curdir = os.curdir()
