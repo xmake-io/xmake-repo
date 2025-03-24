@@ -36,7 +36,7 @@ package("node-addon-api")
         end
     end)
 
-    on_install("linux" ,function(package)
+    on_install(function(package)
         os.cp("*.h", package:installdir("include"))
     end)
 
