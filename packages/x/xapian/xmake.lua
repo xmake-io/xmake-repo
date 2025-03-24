@@ -29,6 +29,14 @@ package("xapian")
         add_deps("libuuid")
     end
 
+    on_check("android", function (package)
+        if package:is_arch("armeabi-v7a") then
+            local ndk = package:toolchain("ndk")
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(xapian/armeabi-v7a): need ndk api level >= 24")
+        end
+    end)
+
     on_install("linux", "macosx", "bsd", "mingw", "msys", "android@linux,macosx", "iphoneos", "cross", "wasm", function (package)
         io.replace("include/xapian/version_h.cc", "#elif defined _MSC_VER", "#elif 0", {plain = true})
 
@@ -59,7 +67,7 @@ fi
         end
 
         if package:is_plat("iphoneos") then
-            table.insert(configs, "--host=" .. package:arch() .. "-apple-darwin")
+            configs.host = package:arch() .. "-apple-darwin"
         end
 
         import("package.tools.autoconf").install(package, configs, {packagedeps = deps})
