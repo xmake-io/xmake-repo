@@ -5,7 +5,7 @@ package("glslang")
 
     add_urls("https://github.com/KhronosGroup/glslang.git")
 
-    -- when adding a new sdk version, please ensure vulkan-headers, vulkan-hpp, vulkan-loader, vulkan-utility-libraries, spirv-headers, spirv-reflect, glslang and volk packages are updated simultaneously
+    -- when adding a new sdk version, please ensure vulkan-headers, vulkan-hpp, vulkan-loader, vulkan-utility-libraries, spirv-headers, spirv-reflect, spirv-tools, glslang and volk packages are updated simultaneously
     add_versions("1.2.154+1", "bacaef3237c515e40d1a24722be48c0a0b30f75f")
     add_versions("1.2.162+0", "c594de23cdd790d64ad5f9c8b059baae0ee2941d")
     add_versions("1.2.189+1", "2fb89a0072ae7316af1c856f22663fde4928128a")
