@@ -90,7 +90,7 @@ package("osip")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "bsd", "android@linux,macosx", "iphoneos", "cross", "wasm", function (package)
+    on_install("linux", "macosx", "bsd", "android@linux,macosx", "iphoneos", "cross", "wasm", function (package)
         local configs = {"--disable-trace"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
