@@ -9,7 +9,7 @@ package("linux-syscall-support")
 
     set_kind("library", {headeronly = true})
 
-    on_install(function (package)
+    on_install("android", "linux", "cross",  function (package)
         os.cp("linux_syscall_support.h", package:installdir("include/lss"))
     end)
 
