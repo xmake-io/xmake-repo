@@ -15,7 +15,7 @@ package("osip")
     if is_plat("windows") then
         add_syslinks("advapi32")
     else
-        add_deps("autoconf", "automake", "m4", "libtool")
+        add_deps("autoconf", "automake", "libtool")
     end
 
     add_links("osip2", "osipparser2")
@@ -90,7 +90,7 @@ package("osip")
         end
     end)
 
-    on_install("!mingw and !android@windows", function (package)
+    on_install("windows", "linux", "macosx", "bsd", "android@linux,macosx", "iphoneos", "cross", "wasm", function (package)
         local configs = {"--disable-trace"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
