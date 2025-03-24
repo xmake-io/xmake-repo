@@ -29,7 +29,7 @@ package("xapian")
         add_deps("libuuid")
     end
 
-    on_install("!windows and !android@windows", function (package)
+    on_install("!windows", function (package)
         io.replace("include/xapian/version_h.cc", "#elif defined _MSC_VER", "#elif 0", {plain = true})
 
         io.replace("configure.ac", "dnl Check for zlib.h.", [[
