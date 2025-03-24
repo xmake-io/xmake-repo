@@ -7,7 +7,7 @@ package("xapian")
 
     add_versions("1.4.27", "bcbc99cfbf16080119c2571fc296794f539bd542ca3926f17c2999600830ab61")
 
-    if is_plat('wasm') then
+    if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
