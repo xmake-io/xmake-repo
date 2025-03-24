@@ -16,7 +16,7 @@ package("xapian-core")
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32", "rpcrt4")
     elseif is_plat("linux", "bsd") then
-        add_syslinks("m")
+        add_syslinks("rt", "m")
     end
 
     add_deps("zlib")
@@ -65,7 +65,7 @@ fi
         end
 
         if package:is_plat("iphoneos") then
-            configs.host = ""
+            configs.host = "aarch64-apple-darwin"
         end
 
         import("package.tools.autoconf").install(package, configs, {packagedeps = deps})
