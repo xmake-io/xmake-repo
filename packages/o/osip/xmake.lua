@@ -8,6 +8,10 @@ package("osip")
 
     add_versions("5.3.0", "593c9d61150b230f7e757b652d70d5fe336c84db7e4db190658f9ef1597d59ed")
 
+    if is_plat('wasm') then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     if not is_plat("windows") then
         add_deps("autoconf", "automake", "m4", "libtool")
     else
@@ -15,6 +19,10 @@ package("osip")
     end
 
     add_links("osip2", "osipparser2")
+
+    on_check("android", function (package)
+        assert(not is_subhost("windows"), "package(osip): does not support windows@android.")
+    end)
 
     on_install("windows", function(package)
         os.cp("include/**.h", package:installdir("include"), {rootdir = "include"})
@@ -91,10 +99,6 @@ package("osip")
         end
     end)
 
-    on_check(function (package)
-        assert(not (package:is_plat("android") and is_subhost("windows")), "package(osip): does not support windows@android.")
-    end)
-
     on_install("!mingw", function (package)
         local configs = {"--disable-trace"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
@@ -104,9 +108,6 @@ package("osip")
         end
         if package:is_plat("android") then
             table.insert(configs, "--enable-pthread=force")
-        end
-        if package:is_plat("wasm") then
-            io.replace("configure.ac", [[EXTRA_LIB="$EXTRA_LIB -lc_p"]], "", {plain = true})
         end
         import("package.tools.autoconf").install(package, configs)
     end)
