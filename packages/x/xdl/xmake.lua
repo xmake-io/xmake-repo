@@ -10,26 +10,23 @@ package("xdl")
 
     on_install("android", function (package)
         os.cd("xdl/src/main/cpp")
+        os.mv("xdl.map.txt", "xdl.map")
         io.writefile("xmake.lua", [[
             add_rules("mode.asan", "mode.release", "mode.debug")
             target("xDL")
                 set_kind("$(kind)")
                 set_languages("c17")
-
                 add_files("*.c")
-
                 add_includedirs("include", ".")
                 add_headerfiles("include/(**.h)")
-
                 if is_mode("asan") then
                     add_cflags("-fno-omit-frame-pointer")
                 else
                     set_optimize("smallest")
                     add_cflags("-ffunction-sections", "-fdata-sections")
-                    add_ldflags("-Wl,--exclude-libs,ALL", "-Wl,--gc-sections", "-Wl,--version-script=]] .. path.unix(path.join(os.curdir(), "xdl.map.txt")) .. [[")]] .. [[
-                
+                    add_ldflags("-Wl,--exclude-libs,ALL", "-Wl,--gc-sections")
+                    add_files("]] .. path.unix(path.join(os.curdir(), "xdl.map")) .. [[")]] .. [[                
                 end
-
                 if is_arch("x64", "x86_64", "arm64.*", "aarch64") then
                     add_ldflags("-Wl,-z,max-page-size=16384")
                 end
