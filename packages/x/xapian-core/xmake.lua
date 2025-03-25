@@ -18,7 +18,6 @@ package("xapian-core")
     end
 
     add_deps("autotools", "zlib")
-
     if is_plat("mingw") then
         add_deps("ssp")
     else
@@ -35,13 +34,11 @@ package("xapian-core")
 
     on_install("linux", "macosx", "bsd", "mingw", "msys", "android@linux,macosx", "cross", "wasm", function (package)
         io.replace("include/xapian/version_h.cc", "#elif defined _MSC_VER", "#elif 0", {plain = true})
-
         io.replace("configure.ac", "dnl Check for zlib.h.", [[
 enable_zlib_checks=no        
   if test "x$enable_zlib_checks" = "xyes"; then
   dnl Check for zlib.h.
         ]], {plain = true})
-
         io.replace("configure.ac", "dnl Find a way to generate UUIDs.", [[
 fi
   PKG_CHECK_MODULES([ZLIB], [zlib], [],[AC_MSG_ERROR([zlib library not found])])
@@ -54,15 +51,13 @@ fi
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
 
-        local deps = {"zlib"}
-
+        local packagedeps = {"zlib"}
         if package:is_plat("mingw") then
-            table.insert(deps, "ssp")
+            table.insert(packagedeps, "ssp")
         else
-            table.insert(deps, "libuuid")
+            table.insert(packagedeps, "libuuid")
         end
-
-        import("package.tools.autoconf").install(package, configs, {packagedeps = deps})
+        import("package.tools.autoconf").install(package, configs, {packagedeps = packagedeps})
     end)
 
     on_test(function (package)
