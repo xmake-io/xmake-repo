@@ -8,6 +8,8 @@ package("libmd")
     add_urls("https://libbsd.freedesktop.org/releases/libmd-$(version).tar.xz")
     add_versions("1.0.4", "f51c921042e34beddeded4b75557656559cf5b1f2448033b4c1eec11c07e530f")
 
+    add_deps("autotools")
+
     on_install(function (package)
         local configs = {"--disable-dependency-tracking"}
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
