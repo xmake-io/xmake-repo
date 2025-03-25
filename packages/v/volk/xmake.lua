@@ -33,7 +33,6 @@ package("volk")
     add_versions("git:1.3.231+1", "sdk-1.3.231.1")
 
     add_versions("1.3.204", "7776e7f3c70f199579da33d2ccd7152ca8b96182fa98c31fbe80880cef0fdf70")
-    add_versions("1.2.162", "ac4d9d6e88dee5a83ad176e2da57f1989ca2c6df155a0aeb5e18e9471aa4d777")
     add_versions("1.2.190", "07f03720b8c70a626c98cc9545350538122bca9f853e6ed20ccad5a25d55fa4b")
 
     add_deps("vulkan-headers")
