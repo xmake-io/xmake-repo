@@ -55,7 +55,12 @@ package("volk")
         table.insert(configs, "-DVOLK_INSTALL=ON")
         table.insert(configs, "-DVULKAN_HEADERS_INSTALL_DIR=" .. vulkanheaders:installdir())
         table.insert(configs, "-DVOLK_HEADERS_ONLY=" .. (package:config("header_only") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        local opt
+        if package:gitref() or package:version():lt("1.3.250") then
+            opt = {}
+            opt.packagedeps = {"vulkan-headers"}
+        end
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_load(function (package)
