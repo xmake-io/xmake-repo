@@ -25,7 +25,7 @@ package("xdl")
                     set_optimize("smallest")
                     add_cflags("-ffunction-sections", "-fdata-sections")
                     add_ldflags("-Wl,--exclude-libs,ALL", "-Wl,--gc-sections")
-                    add_files("xdl.map")                
+                    add_files("xdl.map")
                 end
                 if is_arch("x64", "x86_64", "arm64.*", "aarch64") then
                     add_ldflags("-Wl,-z,max-page-size=16384")
