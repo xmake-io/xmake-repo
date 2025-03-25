@@ -153,9 +153,9 @@ package("imgui")
         if package:config("sdl3") or package:config("sdl3_renderer") or package:config("sdl3_gpu") then
             package:add("deps", "libsdl3")
         end
-        --[[ if package:config("vulkan") then
-            package:add("deps", "vulkansdk")
-        end ]]
+        if package:config("vulkan") then
+            package:add("deps", "vulkan-headers")
+        end
         if package:config("wgpu") then
             package:add("deps", "wgpu-native")
         end
