@@ -1,12 +1,13 @@
 package("libmd")
-
     set_homepage("https://www.hadrons.org/software/libmd/")
     set_description("Message Digest functions from BSD systems")
     set_license("BSD-3-Clause")
 
     add_urls("https://archive.hadrons.org/software/libmd/libmd-$(version).tar.xz")
     add_urls("https://libbsd.freedesktop.org/releases/libmd-$(version).tar.xz")
+    
     add_versions("1.0.4", "f51c921042e34beddeded4b75557656559cf5b1f2448033b4c1eec11c07e530f")
+    add_versions("1.1.0", "1bd6aa42275313af3141c7cf2e5b964e8b1fd488025caf2f971f43b00776b332")
 
     add_deps("autotools")
 
