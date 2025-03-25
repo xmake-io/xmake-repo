@@ -6,6 +6,7 @@ package("asio3")
 
     add_urls("https://github.com/zhllxt/asio3.git")
     add_versions("2023.12.03", "66e76da69b359540fdf15b85bd5f3612b358c1da")
+    add_versions("2024.09.11", "37bf180ee4ee903a8bd8d4d9383c7f46d3ba32bd")
 
     add_deps("asio", "cereal", "fmt", "openssl3", "nlohmann_json")
     add_deps("spdlog", { configs = { header_only = false, fmt_external = true } })
