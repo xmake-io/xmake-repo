@@ -8,10 +8,23 @@ package("woff2")
 
     add_versions("v1.0.2", "add272bb09e6384a4833ffca4896350fdb16e0ca22df68c0384773c67a175594")
 
-    add_deps("cmake", "brotli")
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
+    add_deps("cmake")
+
+    if is_plat("cross", "linux", "mingw") then
+        add_deps("brotli", {configs = {shared = true}})
+    else
+        add_deps("brotli")
+    end
 
     on_install(function (package)
         local configs = {}
+        if package:is_plat("android") then
+            table.insert(configs, "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW")
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, {packagedeps = {"brotli", "brotlienc", "brotlidec"}})
