@@ -24,7 +24,7 @@ package("libxkbcommon")
         end
 
         if package:config("wayland") then
-            package:add("deps", "wayland")
+            package:add("deps", "wayland", "wayland-protocols")
             if package:is_plat("linux") then
                 package:add("extsources", "pacman::libxkbcommon")
             end
