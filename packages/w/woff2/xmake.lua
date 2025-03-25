@@ -20,11 +20,14 @@ package("woff2")
         add_deps("brotli")
     end
 
-    on_install(function (package)
-        local configs = {}
-        if package:is_plat("android") then
-            table.insert(configs, "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW")
+    on_check("mingw", function (package)
+        if is_subhost("macosx") then
+            raise("package(woff2) is unsupported on Mac OS X subhost.")
         end
+    end)
+
+    on_install(function (package)
+        local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, {packagedeps = {"brotli", "brotlienc", "brotlidec"}})
