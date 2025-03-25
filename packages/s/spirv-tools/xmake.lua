@@ -3,7 +3,7 @@ package("spirv-tools")
     set_description("SPIR-V Tools")
     set_license("Apache-2.0")
 
-    -- when adding a new sdk version, please ensure vulkan-headers, vulkan-hpp, vulkan-loader, vulkan-utility-libraries, spirv-headers, spirv-reflect, spirv-tools, glslang and volk packages are updated simultaneously
+    -- when adding a new sdk version, please ensure vulkan-headers, vulkan-hpp, vulkan-loader, vulkan-tools, vulkan-validationlayers, vulkan-utility-libraries, spirv-headers, spirv-reflect, spirv-tools, glslang and volk packages are updated simultaneously
     add_urls("https://github.com/KhronosGroup/SPIRV-Tools.git")
     add_versions("1.2.154+1", "sdk-1.2.154.1")
     add_versions("1.2.162+0", "sdk-1.2.162.0")

@@ -5,7 +5,7 @@ package("spirv-reflect")
 
     add_urls("https://github.com/KhronosGroup/SPIRV-Reflect.git")
  
-    -- when adding a new sdk version, please ensure vulkan-headers, vulkan-hpp, vulkan-loader, vulkan-utility-libraries, spirv-headers, spirv-reflect, spirv-tools, glslang and volk packages are updated simultaneously
+    -- when adding a new sdk version, please ensure vulkan-headers, vulkan-hpp, vulkan-loader, vulkan-tools, vulkan-validationlayers, vulkan-utility-libraries, spirv-headers, spirv-reflect, spirv-tools, glslang and volk packages are updated simultaneously
     add_versions("1.2.154+1", "5de48fe8d3ef434e846d64ed758adc5d26335ae5")
     add_versions("1.2.162+0", "481e34d666031eae28423f3b723a1a8c717d7636")
     add_versions("1.2.189+1", "272e050728de8d4a4ce9e7101c1244e6ff56e5b0")
