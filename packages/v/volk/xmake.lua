@@ -39,14 +39,17 @@ package("volk")
     add_versions("1.2.190", "07f03720b8c70a626c98cc9545350538122bca9f853e6ed20ccad5a25d55fa4b")
     add_versions("1.2.162", "ac4d9d6e88dee5a83ad176e2da57f1989ca2c6df155a0aeb5e18e9471aa4d777")
 
-    add_deps("vulkan-headers")
-
     add_configs("header_only", {description = "Header only.", default = false, type = "boolean"})
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
     if is_plat("linux") then
         add_syslinks("dl")
     end
+
+    on_load(function (package)
+        local sdkver = package:version():split("%+")[1]
+        package:add("deps", "vulkan-headers " .. sdkver)
+    end)
 
     on_install("windows", "linux", "macosx", "mingw", "iphoneos", "android", function (package)
         if package:config("header_only") then
