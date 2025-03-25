@@ -19,7 +19,19 @@ package("vvenc")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
+    if is_plat("linux", "bsd") then
+        add_syslinks("pthread")
+    end
+
     add_deps("cmake")
+
+    if on_check then
+        on_check("wasm", function (target)
+            if package:version() and package:version():eq("1.13.1") then
+                raise("package(vvenc 1.13.1) unsupported version")
+            end
+        end)
+    end
 
     on_load(function (package)
         if package:config("json") then
