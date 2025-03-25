@@ -51,6 +51,9 @@ package("volk")
         end
         local vulkanheaders = package:dep("vulkan-headers")
         local configs = {}
+        if package:is_plat("android") and (package:gitref() or package:version():lt("1.3.261")) then
+            table.insert(configs, "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW")
+        end
         table.insert(configs, "-DVOLK_PULL_IN_VULKAN=ON")
         table.insert(configs, "-DVOLK_INSTALL=ON")
         table.insert(configs, "-DVULKAN_HEADERS_INSTALL_DIR=" .. vulkanheaders:installdir())
