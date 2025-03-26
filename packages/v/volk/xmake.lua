@@ -47,6 +47,9 @@ package("volk")
     end
 
     on_load(function (package)
+        if package:config("header_only") then
+            package:set("kind", "library", {headeronly = true})
+        end
         local sdkver = package:version():split("%+")[1]
         package:add("deps", "vulkan-headers " .. sdkver)
     end)
@@ -71,12 +74,6 @@ package("volk")
             opt.packagedeps = {"vulkan-headers"}
         end
         import("package.tools.cmake").install(package, configs, opt)
-    end)
-
-    on_load(function (package)
-        if package:config("header_only") then
-            package:set("kind", "library", {headeronly = true})
-        end
     end)
 
     on_test(function (package)
