@@ -46,7 +46,7 @@ package("elfutils")
         end)
     end
 
-    on_install("linux", "android", "mingw", "msys", function (package)
+    on_install("linux", "android", function (package)
         local configs = {"--disable-dependency-tracking",
                          "--disable-silent-rules",
                          "--program-prefix=elfutils-",
