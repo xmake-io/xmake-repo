@@ -12,7 +12,7 @@ package("litehtml")
     add_deps("gumbo-parser")
 
     on_install(function (package)
-        local configs = {"-DBUILD_TESTING=OFF", "-DEXTERNAL_GUMBO=ON"}
+        local configs = {"-DBUILD_TESTING=OFF", "-DLITEHTML_BUILD_TESTING=OFF", "-DEXTERNAL_GUMBO=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") and package:config("shared") then
