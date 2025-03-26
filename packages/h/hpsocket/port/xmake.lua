@@ -162,9 +162,9 @@ target("hpsocket")
             end
         else
             local arch = is_arch("x64", "x86_64") and "x64" or "x86"
-            if is_arch("arm64.*")
+            if is_arch("arm64.*") then
                 arch = "arm64"
-            elseif is_arch("arm.*")
+            elseif is_arch("arm.*") then
                 arch = "arm"
             end
             add_includedirs(path.join("Linux/dependent", arch, "include"))
