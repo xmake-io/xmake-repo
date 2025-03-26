@@ -32,7 +32,6 @@ package("vulkan-utility-libraries")
     end
 
     add_deps("cmake")
-    add_deps("vulkan-headers")
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::vulkan-utility-libraries")
@@ -41,6 +40,11 @@ package("vulkan-utility-libraries")
     elseif is_plat("macosx") then
         add_extsources("brew::vulkan-utility-libraries")
     end
+
+    on_load(function (package)
+        local sdkver = package:version():split("%+")[1]
+        package:add("deps", "vulkan-headers " .. sdkver)
+    end)
 
     on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", "cross", function (package)
         local configs = {"-DBUILD_TESTS=OFF", "-DUPDATE_DEPS=OFF"}
