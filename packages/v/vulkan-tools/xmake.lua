@@ -5,10 +5,10 @@ package("vulkan-tools")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/KhronosGroup/Vulkan-Tools/archive/refs/tags/$(version).tar.gz", {alias = "archive", version = function (version)
-        local prefix = ""
+        local prefix
         if version:gt("1.3.261+1") then
             prefix = "vulkan-sdk-"
-        elseif version:ge("1.3.226") then
+        else
             prefix = "sdk-"
         end
         return prefix .. version:gsub("%+", ".")
