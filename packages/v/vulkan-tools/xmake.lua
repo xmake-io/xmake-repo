@@ -77,5 +77,9 @@ package("vulkan-tools")
     end)
 
     on_test(function (package)
-        os.vrun("vulkaninfo --summary")
+        local boostdep = package:installdir("bin/vulkaninfo")
+        if is_host("windows") then
+            boostdep = boostdep .. ".exe"
+        end
+        assert(os.isexec(boostdep), "vulkaninfo not found!")
     end)

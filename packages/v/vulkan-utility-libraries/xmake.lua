@@ -3,21 +3,29 @@ package("vulkan-utility-libraries")
     set_description("Utility libraries for Vulkan developers")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/KhronosGroup/Vulkan-Utility-Libraries.git")
-    add_urls("https://github.com/KhronosGroup/Vulkan-Utility-Libraries/archive/refs/tags/$(version).tar.gz", {version = function (version)
-        local prefix = "sdk-"
+    add_urls("https://github.com/KhronosGroup/Vulkan-Utility-Libraries/archive/refs/tags/$(version).tar.gz", {alias = "archive", version = function (version)
+        local prefix = ""
         if version:gt("1.3.261+1") then
             prefix = "vulkan-sdk-"
+        elseif version:ge("1.3.226") then
+            prefix = "sdk-"
         end
         return version:startswith("v") and version or prefix .. version:gsub("%+", ".")
     end})
+    add_urls("https://github.com/KhronosGroup/Vulkan-Utility-Libraries.git", {alias = "git"})
 
     -- when adding a new sdk version, please ensure vulkan-headers, vulkan-hpp, vulkan-loader, vulkan-tools, vulkan-validationlayers, vulkan-utility-libraries, spirv-headers, spirv-reflect, spirv-tools, glslang and volk packages are updated simultaneously
-    add_versions("v1.4.309", "92e3b842d61965ccab1de04f154eeedef23f895104330e8237055a9ee2feed62")
-    add_versions("v1.3.283", "a446616dede2b0168726f4e1b51777ba5c20ec46c475b378e2c07fd4ab4375ee")
-    add_versions("v1.3.280", "075e13f2fdeeca3bb6fb39155c8cc345cf216ab93661549b1a33368aa28a9dea")
-    add_versions("v1.3.275", "96d3ec7bda7b6e9fabbb471c570104a7b1cb56928d097dd0441c96129468b888")
-    add_versions("v1.3.268", "990de84b66094b647ae420ba13356b79d69e1c6f95532f40466457d51a9d127d")
+    add_versions("archive:v1.4.309", "d888151924c2ec0a0a852d2c7d6c2262362f535513efc2a3a413cc2071b551d8")
+    add_versions("archive:v1.3.283", "a446616dede2b0168726f4e1b51777ba5c20ec46c475b378e2c07fd4ab4375ee")
+    add_versions("archive:v1.3.280", "075e13f2fdeeca3bb6fb39155c8cc345cf216ab93661549b1a33368aa28a9dea")
+    add_versions("archive:v1.3.275", "96d3ec7bda7b6e9fabbb471c570104a7b1cb56928d097dd0441c96129468b888")
+    add_versions("archive:v1.3.268", "990de84b66094b647ae420ba13356b79d69e1c6f95532f40466457d51a9d127d")
+
+    add_versions("git:v1.4.309", "vulkan-sdk-1.4.309.0")
+    add_versions("git:v1.3.283", "vulkan-sdk-1.3.283.0")
+    add_versions("git:v1.3.280", "vulkan-sdk-1.3.280.0")
+    add_versions("git:v1.3.275", "vulkan-sdk-1.3.275.0")
+    add_versions("git:v1.3.268", "vulkan-sdk-1.3.268.0")
 
     if is_plat("windows") then
         add_syslinks("advapi32")
