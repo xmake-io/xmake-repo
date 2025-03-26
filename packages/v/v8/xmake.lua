@@ -4,6 +4,7 @@ package("v8")
 
     add_urls("https://github.com/v8/v8.git")
     add_versions("10.0.58", "d75903764c8547b6fc35c7a3fe4991320be03135")
+    add_versions("12.8.168", "5b07fbc023301f615e2ecd8027374d1e64c9a73e")
 
     add_deps("depot_tools")
 
@@ -11,7 +12,7 @@ package("v8")
         add_syslinks("pthread", "dl")
     elseif is_plat("windows") then
         add_syslinks("user32", "winmm", "advapi32", "dbghelp", "shlwapi")
-        add_configs("vs_runtime", {description = "Set vs runtime.", default = "MT", readonly = true})
+        add_configs("runtimes", {description = "Set runtime.", default = "MT", readonly = true})
     end
 
     add_links("v8_monolith",
@@ -69,8 +70,8 @@ package("v8")
             v8_enable_i18n_support = false}
 
         if package:is_plat("windows") then
-            configs.extra_cflags = {(package:config("vs_runtime"):startswith("MT") and "/MT" or "/MD")}
-            configs.is_clang = false 
+            configs.extra_cflags = {(package:has_runtime("MT", "MTd") and "/MT" or "/MD")}
+            configs.is_clang = false
         end
         import("package.tools.gn").build(package, configs, {buildir = "out.gn"})
         os.cp("include", package:installdir())
