@@ -12,6 +12,9 @@ package("tinyspline")
 
     on_install(function (package)
         io.replace("src/CMakeLists.txt", [["lib64"]], [["lib"]], {plain = true})
+        io.replace("src/CMakeLists.txt", "RUNTIME DESTINATION ${TINYSPLINE_INSTALL_BINARY_DIR}", "RUNTIME DESTINATION bin", {plain = true})
+        io.replace("src/CMakeLists.txt", "LIBRARY DESTINATION ${TINYSPLINE_INSTALL_LIBRARY_DIR}", "LIBRARY DESTINATION lib", {plain = true})
+        io.replace("src/CMakeLists.txt", "ARCHIVE DESTINATION ${TINYSPLINE_INSTALL_LIBRARY_DIR}", "ARCHIVE DESTINATION lib", {plain = true})
         local configs = {
             "-DTINYSPLINE_BUILD_EXAMPLES=OFF", "-DTINYSPLINE_BUILD_TESTS=OFF", 
             "-DTINYSPLINE_BUILD_DOCS=OFF",  "-DTINYSPLINE_WARNINGS_AS_ERRORS=OFF"
