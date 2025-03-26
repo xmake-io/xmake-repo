@@ -4,7 +4,7 @@ package("woff2")
     set_license("MIT")
 
     add_urls("https://github.com/google/woff2/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/google/woff2.git")
+             "https://github.com/google/woff2.git", {submodules = false})
 
     add_versions("v1.0.2", "add272bb09e6384a4833ffca4896350fdb16e0ca22df68c0384773c67a175594")
 
