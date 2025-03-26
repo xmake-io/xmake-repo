@@ -5,6 +5,7 @@ package("libxdmcp")
     set_urls("https://www.x.org/archive/individual/lib/libXdmcp-$(version).tar.gz")
     add_versions("1.1.3", "2ef9653d32e09d1bf1b837d0e0311024979653fe755ad3aaada8db1aa6ea180c")
     add_versions("1.1.4", "55041a8ff8992ab02777478c4b19c249c0f8399f05a752cb4a1a868a9a0ccb9a")
+    add_versions("1.1.5", "31a7abc4f129dcf6f27ae912c3eedcb94d25ad2e8f317f69df6eda0bc4e4f2f3")
 
     if is_plat("linux") then
         add_extsources("apt::libxdmcp-dev", "pacman::libxmdcp")
