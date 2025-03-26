@@ -39,7 +39,9 @@ package("vulkan-tools")
         local sdkver = package:version():split("%+")[1]
         package:add("deps", "vulkan-headers " .. sdkver)
         package:add("deps", "vulkan-loader " .. sdkver)
-        package:add("deps", "volk " .. sdkver)
+        if package:version():ge("1.3.271") then
+            package:add("deps", "volk " .. sdkver)
+        end
         if not package.is_built or package:is_built() then
             package:add("deps", "cmake", "ninja")
         end
