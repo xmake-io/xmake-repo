@@ -18,7 +18,7 @@ package("tinyspline")
         }
         -- Fix for mingw@macosx being recognized as Windows
         if package:is_plat("mingw") and is_subhost("macosx") then
-            table.insert(configs, "-DCMAKE_SYSTEM_NAME=Darwin")
+            table.insert(configs, "-DCMAKE_SYSTEM_NAME=Linux")
         end
         -- Fix for newer WASM/Emscripten versions
         io.replace("src/tinysplinecxx.h", "toWireType(const std::vector<T, Allocator> &vec)", "toWireType(const std::vector<T, Allocator> &vec, rvp::default_tag)", {plain = true})
