@@ -25,19 +25,13 @@ package("khaledhosny-ots")
     add_deps("zlib")
     add_deps("woff2", {configs = {shared = false}})
 
-    on_check("mingw", function (package)
-        if is_subhost("macosx") then
-            raise("package(khaledhosny-ots) is unsupported on Mac OS X subhost.")
-        end
-    end)
-
     on_load(function (package)
         if package:config("graphite") then
             package:add("deps", "lz4")
         end
     end)
 
-    on_install("!iphoneos", function (package)
+    on_install("!iphoneos and !mingw and !android", function (package)
         io.replace("src/ots.h", "#ifdef HAVE_CONFIG_H", "#if 1", {plain = true})
         os.cp("include", package:installdir())
         os.cp("src/*.h", package:installdir("include"))
