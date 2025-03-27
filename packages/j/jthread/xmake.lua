@@ -11,8 +11,8 @@ package("jthread")
     add_patches("2023.08.18", "patches/2023.08.18/cmakelist.patch", "62304c64bf7a84ce7d3f95042d2307b4306d934e00cc033837610d9cef8401d5")
 
     add_includedirs("include", "include/jthread")
-    
-    on_install("windows", "linux", "macosx", function(package)
+
+    on_install(function(package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DJTHREAD_COMPILE_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
