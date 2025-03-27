@@ -12,6 +12,8 @@ package("simplewindow")
 
     add_syslinks("gdi32", "user32", "shell32")
 
+    add_includedirs("include", "include/sw")
+
     on_install("windows", "mingw@windows,msys", function (package)
         os.cd("sw")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
