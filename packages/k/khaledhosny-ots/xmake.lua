@@ -11,6 +11,9 @@ package("khaledhosny-ots")
     add_configs("colr-cycle-check", {description = "Reject fonts with cycles in COLRv1 paint graph", default = true, type = "boolean"})
     add_configs("graphite", {description = "Sanitize Graphite tables", default = true, type = "boolean"})
     add_configs("synthesize-gvar", {description = "Synthesize an empty gvar if fvar is present", default = true, type = "boolean"})
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     add_deps("meson", "ninja")
 
