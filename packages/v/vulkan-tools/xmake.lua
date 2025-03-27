@@ -70,7 +70,7 @@ package("vulkan-tools")
         end
         local opt = {cmake_generator = "Ninja", envs = envs}
         if package:is_plat("linux") and package:version():le("1.2.198") then
-            opt.packagedeps = "libxau"
+            opt.packagedeps = {"libxau", "libxkbcommon"}
         end
 
         package:addenv("PATH", "bin")
