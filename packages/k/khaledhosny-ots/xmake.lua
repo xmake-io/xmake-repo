@@ -17,7 +17,7 @@ package("khaledhosny-ots")
 
     if is_plat("windows") then
         add_syslinks("gdi32")
-    elseif is_plat("macosx", "iphoneos") then
+    elseif is_plat("macosx") then
         add_frameworks("ApplicationServices")
     end
 
