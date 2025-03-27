@@ -24,7 +24,8 @@ package("khaledhosny-ots")
     end
 
     add_deps("freetype", {configs = {woff2 = false, png = false, zlib = false, bzip2 = false}})
-    add_deps("zlib", "woff2")
+    add_deps("zlib")
+    add_deps("woff2", {configs = {shared = false}})
 
     on_load(function (package)
         if package:config("graphite") then
