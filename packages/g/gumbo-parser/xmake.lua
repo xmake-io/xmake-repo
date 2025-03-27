@@ -17,15 +17,11 @@ package("gumbo-parser")
                 if is_plat("windows") then
                     add_includedirs("visualc/include")
                     if is_kind("shared") then
-                        add_rules("utils.symbols.export_all", {export_classes = true})
+                        add_rules("utils.symbols.export_all")
                     end
                 end
         ]])
-        local configs = {}
-        if package:config("shared") then
-            configs.kind = "shared"
-        end
-        import("package.tools.xmake").install(package, configs)
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
