@@ -13,7 +13,7 @@ package("jrtplib")
 
     if is_plat("bsd", "linux") then
         add_syslinks("pthread")
-    elseif is_plat("windows", "mingw") then 
+    elseif is_plat("windows", "mingw") then
         add_syslinks("ws2_32", "advapi32")
     end
 
