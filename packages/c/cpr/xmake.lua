@@ -19,7 +19,7 @@ package("cpr")
     add_configs("ssl", {description = "Enable SSL.", default = false, type = "boolean"})
 
     add_deps("cmake")
-    if is_plat("mingw", "bsd", "linux") then
+    if is_plat("mingw", "linux") then
         add_syslinks("pthread")
     end
     add_links("cpr")
@@ -44,9 +44,9 @@ package("cpr")
         end
     end)
 
-    on_install(function (package)
+    on_install("!wasm and !bsd", function (package)
         io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
-        if package:is_plat("windows") then
+        if package:is_plat("windows") or package:is_plat("android") and is_subhost("windows") then
             -- fix find_package issue on windows
             io.replace("CMakeLists.txt", "find_package%(CURL COMPONENTS .-%)", "find_package(CURL)")
         end
