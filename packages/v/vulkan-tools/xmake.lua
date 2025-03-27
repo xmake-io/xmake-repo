@@ -68,10 +68,6 @@ package("vulkan-tools")
             envs.CPLUS_INCLUDE_PATH = (envs.CPLUS_INCLUDE_PATH or "") .. path.envsep() .. path.joinenv(table.unique(includes))
             envs.LD_LIBRARY_PATH = (envs.LD_LIBRARY_PATH or "") .. path.envsep() .. path.joinenv(table.unique(linkdirs))
         end
-        local opt = {cmake_generator = "Ninja", envs = envs}
-        if package:is_plat("linux") and package:version():le("1.2.198") then
-            opt.packagedeps = {"libxau", "libxkbcommon"}
-        end
 
         package:addenv("PATH", "bin")
         io.replace(path.join("icd", "CMakeLists.txt"), "copy ${src_json} ${dst_json}", "${CMAKE_COMMAND} -E copy ${src_json} ${dst_json}", {plain = true})
@@ -79,10 +75,14 @@ package("vulkan-tools")
         local vulkan_headers = package:dep("vulkan-headers")
         local vulkan_loader = package:dep("vulkan-loader")
         local glslang = package:dep("glslang")
+        table.insert(configs, "-DBUILD_CUBE=OFF")
+        table.insert(configs, "-DBUILD_TESTS=OFF")
+        table.insert(configs, "-DBUILD_WERROR=OFF")
+        table.insert(configs, "-DTOOLS_CODEGEN=OFF")
         table.insert(configs, "-DVULKAN_HEADERS_INSTALL_DIR=" .. vulkan_headers:installdir())
         table.insert(configs, "-DVULKAN_LOADER_INSTALL_DIR=" .. vulkan_loader:installdir())
         table.insert(configs, "-DGLSLANG_INSTALL_DIR=" .. glslang:installdir())
-        cmake.install(package, configs, opt)
+        cmake.install(package, configs, {cmake_generator = "Ninja", envs = envs})
     end)
 
     on_test(function (package)
