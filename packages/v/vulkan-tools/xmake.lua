@@ -32,7 +32,7 @@ package("vulkan-tools")
 
     if is_plat("linux") then
         add_extsources("apt::vulkan-tools", "pacman::vulkan-tools")
-        add_deps("wayland", "libxrandr", "libxau", "libxcb", "libxkbcommon")
+        add_deps("wayland", "libxrandr", "libxcb", "libxkbcommon")
     end
 
     on_load("windows|x64", "linux", function (package)
@@ -41,6 +41,9 @@ package("vulkan-tools")
         package:add("deps", "vulkan-loader " .. sdkver)
         if package:version():ge("1.3.271") then
             package:add("deps", "volk " .. sdkver)
+        end
+        if package:is_plat("linux") and package:version():le("1.2.198") then
+            package:add("deps", "libxau")
         end
         if not package.is_built or package:is_built() then
             package:add("deps", "cmake", "ninja")
@@ -65,6 +68,10 @@ package("vulkan-tools")
             envs.CPLUS_INCLUDE_PATH = (envs.CPLUS_INCLUDE_PATH or "") .. path.envsep() .. path.joinenv(table.unique(includes))
             envs.LD_LIBRARY_PATH = (envs.LD_LIBRARY_PATH or "") .. path.envsep() .. path.joinenv(table.unique(linkdirs))
         end
+        local opt = {cmake_generator = "Ninja", envs = envs}
+        if package:is_plat("linux") and package:version():le("1.2.198") then
+            opt.packagedeps = "libxau"
+        end
 
         package:addenv("PATH", "bin")
         io.replace(path.join("icd", "CMakeLists.txt"), "copy ${src_json} ${dst_json}", "${CMAKE_COMMAND} -E copy ${src_json} ${dst_json}", {plain = true})
@@ -75,7 +82,7 @@ package("vulkan-tools")
         table.insert(configs, "-DVULKAN_HEADERS_INSTALL_DIR=" .. vulkan_headers:installdir())
         table.insert(configs, "-DVULKAN_LOADER_INSTALL_DIR=" .. vulkan_loader:installdir())
         table.insert(configs, "-DGLSLANG_INSTALL_DIR=" .. glslang:installdir())
-        cmake.install(package, configs, {cmake_generator = "Ninja", envs = envs})
+        cmake.install(package, configs, opt)
     end)
 
     on_test(function (package)
