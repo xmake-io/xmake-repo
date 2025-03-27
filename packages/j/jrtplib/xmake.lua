@@ -11,7 +11,7 @@ package("jrtplib")
 
     add_includedirs("include", "include/jrtplib3")
 
-    if is_plat ("linux") then 
+    if is_plat("bsd", "linux") then
         add_syslinks("pthread")
     elseif is_plat("windows", "mingw") then 
         add_syslinks("ws2_32", "advapi32")
