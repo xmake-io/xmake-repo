@@ -43,6 +43,12 @@ package("criterion")
         end)
     end
 
+    on_load("linux", function (package)
+        if linuxos.name() == "fedora" then
+            package:add("deps", "openssl")
+        end
+    end)
+
     on_install("windows|!arm*", "linux", "macosx", "cross", "mingw@windows,msys", "bsd", function (package)
         io.replace("src/meson.build", [[libcriterion = both_libraries]], [[libcriterion = library]], {plain = true})
         local opt = {}
@@ -83,7 +89,7 @@ endif
             io.replace("src/entry/params.c", "#ifdef HAVE_ISATTY", "#if 0", {plain = true})
             io.replace("src/entry/params.c", "opts[]", "opts[28]", {plain = true})
         else
-            opt.packagedeps = {"openssl", "libgit2"}
+            opt.packagedeps = {"openssl"}
             io.replace("src/compat/path.c", "defined (HAVE_GETCWD)", "1", {plain = true})
             io.replace("src/compat/path.c", "defined (HAVE_GETCURRENTDIRECTORY)", "0", {plain = true})
         end
