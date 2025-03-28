@@ -35,7 +35,7 @@ package("criterion")
     if on_check then
         on_check("windows", function (package)
             if package:is_arch("x86") and package:has_runtime("MD", "MDd") then
-                raise("package(criterion) unsupported x86 & MD & shared")
+                raise("package(criterion) unsupported x86 & MD")
             end
         end)
     end
