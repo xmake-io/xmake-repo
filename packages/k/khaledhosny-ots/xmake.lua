@@ -9,9 +9,9 @@ package("khaledhosny-ots")
     add_versions("v9.2.0", "c2b786a334d79a7841549c4f10a49cb62389431fd38d63aeeb98a0bcdb50ad11")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-    add_configs("colr-cycle-check", {description = "Reject fonts with cycles in COLRv1 paint graph", default = true, type = "boolean"})
+    add_configs("colr_check", {description = "Reject fonts with cycles in COLRv1 paint graph", default = true, type = "boolean"})
     add_configs("graphite", {description = "Sanitize Graphite tables", default = true, type = "boolean"})
-    add_configs("synthesize-gvar", {description = "Synthesize an empty gvar if fvar is present", default = true, type = "boolean"})
+    add_configs("synthesize_gvar", {description = "Synthesize an empty gvar if fvar is present", default = true, type = "boolean"})
 
     add_deps("meson", "ninja")
 
@@ -70,9 +70,9 @@ dependencies: ots_deps, install: true
 ]], {plain = true})
         io.replace("meson.build", "configuration: conf", "configuration: conf, install: true, install_dir: 'include'", {plain = true})
         local configs = {}
-        table.insert(configs, "-Dcolr-cycle-check=" .. (package:config("colr-cycle-check") and "true" or "false"))
+        table.insert(configs, "-Dcolr-cycle-check=" .. (package:config("colr_check") and "true" or "false"))
         table.insert(configs, "-Dgraphite=" .. (package:config("graphite") and "true" or "false"))
-        table.insert(configs, "-Dsynthesize-gvar=" .. (package:config("synthesize-gvar") and "true" or "false"))
+        table.insert(configs, "-Dsynthesize-gvar=" .. (package:config("synthesize_gvar") and "true" or "false"))
         table.insert(configs, "-Ddebug=" .. (package:debug() and "true" or "false"))
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         import("package.tools.meson").install(package, configs)
