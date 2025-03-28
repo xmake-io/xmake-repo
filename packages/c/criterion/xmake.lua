@@ -25,56 +25,38 @@ package("criterion")
     end
 
     add_deps("debugbreak", "klib")
-
-    --FIXUP for unres symbols
     add_deps("nanomsg", {configs = {shared = true}})
     add_deps("libgit2", {configs = {shared = true}})
-
     add_deps("boxfort", {configs = {shared = false}})
     add_deps("libffi", {configs = {shared = false}})
-    add_deps("nanopb", {configs = {generator = true}})
+    add_deps("nanopb", {configs = {shared = true, generator = true}})
     add_deps("python 3.x", {kind = "binary"})
 
-     -- Try pass getopt to Windows
+    on_check("windows", function (package)
+        if package:is_arch("x86") and package:has_runtime("MD", "MDd") and package:config("shared") then
+            raise("package(criterion) unsupported x86 & MD & shared")
+        end
+    end)
 
-    on_install(function (package)
+    on_install("windows|!arm*", "linux", "macosx", "cross", "mingw@windows,msys", "msys", function (package)
         io.replace("src/meson.build", [[libcriterion = both_libraries]], [[libcriterion = library]], {plain = true})
         local opt = {}
-        -- Remove debugbreak & klib
         os.rm("subprojects")
-
-        -- Gather protoc-gen-nanopb, protoc comes from protobuf-cpp xmake package
+        --    Gather protoc-gen-nanopb, protoc comes from protobuf-cpp xmake package since we need to escape issue of 
+        --    ModuleNotFoundError: No module named 'google.protobuf.text_format' and place nanopb's bin folder to PATH
         local python = package:is_plat("windows") and "python" or "python3"
         os.vrun(python .. " -m pip install protobuf==5.29.3 nanopb==0.4.9.1")
-
         io.replace("meson.build", "git = find_program('git', required: false)", "", {plain = true})
         io.replace("meson.build", "if git.found() and is_git_repo", "if false", {plain = true})
-
-        -- Swap from CMakeConfig to pkgconfig
-        -- io.replace("meson.build",
-            -- [[nanomsg = dependency('nanomsg', required: get_option('wrap_mode') == 'nofallback')]],
-            -- [[nanomsg = dependency('nanomsg', method: 'pkg-config')]])
-
+        -- Swap from cmake to pkg-config
         io.replace("meson.build",
             [[nanopb = dependency('nanopb', required: get_option('wrap_mode') == 'nofallback', method: 'cmake',]],
             [[nanopb = dependency('nanopb', method: 'pkg-config')]], {plain = true})
         io.replace("meson.build", "modules: ['nanopb::protobuf-nanopb-static'])", "", {plain = true})
-
-        -- io.cat("meson.build")
-
-        -- io.replace("src/criterion.pb.h", "#include <pb.h>", "#include <nanopb/pb.h>", {plain = true})
-        -- for _, file in ipairs(os.files("src/**pb.h")) do
-        --     io.replace(file, "#include <pb.h>", "#include <nanopb/pb.h>", {plain = true})
-        -- end
-        -- for _, file in ipairs(os.files("src/**.h")) do
-        --     io.replace(file, "#include <pb.h>", "#include <nanopb/pb.h>", {plain = true})
-        -- end
-
-        -- io.replace("src/io/event.h", "#include <pb.h>", "#include <nanopb/pb.h>", {plain = true})
-        -- io.replace("src/protocol/protocol.h", "#include <pb.h>", "#include <nanopb/pb.h>", {plain = true})
-        -- io.replace("src/protocol/criterion.pb.h", "#include <pb.h>", "#include <nanopb/pb.h>", {plain = true})
-        -- io.replace("meson.build", [['-DWIN32_LEAN_AND_MEAN',]], [['-DWIN32_LEAN_AND_MEAN', '-D_WIN32', '-DCRITERION_BUILDING_DLL', ]], {plain = true})
-        if is_plat("windows", "mingw") then -- HAVE WINDOWS.H
+        io.replace("meson.build",
+            [[libgit2 = dependency('libgit2', required: get_option('wrap_mode') == 'nofallback')]],
+            [[libgit2 = dependency('libgit2', method: 'pkg-config')]], {plain = true})
+        if is_plat("windows", "mingw") then
             opt.packagedeps = {"wingetopt"}
             if package:has_tool("cl") then
                 table.insert(opt.cxflags, "/utf-8")
@@ -86,11 +68,10 @@ package("criterion")
             end
             io.replace("src/entry/params.c", "#ifdef HAVE_ISATTY", "#if 0", {plain = true})
             io.replace("src/entry/params.c", "opts[]", "opts[28]", {plain = true})
-        else                                -- DO NOT HAVE WINDOWS.H
+        else
             io.replace("src/compat/path.c", "defined (HAVE_GETCWD)", "1", {plain = true})
             io.replace("src/compat/path.c", "defined (HAVE_GETCURRENTDIRECTORY)", "0", {plain = true})
         end
-
         local configs = {"-Dtests=false", "-Dsamples=false", "-Dc_std=c11"}
         table.insert(configs, "-Di18n=" .. (package:config("i18n") and "enabled" or "disabled"))
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
