@@ -45,7 +45,7 @@ package("criterion")
 
         -- Gather protoc-gen-nanopb, protoc comes from protobuf-cpp xmake package
         local python = package:is_plat("windows") and "python" or "python3"
-        os.vrun(python .. " -m pip install nanopb")
+        os.vrun(python .. " -m pip install protobuf==5.29.3 nanopb==0.4.9.1")
 
         io.replace("meson.build", "git = find_program('git', required: false)", "", {plain = true})
         io.replace("meson.build", "if git.found() and is_git_repo", "if false", {plain = true})
