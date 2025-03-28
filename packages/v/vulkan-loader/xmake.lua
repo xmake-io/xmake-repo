@@ -64,14 +64,27 @@ package("vulkan-loader")
     end)
 
     on_install("windows|x86", "windows|x64", "linux", "macosx", function (package)
+        import("package.tools.cmake")
+        local opt = {}
+        local envs = cmake.buildenvs(package)
+        opt.envs = envs
+        if package:is_plat("linux") then
+            opt.packagedeps = {packagedeps = {"wayland", "libxrandr", "libxrender", "libxcb", "libxkbcommon"}}
+            local linkdirs = {}
+            for _, lib in ipairs({"wayland", "libxrandr", "libxcb", "libxkbcommon"}) do
+                local fetchinfo = package:dep(lib):fetch()
+                if fetchinfo then
+                    for _, dir in ipairs(fetchinfo.linkdirs) do
+                        table.insert(linkdirs, dir)
+                    end
+                end
+            end
+            envs.LD_LIBRARY_PATH = (envs.LD_LIBRARY_PATH or "") .. path.envsep() .. path.joinenv(table.unique(linkdirs))
+        end
         local configs = {"-DBUILD_TESTS=OFF"}
         local vulkan_headers = package:dep("vulkan-headers")
         table.insert(configs, "-DVULKAN_HEADERS_INSTALL_DIR=" .. vulkan_headers:installdir())
-        if package:is_plat("linux") then
-            import("package.tools.cmake").install(package, configs, {packagedeps = {"wayland", "libxrandr", "libxrender", "libxcb", "libxkbcommon"}})
-        else
-            import("package.tools.cmake").install(package, configs)
-        end
+        cmake.install(package, configs, opt)
     end)
 
     on_test(function (package)

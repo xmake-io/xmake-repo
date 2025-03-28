@@ -42,9 +42,6 @@ package("vulkan-tools")
         if package:version():ge("1.3.271") then
             package:add("deps", "volk " .. sdkver)
         end
-        if package:is_plat("linux") and package:version():le("1.2.198") then
-            package:add("deps", "libxau")
-        end
         if not package.is_built or package:is_built() then
             package:add("deps", "cmake", "ninja")
         end
