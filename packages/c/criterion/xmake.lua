@@ -21,18 +21,14 @@ package("criterion")
         add_deps("pkg-config")
     end
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("ws2_32", "mswsock")
     elseif is_plat("linux", "bsd") then
         add_syslinks("m", "pthread", "rt")
     end
 
-    add_deps("debugbreak", "klib")
-    add_deps("nanomsg", {configs = {shared = true}})
-    add_deps("libgit2", {configs = {shared = true}})
-    add_deps("boxfort", {configs = {shared = false}})
-    add_deps("libffi", {configs = {shared = false}})
-    add_deps("nanopb", {configs = {generator = false}})
+    add_deps("debugbreak", "klib", "boxfort", "libffi", "nanopb")
+    add_deps("nanomsg", "libgit2", {configs = {shared = true}})
     add_deps("python 3.x", {kind = "binary"})
 
     if on_check then
@@ -49,7 +45,7 @@ package("criterion")
         end
     end)
 
-    on_install("windows|!arm*", "linux", "macosx", "cross", "mingw@windows,msys", "bsd", function (package)
+    on_install("windows|!arm*", "linux", "macosx", "cross", "mingw@windows,msys", "bsd", "msys", function (package)
         io.replace("src/meson.build", [[libcriterion = both_libraries]], [[libcriterion = library]], {plain = true})
         local opt = {}
         os.rm("subprojects")
