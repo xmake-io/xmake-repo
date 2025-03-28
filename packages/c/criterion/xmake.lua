@@ -8,6 +8,9 @@ package("criterion")
 
     add_versions("v2.4.2", "83e1a39c8c519fbef0d64057dc61c8100b3a5741595788c9f094bba2eeeef0df")
 
+    if is_plat("mingw") then
+        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+    end
     add_configs("i18n", {description = "Enable i18n", default = false, type = "boolean"})
 
     add_deps("meson", "ninja")
@@ -39,6 +42,12 @@ package("criterion")
             end
         end)
     end
+
+    on_load("linux", function (package)
+        if linuxos.name() == "fedora" then
+            package:add("deps", "openssl", {system = true})
+        end
+    end)
 
     on_install("windows|!arm*", "linux", "macosx", "cross", "mingw@windows,msys", "msys", function (package)
         io.replace("src/meson.build", [[libcriterion = both_libraries]], [[libcriterion = library]], {plain = true})
@@ -75,7 +84,7 @@ endif
             io.replace("src/entry/params.c", "#ifdef HAVE_ISATTY", "#if 0", {plain = true})
             io.replace("src/entry/params.c", "opts[]", "opts[28]", {plain = true})
         else
-            opt.packagedeps = {"openssl3"}
+            opt.packagedeps = {"openssl"}
             io.replace("src/compat/path.c", "defined (HAVE_GETCWD)", "1", {plain = true})
             io.replace("src/compat/path.c", "defined (HAVE_GETCURRENTDIRECTORY)", "0", {plain = true})
         end
