@@ -8,6 +8,9 @@ package("criterion")
 
     add_versions("v2.4.2", "83e1a39c8c519fbef0d64057dc61c8100b3a5741595788c9f094bba2eeeef0df")
 
+    if is_plat("bsd") then
+        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+    end
     add_configs("i18n", {description = "Enable i18n", default = false, type = "boolean"})
 
     add_deps("meson", "ninja")
@@ -40,18 +43,11 @@ package("criterion")
         end)
     end
 
-    on_load("linux", function (package)
-        if linuxos.name() == "fedora" then
-            package:add("deps", "openssl")
-        end
-    end)
-
     on_install("windows|!arm*", "linux", "macosx", "cross", "mingw@windows,msys", "bsd", function (package)
         io.replace("src/meson.build", [[libcriterion = both_libraries]], [[libcriterion = library]], {plain = true})
         local opt = {}
         os.rm("subprojects")
-        --    Gather protoc-gen-nanopb, protoc comes from protobuf-cpp xmake package since we need to escape issue of 
-        --    ModuleNotFoundError: No module named 'google.protobuf.text_format' and place nanopb's bin folder to PATH
+        --    Gather protoc-gen-nanopb from python3 pip
         local python = package:is_plat("windows") and "python" or "python3"
         os.vrun(python .. " -m pip install protobuf==5.29.3 nanopb==0.4.9.1")
         io.replace("meson.build", "git = find_program('git', required: false)", "", {plain = true})
@@ -87,7 +83,7 @@ endif
             io.replace("src/entry/params.c", "#ifdef HAVE_ISATTY", "#if 0", {plain = true})
             io.replace("src/entry/params.c", "opts[]", "opts[28]", {plain = true})
         else
-            opt.packagedeps = {"libgit2", "openssl"}
+            opt.packagedeps = {"libgit2"}
             io.replace("src/compat/path.c", "defined (HAVE_GETCWD)", "1", {plain = true})
             io.replace("src/compat/path.c", "defined (HAVE_GETCURRENTDIRECTORY)", "0", {plain = true})
         end
