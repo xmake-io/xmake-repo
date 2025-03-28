@@ -8,9 +8,6 @@ package("criterion")
 
     add_versions("v2.4.2", "83e1a39c8c519fbef0d64057dc61c8100b3a5741595788c9f094bba2eeeef0df")
 
-    if is_plat("bsd") then
-        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-    end
     add_configs("i18n", {description = "Enable i18n", default = false, type = "boolean"})
 
     add_deps("meson", "ninja")
