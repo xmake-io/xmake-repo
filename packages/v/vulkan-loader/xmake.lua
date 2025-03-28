@@ -65,11 +65,10 @@ package("vulkan-loader")
 
     on_install("windows|x86", "windows|x64", "linux", "macosx", function (package)
         import("package.tools.cmake")
-        local opt = {}
         local envs = cmake.buildenvs(package)
-        opt.envs = envs
+        local opt = {envs = envs}
         if package:is_plat("linux") then
-            opt.packagedeps = {packagedeps = {"wayland", "libxrandr", "libxrender", "libxcb", "libxkbcommon"}}
+            opt.packagedeps = {"wayland", "libxrandr", "libxrender", "libxcb", "libxkbcommon"}
             local linkdirs = {}
             for _, lib in ipairs({"wayland", "libxrandr", "libxcb", "libxkbcommon"}) do
                 local fetchinfo = package:dep(lib):fetch()
