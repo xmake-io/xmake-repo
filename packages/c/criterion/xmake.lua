@@ -34,7 +34,7 @@ package("criterion")
 
     if on_check then
         on_check("windows", function (package)
-            if package:is_arch("x86") and package:has_runtime("MD", "MDd") and package:config("shared") then
+            if package:is_arch("x86") and package:has_runtime("MD", "MDd") then
                 raise("package(criterion) unsupported x86 & MD & shared")
             end
         end)
@@ -59,7 +59,7 @@ package("criterion")
             [[libgit2 = dependency('libgit2', required: get_option('wrap_mode') == 'nofallback')]],
             [[libgit2 = dependency('libgit2', required: false)
 if not libgit2.found()
-    libgit2 = dependency('libgit2', method: 'cmake', modules: ['libgit2::libgit2package'])
+    libgit2 = dependency('libgit2', method: 'pkg-config')
 endif
 ]], {plain = true})
         if is_plat("windows", "mingw") then
@@ -69,12 +69,13 @@ endif
             end
             io.replace("src/compat/path.c", "defined (HAVE_GETCWD)", "0", {plain = true})
             io.replace("src/compat/path.c", "defined (HAVE_GETCURRENTDIRECTORY)", "1", {plain = true})
-            if not package:config("shared") then
+            if is_plat("windows") and not package:config("shared") then
                 io.replace("include/criterion/internal/common.h", "__declspec(dllimport)", "", {plain = true})
             end
             io.replace("src/entry/params.c", "#ifdef HAVE_ISATTY", "#if 0", {plain = true})
             io.replace("src/entry/params.c", "opts[]", "opts[28]", {plain = true})
         else
+            opt.packagedeps = {"openssl3"}
             io.replace("src/compat/path.c", "defined (HAVE_GETCWD)", "1", {plain = true})
             io.replace("src/compat/path.c", "defined (HAVE_GETCURRENTDIRECTORY)", "0", {plain = true})
         end
