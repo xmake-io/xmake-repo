@@ -46,7 +46,7 @@ package("criterion")
         end
     end)
 
-    on_install("windows|!arm*", "linux", "macosx", "cross", "mingw@windows,msys", "msys", function (package)
+    on_install("windows|!arm*", "linux", "macosx", "cross", "mingw@windows,msys", "bsd", function (package)
         io.replace("src/meson.build", [[libcriterion = both_libraries]], [[libcriterion = library]], {plain = true})
         local opt = {}
         os.rm("subprojects")
@@ -68,7 +68,9 @@ if not libgit2.found()
     libgit2 = dependency('libgit2', method: 'pkg-config')
 endif
 ]], {plain = true})
-        if is_plat("windows", "mingw") then
+        if is_plat("bsd") then
+            opt.cflags = {"-Wno-error=incompatible-function-pointer-types"}
+        elseif is_plat("windows", "mingw") then
             opt.packagedeps = {"wingetopt"}
             if package:has_tool("cl") then
                 table.insert(opt.cxflags, "/utf-8")
