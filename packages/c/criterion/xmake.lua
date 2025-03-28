@@ -8,9 +8,6 @@ package("criterion")
 
     add_versions("v2.4.2", "83e1a39c8c519fbef0d64057dc61c8100b3a5741595788c9f094bba2eeeef0df")
 
-    if is_plat("mingw") then
-        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
-    end
     add_configs("i18n", {description = "Enable i18n", default = false, type = "boolean"})
 
     add_deps("meson", "ninja")
@@ -78,8 +75,12 @@ endif
             end
             io.replace("src/compat/path.c", "defined (HAVE_GETCWD)", "0", {plain = true})
             io.replace("src/compat/path.c", "defined (HAVE_GETCURRENTDIRECTORY)", "1", {plain = true})
-            if is_plat("windows") and not package:config("shared") then
-                io.replace("include/criterion/internal/common.h", "__declspec(dllimport)", "", {plain = true})
+            if not package:config("shared") then
+                if is_plat("windows") then
+                    io.replace("include/criterion/internal/common.h", "__declspec(dllimport)", "", {plain = true})
+                elseif is_plat("mingw") then
+                    io.replace("include/criterion/internal/common.h", "CR_ATTRIBUTE(dllimport)", [[__attribute__((visibility("default")))]], {plain = true})
+                end
             end
             io.replace("src/entry/params.c", "#ifdef HAVE_ISATTY", "#if 0", {plain = true})
             io.replace("src/entry/params.c", "opts[]", "opts[28]", {plain = true})
