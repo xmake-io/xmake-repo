@@ -29,14 +29,16 @@ package("criterion")
     add_deps("libgit2", {configs = {shared = true}})
     add_deps("boxfort", {configs = {shared = false}})
     add_deps("libffi", {configs = {shared = false}})
-    add_deps("nanopb", {configs = {shared = true, generator = true}})
+    add_deps("nanopb", {configs = {generator = false}})
     add_deps("python 3.x", {kind = "binary"})
 
-    on_check("windows", function (package)
-        if package:is_arch("x86") and package:has_runtime("MD", "MDd") and package:config("shared") then
-            raise("package(criterion) unsupported x86 & MD & shared")
-        end
-    end)
+    if on_check then
+        on_check("windows", function (package)
+            if package:is_arch("x86") and package:has_runtime("MD", "MDd") and package:config("shared") then
+                raise("package(criterion) unsupported x86 & MD & shared")
+            end
+        end)
+    end
 
     on_install("windows|!arm*", "linux", "macosx", "cross", "mingw@windows,msys", "msys", function (package)
         io.replace("src/meson.build", [[libcriterion = both_libraries]], [[libcriterion = library]], {plain = true})
@@ -55,7 +57,11 @@ package("criterion")
         io.replace("meson.build", "modules: ['nanopb::protobuf-nanopb-static'])", "", {plain = true})
         io.replace("meson.build",
             [[libgit2 = dependency('libgit2', required: get_option('wrap_mode') == 'nofallback')]],
-            [[libgit2 = dependency('libgit2', method: 'pkg-config')]], {plain = true})
+            [[libgit2 = dependency('libgit2', required: false)
+            if not libgit2.found()
+                libgit2 = dependency('libgit2', method: 'cmake', modules: ['libgit2::libgit2package'])
+            end
+            ]], {plain = true})
         if is_plat("windows", "mingw") then
             opt.packagedeps = {"wingetopt"}
             if package:has_tool("cl") then
