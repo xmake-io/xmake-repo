@@ -34,6 +34,11 @@ package("libyuv")
             local ndk = package:toolchain("ndk"):config("ndkver")
             assert(ndk and tonumber(ndk) > 22, "package(libyuv): need ndk version > 22")
         end)
+        on_check("linux", function (package)
+            if package:is_arch("arm64") then
+                raise("package(libuv) unsupport compile flags -march=armv9-a+sme")
+            end
+        end)
     end
 
     on_load(function (package)
