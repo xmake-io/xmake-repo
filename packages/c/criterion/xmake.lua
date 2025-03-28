@@ -58,10 +58,10 @@ package("criterion")
         io.replace("meson.build",
             [[libgit2 = dependency('libgit2', required: get_option('wrap_mode') == 'nofallback')]],
             [[libgit2 = dependency('libgit2', required: false)
-            if not libgit2.found()
-                libgit2 = dependency('libgit2', method: 'cmake', modules: ['libgit2::libgit2package'])
-            end
-            ]], {plain = true})
+if not libgit2.found()
+    libgit2 = dependency('libgit2', method: 'cmake', modules: ['libgit2::libgit2package'])
+endif
+]], {plain = true})
         if is_plat("windows", "mingw") then
             opt.packagedeps = {"wingetopt"}
             if package:has_tool("cl") then
