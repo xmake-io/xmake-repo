@@ -45,7 +45,7 @@ package("criterion")
 
     on_load("linux", function (package)
         if linuxos.name() == "fedora" then
-            package:add("deps", "openssl3", {system = true})
+            package:add("deps", "openssl")
         end
     end)
 
@@ -84,7 +84,7 @@ endif
             io.replace("src/entry/params.c", "#ifdef HAVE_ISATTY", "#if 0", {plain = true})
             io.replace("src/entry/params.c", "opts[]", "opts[28]", {plain = true})
         else
-            opt.packagedeps = {"openssl3"}
+            opt.packagedeps = {"libgit2", "openssl"}
             io.replace("src/compat/path.c", "defined (HAVE_GETCWD)", "1", {plain = true})
             io.replace("src/compat/path.c", "defined (HAVE_GETCURRENTDIRECTORY)", "0", {plain = true})
         end
