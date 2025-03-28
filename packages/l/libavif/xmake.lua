@@ -22,6 +22,11 @@ package("libavif")
             local ndk = package:toolchain("ndk"):config("ndkver")
             assert(ndk and tonumber(ndk) > 22, "package(libavif): library deps libyuv need ndk version > 22")
         end)
+        on_check("linux", function (package)
+            if package:is_arch("arm64") then
+                raise("package(libavif): library deps libyuv unsupport compile flags -march=armv9-a+sme")
+            end
+        end)
     end
 
     on_load(function (package)
