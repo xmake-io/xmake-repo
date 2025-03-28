@@ -10,6 +10,8 @@ package("nanopb")
 
     add_configs("generator", {description = "Build the protoc plugin for code generation", default = false, type = "boolean"})
 
+    add_includedirs("include", "include/nanopb")
+
     add_deps("cmake", "protoc")
 
     on_load(function (package)
