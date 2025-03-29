@@ -69,6 +69,18 @@ package("pcre2")
             table.insert(configs, "-DPCRE2_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
+
+        local defines = package:get("defines")
+        if defines and #defines ~= 0 then
+            defines = table.clone(defines)
+            for i, define in ipairs(defines) do
+                defines[i] = "-D" .. define
+            end
+            table.insert(defines, 1, "Cflags: -I${includedir}")
+            local pkgconfig_dir = package:installdir("lib/pkgconfig")
+            io.replace(path.join(pkgconfig_dir, "libpcre2-8.pc"), "Cflags: -I${includedir}", table.concat(defines, " "), {plain = true})
+            io.replace(path.join(pkgconfig_dir, "libpcre2-posix.pc"), "Cflags: -I${includedir}", table.concat(defines, " "), {plain = true})
+        end
     end)
 
     on_test(function (package)
