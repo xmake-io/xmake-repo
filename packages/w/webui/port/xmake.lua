@@ -1,6 +1,6 @@
 add_rules("mode.debug", "mode.release")
 
-option("log",              {showmenu = true,  default = true})
+option("log", {showmenu = true,  default = true})
 
 target("webui")
     set_kind("$(kind)")
