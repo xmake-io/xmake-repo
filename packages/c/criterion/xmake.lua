@@ -22,7 +22,7 @@ package("criterion")
         add_syslinks("m", "pthread", "rt")
     end
 
-    add_deps("meson", "ninja", "debugbreak", "klib", "libffi", "nanopb", "nanomsg"
+    add_deps("meson", "ninja", "debugbreak", "klib", "libffi", "nanopb", "nanomsg")
     add_deps("libgit2", {configs = {shared = true}})
     add_deps("python 3.x", {kind = "binary"})
 
