@@ -10,8 +10,6 @@ package("criterion")
 
     add_configs("i18n", {description = "Enable i18n", default = false, type = "boolean"})
 
-    add_deps("meson", "ninja")
-
     if is_subhost("windows") then
         add_deps("pkgconf", "wingetopt")
     else
@@ -24,7 +22,7 @@ package("criterion")
         add_syslinks("m", "pthread", "rt")
     end
 
-    add_deps("debugbreak", "klib", "boxfort", "libffi", "nanopb")
+    add_deps("meson", "ninja", "debugbreak", "klib", "boxfort", "libffi", "nanopb")
     add_deps("nanomsg", "libgit2", {configs = {shared = true}})
     add_deps("python 3.x", {kind = "binary"})
 
