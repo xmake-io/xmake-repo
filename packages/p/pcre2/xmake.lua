@@ -78,8 +78,14 @@ package("pcre2")
             end
             table.insert(defines, 1, "Cflags: -I${includedir}")
             local pkgconfig_dir = package:installdir("lib/pkgconfig")
-            io.replace(path.join(pkgconfig_dir, "libpcre2-8.pc"), "Cflags: -I${includedir}", table.concat(defines, " "), {plain = true})
-            io.replace(path.join(pkgconfig_dir, "libpcre2-posix.pc"), "Cflags: -I${includedir}", table.concat(defines, " "), {plain = true})
+
+            local pcre2_pc = path.join(pkgconfig_dir, format("libpcre2-%d.pc", package:config("bitwidth")))
+            io.replace(pcre2_pc, "Cflags: -I${includedir}", table.concat(defines, " "), {plain = true})
+
+            local pcre2_posix_pc = path.join(pkgconfig_dir, "libpcre2-posix.pc")
+            if os.isfile(pcre2_posix_pc) then
+                io.replace(pcre2_posix_pc, "Cflags: -I${includedir}", table.concat(defines, " "), {plain = true})
+            end
         end
     end)
 
