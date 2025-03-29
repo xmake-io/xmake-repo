@@ -248,7 +248,9 @@ package("sfml")
         table.insert(configs, "-DSFML_BUILD_WINDOW=" .. (package:config("window") and "ON" or "OFF"))
         table.insert(configs, "-DSFML_BUILD_NETWORK=" .. (package:config("network") and "ON" or "OFF"))
         table.insert(configs, "-DWARNINGS_AS_ERRORS=OFF")
-        table.insert(configs, "-DSFML_USE_SYSTEM_DEPS=TRUE")
+        if not is_plat("mingw") then
+            table.insert(configs, "-DSFML_USE_SYSTEM_DEPS=TRUE")
+        end
         if package:gitref() or package:version():ge("3.0.0") then 
             table.insert(configs, "-DCMAKE_CXX_STANDARD=17") 
         end
