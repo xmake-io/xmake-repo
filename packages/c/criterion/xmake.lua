@@ -46,26 +46,13 @@ package("criterion")
     end)
 
     on_install("windows|!arm*", "linux", "macosx", "cross", "mingw@windows,msys", "bsd", function (package)
-        io.replace("src/meson.build", [[libcriterion = both_libraries]], [[libcriterion = library]], {plain = true})
-        local opt = {}
         os.rm("subprojects")
+        io.replace("src/meson.build", [[libcriterion = both_libraries]], [[libcriterion = library]], {plain = true})
+        import("patch")(package)
+        local opt = {}
         --    Gather protoc-gen-nanopb from python3 pip
         local python = package:is_plat("windows") and "python" or "python3"
         os.vrun(python .. " -m pip install protobuf==5.29.3 nanopb==0.4.9.1")
-        io.replace("meson.build", "git = find_program('git', required: false)", "", {plain = true})
-        io.replace("meson.build", "if git.found() and is_git_repo", "if false", {plain = true})
-        -- Swap from cmake to pkg-config
-        io.replace("meson.build",
-            [[nanopb = dependency('nanopb', required: get_option('wrap_mode') == 'nofallback', method: 'cmake',]],
-            [[nanopb = dependency('nanopb', method: 'pkg-config')]], {plain = true})
-        io.replace("meson.build", "modules: ['nanopb::protobuf-nanopb-static'])", "", {plain = true})
-        io.replace("meson.build",
-            [[libgit2 = dependency('libgit2', required: get_option('wrap_mode') == 'nofallback')]],
-            [[libgit2 = dependency('libgit2', required: false)
-if not libgit2.found()
-    libgit2 = dependency('libgit2', method: 'pkg-config')
-endif
-]], {plain = true})
         if is_plat("bsd") then
             opt.cflags = {"-Wno-error=incompatible-function-pointer-types"}
         elseif is_plat("windows", "mingw") then
@@ -73,21 +60,8 @@ endif
             if package:has_tool("cl") then
                 table.insert(opt.cxflags, "/utf-8")
             end
-            io.replace("src/compat/path.c", "defined (HAVE_GETCWD)", "0", {plain = true})
-            io.replace("src/compat/path.c", "defined (HAVE_GETCURRENTDIRECTORY)", "1", {plain = true})
-            if not package:config("shared") then
-                if is_plat("windows") then
-                    io.replace("include/criterion/internal/common.h", "__declspec(dllimport)", "", {plain = true})
-                elseif is_plat("mingw") then
-                    io.replace("include/criterion/internal/common.h", "CR_ATTRIBUTE(dllimport)", [[__attribute__((visibility("default")))]], {plain = true})
-                end
-            end
-            io.replace("src/entry/params.c", "#ifdef HAVE_ISATTY", "#if 0", {plain = true})
-            io.replace("src/entry/params.c", "opts[]", "opts[28]", {plain = true})
         else
             opt.packagedeps = {"openssl"}
-            io.replace("src/compat/path.c", "defined (HAVE_GETCWD)", "1", {plain = true})
-            io.replace("src/compat/path.c", "defined (HAVE_GETCURRENTDIRECTORY)", "0", {plain = true})
         end
         local configs = {"-Dtests=false", "-Dsamples=false", "-Dc_std=c11"}
         table.insert(configs, "-Di18n=" .. (package:config("i18n") and "enabled" or "disabled"))
