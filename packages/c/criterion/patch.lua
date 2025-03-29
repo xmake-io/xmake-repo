@@ -13,13 +13,13 @@ if not libgit2.found()
 libgit2 = dependency('libgit2', method: 'pkg-config')
 endif
 ]], {plain = true})
-    if is_plat("windows", "mingw") then
+    if package:is_plat("windows", "mingw") then
         io.replace("src/compat/path.c", "defined (HAVE_GETCWD)", "0", {plain = true})
         io.replace("src/compat/path.c", "defined (HAVE_GETCURRENTDIRECTORY)", "1", {plain = true})
         if not package:config("shared") then
-            if is_plat("windows") then
+            if package:is_plat("windows") then
                 io.replace("include/criterion/internal/common.h", "__declspec(dllimport)", "", {plain = true})
-            elseif is_plat("mingw") then
+            elseif package:is_plat("mingw") then
                 io.replace("include/criterion/internal/common.h", "CR_ATTRIBUTE(dllimport)", [[__attribute__((visibility("default")))]], {plain = true})
             end
         end
