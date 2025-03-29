@@ -11,6 +11,8 @@ package("vulkan-loader")
          return prefix .. version:gsub("%+", ".")
     end})
 
+    -- when adding a new sdk version, please ensure vulkan-headers, vulkan-hpp, vulkan-loader, vulkan-tools, vulkan-validationlayers, vulkan-utility-libraries, spirv-headers, spirv-reflect, spirv-tools, glslang and volk packages are updated simultaneously
+    add_versions("1.4.309+0", "ddfeca84a868899fbb2c7f28b7c8fd1006e34b2b13ce653a63bddfb65cbc8d13")
     add_versions("1.3.290+0", "0cd31fdb9b576e432a85ad4d555fac4f4e5ede22ca37ff534ab67c71cd172644")
     add_versions("1.3.283+0", "59151a3cdbf8dcfe9c2ce4b5bf33358255a197f48d8d0ee8a1d8642ed9ace80f")
     add_versions("1.3.280+0", "f9317667a180257381dcbc74726083af581189f51e10e0246adaa86df075fe16")
@@ -62,14 +64,26 @@ package("vulkan-loader")
     end)
 
     on_install("windows|x86", "windows|x64", "linux", "macosx", function (package)
+        import("package.tools.cmake")
+        local envs = cmake.buildenvs(package)
+        local opt = {envs = envs}
+        if package:is_plat("linux") then
+            opt.packagedeps = {"wayland", "libxrandr", "libxrender", "libxcb", "libxkbcommon"}
+            local linkdirs = {}
+            for _, lib in ipairs({"wayland", "libxrandr", "libxcb", "libxkbcommon"}) do
+                local fetchinfo = package:dep(lib):fetch()
+                if fetchinfo then
+                    for _, dir in ipairs(fetchinfo.linkdirs) do
+                        table.insert(linkdirs, dir)
+                    end
+                end
+            end
+            envs.LD_LIBRARY_PATH = (envs.LD_LIBRARY_PATH or "") .. path.envsep() .. path.joinenv(table.unique(linkdirs))
+        end
         local configs = {"-DBUILD_TESTS=OFF"}
         local vulkan_headers = package:dep("vulkan-headers")
         table.insert(configs, "-DVULKAN_HEADERS_INSTALL_DIR=" .. vulkan_headers:installdir())
-        if package:is_plat("linux") then
-            import("package.tools.cmake").install(package, configs, {packagedeps = {"wayland", "libxrandr", "libxrender", "libxcb", "libxkbcommon"}})
-        else
-            import("package.tools.cmake").install(package, configs)
-        end
+        cmake.install(package, configs, opt)
     end)
 
     on_test(function (package)
