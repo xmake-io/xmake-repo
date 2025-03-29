@@ -70,7 +70,7 @@ package("pcre2")
         end
         import("package.tools.cmake").install(package, configs)
 
-        local defines = package:get("defines")
+        local defines = table.wrap(package:get("defines"))
         if defines and #defines ~= 0 then
             defines = table.clone(defines)
             for i, define in ipairs(defines) do
