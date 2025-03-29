@@ -22,7 +22,7 @@ package("criterion")
         add_syslinks("m", "pthread", "rt")
     end
 
-    add_deps("meson", "ninja", "debugbreak", "klib", "boxfort", "libffi", "nanopb")
+    add_deps("meson", "ninja", "debugbreak", "klib", "libffi", "nanopb")
     add_deps("nanomsg", "libgit2", {configs = {shared = true}})
     add_deps("python 3.x", {kind = "binary"})
 
@@ -35,6 +35,11 @@ package("criterion")
     end
 
     on_load("linux", function (package)
+        if package:is_plat("bsd") and package:config("shared") then
+            package:add("deps", "boxfort", {configs = {shared = true}})
+        else
+            package:add("deps", "boxfort")
+        end
         if linuxos.name() == "fedora" then
             package:add("deps", "openssl")
         end
