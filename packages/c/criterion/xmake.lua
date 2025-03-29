@@ -53,9 +53,9 @@ package("criterion")
         --    Gather protoc-gen-nanopb from python3 pip
         local python = package:is_plat("windows") and "python" or "python3"
         os.vrun(python .. " -m pip install protobuf==5.29.3 nanopb==0.4.9.1")
-        if is_plat("bsd") then
+        if package:is_plat("bsd") then
             opt.cflags = {"-Wno-error=incompatible-function-pointer-types"}
-        elseif is_plat("windows", "mingw") then
+        elseif package:is_plat("windows", "mingw") then
             opt.packagedeps = {"wingetopt"}
             if package:has_tool("cl") then
                 table.insert(opt.cxflags, "/utf-8")
