@@ -34,13 +34,13 @@ package("criterion")
         end)
     end
 
-    on_load("linux", function (package)
+    on_load(function (package)
         if package:is_plat("bsd") and package:config("shared") then
             package:add("deps", "boxfort", {configs = {shared = true}})
         else
             package:add("deps", "boxfort")
         end
-        if linuxos.name() == "fedora" then
+        if package:is_plat("linux") and linuxos.name() == "fedora" then
             package:add("deps", "openssl")
         end
     end)
