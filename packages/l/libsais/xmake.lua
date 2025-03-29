@@ -16,7 +16,6 @@ package("libsais")
     add_versions("v2.7.1", "5f459ad90cd007c30aaefb7d122bba2a4307ea02915c56381be4b331cca92545")
 
     on_install(function (package)
-        local configs = {}
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             target("libsais")
@@ -29,10 +28,7 @@ package("libsais")
                     add_defines("LIBSAIS_SHARED", "LIBSAIS_EXPORTS")
                end
         ]])
-        -- if package:config("shared") then
-            -- configs.kind = "shared"
-        -- end
-        import("package.tools.xmake").install(package) --, configs)
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
