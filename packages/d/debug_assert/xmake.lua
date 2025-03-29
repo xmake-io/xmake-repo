@@ -6,6 +6,7 @@ package("debug_assert")
 
     add_urls("https://github.com/foonathan/debug_assert.git")
     add_versions("2022.11.13", "7ea47091830eec9a9c6a338c8a29da70494692a5")
+    add_versions("1.3.4", "faedee673ed065fea802f5b347652737837958bd")
 
     add_deps("cmake")
 
