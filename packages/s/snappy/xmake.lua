@@ -10,6 +10,7 @@ package("snappy")
     add_versions("1.1.10", "49d831bffcc5f3d01482340fe5af59852ca2fe76c3e05df0e67203ebbe0f1d90")
     add_versions("1.2.0", "9b8f10fbb5e3bc112f2e5e64f813cb73faea42ec9c533a5023b5ae08aedef42e")
     add_versions("1.2.1", "736aeb64d86566d2236ddffa2865ee5d7a82d26c9016b36218fcc27ea4f09f86")
+    add_versions("1.2.2", "90f74bc1fbf78a6c56b3c4a082a05103b3a56bb17bca1a27e052ea11723292dc")
 
     add_patches("1.1.9", "patches/1.1.9/inline.patch", "ed6b247d19486ab3f08f268269133193d7cdadd779523c5e69b5e653f82d535b")
     add_patches("1.1.10", "patches/1.1.10/cmake.patch", "d4883111dcfab81ea35ac1e4e157e55105cec02a0ba804458405be25cbf7b6bb")
@@ -41,9 +42,5 @@ package("snappy")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            void test(int args, char** argv) {
-                snappy::Compress(nullptr, nullptr);
-            }
-        ]]}, {configs = {languages = package:is_plat("windows") and "c++14" or "c++11"}, includes = "snappy.h"}))
+        assert(package:has_cxxfuncs("snappy::Compress(nullptr, nullptr)", {includes = "snappy.h", configs = {languages = package:is_plat("windows") and "c++14" or "c++11"}}))
     end)
