@@ -16,6 +16,7 @@ package("nanopb")
 
     on_load(function (package)
         if package:config("generator") then
+            package:addenv("PATH", "bin")
             package:add("deps", "python 3.x", {kind = "binary"})
             package:addenv("PYTHONPATH", "lib/site-packages")
             package:add("patches", ">=0.4.9", "patches/0.4.9/nanopb_generator.patch", "40031727bac5719c2e98bdd2c2b7b05d58e649b8706087fea1b17413f171df72")
