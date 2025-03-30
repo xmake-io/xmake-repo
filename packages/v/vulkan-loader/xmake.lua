@@ -41,11 +41,19 @@ package("vulkan-loader")
         add_extsources("brew::vulkan-loader")
     end
 
+    -- xmake doesn't pass environment variables to make (such as LD_LIBRARY_PATH) but passes them to Ninja
+    if is_plat("linux") then
+        set_policy("package.cmake_generator.ninja", true)
+    end
+
     on_load("windows", "linux", "macosx", function (package)
         local sdkver = package:version():split("%+")[1]
         package:add("deps", "vulkan-headers " .. sdkver)
         if not package.is_built or package:is_built() then
-            package:add("deps", "cmake")
+            package:add("deps", "cmake", "ninja")
+            if package:is_plat("linux") then
+                package:add("deps", "ninja")
+            end
         end
         if package:is_plat("macosx") then
             package:add("links", "vulkan")
@@ -83,7 +91,6 @@ package("vulkan-loader")
         local configs = {"-DBUILD_TESTS=OFF"}
         local vulkan_headers = package:dep("vulkan-headers")
         table.insert(configs, "-DVULKAN_HEADERS_INSTALL_DIR=" .. vulkan_headers:installdir())
-        print("opt", opt)
         cmake.install(package, configs, opt)
     end)
 
