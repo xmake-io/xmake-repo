@@ -30,8 +30,11 @@ package("webui")
                 io.replace("src/civetweb/civetweb.c", "fseeko", "fseek", {plain = true})
             end
         end
+        local configs = {
+            log = package:config("log"),
+        }
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        import("package.tools.xmake").install(package)
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
