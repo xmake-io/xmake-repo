@@ -126,6 +126,10 @@ package("libgit2")
         table.insert(configs, "-DUSE_SSH=" .. (package:config("ssh") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_CLI=" .. (package:config("tools") and "ON" or "OFF"))
 
+        if package:is_plat("macosx") then
+            table.insert(configs, "-DLINK_WITH_STATIC_LIBRARIES=ON")
+        end
+
         if package:is_plat("mingw") then
             local mingw = import("detect.sdks.find_mingw")()
             local dlltool = assert(os.files(path.join(mingw.bindir, "*dlltool*"))[1], "dlltool not found!")
