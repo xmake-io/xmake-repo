@@ -24,7 +24,7 @@ package("libgit2")
         add_syslinks("ole32", "rpcrt4", "winhttp", "ws2_32", "user32", "crypt32", "advapi32")
     elseif is_plat("macosx", "iphoneos") then
         add_frameworks("CoreFoundation", "Security")
-        add_syslinks("iconv", "z")
+        add_deps("libiconv", {system = true})
     end
 
     add_deps("cmake")
@@ -125,26 +125,21 @@ package("libgit2")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_SSH=" .. (package:config("ssh") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_CLI=" .. (package:config("tools") and "ON" or "OFF"))
-
-        if package:is_plat("macosx") then
-            if package:is_arch("arm64") then
-                table.insert(configs, "-DCMAKE_OSX_ARCHITECTURES=arm64")
-            elseif package:is_arch("x86_64") then
-                table.insert(configs, "-DCMAKE_OSX_ARCHITECTURES=x86_64")
-            else
-                table.insert(configs, "-DCMAKE_OSX_ARCHITECTURES=i386")
-            end
-            table.insert(configs, "-DLINK_WITH_STATIC_LIBRARIES=ON")
+        local opt = {}
+        opt.packagedeps = {"pcre2"}
+        if package:is_plat("macosx") and package:config("shared") then
+            opt.shflags = {"-framework", "CoreFoundation", "-framework", "Security"}
         end
-
         if package:is_plat("mingw") then
             local mingw = import("detect.sdks.find_mingw")()
             local dlltool = assert(os.files(path.join(mingw.bindir, "*dlltool*"))[1], "dlltool not found!")
             table.insert(configs, "-DDLLTOOL=" .. dlltool)
         end
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"pcre2"}})
-        io.replace(path.join(package:installdir("lib/pkgconfig"), "libgit2.pc"), 
-            "Requires.private: openssl", "Requires.private: openssl3", {plain = true})
+        import("package.tools.cmake").install(package, configs, opt)
+        if package:is_plat("linux") and linuxos.name() == "fedora" then
+            io.replace(path.join(package:installdir("lib/pkgconfig"), "libgit2.pc"), 
+                "Requires.private: openssl ", "Requires.private: openssl3 ", {plain = true})
+        end
     end)
 
     on_test(function (package)

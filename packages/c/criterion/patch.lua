@@ -1,4 +1,5 @@
 function main(package)
+    io.replace("src/meson.build", [[libcriterion = both_libraries]], [[libcriterion = library]], {plain = true})
     io.replace("meson.build", "git = find_program('git', required: false)", "", {plain = true})
     io.replace("meson.build", "if git.found() and is_git_repo", "if false", {plain = true})
     -- Swap from cmake to pkg-config

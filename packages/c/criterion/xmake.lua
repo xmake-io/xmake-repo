@@ -31,14 +31,10 @@ package("criterion")
         else
             package:add("deps", "boxfort")
         end
-        if package:is_plat("linux") and linuxos.name() == "fedora" then
-            package:add("deps", "openssl3")
-        end
     end)
 
     on_install("windows|!arm*", "linux", "macosx", "cross", "mingw@windows,msys", "bsd", "msys", function (package)
         os.rm("subprojects")
-        io.replace("src/meson.build", [[libcriterion = both_libraries]], [[libcriterion = library]], {plain = true})
         import("patch")(package)
         local opt = {}
         --    Gather protoc-gen-nanopb from python3 pip
