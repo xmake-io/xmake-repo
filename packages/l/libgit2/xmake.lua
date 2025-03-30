@@ -131,7 +131,7 @@ package("libgit2")
             table.insert(configs, "-DDLLTOOL=" .. dlltool)
         end
 
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"pcre2"}}) --, opt)
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"pcre2"}})
     end)
 
     on_test(function (package)
