@@ -119,6 +119,7 @@ package("libgit2")
             "-DBUILD_FUZZERS=OFF",
             "-DREGEX_BACKEND=pcre2",
             "-DUSE_HTTP_PARSER=llhttp",
+            "-DUSE_GSSAPI=OFF"
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
