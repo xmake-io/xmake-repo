@@ -24,7 +24,7 @@ package("libgit2")
         add_syslinks("ole32", "rpcrt4", "winhttp", "ws2_32", "user32", "crypt32", "advapi32")
     elseif is_plat("macosx", "iphoneos") then
         add_frameworks("CoreFoundation", "Security")
-        add_deps("libiconv", {system = true})
+        add_syslinks("iconv", "z")
     end
 
     add_deps("cmake")
@@ -129,6 +129,7 @@ package("libgit2")
         opt.packagedeps = {"pcre2"}
         if package:is_plat("macosx") and package:config("shared") then
             opt.shflags = {"-framework", "CoreFoundation", "-framework", "Security"}
+            opt.ldflags = {"-framework", "CoreFoundation", "-framework", "Security"}
         end
         if package:is_plat("mingw") then
             local mingw = import("detect.sdks.find_mingw")()
