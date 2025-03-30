@@ -70,7 +70,7 @@ package("libremidi")
     on_install(function (package)
         io.replace("CMakeLists.txt", "          ARCHIVE DESTINATION lib/static", "          ARCHIVE DESTINATION lib", {plain = true})
 
-        local configs = {"-DLIBREMIDI_EXAMPLES=OFF", "-DLIBREMIDI_TESTS=OFF"}
+        local configs = {"-DLIBREMIDI_EXAMPLES=OFF", "-DLIBREMIDI_TESTS=OFF", "-DLIBREMIDI_NO_WARNINGS=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DLIBREMIDI_NO_EXPORTS=" .. (package:config("shared") and "OFF" or "ON"))
