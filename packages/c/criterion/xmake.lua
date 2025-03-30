@@ -31,9 +31,6 @@ package("criterion")
         else
             package:add("deps", "boxfort")
         end
-        if package:is_plat("linux") and linuxos.name() == "fedora" then
-            package:add("deps", "openssl")
-        end
     end)
 
     on_install("windows|!arm*", "linux", "macosx", "cross", "mingw@windows,msys", "bsd", "msys", function (package)
