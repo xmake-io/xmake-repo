@@ -127,6 +127,13 @@ package("libgit2")
         table.insert(configs, "-DBUILD_CLI=" .. (package:config("tools") and "ON" or "OFF"))
 
         if package:is_plat("macosx") then
+            if package:is_arch("arm64") then
+                table.insert(configs, "-DCMAKE_OSX_ARCHITECTURES=arm64")
+            elseif package:is_arch("x86_64") then
+                table.insert(configs, "-DCMAKE_OSX_ARCHITECTURES=x86_64")
+            else
+                table.insert(configs, "-DCMAKE_OSX_ARCHITECTURES=i386")
+            end
             table.insert(configs, "-DLINK_WITH_STATIC_LIBRARIES=ON")
         end
 
