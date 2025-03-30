@@ -131,14 +131,10 @@ package("libgit2")
             table.insert(configs, "-DDLLTOOL=" .. dlltool)
         end
 
-        local opt = {}
-        local pcre2 = package:dep("pcre2")
-        if not pcre2:config("shared") then
-            opt.cxflags = "-DPCRE2_STATIC"
-        end
-        import("package.tools.cmake").install(package, configs, opt)
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
+        assert(package:check_importfiles("pkgconfig::libgit2"))
         assert(package:has_cfuncs("git_repository_init", {includes = "git2.h"}))
     end)
