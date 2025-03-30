@@ -17,21 +17,13 @@ package("criterion")
     end
 
     if is_plat("windows", "mingw") then
-        add_syslinks("ws2_32", "mswsock", "winhttp")
+        add_syslinks("ws2_32", "mswsock")
     elseif is_plat("linux", "bsd") then
         add_syslinks("m", "pthread", "rt")
     end
 
     add_deps("meson", "ninja", "debugbreak", "klib", "libffi", "nanopb", "nanomsg", "libgit2")
     add_deps("python 3.x", {kind = "binary"})
-
-    if on_check then
-        on_check("windows", function (package)
-            if package:is_arch("x86") and package:has_runtime("MD", "MDd") then
-                raise("package(criterion) unsupported x86 & MD")
-            end
-        end)
-    end
 
     on_load(function (package)
         if package:is_plat("bsd") and package:config("shared") then
