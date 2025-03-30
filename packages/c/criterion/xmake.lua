@@ -17,7 +17,7 @@ package("criterion")
     end
 
     if is_plat("windows", "mingw") then
-        add_syslinks("ws2_32", "mswsock")
+        add_syslinks("ws2_32", "mswsock", "winhttp")
     elseif is_plat("linux", "bsd") then
         add_syslinks("m", "pthread", "rt")
     end
@@ -44,7 +44,7 @@ package("criterion")
         end
     end)
 
-    on_install("windows|!arm*", "linux", "macosx", "cross", "mingw@windows,msys", "bsd", function (package)
+    on_install("windows|!arm*", "linux", "macosx", "cross", "mingw@windows,msys", "bsd", "msys", function (package)
         os.rm("subprojects")
         io.replace("src/meson.build", [[libcriterion = both_libraries]], [[libcriterion = library]], {plain = true})
         import("patch")(package)
@@ -55,7 +55,7 @@ package("criterion")
         if package:is_plat("bsd") then
             opt.cflags = {"-Wno-error=incompatible-function-pointer-types"}
         elseif package:is_plat("windows", "mingw") then
-            opt.packagedeps = {"wingetopt", "nanomsg", "pcre2"}
+            opt.packagedeps = {"wingetopt", "nanomsg", "pcre2", "libgit2"}
             if package:has_tool("cl") then
                 table.insert(opt.cxflags, "/utf-8")
             end
