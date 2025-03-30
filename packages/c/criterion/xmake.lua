@@ -52,7 +52,7 @@ package("criterion")
                 table.insert(opt.cxflags, "/utf-8")
             end
         else
-            opt.packagedeps = {"openssl"}
+            opt.packagedeps = {"llhttp", "openssl3", "pcre2"}
         end
         local configs = {"-Dtests=false", "-Dsamples=false", "-Dc_std=c11"}
         table.insert(configs, "-Di18n=" .. (package:config("i18n") and "enabled" or "disabled"))
