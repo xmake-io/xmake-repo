@@ -131,11 +131,21 @@ package("libgit2")
             table.insert(configs, "-DDLLTOOL=" .. dlltool)
         end
 
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = "pcre2"})
         io.cat(path.join(package:installdir("lib"), "pkgconfig", "libgit2.pc"))
     end)
 
     on_test(function (package)
+
+        local pc_files = os.files(package:installdir() .. "**.pc")
+        if pc_files and #pc_files ~= 0 then
+            for _, pc_file in ipairs(pc_files) do
+                print("Found .pc  " .. pc_file)
+            end
+        else
+            print("No .pc files found!!!")
+        end
+
         assert(package:check_importfiles("pkgconfig::libgit2"))
         assert(package:has_cfuncs("git_repository_init", {includes = "git2.h"}))
     end)
