@@ -83,6 +83,7 @@ package("vulkan-loader")
         local configs = {"-DBUILD_TESTS=OFF"}
         local vulkan_headers = package:dep("vulkan-headers")
         table.insert(configs, "-DVULKAN_HEADERS_INSTALL_DIR=" .. vulkan_headers:installdir())
+        print("opt", opt)
         cmake.install(package, configs, opt)
     end)
 
