@@ -142,8 +142,9 @@ package("libgit2")
             local dlltool = assert(os.files(path.join(mingw.bindir, "*dlltool*"))[1], "dlltool not found!")
             table.insert(configs, "-DDLLTOOL=" .. dlltool)
         end
-
         import("package.tools.cmake").install(package, configs, {packagedeps = {"pcre2"}})
+        io.replace(path.join(package:installdir("lib/pkgconfig"), "libgit2.pc"), 
+            "Requires.private: openssl", "Requires.private: openssl3", {plain = true})
     end)
 
     on_test(function (package)
