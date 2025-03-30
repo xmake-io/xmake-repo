@@ -132,6 +132,7 @@ package("libgit2")
         end
 
         import("package.tools.cmake").install(package, configs)
+        io.cat(path.join(package:installdir("lib"), "pkgconfig", "libgit2.pc"))
     end)
 
     on_test(function (package)
