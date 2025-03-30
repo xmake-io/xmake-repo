@@ -46,6 +46,7 @@ package("criterion")
         os.vrun(python .. " -m pip install protobuf==5.29.3 nanopb==0.4.9.1")
         if package:is_plat("bsd") then
             opt.cflags = {"-Wno-error=incompatible-function-pointer-types"}
+            opt.packagedeps = {"llhttp", "openssl3", "pcre2"}
         elseif package:is_plat("windows", "mingw") then
             opt.packagedeps = {"wingetopt", "nanomsg", "pcre2", "libgit2"}
             if package:has_tool("cl") then
