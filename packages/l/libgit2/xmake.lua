@@ -131,12 +131,7 @@ package("libgit2")
             table.insert(configs, "-DDLLTOOL=" .. dlltool)
         end
 
-        local opt = {}
-        local pcre2 = package:dep("pcre2")
-        if not pcre2:config("shared") then
-            opt.cxflags = "-DPCRE2_STATIC"
-        end
-        import("package.tools.cmake").install(package, configs, opt)
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"pcre2"}}) --, opt)
     end)
 
     on_test(function (package)

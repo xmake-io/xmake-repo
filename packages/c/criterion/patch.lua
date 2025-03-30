@@ -8,11 +8,7 @@ function main(package)
     io.replace("meson.build", "modules: ['nanopb::protobuf-nanopb-static'])", "", {plain = true})
     io.replace("meson.build",
         [[libgit2 = dependency('libgit2', required: get_option('wrap_mode') == 'nofallback')]],
-        [[libgit2 = dependency('libgit2', required: false)
-if not libgit2.found()
-libgit2 = dependency('libgit2', method: 'pkg-config')
-endif
-]], {plain = true})
+        [[libgit2 = dependency('libgit2', method: 'pkg-config')]], {plain = true})
     if package:is_plat("windows", "mingw") then
         io.replace("src/compat/path.c", "defined (HAVE_GETCWD)", "0", {plain = true})
         io.replace("src/compat/path.c", "defined (HAVE_GETCURRENTDIRECTORY)", "1", {plain = true})

@@ -55,7 +55,7 @@ package("criterion")
         if package:is_plat("bsd") then
             opt.cflags = {"-Wno-error=incompatible-function-pointer-types"}
         elseif package:is_plat("windows", "mingw") then
-            opt.packagedeps = {"wingetopt"}
+            opt.packagedeps = {"wingetopt", "nanomsg", "pcre2"}
             if package:has_tool("cl") then
                 table.insert(opt.cxflags, "/utf-8")
             end
