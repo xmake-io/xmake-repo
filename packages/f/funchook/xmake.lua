@@ -12,7 +12,7 @@ package("funchook")
 
     add_deps("cmake")
     on_load(function(package)
-        if is_plat("windows") then
+        if package:is_plat("windows") then
             package:add("syslinks", "psapi")
         else
             -- unix
