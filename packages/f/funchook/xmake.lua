@@ -20,7 +20,7 @@ package("funchook")
         end
         if not package:config("disasm") then
             -- default disasm engine.
-            if is_arch("arm64") then
+            if package:is_arch("arm64") then
                 package:add("deps", "capstone")
             else
                 package:set("deps", "distorm")
