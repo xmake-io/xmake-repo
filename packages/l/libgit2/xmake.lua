@@ -127,10 +127,6 @@ package("libgit2")
         table.insert(configs, "-DBUILD_CLI=" .. (package:config("tools") and "ON" or "OFF"))
         local opt = {}
         opt.packagedeps = {"pcre2"}
-        if package:is_plat("macosx") and package:config("shared") then
-            opt.shflags = {"-framework", "CoreFoundation", "-framework", "Security"}
-            opt.ldflags = {"-framework", "CoreFoundation", "-framework", "Security"}
-        end
         if package:is_plat("mingw") then
             local mingw = import("detect.sdks.find_mingw")()
             local dlltool = assert(os.files(path.join(mingw.bindir, "*dlltool*"))[1], "dlltool not found!")
