@@ -5,10 +5,11 @@ package("zstr")
     set_description("A C++ header-only ZLib wrapper.")
     set_license("MIT")
 
-    add_urls("https://github.com/mateidavid/zstr.git")
-    add_versions("1.0.7", "755da7890ea22478a702e3139092e6c964fab1f5")
+    add_urls("https://github.com/mateidavid/zstr/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/mateidavid/zstr.git")
+    add_versions("v1.0.7", "8d2ddae68ff7bd0a6fce6150a8f52ad9ce1bed2c4056c8846f4dec4f2dc60819")
 
-    add_patches("1.0.7", "patches/fix-build-on-android-ndksdk-21.patch", "66468d9aab3443c488b7fadde7fb2547f1501c73d89e00c672834652ce61a047")
+    add_patches("v1.0.7", "patches/fix-build-on-android-ndksdk-21.patch", "66468d9aab3443c488b7fadde7fb2547f1501c73d89e00c672834652ce61a047")
 
     add_deps("zlib")
     on_install(function (package)
