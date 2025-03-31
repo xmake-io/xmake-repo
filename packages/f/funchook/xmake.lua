@@ -3,8 +3,8 @@ package("funchook")
     set_description("Hook function calls by inserting jump instructions at runtime.")
     set_license("GPL-2.0-or-later")
 
-   add_urls("https://github.com/kubo/funchook/archive/refs/tags/$(version).tar.gz",
-            "https://github.com/kubo/funchook.git")
+    add_urls("https://github.com/kubo/funchook/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/kubo/funchook.git")
 
     add_versions("v1.1.3", "4b0195e70524237e222dc34c53ac25e12677bb936e64eefe33189931688444c4")
 
@@ -14,24 +14,30 @@ package("funchook")
 
     add_configs("disasm", {description = "Disassembler engine.", default = nil, type = "string", values = {"capstone", "distorm", "zydis"}})
 
+    if is_plat("windows") then
+        add_syslinks("psapi")
+    else
+        add_syslinks("dl")
+    end
+
     add_deps("cmake")
+    if is_subhost("windows") then
+        add_deps("pkgconf")
+    else
+        add_deps("pkg-config")
+    end
+
     on_load(function(package)
-        if package:is_plat("windows") then
-            package:add("syslinks", "psapi")
-        else
-            -- unix
-            package:add("syslinks", "dl")
-        end
-        package:add("links", "funchook")
         if package:config("shared") and package:is_plat("windows") then
             package:add("links", "funchook_dll")
+        else
+            package:add("links", "funchook")
         end
         if not package:config("disasm") then
             -- default disasm engine.
             if package:is_arch("arm64") then
                 package:add("deps", "capstone")
             else
-                package:add("deps", "pkg-config") -- cmake needs this to find distorm
                 package:add("deps", "distorm")
             end
         else
