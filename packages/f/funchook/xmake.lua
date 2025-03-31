@@ -3,8 +3,10 @@ package("funchook")
     set_description("Hook function calls by inserting jump instructions at runtime.")
     set_license("GPLv2")
 
-    add_urls("https://github.com/kubo/funchook.git")
-    add_versions("1.1.3", "88388db3c69e16c1560fee65c6857d75f5ce6fd5")
+   add_urls("https://github.com/kubo/funchook/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/kubo/funchook.git")
+
+    add_versions("v1.1.3", "4b0195e70524237e222dc34c53ac25e12677bb936e64eefe33189931688444c4")
 
     add_patches("*", "patches/try-fix-function-visibility.patch", "5b505ad24332320f3970a6cb56b5f550b01b9c80aa14cea0fea74ac77f1fc8f3")
 
