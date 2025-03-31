@@ -30,8 +30,6 @@ package("vulkan-loader")
     add_versions("1.2.162+0", "f8f5ec2485e7fdba3f58c1cde5a25145ece1c6a686c91ba4016b28c0af3f21dd")
     add_versions("1.2.154+1", "889e45f7175d915dd0d702013b8021192e181d20f2ad4021c94006088f1edfe5")
 
-    add_patches("<1.3.211", "https://github.com/KhronosGroup/Vulkan-Loader/commit/a06909aaa67d31d9f0e854ede9ad23ac4cfd0f22.patch", "cba390ca59457e1523776433d6ee9ac8a5baeb0e6e49f830e3db8d5e93f5d5fc")
-
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
     if is_plat("mingw") and is_subhost("msys") then
@@ -89,6 +87,10 @@ package("vulkan-loader")
                 end
             end
             envs.LD_LIBRARY_PATH = (envs.LD_LIBRARY_PATH or "") .. path.envsep() .. path.joinenv(table.unique(linkdirs))
+            if package:version():lt("1.3.211") then
+                -- see https://github.com/KhronosGroup/Vulkan-Loader/commit/a06909aaa67d31d9f0e854ede9ad23ac4cfd0f22
+                opt.cxflags = "-D_GNU_SOURCE"
+            end
         end
         local configs = {"-DBUILD_TESTS=OFF"}
         local vulkan_headers = package:dep("vulkan-headers")
