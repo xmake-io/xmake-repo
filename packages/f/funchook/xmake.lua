@@ -18,6 +18,9 @@ package("funchook")
             -- unix
             package:add("syslinks", "dl")
         end
+        if package:config("shared") then
+            package:add("links", "funchook_dll")
+        end
         if not package:config("disasm") then
             -- default disasm engine.
             if package:is_arch("arm64") then
@@ -25,8 +28,9 @@ package("funchook")
             else
                 package:add("deps", "distorm")
             end
+        else
+            package:add("deps", package:config("disasm"))
         end
-        package:add("deps", package:config("disasm"))
     end)
 
     on_install("linux|x86_64", "linux|i386", "linux|arm64", "macosx|x86_64", "windows|x86", "windows|x64", function (package)
@@ -36,7 +40,7 @@ package("funchook")
         table.insert(configs, "-DCMAKE_BUILD_TYPE="  .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DFUNCHOOK_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
-        -- table.insert(configs, "-DFUNCHOOK_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
+        table.insert(configs, "-DFUNCHOOK_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         if package:config("disasm") then
             if package:is_arch("arm64") then
                 table.insert(configs, "-DFUNCHOOK_DISASM=capstone")
