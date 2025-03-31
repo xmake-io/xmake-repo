@@ -10,6 +10,7 @@ package("aklomp-base64")
 
     add_deps("cmake")
     on_load(function (package)
+        package:add("links", "base64")
         if not package:config("shared") then
             package:add("defines", "BASE64_STATIC_DEFINE")
         end
