@@ -34,7 +34,7 @@ package("vulkan-loader")
         add_extsources("pacman::vulkan-loader")
     elseif is_plat("linux") then
         add_extsources("apt::libvulkan-dev", "pacman::vulkan-icd-loader")
-        add_deps("wayland", "libxrandr", "libxrender", "libxcb", "libxkbcommon")
+        add_deps("wayland", "libx11", "libxrandr", "libxrender", "libxcb", "libxkbcommon")
     elseif is_plat("macosx") then
         add_extsources("brew::vulkan-loader")
     end
