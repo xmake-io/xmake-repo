@@ -1,0 +1,143 @@
+From 5ccdbca59654914ffcd3264170988f466ffdf669 Mon Sep 17 00:00:00 2001
+From: Redbeanw44602 <redbeana44945@gmail.com>
+Date: Mon, 31 Mar 2025 22:22:01 +0800
+Subject: [PATCH] fix build system deps
+
+---
+ CMakeLists.txt | 85 +++++++++++---------------------------------------
+ 1 file changed, 18 insertions(+), 67 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 1c3b2e9..4487605 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -86,25 +86,8 @@ endfunction(add_subdirectory_pic)
+ # capstone
+ #
+ if (DISASM_CAPSTONE)
+-  configure_file(cmake/capstone.cmake.in capstone-download/CMakeLists.txt)
+-  execute_process(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
+-      WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/capstone-download"
+-  )
+-  execute_process(COMMAND "${CMAKE_COMMAND}" --build .
+-      WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/capstone-download"
+-  )
+-
+-  string(TOUPPER ${FUNCHOOK_CPU} FUNCHOOK_CPU_UPPER)
+-
+-  set(CAPSTONE_BUILD_SHARED OFF CACHE BOOL "")
+-  set(CAPSTONE_BUILD_STATIC_RUNTIME OFF CACHE BOOL "")
+-  set(CAPSTONE_BUILD_TESTS OFF CACHE BOOL "")
+-  set(CAPSTONE_BUILD_CSTOOL OFF CACHE BOOL "")
+-  set(CAPSTONE_ARCHITECTURE_DEFAULT OFF CACHE BOOL "")
+-  set(CAPSTONE_${FUNCHOOK_CPU_UPPER}_SUPPORT ON CACHE BOOL "")
+-  add_subdirectory_pic(${CMAKE_CURRENT_BINARY_DIR}/capstone-src ${CMAKE_CURRENT_BINARY_DIR}/capstone-build)
+-
+-  list(APPEND FUNCHOOK_DEPS capstone-static)
++  find_package(capstone REQUIRED)
++  list(APPEND FUNCHOOK_DEPS capstone::capstone_static)
+   set(DISASM capstone)
+ endif ()
+ 
+@@ -112,55 +95,17 @@ endif ()
+ # distorm
+ #
+ if (DISASM_DISTORM)
+-  set(DISTORM_PATH distorm/)
+-  set(DISTORM_SRC_DIR ${DISTORM_PATH}/src/)
+-  set(DISTORM_SOURCES ${DISTORM_SRC_DIR}/decoder.c ${DISTORM_SRC_DIR}/distorm.c ${DISTORM_SRC_DIR}/instructions.c
+-      ${DISTORM_SRC_DIR}/insts.c ${DISTORM_SRC_DIR}/mnemonics.c ${DISTORM_SRC_DIR}/operands.c
+-      ${DISTORM_SRC_DIR}/prefix.c ${DISTORM_SRC_DIR}/textdefs.c)
+-  if (MSVC)
+-    # Suppress warning C4819:
+-    #   The file contains a character that cannot be represented in the current code
+-    #   page (number). Save the file in Unicode format to prevent data loss.
+-    #
+-    # prefix.c includes non-ascii chracters and C compiler warns C4819 on multibyte Windows
+-    # environment.
+-    set_source_files_properties(${DISTORM_SRC_DIR}/prefix.c PROPERTIES COMPILE_FLAGS /wd4819)
+-  endif ()
+-  add_library(distorm STATIC ${DISTORM_SOURCES})
+-  set_target_properties(distorm PROPERTIES POSITION_INDEPENDENT_CODE ON)
+-  target_include_directories(distorm PUBLIC ${DISTORM_PATH}/include)
+-  if (HAVE_FVISIBILITY_HIDDEN)
+-    target_compile_options(distorm PRIVATE -fvisibility=hidden)
+-  endif ()
+   set(DISASM distorm)
+-  list(APPEND FUNCHOOK_DEPS distorm)
+ endif ()
+ 
+ #
+ # zydis
+ #
+ if (DISASM_ZYDIS)
+-  include(ExternalProject)
+-  ExternalProject_Add(Zydis_src
+-    GIT_REPOSITORY    https://github.com/zyantific/zydis.git
+-    GIT_TAG           v3.1.0
+-    GIT_SHALLOW       TRUE
+-    CMAKE_ARGS        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+-                      -DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN_FILE}
+-                      -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+-                      -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}
+-                      -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}
+-                      -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+-                      -DZYDIS_BUILD_SHARED_LIB=OFF
+-                      -DZYDIS_BUILD_EXAMPLES=OFF
+-                      -DZYDIS_BUILD_TOOLS=OFF
+-    INSTALL_COMMAND  ${CMAKE_COMMAND} --build . --target install && ${CMAKE_COMMAND} --build zycore --target install
+-  )
+-  file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/include)
+-  add_library(Zydis STATIC IMPORTED)
+-  set_property(TARGET Zydis PROPERTY IMPORTED_LOCATION ${CMAKE_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}Zydis${CMAKE_STATIC_LIBRARY_SUFFIX})
+-  set_property(TARGET Zydis PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR}/include)
+-  list(APPEND FUNCHOOK_DEPS Zydis)
++  find_package(Zycore REQUIRED)
++  find_package(Zydis REQUIRED)
++  list(APPEND FUNCHOOK_DEPS Zydis::Zydis)
++  list(APPEND FUNCHOOK_DEPS Zycore::Zycore)
+   set(DISASM Zydis)
+ endif ()
+ 
+@@ -180,15 +125,9 @@ configure_file(src/cmake_config.h.in config.h)
+ 
+ function (add_funchook_library target_name target_type)
+   add_library(${target_name} ${target_type} ${FUNCHOOK_SOURCES})
+-  if (DISASM_ZYDIS)
+-    add_dependencies(${target_name} Zydis_src)
+-  endif ()
+   set_target_properties(${target_name} PROPERTIES ${FUNCHOOK_PROPERTIES})
+   target_include_directories(${target_name} PUBLIC include)
+   target_include_directories(${target_name} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}) # to include config.h
+-  if (DISASM_CAPSTONE)
+-    target_include_directories(${target_name} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/capstone-src/include)
+-  endif()
+   target_link_libraries(${target_name} PRIVATE ${FUNCHOOK_DEPS})
+   if (HAVE_FVISIBILITY_HIDDEN)
+     target_compile_options(${target_name} PRIVATE -fvisibility=hidden)
+@@ -206,10 +145,22 @@ if (FUNCHOOK_BUILD_SHARED)
+   if (MSVC)
+     set_target_properties(funchook-shared PROPERTIES IMPORT_SUFFIX _dll.lib)
+   endif ()
++  if (DISASM_DISTORM)
++    find_package(PkgConfig REQUIRED)
++    pkg_check_modules(DISTORM REQUIRED distorm)
++    target_include_directories(funchook-shared PRIVATE ${DISTORM_INCLUDE_DIRS}/distorm)
++    target_link_libraries(funchook-shared PRIVATE ${DISTORM_LIBRARIES})
++  endif ()
+ endif ()
+ 
+ if (FUNCHOOK_BUILD_STATIC)
+   add_funchook_library(funchook-static STATIC)
++  if (DISASM_DISTORM)
++    find_package(PkgConfig REQUIRED)
++    pkg_check_modules(DISTORM REQUIRED distorm)
++    target_include_directories(funchook-static PRIVATE ${DISTORM_INCLUDE_DIRS}/distorm)
++    target_link_libraries(funchook-static PRIVATE ${DISTORM_LIBRARIES})
++  endif ()
+ endif ()
+ 
+ #
+-- 
+2.49.0
+
