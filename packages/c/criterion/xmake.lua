@@ -45,7 +45,7 @@ package("criterion")
         elseif package:is_plat("windows", "mingw") then
             opt.packagedeps = {"wingetopt", "nanomsg", "pcre2", "libgit2"}
             if package:has_tool("cxx", "cl") then
-                table.insert(opt.cxflags, "/utf-8")
+                opt.cxflags = {"/utf-8"}
             end
         else
             opt.packagedeps = {"libgit2"}
