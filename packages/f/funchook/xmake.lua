@@ -23,13 +23,12 @@ package("funchook")
             if package:is_arch("arm64") then
                 package:add("deps", "capstone")
             else
-                package:set("deps", "distorm")
+                package:add("deps", "distorm")
             end
         end
         package:add("deps", package:config("disasm"))
     end)
 
-    --- TODO: linux|arm64
     on_install("linux|x86_64", "linux|i386", "linux|arm64", "macosx|x86_64", "windows|x86", "windows|x64", function (package)
         local configs = {
             "-DFUNCHOOK_BUILD_TESTS=OFF"
