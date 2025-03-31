@@ -1,7 +1,7 @@
 package("funchook")
     set_homepage("https://github.com/kubo/funchook")
     set_description("Hook function calls by inserting jump instructions at runtime.")
-    set_license("GPLv2")
+    set_license("GPL-2.0-or-later")
 
    add_urls("https://github.com/kubo/funchook/archive/refs/tags/$(version).tar.gz",
              "https://github.com/kubo/funchook.git")
