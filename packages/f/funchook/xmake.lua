@@ -18,7 +18,7 @@ package("funchook")
             -- unix
             package:add("syslinks", "dl")
         end
-        if package:config("shared") then
+        if package:config("shared") and package:is_plat("windows") then
             package:add("links", "funchook_dll")
         end
         if not package:config("disasm") then
