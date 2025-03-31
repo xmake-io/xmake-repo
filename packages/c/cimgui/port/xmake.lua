@@ -18,7 +18,7 @@ if has_config("sdl2") then
 end
 
 if has_config("vulkan") then
-    add_requires("vulkansdk")
+    add_requires("vulkan-headers")
 end
 
 if has_config("freetype") then
@@ -69,7 +69,7 @@ target("cimgui")
     if has_config("vulkan") then
         add_files("imgui/backends/imgui_impl_vulkan.cpp")
         add_headerfiles("imgui/(backends/imgui_impl_vulkan.h)")
-        add_packages("vulkansdk")
+        add_packages("vulkan-headers")
     end
 
     if has_config("freetype") then

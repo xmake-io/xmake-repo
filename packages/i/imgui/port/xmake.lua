@@ -40,7 +40,7 @@ if has_config("sdl3") or has_config("sdl3_renderer") or has_config("sdl3_gpu") t
 end
 
 if has_config("vulkan") then
-    add_requires("vulkansdk")
+    add_requires("vulkan-headers")
 end
 
 if has_config("wgpu") then
@@ -146,7 +146,7 @@ target("imgui")
     if has_config("vulkan") then
         add_files("backends/imgui_impl_vulkan.cpp")
         add_headerfiles("(backends/imgui_impl_vulkan.h)")
-        add_packages("vulkansdk")
+        add_packages("vulkan-headers")
     end
 
     if has_config("win32") then
