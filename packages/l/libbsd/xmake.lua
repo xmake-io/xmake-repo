@@ -11,7 +11,7 @@ package("libbsd")
     add_deps("autotools", "libmd")
     add_links("bsd")
 
-    on_install("linux", "android@linux,macosx", "cross", "bsd", "mingw", "wasm", function (package)
+    on_install("linux", "cross", "bsd", function (package)
         local configs = {"--disable-dependency-tracking"}
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
