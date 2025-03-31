@@ -10,20 +10,19 @@ package("criterion")
 
     add_configs("i18n", {description = "Enable i18n", default = false, type = "boolean"})
 
-    if is_subhost("windows") then
-        add_deps("pkgconf", "wingetopt")
-    else
-        add_deps("pkg-config")
-    end
-
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32", "mswsock")
     elseif is_plat("linux", "bsd") then
         add_syslinks("m", "pthread", "rt")
     end
 
-    add_deps("meson", "ninja", "debugbreak", "klib", "libffi", "nanopb", "nanomsg", "libgit2")
-    add_deps("python 3.x", {kind = "binary"})
+    add_deps("meson", "ninja")
+    if is_subhost("windows") then
+        add_deps("pkgconf", "wingetopt")
+    else
+        add_deps("pkg-config")
+    end
+    add_deps("debugbreak", "klib", "libffi", "nanopb", "nanomsg", "libgit2")
 
     on_load(function (package)
         if package:is_plat("bsd") and package:config("shared") then
@@ -45,11 +44,11 @@ package("criterion")
             opt.packagedeps = {"llhttp", "openssl3", "pcre2"}
         elseif package:is_plat("windows", "mingw") then
             opt.packagedeps = {"wingetopt", "nanomsg", "pcre2", "libgit2"}
-            if package:has_tool("cl") then
+            if package:has_tool("cxx", "cl") then
                 table.insert(opt.cxflags, "/utf-8")
             end
         else
-            opt.packagedeps = {"llhttp", "openssl3", "pcre2", "libgit2"}
+            opt.packagedeps = {"libgit2"}
         end
         local configs = {"-Dtests=false", "-Dsamples=false", "-Dc_std=c11"}
         table.insert(configs, "-Di18n=" .. (package:config("i18n") and "enabled" or "disabled"))
