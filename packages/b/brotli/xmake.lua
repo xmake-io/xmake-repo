@@ -33,25 +33,18 @@ package("brotli")
     end
 
     if on_fetch then
-        on_fetch("linux", "macosx", function (package, opt)
+        on_fetch("linux", "macosx", "mingw", function (package, opt)
             if opt.system then
                 local result
+                local pkginfo
                 for _, name in ipairs({"libbrotlidec", "libbrotlienc", "libbrotlicommon"}) do
-                    local pkginfo = package.find_package and package:find_package("pkgconfig::" .. name, opt)
-                    if pkginfo then
-                        if not result then
-                            result = table.copy(pkginfo)
-                        else
-                            local includedirs = pkginfo.sysincludedirs or pkginfo.includedirs
-                            result.links = table.wrap(result.links)
-                            result.linkdirs = table.wrap(result.linkdirs)
-                            result.includedirs = table.wrap(result.includedirs)
-                            table.join2(result.includedirs, includedirs)
-                            table.join2(result.linkdirs, pkginfo.linkdirs)
-                            table.join2(result.links, pkginfo.links)
-                        end
+                    pkginfo = package:find_package("pkgconfig::" .. name, opt)
+                    if not pkginfo then
+                        return
                     end
+                    result = (result and result .. pkginfo) or pkginfo
                 end
+                result.version = pkginfo.version
                 return result
             end
         end)
