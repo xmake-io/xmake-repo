@@ -29,7 +29,7 @@ package("shadowhook")
                     add_files("arch/arm64/*.c")
                     add_includedirs("arch/arm64")
                     add_ldflags("-Wl,-z,max-page-size=16384")
-                elseif is_arch("arm.*")
+                elseif is_arch("arm.*") then
                     add_files("arch/arm/*.c")
                     add_includedirs("arch/arm")
                 end
