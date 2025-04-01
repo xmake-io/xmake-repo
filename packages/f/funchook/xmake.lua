@@ -14,7 +14,7 @@ package("funchook")
 
     add_configs("disasm", {description = "Disassembler engine.", default = nil, type = "string", values = {"capstone", "distorm", "zydis"}})
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("psapi")
     else
         add_syslinks("dl")
@@ -26,6 +26,12 @@ package("funchook")
     else
         add_deps("pkg-config")
     end
+
+    on_check(function (package)
+        if package:is_arch("arm.*") and not package:is_arch("aarch64", "arm64") then
+            assert(false, "package(funchook): Unsupported arch.")
+        end
+    end)
 
     on_load(function(package)
         if package:config("shared") and package:is_plat("windows") then
@@ -50,7 +56,7 @@ package("funchook")
         end
     end)
 
-    on_install(function (package)
+    on_install("!bsd and !wasm and !iphoneos", function (package)
         local configs = {
             "-DFUNCHOOK_BUILD_TESTS=OFF"
         }
