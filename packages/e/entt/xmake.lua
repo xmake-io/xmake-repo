@@ -45,7 +45,7 @@ package("entt")
     end
 
     on_install(function (package)
-        local configs = {"-DENTT_BUILD_TESTING=OFF", "-DENTT_INSTALL=Y"}
+        local configs = {"-DENTT_BUILD_TESTING=OFF", "-DENTT_INSTALL=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
         os.cp("natvis/entt/*.natvis", package:installdir("include", "entt", "natvis"))
