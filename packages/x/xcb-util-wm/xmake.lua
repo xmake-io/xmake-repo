@@ -8,6 +8,7 @@ package("xcb-util-wm")
     add_versions("0.3.9", "7a2f032f0f791dda6e75f2dc7b6cf347f62f27234fab58308124feff5f27be69")
     add_versions("0.4.0", "48c9b2a8c5697e0fde189706a6fa4b09b7b65762d88a495308e646eaf891f42a")
     add_versions("0.4.1", "038b39c4bdc04a792d62d163ba7908f4bb3373057208c07110be73c1b04b8334")
+    add_versions("0.4.2", "dcecaaa535802fd57c84cceeff50c64efe7f2326bf752e16d2b77945649c8cd7")
 
     if is_plat("linux") then
         add_extsources("apt::libxcb-icccm4-dev", "pacman::xcb-util-wm")

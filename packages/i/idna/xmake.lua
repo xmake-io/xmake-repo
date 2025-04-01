@@ -6,9 +6,19 @@ package("idna")
     set_urls("https://github.com/ada-url/idna/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ada-url/idna.git")
 
+    add_versions("0.3.2", "3fffd81d11d5dea6ea0dd5bcd9fa6e9faa6d766ead3e1936229ec47997b90ec9")
     add_versions("0.2.0", "fa9aac3611d11ef4c0196d74bfbf5d12b87814b62d70c101e8eb74fb65c636c9")
 
     add_deps("cmake")
+
+    if on_check then
+        on_check(function (package)
+            assert(package:check_cxxsnippets({test = [[
+                #include <ranges>
+                void test() {}
+            ]]}, {configs = {languages = "c++20"}}), "package(idna) require at least C++20.")
+        end)
+    end
 
     on_install(function (package)
         io.replace("CMakeLists.txt", "add_subdirectory(singleheader)", "", {plain = true})

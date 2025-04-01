@@ -37,6 +37,10 @@ package("harfbuzz")
         add_deps("pkgconf")
     end
 
+    if is_plat("linux", "bsd") then
+        add_syslinks("m")
+    end
+
     add_includedirs("include", "include/harfbuzz")
     if is_plat("macosx") then
         add_frameworks("CoreText", "CoreFoundation", "CoreGraphics")

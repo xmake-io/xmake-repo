@@ -6,6 +6,7 @@ package("aws-c-auth")
     add_urls("https://github.com/awslabs/aws-c-auth/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-auth.git")
 
+    add_versions("v0.8.7", "b961cbed0b82248d3ea7a47f5a49bf174d5a0a977bbdd7ef3e1b2d2eb5468af5")
     add_versions("v0.8.6", "5f5df716d02a2b973ec685f1b50749b2e82736599189926817fbca00cfb194d7")
     add_versions("v0.8.0", "217a0ebf8d7c5ad7e5f5ae814c2a371042164b64b4b9330c1c4bb2c6db1dbd33")
     add_versions("v0.7.31", "7f97aacef6bd1649734383c2bf022250671f353b7fa60d195e6865d7f4594b43")

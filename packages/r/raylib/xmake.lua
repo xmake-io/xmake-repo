@@ -53,10 +53,13 @@ package("raylib")
         os.cp("lib/libraylib.a", package:installdir("lib"))
     end)
 
-    on_install("windows", "linux", "macosx|arm64", "mingw", function (package)
+    on_install("windows", "linux", "macosx|arm64", "mingw", "wasm", function (package)
         local configs = {"-DBUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if is_plat("wasm") then
+            table.insert(configs, "-DPLATFORM=Web")
+        end
         import("package.tools.cmake").install(package, configs, {packagedeps = {"libx11", "libxrender", "libxrandr", "libxinerama", "libxcursor", "libxi", "libxfixes", "libxext"}})
     end)
 

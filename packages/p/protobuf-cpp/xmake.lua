@@ -13,6 +13,7 @@ package("protobuf-cpp")
     end})
 
     -- TODO: Use x.y.z version? https://protobuf.dev/support/version-support
+    add_versions("30.2", "6544e5ceec7f29d00397193360435ca8b3c4e843de3cf5698a99d36b72d65342")
     add_versions("29.3", "e9b9ac1910b1041065839850603caf36e29d3d3d230ddf52bd13778dd31b9046")
     add_versions("29.2", "60c1ab4befe9d0a975c2344b5511bf6b44f91ec3e1426c878f56bf30a0589c43")
     add_versions("28.1", "0ac35978514f3e868181ea60237e695d892d4748ac03fb926a26ac7e2698aa29")
@@ -56,7 +57,7 @@ package("protobuf-cpp")
         end
 
         if package:is_plat("windows") then
-            package:add("links", "libprotoc", "libprotobuf", "utf8_range", "utf8_validity")
+            package:add("links", "libprotoc", "libprotobuf", "utf8_range", "utf8_validity", "libutf8_range", "libutf8_validity")
         else
             package:add("links", "protoc", "protobuf", "utf8_range", "utf8_validity")
         end

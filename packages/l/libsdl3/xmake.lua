@@ -15,9 +15,13 @@ package("libsdl3")
              "https://github.com/libsdl-org/SDL/releases/download/release-$(version)/SDL3-$(version).zip", { alias = "archive" })
     add_urls("https://github.com/libsdl-org/SDL.git", { alias = "github" })
 
+    add_versions("archive:3.2.8", "7f8ff5c8246db4145301bc122601a5f8cef25ee2c326eddb3e88668849c61ddf")
+    add_versions("archive:3.2.6", "665e5aa2a613affe099a38d61257ecc5ef4bf38b109d915147aa8b005399d68a")
     add_versions("archive:3.2.2", "58d8adc7068d38923f918e0bdaa9c4948f93d9ba204fe4de8cc6eaaf77ad6f82")
     add_versions("archive:3.2.0", "abe7114fa42edcc8097856787fa5d37f256d97e365b71368b60764fe7c10e4f8")
 
+    add_versions("github:3.2.8", "release-3.2.8")
+    add_versions("github:3.2.6", "release-3.2.6")
     add_versions("github:3.2.2", "release-3.2.2")
     add_versions("github:3.2.0", "release-3.2.0")
 
