@@ -51,11 +51,7 @@ package("volk")
             package:set("kind", "library", {headeronly = true})
         end
         if not package.is_built or package:is_built() then
-            if package:version():lt("1.4.304") then
-                package:add("deps", "cmake 3.x")
-            else
-                package:add("deps", "cmake")
-            end
+            package:add("deps", "cmake")
         end
         local sdkver = package:version():split("%+")[1]
         package:add("deps", "vulkan-headers " .. sdkver)
@@ -66,6 +62,10 @@ package("volk")
             io.replace("CMakeLists.txt", "if(NOT VOLK_HEADERS_ONLY OR VOLK_INSTALL)", "if(NOT VOLK_HEADERS_ONLY)", {plain = true})
             io.replace("CMakeLists.txt", "install(TARGETS volk volk_headers", "install(TARGETS volk_headers", {plain = true})
         end
+        if package:version():lt("1.4.304") then
+            io.replace("CMakeLists.txt", "cmake_minimum_required(VERSION 3.5)", "cmake_minimum_required(VERSION 3.5...3.30)", {plain = true})
+        end
+
         local vulkanheaders = package:dep("vulkan-headers")
         local configs = {}
         if package:is_plat("android") and (package:gitref() or package:version():lt("1.3.261")) then
