@@ -63,9 +63,11 @@ package("volk")
             io.replace("CMakeLists.txt", "install(TARGETS volk volk_headers", "install(TARGETS volk_headers", {plain = true})
         end
         if package:version():lt("1.4.304") then
-            io.replace("CMakeLists.txt", "cmake_minimum_required(VERSION 3.5)", "cmake_minimum_required(VERSION 3.5...3.30)", {plain = true})
-        elseif package:version():lt("1.3.270") then
-            io.replace("CMakeLists.txt", "cmake_minimum_required(VERSION 3.0)", "cmake_minimum_required(VERSION 3.5...3.30)", {plain = true})
+            if package:version():ge("1.3.270") then
+                io.replace("CMakeLists.txt", "cmake_minimum_required(VERSION 3.5)", "cmake_minimum_required(VERSION 3.5...3.30)", {plain = true})
+            else
+                io.replace("CMakeLists.txt", "cmake_minimum_required(VERSION 3.0)", "cmake_minimum_required(VERSION 3.5...3.30)", {plain = true})
+            end
         end
 
         local vulkanheaders = package:dep("vulkan-headers")
