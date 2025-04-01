@@ -11,7 +11,7 @@ package("shadowhook")
     add_deps("xdl", "linux-syscall-support")
 
     on_install("android", function (package)
-        io.replace("shadowhook/src/main/cpp/sh_safe.c", [[#include "linux_syscall_support.h"]], [[[#include <lss/linux_syscall_support.h>]], {plain = true})
+        io.replace("shadowhook/src/main/cpp/sh_safe.c", [[#include "linux_syscall_support.h"]], [[#include <lss/linux_syscall_support.h>]], {plain = true})
         os.cd("shadowhook/src/main/cpp")
         os.mv("shadowhook.map.txt", "shadowhook.map")
         io.writefile("xmake.lua", [[
