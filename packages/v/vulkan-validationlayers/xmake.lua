@@ -70,10 +70,15 @@ package("vulkan-validationlayers")
             package:add("deps", "vulkan-utility-libraries " .. sdkver)
         end
 
-        package:addenv("VK_ADD_LAYER_PATH", package:installdir("bin"))
-        package:mark_as_pathenv("VK_ADD_LAYER_PATH")
-        package:addenv("VK_LAYER_PATH", package:installdir("bin"))
-        package:mark_as_pathenv("VK_LAYER_PATH")
+        if package:is_plat("windows") then
+            package:addenv("VK_ADD_LAYER_PATH", package:installdir("bin"))
+            package:mark_as_pathenv("VK_ADD_LAYER_PATH")
+            package:addenv("VK_LAYER_PATH", package:installdir("bin"))
+            package:mark_as_pathenv("VK_LAYER_PATH")
+        else
+            package:addenv("VK_ADD_LAYER_PATH", "lib")
+            package:mark_as_pathenv("VK_ADD_LAYER_PATH")
+        end
     end)
 
     on_install("windows", "linux", function (package)
