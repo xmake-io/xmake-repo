@@ -50,7 +50,7 @@ package("funchook")
         end
     end)
 
-    on_install("linux|x86_64", "linux|i386", "linux|arm64", "macosx|x86_64", "windows|x86", "windows|x64", function (package)
+    on_install(function (package)
         local configs = {
             "-DFUNCHOOK_BUILD_TESTS=OFF"
         }
