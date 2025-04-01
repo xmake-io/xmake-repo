@@ -52,5 +52,15 @@ package("gmp")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("gmp_randinit", {includes = "gmp.h"}))
+        assert(package:check_csnippets([[
+            void factorial(int n) {
+                int i;
+                mpz_t p;
+                mpz_init_set_ui(p,1);
+                for (i=1; i <= n ; ++i){
+                    mpz_mul_ui(p,p,i);
+                }
+                mpz_clear(p);
+            }
+        ]], {includes = "gmp.h"}))
     end)
