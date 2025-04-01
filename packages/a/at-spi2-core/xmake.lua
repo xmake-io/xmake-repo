@@ -32,7 +32,7 @@ package("at-spi2-core")
         {
             -- try 代码块
             function ()
-                import("package.tools.meson").install(package, configs, {packagedeps = {"glib", "libiconv", "libx11", "libxtst", "libxi", "dbus"}})
+                import("package.tools.meson").install(package, configs, {packagedeps = {"glib", "libxml2", "libxtst", "libxi", "dbus"}})
                 io.cat(path.join(package:buildir(), "meson-logs/meson-log.txt"))
             end,
             -- catch 代码块
