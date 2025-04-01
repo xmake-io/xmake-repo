@@ -55,10 +55,7 @@ package("funchook")
         end
     end)
 
-    on_install("!wasm and !iphoneos and !android", function (package)
-        io.replace("CMakeLists.txt",
-            [[if (FUNCHOOK_CPU MATCHES "x86_64" OR FUNCHOOK_CPU MATCHES "i.86" OR FUNCHOOK_CPU MATCHES "AMD64")]],
-            [[if (FUNCHOOK_CPU MATCHES "x86_64" OR FUNCHOOK_CPU MATCHES "i.86" OR FUNCHOOK_CPU MATCHES "AMD64" OR FUNCHOOK_CPU MATCHES "amd64")]], {plain = true})            
+    on_install("!bsd and !wasm and !iphoneos and !android", function (package)      
         local configs = {
             "-DFUNCHOOK_BUILD_TESTS=OFF"
         }
