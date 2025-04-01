@@ -22,28 +22,14 @@ package("at-spi2-core")
         add_syslinks("dl", "resolv", "pthread")
     end
 
-    add_deps("meson", "ninja", "pkg-config", "dbus", "libx11", "libxtst", "libxi", "libxml2", "glib")
+    add_deps("meson", "ninja", "glib", "pkg-config", "dbus", "libx11", "libxtst", "libxi", "libxml2")
     on_install("linux", function (package)
         io.replace("meson.build", "warning_level=1", "warning_level=3", {plain = true})
         io.replace("meson.build", "subdir('tests')", "", {plain = true})
         local configs = {"-Dintrospection=disabled", "-Ddocs=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-        try
-        {
-            -- try 代码块
-            function ()
-                import("package.tools.meson").install(package, configs, {packagedeps = {"glib", "libxml2", "libxtst", "libxi", "dbus"}})
-                io.cat(path.join(package:buildir(), "meson-logs/meson-log.txt"))
-            end,
-            -- catch 代码块
-            catch
-            {
-                -- 发生异常后，被执行
-                function (errors)
-                    io.cat(path.join(package:buildir(), "meson-logs/meson-log.txt"))
-                end
-            }
-        }
+        import("package.tools.meson").install(package, configs, {packagedeps = {"glib", "dbus", "libx11", "libxtst", "libxi", "libxml2"}})
+        io.cat(path.join(package:buildir(), "meson-logs/meson-log.txt"))
         local atspi_pkgconfig_dir = package:installdir("lib/pkgconfig/atspi-2.pc")
         io.replace(atspi_pkgconfig_dir, [[-DG_LOG_DOMAIN="dbind"]], [[-DG_LOG_DOMAIN=\"dbind\"]])
     end)
