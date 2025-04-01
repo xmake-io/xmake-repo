@@ -8,7 +8,6 @@ package("funchook")
 
     add_versions("v1.1.3", "4b0195e70524237e222dc34c53ac25e12677bb936e64eefe33189931688444c4")
 
-    -- warning: This patch cannot be used with the latest commit.
     add_patches("*", "patches/fix-build-system-deps.patch", "a39c8441e991851b3b0994088100f1b0751ccba4f4cc0ede73f95968ac873597")
     add_patches("*", "patches/fix-function-visibility.patch", "5b505ad24332320f3970a6cb56b5f550b01b9c80aa14cea0fea74ac77f1fc8f3")
 
@@ -56,7 +55,10 @@ package("funchook")
         end
     end)
 
-    on_install("!bsd and !wasm and !iphoneos and !android", function (package)
+    on_install("!wasm and !iphoneos and !android", function (package)
+        io.replace("CMakeLists.txt",
+            [[if (FUNCHOOK_CPU MATCHES "x86_64" OR FUNCHOOK_CPU MATCHES "i.86" OR FUNCHOOK_CPU MATCHES "AMD64")]],
+            [[if (FUNCHOOK_CPU MATCHES "x86_64" OR FUNCHOOK_CPU MATCHES "i.86" OR FUNCHOOK_CPU MATCHES "AMD64" OR FUNCHOOK_CPU MATCHES "amd64")]], {plain = true})            
         local configs = {
             "-DFUNCHOOK_BUILD_TESTS=OFF"
         }
