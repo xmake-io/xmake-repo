@@ -31,11 +31,10 @@ package("nettle")
             table.insert(configs, "--disable-shared")
             table.insert(configs, "--enable-static")
         end
-        import("package.tools.autoconf")
-        local envs = autoconf.buildenvs(package, {packagedeps = {"gmp"}})
-        autoconf.install(package, configs, {envs = envs})
-        if os.isfile(package:installdir("lib64", "pkgconfig", "nettle.pc")) then
+        import("package.tools.autoconf").install(package, configs, {packagedeps = {"gmp"}})
+        if os.isfile(path.join(package:installdir(), "lib64", "pkgconfig", "nettle.pc")) then
             package:add("linkdirs", "lib64")
+            os.trycp((package:installdir("lib64", "pkgconfig")), package:installdir("lib"))
         end
     end)
 
