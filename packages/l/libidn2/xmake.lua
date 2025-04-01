@@ -14,8 +14,8 @@ package("libidn2")
         add_extsources("apt::libidn2-dev", "pacman::libidn2")
     end
 
-    on_install("macosx", "linux", function (package)
-        local configs = {"--disable-dependency-tracking"}
+    on_install("@!windows and !wasm", function (package)
+        local configs = {"--disable-dependency-tracking", "--disable-doc"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:config("pic") ~= false then
