@@ -57,7 +57,7 @@ package("protobuf-cpp")
         end
 
         if package:is_plat("windows") then
-            package:add("links", "libprotoc", "libprotobuf", "utf8_range", "utf8_validity")
+            package:add("links", "libprotoc", "libprotobuf", "utf8_range", "utf8_validity", "libutf8_range", "libutf8_validity")
         else
             package:add("links", "protoc", "protobuf", "utf8_range", "utf8_validity")
         end
