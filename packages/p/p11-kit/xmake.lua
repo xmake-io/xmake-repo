@@ -18,6 +18,8 @@ package("p11-kit")
         add_extsources("brew::p11-kit")
     end
 
+    add_includedirs("include/p11-kit-1")
+
     add_deps("meson", "ninja")
     add_deps("libffi", "libtasn1")
 
@@ -32,7 +34,6 @@ package("p11-kit")
     on_install("linux", "mingw", "macosx", "iphoneos", "bsd", "cross", function (package)
         local configs = {"-Dsystemd=disabled", "-Dbash_completion=disabled", "-Dtest=false"}
         import("package.tools.meson").install(package, configs)
-        os.trymv(package:installdir("include", "p11-kit-1", "*"), package:installdir("include"))
     end)
 
     on_test(function (package)
