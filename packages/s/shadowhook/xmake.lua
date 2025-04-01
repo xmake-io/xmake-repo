@@ -1,6 +1,6 @@
 package("shadowhook")
     set_homepage("https://github.com/bytedance/android-inline-hook/tree/main/doc")
-    set_description(":fire: ShadowHook is an Android inline hook library which supports thumb, arm32 and arm64.")
+    set_description("ShadowHook is an Android inline hook library which supports thumb, arm32 and arm64.")
     set_license("MIT")
 
     add_urls("https://github.com/bytedance/android-inline-hook/archive/refs/tags/$(version).tar.gz",
