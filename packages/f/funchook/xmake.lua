@@ -56,7 +56,7 @@ package("funchook")
         end
     end)
 
-    on_install("!bsd and !wasm and !iphoneos", function (package)
+    on_install("!bsd and !wasm and !iphoneos and !android", function (package)
         local configs = {
             "-DFUNCHOOK_BUILD_TESTS=OFF"
         }
