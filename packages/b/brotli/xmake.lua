@@ -18,6 +18,10 @@ package("brotli")
                     "333e2a0306cf33f2fac381aa6b81afd3d1237e7511e5cc8fe7fb760d16d01ca1")
     end
 
+    if is_plat("cross") then
+        add_syslinks("m")
+    end
+
     add_links("brotlienc", "brotlidec", "brotlicommon")
 
     if is_plat("mingw") and is_subhost("msys") then
