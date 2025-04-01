@@ -36,10 +36,18 @@ package("libaribcaption")
                 package:add("frameworks", "CoreFoundation", "CoreGraphics", "CoreText")
             end
             if package:config("fontconfig") then
-                package:add("deps", "fontconfig")
+                if package:is_plat("linux") then
+                    package:add("deps", "fontconfig", { configs = { shared = package:config("shared")}})
+                else
+                    package:add("deps", "fontconfig")
+                end
             end
             if package:config("freetype") then
-                package:add("deps", "freetype")
+                if package:is_plat("linux") then
+                    package:add("deps", "freetype", { configs = { shared = package:config("shared")}})
+                else
+                    package:add("deps", "freetype")
+                end
             end
         end
     end)
