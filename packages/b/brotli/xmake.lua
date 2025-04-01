@@ -59,7 +59,7 @@ package("brotli")
 
     on_install(function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        local configs = {buildir = "xbuild", vers = package:version_str()}
+        local configs = {buildir = "xbuild", vers = package:version_str():gsub("^v", "")}
         if package:config("shared") then
             configs.kind = "shared"
         end
