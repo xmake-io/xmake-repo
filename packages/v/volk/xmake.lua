@@ -50,6 +50,13 @@ package("volk")
         if package:config("header_only") then
             package:set("kind", "library", {headeronly = true})
         end
+        if not package.is_built or package:is_built() then
+            if package:version():lt("1.4.304") then
+                package:add("deps", "cmake 3.x")
+            else
+                package:add("deps", "cmake")
+            end
+        end
         local sdkver = package:version():split("%+")[1]
         package:add("deps", "vulkan-headers " .. sdkver)
     end)
