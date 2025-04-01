@@ -28,10 +28,6 @@ package("brotli")
         add_extsources("brew::brotli")
     end
 
-    on_load(function (package)
-        package:addenv("PATH", "bin")
-    end)
-
     if on_fetch then
         on_fetch("linux", "macosx", function (package, opt)
             if opt.system then
@@ -67,6 +63,9 @@ package("brotli")
             configs.cxflags = "-fPIC"
         end
         import("package.tools.xmake").install(package, configs)
+        if not package:is_cross() then
+            package:addenv("PATH", "bin")
+        end
     end)
 
     on_test(function(package)
