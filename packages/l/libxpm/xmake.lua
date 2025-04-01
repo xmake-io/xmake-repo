@@ -5,6 +5,7 @@ package("libxpm")
 
     add_urls("https://www.x.org/archive/individual/lib/libXpm-$(version).tar.gz")
     add_versions("3.5.13", "e3dfb0fb8c1f127432f2a498c7856b37ce78a61e8da73f1aab165a73dd97ad00")
+    add_versions("3.5.17", "959466c7dfcfcaa8a65055bfc311f74d4c43d9257900f85ab042604d286df0c6")
 
     if is_plat("linux") then
         add_extsources("apt::libxpm-dev", "pacman::libxpm")

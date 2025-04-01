@@ -6,6 +6,7 @@ package("libfswatch")
     add_urls("https://github.com/emcrisostomo/fswatch/archive/refs/tags/$(version).tar.gz",
              "https://github.com/emcrisostomo/fswatch.git")
 
+    add_versions("1.18.3", "07f9fec15138fe25ea92d869117811c7c4fba2e6c6231682d49b159bae2ebd53")
     add_versions("1.18.2", "698f21fe5489311dabe9e90463fb9d40796780abac8d207b857e86ade7345d86")
     add_versions("1.17.1", "bd492b6e203b10b30857778f4dd26f688426cd352937bd7779ee245139bafa2b")
 
@@ -19,10 +20,10 @@ package("libfswatch")
 
     if on_check then
         on_check(function (package)
-            if package:version() and package:version():eq("1.18.2") then
+            if package:version() and package:version():ge("1.18.2") then
                 if package:is_plat("bsd") then
                     -- libfswatch/src/libfswatch/c++/kqueue_monitor.cpp:134:29: error: unknown type name '__darwin_time_t'; did you mean '__sbintime_t'
-                    raise("package(libfswatch 1.18.2) unsupported current platform")
+                    raise("package(libfswatch >=1.18.2) unsupported platform")
                 end
             end
         end)

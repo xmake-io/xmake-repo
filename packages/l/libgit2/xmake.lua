@@ -119,24 +119,24 @@ package("libgit2")
             "-DBUILD_FUZZERS=OFF",
             "-DREGEX_BACKEND=pcre2",
             "-DUSE_HTTP_PARSER=llhttp",
+            "-DUSE_GSSAPI=OFF"
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_SSH=" .. (package:config("ssh") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_CLI=" .. (package:config("tools") and "ON" or "OFF"))
-
+        local opt = {}
+        opt.packagedeps = {"pcre2"}
         if package:is_plat("mingw") then
             local mingw = import("detect.sdks.find_mingw")()
             local dlltool = assert(os.files(path.join(mingw.bindir, "*dlltool*"))[1], "dlltool not found!")
             table.insert(configs, "-DDLLTOOL=" .. dlltool)
         end
-
-        local opt = {}
-        local pcre2 = package:dep("pcre2")
-        if not pcre2:config("shared") then
-            opt.cxflags = "-DPCRE2_STATIC"
-        end
         import("package.tools.cmake").install(package, configs, opt)
+        if package:is_plat("linux") and linuxos.name() == "fedora" then
+            io.replace(path.join(package:installdir("lib/pkgconfig"), "libgit2.pc"), 
+                "Requires.private: openssl ", "Requires.private: openssl3 ", {plain = true})
+        end
     end)
 
     on_test(function (package)

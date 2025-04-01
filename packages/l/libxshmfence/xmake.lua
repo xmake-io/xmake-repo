@@ -3,8 +3,9 @@ package("libxshmfence")
     set_homepage("https://www.x.org/")
     set_description("X.Org: Shared memory 'SyncFence' synchronization primitive")
 
-    set_urls("https://www.x.org/archive/individual/lib/libxshmfence-$(version).tar.bz2")
-    add_versions("1.3", "b884300d26a14961a076fbebc762a39831cb75f92bed5ccf9836345b459220c7")
+    set_urls("https://www.x.org/archive/individual/lib/libxshmfence-$(version).tar.gz")
+    add_versions("1.3", "7eb3d46ad91bab444f121d475b11b39273142d090f7e9ac43e6a87f4ff5f902c")
+    add_versions("1.3.3", "6233ccd9fa80198835efc3039cdf8086ab2b218b17e77ebdb0a19913fcee58d3")
 
     if is_plat("linux") then
         add_extsources("apt::libxshmfence-dev")

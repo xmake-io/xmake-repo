@@ -47,7 +47,7 @@ package("cimgui")
             package:add("defines", "CIMGUI_USE_GLFW")
         end
         if package:config("vulkan") then
-            package:add("deps", "vulkansdk")
+            package:add("deps", "vulkan-headers")
         end
         if package:config("freetype") then
             package:add("deps", "freetype")

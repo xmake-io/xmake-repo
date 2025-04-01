@@ -8,6 +8,8 @@ package("nuklear")
     add_urls("https://github.com/Immediate-Mode-UI/Nuklear/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Immediate-Mode-UI/Nuklear.git")
 
+    add_versions("4.12.6", "60a62c3a15b0d11a4cc74e0007ea42787e08548db4caa642ca9fd2208f47d8ca")
+    add_versions("4.12.5", "1067ae54a2bde8b94b8db262618b75f63c8a6f4df2085ec0970bd9b210fbec0b")
     add_versions("4.12.4", "d698f78a44722fbc8617e6c749197d2b9d5f44b1a5adf3467ccbd8f9aa001411")
     add_versions("4.12.3", "93d32d02ac5c5b17ecc243bb6436da3dc79e656eaa9046e053b8a922e1ee1ad3")
     add_versions("4.12.2", "a705e626a7190722fc5bd3b298e0be35b3d3d92eccf017660ef251cab29fcc94")

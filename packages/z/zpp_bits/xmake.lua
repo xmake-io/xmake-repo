@@ -7,6 +7,7 @@ package("zpp_bits")
     add_urls("https://github.com/eyalz800/zpp_bits/archive/refs/tags/$(version).tar.gz",
              "https://github.com/eyalz800/zpp_bits.git")
 
+    add_versions("v4.5", "2ed5058b1394cd79b5130916e6beb275efbfb73f1713ed1d08a7d3ba1b36970e")
     add_versions("v4.4.25", "d4afb8cf73aec19686928445e912dbbe8d39bffdac43ea69b4781f145195a09e")
 
     if on_check then

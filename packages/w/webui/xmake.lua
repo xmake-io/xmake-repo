@@ -9,6 +9,8 @@ package("webui")
     add_versions("2.4.2", "c51967bbab472655d04e28ce1668ee4adda1f320e05f98c14f071b2cdf61228b")
     add_versions("2.3.0", "14be57405b12cf434daade2310178534240866e3169c7213a6fa0e4a6c6f9f27")
 
+    add_configs("log", {description = "Enable log", default = true, type = "boolean"})
+
     if is_plat("windows") then
         add_syslinks("user32", "advapi32", "shell32", "ws2_32", "ole32")
     elseif is_plat("mingw") then
@@ -28,24 +30,11 @@ package("webui")
                 io.replace("src/civetweb/civetweb.c", "fseeko", "fseek", {plain = true})
             end
         end
-
-        io.writefile("xmake.lua", [[
-            add_rules("mode.debug", "mode.release")
-            target("webui")
-                set_kind("$(kind)")
-                add_files("src/civetweb/civetweb.c", {defines = {"NO_CACHING", "NO_CGI", "NO_SSL", "USE_WEBSOCKET"}})
-                add_files("src/webui.c", {defines = "WEBUI_LOG"})
-                add_headerfiles("include/webui.h", "include/webui.hpp")
-                add_includedirs("include", "src/civetweb")
-                if is_plat("windows") then
-                    add_syslinks("user32", "advapi32", "shell32", "ws2_32", "ole32")
-                elseif is_plat("mingw") then
-                    add_syslinks("ws2_32")
-                elseif is_plat("linux") then
-                    add_syslinks("pthread", "dl")
-                end
-        ]])
-        import("package.tools.xmake").install(package)
+        local configs = {
+            log = package:config("log"),
+        }
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)

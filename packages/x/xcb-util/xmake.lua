@@ -8,6 +8,7 @@ package("xcb-util")
     add_versions("0.3.8", "e9e7f68d60ddd1bab6da714399dd1d91c78cb900c88427d3b8436a013178b3be")
     add_versions("0.3.9", "c3f9e8921998d92b3709baeb6c0b78179d0d8b6f592efdb11120584c5dfedc7e")
     add_versions("0.4.0", "0ed0934e2ef4ddff53fcc70fc64fb16fe766cd41ee00330312e20a985fd927a7")
+    add_versions("0.4.1", "21c6e720162858f15fe686cef833cf96a3e2a79875f84007d76f6d00417f593a")
 
     if is_plat("linux") then
         add_extsources("apt::libxcb-util-dev", "pacman::xcb-util")

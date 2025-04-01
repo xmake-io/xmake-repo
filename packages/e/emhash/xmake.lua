@@ -6,6 +6,8 @@ package("emhash")
 
     add_urls("https://github.com/ktprime/emhash.git")
     add_versions("2024.06.01", "3efa77ef32786a033b379071fe8af3dc705736ca")
+    add_versions("2025.03.19", "0a3107222b4f1d2f3286fb84c2d468ea5ec50373")
+    add_versions("2025.03.24", "beae64cf1ef9e2be04923942aa457f729d105d04")
 
     on_install(function (package)
         os.cp("*.hpp", package:installdir("include"))

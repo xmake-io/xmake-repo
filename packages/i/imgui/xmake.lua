@@ -92,6 +92,9 @@ package("imgui")
     add_configs("sdl2",             {description = "Enable the sdl2 backend with sdl2_renderer", default = false, type = "boolean"})
     add_configs("sdl2_no_renderer", {description = "Enable the sdl2 backend without sdl2_renderer", default = false, type = "boolean"})
     add_configs("sdl2_renderer",    {description = "Enable the sdl2 renderer backend", default = false, type = "boolean"})
+    add_configs("sdl3",             {description = "Enable the sdl3 backend with sdl3_renderer", default = false, type = "boolean"})
+    add_configs("sdl3_renderer",    {description = "Enable the sdl3 renderer backend", default = false, type = "boolean"})
+    add_configs("sdl3_gpu",         {description = "Enable the sdl3 gpu backend", default = false, type = "boolean"})
     add_configs("vulkan",           {description = "Enable the vulkan backend", default = false, type = "boolean"})
     add_configs("win32",            {description = "Enable the win32 backend", default = false, type = "boolean"})
     add_configs("wgpu",             {description = "Enable the wgpu backend", default = false, type = "boolean"})
@@ -147,8 +150,11 @@ package("imgui")
         if package:config("sdl2_renderer") then
             package:add("deps", "libsdl2 >=2.0.17")
         end
+        if package:config("sdl3") or package:config("sdl3_renderer") or package:config("sdl3_gpu") then
+            package:add("deps", "libsdl3")
+        end
         if package:config("vulkan") then
-            package:add("deps", "vulkansdk")
+            package:add("deps", "vulkan-headers")
         end
         if package:config("wgpu") then
             package:add("deps", "wgpu-native")
@@ -170,6 +176,9 @@ package("imgui")
             glad             = package:config("opengl3") and (not package:gitref() and package:version():lt("1.84")),
             sdl2             = package:config("sdl2") or package:config("sdl2_no_renderer"),
             sdl2_renderer    = package:config("sdl2_renderer"),
+            sdl3             = package:config("sdl3"),
+            sdl3_renderer    = package:config("sdl3_renderer"),
+            sdl3_gpu         = package:config("sdl3_gpu"),
             vulkan           = package:config("vulkan"),
             win32            = package:config("win32"),
             wgpu             = package:config("wgpu"),

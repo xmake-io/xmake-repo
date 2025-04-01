@@ -7,6 +7,8 @@ package("parallel-hashmap")
 
     add_urls("https://github.com/greg7mdp/parallel-hashmap/archive/refs/tags/$(version).tar.gz",
              "https://github.com/greg7mdp/parallel-hashmap.git")
+    
+    add_versions("v2.0.0", "4f462f51a3468166ea4cf87c80e001dc1999093264cf55cbda3492ca39a7730b")
     add_versions("v1.3.12","0cc203144321924cfbfcc401f42d8204c0dd24e2760c7a1c091baa16d9777c08")
     add_versions("1.37", "2ac652be0552fcb53a1163c08c1f28f29f0756594fcc587eebb4d8b363153709")
     add_versions("1.35", "308ab6f92e4c6f49304562e352890cf7140de85ce723c097e74fbdec88e0e1ce")

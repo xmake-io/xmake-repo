@@ -6,6 +6,7 @@ package("cserialport")
     add_urls("https://github.com/itas109/CSerialPort/archive/refs/tags/$(version).tar.gz",
              "https://github.com/itas109/CSerialPort.git")
 
+    add_versions("v4.3.2", "0d10a0e978ab77b223dca8a37cfeb2b31676f2211d29a486f8e7173bb2e8c27d")
     add_versions("v4.3.1", "376f41866be65ddfed91f3d0fea91aaaf5ca7e645f9b9cfcdaa0a9182a0bb3ac")
 
     add_configs("c_api", {description = "Build C API", default = false, type = "boolean"})
