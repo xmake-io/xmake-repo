@@ -10,7 +10,9 @@ package("libunistring")
     add_versions("1.1", "a2252beeec830ac444b9f68d6b38ad883db19919db35b52222cf827c385bdb6a")
     add_versions("1.3", "8ea8ccf86c09dd801c8cac19878e804e54f707cf69884371130d20bde68386b7")
 
-    add_deps("libiconv")
+    on_load(function (package)
+        package:add("deps", "libiconv", { configs = {shared = package:config("shared")} })
+    end)
 
     on_install("@!windows and !wasm", function (package)
         local configs = {"--disable-dependency-tracking"}
