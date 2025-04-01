@@ -8,6 +8,8 @@ package("p11-kit")
 
     add_versions("0.25.5", "04d0a86450cdb1be018f26af6699857171a188ac6d5b8c90786a60854e1198e5")
 
+    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::p11-kit")
     elseif is_plat("linux") then
@@ -29,7 +31,6 @@ package("p11-kit")
 
     on_install("linux", "mingw", "macosx", "iphoneos", "bsd", "cross", function (package)
         local configs = {"-Dsystemd=disabled", "-Dbash_completion=disabled", "-Dtest=false"}
-        table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         import("package.tools.meson").install(package, configs)
         os.trymv(package:installdir("include", "p11-kit-1", "*"), package:installdir("include"))
     end)
