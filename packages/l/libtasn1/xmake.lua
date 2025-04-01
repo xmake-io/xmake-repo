@@ -8,6 +8,7 @@ package("libtasn1")
              "https://ftp.gnu.org/gnu/libtasn1/libtasn1-$(version).tar.gz")
     add_versions("4.15.0", "dd77509fe8f5304deafbca654dc7f0ea57f5841f41ba530cff9a5bf71382739e")
     add_versions("4.19.0", "1613f0ac1cf484d6ec0ce3b8c06d56263cc7242f1c23b30d82d23de345a63f7a")
+    add_versions("4.20.0", "92e0e3bd4c02d4aeee76036b2ddd83f0c732ba4cda5cb71d583272b23587a76c")
 
     on_install("!windows and !wasm", function (package)
         if not package:is_cross() then
