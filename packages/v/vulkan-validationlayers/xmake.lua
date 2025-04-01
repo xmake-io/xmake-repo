@@ -70,7 +70,7 @@ package("vulkan-validationlayers")
             package:add("deps", "vulkan-utility-libraries " .. sdkver)
         end
 
-        package:addenv("VK_ADD_LAYER_PATH", package:installdir(package:is_plat("windows") and "bin" or "lib"))
+        package:addenv("VK_ADD_LAYER_PATH", package:is_plat("windows") and "bin" or "lib")
         package:mark_as_pathenv("VK_ADD_LAYER_PATH")
     end)
 
