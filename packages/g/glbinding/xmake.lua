@@ -6,6 +6,7 @@ package("glbinding")
     add_urls("https://github.com/cginternals/glbinding/archive/refs/tags/$(version).tar.gz",
              "https://github.com/cginternals/glbinding.git")
 
+    add_versions("v3.4.0", "0f623f9eb924d9e24124fd014c877405560f8864a4a1f9b1f92a160dfa32f816")
     add_versions("v3.3.0", "a0aa5e67b538649979a71705313fc2b2c3aa49cf9af62a97f7ee9a665fd30564")
     add_versions("v3.1.0", "6729b260787108462ec6d8954f32a3f11f959ada7eebf1a2a33173b68762849e")
     add_versions("v3.0.2", "23a383f3ed31af742a4952b6c26faa9c346dd982ba9112c68293a578a6e542ad")
