@@ -22,6 +22,7 @@ package("libassert")
     add_configs("decompose", {description = "Enables expression decomposition of && and || (this prevents short circuiting)", default = false, type = "boolean"})
     add_configs("lowercase", {description = "Enables assert alias for ASSERT", default = false, type = "boolean"})
     add_configs("magic_enum", {description = "Use the MagicEnum library to print better diagnostics for enum classes", default = true, type = "boolean"})
+    add_configs("use_external_magic_enum", {description = "Use the external MagicEnum library", default = true, type = "boolean"})
 
     on_load(function (package)
         if package:config("magic_enum") then
@@ -68,6 +69,7 @@ package("libassert")
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
             table.insert(configs, "-DLIBASSERT_USE_MAGIC_ENUM=" .. (package:config("magic_enum") and "ON" or "OFF"))
+            table.insert(configs, "-DLIBASSERT_USE_EXTERNAL_MAGIC_ENUM=" .. (package:config("use_external_magic_enum") and "ON" or "OFF"))
             import("package.tools.cmake").install(package, configs)
         end
     end)
