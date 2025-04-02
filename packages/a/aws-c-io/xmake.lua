@@ -32,7 +32,7 @@ package("aws-c-io")
     elseif is_plat("linux", "bsd", "cross", "android") then
         add_deps("s2n-tls")
     elseif is_plat("macosx", "iphoneos") then
-        add_frameworks("Security")
+        add_frameworks("Security", "Network")
     end
 
     add_deps("cmake", "aws-c-common", "aws-c-cal")
