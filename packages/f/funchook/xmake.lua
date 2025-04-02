@@ -28,16 +28,11 @@ package("funchook")
 
     on_check(function (package)
         if package:is_arch("arm.*") and not package:is_arch("aarch64", "arm64") then
-            assert(false, "package(funchook): Unsupported arch.")
+            raise("package(funchook): Unsupported arch.")
         end
     end)
 
     on_load(function(package)
-        if package:config("shared") and package:is_plat("windows") then
-            package:add("links", "funchook_dll")
-        else
-            package:add("links", "funchook")
-        end
         if not package:config("disasm") then
             -- default disasm engine.
             if package:is_arch("arm64") then
@@ -55,11 +50,9 @@ package("funchook")
         end
     end)
 
-    on_install("!bsd and !wasm and !iphoneos and !android", function (package)      
-        local configs = {
-            "-DFUNCHOOK_BUILD_TESTS=OFF"
-        }
-        table.insert(configs, "-DCMAKE_BUILD_TYPE="  .. (package:debug() and "Debug" or "Release"))
+    on_install("windows", "linux", "macosx", "mingw", "msys", "cross", function (package)      
+        local configs = {"-DFUNCHOOK_BUILD_TESTS=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE="  .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DFUNCHOOK_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DFUNCHOOK_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
@@ -71,6 +64,12 @@ package("funchook")
             end
         end
         import("package.tools.cmake").install(package, configs)
+
+        if package:config("shared") and package:is_plat("windows") then
+            io.replace(path.join(package:installdir("include"), "funchook.h"),
+                "#define FUNCHOOK_EXPORT __declspec(dllexport)",
+                "#define FUNCHOOK_EXPORT __declspec(dllimport)", {plain = true})
+        end
     end)
 
     on_test(function (package)
