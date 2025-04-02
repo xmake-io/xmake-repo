@@ -22,7 +22,6 @@ package("libassert")
     add_configs("decompose", {description = "Enables expression decomposition of && and || (this prevents short circuiting)", default = false, type = "boolean"})
     add_configs("lowercase", {description = "Enables assert alias for ASSERT", default = false, type = "boolean"})
     add_configs("magic_enum", {description = "Use the MagicEnum library to print better diagnostics for enum classes", default = true, type = "boolean"})
-    add_configs("use_external_magic_enum", {description = "Use the external MagicEnum library", default = true, type = "boolean"})
 
     on_load(function (package)
         if package:config("magic_enum") then
@@ -33,7 +32,7 @@ package("libassert")
     end)
 
     on_install("windows", "linux", "macosx", function (package)
-        if package:version():lt("2.0.0") then
+        if package:version() and package:version():lt("2.0.0") then
             if package:config("decompose") then
                 package:add("defines", "ASSERT_DECOMPOSE_BINARY_LOGICAL")
             end
@@ -57,6 +56,7 @@ package("libassert")
                 "-DLIBASSERT_USE_MAGIC_ENUM=ON",
                 "-DLIBASSERT_BUILD_TESTING=OFF",
                 "-DLIBASSERT_SANITIZER_BUILD=OFF",
+                "-DLIBASSERT_USE_EXTERNAL_MAGIC_ENUM=ON",
             }
             io.replace("CMakeLists.txt", "/WX", "", {plain = true})
             if not package:config("shared") then
@@ -69,7 +69,6 @@ package("libassert")
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
             table.insert(configs, "-DLIBASSERT_USE_MAGIC_ENUM=" .. (package:config("magic_enum") and "ON" or "OFF"))
-            table.insert(configs, "-DLIBASSERT_USE_EXTERNAL_MAGIC_ENUM=" .. (package:config("use_external_magic_enum") and "ON" or "OFF"))
             import("package.tools.cmake").install(package, configs)
         end
     end)
