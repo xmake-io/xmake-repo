@@ -32,7 +32,7 @@ package("at-spi2-core")
         local configs = {"-Dintrospection=disabled", "-Ddocs=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         import("package.tools.meson").install(package, configs, {packagedeps = {"glib", "dbus", "libx11", "libxtst", "libxi", "libxml2"}})
-        io.cat(path.join(package:buildir(), "meson-logs/meson-log.txt"))
+        io.cat("build_*/meson-logs/meson-log.txt")
         local atspi_pkgconfig_dir = package:installdir("lib/pkgconfig/atspi-2.pc")
         io.replace(atspi_pkgconfig_dir, [[-DG_LOG_DOMAIN="dbind"]], [[-DG_LOG_DOMAIN=\"dbind\"]])
     end)
