@@ -27,7 +27,7 @@ package("entt")
     add_versions("v3.6.0", "94b7dc874acd0961cfc28cf6b0342eeb0b7c58250ddde8bdc6c101e84b74c190")
 
     -- https://github.com/skypjack/entt/issues/1188
-    add_patches("v3.14.0", "https://github.com/skypjack/entt/commit/0a3c2cc4006157241665c6ccefc8b9676c1c752e.patch", "3f059d322244d64233ff2f37e9c80c8b28d92bf5b1bbef39e95cbc4d9ef0b132")
+    add_patches("v3.14.0", "https://github.com/skypjack/entt/commit/0a3c2cc4006157241665c6ccefc8b9676c1c752e.patch", "3e791f9869d1b387444d435cad9b1515db5befe706ed5dca71ee733a583da84e")
 
     add_deps("cmake")
     
