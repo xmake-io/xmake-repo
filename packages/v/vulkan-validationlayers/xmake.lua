@@ -70,7 +70,7 @@ package("vulkan-validationlayers")
             package:add("deps", "vulkan-utility-libraries " .. sdkver)
         end
 
-        package:addenv("VK_ADD_LAYER_PATH", "lib")
+        package:addenv("VK_ADD_LAYER_PATH", package:is_plat("windows") and "bin" or "lib")
         package:mark_as_pathenv("VK_ADD_LAYER_PATH")
     end)
 
@@ -122,5 +122,8 @@ package("vulkan-validationlayers")
             assert(os.isfile(path.join(package:installdir("lib"), "x86", "libVkLayer_khronos_validation.so")))
             assert(os.isfile(path.join(package:installdir("lib"), "armeabi-v7a", "libVkLayer_khronos_validation.so")))
             assert(os.isfile(path.join(package:installdir("lib"), "arm64-v8a", "libVkLayer_khronos_validation.so")))
+        elseif package:is_plat("windows") then
+            assert(os.isfile(path.join(package:installdir("bin"), "VkLayer_khronos_validation.dll")))
+            assert(os.isfile(path.join(package:installdir("bin"), "VkLayer_khronos_validation.json")))
         end
     end)
