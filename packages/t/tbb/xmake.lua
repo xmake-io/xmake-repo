@@ -43,6 +43,7 @@ package("tbb")
         add_patches("2021.2.0", "patches/2021.2.0/gcc11.patch", "181511cf4878460cb48ac0531d3ce8d1c57626d698e9001a0951c728fab176fb")
         add_patches("2021.5.0", "patches/2021.5.0/i386.patch", "1a1c11724839cf98b1b8f4d415c0283ec7719c330b11503c578739eb02889ec0")
         add_patches("2022.0.0", "patches/2022.0.0/fix-mingw-compilation.patch", "917999038883152acd2e8b59edbc67081d4c9cb6a15113ce28d38274fe8fb0d9")
+        add_patches("2022.1.0", "patches/2022.0.0/fix-mingw-compilation.patch", "917999038883152acd2e8b59edbc67081d4c9cb6a15113ce28d38274fe8fb0d9")
         
         if is_plat("macosx") then
             add_configs("compiler", {description = "Compiler used to compile tbb." , default = "clang", type = "string", values = {"clang", "gcc", "icc", "cl", "icl", "[others]"}})
