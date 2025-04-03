@@ -7,6 +7,7 @@ package("libxml2")
              "https://gitlab.gnome.org/GNOME/libxml2.git",
              "https://github.com/GNOME/libxml2.git")
 
+    add_versions("v2.14.0", "4884b61038ea5e3bb9163ad86a08b36667b5bb6b1f44e2d65e2f35ee7a2bcec2")
     add_versions("v2.13.4", "ba783b43e8b3475cbd2b1ef40474da6a4465105ee9818d76cd3ac7863550afce")
     add_versions("v2.13.2", "5091cf2767c3f7ba08bf59fbe85b01db36ca21abdcb37deea964fcb26a4391fb")
     add_versions("v2.12.9", "3cd02671b20954865f5b3e90f192d8cc4d815b2362c2ff9a0b450b41648dac58")
@@ -35,10 +36,6 @@ package("libxml2")
 
     if on_check then
         on_check(function (package)
-            if not package:gitref() and package:is_plat("iphoneos") then
-                raise("All version unsupported now. see https://gitlab.gnome.org/GNOME/libxml2/-/issues/774\nYou can use `libxml2 master` branch to build or open a pull request to patch it.")
-            end
-
             if package:config("python") then
                 if package:is_cross() then
                     raise("package(libxml2) python interface does not support cross-compilation")
