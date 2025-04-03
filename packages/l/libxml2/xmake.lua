@@ -139,7 +139,7 @@ package("libxml2")
         if lzma and not lzma:config("shared") then
             table.insert(cxflags, "-DLZMA_API_STATIC")
         end
-        import("package.tools.cmake").install(package, configs, {cxflags = cxflags, shflags = shflags})
+        import("package.tools.cmake").install(package, configs, {cxflags = cxflags, shflags = shflags, packagedeps = {"libiconv", "icu4c", "zlib", "xz", "readline"}})
 
         if package:is_plat("windows") then
             local libfiles = os.files(package:installdir("lib/*xml2*.lib"))[1]
