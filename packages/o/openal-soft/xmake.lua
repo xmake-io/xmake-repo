@@ -29,7 +29,10 @@ package("openal-soft")
     end
 
     if is_plat("windows", "mingw") then
-        add_syslinks("ole32", "shell32", "user32", "winmm", "kernel32")
+        add_syslinks("ole32", "shell32", "user32", "winmm", "kernel32", "Avrt")
+        if is_plat("mingw") then
+            add_syslinks("uuid")
+        end
     elseif is_plat("linux", "cross") then
         add_syslinks("dl", "pthread")
      elseif is_plat("bsd", "cross") then
