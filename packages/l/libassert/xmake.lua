@@ -32,7 +32,7 @@ package("libassert")
     end)
 
     on_install("windows", "linux", "macosx", function (package)
-        if package:version():lt("2.0.0") then
+        if package:version() and package:version():lt("2.0.0") then
             if package:config("decompose") then
                 package:add("defines", "ASSERT_DECOMPOSE_BINARY_LOGICAL")
             end
@@ -56,6 +56,7 @@ package("libassert")
                 "-DLIBASSERT_USE_MAGIC_ENUM=ON",
                 "-DLIBASSERT_BUILD_TESTING=OFF",
                 "-DLIBASSERT_SANITIZER_BUILD=OFF",
+                "-DLIBASSERT_USE_EXTERNAL_MAGIC_ENUM=ON",
             }
             io.replace("CMakeLists.txt", "/WX", "", {plain = true})
             if not package:config("shared") then
