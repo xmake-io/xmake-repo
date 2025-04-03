@@ -9,6 +9,10 @@ package("mkl")
                 local mv = version:split("%+")
                 return format("win-64/mkl-static-%s-intel_%s", mv[1], mv[2])
             end})
+            add_urls("https://software.repos.intel.com/python/conda/$(version).conda", {alias = "conda", version = function (version)
+                local mv = version:split("%+")
+                return format("win-64/mkl-static-%s-intel_%s", mv[1], mv[2])
+            end})
             add_versions("2022.2.0+9563", "82ed56af423fa6f2fef46085e267695feb5fd079a5eabb6353a99598ff2a7879")
             add_resources("2022.2.0+9563", "headers", "https://software.repos.intel.com/python/conda/win-64/mkl-include-2022.2.0-intel_9563.tar.bz2", "da4458b2c8f86b7e8d2772e1d992b8913dd74fb9d0822559eb9538aa36125a45")
             add_versions("2022.2.1+19754", "a1c3592caeb248ec16698d2a0971b6c6fa8eae1ddfd0cc575d8ec1d02e607ee6")
@@ -27,8 +31,8 @@ package("mkl")
             add_resources("2025.0.0+928", "headers", "https://software.repos.intel.com/python/conda/win-64/mkl-include-2025.0.0-intel_928.tar.bz2", "49c9e263a3a3cb2a6929900bfa66a19449cdaeee2da8a821aa8aa7e2fbaf9240")
             add_versions("2025.0.1+5", "799d83e6d4474d52bcbee61b5697f0b32a7993b335c5cee504a0fb9e97e9b65a")
             add_resources("2025.0.1+5", "headers", "https://software.repos.intel.com/python/conda/win-64/mkl-include-2025.0.1-intel_5.tar.bz2", "2492bf11b16bf9b911d65398bbca4f848b7b3b344a483b132a6a5aa68ff3d95c")
-            add_versions("2025.1.0+798", "58ba9d43ec30d2ea2f2e5bccf7e03cb5967b09abf8d48a9215b5a33593e5ce93")
-            add_resources("2025.1.0+798", "headers", "https://software.repos.intel.com/python/conda/win-64/mkl-include-2025.1.0-intel_798.tar.bz2", "95f4cb0304186d6638f0033628b802d32791ba907198e32715c156f369ff67cc")
+            add_versions("conda:2025.1.0+798", "e7e905c58aae00b6497c3feb2208bdd83700293160703ca4371896c3a692ac93")
+            add_resources("2025.1.0+798", "headers", "https://software.repos.intel.com/python/conda/win-64/mkl-include-2025.1.0-intel_798.conda", "95f4cb0304186d6638f0033628b802d32791ba907198e32715c156f369ff67cc")
         elseif is_arch("x86") then
             add_urls("https://software.repos.intel.com/python/conda/$(version).tar.bz2", {version = function (version)
                 local mv = version:split("%+")
@@ -66,6 +70,10 @@ package("mkl")
                 local mv = version:split("%+")
                 return format("linux-64/mkl-static-%s-intel_%s", mv[1], mv[2])
             end})
+            add_urls("https://software.repos.intel.com/python/conda/$(version).conda", {alias = "conda", version = function (version)
+                local mv = version:split("%+")
+                return format("linux-64/mkl-static-%s-intel_%s", mv[1], mv[2])
+            end})
             add_versions("2022.2.0+8748", "cbcff4024be9830a9fb7f640d4555ea4f3a9c4dd503df67a42f11b940286b7b3")
             add_resources("2022.2.0+8748", "headers", "https://software.repos.intel.com/python/conda/linux-64/mkl-include-2022.2.0-intel_8748.tar.bz2", "9dd06c499ec890294b2909a0784303e94b14d88c6e95ae4ffee308f16fd55121")
             add_versions("2022.2.1+16993", "4f1e738b7b54763a211b52702dea763d1c5dff352cb14a6155244634b58b28f9")
@@ -82,8 +90,8 @@ package("mkl")
             add_resources("2025.0.0+939", "headers", "https://software.repos.intel.com/python/conda/linux-64/mkl-include-2025.0.0-intel_939.tar.bz2", "e3c02344b0405d90c7b992493a081f1f763fa96493626a5da1fe7693040a486f")
             add_versions("2025.0.1+14", "aa1e600d0c26b4fe7960bae84489162efbd03ee76c1fa2865630f9303768bdbe")
             add_resources("2025.0.1+14", "headers", "https://software.repos.intel.com/python/conda/linux-64/mkl-include-2025.0.1-intel_14.tar.bz2", "a8cef2bc84c135a38031f3bb5b0ec1c42cbb8e8e969754f91c25d50a19fda22b")
-            add_versions("2025.1.0+801", "4ed0dc14d2d8dbf3840dbe2a89c3c6c89c0ff3fb63cb766616973135a0fb705c")
-            add_resources("2025.1.0+801", "headers", "https://software.repos.intel.com/python/conda/linux-64/mkl-include-2025.1.0-intel_801.tar.bz2", "ccf54c873bb7527dc1aab08e7ab731e89d399c09f4cd94db374807a7d78f7902")
+            add_versions("conda:2025.1.0+801", "9edb8ef62d24646506dd2afc8160ea84ff9c9add8c63cbbd420d63283a16a541")
+            add_resources("2025.1.0+801", "headers", "https://software.repos.intel.com/python/conda/linux-64/mkl-include-2025.1.0-intel_801.conda", "ccf54c873bb7527dc1aab08e7ab731e89d399c09f4cd94db374807a7d78f7902")
         elseif is_arch("i386") then
             add_urls("https://software.repos.intel.com/python/conda/$(version).tar.bz2", {version = function (version)
                 local mv = version:split("%+")
@@ -162,7 +170,85 @@ package("mkl")
     end)
 
     on_install("windows|!arm64", "macosx|!arm64", "linux|x86_64", "linux|i386", function (package)
+        import("lib.detect.find_tool")
         local headerdir = package:resourcedir("headers")
+        if not (os.exists("lib") or os.exists("Library")) then
+            local mv = package:version():split("%+")
+            local lib_filename = format("mkl-static-%s-intel_%s", mv[1], mv[2])
+            local inc_filename = format("mkl-include-%s-intel_%s", mv[1], mv[2])
+            local z7 = find_tool("7z")
+            local program = z7.program
+            local argv = {"x", "-y", "../" .. lib_filename .. ".conda"}
+            os.vrunv(program, argv)
+            -- Extarct pkg-mkl-static-2025.1.0-intel_798.tar.zst
+            local archivefile = "pkg-" .. lib_filename .. ".tar.zst"
+            local zstd = find_tool("zstd")
+            program = zstd.program
+            local outputdir = "tmp"
+             -- extract to *.tar file first
+            local outputdir_old = nil
+            outputdir_old = outputdir
+            outputdir = os.tmpfile({ramdisk = false}) .. ".tar"
+            -- init temporary archivefile
+            local tmpfile = path.join(outputdir, path.filename(archivefile))
+            -- init argv
+            argv = {"-d"}
+            table.insert(argv, "-q")
+            table.insert(argv, tmpfile)
+            -- ensure output directory
+            if not os.isdir(outputdir) then
+                os.mkdir(outputdir)
+            end
+            -- copy archivefile to outputdir first
+            if path.absolute(archivefile) ~= path.absolute(tmpfile) then
+                os.cp(archivefile, tmpfile)
+            end
+            -- extract .tar.zst into temporary
+            os.vrunv(program, argv, {curdir = outputdir})
+            -- extract .tar from tmp into source
+            program = z7.program
+            os.vrunv(program, {"x", "-y", outputdir})
+
+            --repeat same for headers
+
+            argv = {"x", "-y", path.join(headerdir, "../" .. inc_filename .. ".conda")}
+            os.vrunv(program, argv)
+            -- Extarct pkg-mkl-include-2025.1.0-intel_798.tar.zst
+            local archivefile = "pkg-" .. inc_filename .. ".tar.zst"
+            local zstd = find_tool("zstd")
+            program = zstd.program
+            local outputdir = "tmp"
+             -- extract to *.tar file first
+            local outputdir_old = nil
+            outputdir_old = outputdir
+            outputdir = os.tmpfile({ramdisk = false}) .. ".tar"
+            -- init temporary archivefile
+            local tmpfile = path.join(outputdir, path.filename(archivefile))
+            -- init argv
+            argv = {"-d"}
+            table.insert(argv, "-q")
+            table.insert(argv, tmpfile)
+            -- ensure output directory
+            if not os.isdir(outputdir) then
+                os.mkdir(outputdir)
+            end
+            -- copy archivefile to outputdir first
+            if path.absolute(archivefile) ~= path.absolute(tmpfile) then
+                os.cp(archivefile, tmpfile)
+            end
+            -- extract .tar.zst into temporary
+            os.vrunv(program, argv, {curdir = outputdir})
+            -- extract .tar from tmp into source
+            program = z7.program
+            os.vrunv(program, {"x", "-y", outputdir})
+            -- move from *source* folder to headerdir resource folder
+            if package:is_plat("windows") then
+                os.trymv("Library/include", path.join(headerdir, "Library", "include"))
+            else
+                os.trymv("include", headerdir)
+            end
+        end
+
         if package:is_plat("windows") then
             os.trymv(path.join("Library", "lib"), package:installdir())
             os.trymv(path.join(headerdir, "Library", "include"), package:installdir())
