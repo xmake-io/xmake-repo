@@ -17,37 +17,61 @@ package("glbinding")
     add_versions("v2.1.1", "cf5f32aa09c3427b0f5c9626fe83aa1473da037d55b6f14f8753b2d9159cc91d")
     add_versions("v2.0.0", "fd09a469b9bd84e44cd0a33e76fb62413678a926601934b3eb0d8956ba11ec3a")
 
+    add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
+
     if is_plat("linux") then
         add_extsources("apt::libglbinding-dev", "pacman::glbinding")
     elseif is_plat("macosx") then
         add_extsources("brew::glbinding")
     end
 
+    if is_plat("linux", "bsd", "mingw") then
+        add_syslinks("pthread")
+    end
+
     add_deps("cmake", "khrplatform")
 
     on_load(function (package)
-        if package:version():major() < 3 then
+        if package:version() and package:version():major() < 3 then
             if is_plat("linux") then
                 package:add("deps", "glx")
             elseif is_plat("windows", "mingw") then
                 package:add("deps", "opengl")
             end
         end
+
+        if package:is_debug() then
+            package:add("links", "glbinding-auxd", "glbindingd")
+        else
+            package:add("links", "glbinding-aux", "glbinding")
+        end
+
+        if not package:config("shared") then
+            package:add("defines", "GLBINDING_STATIC_DEFINE", "GLBINDING_AUX_STATIC_DEFINE")
+        end
     end)
 
     on_install(function (package)
-        local configs = {}
+        io.replace("CMakeLists.txt", "cmake_minimum_required(VERSION 3.0 FATAL_ERROR)", "", {plain = true})
+        -- fix install path
+        io.replace("CMakeLists.txt", "if(UNIX AND SYSTEM_DIR_INSTALL)", "if(1)", {plain = true})
+        io.replace("cmake/CompileOptions.cmake", "POSITION_INDEPENDENT_CODE ON", "", {plain = true})
+
+        local configs = {
+            "-DOPTION_BUILD_TESTS=OFF",
+            "-DOPTION_BUILD_EXAMPLES=OFF",
+            "-DOPTION_SELF_CONTAINED=OFF",
+            "-DOPTION_BUILD_OWN_KHR_HEADERS=ON",
+        }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DOPTION_BUILD_TESTS=OFF")
-        table.insert(configs, "-DOPTION_BUILD_OWN_KHR_HEADERS=ON")
-
+        table.insert(configs, "-DOPTION_BUILD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
         -- Breaking changes since v3.x.x
-        if package:version():major() >= 3 then
+        if package:version() and package:version():major() >= 3 then
             assert(package:check_cxxsnippets({test = [[
                 #include <glbinding/glbinding.h>
                 #include <glbinding/gl/gl.h>
