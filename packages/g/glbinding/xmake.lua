@@ -52,7 +52,7 @@ package("glbinding")
     end)
 
     on_install(function (package)
-        io.replace("CMakeLists.txt", "cmake_minimum_required(VERSION 3.0 FATAL_ERROR)", "", {plain = true})
+        io.replace("CMakeLists.txt", "cmake_minimum_required(VERSION 3.0 FATAL_ERROR)", "cmake_minimum_required(VERSION 3.0)", {plain = true})
         -- fix install path
         io.replace("CMakeLists.txt", "if(UNIX AND SYSTEM_DIR_INSTALL)", "if(1)", {plain = true})
         io.replace("cmake/CompileOptions.cmake", "POSITION_INDEPENDENT_CODE ON", "", {plain = true})
