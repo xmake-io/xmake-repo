@@ -31,6 +31,14 @@ package("glbinding")
 
     add_deps("cmake", "khrplatform")
 
+    if on_check then
+        on_check("mingw", function (package)
+            if not package:is_arch64() then
+                raise("package(glbinding) compiler may out of memory")
+            end
+        end)
+    end
+
     on_load(function (package)
         if package:version() and package:version():major() < 3 then
             if is_plat("linux") then
@@ -58,6 +66,7 @@ package("glbinding")
         io.replace("cmake/CompileOptions.cmake", "POSITION_INDEPENDENT_CODE ON", "", {plain = true})
 
         local configs = {
+            "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
             "-DOPTION_BUILD_TESTS=OFF",
             "-DOPTION_BUILD_EXAMPLES=OFF",
             "-DOPTION_SELF_CONTAINED=OFF",
