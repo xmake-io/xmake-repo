@@ -172,81 +172,42 @@ package("mkl")
     on_install("windows|!arm64", "macosx|!arm64", "linux|x86_64", "linux|i386", function (package)
         import("lib.detect.find_tool")
         local headerdir = package:resourcedir("headers")
+        -- Only proceed if library files don't already exist
         if not (os.exists("lib") or os.exists("Library")) then
+            -- Get version components for filename construction
             local mv = package:version():split("%+")
             local lib_filename = format("mkl-static-%s-intel_%s", mv[1], mv[2])
-            local inc_filename = format("mkl-include-%s-intel_%s", mv[1], mv[2])
-            local z7 = find_tool("7z")
-            local program = z7.program
-            local argv = {"x", "-y", "../" .. lib_filename .. ".conda"}
-            os.vrunv(program, argv)
-            -- Extarct pkg-mkl-static-2025.1.0-intel_798.tar.zst
-            local archivefile = "pkg-" .. lib_filename .. ".tar.zst"
-            local zstd = find_tool("zstd")
-            program = zstd.program
-            local outputdir = "tmp"
-             -- extract to *.tar file first
-            local outputdir_old = nil
-            outputdir_old = outputdir
-            outputdir = os.tmpfile({ramdisk = false}) .. ".tar"
-            -- init temporary archivefile
-            local tmpfile = path.join(outputdir, path.filename(archivefile))
-            -- init argv
-            argv = {"-d"}
-            table.insert(argv, "-q")
-            table.insert(argv, tmpfile)
-            -- ensure output directory
-            if not os.isdir(outputdir) then
-                os.mkdir(outputdir)
+            local inc_filename = format("mkl-include-%s-intel_%s", mv[1], mv[2])            
+            -- Find required tools
+            local z7 = assert(find_tool("7z"), "7z tool not found!")
+            local zstd = assert(find_tool("zstd"), "zstd tool not found!")
+            -- Helper function to extract .conda -> .tar.zst -> .tar -> files
+            local function extract_conda(conda_file)
+                -- .conda -> .tar.zst
+                os.vrunv(z7.program, {"x", "-y", conda_file})
+                local archivefile = "pkg-" .. path.basename(conda_file) .. ".tar.zst"
+                -- .tar.zst -> .tar
+                local temp_tar = os.tmpfile() .. ".tar"
+                os.vrunv(zstd.program, {"-d", "-q", "-o", temp_tar, archivefile})
+                -- .tar -> files
+                os.vrunv(z7.program, {"x", "-y", temp_tar})
+                -- Clean up temporary files
+                os.tryrm(temp_tar)
+                os.tryrm(archivefile)
             end
-            -- copy archivefile to outputdir first
-            if path.absolute(archivefile) ~= path.absolute(tmpfile) then
-                os.cp(archivefile, tmpfile)
-            end
-            -- extract .tar.zst into temporary
-            os.vrunv(program, argv, {curdir = outputdir})
-            -- extract .tar from tmp into source
-            program = z7.program
-            os.vrunv(program, {"x", "-y", outputdir})
-
-            --repeat same for headers
-
-            argv = {"x", "-y", path.join(headerdir, "../" .. inc_filename .. ".conda")}
-            os.vrunv(program, argv)
-            -- Extarct pkg-mkl-include-2025.1.0-intel_798.tar.zst
-            local archivefile = "pkg-" .. inc_filename .. ".tar.zst"
-            local zstd = find_tool("zstd")
-            program = zstd.program
-            local outputdir = "tmp"
-             -- extract to *.tar file first
-            local outputdir_old = nil
-            outputdir_old = outputdir
-            outputdir = os.tmpfile({ramdisk = false}) .. ".tar"
-            -- init temporary archivefile
-            local tmpfile = path.join(outputdir, path.filename(archivefile))
-            -- init argv
-            argv = {"-d"}
-            table.insert(argv, "-q")
-            table.insert(argv, tmpfile)
-            -- ensure output directory
-            if not os.isdir(outputdir) then
-                os.mkdir(outputdir)
-            end
-            -- copy archivefile to outputdir first
-            if path.absolute(archivefile) ~= path.absolute(tmpfile) then
-                os.cp(archivefile, tmpfile)
-            end
-            -- extract .tar.zst into temporary
-            os.vrunv(program, argv, {curdir = outputdir})
-            -- extract .tar from tmp into source
-            program = z7.program
-            os.vrunv(program, {"x", "-y", outputdir})
-            -- move from *source* folder to headerdir resource folder
+            -- Process library files
+            extract_conda("../" .. lib_filename .. ".conda")            
+            -- Process header files
+            extract_conda(path.join(headerdir, "../" .. inc_filename .. ".conda"))
+            -- Move headers to the correct location
             if package:is_plat("windows") then
                 os.trymv("Library/include", path.join(headerdir, "Library", "include"))
             else
                 os.trymv("include", headerdir)
             end
+            -- Clean up remaining temporary files
+            os.tryrm("pkg-" .. lib_filename .. ".tar")
+            os.tryrm("pkg-" .. inc_filename .. ".tar")
         end
 
         if package:is_plat("windows") then
