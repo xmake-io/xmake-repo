@@ -6,18 +6,20 @@ package("dlfcn-win32")
     add_urls("https://github.com/dlfcn-win32/dlfcn-win32/archive/refs/tags/$(version).tar.gz",
              "https://github.com/dlfcn-win32/dlfcn-win32.git")
 
+    add_versions("v1.4.2", "f61a874bc9163ab488accb364fd681d109870c86e8071f4710cbcdcbaf9f2565")
     add_versions("v1.4.1", "30a9f72bdf674857899eb7e553df1f0d362c5da2a576ae51f886e1171fbdb399")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("windows", "mingw", function (package)
+        if package:config("shared") then
+            package:add("defines", "DLFCN_WIN32_SHARED")
+        end
+
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
-        if package:config("shared") then
-            package:add("defines", "DLFCN_WIN32_SHARED")
-        end
     end)
 
     on_test(function (package)
