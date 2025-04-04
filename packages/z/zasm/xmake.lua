@@ -25,12 +25,16 @@ package("zasm")
     end)
 
     on_install("!wasm and !iphoneos", function (package)
-        local old_layout
+        local old_layout = false
         local commit = package:commit()
-        local git = import("lib.detect.find_tool")("git")
-        local result = os.iorunv(git.program, {"rev-list", "bea8af2c68f0cbe8a02e93ab79a8b5c596d2b232" .. ".." .. commit, "--count"}):trim()
-        if result == "0" then
-            old_layout = true
+        if commit then
+            local git = import("lib.detect.find_tool")("git")
+            local result = os.iorunv(git.program, {"rev-list", "bea8af2c68f0cbe8a02e93ab79a8b5c596d2b232" .. ".." .. commit, "--count"}):trim()
+            if result == "0" then
+                old_layout = true
+            end
+        else
+            old_layout = (package:version() and package:version():lt("2024.05.14"))
         end
 
         local src_include
