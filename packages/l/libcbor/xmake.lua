@@ -6,6 +6,7 @@ package("libcbor")
     add_urls("https://github.com/pjk/libcbor/archive/refs/tags/$(version).tar.gz",
              "https://github.com/pjk/libcbor.git")
 
+    add_versions("v0.12.0", "5368add109db559f546d7ed10f440f39a273b073daa8da4abffc83815069fa7f")
     add_versions("v0.11.0", "89e0a83d16993ce50651a7501355453f5250e8729dfc8d4a251a78ea23bb26d7")
 
     add_deps("cmake")
