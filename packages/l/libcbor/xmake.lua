@@ -12,7 +12,15 @@ package("libcbor")
     add_deps("cmake")
 
     on_install(function (package)
-        local configs = {"-DWITH_EXAMPLES=OFF", "-DCMAKE_SKIP_INSTALL_ALL_DEPENDENCY=OFF"}
+        if not package:config("shared") then
+            package:add("defines", "CBOR_STATIC_DEFINE")
+        end
+
+        local configs = {
+            "-DWITH_EXAMPLES=OFF",
+            "-DCMAKE_SKIP_INSTALL_ALL_DEPENDENCY=OFF",
+            "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
+        }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSANITIZE=" .. (package:config("asan") and "ON" or "OFF"))
