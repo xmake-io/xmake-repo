@@ -6,6 +6,7 @@ package("dlfcn-win32")
     add_urls("https://github.com/dlfcn-win32/dlfcn-win32/archive/refs/tags/$(version).tar.gz",
              "https://github.com/dlfcn-win32/dlfcn-win32.git")
 
+    add_versions("v1.4.2", "f61a874bc9163ab488accb364fd681d109870c86e8071f4710cbcdcbaf9f2565")
     add_versions("v1.4.1", "30a9f72bdf674857899eb7e553df1f0d362c5da2a576ae51f886e1171fbdb399")
 
     add_deps("cmake")
