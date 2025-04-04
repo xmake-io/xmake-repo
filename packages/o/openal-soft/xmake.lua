@@ -35,8 +35,8 @@ package("openal-soft")
         end
     elseif is_plat("linux", "cross") then
         add_syslinks("dl", "pthread")
-     elseif is_plat("bsd", "cross") then
-        add_syslinks("pthread")
+     elseif is_plat("bsd") then
+        add_syslinks("stdthreads")
     elseif is_plat("android") then
         add_syslinks("dl", "OpenSLES")
     elseif is_plat("macosx", "iphoneos") then
