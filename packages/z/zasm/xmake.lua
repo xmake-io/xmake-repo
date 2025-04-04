@@ -25,8 +25,16 @@ package("zasm")
     end)
 
     on_install("!wasm and !iphoneos", function (package)
+        local old_layout
+        local commit = package:commit()
+        local git = import("lib.detect.find_tool")("git")
+        local result = os.iorunv(git.program, {"rev-list", "bea8af2c68f0cbe8a02e93ab79a8b5c596d2b232" .. ".." .. commit, "--count"}):trim()
+        if result == "0" then
+            old_layout = true
+        end
+
         local src_include
-        if package:version() and package:version():lt("2024.05.14") then
+        if old_layout then
             src_include = [[
                 add_files("src/zasm/**.cpp")
                 add_includedirs("include", "src/zasm/src")
