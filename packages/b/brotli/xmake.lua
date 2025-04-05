@@ -18,6 +18,10 @@ package("brotli")
                     "333e2a0306cf33f2fac381aa6b81afd3d1237e7511e5cc8fe7fb760d16d01ca1")
     end
 
+    if is_plat("cross") then
+        add_syslinks("m")
+    end
+
     add_links("brotlienc", "brotlidec", "brotlicommon")
 
     if is_plat("mingw") and is_subhost("msys") then
@@ -28,30 +32,19 @@ package("brotli")
         add_extsources("brew::brotli")
     end
 
-    on_load(function (package)
-        package:addenv("PATH", "bin")
-    end)
-
     if on_fetch then
-        on_fetch("linux", "macosx", function (package, opt)
+        on_fetch("linux", "macosx", "mingw", function (package, opt)
             if opt.system then
                 local result
+                local pkginfo
                 for _, name in ipairs({"libbrotlidec", "libbrotlienc", "libbrotlicommon"}) do
-                    local pkginfo = package.find_package and package:find_package("pkgconfig::" .. name, opt)
-                    if pkginfo then
-                        if not result then
-                            result = table.copy(pkginfo)
-                        else
-                            local includedirs = pkginfo.sysincludedirs or pkginfo.includedirs
-                            result.links = table.wrap(result.links)
-                            result.linkdirs = table.wrap(result.linkdirs)
-                            result.includedirs = table.wrap(result.includedirs)
-                            table.join2(result.includedirs, includedirs)
-                            table.join2(result.linkdirs, pkginfo.linkdirs)
-                            table.join2(result.links, pkginfo.links)
-                        end
+                    pkginfo = package:find_package("pkgconfig::" .. name, opt)
+                    if not pkginfo then
+                        return
                     end
+                    result = (result and result .. pkginfo) or pkginfo
                 end
+                result.version = pkginfo.version
                 return result
             end
         end)
@@ -59,7 +52,7 @@ package("brotli")
 
     on_install(function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        local configs = {buildir = "xbuild", vers = package:version_str()}
+        local configs = {buildir = "xbuild", vers = package:version_str():gsub("^v", "")}
         if package:config("shared") then
             configs.kind = "shared"
         end
@@ -67,6 +60,9 @@ package("brotli")
             configs.cxflags = "-fPIC"
         end
         import("package.tools.xmake").install(package, configs)
+        if not package:is_cross() then
+            package:addenv("PATH", "bin")
+        end
     end)
 
     on_test(function(package)
