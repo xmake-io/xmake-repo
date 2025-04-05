@@ -10,6 +10,8 @@ package("vulkan-memory-allocator-hpp")
     add_versions("v3.0.1-1", '0e0c374751d5ca6123d0ae0df756693f0674412d7c758ec4a39a5a9dcc412911')
     add_versions("v3.0.1-3", '66a3d4be3bc1404c844b5a36aadeb6b366878e7cf1efe899eb0a0095f3871aae')
     add_versions("v3.1.0", 'f5cbce9b8efdb0de721f22b172c76184979e93ee45a008bfe515533d5d2e2d36')
+    add_versions("v3.2.0", '7f24c857642ed9c030a843738892188301f6409e4405938f3f83ba12f0e3b553')
+    add_versions("v3.2.1", '517fb3fd0d36038124b9644907784840c7e33c52f259b324156687b82fc6a878')
 
     add_configs("modules", {description = "Build with C++20 modules support.", default = false, type = "boolean"})
     add_configs("use_vulkanheaders", {description = "Use vulkan-headers package instead of vulkan-hpp.", default = false, type = "boolean"})
@@ -61,5 +63,5 @@ package("vulkan-memory-allocator-hpp")
             void test() {
                 int version = VMA_VULKAN_VERSION;
             }
-        ]]}, {includes = "vk_mem_alloc.hpp", configs = {languages = "c++14"} }))
+        ]]}, {includes = "vk_mem_alloc.hpp", configs = {languages = package:version():ge("3.2.1") and "c++17" or "c++14"} }))
     end)
