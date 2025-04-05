@@ -173,15 +173,9 @@ package("mkl")
         import("lib.detect.find_tool")
         local headerdir = package:resourcedir("headers")
         -- Only proceed if library files don't already exist
-        print("Phase 1: ")
-        print(package:version())
         if not (os.exists("lib") or os.exists("Library")) then
             -- Get version components for filename construction
             local mv = package:version():split("%+")
-            print("Phase 2: ")
-            print(package:version())
-            print(" VAR mv VALUE:")
-            print(mv)
             local lib_filename = format("mkl-static-%s-intel_%s", mv[1], mv[2])
             local inc_filename = format("mkl-include-%s-intel_%s", mv[1], mv[2])            
             -- Find required tools
