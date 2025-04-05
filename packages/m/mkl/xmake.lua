@@ -173,7 +173,7 @@ package("mkl")
         import("lib.detect.find_tool")
         local headerdir = package:resourcedir("headers")
         -- Only proceed if library files don't already exist
-        print("Phase 1: "）
+        print("Phase 1: ")
         print(package:version())
         if not (os.exists("lib") or os.exists("Library")) then
             -- Get version components for filename construction
