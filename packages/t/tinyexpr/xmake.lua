@@ -13,15 +13,29 @@ package("tinyexpr")
     on_install(function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
+            
+            option("pow_from_right", { showmenu = true, default = false })
+            option("natural_log", { showmenu = true, default = false })
+
             target("tinyexpr")
                 set_kind("static")
                 add_files("tinyexpr.c")
                 add_headerfiles("tinyexpr.h")
-        ]]
-            .. (package:config("pow_from_right") and [[ add_defines("TE_POW_FROM_RIGHT") ]] or "")
-            .. (package:config("natural_log") and [[ add_defines("TE_NAT_LOG") ]] or "")
-        )
-        import("package.tools.xmake").install(package)
+
+                if has_config("pow_from_right") then
+                    add_defines("TE_POW_FROM_RIGHT")
+                end
+
+                if has_config("natural_log") then
+                    add_defines("TE_NAT_LOG")
+                end
+        ]])
+        
+        local configs = {
+            pow_from_right = package:config("pow_from_right"),
+            natural_log = package:config("natural_log"),
+        }
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
