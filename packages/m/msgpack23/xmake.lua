@@ -11,6 +11,18 @@ package("msgpack23")
 
     add_deps("cmake")
 
+    on_check(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            #include <utility>
+            enum class Color : char {
+                red
+            };
+            void test() {
+                std::to_underlying(Color::red);
+            }
+        ]]}, {configs = {languages = "c++23"}}), "package(msgpack23) require c++23")
+    end)
+
     on_install(function (package)
         local configs = {"-DBUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
