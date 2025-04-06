@@ -27,6 +27,9 @@ package("msgpack23")
         local configs = {"-DBUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
+
+        io.replace(path.join(package:installdir("include/msgpack23"), "msgpack23.h"),
+            "#include <cstring>", "#include <cstring>\n#include <utility>", {plain = true})
     end)
 
     on_test(function (package)
