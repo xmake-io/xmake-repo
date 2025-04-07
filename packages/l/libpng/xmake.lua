@@ -38,6 +38,10 @@ package("libpng")
             src_include = [[
                 add_defines("LIBPNG_NO_MMX")
                 add_defines("PNG_NO_MMX_CODE")
+                if is_plat("windows") then
+                    add_defines("PNG_NO_MODULEDEF")
+                    add_defines("_CRT_SECURE_NO_DEPRECATE")
+                end
             ]]
         else
             src_include = [[
