@@ -3,8 +3,8 @@ package("libpng")
     set_description("The official PNG reference library")
     set_license("libpng-2.0")
 
-    add_urls("https://github.com/glennrp/libpng/archive/refs/tags/$(version).tar.gz")
-    add_urls("https://github.com/glennrp/libpng.git")
+    add_urls("https://github.com/glennrp/libpng/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/glennrp/libpng.git")
 
     add_versions("v1.6.47", "631a4c58ea6c10c81f160c4b21fa8495b715d251698ebc2552077e8450f30454")
     add_versions("v1.6.46", "767b01936f9620d4ab4cdf6ec348f6526f861f825648b610b1d604167dc738d2")
@@ -34,7 +34,7 @@ package("libpng")
 
     on_install(function (package)
         local src_include
-        if package:version():le("v1.2.56") then
+        if package:version() and package:version():le("v1.2.56") then
             src_include = [[
                 add_defines("LIBPNG_NO_MMX")
                 add_defines("PNG_NO_MMX_CODE")
@@ -85,8 +85,7 @@ package("libpng")
                     add_defines("PNG_BUILD_DLL")
                 end
         ]], src_include))
-        local configs = {}
-        import("package.tools.xmake").install(package, configs)
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
