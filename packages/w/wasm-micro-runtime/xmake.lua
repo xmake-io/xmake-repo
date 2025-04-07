@@ -21,6 +21,11 @@ package("wasm-micro-runtime")
         add_patches("2.2.0", path.join(os.scriptdir(), "patches", "2.2.0", "fix-windows.patch"), "bf6f96c204959361827ac0e3b3da6e686abaaf56b10078c60866639407bc5fb1")
     end
 
+    -- Resolve missing log library link
+    if is_plat("android") then
+        add_patches("2.2.0", path.join(os.scriptdir(), "patches", "2.2.0", "log-link-android.patch"), "c91371bc0514c663357975ac5c1725ff4b119bb8d3428fe957ec38ff031d7856")
+    end
+
     add_configs("interp", {description = "Enable interpreter", default = true, type = "boolean"})
     add_configs("fast_interp", {description = "Enable fast interpreter", default = false, type = "boolean"})
     add_configs("aot", {description = "Enable AOT", default = false, type = "boolean"})
