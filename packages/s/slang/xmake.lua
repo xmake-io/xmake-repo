@@ -5,6 +5,7 @@ package("slang")
 
     add_urls("https://github.com/shader-slang/slang.git")
 
+    add_versions("v2025.6.3", "b9300bae08a77df6ef2efe2b62de14a13b10b9a4")
     add_versions("v2024.1.18", "efdbb954c57b89362e390f955d45f90e59d66878")
     add_versions("v2024.1.17", "62b7219e715bd4c0f984bcd98c9767fb6422c78f")
 
