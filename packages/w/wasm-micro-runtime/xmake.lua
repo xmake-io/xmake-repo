@@ -6,6 +6,7 @@ package("wasm-micro-runtime")
     add_urls("https://github.com/bytecodealliance/wasm-micro-runtime/archive/refs/tags/WAMR-$(version).tar.gz", {excludes = {"*/language-bindings/python/LICENSE"}})
     add_urls("https://github.com/bytecodealliance/wasm-micro-runtime.git")
 
+    add_versions("2.2.0", "93b6ba03f681e061967106046b1908631ee705312b9a6410f3baee7af7c6aac9")
     add_versions("1.3.2", "58961ba387ed66ace2dd903597f1670a42b8154a409757ae6f06f43fe867a98c")
     add_versions("1.2.3", "85057f788630dc1b8c371f5443cc192627175003a8ea63c491beaff29a338346")
 
@@ -14,6 +15,10 @@ package("wasm-micro-runtime")
 
     add_patches("1.3.2", path.join(os.scriptdir(), "patches", "libc_uvwasi.patch"), "e83ff42588cc112588c7fde48a1bd9df7ffa8fa41f70dd99af5d6b0325ce46f7")
     add_patches("1.2.3", path.join(os.scriptdir(), "patches", "libc_uvwasi.patch"), "e83ff42588cc112588c7fde48a1bd9df7ffa8fa41f70dd99af5d6b0325ce46f7")
+
+    if is_plat("windows") then
+        add_patches("2.2.0", path.join(os.scriptdir(), "patches", "2.2.0", "fix-windows.patch"), "bf6f96c204959361827ac0e3b3da6e686abaaf56b10078c60866639407bc5fb1")
+    end
 
     add_configs("interp", {description = "Enable interpreter", default = true, type = "boolean"})
     add_configs("fast_interp", {description = "Enable fast interpreter", default = false, type = "boolean"})
@@ -56,7 +61,10 @@ package("wasm-micro-runtime")
     end)
 
     on_install("windows", "linux", "macosx", "bsd", "android", function (package)
-        local configs = {"-DWAMR_BUILD_INVOKE_NATIVE_GENERAL=1"}
+        local configs = {
+            "-DWAMR_BUILD_INVOKE_NATIVE_GENERAL=1",
+            "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"
+        }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") and (not package:config("shared")) then
