@@ -41,6 +41,8 @@ package("wasm-micro-runtime")
         add_syslinks("ntdll", "ws2_32")
     elseif is_plat("linux", "bsd") then
         add_syslinks("m", "dl", "pthread")
+    elseif is_plat("android") then
+        add_syslinks("log")
     end
 
     add_deps("cmake")
