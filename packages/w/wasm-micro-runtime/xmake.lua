@@ -16,6 +16,7 @@ package("wasm-micro-runtime")
     add_patches("1.3.2", path.join(os.scriptdir(), "patches", "libc_uvwasi.patch"), "e83ff42588cc112588c7fde48a1bd9df7ffa8fa41f70dd99af5d6b0325ce46f7")
     add_patches("1.2.3", path.join(os.scriptdir(), "patches", "libc_uvwasi.patch"), "e83ff42588cc112588c7fde48a1bd9df7ffa8fa41f70dd99af5d6b0325ce46f7")
 
+    -- Resolve re-definition of NtQueryTimerResolution
     if is_plat("windows") then
         add_patches("2.2.0", path.join(os.scriptdir(), "patches", "2.2.0", "fix-windows.patch"), "bf6f96c204959361827ac0e3b3da6e686abaaf56b10078c60866639407bc5fb1")
     end
