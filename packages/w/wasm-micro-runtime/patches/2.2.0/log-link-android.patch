@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 40658e9..1e324dc 100644
+index 40658e9..237bb62 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -172,6 +172,10 @@ if (WAMR_BUILD_STATIC)
@@ -7,7 +7,7 @@ index 40658e9..1e324dc 100644
      endif()
  
 +    if (ANDROID)
-+      target_link_libraries(iwasm_shared PRIVATE log)
++      target_link_libraries(iwasm_static PRIVATE log)
 +    endif()
 +
      install (TARGETS iwasm_static ARCHIVE DESTINATION lib)

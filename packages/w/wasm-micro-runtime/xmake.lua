@@ -23,7 +23,7 @@ package("wasm-micro-runtime")
 
     -- Resolve missing log library link
     if is_plat("android") then
-        add_patches("2.2.0", path.join(os.scriptdir(), "patches", "2.2.0", "log-link-android.patch"), "c91371bc0514c663357975ac5c1725ff4b119bb8d3428fe957ec38ff031d7856")
+        add_patches("2.2.0", path.join(os.scriptdir(), "patches", "2.2.0", "log-link-android.patch"), "66644a9b86fa26368c029c670f2c5529ba03fba3f5ed6f2aa11f6c359c293cab")
     end
 
     add_configs("interp", {description = "Enable interpreter", default = true, type = "boolean"})
