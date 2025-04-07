@@ -18,6 +18,7 @@ package("hdf5")
     add_versions("home:1.13.3", "83c7c06671f975cee6944b0b217f95005faa55f79ea5532cf4ac268989866af4")
     add_versions("home:1.14.0", "a571cc83efda62e1a51a0a912dd916d01895801c5025af91669484a1575a6ef4")
     add_versions("github:1.14.4-3", "019ac451d9e1cf89c0482ba2a06f07a46166caf23f60fea5ef3c37724a318e03")
+    add_versions("github:1.14.6", "e4defbac30f50d64e1556374aa49e574417c9e72c6b1de7a4ff88c4b1bea6e9b")
 
     add_configs("zlib", {description = "Enable Zlib Filters", default = false, type = "boolean"})
     add_configs("szip", {description = "Enable Szip Filters", default = false, type = "boolean"})
