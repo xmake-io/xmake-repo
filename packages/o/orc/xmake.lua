@@ -34,6 +34,7 @@ package("orc")
     end)
 
     on_install("windows", "linux", "macosx", "bsd", function (package)
+        io.replace("c++/src/CMakeLists.txt", [[(orc STATIC ${SOURCE_FILES})]], [[(orc ${SOURCE_FILES})]], {plain = true})
         local configs = {
             "-DBUILD_JAVA=OFF",
             "-DBUILD_CPP_TESTS=OFF",
