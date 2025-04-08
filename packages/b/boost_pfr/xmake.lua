@@ -4,12 +4,13 @@ package("boost_pfr")
     set_description("C++14 library for struct reflection")
     set_license("BSL-1.0")
 
-    add_urls("https://github.com/boostorg/pfr/archive/refs/tags/$(version).tar.gz")
-    
+    add_urls("https://github.com/boostorg/pfr/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/boostorg/pfr.git")
+
     add_versions("2.2.0", "6f490ec1383de5855dcf801c23f0a967f888eb6e1440b6ca0bf36c12d4ae7ac7")
     add_versions("2.1.0", "7c18a4ab73b70f8b3513fa3a836c6f4310f627bbf55f62b89bdd7aa787c7da31")
 
-    on_install(function (package) 
+    on_install(function (package)
         os.cp("include", package:installdir())
     end)
 
