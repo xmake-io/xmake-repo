@@ -44,10 +44,7 @@ package("opencv")
     add_configs("blas", {description = "Set BLAS vendor.", values = {"mkl", "openblas"}})
     add_configs("cuda", {description = "Enable CUDA support.", default = false, type = "boolean"})
     add_configs("dynamic_parallel", {description = "Dynamically load parallel runtime (TBB etc.).", default = false, type = "boolean"})
-    add_configs("mirror", {
-        description = "Set mirror for download.",
-        values = {"github", "gitcode"}
-    })
+    add_configs("mirror", {description = "Set mirror for download.", values = {"github", "gitcode"}})
 
     if is_plat("macosx") then
         add_frameworks("Foundation", "CoreFoundation", "CoreGraphics", "AppKit", "OpenCL", "Accelerate")
