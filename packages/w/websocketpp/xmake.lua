@@ -11,7 +11,7 @@ package("websocketpp")
     --add_patches("0.8.2", [[https://github.com/zaphoyd/websocketpp/compare/0.8.2%2E%2E%2Eamini-allight%3Awebsocketpp%3Adevelop.diff]], "1d50646a00452155443f401a4b88b8b16047f3218cbe0a33a6947e92d094a13c")
 
     add_deps("cmake")
-    add_deps("boost") --, {configs = {system = true, asio = true, regex = true}}
+    add_deps("boost", {configs = {system = true, asio = true, regex = true}}
 
     on_install(function (package)
         local configs = {}
