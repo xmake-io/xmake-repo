@@ -1,0 +1,17 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 41fb8120d..8682201ee 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -204,10 +204,8 @@ if(CMAKE_COMPILER_IS_MSVC)
+   endif()
+   string(APPEND CMAKE_CXX_FLAGS " /bigobj")
+ 
+-  if(CMAKE_GENERATOR STREQUAL "Ninja")
+-    string(APPEND CMAKE_C_FLAGS " /FS")
+-    string(APPEND CMAKE_CXX_FLAGS " /FS")
+-  endif()
++  string(APPEND CMAKE_C_FLAGS " /FS")
++  string(APPEND CMAKE_CXX_FLAGS " /FS")
+ endif()
+ 
+ if(CMAKE_COMPILER_IS_PATHSCALE)
