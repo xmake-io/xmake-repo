@@ -53,10 +53,17 @@ package("proj")
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DBUILD_APPS=" .. (package:config("apps") and "ON" or "OFF"))
+        if package:version():ge("8.2") then
+            table.insert(configs, "-DBUILD_APPS=" .. (package:config("apps") and "ON" or "OFF"))
+        else
+            local apps = {"CCT", "CS2CS", "GEOD", "GIE", "PROJ", "PROJINFO"}
+            for _, v in pairs(apps) do
+                table.insert(configs, "-DBUILD_" .. v .. "=" .. (package:config("apps") and "ON" or "OFF"))
+            end
+        end
         table.insert(configs, "-DENABLE_TIFF=" .. (package:config("tiff") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_CURL=" .. (package:config("curl") and "ON" or "OFF"))
-        table.insert(configs, "-DBUILD_PROJSYNC=" .. (package:config("curl") and "ON" or "OFF"))
+        table.insert(configs, "-DBUILD_PROJSYNC=" .. (package:config("apps") and package:config("curl") and "ON" or "OFF"))
 
         if package:config("curl") and package:is_plat("macosx") then
             local exflags = {"-framework", "CoreFoundation", "-framework", "Security", "-framework", "SystemConfiguration"}
