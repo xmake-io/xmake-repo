@@ -1,0 +1,15 @@
+diff --git a/src/lib_proj.cmake b/src/lib_proj.cmake
+index bc27baf..32902b0 100644
+--- a/src/lib_proj.cmake
++++ b/src/lib_proj.cmake
+@@ -435,6 +435,10 @@ if(UNIX)
+   if(M_LIB)
+     target_link_libraries(${PROJ_CORE_TARGET} -lm)
+   endif()
++  find_library(DL_LIB dl)
++  if(DL_LIB)
++    target_link_libraries(${PROJ_CORE_TARGET} -ldl)
++  endif()
+ endif()
+ if(USE_THREAD AND Threads_FOUND AND CMAKE_USE_PTHREADS_INIT)
+   target_link_libraries(${PROJ_CORE_TARGET} ${CMAKE_THREAD_LIBS_INIT})
