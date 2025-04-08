@@ -42,7 +42,7 @@ package("proj")
         if package:is_plat("windows") and package:is_arch("arm64") then
             io.replace("CMakeLists.txt", "add_subdirectory(data)", "", {plain = true})
         end
-        if package:config("curl") and (package:version():le(9.4)) then
+        if package:config("curl") and (package:version():le("9.4")) then
             io.replace("src/lib_proj.cmake", "${CURL_LIBRARIES}", "CURL::libcurl", {plain = true})
         end
         local configs = {"-DNLOHMANN_JSON_ORIGIN=external", "-DBUILD_TESTING=OFF"}
