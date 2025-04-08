@@ -45,7 +45,12 @@ package("proj")
         if package:config("curl") and (package:version():le("9.4")) then
             io.replace("src/lib_proj.cmake", "${CURL_LIBRARIES}", "CURL::libcurl", {plain = true})
         end
-        local configs = {"-DNLOHMANN_JSON_ORIGIN=external", "-DBUILD_TESTING=OFF"}
+        local configs = {"-DNLOHMANN_JSON_ORIGIN=external"}
+        if package:version():ge("7.0") then
+            table.insert(configs, "-DBUILD_TESTING=OFF")
+        else
+            table.insert(configs, "-DPROJ_TESTS=OFF")
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_APPS=" .. (package:config("apps") and "ON" or "OFF"))
