@@ -13,8 +13,8 @@ package("websocketpp")
     add_deps("cmake")
     add_deps("boost", {configs = {system = true, asio = true, regex = true, thread = true}})
 
-    on_install(function (package)
-        local configs = {}
+    on_install("!wasm", function (package)
+        local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
