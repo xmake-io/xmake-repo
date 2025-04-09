@@ -10,7 +10,7 @@ package("proj")
     add_versions("6.3.1", "6de0112778438dcae30fcc6942dee472ce31399b9e5a2b67e8642529868c86f8")
 
     add_patches("6.3.1", path.join(os.scriptdir(), "patches", "6.3.1", "fixes.patch"),
-                        "119220275c849346fe93bdcd3a1d113f0a2035f25cf4281db43f25d7856b98f2")
+                        "8e3aa5ff9d10653ed7d8b16513e97eb2ffb39d1c87c1c37684e25336fa14e831")
 
     add_configs("apps", {description = "Build PROJ applications.", default = false, type = "boolean"})
     add_configs("tiff", {description = "Enable TIFF support.", default = false, type = "boolean"})
