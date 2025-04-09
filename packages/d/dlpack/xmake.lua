@@ -6,6 +6,7 @@ package("dlpack")
     add_urls("https://github.com/dmlc/dlpack/archive/refs/tags/$(version).tar.gz",
              "https://github.com/dmlc/dlpack.git")
 
+    add_versions("v1.1", "2e3b94b55825c240cc58e6721e15b449978cbae21a2a4caa23058b0157ee2fb3")
     add_versions("v1.0", "f8cfdcb634ff3cf0e3d9a3426e019e1c6469780a3b0020c9bc4ecc09cf9abcb1")
     add_versions("v0.8", "cf965c26a5430ba4cc53d61963f288edddcd77443aa4c85ce722aaf1e2f29513")
 
@@ -20,7 +21,7 @@ package("dlpack")
     end)
 
     on_install(function (package)
-        local configs = {}
+        local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_MOCK=" .. (package:config("contrib") and "ON" or "OFF"))
