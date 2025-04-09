@@ -1,6 +1,4 @@
-constants = {}
-
---- configure
+local constants = {}
 
 -- only options listed here are yes/no configurations, underscores will be replaced with hyphens.
 function constants.get_yn_features()
@@ -43,8 +41,6 @@ function constants.get_supported_packages()
         "emscripten_target"
     }
 end
-
---- module
 
 function main()
     return constants

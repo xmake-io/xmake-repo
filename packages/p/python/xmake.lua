@@ -97,7 +97,7 @@ package("python")
         package:add("deps", "libuuid") -- py module 'uuuid'
         package:add("deps", "zlib") -- py module 'gzip'
         package:add("deps", "ca-certificates") -- py module 'ssl'
-        if is_plat("linux", "macosx", "bsd") then
+        if package:is_plat("linux", "macosx", "bsd") then
             package:add("deps", "ncurses") -- py module 'curses'
             package:add("deps", "libedit") -- py module 'readline'
             package:add("deps", "libffi") -- py module 'ctypes'
@@ -109,16 +109,16 @@ package("python")
                 package:add("deps", "sqlite3")
             end
         end
-        if is_plat("linux", "macosx") then
+        if package:is_plat("linux", "macosx") then
             package:add("deps", "mpdecimal") -- py module 'decimal'
             package:add("deps", "lzma") -- py module 'lzma'
             package:add("deps", "readline") -- py module 'readline'
         end
-        if is_plat("linux", "bsd") then
+        if package:is_plat("linux", "bsd") then
             package:add("syslinks", "util", "pthread", "dl")
         end
         
-        if not is_plat("wasm") then
+        if not package:is_plat("wasm") then
             if package:config("openssl3") then -- openssl, py module 'ssl', 'hashlib'
                 package:add("deps", "openssl3")
             else
