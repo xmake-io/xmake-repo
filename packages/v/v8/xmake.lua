@@ -53,17 +53,20 @@ package("v8")
         os.vrunv(gclient, {"sync", "--reset", "--delete_unversioned_trees", "-v"}, {envs = envs})
 
         -- Fix GN issue
-        local patchPath = path.join(package:scriptdir(), "patches", "fix_chromium.patch")
-        local sourcePath = path.join(package:cachedir(), "source", "v8")
-        local cwd = os.cd(sourcePath)
+        local patchPath = path.join(package:scriptdir(), "patches", package:version() .. ".patch")
 
-        os.execv("git", {"apply", patchPath})
+        if os.exists(patchPath) then
+            local sourcePath = path.join(package:cachedir(), "source", "v8")
+            local cwd = os.cd(sourcePath)
 
-        os.cd(path.join("third_party", "partition_alloc"))
-        os.execv("git", {"add", path.join("src", "partition_alloc", "BUILD.gn")})
-        os.execv("git", {"commit", "-m", "xmake-patch-01"})
+            os.execv("git", {"apply", patchPath})
 
-        os.cd(cwd)
+            os.cd(path.join("third_party", "partition_alloc"))
+            os.execv("git", {"add", path.join("src", "partition_alloc", "BUILD.gn")})
+            os.execv("git", {"commit", "-m", "xmake-patch-01"})
+
+            os.cd(cwd)
+        end
 
         -- Setup args.gn
         local configs = {
