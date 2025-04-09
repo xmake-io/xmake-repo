@@ -6,6 +6,7 @@ package("openexr")
     add_urls("https://github.com/AcademySoftwareFoundation/openexr/archive/refs/tags/$(version).tar.gz",
              "https://github.com/AcademySoftwareFoundation/openexr.git")
 
+    add_versions("v3.3.3", "0ffbd842a7ee2128d44affdea30f42294b4061293cde3aa75b61a53573413d1e")
     add_versions("v3.3.2", "5013e964de7399bff1dd328cbf65d239a989a7be53255092fa10b85a8715744d")
     add_versions("v3.3.1", "58aad2b32c047070a52f1205b309bdae007442e0f983120e4ff57551eb6f10f1")
     add_versions("v3.3.0", "58b00f50d2012f3107573c4b7371f70516d2972c2b301a50925e1b4a60a7be6f")
@@ -20,6 +21,8 @@ package("openexr")
     add_versions("v3.1.4", "cb019c3c69ada47fe340f7fa6c8b863ca0515804dc60bdb25c942c1da886930b")
     add_versions("v3.1.5", "93925805c1fc4f8162b35f0ae109c4a75344e6decae5a240afdfce25f8a433ec")
     add_versions("v3.2.1", "61e175aa2203399fb3c8c2288752fbea3c2637680d50b6e306ea5f8ffdd46a9b")
+
+    add_patches("3.3.3", "patches/3.3.3/mingw32.patch", "17cbe9d0cbc0c670a846454893c1a427590789cf6bf052a4d800d1263e0faa9a")
 
     add_configs("build_both", {description = "Build both static library and shared library. (deprecated)", default = false, type = "boolean"})
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
@@ -64,6 +67,7 @@ package("openexr")
 
     on_install(function (package)
         io.replace("CMakeLists.txt", "add_subdirectory(website/src)", "", {plain = true})
+        io.replace("cmake/OpenEXRSetup.cmake", [[set(CMAKE_DEBUG_POSTFIX "_d")]], "", {plain = true})
 
         local configs = {
             "-DBUILD_TESTING=OFF",
@@ -72,11 +76,10 @@ package("openexr")
             "-DINSTALL_OPENEXR_DOCS=OFF",
             "-DBUILD_WEBSITE=OFF",
             "-DCMAKE_DEBUG_POSTFIX=''",
+            "-DOPENEXR_FORCE_INTERNAL_IMATH=OFF",
+            "-DOPENEXR_IS_SUBPROJECT=ON",
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        if package:is_plat("windows") then
-            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
-        end
         table.insert(configs, "-DOPENEXR_BUILD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
         table.insert(configs, "-DOPENEXR_BUILD_UTILS=" .. (package:config("tools") and "ON" or "OFF"))
         if package:version():ge("3.0") then
@@ -101,11 +104,6 @@ package("openexr")
             table.insert(configs, "-DPYILMBASE_ENABLE=OFF")
         end
         import("package.tools.cmake").install(package, configs)
-
-        if package:is_plat("windows") and package:is_debug() then
-            os.vcp(path.join(package:buildir(), "bin/*.pdb"), package:installdir("bin"))
-            os.vcp(path.join(package:buildir(), "src/lib/*.pdb"), package:installdir("lib"))
-        end
     end)
 
     on_test(function (package)
