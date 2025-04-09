@@ -4,7 +4,9 @@ package("elfutils")
     set_description("Libraries and utilities for handling ELF objects")
     set_license("GPL-2.0")
 
-    set_urls("https://sourceware.org/elfutils/ftp/$(version)/elfutils-$(version).tar.bz2")
+    add_urls("https://sourceware.org/elfutils/ftp/$(version)/elfutils-$(version).tar.bz2",
+             "https://github.com/xmake-mirror/elfutils/releases/download/elfutils-$(version)/elfutils-$(version).tar.bz2")
+
     add_versions("0.183", "c3637c208d309d58714a51e61e63f1958808fead882e9b607506a29e5474f2c5")
     add_versions("0.189", "39bd8f1a338e2b7cd4abc3ff11a0eddc6e690f69578a57478d8179b4148708c8")
     add_versions("0.190", "8e00a3a9b5f04bc1dc273ae86281d2d26ed412020b391ffcc23198f10231d692")
