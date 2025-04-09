@@ -42,6 +42,6 @@ function constants.get_supported_packages()
     }
 end
 
-function main()
+function get_python_package_constants()
     return constants
 end

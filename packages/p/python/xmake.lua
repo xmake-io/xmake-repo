@@ -5,7 +5,7 @@ package("python")
 
     -- enable-FEATURE
     includes(path.join(os.scriptdir(), "constants.lua"))
-    for _, feature in ipairs(constants.get_yn_features()) do
+    for _, feature in ipairs(get_python_package_constants()) do
         -- if the user doesn't pass it (nil), we won't pass it either.
         add_configs(feature, {description = "Enable " .. feature .. ".", default = nil, type = "boolean"})
     end
@@ -169,7 +169,7 @@ package("python")
 
     --- android, iphoneos, wasm unsupported: dependencies not resolved.
     on_install("macosx", "linux", "bsd", function (package)
-        local constants = import('constants')()
+        local constants = import('constants').get_python_package_constants()
         function opt2cfg(cfg)
             if type(cfg) == "boolean" then
                 return cfg and 'yes' or 'no'
