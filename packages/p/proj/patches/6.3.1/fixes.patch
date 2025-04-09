@@ -13,3 +13,15 @@ index bc27baf..32902b0 100644
  endif()
  if(USE_THREAD AND Threads_FOUND AND CMAKE_USE_PTHREADS_INIT)
    target_link_libraries(${PROJ_CORE_TARGET} ${CMAKE_THREAD_LIBS_INIT})
+diff --git a/src/proj_json_streaming_writer.hpp b/src/proj_json_streaming_writer.hpp
+index 6267684..163da43 100644
+--- a/src/proj_json_streaming_writer.hpp
++++ b/src/proj_json_streaming_writer.hpp
+@@ -33,6 +33,7 @@
+ 
+ #include <vector>
+ #include <string>
++#include <cstdint>
+ 
+ #define CPL_DLL
+ 

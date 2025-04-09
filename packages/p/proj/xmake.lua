@@ -9,7 +9,7 @@ package("proj")
     add_versions("8.2.1", "76ed3d0c3a348a6693dfae535e5658bbfd47f71cb7ff7eb96d9f12f7e068b1cf")
     add_versions("6.3.1", "6de0112778438dcae30fcc6942dee472ce31399b9e5a2b67e8642529868c86f8")
 
-    add_patches("6.3.1", path.join(os.scriptdir(), "patches", "6.3.1", "fix-dl.patch"),
+    add_patches("6.3.1", path.join(os.scriptdir(), "patches", "6.3.1", "fixes.patch"),
                         "119220275c849346fe93bdcd3a1d113f0a2035f25cf4281db43f25d7856b98f2")
 
     add_configs("apps", {description = "Build PROJ applications.", default = false, type = "boolean"})
