@@ -65,6 +65,7 @@ package("openexr")
 
     on_install(function (package)
         io.replace("CMakeLists.txt", "add_subdirectory(website/src)", "", {plain = true})
+        io.replace("cmake/OpenEXRSetup.cmake", [[set(CMAKE_DEBUG_POSTFIX "_d")]], "", {plain = true})
 
         local configs = {
             "-DBUILD_TESTING=OFF",
@@ -73,11 +74,10 @@ package("openexr")
             "-DINSTALL_OPENEXR_DOCS=OFF",
             "-DBUILD_WEBSITE=OFF",
             "-DCMAKE_DEBUG_POSTFIX=''",
+            "-DOPENEXR_FORCE_INTERNAL_IMATH=OFF",
+            "-DOPENEXR_IS_SUBPROJECT=ON",
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        if package:is_plat("windows") then
-            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
-        end
         table.insert(configs, "-DOPENEXR_BUILD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
         table.insert(configs, "-DOPENEXR_BUILD_UTILS=" .. (package:config("tools") and "ON" or "OFF"))
         if package:version():ge("3.0") then
@@ -102,11 +102,6 @@ package("openexr")
             table.insert(configs, "-DPYILMBASE_ENABLE=OFF")
         end
         import("package.tools.cmake").install(package, configs)
-
-        if package:is_plat("windows") and package:is_debug() then
-            os.vcp(path.join(package:buildir(), "bin/*.pdb"), package:installdir("bin"))
-            os.vcp(path.join(package:buildir(), "src/lib/*.pdb"), package:installdir("lib"))
-        end
     end)
 
     on_test(function (package)
