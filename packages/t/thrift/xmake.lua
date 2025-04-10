@@ -20,7 +20,7 @@ package("thrift")
     add_configs("compiler", {description = "Build compiler", default = false, type = "boolean"})
 
     add_deps("cmake", "flex", "bison", {kind = "binary"})
-    add_deps("boost", {configs = {locale = true}})
+    add_deps("boost", {configs = {locale = true, icu = true}})
 
     local configdeps = {"glib", "libevent", "openssl", "zlib", "qt5"}
     for _, dep in pairs(configdeps) do
