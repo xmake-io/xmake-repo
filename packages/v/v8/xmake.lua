@@ -82,6 +82,9 @@ package("v8")
             v8_enable_test_features = false,
             v8_use_external_startup_data = false
         }
+        if not is_host("windows") then
+            configs.is_clang = false
+        end
 
         -- Build V8 library
         import("package.tools.gn").build(package, configs, {buildir = "out.gn", target = {"v8_monolith"}})
