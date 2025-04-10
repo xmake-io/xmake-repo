@@ -51,26 +51,14 @@ package("v8")
 
         -- Update repository and dependencies
         -- Clean any local changes to apply patches
-        try {
-            function()
-                os.vrunv(gclient, {"sync", "-v", "--reset", "--delete_unversioned_trees"}, {envs = envs})
-            end,
-
-            finally {
-                function()
-                    os.vrunv("git", {"config", "--local", "--unset", "core.longpaths"})
-                end
-            }
-        }
+        os.vrunv(gclient, {"sync", "-v", "--reset", "--delete_unversioned_trees"}, {envs = envs})
 
         -- Fix GN issue
-        local version = package:version()
+        local version = package:version_str()
         local patch_path = path.join(package:scriptdir(), "patches", version, "fix.patch")
-
         if os.exists(patch_path) then
             local source_path = path.join(package:cachedir(), "source", "v8")
             local fix_path = path.join(source_path, "third_party", "partition_alloc")
-
             os.execv("git", {"apply", patch_path}, {curdir = source_path})
             os.execv("git", {"add", path.join("src", "partition_alloc", "BUILD.gn")}, {curdir = fix_path})
             os.execv("git", {"commit", "-m", "xmake-patch-01"}, {curdir = fix_path})
@@ -80,16 +68,16 @@ package("v8")
         local configs = {
             is_official_build = false,
             is_component_build = false,
-            is_debug = package:debug(),
-            symbol_level = package:debug() and 2 or 0,
-            strip_debug_info = not package:debug(),
+            is_debug = package:is_debug(),
+            symbol_level = package:is_debug() and 2 or 0,
+            strip_debug_info = not package:is_debug(),
             treat_warnings_as_errors = false,
             use_custom_libcxx = false,
             v8_monolithic = true,
             v8_enable_sandbox = false,
             v8_enable_pointer_compression = false,
             v8_enable_webassembly = false,
-            v8_enable_gdbjit = package:debug(),
+            v8_enable_gdbjit = package:is_debug(),
             v8_enable_i18n_support = false,
             v8_enable_test_features = false,
             v8_use_external_startup_data = false
