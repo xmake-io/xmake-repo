@@ -97,7 +97,7 @@ set_configvar("GNULIB_TEST_REALPATH", 1)
 set_configvar("GNULIB_TEST_SIGPROCMASK", 1)
 set_configvar("GNULIB_TEST_STAT", 1)
 set_configvar("GNULIB_TEST_STRERROR", 1)
-if not is_plat("android") then
+if not is_plat("android", "iphoneos") then
     set_configvar("ssize_t", "int", {quote = false})
     set_configvar("uid_t", "int", {quote = false})
 end
@@ -260,7 +260,7 @@ target("iconv_no_i18n")
     end
     add_files("src/iconv_no_i18n.c")
 
-    if is_plat("android") then
+    if is_plat("android", "iphoneos") then
         -- Gnulib defines these macros to 0 on GNU and other platforms that do not distinguish between text and binary I/O.
         -- https://www.gnu.org/software/gnulib/manual/html_node/fcntl_002eh.html
         add_defines("O_BINARY=0")

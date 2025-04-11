@@ -5,7 +5,11 @@ package("wintoast")
 
     add_urls("https://github.com/mohabouje/WinToast/archive/refs/tags/$(version).tar.gz",
              "https://github.com/mohabouje/WinToast.git")
+
+    add_versions("v1.3.1", "3e060d3376fdfd9cd092e324f5d50dde9632e9f544295f4613c8e22078653ff0")
     add_versions("v1.3.0", "998bd82fb2f49ee4b0df98774424d72c2bc18225188f251a9242af28bb80e6d4")
+
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
     on_install("windows", function (package)
         io.writefile("xmake.lua", [[
@@ -16,12 +20,8 @@ package("wintoast")
                 add_headerfiles("include/(wintoastlib.h)")
                 add_files("src/wintoastlib.cpp")
                 add_includedirs("include")
-                if not is_mode("debug") then
-                    add_defines("NDEBUG")
-                end
         ]])
-        local configs = {}
-        import("package.tools.xmake").install(package, configs)
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)

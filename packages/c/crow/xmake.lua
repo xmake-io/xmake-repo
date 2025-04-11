@@ -4,9 +4,11 @@ package("crow")
     set_description("A Fast and Easy to use microframework for the web.")
     set_license("BSD 3-Clause")
 
-    set_urls("https://github.com/CrowCpp/Crow.git")
-    add_versions("2023.06.26", "13a91a1941fbabfc289dddcdeab08b80193f7c6c")
-    add_versions("2023.07.22", "4f3f5deaaa01825c63c83431bfa96ccec195f741")
+    add_urls("https://github.com/CrowCpp/Crow/archive/refs/tags/$(version).zip", {version = function (version)
+        return (version:gsub("%+", "."))
+    end})
+    add_versions("v1.2.1+2", "eb52839043358830e09976198df5c1e8855a75730ccd3f1d8799eff0a79609b1")
+    add_versions("v1.2.1+1", "d9f85d9df036336c9cb872ecd73c7744e493ed5d02e9aec8b3c1351c757c9707")
 
     add_configs("zlib", {description = "ZLib for HTTP Compression", default = true, type = "boolean"})
     add_configs("ssl", {description = "OpenSSL for HTTPS support", default = true, type = "boolean"})
@@ -22,19 +24,11 @@ package("crow")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "mingw", function (package)
+    on_install("!wasm", function (package)
         local configs = {"-DCROW_BUILD_EXAMPLES=OFF", "-DCROW_BUILD_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        local features = {}
-        if package:config("zlib") then
-            table.insert(features, "compression")
-        end
-        if package:config("ssl") then
-            table.insert(features, "ssl")
-        end
-        if #features > 0 then
-            table.insert(configs, '-DCROW_FEATURES="' .. table.concat(features, ";") .. '"')
-        end
+        table.insert(configs, "-DCROW_ENABLE_COMPRESSION=" .. (package:config("zlib") and "ON" or "OFF"))
+        table.insert(configs, "-DCROW_ENABLE_SSL=" .. (package:config("ssl") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
@@ -46,5 +40,5 @@ package("crow")
             {
                 crow::SimpleApp app;
             }
-        ]]}, {configs = {languages = "c++14"}}))
+        ]]}, {configs = {languages = "c++17"}}))
     end)

@@ -18,7 +18,7 @@ package("raw_pdb")
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
 
-        if package:version():ge("2024.08.27") then
+        if package:gitref() or package:version():ge("2024.08.27") then
             io.replace("src/CMakeLists.txt", "if (UNIX)", "if(1)", {plain = true})
             import("package.tools.cmake").install(package, configs)
             if is_host("windows") then
@@ -44,7 +44,7 @@ package("raw_pdb")
     end)
 
     on_test(function (package)
-        if package:version():ge("2024.08.27") then
+        if package:gitref() or package:version():ge("2024.08.27") then
             assert(package:has_cxxfuncs("PDB::ValidateFile(0, 0)", {includes = {"cstddef", "raw_pdb/PDB.h"}}))
         else
             assert(package:has_cxxfuncs("PDB::ValidateFile(0)", {includes = "PDB.h"}))

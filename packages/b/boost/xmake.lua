@@ -3,18 +3,26 @@ package("boost")
     set_description("Collection of portable C++ source libraries.")
     set_license("BSL-1.0")
 
+    -- xrepo does not support `package:config("cmake")` in on_source to set the download url, so if you want to build with cmake, we need to `add_urls` cmake archive url at first line.
+    -- Users can also download the cmake archive and put it in `xmake g --pkg_searchdirs=` to avoid xrepo using a non-cmake archive url.
+    add_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version)-cmake.tar.gz", {alias = "cmake"})
     add_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version)-b2-nodocs.tar.gz")
     add_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version).tar.gz")
     add_urls("https://github.com/xmake-mirror/boost/releases/download/boost-$(version).tar.bz2", {alias = "mirror", version = function (version)
             return version .. "/boost_" .. (version:gsub("%.", "_"))
         end})
 
+    add_versions("cmake:1.87.0", "78fbf579e3caf0f47517d3fb4d9301852c3154bfecdc5eeebd9b2b0292366f5b")
+    add_versions("cmake:1.86.0", "c62ce6e64d34414864fef946363db91cea89c1b90360eabed0515f0eda74c75c")
+
+    add_versions("1.87.0", "d6c69e4459eb5d6ec208250291221e7ff4a2affde9af6e49c9303b89c687461f")
     add_versions("1.86.0", "2128a4c96862b5c0970c1e34d76b1d57e4a1016b80df85ad39667f30b1deba26")
     add_versions("1.85.0", "f4a7d3f81b8a0f65067b769ea84135fd7b72896f4f59c7f405086c8c0dc61434")
     add_versions("1.84.0", "4d27e9efed0f6f152dc28db6430b9d3dfb40c0345da7342eaa5a987dde57bd95")
     add_versions("1.83.0", "0c6049764e80aa32754acd7d4f179fd5551d8172a83b71532ae093e7384e98da")
     add_versions("1.82.0", "b62bd839ea6c28265af9a1f68393eda37fab3611425d3b28882d8e424535ec9d")
     add_versions("1.81.0", "121da556b718fd7bd700b5f2e734f8004f1cfa78b7d30145471c526ba75a151c")
+
     add_versions("mirror:1.80.0", "1e19565d82e43bc59209a168f5ac899d3ba471d55c7610c677d4ccf2c9c500c0")
     add_versions("mirror:1.79.0", "475d589d51a7f8b3ba2ba4eda022b170e562ca3b760ee922c146b6c65856ef39")
     add_versions("mirror:1.78.0", "8681f175d4bdb26c52222665793eef08490d7758529330f98d3b29dd0735bccc")
@@ -26,6 +34,26 @@ package("boost")
     add_versions("mirror:1.72.0", "59c9b274bc451cf91a9ba1dd2c7fdcaf5d60b1b3aa83f2c9fa143417cc660722")
     add_versions("mirror:1.70.0", "430ae8354789de4fd19ee52f3b1f739e1fba576f0aded0897c3c2bc00fb38778")
 
+    add_patches("1.75.0", "patches/1.75.0/warning.patch", "43ff97d338c78b5c3596877eed1adc39d59a000cf651d0bcc678cf6cd6d4ae2e")
+
+    includes(path.join(os.scriptdir(), "libs.lua"))
+    for _, libname in ipairs(get_libs()) do
+        add_configs(libname, {description = "Enable " .. libname .. " library.", default = (libname == "filesystem"), type = "boolean"})
+    end
+    add_configs("zlib", {description = "Enable zlib for iostreams", default = false, type = "boolean"})
+    add_configs("bzip2", {description = "Enable bzip2 for iostreams", default = false, type = "boolean"})
+    add_configs("lzma", {description = "Enable lzma for iostreams", default = false, type = "boolean"})
+    add_configs("zstd", {description = "Enable zstd for iostreams", default = false, type = "boolean"})
+    add_configs("openssl", {description = "Enable openssl for mysql/redis", default = false, type = "boolean"})
+    add_configs("icu", {description = "Enable icu for regex/locale", default = false, type = "boolean"})
+
+    add_configs("cmake", {description = "Use cmake build system (>= 1.86)", default = true, type = "boolean"})
+    add_configs("all", {description = "Enable all library modules support.", default = false, type = "boolean"})
+    add_configs("header_only", {description = "Enable header only modules", default = false, type = "boolean"})
+
+    add_configs("pyver", {description = "python version x.y, etc. 3.10 (only for b2)", default = "3.10"})
+    add_configs("multi", {description = "Enable multi-thread support (only for b2)",  default = true, type = "boolean"})
+
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::boost")
     elseif is_plat("linux") then
@@ -34,483 +62,53 @@ package("boost")
         add_extsources("brew::boost")
     end
 
-    add_patches("1.75.0", path.join(os.scriptdir(), "patches", "1.75.0", "warning.patch"), "43ff97d338c78b5c3596877eed1adc39d59a000cf651d0bcc678cf6cd6d4ae2e")
-
-    if is_plat("linux") then
-        add_deps("bzip2", "zlib")
+    if is_plat("linux", "bsd") then
         add_syslinks("pthread", "dl")
+    elseif is_plat("windows", "mingw") then
+        add_syslinks("ntdll", "shell32", "advapi32", "user32", "ws2_32")
     end
 
-    add_configs("pyver", {description = "python version x.y, etc. 3.10", default = "3.10"})
-    local libnames = {"atomic",
-                      "charconv",
-                      "chrono",
-                      "cobalt",
-                      "container",
-                      "context",
-                      "contract",
-                      "coroutine",
-                      "date_time",
-                      "exception",
-                      "fiber",
-                      "filesystem",
-                      "graph",
-                      "graph_parallel",
-                      "headers",
-                      "iostreams",
-                      "json",
-                      "locale",
-                      "log",
-                      "math",
-                      "mpi",
-                      "nowide",
-                      "program_options",
-                      "python",
-                      "random",
-                      "regex",
-                      "serialization",
-                      "stacktrace",
-                      "system",
-                      "test",
-                      "thread",
-                      "timer",
-                      "type_erasure",
-                      "url",
-                      "wave"}
+    on_fetch("fetch")
 
-    add_configs("all",          { description = "Enable all library modules support.",  default = false, type = "boolean"})
-    add_configs("multi",        { description = "Enable multi-thread support.",  default = true, type = "boolean"})
-    for _, libname in ipairs(libnames) do
-        add_configs(libname,    { description = "Enable " .. libname .. " library.", default = (libname == "filesystem"), type = "boolean"})
+    if on_check then
+        on_check(function (package)
+            if not package:is_plat("macosx", "linux", "windows", "bsd", "mingw", "cross") then
+                if not package:config("cmake") then
+                    raise("package(boost/b2) unsupported current platform.")
+                end
+            end
+        end)
     end
-    add_configs("zstd", {description = "enable zstd for iostreams", default = false, type = "boolean"})
-    add_configs("lzma", {description = "enable lzma for iostreams", default = false, type = "boolean"})
-    add_configs("zlib", {description = "enable zlib for iostreams", default = false, type = "boolean"})
-    add_configs("bzip2", {description = "enable bzip2 for iostreams", default = false, type = "boolean"})
 
     on_load(function (package)
-
-        local function get_linkname(package, libname)
-            local linkname
-            if package:is_plat("windows") then
-                linkname = (package:config("shared") and "boost_" or "libboost_") .. libname
-            else
-                linkname = "boost_" .. libname
-            end
-            if libname == "python" or libname == "numpy" then
-                linkname = linkname .. package:config("pyver"):gsub("%p+", "")
-            end
-            if package:config("multi") then
-                linkname = linkname .. "-mt"
-            end
-            if package:is_plat("windows") then
-                if package:config("shared") then
-                    if package:debug() then
-                        linkname = linkname .. "-gd"
-                    end
-                elseif package:config("asan") or package:has_runtime("MTd") then
-                    linkname = linkname .. "-sgd"
-                elseif package:has_runtime("MT") then
-                    linkname = linkname .. "-s"
-                elseif package:config("asan") or package:has_runtime("MDd") then
-                    linkname = linkname .. "-gd"
-                end
-            else
-                if package:debug() then
-                    linkname = linkname .. "-d"
-                end
-            end
-            return linkname
+        local version = package:version()
+        if package:config("cmake") and version:lt("1.86") then
+            -- Don't break old version
+            package:config_set("cmake", false)
         end
 
-        -- we need the fixed link order
-        local headeronly = not package:config("all")
-        local sublibs = {log = {"log_setup", "log"},
-                        python = {"python", "numpy"},
-                        stacktrace = {"stacktrace_backtrace", "stacktrace_basic"}}
-        for _, libname in ipairs(libnames) do
-            if package:config(libname) then
-                headeronly = false
-            end
-            local libs = sublibs[libname]
-            if libs then
-                for _, lib in ipairs(libs) do
-                    package:add("links", get_linkname(package, lib))
-                end
-            else
-                package:add("links", get_linkname(package, libname))
-            end
-        end
-        if headeronly then
-            package:set("kind", "library", {headeronly = true})
-        end
-        -- disable auto-link all libs
-        if package:is_plat("windows") then
-            package:add("defines", "BOOST_ALL_NO_LIB")
-        end
+        if package:config("cmake") then
+            wprint("If cmake build failure, set package config cmake = false fallback to b2 for the build")
 
-        if package:config("python") then
-            if not package:config("shared") then
-                package:add("defines", "BOOST_PYTHON_STATIC_LIB")
+            package:add("deps", "cmake")
+            import("cmake.load")(package)
+        else
+            if package:is_plat("linux") then
+                package:add("deps", "bzip2", "zlib")
             end
-            package:add("deps", "python " .. package:config("pyver") .. ".x", {configs = {headeronly = true}})
-        end
-        if package:config("zstd") then
-            package:add("deps", "zstd")
-        end
-        if package:config("lzma") then
-            package:add("deps", "xz")
-        end
-        if package:config("zlib") then
-            package:add("deps", "zlib")
-        end
-        if package:config("bzip2") then
-            package:add("deps", "bzip2")
-        end
-
-        if package:is_plat("windows") and package:version():le("1.85.0") then
-            local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
-            if vs_toolset then
-                local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
-                local minor = vs_toolset_ver:minor()
-                if minor and minor >= 40 then
-                    package:add("patches", "<=1.85.0", "patches/1.85.0/fix-v144.patch", "1ba99cb2e2f03a4ba489a32596c62e1310b6c73ba4d19afa8796bcf180c84422")
-                end
-            end
+            import("b2.load")(package)
         end
     end)
 
-    on_install("macosx", "linux", "windows", "bsd", "mingw", "cross", function (package)
-        import("core.base.option")
-
-        local function get_compiler(package, toolchain)
-            local cxx = package:build_getenv("cxx")
-            if package:is_plat("macosx") then
-                -- we uses ld/clang++ for link stdc++ for shared libraries
-                -- and we need `xcrun -sdk macosx clang++` to make b2 to get `-isysroot` automatically
-                local cc = package:build_getenv("ld")
-                if cc and cc:find("clang", 1, true) and cc:find("Xcode", 1, true) then
-                    cc = "xcrun -sdk macosx clang++"
-                end
-                return format("using darwin : : %s ;", cc)
-            elseif package:is_plat("windows") then
-                local vs_toolset = toolchain:config("vs_toolset")
-                local msvc_ver = ""
-                local win_toolset = "msvc"
-                if toolchain:name() == "clang-cl" then
-                    win_toolset = "clang-win"
-                    cxx = cxx:gsub("(clang%-cl)$", "%1.exe", 1)
-                    msvc_ver = ""
-                elseif vs_toolset then
-                    local i = vs_toolset:find("%.")
-                    msvc_ver = i and vs_toolset:sub(1, i + 1)
-                end
-
-                -- Specifying a version will disable b2 from forcing tools
-                -- from the latest installed msvc version.
-                return format("using %s : %s : \"%s\" ;", win_toolset, msvc_ver, cxx:gsub("\\", "\\\\"))
-            else
-                cxx = cxx:gsub("gcc$", "g++")
-                cxx = cxx:gsub("gcc%-", "g++-")
-                cxx = cxx:gsub("clang$", "clang++")
-                cxx = cxx:gsub("clang%-", "clang++-")
-                if cxx and cxx:find("clang", 1, true) then
-                    return format("using clang : : \"%s\" ;", cxx:gsub("\\", "/"))
-                else
-                    return format("using gcc : : \"%s\" ;", cxx:gsub("\\", "/"))
-                end
-            end
-        end
-
-        -- get host toolchain
-        import("core.tool.toolchain")
-        local host_toolchain
-        if package:is_plat("windows") then
-            host_toolchain = toolchain.load("msvc", {plat = "windows", arch = os.arch()})
-            if not host_toolchain:check() then
-                host_toolchain = toolchain.load("clang-cl", {plat = "windows", arch = os.arch()})
-            end
-            assert(host_toolchain:check(), "host msvc or clang-cl not found!")
-        end
-
-        -- force boost to compile with the desired compiler
-        local file = io.open("user-config.jam", "w")
-        if file then
-            file:write(get_compiler(package, host_toolchain))
-            file:close()
-        end
-
-        local bootstrap_argv =
-        {
-            "--prefix=" .. package:installdir(),
-            "--libdir=" .. package:installdir("lib"),
-            "--without-icu"
-        }
-
-        if package:has_tool("cxx", "clang", "clangxx") then
-            table.insert(bootstrap_argv, "--with-toolset=clang")
-        end
-
-        if package:is_plat("windows") then
-            -- for bootstrap.bat, all other arguments are useless
-            bootstrap_argv = { "msvc" }
-            os.vrunv("bootstrap.bat", bootstrap_argv, {envs = host_toolchain:runenvs()})
-        elseif package:is_plat("mingw") and is_host("windows") then
-            bootstrap_argv = { "gcc" }
-            os.vrunv("bootstrap.bat", bootstrap_argv)
-            -- todo looking for better solution to fix the confict between user-config.jam and project-config.jam
-            io.replace("project-config.jam", "using[^\n]+", "")
+    on_install(function (package)
+        if package:config("cmake") then
+            assert(os.isfile("CMakeLists.txt"), "Currently the source archive only has the b2 build system, you need to download the cmake archive and put it in `xmake g --pkg_searchdirs=` to avoid xrepo using a non-cmake archive url.")
+            import("cmake.install")(package)
         else
-            os.vrunv("./bootstrap.sh", bootstrap_argv)
-        end
-
-        -- get build toolchain
-        local build_toolchain
-        local build_toolset
-        local runenvs
-        if package:is_plat("windows") then
-            if package:has_tool("cxx", "clang_cl") then
-                build_toolset = "clang-win"
-                build_toolchain = package:toolchain("clang-cl")
-            elseif package:has_tool("cxx", "clang") then
-                build_toolset = "clang-win"
-                build_toolchain = package:toolchain("clang") or package:toolchain("llvm")
-            elseif package:has_tool("cxx", "cl") then
-                build_toolset = "msvc"
-                build_toolchain = package:toolchain("msvc")
-            end
-            if build_toolchain then
-                runenvs = build_toolchain:runenvs()
-            end
-        end
-
-        local function config_deppath(file, depname, rule)
-            local dep = package:dep(depname)
-            local info = dep:fetch({external = false})
-            if info then
-                local includedirs = table.wrap(info.sysincludedirs or info.includedirs)
-                for i, dir in ipairs(includedirs) do
-                    includedirs[i] = path.unix(dir)
-                end
-                local linkdirs = table.wrap(info.linkdirs)
-                for i, dir in ipairs(linkdirs) do
-                    linkdirs[i] = path.unix(dir)
-                end
-                local links = table.wrap(info.links)
-                local usingstr = format("\nusing %s : %s : <include>%s <search>%s <name>%s ;",
-                    rule, dep:version(),
-                    table.concat(includedirs, ";"),
-                    table.concat(linkdirs, ";"),
-                    table.concat(links, ";"))
-                file:write(usingstr)
-            end
-        end
-        local file = io.open("user-config.jam", "w")
-        if file then
-            file:write(get_compiler(package, build_toolchain))
-            if package:config("lzma") then
-                config_deppath(file, "xz", "lzma")
-            end
-            if package:config("zstd") then
-                config_deppath(file, "zstd", "zstd")
-            end
-            if package:config("zlib") then
-                config_deppath(file, "zlib", "zlib")
-            end
-            if package:config("bzip2") then
-                config_deppath(file, "bzip2", "bzip2")
-            end
-            file:close()
-        end
-        os.vrun("./b2 headers")
-
-        local njobs = option.get("jobs") or tostring(os.default_njob())
-        local argv =
-        {
-            "--prefix=" .. package:installdir(),
-            "--libdir=" .. package:installdir("lib"),
-            "-d2",
-            "-j" .. njobs,
-            "--hash",
-            "-q", -- quit on first error
-            "--layout=tagged-1.66", -- prevent -x64 suffix in case cmake can't find it
-            "--user-config=user-config.jam",
-            "install",
-            "threading=" .. (package:config("multi") and "multi" or "single"),
-            "debug-symbols=" .. (package:debug() and "on" or "off"),
-            "link=" .. (package:config("shared") and "shared" or "static"),
-            "variant=" .. (package:is_debug() and "debug" or "release"),
-            "runtime-debugging=" .. (package:is_debug() and "on" or "off")
-        }
-
-        local cxxflags = {}
-        if package:config("lzma") then
-            if package:is_plat("windows") and not package:dep("xz"):config("shared") then
-                table.insert(cxxflags, "-DLZMA_API_STATIC")
-            end
-        else
-            table.insert(argv, "-sNO_LZMA=1")
-        end
-        if not package:config("zstd") then
-            table.insert(argv, "-sNO_ZSTD=1")
-        end
-        if not package:config("zlib") then
-            table.insert(argv, "-sNO_ZLIB=1")
-        end
-        if not package:config("bzip2") then
-            table.insert(argv, "-sNO_BZIP2=1")
-        end
-
-        if package:config("lto") then
-            table.insert(argv, "lto=on")
-        end
-        if package:is_arch("aarch64", "arm+.*") then
-            table.insert(argv, "architecture=arm")
-        end
-        if package:is_arch(".+64.*") then
-            table.insert(argv, "address-model=64")
-        else
-            table.insert(argv, "address-model=32")
-        end
-
-        local linkflags = {}
-        table.join2(cxxflags, table.wrap(package:config("cxflags")))
-        table.join2(cxxflags, table.wrap(package:config("cxxflags")))
-        if package:is_plat("windows") then
-            if package:config("shared") then
-                table.insert(argv, "runtime-link=shared")
-            elseif package:has_runtime("MT", "MTd") then
-                table.insert(argv, "runtime-link=static")
-            else
-                table.insert(argv, "runtime-link=shared")
-            end
-            table.insert(argv, "toolset=" .. build_toolset)
-            table.insert(cxxflags, "-std:c++14")
-        elseif package:is_plat("mingw") then
-            table.insert(argv, "toolset=gcc")
-        elseif package:is_plat("macosx") then
-            table.insert(argv, "toolset=darwin")
-
-            -- fix macosx arm64 build issue https://github.com/microsoft/vcpkg/pull/18529
-            table.insert(cxxflags, "-std=c++14")
-            table.insert(cxxflags, "-arch")
-            table.insert(cxxflags, package:arch())
-            local xcode = package:toolchain("xcode") or import("core.tool.toolchain").load("xcode", {plat = package:plat(), arch = package:arch()})
-            if xcode:check() then
-                local xcode_dir = xcode:config("xcode")
-                local xcode_sdkver = xcode:config("xcode_sdkver")
-                local target_minver = xcode:config("target_minver")
-                if xcode_dir and xcode_sdkver then
-                    local xcode_sdkdir = xcode_dir .. "/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX" .. xcode_sdkver .. ".sdk"
-                    table.insert(cxxflags, "-isysroot")
-                    table.insert(cxxflags, xcode_sdkdir)
-                end
-                if target_minver then
-                    table.insert(cxxflags, "-mmacosx-version-min=" .. target_minver)
-                end
-            end
-        else
-            table.insert(cxxflags, "-std=c++14")
-            if package:config("pic") ~= false then
-                table.insert(cxxflags, "-fPIC")
-            end
-        end
-        if package.has_runtime and package:has_runtime("c++_shared", "c++_static") then
-            table.insert(cxxflags, "-stdlib=libc++")
-            table.insert(linkflags, "-stdlib=libc++")
-            if package:has_runtime("c++_static") then
-                table.insert(linkflags, "-static-libstdc++")
-            end
-        end
-        if package:config("asan") then
-            table.insert(cxxflags, "-fsanitize=address")
-            table.insert(linkflags, "-fsanitize=address")
-        end
-        if cxxflags then
-            table.insert(argv, "cxxflags=" .. table.concat(cxxflags, " "))
-        end
-        if linkflags then
-            table.insert(argv, "linkflags=" .. table.concat(linkflags, " "))
-        end
-        for _, libname in ipairs(libnames) do
-            if package:config("all") or package:config(libname) then
-                table.insert(argv, "--with-" .. libname)
-            end
-        end
-
-        if package:is_plat("linux") then
-            table.insert(argv, "pch=off")
-        end
-        local ok = os.execv("./b2", argv, {envs = runenvs, try = true, stdout = "boost-log.txt"})
-        if ok ~= 0 then
-            raise("boost build failed, please check log in " .. path.join(os.curdir(), "boost-log.txt"))
+            import("b2.install")(package)
         end
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            #include <boost/algorithm/string.hpp>
-            #include <string>
-            #include <vector>
-            static void test() {
-                std::string str("a,b");
-                std::vector<std::string> vec;
-                boost::algorithm::split(vec, str, boost::algorithm::is_any_of(","));
-            }
-        ]]}, {configs = {languages = "c++14"}}))
-
-        assert(package:check_cxxsnippets({test = [[
-            #include <boost/unordered_map.hpp>
-            static void test() {
-                boost::unordered_map<std::string, int> map;
-                map["2"] = 2;
-            }
-        ]]}, {configs = {languages = "c++14"}}))
-
-        if package:config("date_time") then
-            assert(package:check_cxxsnippets({test = [[
-                #include <boost/date_time/gregorian/gregorian.hpp>
-                static void test() {
-                    boost::gregorian::date d(2010, 1, 30);
-                }
-            ]]}, {configs = {languages = "c++14"}}))
-        end
-
-        if package:config("filesystem") then
-            assert(package:check_cxxsnippets({test = [[
-                #include <boost/filesystem.hpp>
-                #include <iostream>
-                static void test() {
-                    boost::filesystem::path path("/path/to/directory");
-                    if (boost::filesystem::exists(path)) {
-                        std::cout << "Directory exists" << std::endl;
-                    } else {
-                        std::cout << "Directory does not exist" << std::endl;
-                    }
-                }
-            ]]}, {configs = {languages = "c++14"}}))
-        end
-
-        if package:config("iostreams") then
-            if package:config("zstd") then
-                assert(package:check_cxxsnippets({test = [[
-                    #include <boost/iostreams/filter/zstd.hpp>
-                    #include <boost/iostreams/filtering_stream.hpp>
-                    static void test() {
-                        boost::iostreams::filtering_ostream out;
-                        out.push(boost::iostreams::zstd_compressor());
-                    }
-                ]]}, {configs = {languages = "c++14"}}))
-            end
-            if package:config("lzma") then
-                assert(package:check_cxxsnippets({test = [[
-                    #include <boost/iostreams/filter/lzma.hpp>
-                    #include <boost/iostreams/filtering_stream.hpp>
-                    static void test() {
-                        boost::iostreams::filtering_ostream out;
-                        out.push(boost::iostreams::lzma_compressor());
-                    }
-                ]]}, {configs = {languages = "c++14"}}))
-            end
-        end
+        import("test")(package)
     end)

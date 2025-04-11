@@ -1,8 +1,9 @@
 package("vulkan-validationlayers")
-
     set_homepage("https://github.com/KhronosGroup/Vulkan-ValidationLayers/")
     set_description("Vulkan Validation Layers")
     set_license("Apache-2.0")
+
+    -- when adding a new sdk version, please ensure vulkan-headers, vulkan-hpp, vulkan-loader, vulkan-tools, vulkan-validationlayers, vulkan-utility-libraries, spirv-headers, spirv-reflect, spirv-tools, glslang and volk packages are updated simultaneously
 
     if is_plat("android") then
         add_urls("https://github.com/KhronosGroup/Vulkan-ValidationLayers/releases/download/$(version).tar.gz", {version = function (version)
@@ -18,19 +19,23 @@ package("vulkan-validationlayers")
             end
         end})
 
+        add_versions("1.4.309+0", "6483ee30edcba3bb05e0ab3569dee632fd4532c190fef780e9ff038391c2edec")
         add_versions("1.3.290+0", "eb26b4bf1f031e57d1624c53d489279076b893b0383fddccc79de7ee2caaa128")
         add_versions("1.3.275+0", "6e22fb13601c1e780c44a17497a3c999cc5207e52a09819e7c32ecd8439eff7a")
         add_versions("1.2.198+0", "5436e974d6b3133b3454edf1910f76b9f869db8bbe086859b2abe32fdb539cbc")
         add_versions("1.2.189+1", "b3e69b60a67a17b023825f9eb0ce1aef22e6b59d095afa204d883a9ce3d81021")
     else
-        add_urls("https://github.com/KhronosGroup/Vulkan-ValidationLayers/archive/$(version).tar.gz", {version = function (version)
-            local prefix = "sdk-"
+        add_urls("https://github.com/KhronosGroup/Vulkan-ValidationLayers/archive/refs/tags/$(version).tar.gz", {version = function (version)
+            local prefix = ""
             if version:gt("1.3.261+1") then
                 prefix = "vulkan-sdk-"
+            elseif version:ge("1.3.226") then
+                prefix = "sdk-"
             end
             return version:startswith("v") and version or prefix .. version:gsub("%+", ".")
         end})
 
+        add_versions("1.4.309+0", "56eb7b70c0ebf3e6b7def7723617a71bd01ca1497ab8dec542e1e4eadf6e07d7")
         add_versions("1.3.290+0", "59be2c0a5bdbfdbdebdcda48bd65ffa3b219f681c73a90fc683cd4708c1b79de")
         add_versions("1.3.275+0", "acfd84039109220129624b0ecb69980bbc3a858978c62b556dbe16efd0f26755")
         add_versions("1.2.198+0", "4a70cc5da26baf873fcf69b081eeeda545515dd66e5904f18fee32b4d275593a")
@@ -70,7 +75,7 @@ package("vulkan-validationlayers")
             package:add("deps", "vulkan-utility-libraries " .. sdkver)
         end
 
-        package:addenv("VK_ADD_LAYER_PATH", "lib")
+        package:addenv("VK_ADD_LAYER_PATH", package:is_plat("windows") and "bin" or "lib")
         package:mark_as_pathenv("VK_ADD_LAYER_PATH")
     end)
 
@@ -122,5 +127,8 @@ package("vulkan-validationlayers")
             assert(os.isfile(path.join(package:installdir("lib"), "x86", "libVkLayer_khronos_validation.so")))
             assert(os.isfile(path.join(package:installdir("lib"), "armeabi-v7a", "libVkLayer_khronos_validation.so")))
             assert(os.isfile(path.join(package:installdir("lib"), "arm64-v8a", "libVkLayer_khronos_validation.so")))
+        elseif package:is_plat("windows") then
+            assert(os.isfile(path.join(package:installdir("bin"), "VkLayer_khronos_validation.dll")))
+            assert(os.isfile(path.join(package:installdir("bin"), "VkLayer_khronos_validation.json")))
         end
     end)

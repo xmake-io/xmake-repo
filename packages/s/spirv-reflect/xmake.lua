@@ -4,6 +4,8 @@ package("spirv-reflect")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/KhronosGroup/SPIRV-Reflect.git")
+ 
+    -- when adding a new sdk version, please ensure vulkan-headers, vulkan-hpp, vulkan-loader, vulkan-tools, vulkan-validationlayers, vulkan-utility-libraries, spirv-headers, spirv-reflect, spirv-tools, glslang and volk packages are updated simultaneously
     add_versions("1.2.154+1", "5de48fe8d3ef434e846d64ed758adc5d26335ae5")
     add_versions("1.2.162+0", "481e34d666031eae28423f3b723a1a8c717d7636")
     add_versions("1.2.189+1", "272e050728de8d4a4ce9e7101c1244e6ff56e5b0")
@@ -15,6 +17,7 @@ package("spirv-reflect")
     add_versions("1.3.280+0", "8406f76dcf6cca11fe430058c4f0ed4b846f3be4")
     add_versions("1.3.283+0", "ee5b57fba6a986381f998567761bbc064428e645")
     add_versions("1.3.290+0", "b4dc70d8e6ac30c719a2d05b8ad05e1d277c92b4")
+    add_versions("1.4.309+0", "c637858562fbce1b6f5dc7ca48d4e8a5bd117b70")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 

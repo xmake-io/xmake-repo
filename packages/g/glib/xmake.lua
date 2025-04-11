@@ -13,6 +13,27 @@ package("glib")
     add_versions("home:2.78.1", "915bc3d0f8507d650ead3832e2f8fb670fce59aac4d7754a7dab6f1e6fed78b2")
     add_patches("2.71.0", path.join(os.scriptdir(), "patches", "2.71.0", "macosx.patch"), "a0c928643e40f3a3dfdce52950486c7f5e6f6e9cfbd76b20c7c5b43de51d6399")
 
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::glib2")
+    elseif is_plat("linux") then
+        add_extsources("apt::libglib2.0-dev", "pacman::glib2")
+    elseif is_plat("macosx") then
+        add_extsources("brew::glib")
+    end
+
+    if not is_subhost("windows") then
+        add_extsources("pkgconfig::glib-2.0")
+    end
+
+    if is_plat("windows", "mingw") then
+        add_syslinks("user32", "shell32", "ole32", "ws2_32", "shlwapi", "iphlpapi", "dnsapi")
+    elseif is_plat("macosx") then
+        add_syslinks("resolv")
+        add_frameworks("AppKit", "Foundation", "CoreServices", "CoreFoundation")
+    elseif is_plat("linux") then
+        add_syslinks("pthread", "dl", "resolv")
+    end
+
     add_deps("meson", "ninja", "libffi", "zlib")
     if is_plat("linux") then
         add_deps("libiconv")
@@ -25,17 +46,6 @@ package("glib")
 
     add_includedirs("include/glib-2.0", "lib/glib-2.0/include")
     add_links("gio-2.0", "gobject-2.0", "gthread-2.0", "gmodule-2.0", "glib-2.0")
-
-    if is_plat("windows") then
-        add_syslinks("user32", "shell32", "ole32", "ws2_32", "shlwapi", "iphlpapi", "dnsapi")
-    elseif is_plat("macosx") then
-        add_syslinks("resolv")
-        add_frameworks("AppKit", "Foundation", "CoreServices", "CoreFoundation")
-        add_extsources("brew::glib")
-    elseif is_plat("linux") then
-        add_syslinks("pthread", "dl", "resolv")
-        add_extsources("apt::libglib2.0-dev", "pacman::glib2")
-    end
 
     on_fetch("macosx", "linux", function (package, opt)
         if opt.system and package.find_package then

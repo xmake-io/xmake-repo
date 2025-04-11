@@ -5,6 +5,7 @@ package("catch2")
 
     add_urls("https://github.com/catchorg/Catch2/archive/refs/tags/$(version).zip",
              "https://github.com/catchorg/Catch2.git")
+    add_versions("v3.8.0", "bffd2c45a84e5a4b0c17e695798e8d2f65931cbaf5c7556d40388d1d8d04eb83")
     add_versions("v3.7.1", "7d771897398704ecb61eae534912e50c4d3ec6129c4d01c174a55c29657970d7")
     add_versions("v3.7.0", "75b04c94471a70680f10f5d0d985bd1a96b8941d040d6a7bfd43f6c6b1de9daf")
     add_versions("v3.6.0", "aa0ebf551ffbf098ec1e253b5fee234c30b4ee54a31b1be63cb1a7735d3cf391")
@@ -69,7 +70,7 @@ package("catch2")
         end
         component:add("links", link)
         if package:is_plat("windows") and package:version():le("3.0") then
-            if package:has_tool("cxx", "cl") then
+            if package:has_tool("cxx", "cl", "clang-cl") then
                 component:add("ldflags", "-subsystem:console")
             elseif package:has_tool("cxx", "clang", "clangxx") then
                 component:add("ldflags", "-Wl,/subsystem:console")
@@ -81,7 +82,7 @@ package("catch2")
         if package:version():ge("3.0") then
             if package:is_plat("windows") then
                 local main_component = package:component("main")
-                if package:has_tool("cxx", "cl") then
+                if package:has_tool("cxx", "cl", "clang-cl") then
                     main_component:add("ldflags", "-subsystem:console")
                 elseif package:has_tool("cxx", "clang", "clangxx") then
                     main_component:add("ldflags", "-Wl,/subsystem:console")

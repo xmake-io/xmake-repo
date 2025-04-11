@@ -28,8 +28,8 @@ package("centurion")
     add_includedirs("include", "include/SDL2")
 
     on_load(function (package)
-        package:add("deps", "libsdl", { configs = { shared = package:config("shared") } })
-        
+        package:add("deps", "libsdl2", { configs = { shared = package:config("shared") } })
+
         if not package:config("pragma_once") then
             package:add("defines", "CENTURION_NO_PRAGMA_ONCE")
         end
@@ -38,17 +38,17 @@ package("centurion")
         end
 
         if package:config("sdl_image") then
-            package:add("deps", "libsdl_image", { configs = { shared = package:config("shared") } })
+            package:add("deps", "libsdl2_image", { configs = { shared = package:config("shared") } })
         else
             package:add("defines", "CENTURION_NO_SDL_IMAGE")
         end
         if package:config("sdl_mixer") then
-            package:add("deps", "libsdl_mixer", { configs = { shared = package:config("shared") } })
+            package:add("deps", "libsdl2_mixer", { configs = { shared = package:config("shared") } })
         else
             package:add("defines", "CENTURION_NO_SDL_MIXER")
         end
         if package:config("sdl_ttf") then
-            package:add("deps", "libsdl_ttf", { configs = { shared = package:config("shared") } })
+            package:add("deps", "libsdl2_ttf", { configs = { shared = package:config("shared") } })
         else
             package:add("defines", "CENTURION_NO_SDL_TTF")
         end

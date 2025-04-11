@@ -19,17 +19,21 @@ package("zbar")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
+    elseif is_plat("windows") then
+        add_syslinks("winmm")
     end
 
     add_deps("libiconv")
 
-    on_install("!iphoneos and !windows", function (package)
+    on_install(function (package)
         os.cp(path.join(package:scriptdir(), "port", "config.h.in"), "include/config.h.in")
         io.gsub("include/config.h.in", "# ?undef (.-)\n", "${define %1}\n")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+
+        io.replace("zbar/processor.h", "#include <unistd.h>", "", {plain = true})
         
         local configs = {   vers = package:version_str(),
-                            symbologies = table.concat(package:config("symbologies"), ",") }
+                            symbologies = table.concat(package:config("symbologies"), ",")}
 
         -- get LIB_VERSION from configure.ac
         -- format: AC_SUBST([LIB_VERSION], [3:0:3])

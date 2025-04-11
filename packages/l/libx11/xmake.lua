@@ -8,6 +8,7 @@ package("libx11")
     add_versions("1.7.3", "029acf61e7e760a3150716b145a58ce5052ee953e8cccc8441d4f550c420debb")
     add_versions("1.8.1", "d52f0a7c02a45449f37b0831d99ff936d92eb4ce8b4c97dc17a63cea79ce5a76")
     add_versions("1.8.7", "793ebebf569f12c864b77401798d38814b51790fce206e01a431e5feb982e20b")
+    add_versions("1.8.12", "220fbcf54b6e4d8dc40076ff4ab87954358019982490b33c7802190b62d89ce1")
 
     if is_plat("linux") then
         add_extsources("apt::libx11-dev", "pacman::libx11")
@@ -15,13 +16,13 @@ package("libx11")
         add_extsources("brew::libx11")
     end
 
-    if is_plat("linux", "bsd") then
+    if is_plat("linux", "bsd", "cross") then
         add_syslinks("dl")
     end
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"})
 
-    if is_plat("macosx", "linux", "bsd") then
+    if is_plat("macosx", "linux", "bsd", "cross") then
         add_deps("pkg-config", "util-macros", "xtrans", "libxcb", "xorgproto")
     end
     if is_plat("macosx") then
@@ -29,7 +30,7 @@ package("libx11")
         add_deps("gnu-sed")
     end
 
-    on_install("macosx", "linux", "bsd", function (package)
+    on_install("macosx", "linux", "bsd", "cross", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
                          "--localstatedir=" .. package:installdir("var"),
                          "--disable-dependency-tracking",
@@ -37,7 +38,6 @@ package("libx11")
                          "--enable-unix-transport",
                          "--enable-tcp-transport",
                          "--enable-ipv6",
-                         "--enable-local-transport",
                          "--enable-loadable-i18n",
                          "--enable-xthreads",
                          "--enable-specs=no"}
@@ -45,6 +45,9 @@ package("libx11")
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         if package:config("pic") then
             table.insert(configs, "--with-pic")
+        end
+        if package:is_plat("cross") then
+            table.insert(configs, "--disable-malloc0returnsnull")
         end
         import("package.tools.autoconf").install(package, configs)
     end)

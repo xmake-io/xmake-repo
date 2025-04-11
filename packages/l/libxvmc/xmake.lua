@@ -3,8 +3,9 @@ package("libxvmc")
     set_homepage("https://www.x.org/")
     set_description("X.Org: X-Video Motion Compensation API")
 
-    set_urls("https://www.x.org/archive/individual/lib/libXvMC-$(version).tar.bz2")
-    add_versions("1.0.12", "6b3da7977b3f7eaf4f0ac6470ab1e562298d82c4e79077765787963ab7966dcd")
+    set_urls("https://www.x.org/archive/individual/lib/libXvMC-$(version).tar.gz")
+    add_versions("1.0.12", "024c9ec4f001f037eeca501ee724c7e51cf287eb69ced8c6126e16e7fa9864b5")
+    add_versions("1.0.14", "3ad5d2b991219e2bf9b2f85d40b12c16f1afec038715e462f6058af73a9b5ef8")
 
     if is_plat("linux") then
         add_extsources("apt::libxvmc-dev")

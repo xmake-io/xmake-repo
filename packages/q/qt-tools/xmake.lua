@@ -1,0 +1,32 @@
+package("qt-tools")
+    set_kind("binary")
+    set_base("qtbase")
+
+    -- Sync with qt5base and qt5lib
+    add_versions("5.15.2", "dummy")
+    add_versions("5.12.5", "dummy")
+
+    -- Sync with qt6base and qt6lib
+    add_versions("6.3.0", "dummy")
+    add_versions("6.3.1", "dummy")
+    add_versions("6.3.2", "dummy")
+    add_versions("6.4.0", "dummy")
+    add_versions("6.4.1", "dummy")
+    add_versions("6.4.2", "dummy")
+    add_versions("6.4.3", "dummy")
+    add_versions("6.5.0", "dummy")
+    add_versions("6.5.1", "dummy")
+    add_versions("6.5.2", "dummy")
+    add_versions("6.5.3", "dummy")
+    add_versions("6.6.0", "dummy")
+    add_versions("6.6.1", "dummy")
+    add_versions("6.6.2", "dummy")
+    add_versions("6.6.3", "dummy")
+    add_versions("6.7.0", "dummy")
+    add_versions("6.7.1", "dummy")
+    add_versions("6.7.2", "dummy")
+    add_versions("6.8.0", "dummy")
+
+    on_install("windows", "linux", "macosx", function (package)
+        package:base():script("install")(package)
+    end)

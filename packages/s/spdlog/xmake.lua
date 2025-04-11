@@ -5,6 +5,10 @@ package("spdlog")
 
     add_urls("https://github.com/gabime/spdlog/archive/refs/tags/$(version).zip",
              "https://github.com/gabime/spdlog.git")
+
+    add_versions("v1.15.2", "d91ab0e16964cedb826e65ba1bed5ed4851d15c7b9453609a52056a94068c020")
+    add_versions("v1.15.1", "322c144e24abee5d0326ddbe5bbc0e0c39c85ac8c2cb3c90d10290a85428327a")
+    add_versions("v1.15.0", "076f3b4d452b95433083bcc66d07f79addba2d3fcb2b9177abeb7367d47aefbb")
     add_versions("v1.14.1", "429dfdf3afc1984feb59e414353c21c110bc79609f6d7899d52f6aa388646f6d")
     add_versions("v1.14.0", "2cd8a65885e7937fdd046b181eed7e95d61bab7006bd0fb7b9c766185ed3e0ae")
     add_versions("v1.13.0", "9f6763bb76fff7db371f5733626c83352edd7c57899501ab00248fafad9cc504")
@@ -32,8 +36,9 @@ package("spdlog")
     add_configs("noexcept",        {description = "Compile with -fno-exceptions. Call abort() on any spdlog exceptions.", default = false, type = "boolean"})
 
     if is_plat("windows") then
-        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
         add_configs("wchar",  {description = "Support wchar api.", default = false, type = "boolean"})
+        add_configs("wchar_filenames",  {description = "Support wchar filenames.", default = false, type = "boolean"})
+        add_configs("wchar_console",  {description = "Support wchar output to console.", default = false, type = "boolean"})
     elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
@@ -61,9 +66,19 @@ package("spdlog")
         if package:config("wchar") then
             package:add("defines", "SPDLOG_WCHAR_TO_UTF8_SUPPORT")
         end
+        if package:config("wchar_filenames") then
+            package:add("defines", "SPDLOG_WCHAR_FILENAMES")
+        end
+        if package:config("wchar_console") then
+            package:add("defines", "SPDLOG_UTF8_TO_WCHAR_CONSOLE")
+        end
     end)
 
     on_install(function (package)
+        if package:has_tool("cxx", "cl") and not package:config("std_format") and not (package:config("fmt_external") or package:config("fmt_external_ho")) then
+            package:add("cxxflags", "/utf-8")
+        end
+
         if (not package:gitref() and package:version():lt("1.4.0")) or package:config("header_only") then
             os.cp("include", package:installdir())
             return
@@ -77,6 +92,8 @@ package("spdlog")
         table.insert(configs, "-DSPDLOG_FMT_EXTERNAL_HO=" .. (package:config("fmt_external_ho") and "ON" or "OFF"))
         table.insert(configs, "-DSPDLOG_NO_EXCEPTIONS=" .. (package:config("noexcept") and "ON" or "OFF"))
         table.insert(configs, "-DSPDLOG_WCHAR_SUPPORT=" .. (package:config("wchar") and "ON" or "OFF"))
+        table.insert(configs, "-DSPDLOG_WCHAR_FILENAMES=" .. (package:config("wchar_filenames") and "ON" or "OFF"))
+        table.insert(configs, "-DSPDLOG_UTF8_TO_WCHAR_CONSOLE=" .. (package:config("wchar_console") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 

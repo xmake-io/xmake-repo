@@ -1,0 +1,130 @@
+From 24c79d845bcc1d3de35ea9052665a68f89ff6a02 Mon Sep 17 00:00:00 2001
+From: Redbeanw44602 <redbeana44945@gmail.com>
+Date: Sat, 31 Aug 2024 01:33:04 +0800
+Subject: [PATCH] fix compile on lower version of gcc.
+
+---
+ .../ImportTableReplace/dobby_import_replace.cc        |  4 ++--
+ examples/socket_example.cc                            |  4 +---
+ .../ClosureTrampolineBridge/common_bridge_handler.cc  |  4 +---
+ source/dobby/pac_kit.h                                |  8 +++++---
+ source/dobby/platform_features.h                      | 11 ++++++++++-
+ 5 files changed, 19 insertions(+), 12 deletions(-)
+
+diff --git a/builtin-plugin/ImportTableReplace/dobby_import_replace.cc b/builtin-plugin/ImportTableReplace/dobby_import_replace.cc
+index eab1af9..1b7b573 100644
+--- a/builtin-plugin/ImportTableReplace/dobby_import_replace.cc
++++ b/builtin-plugin/ImportTableReplace/dobby_import_replace.cc
+@@ -172,13 +172,13 @@ PUBLIC int DobbyImportTableReplace(char *image_name, char *symbol_name, void *fa
+     if (stub) {
+       void *orig_func;
+       orig_func = *(void **)stub;
+-#if __has_feature(ptrauth_calls)
++#if __has_ptrauth_calls
+       orig_func = ptrauth_strip(orig_func, ptrauth_key_asia);
+       orig_func = ptrauth_sign_unauthenticated(orig_func, ptrauth_key_asia, 0);
+ #endif
+       *orig_func_ptr = orig_func;
+ 
+-#if __has_feature(ptrauth_calls)
++#if __has_ptrauth_calls
+       fake_func = (void *)ptrauth_strip(fake_func, ptrauth_key_asia);
+       fake_func = ptrauth_sign_unauthenticated(fake_func, ptrauth_key_asia, stub);
+ #endif
+diff --git a/examples/socket_example.cc b/examples/socket_example.cc
+index 1377fa3..07e2dcc 100644
+--- a/examples/socket_example.cc
++++ b/examples/socket_example.cc
+@@ -43,12 +43,10 @@ const char *func_short_array[] = {
+ // clang-format on
+ 
+ #define pac_strip(symbol)
+-#if defined(__APPLE__) && __arm64e__
+-#if __has_feature(ptrauth_calls)
++#if __has_ptrauth_calls
+ #define pac_strip(symbol)
+ //#define pac_strip(symbol) *(void **)&symbol = (void *)ptrauth_sign_unauthenticated((void *)symbol, ptrauth_key_asia, 0)
+ #endif
+-#endif
+ 
+ #define install_hook(name, fn_ret_t, fn_args_t...)                                                                     \
+   fn_ret_t (*orig_##name)(fn_args_t);                                                                                  \
+diff --git a/source/TrampolineBridge/ClosureTrampolineBridge/common_bridge_handler.cc b/source/TrampolineBridge/ClosureTrampolineBridge/common_bridge_handler.cc
+index b1be02a..b7757e0 100644
+--- a/source/TrampolineBridge/ClosureTrampolineBridge/common_bridge_handler.cc
++++ b/source/TrampolineBridge/ClosureTrampolineBridge/common_bridge_handler.cc
+@@ -9,13 +9,11 @@ PUBLIC void common_closure_bridge_handler(DobbyRegisterContext *ctx, ClosureTram
+   typedef void (*routing_handler_t)(InterceptEntry *, DobbyRegisterContext *);
+   auto routing_handler = (routing_handler_t)entry->carry_handler;
+ 
+-#if defined(__APPLE__) && __arm64e__
+-#if __has_feature(ptrauth_calls)
++#if __has_ptrauth_calls
+   uint64_t discriminator = 0;
+   // discriminator = __builtin_ptrauth_type_discriminator(__typeof(routing_handler));
+   routing_handler = (__typeof(routing_handler))__builtin_ptrauth_sign_unauthenticated((void *)routing_handler,
+                                                                                       ptrauth_key_asia, discriminator);
+-#endif
+ #endif
+ 
+   routing_handler((InterceptEntry *)entry->carry_data, ctx);
+diff --git a/source/dobby/pac_kit.h b/source/dobby/pac_kit.h
+index 12bf097..c8c3dbb 100644
+--- a/source/dobby/pac_kit.h
++++ b/source/dobby/pac_kit.h
+@@ -2,9 +2,11 @@
+ 
+ #include <stdint.h>
+ 
++#include "platform_features.h"
++
+ #ifndef PAC_KIT
+ #define PAC_KIT
+-#if defined(__arm64e__) && __has_feature(ptrauth_calls)
++#if __has_ptrauth_calls
+ #include <ptrauth.h>
+ #endif
+ 
+@@ -12,7 +14,7 @@ static inline void *pac_strip(void *addr) {
+   if (addr == NULL) {
+     return NULL;
+   }
+-#if __has_feature(ptrauth_calls)
++#if __has_ptrauth_calls
+   addr = ptrauth_strip(addr, ptrauth_key_asia);
+ #endif
+   return addr;
+@@ -22,7 +24,7 @@ static inline void *pac_sign(void *addr) {
+   if (addr == NULL) {
+     return NULL;
+   }
+-#if __has_feature(ptrauth_calls)
++#if __has_ptrauth_calls
+   addr = ptrauth_sign_unauthenticated((void *)addr, ptrauth_key_asia, 0);
+ #endif
+   return addr;
+diff --git a/source/dobby/platform_features.h b/source/dobby/platform_features.h
+index fb9076a..8e9a5c5 100644
+--- a/source/dobby/platform_features.h
++++ b/source/dobby/platform_features.h
+@@ -1,7 +1,16 @@
+ #pragma once
+ 
++// __has_feature is only supported in clang or gcc >= 14.0. To avoid compilation failure in lower versions
++// of gcc, please should not use this extension directly in project.
++#if defined(__has_feature)
++// ptrauth_calls is only implemented in Apple Clang.
++#if __has_feature(ptrauth_calls) // Do not use && directly, it will cause gcc < 14.0 to fail to compile
++#define __has_ptrauth_calls (1)
++#endif
++#endif
++
+ #if defined(__APPLE__) && __arm64e__
+-#if __has_feature(ptrauth_calls)
++#if __has_ptrauth_calls
+ #include <ptrauth.h>
+ #endif
+ #endif
+-- 
+2.47.1
+

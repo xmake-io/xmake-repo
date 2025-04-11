@@ -3,9 +3,10 @@ package("abseil")
     set_description("C++ Common Libraries")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/abseil/abseil-cpp/archive/$(version).tar.gz",
+    add_urls("https://github.com/abseil/abseil-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/abseil/abseil-cpp.git")
 
+    add_versions("20250127.1", "b396401fd29e2e679cace77867481d388c807671dc2acc602a0259eeb79b7811")
     add_versions("20200225.1", "0db0d26f43ba6806a8a3338da3e646bb581f0ca5359b3a201d8fb8e4752fd5f8")
     add_versions("20210324.1", "441db7c09a0565376ecacf0085b2d4c2bbedde6115d7773551bc116212c2a8d6")
     add_versions("20210324.2", "59b862f50e710277f8ede96f083a5bb8d7c9595376146838b9580be90374ee1f")
@@ -16,6 +17,7 @@ package("abseil")
     add_versions("20240116.1", "3c743204df78366ad2eaf236d6631d83f6bc928d1705dd0000b872e53b73dc6a")
     add_versions("20240116.2", "733726b8c3a6d39a4120d7e45ea8b41a434cdacde401cba500f14236c49b39dc")
     add_versions("20240722.0", "f50e5ac311a81382da7fa75b97310e4b9006474f9560ac46f54a9967f07d4ae3")
+    add_versions("20250127.0", "16242f394245627e508ec6bb296b433c90f8d914f73b9c026fddb905e27276e8")
 
     add_patches("20240116.1", "https://github.com/abseil/abseil-cpp/commit/3335e58f198e899a500b744163f9b883035a5217.patch", "f83278086b42bc997846d2b931a266678f96e2727fce6ffd98b2b58ce75fa0a3")
     add_patches("20240116.2", "https://github.com/abseil/abseil-cpp/commit/3335e58f198e899a500b744163f9b883035a5217.patch", "f83278086b42bc997846d2b931a266678f96e2727fce6ffd98b2b58ce75fa0a3")
@@ -24,13 +26,15 @@ package("abseil")
 
     add_configs("cxx_standard", {description = "Select c++ standard to build.", default = "17", type = "string", values = {"14", "17", "20"}})
 
-    if is_plat("linux") then
-        add_syslinks("pthread")
-    elseif is_plat("macosx") then
-        add_frameworks("CoreFoundation")
-    end
-
     on_load(function (package)
+        if package:is_plat("windows", "mingw", "msys") then
+            package:add("syslinks", "advapi32", "dbghelp", "bcrypt")
+        elseif package:is_plat("linux", "bsd") then
+            package:add("syslinks", "pthread")
+        elseif package:is_plat("macosx", "iphoneos") then
+            package:add("frameworks", "CoreFoundation")
+        end
+
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "ABSL_CONSUME_DLL")
         end
@@ -43,8 +47,13 @@ package("abseil")
         end
         io.replace("CMakeLists.txt", [[set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")]], "", {plain = true})
         io.replace("CMakeLists.txt", [[set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")]], "", {plain = true})
-        local configs = {"-DCMAKE_CXX_STANDARD=" .. package:config("cxx_standard"), "-DABSL_ENABLE_INSTALL=ON", "-DABSL_PROPAGATE_CXX_STD=ON"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+
+        local configs = {
+            "-DCMAKE_CXX_STANDARD=" .. package:config("cxx_standard"),
+            "-DABSL_ENABLE_INSTALL=ON",
+            "-DABSL_PROPAGATE_CXX_STD=ON",
+        }
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, {buildir = os.tmpfile() .. ".dir"})
 
@@ -88,5 +97,5 @@ package("abseil")
                 auto a = absl::SimpleAtoi("123", &result);
                 std::cout << "Joined string: " << s << "\\n";
             }
-        ]]}, {configs = {languages = "cxx17"}}))
+        ]]}, {configs = {languages = "cxx" .. package:config("cxx_standard")}}))
     end)

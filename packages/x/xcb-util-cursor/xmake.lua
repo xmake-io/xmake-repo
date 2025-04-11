@@ -8,6 +8,8 @@ package("xcb-util-cursor")
     add_versions("0.1.1", "3f89a77e1a7bd29bd82b935225f640dee02daf46cb0394bfafb180412b5b7252")
     add_versions("0.1.2", "b9e55161eb283ce14b5f73d09aba58c7ccadebc010984db659ae2d95d2ada02e")
     add_versions("0.1.3", "a322332716a384c94d3cbf98f2d8fe2ce63c2fe7e2b26664b6cea1d411723df8")
+    add_versions("0.1.4", "cc8608ebb695742b6cf84712be29b2b66aa5f6768039528794fca0fa283022bf")
+    add_versions("0.1.5", "0e9c5446dc6f3beb8af6ebfcc9e27bcc6da6fe2860f7fc07b99144dfa568e93b")
 
     if is_plat("linux") then
         add_extsources("apt::libxcb-cursor-dev", "pacman::xcb-util-cursor")

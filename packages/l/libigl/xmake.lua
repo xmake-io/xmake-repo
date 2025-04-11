@@ -19,6 +19,7 @@ package("libigl")
     add_configs("embree", {description = "Use embree library.", default = false, type = "boolean"})
 
     if is_plat("windows") then
+        add_defines("NOMINMAX")
         add_syslinks("comdlg32")
     elseif is_plat("linux") then
         add_syslinks("pthread")

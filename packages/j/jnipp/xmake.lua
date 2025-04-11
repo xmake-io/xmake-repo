@@ -8,23 +8,34 @@ package("jnipp")
 
     add_versions("v1.0.0", "e5ff425e1af81d6c0a80420f5b3a46986cdb5f2a1c34449e2fb262eb2edf885b")
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("advapi32")
     end
 
-    add_deps("openjdk")
+    add_deps("openjdk", {kind = "library"})
 
-    on_install("windows|x64", "linux|x86_64", "macosx|x86_64", "macosx|arm64", "mingw|x86_64", function (package)
+    if on_check then
+        on_check(function (package)
+            if not package:is_arch64() then
+                raise("package(jnipp) unsupported 32-bit arch")
+            end
+            if package:is_cross() then
+                raise("package(jnipp) only support native build")
+            end
+        end)
+    end
+
+    on_install("windows", "linux", "macosx", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
-            add_requires("openjdk")
+            add_requires("openjdk", {kind = "library"})
             set_languages("c++14")
             target("jnipp")
                 set_kind("$(kind)")
                 add_files("jnipp.cpp")
                 add_headerfiles("jnipp.h")
                 add_packages("openjdk")
-                if is_plat("windows") then
+                if is_plat("windows", "mingw") then
                     add_syslinks("advapi32")
                     if is_kind("shared") then
                         add_rules("utils.symbols.export_all", {export_classes = true})

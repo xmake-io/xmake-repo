@@ -5,6 +5,8 @@ package("libmem")
 
     add_urls("https://github.com/rdbo/libmem/archive/refs/tags/$(version).tar.gz",
             "https://github.com/rdbo/libmem.git")
+    add_versions("5.0.4", "32b968fb2bd1e33ae854db3bd3fc9ce4374bd9e61ff420f365c52d5f7bbd85dd")
+    add_versions("5.0.3", "75a190d1195c641c7d5d2c37ac79d8d1b5f18e43268d023454765a566d6f0d88")
     add_versions("5.0.2", "99adea3e86bd3b83985dce9076adda16968646ebd9d9316c9f57e6854aeeab9c")
 
     add_deps("capstone", "keystone")

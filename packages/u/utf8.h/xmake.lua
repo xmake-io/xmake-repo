@@ -5,6 +5,7 @@ package("utf8.h")
 
     add_urls("https://github.com/sheredom/utf8.h.git")
     add_versions("2022.07.04", "4e4d828174c35e4564c31a9e35580c299c69a063")
+    add_versions("2025.01.03", "505f9bb638d023468d4f5db279ffbfe0b955949b")
 
     on_install(function (package)
         os.cp("*.h", package:installdir("include"))

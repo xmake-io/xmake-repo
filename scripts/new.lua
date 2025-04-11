@@ -172,7 +172,7 @@ function generate_package(reponame, get_data)
             deps = {},
             priority = 1,
             install = function(configs, package)
-                return [=[
+                return ([=[
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             target("%s")
@@ -180,7 +180,7 @@ function generate_package(reponame, get_data)
                 add_files("src/*.c")
                 add_headerfiles("src/(*.h)")
         ]])
-        import("package.tools.xmake").install(package)]=]
+        import("package.tools.xmake").install(package)]=]):format(packagename)
             end,
         },
         ["CMakeLists.txt"] = {

@@ -6,6 +6,7 @@ package("opencv")
 
     add_urls("https://github.com/opencv/opencv/archive/$(version).tar.gz",
              "https://github.com/opencv/opencv.git")
+    add_versions("4.11.0", "9a7c11f924eff5f8d8070e297b322ee68b9227e003fd600d4b8122198091665f")
     add_versions("4.10.0", "b2171af5be6b26f7a06b1229948bbb2bdaa74fcf5cd097e0af6378fce50a6eb9")
     add_versions("4.9.0", "ddf76f9dffd322c7c3cb1f721d0887f62d747b82059342213138dc190f28bc6c")
     add_versions("4.8.0", "cbf47ecc336d2bff36b0dcd7d6c179a9bb59e805136af6b9670ca944aef889bd")
@@ -18,6 +19,7 @@ package("opencv")
     add_versions("4.2.0", "9ccb2192d7e8c03c58fee07051364d94ed7599363f3b0dce1c5e6cc11c1bb0ec")
     add_versions("3.4.9", "b7ea364de7273cfb3b771a0d9c111b8b8dfb42ff2bcd2d84681902fb8f49892a")
 
+    add_resources("4.11.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.11.0.tar.gz", "2dfc5957201de2aa785064711125af6abb2e80a64e2dc246aca4119b19687041")
     add_resources("4.10.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.10.0.tar.gz", "65597f8fb8dc2b876c1b45b928bbcc5f772ddbaf97539bf1b737623d0604cba1")
     add_resources("4.9.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.9.0.tar.gz", "8952c45a73b75676c522dd574229f563e43c271ae1d5bbbd26f8e2b6bc1a4dae")
     add_resources("4.8.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.8.0.tar.gz", "b4aef0f25a22edcd7305df830fa926ca304ea9db65de6ccd02f6cfa5f3357dbb")
@@ -34,7 +36,7 @@ package("opencv")
     add_configs("tesseract", {description = "Enable tesseract on text module", default = false, type = "boolean"})
 
     local features = {"1394", "vtk", "eigen", "ffmpeg", "gstreamer", "gtk", "ipp", "halide", "vulkan", "jasper", "openjpeg", "jpeg", "webp", "openexr", "opengl", "png", "tbb", "openmp", "tiff", "itt", "protobuf", "quirc", "obsensor"}
-    local default_features = {"1394", "eigen", "ffmpeg", "jpeg", "opengl", "png", "protobuf", "quirc", "webp", "tiff"}
+    local default_features = {"eigen", "ffmpeg", "jpeg", "opengl", "png", "protobuf", "quirc", "webp", "tiff"}
 
     for _, feature in ipairs(features) do
         add_configs(feature, {description = "Include " .. feature .. " support.", default = table.contains(default_features, feature), type = "boolean"})
@@ -112,7 +114,7 @@ package("opencv")
         end
         if package:is_plat("linux") then
             if package:config("gtk") then
-                package:add("deps", "gtk+3", {optional = true})
+                package:add("deps", "gtk3", {optional = true})
             end
         end
         if not package:is_precompiled() then
@@ -166,13 +168,19 @@ package("opencv")
         if package:is_plat("windows") then
             table.insert(configs, "-DBUILD_WITH_STATIC_CRT=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
             if package:is_arch("arm64") then
-                table.insert(configs, "-DCMAKE_SYSTEM_NAME=Windows")
-                table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=ARM64")
+                -- https://github.com/opencv/opencv/issues/25052
+                table.insert(configs, "-DCPU_NEON_FP16_SUPPORTED=OFF")
             end
-        elseif package:is_plat("mingw") then
-            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "AMD64" or "i686"))
-        elseif package:is_plat("macosx") then
-            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "AMD64" or "ARM64"))
+        end
+        if package:is_cross() or (package:is_plat("mingw") and not package:is_arch(os.arch())) then
+            if package:is_plat("windows") or package:is_plat("mingw") then
+                table.insert(configs, "-DCMAKE_SYSTEM_NAME=Windows")
+            elseif package:is_plat("macosx") then
+                table.insert(configs, "-DCMAKE_SYSTEM_NAME=Darwin")
+            elseif package:is_plat("linux") then
+                table.insert(configs, "-DCMAKE_SYSTEM_NAME=Linux")
+            end
+            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. package:targetarch())
         end
         local resourcedir = package:resourcedir("opencv_contrib")
         if resourcedir then

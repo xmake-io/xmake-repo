@@ -6,6 +6,8 @@ package("yoga")
     add_urls("https://github.com/facebook/yoga/archive/refs/tags/$(version).tar.gz",
              "https://github.com/facebook/yoga.git")
 
+    add_versions("v3.2.1", "86b399ac31fd820d8ffa823c3fae31bb690b6fc45301b2a8a966c09b5a088b55")
+    add_versions("v3.2.0", "a963392c6c120a35f097b5b793d2b9b6684b94443ff873b0e521649a69a0b607")
     add_versions("v3.1.0", "06ff9e6df9b2388a0c6ef8db55ba9bc2ae75e716e967cd12cf18785f6379159e")
     add_versions("v3.0.4", "ef3ce5106eed03ab2e40dcfe5b868936a647c5f02b7ffd89ffaa5882dca3ef7f")
     add_versions("v3.0.3", "0ae44f7d30f8130cdf63e91293e11e34803afbfd12482fe4ef786435fc7fa8e7")

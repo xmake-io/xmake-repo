@@ -6,6 +6,7 @@ package("oniguruma")
     add_urls("https://github.com/kkos/oniguruma/archive/refs/tags/$(version).tar.gz",
              "https://github.com/kkos/oniguruma.git")
 
+    add_versions("v6.9.10", "ad92309d0d13eebc27f6592e875f3efbfa3dda2bf6da5952e00f0a2120c921a8")
     add_versions("v6.9.9", "001aa1202e78448f4c0bf1a48c76e556876b36f16d92ce3207eccfd61d99f2a0")
 
     add_configs("posix", {description = "Include POSIX API", default = false, type = "boolean"})
