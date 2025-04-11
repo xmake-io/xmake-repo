@@ -3,14 +3,7 @@ package("socket-io-client")
     set_description("C++11 implementation of Socket.IO client")
     set_license("MIT")
 
-    add_urls("https://github.com/socketio/socket.io-client-cpp.git", {alias = "github", submodules = false, version = function (version)
-        local hash = "da779141a7379cc30c870d48295033bc16a23c66"
-        if version:le("2024.07.17") then
-            hash = "da779141a7379cc30c870d48295033bc16a23c66"
-        end
-        return hash
-    end})
-
+    add_urls("https://github.com/socketio/socket.io-client-cpp.git")
     add_versions("2024.07.17", "da779141a7379cc30c870d48295033bc16a23c66")
 
     if is_plat("linux", "bsd") then
@@ -18,7 +11,7 @@ package("socket-io-client")
     end
 
     add_deps("cmake", "websocketpp", "rapidjson", "openssl")
-    add_deps("asio 1.32.0")
+    add_deps("asio <=1.32.0")
 
     if is_host("windows") then
         add_deps("pkgconf")
