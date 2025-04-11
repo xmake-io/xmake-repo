@@ -28,16 +28,13 @@ pkg_check_modules(asio REQUIRED IMPORTED_TARGET asio)]], {plain = true})
         io.replace("CMakeLists.txt", "asio::asio", "PkgConfig::asio", {plain = true})
 
         io.replace("CMakeLists.txt", "find_package(RapidJSON CONFIG REQUIRED)", 
-[[pkg_check_modules(rapidjson QUIET IMPORTED_TARGET RapidJSON)
-if(NOT rapidjson_FOUND)
-pkg_check_modules(rapidjson REQUIRED IMPORTED_TARGET rapidjson)
-endif()]], {plain = true})
+[[pkg_check_modules(rapidjson REQUIRED IMPORTED_TARGET RapidJSON)]], {plain = true})
         io.replace("CMakeLists.txt", "rapidjson)", "PkgConfig::rapidjson)", {plain = true})
 
         local configs = {"-DUSE_SUBMODULES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"asio"}})
     end)
 
     on_test(function (package)
