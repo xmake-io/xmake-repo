@@ -11,12 +11,27 @@ package("socket-io-client")
     end
 
     add_deps("cmake")
+    if is_subhost("windows") then
+        add_deps("pkgconf")
+    else
+        add_deps("pkg-config")
+    end
     add_deps("websocketpp", "rapidjson", "openssl", "asio <=1.32.0")
 
     on_install("!wasm", function (package)
-        io.replace("CMakeLists.txt", "find_package(asio CONFIG REQUIRED)", "", {plain = true})
-        io.replace("CMakeLists.txt", "asio::asio", "", {plain = true})
-        io.replace("CMakeLists.txt", " asio ", "", {plain = true})
+        io.replace("CMakeLists.txt", "find_package(asio CONFIG REQUIRED)", "find_package(PkgConfig)\npkg_check_modules(asio REQUIRED IMPORTED_TARGET asio)", {plain = true})
+        io.replace("CMakeLists.txt", "asio::asio", "PkgConfig::asio", {plain = true})
+        io.replace("CMakeLists.txt", " asio ", " PkgConfig::asio ", {plain = true})
+
+        if package:is_plat("windows", "mingw") then
+            local syslinks = table.concat(package:dep("openssl"):get("syslinks"), " ")
+            io.replace("CMakeLists.txt",
+                "target_link_libraries(sioclient PRIVATE ",
+                format("target_link_libraries(sioclient PRIVATE %s ", syslinks), {plain = true})
+            io.replace("CMakeLists.txt",
+                "target_link_libraries(sioclient_tls PRIVATE OpenSSL::SSL OpenSSL::Crypto)",
+                format("target_link_libraries(sioclient_tls PRIVATE OpenSSL::SSL OpenSSL::Crypto %s)", syslinks), {plain = true})
+        end
 
         local configs = {"-DUSE_SUBMODULES=OFF", "-DBUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
@@ -24,7 +39,7 @@ package("socket-io-client")
         if package:config("shared") and package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"asio", "openssl"}})
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
