@@ -5,6 +5,7 @@ package("slang")
 
     add_urls("https://github.com/shader-slang/slang.git")
 
+    add_versions("v2025.6.3", "b9300bae08a77df6ef2efe2b62de14a13b10b9a4")
     add_versions("v2024.1.18", "efdbb954c57b89362e390f955d45f90e59d66878")
     add_versions("v2024.1.17", "62b7219e715bd4c0f984bcd98c9767fb6422c78f")
 
@@ -14,7 +15,7 @@ package("slang")
     add_configs("full_ir_validation", { description = "Enable full IR validation (SLOW!)", default = false, type = "boolean" })
     add_configs("gfx", { description = "Enable gfx targets", default = false, type = "boolean" })
     add_configs("slangd", { description = "Enable language server target", default = false, type = "boolean" })
-    add_configs("slangc", { description = "Enable standalone compiler target", default = false, type = "boolean" })
+    add_configs("slangc", { description = "Enable standalone compiler target", default = true, type = "boolean" })
     add_configs("slangrt", { description = "Enable runtime target", default = false, type = "boolean" })
     add_configs("slang_glslang", { description = "Enable glslang dependency and slang-glslang wrapper target", default = false, type = "boolean" })
     add_configs("slang_llvm_flavor", { description = "How to get or build slang-llvm (available options: FETCH_BINARY, USE_SYSTEM_LLVM, DISABLE)", default = "DISABLE", type = "string" })
