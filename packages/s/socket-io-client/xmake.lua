@@ -34,7 +34,7 @@ pkg_check_modules(asio REQUIRED IMPORTED_TARGET asio)]], {plain = true})
         local configs = {"-DUSE_SUBMODULES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"rapidjson"}})
     end)
 
     on_test(function (package)
