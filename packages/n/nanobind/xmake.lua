@@ -6,6 +6,7 @@ package("nanobind")
     set_urls("https://github.com/wjakob/nanobind/archive/refs/tags/$(version).tar.gz",
              "https://github.com/wjakob/nanobind.git", {submodules = false})
 
+    add_versions("v2.6.1", "519c6dd56581ad6db9aab814105c2666a0491096487cb384dd20216f80d1a291")
     add_versions("v2.2.0", "bfbfc7e5759f1669e4ddb48752b1ddc5647d1430e94614d6f8626df1d508e65a")
 
     add_deps("cmake")
@@ -30,7 +31,7 @@ package("nanobind")
             package:add("defines", "NB_SHARED")
 
             if package:is_plat("macosx") then
-                local response = package:installdir("cmake/darwin-ld-cpython.sym")
+                local response = path.join(package:installdir("cmake"), "darwin-ld-cpython.sym")
                 package:add("shflags", "-Wl,-dead_strip", "-Wl,x", "-Wl,-S", "-Wl,@" .. response)
             elseif not package:is_plat("windows") then
                 package:add("shflags", "-Wl,-s")
@@ -45,9 +46,16 @@ package("nanobind")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            int add(int a, int b) { return a + b; }
+            #include <nanobind/nanobind.h>
+
+            namespace nb = nanobind;
+            using namespace nb::literals;
+
+            int add(int a, int b = 1) { return a + b; }
+
             NB_MODULE(my_ext, m) {
-                m.def("add", &add);
+                m.def("add", &add, "a"_a, "b"_a = 1,
+                    "This function adds two numbers and increments if only one is provided.");
             }
             void test() {}
         ]]}, {configs = {languages = "c++17"}, includes = "nanobind/nanobind.h"}))

@@ -1,3 +1,27 @@
+-- Usage
+--[[
+    add_requires("nanobind")
+
+    set_languages("c++17")
+
+    target("my_ext")
+        add_rules("python.library")
+        add_files("src/*.cpp")
+        add_packages("nanobind")
+
+        on_run(function (target)
+            import("private.action.run.runenvs")
+            import("lib.detect.find_tool")
+
+            local rundir = target:rundir()
+            local addenvs, setenvs = runenvs.make(target)
+            local args = {"-c", "\"import my_ext; print(my_ext.add(1, 2))\""}
+
+            local python = find_tool("python3", {envs = addenvs})
+            os.execv(python.program, args, {curdir = rundir, addenvs = addenvs, setenvs = setenvs})
+        end)
+--]]
+
 -- https://github.com/wjakob/nanobind/blob/master/cmake/nanobind-config.cmake
 -- https://github.com/mesonbuild/wrapdb/blob/master/subprojects/packagefiles/nanobind/meson.build
 
