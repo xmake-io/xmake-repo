@@ -100,7 +100,9 @@ package("drogon")
             table.insert(configs, "-DUSE_SUBMODULE=OFF")
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-
+        if is_cross() then
+            table.insert(configs, "-DBUILD_CTL=OFF")
+        end
         -- no support for windows shared library
         if not package:is_plat("windows") then
             local shared = package:config("shared") and "ON" or "OFF"
