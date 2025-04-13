@@ -3,7 +3,6 @@ package("c-ares")
     set_description("A C library for asynchronous DNS requests")
     set_license("MIT")
 
-    add_urls("https://c-ares.org/download/c-ares-$(version).tar.gz")
     add_urls("https://github.com/c-ares/c-ares/releases/download/$(version).tar.gz", {version = function (version)
         if version:ge("1.30.0") then
             return "v" .. version .. "/c-ares-" .. version

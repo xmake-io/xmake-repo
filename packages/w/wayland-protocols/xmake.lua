@@ -16,6 +16,7 @@ package("wayland-protocols")
     add_versions("1.32", "7459799d340c8296b695ef857c07ddef24c5a09b09ab6a74f7b92640d2b1ba11")
     add_versions("1.39", "e1dcdcbbf08e2e0a8a02ee5d9a0be3a6aafc39a4b51fa7e0d2f1a16411cb72fa")
     add_versions("1.42", "23ba80d410d1200a86fe29592c19766eae8f1c350b67289999e9e7ea12d9f7aa")
+    add_versions("1.43", "ba3c3425dd27c57b5291e93dba97be12479601e00bcab24d26471948cb643653")
 
     add_deps("meson", "ninja", "wayland", "pkg-config")
 
