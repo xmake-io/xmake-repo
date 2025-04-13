@@ -6,19 +6,24 @@ package("nzsl")
     add_urls("https://github.com/NazaraEngine/ShaderLang/archive/refs/tags/$(version).tar.gz",
              "https://github.com/NazaraEngine/ShaderLang.git")
 
-    add_versions("v1.0.0", "1e3110ffaeed57d2ac42b85771c25e71719c62218776ad159696ff3583a59715")
+    add_versions("v1.0.0", "ef434fec5d32ddf64f2f7c7691a4d96a6ac24cab4cc6c091d46a542c86825359")
 
     set_policy("package.strict_compatibility", true)
 
     add_deps("nazarautils")
     add_deps("fast_float", "frozen", "ordered_map", {private = true})
 
+    add_configs("cbinding", {description = "Builds the C binding library (CNZSL)", default = false, type = "boolean"})
     add_configs("nzsla", {description = "Includes standalone archiver", default = true, type = "boolean"})
     add_configs("nzslc", {description = "Includes standalone compiler", default = true, type = "boolean"})
     add_configs("symbols", {description = "Enable debug symbols in release", default = false, type = "boolean"})
 
     if is_plat("windows", "linux", "mingw", "macosx", "bsd") then
         add_configs("fs_watcher", {description = "Includes filesystem watcher", default = true, type = "boolean"})
+    end
+
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
     on_load(function (package)
@@ -40,9 +45,11 @@ package("nzsl")
 
     on_install(function (package)
         local configs = {}
+        configs.cbinding = package:config("cbinding")
         configs.fs_watcher = package:config("fs_watcher") or false
         configs.erronwarn = false
         configs.examples = false
+        configs.tests = false
         configs.with_nzsla = package:config("nzsla") or false
         configs.with_nzslc = package:config("nzslc") or false
 
@@ -60,6 +67,7 @@ package("nzsl")
         end
 
         import("package.tools.xmake").install(package, configs)
+        package:add("linkorders", "cnzsl", "nzsl")
     end)
 
     on_test(function (package)
