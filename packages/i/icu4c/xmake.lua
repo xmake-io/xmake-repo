@@ -145,7 +145,7 @@ package("icu4c")
             end
         end
         local configs = {"--disable-samples", "--disable-tests"}
-        if package:debug() then
+        if package:is_debug() then
             table.insert(configs, "--enable-debug")
             table.insert(configs, "--disable-release")
         end
