@@ -174,9 +174,6 @@ package("icu4c")
         end
         -- suppress ar errors when passing --toolchain=clang
         envs.ARFLAGS = nil
-        if package:is_cross() and not envs.CXX then
-            envs.CXX = path.unix(package:build_getenv("cxx"))
-        end
         autoconf.install(package, configs, {envs = envs})
 
         if not package:is_cross() then
