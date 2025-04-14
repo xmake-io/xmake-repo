@@ -3,9 +3,18 @@ package("yy-thunks")
     set_description("Fix DecodePointer, EncodePointer,RegDeleteKeyEx etc. APIs not found in Windows XP RTM.")
     set_license("MIT")
 
-    add_urls("https://github.com/Chuyu-Team/YY-Thunks/releases/download/v$(version)/YY-Thunks-$(version)-Objs.zip")
+    add_urls("https://github.com/Chuyu-Team/YY-Thunks/releases/download/v$(version)-Objs.zip", {
+        version = function (version)
+            if version:ge("1.1.6") then
+                return format("%s/YY-Thunks", version)
+            else
+                return format("%s/YY-Thunks-%s", version, version)
+            end
+        end
+    })
     add_urls("https://github.com/Chuyu-Team/YY-Thunks/releases/download/v$(version)/YY-Thunks-$(version)-Binary.zip")
 
+    add_versions("1.1.6", "fa4de6bda69f476907f780f63f3dda792537a2e3236cd23043a490c6b91cb0b5")
     add_versions("1.1.5", "e6e2bb6e6b46f8b2b4af4cff2b2b754b123837a3c72f1cd5d7a5bfdf3c0df82a")
     add_versions("1.1.4", "f9850a35d1f2b0cae15e64da516de0ec5e798c060b320e91788aa33b853e85ba")
     add_versions("1.1.1", "fe79e309aa42a58794609e06382632a0b768a1193a6bb5aad0bddd4264712aba")
