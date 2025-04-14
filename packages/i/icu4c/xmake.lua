@@ -20,9 +20,6 @@ package("icu4c")
 
     add_patches("69.1", path.join(os.scriptdir(), "patches", "69.1", "replace-py-3.patch"), "ae27a55b0e79a8420024d6d349a7bae850e1dd403a8e1131e711c405ddb099b9")
     add_patches("70.1", path.join(os.scriptdir(), "patches", "70.1", "replace-py-3.patch"), "6469739da001721122b62af513370ed62901caf43af127de3f27ea2128830e35")
-    if is_plat("mingw") then
-        add_patches(">=69.1", path.join(os.scriptdir(), "patches", "72.1", "mingw.patch"), "9ddbe7f691224ccf69f8c0218f788f0a39ab8f1375cc9aad2cc92664ffcf46a5")
-    end
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::icu")
@@ -42,6 +39,9 @@ package("icu4c")
     end
 
     on_load(function (package)
+        if package:is_plat("mingw", "msys", "cygwin") then
+            package:add("patches", ">=69.1", path.join(os.scriptdir(), "patches", "72.1", "mingw.patch"), "9ddbe7f691224ccf69f8c0218f788f0a39ab8f1375cc9aad2cc92664ffcf46a5")
+        end
         if package:is_cross() then
             package:add("deps", "icu4c~host", {kind = "binary", private = true})
         else
@@ -59,9 +59,9 @@ package("icu4c")
             end
         end
 
-        local libsuffix = package:is_debug() and package:is_plat("mingw", "windows") and "d" or ""
+        local libsuffix = package:is_debug() and package:is_plat("windows", "mingw", "msys", "cygwin") and "d" or ""
         package:add("links", "icutu" .. libsuffix, "icuio" .. libsuffix)
-        if package:is_plat("mingw", "windows") then
+        if package:is_plat("windows", "mingw", "msys", "cygwin") then
             package:add("links", "icuin" .. libsuffix, "icuuc" .. libsuffix, "icudt" .. libsuffix)
         else
             package:add("links", "icui18n" .. libsuffix, "icuuc" .. libsuffix, "icudata" .. libsuffix)
@@ -156,7 +156,7 @@ package("icu4c")
             table.insert(configs, "--disable-shared")
             table.insert(configs, "--enable-static")
         end
-        if package:is_plat("mingw") then
+        if package:is_plat("mingw", "msys", "cygwin") then
             table.insert(configs, "--with-data-packaging=dll")
         elseif package:is_plat("iphoneos") then
             table.insert(configs, "--disable-tools")
