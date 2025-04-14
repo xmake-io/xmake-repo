@@ -59,7 +59,7 @@ add_generator("$(projectdir)/source/slangc", {
         "slang-capability-lookup",
         "slang-lookup-tables",
     },
-    public_deps = {
+    links = {
         "slang-without-embedded-core-module"
     },
     defines = {
