@@ -58,6 +58,7 @@ add_generator("$(projectdir)/source/slangc", {
         "prelude",
         "slang-capability-lookup",
         "slang-lookup-tables",
+        "slang-without-embedded-core-module",
     },
     links = {
         "slang-without-embedded-core-module"
