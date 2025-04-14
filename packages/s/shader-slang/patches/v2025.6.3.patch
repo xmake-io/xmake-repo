@@ -1,0 +1,13 @@
+diff --git a/source/slang-glslang/slang-glslang.cpp b/source/slang-glslang/slang-glslang.cpp
+index 8d9f64fd5..011dbf256 100644
+--- a/source/slang-glslang/slang-glslang.cpp
++++ b/source/slang-glslang/slang-glslang.cpp
+@@ -1,7 +1,7 @@
+ // slang-glslang.cpp
+ #include "slang-glslang.h"
+ 
+-#include "SPIRV/GlslangToSpv.h"
++#include "glslang/SPIRV/GlslangToSpv.h"
+ #include "glslang/MachineIndependent/localintermediate.h"
+ #include "glslang/Public/ShaderLang.h"
+ #include "slang.h"
