@@ -51,17 +51,20 @@ package("drogon")
     add_configs("spdlog", {description = "Allow using the spdlog logging library", default = false, type = "boolean"})
     add_configs("cpp20", {description = "Enable c++ 20 support.", default = false, type = "boolean"})
 
-    add_deps("cmake")
     add_deps("jsoncpp", "brotli", "zlib")
-
-    if is_plat("windows") then
-        -- enable mtt for drogon
-        set_policy("package.msbuild.multi_tool_task", true)
-        add_syslinks("ws2_32", "rpcrt4", "crypt32", "advapi32", "iphlpapi")
+    if(is_plat("macosx") and is_arch("x86_64")) then
+        add_deps("cmake 3.*")
     else
-        add_deps("libuuid")
-        if is_plat("linux") then
-            add_syslinks("pthread", "dl")
+        add_deps("cmake")
+        if is_plat("windows") then
+            -- enable mtt for drogon
+            set_policy("package.msbuild.multi_tool_task", true)
+            add_syslinks("ws2_32", "rpcrt4", "crypt32", "advapi32", "iphlpapi")
+        else
+            add_deps("libuuid")
+            if is_plat("linux") then
+                add_syslinks("pthread", "dl")
+            end
         end
     end
 
