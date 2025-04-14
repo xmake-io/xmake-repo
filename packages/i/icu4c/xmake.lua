@@ -131,7 +131,7 @@ package("icu4c")
         os.vcp("lib" .. suffix .. "/*", package:installdir("lib"))
     end)
 
-    on_install("@!windows and !wasm and !iphoneos", function (package)
+    on_install("@!windows and !wasm", function (package)
         import("package.tools.autoconf")
 
         os.cd("source")
@@ -158,6 +158,8 @@ package("icu4c")
         end
         if package:is_plat("mingw") then
             table.insert(configs, "--with-data-packaging=dll")
+        elseif package:is_plat("iphoneos") then
+            table.insert(configs, "--disable-tools")
         end
         if package:is_cross() then
             table.insert(configs, "--with-cross-build=" .. path.unix(package:dep("icu4c"):installdir()))
