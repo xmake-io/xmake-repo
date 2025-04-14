@@ -51,7 +51,6 @@ package("drogon")
     add_configs("spdlog", {description = "Allow using the spdlog logging library", default = false, type = "boolean"})
     add_configs("cpp20", {description = "Enable c++ 20 support.", default = false, type = "boolean"})
 
-    add_deps("cmake 3.x")
     add_deps("jsoncpp", "brotli", "zlib")
     if not is_plat("windows") then
         add_deps("libuuid")
@@ -88,6 +87,7 @@ package("drogon")
         else
             package:add("deps", "trantor")
         end
+        package:add("deps", "cmake", {override = true, version = "3.x"})
     end)
 
     on_install("windows", "macosx", "linux", function (package)
