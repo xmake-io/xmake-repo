@@ -3,7 +3,7 @@ package("v8")
     set_description("V8 JavaScript Engine")
 
     add_urls("https://github.com/v8/v8.git")
-    add_versions("13.3.415.19", "fe051262efbbd92479a08436f733eba9f756e008")
+    add_versions("13.5.212.10", "e2591684c45463aa1e46ebefc3fd35deee63f37c")
 
     add_deps("depot_tools")
 
