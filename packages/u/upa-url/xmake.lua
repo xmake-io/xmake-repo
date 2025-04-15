@@ -13,14 +13,31 @@ package("upa-url")
     add_versions("v1.0.0", "9ad14357c177f7c038a447996a065995e074eb5447015467687726c5d221b5f4")
 
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
+    add_configs("cmake", {description = "Use cmake build system", default = true, type = "boolean"})
 
-    add_deps("cmake")
+    on_load(function (package)
+        if package:is_plat("windows") and package:config("shared") then
+            package:config_set("cmake", false)
+        end
+        
+        if package:config("cmake") then
+            package:add("deps", "cmake")
+        end
+    end)
 
     on_install(function (package)
-        if package:is_plat("windows") and package:config("shared") then
+        if package:config("cmake") then
+            io.replace("CMakeLists.txt", "STATIC", "", {plain = true})
+    
+            local configs = {"-DURL_BUILD_TESTS=OFF", "-DUPA_BUILD_TESTS=OFF"}
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+            table.insert(configs, "-DUPA_BUILD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
+            import("package.tools.cmake").install(package, configs)
+        else
             io.writefile("xmake.lua", [[
                 add_rules("mode.debug", "mode.release")
-                set_languages("c++11")
+                set_languages("c++17")
                 target("upa_url")
                     set_kind("$(kind)")
                     add_files("src/*.cpp")
@@ -31,14 +48,6 @@ package("upa-url")
                     end
             ]])
             import("package.tools.xmake").install(package)
-        else
-            io.replace("CMakeLists.txt", "STATIC", "", {plain = true})
-    
-            local configs = {"-DURL_BUILD_TESTS=OFF", "-DUPA_BUILD_TESTS=OFF"}
-            table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-            table.insert(configs, "-DUPA_BUILD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
-            import("package.tools.cmake").install(package, configs)
         end
     end)
 
@@ -47,5 +56,5 @@ package("upa-url")
             void test() {
                 upa::url url{"https://xmake.io/"};
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "upa/url.h"}))
+        ]]}, {configs = {languages = "c++17"}, includes = "upa/url.h"}))
     end)
