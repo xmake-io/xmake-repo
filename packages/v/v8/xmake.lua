@@ -44,23 +44,16 @@ package("v8")
 
         local gclient = is_host("windows") and "gclient.bat" or "gclient"
 
+        -- A Git account needs to be configured
+        os.vrunv("git", {"config", "user.email", "dummy@dummy.com"})
+        os.vrunv("git", {"config", "user.name", "Dummy Dummy"})
+
         -- Prevent long path issue on Windows
         os.vrunv("git", {"config", "--local", "core.longpaths", "true"})
 
         -- Update repository and dependencies
         -- Clean any local changes to apply patches
-        os.vrunv(gclient, {"sync", "-v", "--reset", "--delete_unversioned_trees"}, {envs = envs})
-
-        -- Fix GN issue
-        local version = package:version_str()
-        local patch_path = path.join(package:scriptdir(), "patches", version, "fix.patch")
-        if os.exists(patch_path) then
-            local source_path = path.join(package:cachedir(), "source", "v8")
-            local fix_path = path.join(source_path, "third_party", "partition_alloc")
-            os.execv("git", {"apply", patch_path}, {curdir = source_path})
-            os.execv("git", {"add", path.join("src", "partition_alloc", "BUILD.gn")}, {curdir = fix_path})
-            os.execv("git", {"commit", "-m", "xmake-patch-01"}, {curdir = fix_path})
-        end
+        os.vrunv(gclient, {"sync", "-v"}, {envs = envs})
 
         -- Setup args.gn
         local configs = {
