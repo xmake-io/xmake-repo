@@ -3,8 +3,7 @@ package("csfml")
     set_description("CSFML is the official binding of SFML for the C language.")
     set_license("zlib")
 
-    add_urls("https://github.com/SFML/CSFML/archive/refs/tags/$(version).tar.gz",
-            {alias = "github", version = function (version) return version end})
+    add_urls("https://github.com/SFML/CSFML/archive/refs/tags/$(version).tar.gz", "https://github.com/SFML/CSFML.git")
 
     add_versions("2.6.1", "f3f3980f6b5cad85b40e3130c10a2ffaaa9e36de5f756afd4aacaed98a7a9b7b")
 
@@ -34,10 +33,6 @@ package("csfml")
                  elseif os.isdir(sfml_cmakedir_alt) then
                      configs.SFML_DIR = sfml_cmakedir_alt
                  end
-
-                 if package:is_plat("windows") then
-                     os.addenv("PATH", path.join(sfml_installdir, "bin"))
-                 end
             else
                  error("SFML dependency package data not found for CSFML build.")
             end
@@ -51,12 +46,6 @@ package("csfml")
 
         import("package.tools.cmake")
         cmake.install(package, configs)
-
-        if os.isfile("license.md") then
-            os.cp("license.md", package:installdir())
-        elseif os.isfile("LICENSE") then
-            os.cp("LICENSE", package:installdir())
-        end
     end)
 
     on_test(function (package)
