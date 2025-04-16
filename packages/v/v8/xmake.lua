@@ -17,7 +17,7 @@ package("v8")
     add_includedirs("include", {public = true})
     add_links("v8_monolith")
 
-    on_install("linux", "macosx", "windows", function (package)
+    on_install("linux", "windows", function (package)
         import("core.base.global")
 
         -- maybe we need set proxy, e.g. `xmake g --proxy=http://127.0.0.1:xxxx`
