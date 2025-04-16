@@ -119,10 +119,12 @@ package("v8")
     end)
 
     on_test(function (package)
+        local cxxflags = is_host("windows") and "/Zc:__cplusplus" or ""
+
         assert(package:has_cxxfuncs("v8::V8::InitializePlatform(0)", {
             configs = {
                 languages = "c++20",
-                cxxflags = "/Zc:__cplusplus"
+                cxxflags = cxxflags
             },
             includes = "v8.h"
         }))
