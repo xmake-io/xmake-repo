@@ -26,7 +26,7 @@ jobs:
         with:
           xmake-version: branch@master
           actions-cache-folder: '.xmake-cache'
-          actions-cache-key: 'windows'
+          actions-cache-key: 'windows-arm'
 
       - name: Configure Pagefile
         uses: al-cheb/configure-pagefile-action@v1.4
