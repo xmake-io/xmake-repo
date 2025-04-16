@@ -17,6 +17,37 @@ package("v8")
     add_includedirs("include", {public = true})
     add_links("v8_monolith")
 
+    on_check(function (package)
+        import("core.tool.toolchain")
+        import("core.base.semver")
+
+        -- Require C++20
+        assert(package:check_cxxsnippets({test = [[
+             #include <cstddef>
+             #include <iterator>
+             struct SimpleInputIterator {
+                 using difference_type = std::ptrdiff_t;
+                 using value_type = int;
+                 int operator*() const;
+                 SimpleInputIterator& operator++();
+                 void operator++(int) { ++*this; }
+             };
+             static_assert(std::input_iterator<SimpleInputIterator>);
+         ]]}, {configs = {languages = "c++20"}}), "package(v8): require at least C++20.")
+
+        if is_host("windows") then
+            -- Require MSVC / Visual Studio 2022
+            local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+            if msvc then
+                local vs = msvc:config("vs")
+                local year = tonumber(vs)
+                assert(year >= 2022, "package(v8): require at least Visual Studio 2022.")
+            else
+                assert(false, "package(v8): require MSVC on Windows.")
+            end
+        end
+    end)
+
     on_install("linux", "windows", function (package)
         import("core.base.global")
 
