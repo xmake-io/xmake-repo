@@ -6,6 +6,7 @@ package("anari")
     add_urls("https://github.com/KhronosGroup/ANARI-SDK/archive/refs/tags/$(version).tar.gz",
              "https://github.com/KhronosGroup/ANARI-SDK.git")
 
+    add_versions("v0.13.1", "b8979ab0dea22cf71c2eacf9421b0cf3fe5807224147c63686d6ed07e65873f4")
     add_versions("v0.12.1", "1fc5cf360b260cc2e652bff4a41dcf3507c84d25701dc6c6630f6f6f83656b6c")
 
     add_deps("cmake", "python 3.x", {kind = "binary"})
