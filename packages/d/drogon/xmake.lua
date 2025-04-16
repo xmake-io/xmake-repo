@@ -51,6 +51,7 @@ package("drogon")
     add_configs("spdlog", {description = "Allow using the spdlog logging library", default = false, type = "boolean"})
     add_configs("cpp20", {description = "Enable c++ 20 support.", default = false, type = "boolean"})
 
+    add_deps("cmake")
     add_deps("jsoncpp", "brotli", "zlib")
     if not is_plat("windows") then
         add_deps("libuuid")
@@ -87,10 +88,13 @@ package("drogon")
         else
             package:add("deps", "trantor")
         end
-        package:add("deps", "cmake", {override = true, version = "3.x"})
     end)
 
     on_install("windows", "macosx", "linux", function (package)
+        if package:is_plat("macosx") and package:is_arch("x86_64") then
+            wprint([[package(drogon) unsupported cmake4 on macos/x86, please use `add_requireconfs("**.cmake", {override = true, version = "<4.0.0"})`]])
+        end
+
         io.replace("cmake/templates/config.h.in", "\"@COMPILATION_FLAGS@@DROGON_CXX_STANDARD@\"", "R\"(@COMPILATION_FLAGS@@DROGON_CXX_STANDARD@)\"", {plain = true})
         io.replace("cmake_modules/FindMySQL.cmake", "PATH_SUFFIXES mysql", "PATH_SUFFIXES mysql mariadb", {plain = true})
 
