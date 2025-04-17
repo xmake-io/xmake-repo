@@ -34,6 +34,9 @@ package("csfml")
     end)
 
     on_install("windows", "linux", "macosx", "mingw", function (package)
+        -- Mac OS X do not use BUILD_WITH_INSTALL_RPATH 1 INSTALL_NAME_DIR "@rpath"
+        io.replace("cmake/Macros.cmake", "if(SFML_OS_MACOSX AND BUILD_SHARED_LIBS)", "if(0)", {plain = true})
+
         local configs = {"-DCSFML_BUILD_DOC=OFF", "-DCSFML_BUILD_EXAMPLES=OFF"}
 
         table.insert(configs, "-DCSFML_BUILD_GRAPHICS=".. (package:config("graphics") and "ON" or "OFF"))
@@ -42,9 +45,17 @@ package("csfml")
         table.insert(configs, "-DCSFML_BUILD_NETWORK=".. (package:config("network") and "ON" or "OFF"))
         if package:is_plat("windows", "mingw") then
             if not package:config("shared") then
-                io.replace("include/SFML/Config.h",
-                    [[#define CSFML_API_IMPORT CSFML_EXTERN_C __declspec(dllimport)]],
-                    [[#define CSFML_API_IMPORT CSFML_EXTERN_C __declspec(dllexport)]], {plain = true})
+                if package:is_plat("windows") then
+                    io.replace("include/SFML/Config.h",
+                        [[#define CSFML_API_IMPORT CSFML_EXTERN_C __declspec(dllimport)]],
+                        [[#define CSFML_API_IMPORT CSFML_EXTERN_C __declspec(dllexport)]], {plain = true})
+                end
+                if package:is_plat("mingw") then
+                    io.replace("cmake/Macros.cmake", [[if (SFML_OS_WINDOWS AND SFML_COMPILER_GCC)]], [[if(0)]], {plain = true})
+                    io.replace("include/SFML/Config.h",
+                        [[#define CSFML_API_IMPORT CSFML_EXTERN_C __declspec(dllimport)]],
+                        [[#define CSFML_API_IMPORT CSFML_EXTERN_C]], {plain = true})
+                end
                 -- Do not use CMAKE_SHARED_LIBRARY_SUFFIX when building static lib
                 io.replace("cmake/Macros.cmake", "if(SFML_OS_WINDOWS)", "if(0)", {plain = true})
             end
