@@ -6,19 +6,25 @@ package("open3d")
 
     add_urls("https://github.com/isl-org/Open3D/archive/refs/tags/$(version).tar.gz",
              "https://github.com/isl-org/Open3D.git")
-    add_versions("v0.15.1", "4bcfbaa6fcbcc14fba46a4d719b9256fffac09b23f8344a7d561b26394159660")
+    add_versions("v0.19.0", "5cedb0e093c6baceab801b903eb8e2558bc2b3999ac57762bf78a39d5e15394a")
     add_versions("v0.17.0", "a7526efaf54434c4d54276fa0ddc63a1555401c30fb10fec9efa3241326bdd27")
 
     add_configs("python", {description = "Build the python module.", default = false, type = "boolean"})
     add_configs("cuda",   {description = "Enable CUDA support.", default = false, type = "boolean"})
     add_configs("blas",   {description = "Choose BLAS vendor.", default = "mkl", type = "string", values = {"mkl", "openblas"}})
 
+    set_policy("package.cmake_generator.ninja", false)
+    set_policy("platform.longpaths", true)
+
     add_deps("cmake", "nasm")
     add_deps("openssl", {system = false})
+    add_deps("libcurl 7.x", {configs = {openssl = true}})
     add_includedirs("include", "include/open3d/3rdparty")
     if is_plat("linux") then
+        add_deps("glfw", {configs = {x11 = true, wayland = true}})
         add_syslinks("stdc++fs")
-        add_deps("libx11", "libxrandr", "libxrender", "libxinerama", "libxcursor", "libxfixes", "libxext", "libxi")
+    else
+        add_deps("glfw")
     end
     on_load("windows|x64", "linux|x86_64", "macosx|x86_64", function (package)
         if package:config("cuda") then
@@ -42,6 +48,10 @@ package("open3d")
         io.replace("CMakeLists.txt", "add_subdirectory(examples)", "", {plain = true})
         io.replace("3rdparty/curl/curl.cmake", "add_dependencies", "#", {plain = true})
         io.replace("3rdparty/find_dependencies.cmake", "OpenSSL::Crypto", "OpenSSL::SSL OpenSSL::Crypto", {plain = true})
+        io.replace("3rdparty/find_dependencies.cmake", "open3d_pkg_config_3rdparty_library(3rdparty_curl", "open3d_find_package_3rdparty_library(3rdparty_curl", {plain = true})
+        io.replace("3rdparty/find_dependencies.cmake", "SEARCH_ARGS libcurl", "PACKAGE CURL\nTARGETS CURL::libcurl", {plain = true})
+        io.replace("cpp/open3d/utility/Download.cpp", "#define CURL_STATICLIB", "", {plain = true})
+        io.replace("cpp/open3d/visualization/gui/GLFWWindowSystem.cpp", "GL_TRUE", "GLFW_TRUE", {plain = true})
         io.writefile("examples/test_data/download_file_list.json", "{}")
         local configs = {"-DCMAKE_FIND_FRAMEWORK=LAST",
                          "-DBUILD_EXAMPLES=OFF",
@@ -51,6 +61,8 @@ package("open3d")
                          "-DBUILD_WEBRTC=OFF",
                          "-DUSE_SYSTEM_BLAS=ON",
                          "-DUSE_SYSTEM_OPENSSL=ON",
+                         "-DUSE_SYSTEM_CURL=ON",
+                         "-DUSE_SYSTEM_GLFW=ON",
                          "-DBUILD_FILAMENT_FROM_SOURCE=OFF",
                          "-DBUILD_CURL_FROM_SOURCE=ON",
                          "-DWITH_IPPICV=OFF",
@@ -85,13 +97,7 @@ package("open3d")
         end
         table.insert(configs, "-DUSE_BLAS=" .. (package:config("blas") == "openblas" and "ON" or "OFF"))
         table.insert(configs, "-DBORINGSSL_ROOT_DIR=" .. package:dep("openssl"):installdir())
-        if package:is_plat("windows") then
-            import("package.tools.cmake").install(package, configs, {buildir = os.tmpfile() .. ".dir"})
-        elseif package:is_plat("linux") then
-            import("package.tools.cmake").install(package, configs, {packagedeps = {"libxrandr", "libxrender", "libxinerama", "libxcursor", "libxfixes", "libxext", "libxi", "libx11"}})
-        else
-            import("package.tools.cmake").install(package, configs)
-        end
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"glfw", "libcurl"}})
         if not package:is_plat("windows") then
             package:add("links", "Open3D")
             for _, f in ipairs(os.files(path.join(package:installdir("lib"), "lib*.a"))) do
