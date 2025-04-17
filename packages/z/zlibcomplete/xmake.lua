@@ -16,6 +16,7 @@ package("zlibcomplete")
         table.insert(configs, "-DZLIBCOMPLETE_EXAMPLES=off")
         table.insert(configs, "-DZLIBCOMPLETE_DOCS=off")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW")
         if package:config("shared") then
             table.insert(configs, "-DZLIBCOMPLETE_SHARED=on")
         else
