@@ -33,7 +33,7 @@ package("csfml")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "mingw", function (package)
         local configs = {"-DCSFML_BUILD_DOC=OFF", "-DCSFML_BUILD_EXAMPLES=OFF"}
 
         table.insert(configs, "-DCSFML_BUILD_GRAPHICS=".. (package:config("graphics") and "ON" or "OFF"))
