@@ -21,6 +21,9 @@ package("zlibcomplete")
         else
             table.insert(configs, "-DZLIBCOMPLETE_STATIC=on")
         end
+        if package:is_cross() then
+            table.insert(configs, "-DCMAKE_TRY_COMPILE_TARGET_TYPE=STATIC_LIBRARY")
+        end
         import("package.tools.cmake").install(package, configs)
         os.cp("lib/zlc/*.hpp", package:installdir("include", "zlc"))
     end)
