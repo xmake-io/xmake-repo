@@ -9,6 +9,26 @@ package("reaction")
 
     add_deps("cmake")
 
+    on_check(function (package)
+        if package:is_plat("android") then
+            local ndk = package:toolchain("ndk"):config("ndkver")
+            assert(ndk and tonumber(ndk) > 22, "package(ada >=3.0.0) require ndk version > 22")
+        elseif package:is_plat("macosx") then
+            assert(package:check_cxxsnippets({test = [[#include <format>
+                    #include <iostream>
+                    
+                    template<typename... Args>
+                    inline void println(const std::format_string<Args...> fmt, Args&&... args)
+                    {
+                        std::cout << std::vformat(fmt.get(), std::make_format_args(args...)) << '\n';
+                    }
+                void test() {
+                    println("{}{} {}{}", "Hello", ',', "C++", -1 + 2 * 3 * 4);
+                }
+            ]]}, {configs = {languages = "c++20"}}))
+        end
+    end)
+
     on_install(function (package)
         io.replace("CMakeLists.txt", "if(GTest_FOUND)", "if(0)", {plain = true})
         os.tryrm("example")
