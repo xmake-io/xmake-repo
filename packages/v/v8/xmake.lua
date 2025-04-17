@@ -36,17 +36,17 @@ package("v8")
          ]]}, {configs = {languages = "c++20"}}), "package(v8): require at least C++20.")
 
         -- Only configured and tested for:
-        assert(is_mode("release") and is_kind("static"), "package(v8): only configured for static + release usage")
+        assert(not package:is_debug() and not package:config("shared"), "package(v8): only configured for static + release usage")
 
         if is_host("windows") then
             -- Require MSVC / Visual Studio 2022
-            local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+            local msvc = package:toolchain("msvc")
             if msvc then
                 local vs = msvc:config("vs")
                 local year = tonumber(vs)
                 assert(year >= 2022, "package(v8): require at least Visual Studio 2022.")
             else
-                assert(false, "package(v8): require MSVC on Windows.")
+                assert(false, "package(v8): only configured for MSVC on Windows.")
             end
         end
     end)
