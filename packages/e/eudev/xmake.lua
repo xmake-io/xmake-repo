@@ -1,23 +1,24 @@
 package("eudev")
-
-    set_homepage("https://dev.gentoo.org/~blueness/eudev/")
+    set_homepage("https://github.com/eudev-project/eudev")
     set_description("A fork of systemd with the aim of isolating udev from any particular flavor of system initialization.")
+    set_license("GPL-2.0")
 
-    add_urls("https://dev.gentoo.org/~blueness/eudev/eudev-$(version).tar.gz")
-    add_versions("3.2.9", "89618619084a19e1451d373c43f141b469c9fd09767973d73dd268b92074d4fc")
+    add_urls("https://github.com/eudev-project/eudev/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/eudev-project/eudev.git")
 
-    if is_plat("linux") then
-        add_deps("autoconf", "automake", "libtool", "pkg-config", "gperf")
-    end
+    add_versions("v3.2.14", "c340e6c51dfc5531ac0c0fa84a34b72162acf525f9023eb9cf4931b782c8f177")
+    add_versions("v3.2.9", "7d281276b480da3935d1acb239748c2c9db01a8043aad7e918ce57a223d8cd24")
 
-    on_install("linux", function (package)
+    add_deps("autotools", "pkg-config", "gperf")
+
+    on_install("linux", "cross", function (package)
         local configs = {}
         if package:config("shared") then
             table.insert(configs, "--enable-shared=yes")
         else
             table.insert(configs, "--enable-shared=no")
         end
-        if package:config("pic") ~= false then
+        if package:config("pic") then
             table.insert(configs, "--with-pic")
         end
         import("package.tools.autoconf").install(package, configs)
