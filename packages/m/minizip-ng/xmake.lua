@@ -48,7 +48,7 @@ package("minizip-ng")
         end
     end)
 
-    on_install("macosx", "android", "linux", "windows", "mingw", function (package)
+    on_install(function (package)
         local configs = {"-DMZ_LIBCOMP=OFF", "-DMZ_FETCH_LIBS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
