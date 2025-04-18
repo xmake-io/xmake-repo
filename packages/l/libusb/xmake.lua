@@ -12,23 +12,27 @@ package("libusb")
     add_resources(">=1.0.26", "libusb-cmake", "https://github.com/libusb/libusb-cmake.git", "8f0b4a38fc3eefa2b26a99dff89e1c12bf37afd4")
 
     if is_plat("macosx") then
-        add_frameworks("CoreFoundation", "IOKit", "Security")
         add_extsources("brew::libusb")
-    elseif is_plat("bsd") then
-        add_syslinks("pthread")
     elseif is_plat("linux") then
-        add_deps("eudev")
-        add_syslinks("pthread")
         add_extsources("apt::libusb-dev", "pacman::libusb")
     elseif is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::libusb")
     end
 
+    if is_plat("macosx") then
+        add_frameworks("CoreFoundation", "IOKit", "Security")
+    elseif is_plat("linux", "bsd") then
+        add_syslinks("pthread")
+    end
+
     add_deps("cmake")
+    if is_plat("linux") then
+        add_deps("eudev")
+    end
 
     add_includedirs("include", "include/libusb-1.0")
 
-    on_install("windows", "linux", "macosx", "bsd", "msys", "android", function (package)
+    on_install(function (package)
         local dir = package:resourcefile("libusb-cmake")
         os.cp(path.join(dir, "CMakeLists.txt"), os.curdir())
         os.cp(path.join(dir, "config.h.in"), os.curdir())
@@ -37,7 +41,7 @@ package("libusb")
             [[get_filename_component(LIBUSB_ROOT "libusb" ABSOLUTE)]], {plain = true})
 
         local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
         local packagedeps = {}
