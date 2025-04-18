@@ -36,10 +36,11 @@ package("v8")
          ]]}, {configs = {languages = "c++20"}}), "package(v8): require at least C++20.")
 
         -- Only configured and tested for:
-        assert(not package:is_debug() and not package:config("shared") and package:config("runtimes") == "MT",
-            "package(v8): only configured for static + release + MT usage")
+        assert(not package:is_debug() and not package:config("shared"), "package(v8): only configured for static + release usage")
 
         if is_host("windows") then
+            assert(package:config("runtimes") == "MT", "package(v8): only configured for MT on Windows")
+
             -- Require MSVC / Visual Studio 2022
             local msvc = package:toolchain("msvc")
             if msvc then
