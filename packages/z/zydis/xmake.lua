@@ -4,7 +4,7 @@ package("zydis")
     set_license("MIT")
 
     add_urls("https://github.com/zyantific/zydis/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/zyantific/zydis.git")
+             "https://github.com/zyantific/zydis.git", {submodules = false})
 
     add_versions("v4.1.0", "31f23de8abb4cc2efa0fd0e827bbabcaa0f3d00fcaed8598e05295ba7b3806ad")
     add_versions("v4.0.0", "14e991fd97b021e15c77a4726a0ae8a4196d6521ab505acb5c51fc2f9be9530a")
@@ -28,7 +28,11 @@ package("zydis")
             ["v4.0.0"] = "v1.4.0",
             ["v4.1.0"] = "v1.5.0",
         }
-        package:add("deps", "zycore-c " .. zycore_c_vers[package:version_str()])
+        if package:version() then
+            package:add("deps", "zycore-c " .. zycore_c_vers[package:version_str()])
+        else
+            package:add("deps", "zycore-c")
+        end
 
         if package:is_plat("android") then
             package:add("patches", "4.0.0", "patches/v4.0.0/cmake.patch", "061b2286e8e96178294f8b25e0c570bf65f8739848ea1de57dd36be710001da4")
@@ -64,6 +68,7 @@ package("zydis")
             "-DZYDIS_BUILD_TESTS=OFF",
             "-DZYAN_SYSTEM_ZYCORE=ON",
         }
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DZYDIS_BUILD_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DZYDIS_BUILD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
 
