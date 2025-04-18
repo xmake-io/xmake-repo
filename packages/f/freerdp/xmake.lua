@@ -36,6 +36,8 @@ package("freerdp")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
+    elseif is_plat("windows", "mingw") then
+        add_syslinks("rpcrt4", "ncrypt", "shell32", "ole32", "dbghelp")
     end
 
     add_deps("cmake")
@@ -94,6 +96,7 @@ package("freerdp")
 
     on_install("!bsd", function (package)
         io.replace("CMakeLists.txt", "include(${CMAKE_CPACK_INCLUDE_FILE})", "", {plain = true})
+        io.replace("cmake/MSVCRuntime.cmake", "if(BUILD_SHARED_LIBS)", "if(0)", {plain = true})
 
         local configs = {
             "-DWITH_SAMPLE=OFF",
