@@ -44,7 +44,7 @@ package("freerdp")
     else
         add_deps("pkg-config")
     end
-    add_deps("zlib", "openssl", "libusb")
+    add_deps("zlib", "openssl3", "libusb")
 
     add_includedirs("include", "include/freerdp3", "include/winpr3")
 
@@ -59,8 +59,6 @@ package("freerdp")
         end
 
         local configs_map_to_deps = {
-            x11       = "libx11",
-            shadow    = "libx11",
             wayland   = "wayland",
             fuse      = "libfuse",
             json      = package:config("json"),
@@ -77,6 +75,9 @@ package("freerdp")
             end
         end
 
+        if package:config("x11") or package:config("shadow") then
+            package:add("deps", "libx11", "libxext", "libxcursor")
+        end
         if not package:config("unicode_builtin") or package:config("timezone_icu") then
             package:add("deps", "icu4c")
         end
@@ -91,7 +92,7 @@ package("freerdp")
         end
     end)
 
-    on_install(function (package)
+    on_install("!bsd", function (package)
         io.replace("CMakeLists.txt", "include(${CMAKE_CPACK_INCLUDE_FILE})", "", {plain = true})
 
         local configs = {
@@ -106,6 +107,7 @@ package("freerdp")
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=" .. (package:config("lto") and "ON" or "OFF"))
 
         local dep = package:config("json")
         table.insert(configs, "-DWITH_JSON_DISABLED=" .. (dep and "OFF" or "ON"))
@@ -121,6 +123,9 @@ package("freerdp")
         end
 
         local opt = {}
+        if package:dep("libx11") then
+            opt.packagedeps = {"libx11", "xorgproto", "libxext", "libxcursor"}
+        end
         if package:dep("ffmpeg") and not package:has_tool("ld", "link") then
             -- https://stackoverflow.com/questions/44379426/building-shared-library-with-ffmpeg-results-in-relocation-error
             opt.ldflags = "-Wl,-Bsymbolic"
@@ -130,8 +135,8 @@ package("freerdp")
         import("package.tools.cmake").install(package, configs, opt)
 
         if package:is_plat("windows") and not package:config("shared") then
-            io.replace(path.join(package:installdir("include"), "freerdp/api.h"), "__declspec(dllimport)", "", {plain = true})
-            io.replace(path.join(package:installdir("include"), "winpr/platform.h"), "__declspec(dllimport)", "", {plain = true})
+            io.replace(path.join(package:installdir("include/freerdp3"), "freerdp/api.h"), "__declspec(dllimport)", "", {plain = true})
+            io.replace(path.join(package:installdir("include/winpr3"), "winpr/platform.h"), "__declspec(dllimport)", "", {plain = true})
         end
     end)
 
