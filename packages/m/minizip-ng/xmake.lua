@@ -20,13 +20,15 @@ package("minizip-ng")
     add_configs("zstd",  {description = "Enable zstd comppressression library.", default = false, type = "boolean"})
 
     add_deps("cmake")
-    if is_plat("linux", "android") then
+    if is_plat("linux", "bsd", "android", "cross") then
         add_deps("openssl")
     end
 
     if is_plat("macosx") then
         add_frameworks("CoreFoundation", "Security")
         add_syslinks("iconv")
+    elseif is_plat("iphoneos") then
+        add_frameworks("CoreFoundation", "Security")
     elseif is_plat("windows", "mingw") then
         add_syslinks("crypt32", "advapi32")
     end
@@ -48,7 +50,7 @@ package("minizip-ng")
         end
     end)
 
-    on_install(function (package)
+    on_install("macosx", "android", "linux", "windows", "mingw", function (package)
         local configs = {"-DMZ_LIBCOMP=OFF", "-DMZ_FETCH_LIBS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
