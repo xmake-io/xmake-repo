@@ -27,15 +27,13 @@ package("minizip-ng")
     if is_plat("macosx") then
         add_frameworks("CoreFoundation", "Security")
         add_syslinks("iconv")
-    elseif is_plat("iphoneos") then
-        add_frameworks("CoreFoundation", "Security")
     elseif is_plat("windows", "mingw") then
         add_syslinks("crypt32", "advapi32")
     end
 
     on_load(function (package)
         if package:version() and package:version():ge("4.0") then
-            if package:is_plat("macosx") then
+            if package:is_plat("macosx", "iphoneos") then
                 package:add("deps", "openssl")
             elseif package:is_plat("windows", "mingw") then
                 package:add("syslinks", "Bcrypt")
