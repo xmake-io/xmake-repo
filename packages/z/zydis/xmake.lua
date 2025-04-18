@@ -37,27 +37,33 @@ package("zydis")
     end)
 
     on_install("!wasm and !iphoneos", function (package)
-        if package:is_plat("mingw") and package:version():ge("3.2.1") then
-            local rc_str = io.readfile("resources/VersionInfo.rc", {encoding = "utf16le"})
-            io.writefile("resources/VersionInfo.rc", rc_str, {encoding = "utf8"})
-        elseif package:is_plat("macosx") then
-            if package:version():eq("3.2.1") then
-                io.replace("include/Zydis/ShortString.h", "#pragma pack(push, 1)","", {plain = true})
-                io.replace("include/Zydis/ShortString.h", "#pragma pack(pop)","", {plain = true})
-            elseif package:version():eq("4.0.0") then
-                io.replace("include/Zydis/ShortString.h", "#   pragma pack(push, 1)","", {plain = true})
-                io.replace("include/Zydis/ShortString.h", "#   pragma pack(pop)","", {plain = true})
+        local version = package:version()
+        if version then
+            if package:is_plat("mingw") and version:ge("3.2.1") then
+                local rc_str = io.readfile("resources/VersionInfo.rc", {encoding = "utf16le"})
+                io.writefile("resources/VersionInfo.rc", rc_str, {encoding = "utf8"})
+            elseif package:is_plat("macosx") then
+                if version:eq("3.2.1") then
+                    io.replace("include/Zydis/ShortString.h", "#pragma pack(push, 1)","", {plain = true})
+                    io.replace("include/Zydis/ShortString.h", "#pragma pack(pop)","", {plain = true})
+                elseif version:eq("4.0.0") then
+                    io.replace("include/Zydis/ShortString.h", "#   pragma pack(push, 1)","", {plain = true})
+                    io.replace("include/Zydis/ShortString.h", "#   pragma pack(pop)","", {plain = true})
+                end
+            elseif package:is_plat("windows") and version:ge("4.0.0") and (not package:config("shared")) then
+                package:add("defines", "ZYDIS_STATIC_BUILD")
             end
-        elseif package:is_plat("windows") and package:version():ge("4.0.0") and (not package:config("shared")) then
-            package:add("defines", "ZYDIS_STATIC_BUILD")
+
+            if version:ge("4.1.0") then
+                io.replace("CMakeLists.txt", "set(ZYDIS_ROOT_PROJECT ON)", "", {plain = true})
+            end
         end
 
-        if package:version():ge("4.1.0") then
-            io.replace("CMakeLists.txt", "set(ZYDIS_ROOT_PROJECT ON)", "", {plain = true})
-        end
-
-        local configs = {"-DZYAN_SYSTEM_ZYCORE=ON"}
-        table.insert(configs, "-DZYDIS_BUILD_EXAMPLES=OFF")
+        local configs = {
+            "-DZYDIS_BUILD_EXAMPLES=OFF",
+            "-DZYDIS_BUILD_TESTS=OFF",
+            "-DZYAN_SYSTEM_ZYCORE=ON",
+        }
         table.insert(configs, "-DZYDIS_BUILD_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DZYDIS_BUILD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
 
