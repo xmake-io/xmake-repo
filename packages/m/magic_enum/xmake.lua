@@ -25,7 +25,7 @@ package("magic_enum")
 
     on_install(function (package)
         local version = package:version()
-        if version:lt("0.9.6") or not package:config("modules") then
+        if version and version:lt("0.9.6") or not package:config("modules") then
             local configs = {
                 "-DMAGIC_ENUM_OPT_BUILD_EXAMPLES=OFF",
                 "-DMAGIC_ENUM_OPT_BUILD_TESTS=OFF",
