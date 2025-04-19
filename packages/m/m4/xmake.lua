@@ -44,8 +44,7 @@ package("m4")
         local opt = {}
         if package:has_tool("cc", "gcc") then
             -- https://mail.gnu.org/archive/html/bug-m4/2024-11/msg00000.html
-            -- apply deepseek's patch
-            opt.cxflags = "-std=gnu89"
+            opt.cxflags = "-std=gnu11"
         end
         import("package.tools.autoconf").install(package, configs, opt)
     end)
