@@ -52,6 +52,12 @@ package("freerdp")
 
     add_links("freerdp-server3", "freerdp-server-proxy3", "freerdp-client3", "freerdp3", "rdtk0", "winpr3")
 
+    on_check(function (package)
+        if is_subhost("windows") then
+            raise("package(freerdp) require python (from pkgconf) for building, but windows arm python binaries are unsupported")
+        end
+    end)
+
     on_load(function (package)
         if package:config("shadow") or package:config("proxy") or package:config("platform_server") then
             package:config_set("server", true)
@@ -94,8 +100,7 @@ package("freerdp")
         end
     end)
 
-    -- windows arm require python binary (from pkgconf)
-    on_install("!bsd and (!windows or windows|!arm*)", function (package)
+    on_install("!bsd and !iphoneos", function (package)
         io.replace("CMakeLists.txt", "include(${CMAKE_CPACK_INCLUDE_FILE})", "", {plain = true})
         io.replace("cmake/MSVCRuntime.cmake", "if(BUILD_SHARED_LIBS)", "if(0)", {plain = true})
 
