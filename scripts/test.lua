@@ -287,6 +287,29 @@ function get_modified_packages()
     return table.unique(packages)
 end
 
+-- @see https://github.com/xmake-io/xmake-repo/issues/6940
+function _lock_packages(packages)
+    local locked_packages = {
+        "xor_singleheader",
+        "libsolv",
+        "libnfc",
+        "flashlight",
+        "telegram-bot-api",
+        "openvpn3",
+        "systemd",
+        "libxcrypt",
+        "libselinux",
+        "libxls",
+        "openssh",
+        "hashcat"
+    }
+    for _, package in ipairs(packages) do
+        if table.contains(locked_packages, package) then
+            raise("package(%s) has been locked, please do not submit it, @see https://github.com/xmake-io/xmake-repo/issues/6940", package)
+        end
+    end
+end
+
 -- the main entry
 function main(...)
 
@@ -345,11 +368,14 @@ function main(...)
     end
     os.cd(old_dir)
 
-    -- no unsupported packages
+    -- no testable packages
     if #packages == 0 then
         print("no testable packages on %s!", argv.plat or os.subhost())
         return
     end
+
+    -- lock packages
+    _lock_packages(packages)
 
     -- require packages
     _require_packages(argv, packages)
