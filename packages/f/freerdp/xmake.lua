@@ -25,6 +25,8 @@ package("freerdp")
     add_configs("openh264", {description = "Build openh264", default = false, type = "boolean"})
     add_configs("krb5", {description = "Compile support for kerberos authentication.", default = false, type = "boolean"})
 
+    add_configs("simd", {description = "Build with simd", default = not is_plat("wasm"), type = "boolean"})
+
     -- winpr
     add_configs("unicode_builtin", {description = "Build builtin unicode", default = true, type = "boolean"})
     add_configs("timezone_icu", {description = "Use ICU for improved timezone mapping", default = false, type = "boolean"})
@@ -53,8 +55,8 @@ package("freerdp")
     add_links("freerdp-server3", "freerdp-server-proxy3", "freerdp-client3", "freerdp3", "rdtk0", "winpr3")
 
     on_check(function (package)
-        if is_subhost("windows") then
-            raise("package(freerdp) require python (from pkgconf) for building, but windows arm python binaries are unsupported")
+        if is_subhost("windows") and os.arch() == "arm64" then
+            raise("package(freerdp) require python (from pkgconf) for building, but windows arm64 python binaries are unsupported")
         end
     end)
 
@@ -122,6 +124,12 @@ package("freerdp")
         table.insert(configs, "-DWITH_JSON_DISABLED=" .. (dep and "OFF" or "ON"))
         table.insert(configs, "-DWITH_CJSON_REQUIRED=" .. (dep == "cjson" and "ON" or "OFF"))
         table.insert(configs, "-DWITH_JSONC_REQUIRED=" .. (dep == "json-c" and "ON" or "OFF"))
+        if package:is_plat("mingw") then
+            -- winpr/libwinpr/utils/unwind/debug.c require dlfcn.h, try `dlfcn-win32`?
+            table.insert(configs, "-DUSE_UNWIND=OFF")
+            -- fatal error: bits/libc-header-start.h: No such file or directory
+            table.insert(configs, "-DWITH_SMARTCARD_EMULATE=OFF")
+        end
 
         table.insert(configs, "-DWITH_CLIENT_COMMON=" .. (package:config("client") and "ON" or "OFF"))
 
