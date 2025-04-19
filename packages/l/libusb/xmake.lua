@@ -26,13 +26,17 @@ package("libusb")
     end
 
     add_deps("cmake")
-    if is_plat("linux") then
+    if is_plat("linux", "cross") then
         add_deps("eudev")
     end
 
     add_includedirs("include", "include/libusb-1.0")
+    -- https://github.com/emscripten-core/emscripten/issues/13017
+    if is_plat("wasm") then
+        add_ldflags("--bind", "-s ASYNCIFY=1")
+    end
 
-    on_install(function (package)
+    on_install("!iphoneos", function (package)
         local dir = package:resourcefile("libusb-cmake")
         os.cp(path.join(dir, "CMakeLists.txt"), os.curdir())
         os.cp(path.join(dir, "config.h.in"), os.curdir())
