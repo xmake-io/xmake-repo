@@ -25,9 +25,22 @@ package("pkg-config")
         if is_host("macosx") then
             table.insert(pcpath, "/usr/local/Homebrew/Library/Homebrew/os/mac/pkgconfig/" .. macos.version():major() .. '.' .. macos.version():minor())
         end
-        -- see https://gitlab.freedesktop.org/pkg-config/pkg-config/-/issues/81
-        local opt = {cflags = "-Wno-int-conversion"}
-        import("package.tools.autoconf").install(package, {"--disable-werror", "--disable-compile-warnings", "--disable-debug", "--disable-host-tool", "--with-internal-glib", ["with-pc-path"] = table.concat(pcpath, ':')}, opt)
+
+        local configs = {
+            "--disable-werror",
+            "--disable-compile-warnings",
+            "--disable-debug",
+            "--disable-host-tool",
+            "--with-internal-glib", 
+            ["with-pc-path"] = table.concat(pcpath, ':'),
+        }
+        local opt = {
+            cflags = {
+                "-Wno-int-conversion", -- https://gitlab.freedesktop.org/pkg-config/pkg-config/-/issues/81
+                "-std=gnu99", -- gcc15 default c23
+            }
+        }
+        import("package.tools.autoconf").install(package, configs, opt)
     end)
 
     on_test(function (package)
