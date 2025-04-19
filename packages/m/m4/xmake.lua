@@ -38,7 +38,14 @@ package("m4")
 #endif]])
             file:close()
         end
-        import("package.tools.autoconf").install(package, {"--disable-dependency-tracking"})
+
+        local configs = {"--disable-dependency-tracking"}
+
+        local opt = {}
+        -- https://mail.gnu.org/archive/html/bug-m4/2024-11/msg00000.html
+        -- apply deepseek's patch
+        opt.cxflags = "-std=gnu99"
+        import("package.tools.autoconf").install(package, configs, opt)
     end)
 
     on_test(function (package)

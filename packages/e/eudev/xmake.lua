@@ -11,7 +11,7 @@ package("eudev")
 
     add_configs("kmod", {description = "Enable loadable modules support", default = false, type = "boolean"})
     add_configs("selinux", {description = "Enable optional SELINUX support", default = false, type = "boolean", readonly = true})
-    add_configs("tools", {description = "Build tools", default = true, type = "boolean"})
+    add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
 
     add_deps("autotools", "pkg-config", "gperf")
 
