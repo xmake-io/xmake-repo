@@ -49,7 +49,7 @@ package("libusb")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
         local packagedeps = {}
-        if package:is_plat("linux") then
+        if package:is_plat("linux", "cross") then
             table.insert(packagedeps, "eudev")
         end
         import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
