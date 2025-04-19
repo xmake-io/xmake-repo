@@ -42,9 +42,11 @@ package("m4")
         local configs = {"--disable-dependency-tracking"}
 
         local opt = {}
-        -- https://mail.gnu.org/archive/html/bug-m4/2024-11/msg00000.html
-        -- apply deepseek's patch
-        opt.cxflags = "-std=gnu99"
+        if package:has_tool("cc", "gcc") then
+            -- https://mail.gnu.org/archive/html/bug-m4/2024-11/msg00000.html
+            -- apply deepseek's patch
+            opt.cxflags = "-std=gnu89"
+        end
         import("package.tools.autoconf").install(package, configs, opt)
     end)
 
