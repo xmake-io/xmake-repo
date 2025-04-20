@@ -177,6 +177,9 @@ package("sfml")
     end)
 
     on_install("windows", "linux", "macosx", "mingw", function (package)
+        if package:is_plat("mingw") and is_subhost("macosx") then
+            io.replace("include/SFML/Audio/Music.hpp", "#include <SFML/Audio/Export.hpp>", "#include <stdio.h>\n#include <SFML/Audio/Export.hpp>", {plain = true})
+        end
         local configs = {"-DSFML_BUILD_DOC=OFF", "-DSFML_BUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:config("shared") then
@@ -296,14 +299,12 @@ package("sfml")
         end
         if package:config("audio") then
             assert(package:check_cxxsnippets({test = [[
-                #include <stdio.h>
-                #include <SFML/Audio.hpp>
                 void test(int args, char** argv) {
                     sf::Music music;
                     auto res = music.openFromFile("music.ogg");
                     music.play();
                 }
-            ]]}, {configs = configs}))
+            ]]}, {configs = configs, includes = "SFML/Audio.hpp"}))
         end
         if package:config("network") then
             assert(package:check_cxxsnippets({test = [[
