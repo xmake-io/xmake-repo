@@ -1,0 +1,229 @@
+diff --git a/libmysql/CMakeLists.txt b/libmysql/CMakeLists.txt
+index f3669e2a26..43176da5a5 100644
+--- a/libmysql/CMakeLists.txt
++++ b/libmysql/CMakeLists.txt
+@@ -403,20 +403,20 @@ ENDFOREACH()
+ # Generate api_test.c source, substituting @CLIENT_API_FUNCTION_LIST@
+ # with the list of API functions.
+ #
+-CONFIGURE_FILE(api_test.c.in ${CMAKE_CURRENT_BINARY_DIR}/api_test.c)
++# CONFIGURE_FILE(api_test.c.in ${CMAKE_CURRENT_BINARY_DIR}/api_test.c)
+ 
+ #
+ # Note: Compiling this test application will fail if not all symbols
+ # from @CLIENT_API_FUNCTIONS@ are declared by <mysql.h>. It will fail
+ # to run if not all of these symbols are exported by the library.
+ #
+-MYSQL_ADD_EXECUTABLE(libmysql_api_test
+-  ${CMAKE_CURRENT_BINARY_DIR}/api_test.c
+-  LINK_LIBRARIES libmysql ${LIBRT}
+-  SKIP_INSTALL
+-  )
++# MYSQL_ADD_EXECUTABLE(libmysql_api_test
++#   ${CMAKE_CURRENT_BINARY_DIR}/api_test.c
++#   LINK_LIBRARIES libmysql ${LIBRT}
++#   SKIP_INSTALL
++#   )
+ # Clang/UBSAN needs this on some platforms.
+-SET_TARGET_PROPERTIES(libmysql_api_test PROPERTIES LINKER_LANGUAGE CXX)
++# SET_TARGET_PROPERTIES(libmysql_api_test PROPERTIES LINKER_LANGUAGE CXX)
+ 
+ IF(MY_COMPILER_IS_GNU)
+   ADD_COMPILE_FLAGS(
+@@ -434,12 +434,12 @@ IF(HAS_WARN_FLAG)
+ ENDIF()
+ 
+ # Verify that libmysql_api_test runs OK
+-ADD_CUSTOM_COMMAND(
+-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/libmysql_api_test.out
+-  DEPENDS libmysql_api_test
+-  COMMAND libmysql_api_test
+-  > ${CMAKE_CURRENT_BINARY_DIR}/libmysql_api_test.out
+-  )
+-MY_ADD_CUSTOM_TARGET(run_libmysql_api_test ALL
+-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/libmysql_api_test.out
+-  )
++# ADD_CUSTOM_COMMAND(
++#   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/libmysql_api_test.out
++#   DEPENDS libmysql_api_test
++#   COMMAND libmysql_api_test
++#   > ${CMAKE_CURRENT_BINARY_DIR}/libmysql_api_test.out
++#   )
++# MY_ADD_CUSTOM_TARGET(run_libmysql_api_test ALL
++#   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/libmysql_api_test.out
++#   )
+diff --git a/scripts/CMakeLists.txt b/scripts/CMakeLists.txt
+index 818b214ce9..6c96ba9a02 100644
+--- a/scripts/CMakeLists.txt
++++ b/scripts/CMakeLists.txt
+@@ -25,7 +25,7 @@ DISABLE_MISSING_PROFILE_WARNING()
+ 
+ ADD_SUBDIRECTORY(sys_schema)
+ 
+-MYSQL_ADD_EXECUTABLE(comp_sql comp_sql.cc SKIP_INSTALL)
++# MYSQL_ADD_EXECUTABLE(comp_sql comp_sql.cc SKIP_INSTALL)
+ 
+ # Add compiler information, for easier debugging of output from mysql_config.
+ SET(COMPILER_ID_AND_VERSION
+@@ -63,7 +63,7 @@ ADD_CUSTOM_COMMAND(
+   mysql_fix_privilege_tables.sql
+   mysql_fix_privilege_tables_sql.h
+   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+-  DEPENDS comp_sql
++  DEPENDS
+   ${CMAKE_CURRENT_SOURCE_DIR}/mysql_system_tables.sql
+   ${CMAKE_CURRENT_SOURCE_DIR}/mysql_system_tables_fix.sql
+ )
+@@ -81,7 +81,7 @@ ADD_CUSTOM_COMMAND(
+   ${CMAKE_CURRENT_SOURCE_DIR}/mysql_sys_schema.sql
+   sql_commands_sys_schema.h
+   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+-  DEPENDS comp_sql
++  DEPENDS
+   ${CMAKE_CURRENT_SOURCE_DIR}/mysql_sys_schema.sql
+   )
+ 
+@@ -92,7 +92,7 @@ ADD_CUSTOM_COMMAND(
+   ${CMAKE_CURRENT_SOURCE_DIR}/mysql_system_tables_data.sql
+   sql_commands_system_data.h
+   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+-  DEPENDS comp_sql
++  DEPENDS
+   ${CMAKE_CURRENT_SOURCE_DIR}/mysql_system_tables_data.sql
+ )
+ 
+@@ -103,7 +103,7 @@ ADD_CUSTOM_COMMAND(
+   ${CMAKE_CURRENT_SOURCE_DIR}/mysql_system_tables_data_fix.sql
+   sql_commands_system_tables_data_fix.h
+   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+-  DEPENDS comp_sql
++  DEPENDS
+   ${CMAKE_CURRENT_SOURCE_DIR}/mysql_system_tables_data_fix.sql
+ )
+ 
+@@ -114,7 +114,7 @@ ADD_CUSTOM_COMMAND(
+   ${CMAKE_CURRENT_SOURCE_DIR}/mysql_system_tables.sql
+   sql_commands_system_tables.h
+   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+-  DEPENDS comp_sql
++  DEPENDS
+   ${CMAKE_CURRENT_SOURCE_DIR}/mysql_system_tables.sql
+ )
+ 
+@@ -125,7 +125,7 @@ ADD_CUSTOM_COMMAND(
+   ${CMAKE_CURRENT_SOURCE_DIR}/mysql_system_users.sql
+   sql_commands_system_users.h
+   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+-  DEPENDS comp_sql
++  DEPENDS
+   ${CMAKE_CURRENT_SOURCE_DIR}/mysql_system_users.sql
+ )
+ 
+@@ -136,7 +136,7 @@ ADD_CUSTOM_COMMAND(
+   ${CMAKE_CURRENT_SOURCE_DIR}/fill_help_tables.sql
+   sql_commands_help_data.h
+   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+-  DEPENDS comp_sql
++  DEPENDS
+   ${CMAKE_CURRENT_SOURCE_DIR}/fill_help_tables.sql
+ )
+ 
+@@ -147,7 +147,7 @@ ADD_CUSTOM_COMMAND(
+   ${CMAKE_CURRENT_SOURCE_DIR}/firewall_stored_procedures.sql
+   sql_firewall_stored_procedures.h
+   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+-  DEPENDS comp_sql
++  DEPENDS
+   ${CMAKE_CURRENT_SOURCE_DIR}/firewall_stored_procedures.sql
+ )
+ 
+diff --git a/scripts/sys_schema/CMakeLists.txt b/scripts/sys_schema/CMakeLists.txt
+index 1d3295e8d4..c862909257 100644
+--- a/scripts/sys_schema/CMakeLists.txt
++++ b/scripts/sys_schema/CMakeLists.txt
+@@ -213,7 +213,7 @@ ADD_CUSTOM_COMMAND(
+   ${CMAKE_CURRENT_BINARY_DIR}/ALL_SYS_SCHEMA.sql
+   sql_commands.h
+   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+-  DEPENDS comp_sql all_sys_schema
++  DEPENDS all_sys_schema
+   ${CMAKE_CURRENT_BINARY_DIR}/ALL_SYS_SCHEMA.sql
+   VERBATIM
+ )
+@@ -223,7 +223,7 @@ MY_ADD_CUSTOM_TARGET(sql_commands
+ 
+ MY_ADD_CUSTOM_TARGET(GenSysSchemaC
+   ALL
+-  DEPENDS comp_sql sql_commands
++  DEPENDS sql_commands
+   COMMENT "Generating Sys Schema C code"
+ )
+ 
+diff --git a/strings/CMakeLists.txt b/strings/CMakeLists.txt
+index f4cd85e786..99dbd5f811 100644
+--- a/strings/CMakeLists.txt
++++ b/strings/CMakeLists.txt
+@@ -59,7 +59,7 @@ SET(STRINGS_SOURCES
+   xml.cc
+ )
+ 
+-MYSQL_ADD_EXECUTABLE(uca9dump uca9-dump.cc SKIP_INSTALL)
++# MYSQL_ADD_EXECUTABLE(uca9dump uca9-dump.cc SKIP_INSTALL)
+ 
+ MY_CHECK_CXX_COMPILER_WARNING("-Wmissing-profile" HAS_MISSING_PROFILE)
+ IF(HAS_MISSING_PROFILE)
+@@ -78,7 +78,7 @@ ADD_CUSTOM_COMMAND(OUTPUT ${ZH_HANS_DST_FILE}
+                    COMMAND uca9dump ja
+                      --in_file=${JA_HANS_SRC_FILE}
+                      --out_file=${JA_HANS_DST_FILE}
+-                   DEPENDS uca9dump ${ZH_HANS_SRC_FILE} ${JA_HANS_SRC_FILE}
++                   DEPENDS ${ZH_HANS_SRC_FILE} ${JA_HANS_SRC_FILE}
+                   )
+ 
+ SET_SOURCE_FILES_PROPERTIES(
+diff --git a/utilities/CMakeLists.txt b/utilities/CMakeLists.txt
+index 621a8e140d..d5aefda309 100644
+--- a/utilities/CMakeLists.txt
++++ b/utilities/CMakeLists.txt
+@@ -26,19 +26,19 @@ DISABLE_MISSING_PROFILE_WARNING()
+ MSVC_CPPCHECK_DISABLE()
+ 
+ IF(NOT CMAKE_CROSSCOMPILING)
+-  MYSQL_ADD_EXECUTABLE(comp_err
+-    comp_err.cc
+-    COMPONENT Test
+-    LINK_LIBRARIES mysys
+-    )
++  # MYSQL_ADD_EXECUTABLE(comp_err
++  #   comp_err.cc
++  #   COMPONENT Test
++  #   LINK_LIBRARIES mysys
++  #   )
+ ENDIF()
+ 
+-MYSQL_ADD_EXECUTABLE(comp_client_err
+-  comp_client_err.cc
+-  ${CMAKE_SOURCE_DIR}/libmysql/errmsg.cc
+-  LINK_LIBRARIES mysys
+-  SKIP_INSTALL
+-  )
++# MYSQL_ADD_EXECUTABLE(comp_client_err
++#   comp_client_err.cc
++#   ${CMAKE_SOURCE_DIR}/libmysql/errmsg.cc
++#   LINK_LIBRARIES mysys
++#   SKIP_INSTALL
++#   )
+ 
+ ADD_CUSTOM_COMMAND(OUTPUT ${PROJECT_BINARY_DIR}/include/mysqlclient_ername.h
+   COMMAND comp_client_err
+@@ -104,8 +104,8 @@ ADD_DEFINITIONS(-DMUTEX_EVENT)
+ # The copied shared libraries must be available at build time.
+ IF(TARGET copy_openssl_dlls)
+   ADD_DEPENDENCIES(GenError copy_openssl_dlls)
+-  ADD_DEPENDENCIES(comp_client_err copy_openssl_dlls)
+-  ADD_DEPENDENCIES(comp_err copy_openssl_dlls)
++  # ADD_DEPENDENCIES(comp_client_err copy_openssl_dlls)
++  # ADD_DEPENDENCIES(comp_err copy_openssl_dlls)
+ ENDIF()
+ 
+ MYSQL_ADD_EXECUTABLE(static_thread_local_test

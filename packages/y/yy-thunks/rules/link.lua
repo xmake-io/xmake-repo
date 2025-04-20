@@ -1,10 +1,20 @@
+-- TODO:
+-- YY_Thunks_for_Win8.obj
+-- YY_Thunks_for_Win10.0.10240.obj
+-- YY_Thunks_for_Win10.0.19041.obj
+
 rule("xp")
     on_config(function (target)
         local objectfile = "YY_Thunks_for_WinXP.obj"
         local thunks = target:pkg("yy-thunks")
         if thunks then
             local installdir = thunks:installdir()
-            table.insert(target:objectfiles(), path.join(installdir, "lib", objectfile))
+            table.insert(target:objectfiles(), 1, path.join(installdir, "lib", objectfile))
+            if thunks:version():ge("1.1") then
+                if target:is_shared() then
+                    target:add("shflags", "/entry:DllMainCRTStartupForYY_Thunks", {tools = "link", force = true})
+                end
+            end
         end
     end)
 
@@ -14,21 +24,21 @@ rule("vista")
         local thunks = target:pkg("yy-thunks")
         if thunks then
             local installdir = thunks:installdir()
-            table.insert(target:objectfiles(), path.join(installdir, "lib", objectfile))
+            table.insert(target:objectfiles(), 1, path.join(installdir, "lib", objectfile))
         end
     end)
 
 rule("2k")
     on_config(function (target)
         if not target:is_arch("x86") then
-            raise("Win2K only supports x86 architecture")
+            wprint("Win2K only supports x86 architecture")
         end
 
         local objectfile = "YY_Thunks_for_Win2K.obj"
         local thunks = target:pkg("yy-thunks")
         if thunks then
             local installdir = thunks:installdir()
-            table.insert(target:objectfiles(), path.join(installdir, "lib", objectfile))
+            table.insert(target:objectfiles(), 1, path.join(installdir, "lib", objectfile))
         end
     end)
 

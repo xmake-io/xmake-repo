@@ -1,10 +1,11 @@
 package("http_parser")
-
     set_homepage("https://github.com/nodejs/http-parser")
     set_description("Parser for HTTP messages written in C.")
+    set_license("MIT")
 
-    add_urls("https://github.com/nodejs/http-parser/archive/$(version).tar.gz",
+    add_urls("https://github.com/nodejs/http-parser/archive/refs/tags/$(version).tar.gz",
              "https://github.com/nodejs/http-parser.git")
+
     add_versions("v2.9.4", "467b9e30fd0979ee301065e70f637d525c28193449e1b13fbcb1b1fab3ad224f")
 
     on_install(function (package)
@@ -34,11 +35,7 @@ package("http_parser")
                 add_files("http_parser.c")
                 add_headerfiles("http_parser.h")
         ]])
-        local configs = {}
-        if package:config("shared") then
-            configs.kind = "shared"
-        end
-        import("package.tools.xmake").install(package, configs)
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)

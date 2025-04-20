@@ -3,8 +3,9 @@ package("libxdamage")
     set_homepage("https://www.x.org/")
     set_description("X.Org: X Damage Extension library")
 
-    set_urls("https://www.x.org/archive/individual/lib/libXdamage-$(version).tar.bz2")
-    add_versions("1.1.5", "b734068643cac3b5f3d2c8279dd366b5bf28c7219d9e9d8717e1383995e0ea45")
+    set_urls("https://www.x.org/archive/individual/lib/libXdamage-$(version).tar.gz")
+    add_versions("1.1.5", "630ec53abb8c2d6dac5cd9f06c1f73ffb4a3167f8118fdebd77afd639dbc2019")
+    add_versions("1.1.6", "2afcc139eb6eb926ffe344494b1fc023da25def42874496e6e6d3aa8acef8595")
 
     if is_plat("linux") then
         add_extsources("apt::libxdamage-dev")

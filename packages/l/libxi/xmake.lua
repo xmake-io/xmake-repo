@@ -7,6 +7,7 @@ package("libxi")
     add_versions("1.7.10", "b51e106c445a49409f3da877aa2f9129839001b24697d75a54e5c60507e9a5e3")
     add_versions("1.8",    "c80fd200a1190e4406bb4cc6958839d9651638cb47fa546a595d4bebcd3b9e2d")
     add_versions("1.8.1",  "3b5f47c223e4b63d7f7fe758886b8bf665b20a7edb6962c423892fd150e326ea")
+    add_versions("1.8.2",  "5542daec66febfeb6f51d57abfa915826efe2e3af57534f4105b82240ea3188d")
 
     if is_plat("linux") then
         add_extsources("apt::libxi-dev")

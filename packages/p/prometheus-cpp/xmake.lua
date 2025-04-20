@@ -5,6 +5,7 @@ package("prometheus-cpp")
 
     add_urls("https://github.com/jupp0r/prometheus-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jupp0r/prometheus-cpp.git")
+    add_versions("v1.3.0", "ac6e958405a29fbbea9db70b00fa3c420e16ad32e1baf941ab233ba031dd72ee")
     add_versions("v1.2.4", "48dbad454d314b836cc667ec4def93ec4a6e4255fc8387c20cacb3b8b6faee30")
     add_versions("v1.2.1", "190734c4d8d0644c2af327ff8b5ef86cd7ea9074a48d777112394f558dd014f7")
     add_versions("v1.0.0", "07018db604ea3e61f5078583e87c80932ea10c300d979061490ee1b7dc8e3a41")

@@ -8,17 +8,22 @@ package("superlu")
              "https://github.com/xiaoyeli/superlu.git")
     add_versions("v5.2.2", "470334a72ba637578e34057f46948495e601a5988a602604f5576367e606a28c")
     add_versions("v5.3.0", "3e464afa77335de200aeb739074a11e96d9bef6d0b519950cfa6684c4be1f350")
+    add_versions("v7.0.0", "d7b91d4e0bb52644ca74c1a4dd466a694ddf1244a7bbf93cb453e8ca1f6527eb")
 
-    add_configs("blas", {description = "Choose BLAS library to use.", default = "mkl", type = "string", values = {"mkl", "openblas"}})
+    add_configs("blas", {description = "Choose BLAS library to use.", default = "openblas", type = "string", values = {"mkl", "openblas"}})
 
-    on_load("windows", "linux", "macosx", function (package)
+    on_load("windows|!arm64", "linux", "macosx", function (package)
         package:add("deps", package:config("blas"))
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows|!arm64", "linux", "macosx", function (package)
         os.cd("SRC")
+        if package:version():ge("7.0.0") then
+            io.replace("superlu_config.h", "#define HAVE_METIS TRUE", "", {plain = true})
+        end
         io.writefile("xmake.lua", format([[
             add_rules("mode.debug", "mode.release")
+            add_rules("utils.install.cmake_importfiles")
             add_requires("%s")
             target("superlu")
                 set_kind("$(kind)")
@@ -31,8 +36,7 @@ package("superlu")
                 add_headerfiles("*.h")
                 add_packages("%s")
         ]], package:config("blas"), package:config("blas")))
-        local configs = {kind = package:config("shared") and "shared" or "static"}
-        import("package.tools.xmake").install(package, configs)
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)

@@ -4,7 +4,7 @@ package("tclsh")
     set_description("The Tcl Core. (Mirror of core.tcl-lang.org) ")
 
     add_urls("https://github.com/tcltk/tcl.git")
-    add_versions("2023.03.14", "69fe4c9e803e72ef654111cbbf3ce184e63989d4")
+    add_versions("2024.06.07", "6accaa2544857f45554541a83fb4ef4cefa263d0")
 
     on_install("linux", "macosx", function (package)
         local configs = {}

@@ -5,6 +5,7 @@ package("libxrender")
 
     set_urls("https://www.x.org/archive/individual/lib/libXrender-$(version).tar.gz")
     add_versions("0.9.11", "6aec3ca02e4273a8cbabf811ff22106f641438eb194a12c0ae93c7e08474b667")
+    add_versions("0.9.12", "0fff64125819c02d1102b6236f3d7d861a07b5216d8eea336c3811d31494ecf7")
 
     if is_plat("linux") then
         add_extsources("apt::libxrender-dev")

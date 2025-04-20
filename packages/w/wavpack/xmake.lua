@@ -6,6 +6,7 @@ package("wavpack")
     add_urls("https://github.com/dbry/WavPack//archive/refs/tags/$(version).tar.gz",
              "https://github.com/dbry/WavPack.git")
 
+    add_versions("5.8.1", "1228dda992cf70ddda278d0a7ead410cfa8ea7f29ba23da7c6fdcbefb74ca363")
     add_versions("5.7.0", "c5742ba1054d36ff3d22f0101a9be066f55f6becb9b2a7352c79fa362f2d3d76")
     add_versions("5.6.0",  "44043e8ffe415548d5723e9f4fc6bda5e1f429189491c5fb3df08b8dcf28df72")
     add_versions("5.5.0",  "b3d11ba35d12c7d2ed143036478b6f9f4bdac993d84b5ed92615bc6b60697b8a")
@@ -36,7 +37,11 @@ package("wavpack")
             end
         end
 
-        local configs = {"-DWAVPACK_INSTALL_CMAKE_MODULE=OFF", "-DWAVPACK_INSTALL_DOCS=OFF", "-DWAVPACK_INSTALL_PKGCONFIG_MODULE=OFF"}
+        local configs = {
+            "-DWAVPACK_BUILD_PROGRAMS=OFF",
+            "-DWAVPACK_INSTALL_CMAKE_MODULE=OFF",
+            "-DWAVPACK_INSTALL_DOCS=OFF",
+            "-DWAVPACK_INSTALL_PKGCONFIG_MODULE=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
@@ -47,6 +52,13 @@ package("wavpack")
         end
 
         import("package.tools.cmake").install(package, configs)
+
+        if package:is_plat("windows") then
+            os.trycp(path.join(package:installdir("lib"), "libwavpack.a"),
+                path.join(package:installdir("lib"), "libwavpack.lib"))
+            os.trycp(path.join(package:installdir("lib"), "libwavpack.dll.a"),
+                path.join(package:installdir("lib"), "libwavpack.lib"))
+        end
     end)
 
     on_test(function (package)

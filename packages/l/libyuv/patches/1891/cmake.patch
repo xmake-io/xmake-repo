@@ -1,0 +1,79 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 3f521e3..4d742f3 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -73,7 +73,6 @@ if(MSVC)
+ endif()
+ 
+ # Need to set PIC to allow creating shared libraries from object file libraries.
+-SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
+ 
+ # Build the set of objects that do not need to be compiled with flags to enable
+ # particular architecture features.
+@@ -120,19 +119,15 @@ if(NOT MSVC)
+ endif()
+ 
+ # this creates the static library (.a)
+-ADD_LIBRARY( ${ly_lib_static} STATIC ${ly_lib_parts})
+-
+-# this creates the shared library (.so)
+-ADD_LIBRARY( ${ly_lib_shared} SHARED ${ly_lib_parts})
+-SET_TARGET_PROPERTIES( ${ly_lib_shared} PROPERTIES OUTPUT_NAME "${ly_lib_name}" )
+-SET_TARGET_PROPERTIES( ${ly_lib_shared} PROPERTIES PREFIX "lib" )
+-if(WIN32)
+-  SET_TARGET_PROPERTIES( ${ly_lib_shared} PROPERTIES IMPORT_PREFIX "lib" )
++ADD_LIBRARY( ${ly_lib_static}  ${ly_lib_parts})
++if (BUILD_SHARED_LIBS)
++  add_definitions("-DLIBYUV_BUILDING_SHARED_LIBRARY")
+ endif()
++# this creates the shared library (.so)
+ 
++option(BUILD_TOOLS "Build tools" OFF)
++if (BUILD_TOOLS)
+ # this creates the cpuid tool
+-ADD_EXECUTABLE      ( cpuid ${ly_base_dir}/util/cpuid.c )
+-TARGET_LINK_LIBRARIES  ( cpuid ${ly_lib_static} )
+ 
+ # this creates the conversion tool
+ ADD_EXECUTABLE			( yuvconvert ${ly_base_dir}/util/yuvconvert.cc )
+@@ -141,12 +136,22 @@ TARGET_LINK_LIBRARIES	( yuvconvert ${ly_lib_static} )
+ # this creates the yuvconstants tool
+ ADD_EXECUTABLE      ( yuvconstants ${ly_base_dir}/util/yuvconstants.c )
+ TARGET_LINK_LIBRARIES  ( yuvconstants ${ly_lib_static} )
++include(CheckFunctionExists)
++check_function_exists(round HAVE_MATH_SYSTEM)
++if(NOT HAVE_MATH_SYSTEM)
++  target_link_libraries(yuvconstants m)
++endif()
++INSTALL(TARGETS yuvconvert yuvconstants DESTINATION bin)
++endif()
+ 
+-find_package ( JPEG )
+-if (JPEG_FOUND)
+-  include_directories( ${JPEG_INCLUDE_DIR} )
+-  target_link_libraries( ${ly_lib_shared} ${JPEG_LIBRARY} )
+-  add_definitions( -DHAVE_JPEG )
++option(LIBYUV_WITH_JPEG "Build libyuv with jpeg" OFF)
++if (LIBYUV_WITH_JPEG)
++  find_package(JPEG REQUIRED)
++  target_link_libraries(${ly_lib_static} JPEG::JPEG )
++  target_compile_definitions(${ly_lib_static} PRIVATE HAVE_JPEG)
++  if (BUILD_TOOLS)
++    target_compile_definitions(yuvconvert PRIVATE HAVE_JPEG)
++  endif()
+ endif()
+ 
+ if(UNIT_TEST)
+@@ -192,11 +197,8 @@ endif()
+ 
+ 
+ # install the conversion tool, .so, .a, and all the header files
+-INSTALL ( PROGRAMS ${CMAKE_BINARY_DIR}/yuvconvert			DESTINATION bin )
+-INSTALL ( TARGETS ${ly_lib_static}						DESTINATION lib )
+-INSTALL ( TARGETS ${ly_lib_shared} LIBRARY				DESTINATION lib RUNTIME DESTINATION bin )
++INSTALL ( TARGETS ${ly_lib_static} RUNTIME DESTINATION bin ARCHIVE DESTINATION lib LIBRARY DESTINATION lib)
+ INSTALL ( DIRECTORY ${PROJECT_SOURCE_DIR}/include/		DESTINATION include )
+ 
+ # create the .deb and .rpm packages using cpack
+-INCLUDE ( CM_linux_packages.cmake )
+ 

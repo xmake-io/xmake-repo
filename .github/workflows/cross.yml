@@ -1,0 +1,33 @@
+name: Cross
+
+on:
+  pull_request:
+    branches:
+      - dev
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        cross: [arm-none-linux-gnueabihf, aarch64-none-linux-gnu]
+
+    runs-on: ${{ matrix.os }}
+
+    concurrency:
+      group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-Cross-${{ matrix.cross }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v1
+      - uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: branch@master
+
+      - name: Installation
+        run: |
+          wget https://developer.arm.com/-/media/Files/downloads/gnu/13.3.rel1/binrel/arm-gnu-toolchain-13.3.rel1-x86_64-${{ matrix.cross }}.tar.xz
+          tar -xvf arm-gnu-toolchain-13.3.rel1-x86_64-${{ matrix.cross }}.tar.xz
+
+      - name: Tests
+        run: |
+          xmake l ./scripts/test.lua -D -p cross --sdk=`pwd`/arm-gnu-toolchain-13.3.rel1-x86_64-${{ matrix.cross }}

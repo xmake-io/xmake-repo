@@ -6,6 +6,7 @@ package("boost_di")
     add_urls("https://github.com/boost-ext/di/archive/refs/tags/$(version).tar.gz",
              "https://github.com/boost-ext/di.git")
 
+    add_versions("v1.3.2", "2bcd01f1d555bdb59a277b932f9021701c5cd26d1d7411f024394db69c5c11cf")
     add_versions("v1.3.0", "853e02ade9bf39f2863b470350c3ef55caffc3090d7d9a503724ff480c8d7eff")
 
     on_install(function (package)

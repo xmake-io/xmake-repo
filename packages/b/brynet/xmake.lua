@@ -1,24 +1,31 @@
 package("brynet")
-
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/IronsDu/brynet")
-    set_description("Header Only Cross platform high performance TCP network library using C++ 11")
+    set_description("A Header-Only cross-platform C++ TCP network library")
+    set_license("MIT")
 
-    set_urls("https://github.com/IronsDu/brynet/archive/v$(version).zip")
-    add_urls("https://github.com/IronsDu/brynet.git")
-    add_versions("1.0.9", "a264a6aaf3ec9fd5aa4029a8857be813be203ee7b93997b0c1c5c5e2c5f89a2a")
+    add_urls("https://github.com/IronsDu/brynet/archive/337c9f375800b46da77116687a61c00ce534b60f.tar.gz",
+             "https://github.com/IronsDu/brynet")
 
-    if is_plat("windows") then
-        add_syslinks("ws2_32")
-    end
+    add_versions("2024.06.03", "d35271b8f635959c6507c3bba24ff1ee121c6f27db177564012e54654e813ab8")
 
-    on_install("windows", "linux", "android", "cross", function (package)
+    add_configs("openssl", {description = "Enable openssl", default = false, type = "boolean"})
+
+    on_load(function (package)
+        if package:config("openssl") then
+            package:add("deps", "openssl")
+            package:add("defines", "BRYNET_USE_OPENSSL")
+        end
+    end)
+
+    on_install("!wasm", function (package)
         os.cp("include", package:installdir())
     end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            void test(int argc, char** argv) {
-                auto service = brynet::net::TcpService::Create();
+            void test() {
+                auto service = brynet::net::IOThreadTcpService::Create();
             }
         ]]}, {configs = {languages = "c++17"}, includes = "brynet/net/TcpService.hpp"}))
     end)

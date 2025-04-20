@@ -7,6 +7,7 @@ package("libsodium")
              "https://github.com/jedisct1/libsodium/releases/download/$(version)-RELEASE/libsodium-$(version).tar.gz",
              "https://github.com/jedisct1/libsodium.git")
 
+    add_versions("1.0.20", "ebb65ef6ca439333c2bb41a0c1990587288da07f6c7fd07cb3a18cc18d30ce19")
     add_versions("1.0.19", "018d79fe0a045cca07331d37bd0cb57b2e838c51bc48fd837a1472e50068bbea")
     add_versions("1.0.18", "6f504490b342a4f8a4c4a02fc9b866cbef8622d5df4e5452b46be121e46636c1")
 
@@ -20,7 +21,18 @@ package("libsodium")
         end
 
         if package:is_plat("linux", "macosx") then
-            import("package.tools.autoconf").install(package)
+            local configs = {}
+            if package:debug() then
+                table.insert(configs, "--enable-debug")
+            end
+            if package:config("shared") then
+                table.insert(configs, "--enable-static=no")
+                table.insert(configs, "--enable-shared=yes")
+            else
+                table.insert(configs, "--enable-static=yes")
+                table.insert(configs, "--enable-shared=no")
+            end
+            import("package.tools.autoconf").install(package, configs)
         else
             os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
             import("package.tools.xmake").install(package)

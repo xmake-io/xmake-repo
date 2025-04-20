@@ -6,6 +6,8 @@ package("scnlib")
     add_urls("https://github.com/eliaskosunen/scnlib/archive/refs/tags/$(version).tar.gz",
              "https://github.com/eliaskosunen/scnlib.git")
 
+    add_versions("v4.0.1", "ece17b26840894cc57a7127138fe4540929adcb297524dec02c490c233ff46a7")
+    add_versions("v3.0.1", "bc8a668873601d00cce6841c2d0f2c93f836f63f0fbc77997834dea12e951eb1")
     add_versions("v2.0.3", "507ed0e988f1d9460a9c921fc21f5a5244185a4015942f235522fbe5c21e6a51")
     add_versions("v2.0.2", "a485076b8710576cf05fbc086d39499d16804575c0660b0dfaeeaf7823660a17")
     add_versions("v1.1.2", "5ed3ec742302c7304bf188bde9c4012a65dc8124ff4e1a69b598480d664250e6")
@@ -16,7 +18,7 @@ package("scnlib")
     add_configs("rtti", {description = "Enable rtti", default = true, type = "boolean"})
     add_configs("regex", {description = "Regex backend to use", type = "string", values = {"std", "boost", "re2"}})
 
-    add_deps("fast_float")
+    add_deps("fast_float <7.0.0")
 
     on_check("windows", function (package)
         import("core.tool.toolchain")

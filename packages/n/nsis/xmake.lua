@@ -15,8 +15,34 @@ package("nsis")
 
     on_fetch(function (package, opt)
         if opt.system then
+            local function _check_makensis(program)
+                local tmpdir = os.tmpfile() .. ".dir"
+                io.writefile(path.join(tmpdir, "test.nsis"), [[
+                    !include "MUI2.nsh"
+                    !include "WordFunc.nsh"
+                    !include "WinMessages.nsh"
+                    !include "FileFunc.nsh"
+                    !include "UAC.nsh"
+
+                    Name "test"
+                    OutFile "test.exe"
+
+                    Function .onInit
+                    FunctionEnd
+
+                    Section "test" InstallExeutable
+                    SectionEnd
+
+                    Function un.onInit
+                    FunctionEnd
+
+                    Section "Uninstall"
+                    SectionEnd]])
+                os.runv(program, {"test.nsis"}, {curdir = tmpdir})
+                os.tryrm(tmpdir)
+            end
             -- we need return false to disable fallback fetch, it will stuck when call `nsis --version`
-            return package:find_tool("makensis", table.join({check = "/CMDHELP"}, opt)) or false
+            return package:find_tool("makensis", table.join({check = _check_makensis}, opt)) or false
         end
     end)
 

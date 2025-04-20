@@ -6,6 +6,7 @@ package("bzip3")
     add_urls("https://github.com/kspalaiologos/bzip3/archive/refs/tags/$(version).tar.gz",
              "https://github.com/kspalaiologos/bzip3.git")
 
+    add_versions("1.5.1", "1116c5984c87c2193f3981b53669c8cbb4ffd1b158de880be3c5ff27a35db400")
     add_versions("1.4.0", "d70334c19c7cce2cc6c823566b7d8968ff08a52043d518f55caebd2e407b2233")
 
     add_configs("native", {description = "Enable CPU-specific optimizations", default = false, type = "boolean"})
@@ -20,6 +21,10 @@ package("bzip3")
         local configs = {"-DBZIP3_BUILD_APPS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:config("shared") and package:is_plat("windows") then
+            table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
+        end
+
         table.insert(configs, "-DBZIP3_ENABLE_ARCH_NATIVE=" .. (package:config("native") and "ON" or "OFF"))
         table.insert(configs, "-DBZIP3_ENABLE_PTHREAD=" .. (package:is_plat("linux", "bsd") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)

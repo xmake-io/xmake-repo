@@ -7,6 +7,7 @@ package("gmsh")
     add_urls("http://gmsh.info/src/gmsh-$(version)-source.tgz")
     add_versions("4.8.4", "760dbdc072eaa3c82d066c5ba3b06eacdd3304eb2a97373fe4ada9509f0b6ace")
     add_versions("4.11.1", "c5fe1b7cbd403888a814929f2fd0f5d69e27600222a18c786db5b76e8005b365")
+    add_versions("4.13.1", "77972145f431726026d50596a6a44fb3c1c95c21255218d66955806b86edbe8d")
 
     add_configs("openmp", {description = "Enable OpenMP support.", default = not is_plat("windows"), type = "boolean"})
 
@@ -25,6 +26,8 @@ package("gmsh")
 
     on_install("windows", "macosx", "linux", function (package)
         io.replace("CMakeLists.txt", "add_definitions(-D_USE_MATH_DEFINES)", "add_definitions(-DWIN32)\nadd_definitions(-D_USE_MATH_DEFINES)", {plain = true})
+        io.replace("CMakeLists.txt", "if(LINUX_JOYSTICK_H)", "add_definitions(-DLINUX)\nif(LINUX_JOYSTICK_H)", {plain = true})
+        io.replace("contrib/metis/GKlib/GKlib.h", "#include <stddef.h>", "#ifdef LINUX\n#include <strings.h>\n#endif\n#include <stddef.h>", {plain = true})
         local configs = {"-DENABLE_TESTS=OFF", "-DENABLE_GMP=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DENABLE_BUILD_LIB=" .. (package:config("shared") and "OFF" or "ON"))
@@ -32,7 +35,7 @@ package("gmsh")
         table.insert(configs, "-DENABLE_BUILD_DYNAMIC=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_OPENMP=" .. (package:config("openmp") and "ON" or "OFF"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DENABLE_MSVC_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DENABLE_MSVC_STATIC_RUNTIME=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
         if package:is_plat("windows") and package:config("shared") then

@@ -1,6 +1,7 @@
 package("mman_win32")
     set_homepage("https://github.com/alitrack/mman-win32")
     set_description("mman library for Windows. mirror of https://code.google.com/p/mman-win32/")
+    set_license("MIT")
 
     add_urls("https://github.com/alitrack/mman-win32.git")
     add_versions("2019.10.11", "2d1c576e62b99e85d99407e1a88794c6e44c3310")

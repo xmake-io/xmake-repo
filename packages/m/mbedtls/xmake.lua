@@ -11,6 +11,7 @@ package("mbedtls")
     end})
     add_urls("https://github.com/Mbed-TLS/mbedtls.git")
 
+    add_versions("v3.6.1", "fc8bef0991b43629b7e5319de6f34f13359011105e08e3e16eed3a9fe6ffd3a3")
     add_versions("v3.6.0", "3ecf94fcfdaacafb757786a01b7538a61750ebd85c4b024f56ff8ba1490fcd38")
     add_versions("v3.5.1", "959a492721ba036afc21f04d1836d874f93ac124cf47cf62c9bcd3a753e49bdb")
     add_versions("v3.4.0", "9969088c86eb89f6f0a131e699c46ff57058288410f2087bd0d308f65e9fccb5")
@@ -27,9 +28,11 @@ package("mbedtls")
 
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32", "advapi32", "bcrypt")
+    elseif is_plat("linux", "bsd") then
+        add_syslinks("pthread")
     end
 
-    on_install("windows|x86", "windows|x64", "linux", "macosx", "bsd", "mingw", "android", "iphoneos", "cross", "wasm", function (package)
+    on_install(function (package)
         local configs = {"-DENABLE_TESTING=OFF", "-DENABLE_PROGRAMS=OFF", "-DMBEDTLS_FATAL_WARNINGS=OFF"}
         if package:config("shared") then
             table.insert(configs, "-DUSE_SHARED_MBEDTLS_LIBRARY=ON")
@@ -45,9 +48,15 @@ package("mbedtls")
             table.insert(configs, "-DUSE_SHARED_MBEDTLS_LIBRARY=OFF")
             table.insert(configs, "-DUSE_STATIC_MBEDTLS_LIBRARY=ON")
         end
+
         local cxflags
         if package:is_plat("mingw") and package:is_arch("i386") then
             cxflags = {"-maes", "-msse2", "-mpclmul"}
+        end
+        if package:is_plat("windows") then
+            os.mkdir(path.join(package:buildir(), "library/pdb"))
+            os.mkdir(path.join(package:buildir(), "3rdparty/p256-m/pdb"))
+            os.mkdir(path.join(package:buildir(), "3rdparty/everest/pdb"))
         end
         import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
     end)

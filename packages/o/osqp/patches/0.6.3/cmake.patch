@@ -1,0 +1,88 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index afd7bb94..a8ccb883 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -267,15 +267,18 @@ endif (R_LANG)
+ 
+ # Create Static Library
+ # ----------------------------------------------
+-
++include(GNUInstallDirs)
++include(FindPkgConfig)
++pkg_search_module(qdldl REQUIRED IMPORTED_TARGET qdldl)
+ # Add linear system solvers cumulative library
+ add_subdirectory(lin_sys)
+ 
++if(NOT BUILD_SHARED_LIBS)
+ # Static library
+ add_library (osqpstatic STATIC ${osqp_src} ${osqp_headers} ${linsys_solvers})
+ # Give same name to static library output
+ set_target_properties(osqpstatic PROPERTIES OUTPUT_NAME osqp)
+-
++target_link_libraries(osqpstatic PkgConfig::qdldl)
+ # Include directories for linear system solvers
+ target_include_directories(osqpstatic PRIVATE ${linsys_solvers_includes})
+ 
+@@ -294,7 +297,7 @@ install(TARGETS osqpstatic
+         ARCHIVE       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+         LIBRARY       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+         RUNTIME       DESTINATION "${CMAKE_INSTALL_BINDIR}")
+-
++endif()
+ 
+ # Install Headers
+ # ----------------------------------------------
+@@ -310,10 +313,11 @@ endif (MATLAB)
+ # If we are building Python/Matlab/R interface:
+ #   - do not build shared library
+ #   - do not build demo
+-if (NOT PYTHON AND NOT MATLAB AND NOT R_LANG AND NOT EMBEDDED)
++if (BUILD_SHARED_LIBS)
+     # Create osqp shared library
+     # NB: Add all the linear system solvers here
+     add_library (osqp SHARED ${osqp_src} ${osqp_headers} ${linsys_solvers})
++    target_link_libraries(osqp PkgConfig::qdldl)
+ 
+     # Include directories for linear system solvers
+     target_include_directories(osqp PRIVATE ${linsys_solvers_includes})
+@@ -331,10 +335,9 @@ if (NOT PYTHON AND NOT MATLAB AND NOT R_LANG AND NOT EMBEDDED)
+             RUNTIME       DESTINATION "${CMAKE_INSTALL_BINDIR}")
+ 
+     # Create demo executable (linked to static library)
+-    add_executable (osqp_demo ${PROJECT_SOURCE_DIR}/examples/osqp_demo.c)
+-    target_link_libraries (osqp_demo osqpstatic)
+ 
+-endif (NOT PYTHON AND NOT MATLAB AND NOT R_LANG AND NOT EMBEDDED)
++
++endif (BUILD_SHARED_LIBS)
+ 
+ # Create CMake packages for the build directory
+ # ----------------------------------------------
+diff --git a/lin_sys/direct/CMakeLists.txt b/lin_sys/direct/CMakeLists.txt
+index c36c375a..2942cc9f 100644
+--- a/lin_sys/direct/CMakeLists.txt
++++ b/lin_sys/direct/CMakeLists.txt
+@@ -6,7 +6,7 @@ add_subdirectory(qdldl)
+ 
+ # Need to add qdldlobject only here because it cannot be
+ # included in another object library such as linsys_qdldl
+-set(direct_linsys_solvers $<TARGET_OBJECTS:linsys_qdldl> $<TARGET_OBJECTS:qdldlobject>)
++set(direct_linsys_solvers $<TARGET_OBJECTS:linsys_qdldl> )
+ 
+ # NB. The second directory is added because we need to include the "qdldl_types.h" file in "qdldl_interface.h"
+ set(direct_linsys_solvers_includes
+diff --git a/lin_sys/direct/qdldl/CMakeLists.txt b/lin_sys/direct/qdldl/CMakeLists.txt
+index d78c4a38..b3429a12 100644
+--- a/lin_sys/direct/qdldl/CMakeLists.txt
++++ b/lin_sys/direct/qdldl/CMakeLists.txt
+@@ -1,5 +1,4 @@
+ # Add qdldl
+-add_subdirectory(qdldl_sources)
+ 
+ 
+ if(NOT DEFINED EMBEDDED)
+@@ -39,3 +38,4 @@ set(qdldl_interface_src
+ # Create object library for linear system solver interface
+ add_library(linsys_qdldl OBJECT ${qdldl_interface_src})
+ target_include_directories(linsys_qdldl PRIVATE ${qdldl_interface_includes} ${PROJECT_SOURCE_DIR}/include)
++target_link_libraries(linsys_qdldl PkgConfig::qdldl)

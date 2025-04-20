@@ -6,6 +6,7 @@ package("bitsery")
 
     add_urls("https://github.com/fraillt/bitsery/archive/refs/tags/$(version).tar.gz",
              "https://github.com/fraillt/bitsery.git")
+    add_versions("v5.2.4", "ff741a3fee5420b31af31c7a8cefbcc3aaaf6f7f8c3ac49aa020f99b21d96020")
     add_versions("v5.2.3", "896d82ab4ccea9899ff2098aa69ad6d25e524ee1d4c747ce3232d0afe3cd05a5")
 
     add_patches("5.2.3", path.join(os.scriptdir(), "patches", "5.2.3", "cstdint-include.patch"), "bb9ea1f68b219249395f3f3f9404d6e5c150144d793b6707f51facd1ff751f2c")

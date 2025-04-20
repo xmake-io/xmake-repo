@@ -6,6 +6,7 @@ package("zlog")
     add_urls("https://github.com/HardySimpson/zlog/archive/refs/tags/$(version).tar.gz",
              "https://github.com/HardySimpson/zlog.git")
 
+    add_versions("1.2.18", "3977dc8ea0069139816ec4025b320d9a7fc2035398775ea91429e83cb0d1ce4e")
     add_versions("1.2.17", "7fe412130abbb75a0779df89ae407db5d8f594435cc4ff6b068d924e13fd5c68")
 
     add_patches("1.2.17", "patches/1.2.17/cmake.patch", "0558364a4a4a2d54375fffb1ae33877562058d90865712bb7519c9219b0f79e7")

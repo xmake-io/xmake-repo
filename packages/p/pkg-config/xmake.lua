@@ -1,5 +1,4 @@
 package("pkg-config")
-
     set_kind("binary")
     set_homepage("https://freedesktop.org/wiki/Software/pkg-config/")
     set_description("A helper tool used when compiling applications and libraries.")
@@ -10,6 +9,13 @@ package("pkg-config")
         add_versions("0.29.2", "6fc69c01688c9458a57eb9a1664c9aba372ccda420a02bf4429fe610e7e7d591")
     end
 
+    if is_subhost("msys") then
+        add_deps("pacman::pkg-config")
+    end
+
+    on_install("@msys", function (package)
+    end)
+
     on_install("@macosx", "@linux", "@bsd", function (package)
         local pcpath = {"/usr/local/lib/pkgconfig", "/usr/lib/pkgconfig"}
         if package:is_plat("linux") and package:is_arch("x86_64") then
@@ -19,7 +25,22 @@ package("pkg-config")
         if is_host("macosx") then
             table.insert(pcpath, "/usr/local/Homebrew/Library/Homebrew/os/mac/pkgconfig/" .. macos.version():major() .. '.' .. macos.version():minor())
         end
-        import("package.tools.autoconf").install(package, {"--disable-debug", "--disable-host-tool", "--with-internal-glib", ["with-pc-path"] = table.concat(pcpath, ':')})
+
+        local configs = {
+            "--disable-werror",
+            "--disable-compile-warnings",
+            "--disable-debug",
+            "--disable-host-tool",
+            "--with-internal-glib", 
+            ["with-pc-path"] = table.concat(pcpath, ':'),
+        }
+        local opt = {
+            cflags = {
+                "-Wno-int-conversion", -- https://gitlab.freedesktop.org/pkg-config/pkg-config/-/issues/81
+                "-std=gnu99", -- gcc15 default c23
+            }
+        }
+        import("package.tools.autoconf").install(package, configs, opt)
     end)
 
     on_test(function (package)

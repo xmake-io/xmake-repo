@@ -6,30 +6,33 @@ package("aws-c-sdkutils")
     add_urls("https://github.com/awslabs/aws-c-sdkutils/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-sdkutils.git")
 
+    add_versions("v0.2.3", "5a0489d508341b84eea556e351717bc33524d3dfd6207ee3aba6068994ea6018")
+    add_versions("v0.2.2", "75defbfd4d896b8bdc0790bd25d854218acae61b9409d1956d33832924b82045")
+    add_versions("v0.2.1", "17bdec593f3ae8a837622ef81055db81cc2dd14b86d33b21df878a7ab918d0e4")
+    add_versions("v0.2.0", "5c73caa1c0ebde71b357d05a8f0ff6c1be09b32e0935b16d7385c9342f3e59c2")
+    add_versions("v0.1.19", "66bd7a8679703386aec1539407aaed0942a78032fe340ab44e810a3cf6d7e505")
     add_versions("v0.1.16", "4a818563d7c6636b5b245f5d22d4d7c804fa33fc4ea6976e9c296d272f4966d3")
     add_versions("v0.1.15", "15fa30b8b0a357128388f2f40ab0ba3df63742fd333cc2f89cb91a9169f03bdc")
     add_versions("v0.1.12", "c876c3ce2918f1181c24829f599c8f06e29733f0bd6556d4c4fb523390561316")
 
-    add_configs("asan", {description = "Enable Address Sanitize.", default = false, type = "boolean"})
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    add_deps("cmake", "aws-c-common")
+    add_deps("cmake")
+    add_deps("aws-c-common")
 
-    on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", "msys", "android", "iphoneos", "cross", "wasm", function (package)
-        local aws_cmakedir = package:dep("aws-c-common"):installdir("lib", "cmake")
-        local aws_c_common_configdir = package:dep("aws-c-common"):installdir("lib", "aws-c-common", "cmake")
-        if is_host("windows") then
-            aws_cmakedir = aws_cmakedir:gsub("\\", "/")
-            aws_c_common_configdir = aws_c_common_configdir:gsub("\\", "/")
+    on_install("!mingw or mingw|!i386", function (package)
+        if package:is_plat("windows") and package:config("shared") then
+            package:add("defines", "USE_WINDOWS_DLL_SEMANTICS", "AWS_SDKUTILS_USE_IMPORT_EXPORT")
         end
 
-        local configs =
-        {
+        local cmakedir = path.unix(package:dep("aws-c-common"):installdir("lib", "cmake"))
+
+        local configs = {
             "-DBUILD_TESTING=OFF",
-            "-DCMAKE_MODULE_PATH=" .. aws_cmakedir,
-            "-Daws-c-common_DIR=" .. aws_c_common_configdir
+            "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
+            "-DCMAKE_MODULE_PATH=" .. cmakedir,
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))

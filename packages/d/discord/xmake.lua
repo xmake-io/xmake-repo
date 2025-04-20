@@ -1,5 +1,4 @@
 package("discord")
-
     set_homepage("https://discord.com/developers/docs/game-sdk/")
     set_description("Whether you’re part of a school club, gaming group, worldwide art community, or just a handful of friends that want to spend time together, Discord makes it easy to talk every day and hang out more often.")
 
@@ -16,7 +15,7 @@ package("discord")
 
     add_links("discordcpp")
 
-    on_install("windows|x86", "windows|x64", "linux|x64", "macosx|x86_64", "macosx|arm64", function (package)
+    on_install("windows|x86", "windows|x64", "linux|x64", "linux|x86_64", "macosx|x86_64", "macosx|arm64", function (package) -- linux|x64 for retrocompatibility
         if package:config("cppapi") then
             os.cp("cpp/*.h", package:installdir("include"))
         end

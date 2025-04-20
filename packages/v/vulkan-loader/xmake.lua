@@ -11,6 +11,9 @@ package("vulkan-loader")
          return prefix .. version:gsub("%+", ".")
     end})
 
+    -- when adding a new sdk version, please ensure vulkan-headers, vulkan-hpp, vulkan-loader, vulkan-tools, vulkan-validationlayers, vulkan-utility-libraries, spirv-headers, spirv-reflect, spirv-tools, glslang and volk packages are updated simultaneously
+    add_versions("1.4.309+0", "ddfeca84a868899fbb2c7f28b7c8fd1006e34b2b13ce653a63bddfb65cbc8d13")
+    add_versions("1.3.290+0", "0cd31fdb9b576e432a85ad4d555fac4f4e5ede22ca37ff534ab67c71cd172644")
     add_versions("1.3.283+0", "59151a3cdbf8dcfe9c2ce4b5bf33358255a197f48d8d0ee8a1d8642ed9ace80f")
     add_versions("1.3.280+0", "f9317667a180257381dcbc74726083af581189f51e10e0246adaa86df075fe16")
     add_versions("1.3.275+0", "f49a2653cd592439c5b4b987ffa0b2577b7fa72b7d344d7a2a89f7d6cb2b342e")
@@ -38,11 +41,19 @@ package("vulkan-loader")
         add_extsources("brew::vulkan-loader")
     end
 
+    -- xmake doesn't pass environment variables to make (such as LD_LIBRARY_PATH) but passes them to Ninja
+    if is_plat("linux") then
+        set_policy("package.cmake_generator.ninja", true)
+    end
+
     on_load("windows", "linux", "macosx", function (package)
         local sdkver = package:version():split("%+")[1]
         package:add("deps", "vulkan-headers " .. sdkver)
         if not package.is_built or package:is_built() then
-            package:add("deps", "cmake")
+            package:add("deps", "cmake", "ninja")
+            if package:is_plat("linux") then
+                package:add("deps", "ninja")
+            end
         end
         if package:is_plat("macosx") then
             package:add("links", "vulkan")
@@ -61,14 +72,30 @@ package("vulkan-loader")
     end)
 
     on_install("windows|x86", "windows|x64", "linux", "macosx", function (package)
+        import("package.tools.cmake")
+        local envs = cmake.buildenvs(package)
+        local opt = {envs = envs}
+        if package:is_plat("linux") then
+            opt.packagedeps = {"wayland", "libxrandr", "libxrender", "libxcb", "libxkbcommon"}
+            local linkdirs = {}
+            for _, lib in ipairs({"wayland", "libxrandr", "libxcb", "libxkbcommon"}) do
+                local fetchinfo = package:dep(lib):fetch()
+                if fetchinfo then
+                    for _, dir in ipairs(fetchinfo.linkdirs) do
+                        table.insert(linkdirs, dir)
+                    end
+                end
+            end
+            envs.LD_LIBRARY_PATH = (envs.LD_LIBRARY_PATH or "") .. path.envsep() .. path.joinenv(table.unique(linkdirs))
+            if package:version():lt("1.3.211") then
+                -- see https://github.com/KhronosGroup/Vulkan-Loader/commit/a06909aaa67d31d9f0e854ede9ad23ac4cfd0f22
+                opt.cxflags = "-D_GNU_SOURCE"
+            end
+        end
         local configs = {"-DBUILD_TESTS=OFF"}
         local vulkan_headers = package:dep("vulkan-headers")
         table.insert(configs, "-DVULKAN_HEADERS_INSTALL_DIR=" .. vulkan_headers:installdir())
-        if package:is_plat("linux") then
-            import("package.tools.cmake").install(package, configs, {packagedeps = {"wayland", "libxrandr", "libxrender", "libxcb", "libxkbcommon"}})
-        else
-            import("package.tools.cmake").install(package, configs)
-        end
+        cmake.install(package, configs, opt)
     end)
 
     on_test(function (package)

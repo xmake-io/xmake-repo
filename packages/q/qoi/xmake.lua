@@ -8,6 +8,7 @@ package("qoi")
     add_urls("https://github.com/phoboslab/qoi.git")
     add_versions("2021.12.22", "44fe081388c60e7618f49486865b992e08ce4de4")
     add_versions("2022.11.17", "660839cb2c51d6b5f62221f8ef98662fd40e42d2")
+    add_versions("2024.03.18", "bf7b41c2ff3f24a2031193b62aa76d35e8842b5a")
 
     on_install(function (package)
         os.cp("qoi.h", package:installdir("include"))

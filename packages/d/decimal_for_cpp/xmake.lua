@@ -7,6 +7,7 @@ package("decimal_for_cpp")
 
     add_urls("https://github.com/vpiotr/decimal_for_cpp.git")
 
+    add_versions("1.20", "ad4f8f6cfe5096d7576d6ca782795c584abc1053")
     add_versions("1.19", "2bcf48af509690579cf2b521af46e7fb0157c8da")
 
     on_install(function (package)

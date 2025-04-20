@@ -1,7 +1,6 @@
 package("directxtk")
-
     set_homepage("https://github.com/microsoft/DirectXTK")
-    set_description("This package contains the \"DirectX Tool Kit\", a collection of helper classes for writing Direct3D 11 C++ code for Universal Windows Platform (UWP) apps for Windows 10, Xbox One, and Win32 desktop applications for Windows 7 Service Pack 1 or later.")
+    set_description("A collection of helper classes for writing Direct3D 11 C++ code For Windows.")
 
     set_urls("https://github.com/microsoft/DirectXTK/archive/$(version).zip",
              "https://github.com/microsoft/DirectXTK.git",
@@ -19,12 +18,27 @@ package("directxtk")
     add_versions("21.11.0", "d25e634b0e225ae572f82d0d27c97051b0069c6813d7be12453039a504dffeb8")
     add_versions("24.2.0", "edb643b2444ff24925339cfb1bc9f76c671d5404a5549d32ecaa0d61bbab28c9")
 
+    add_deps("cmake")
+
+    -- FIXME arm/MT met some link errors
+    if is_arch("arm.*") then
+        add_configs("runtimes", {description = "Set compiler runtimes.", default = "MD", readonly = true})
+    end
+
+    if on_check then
+        on_check("windows", function (package)
+            local vs_sdkver = package:toolchain("msvc"):config("vs_sdkver")
+            if vs_sdkver then
+                local build_ver = string.match(vs_sdkver, "%d+%.%d+%.(%d+)%.?%d*")
+                assert(tonumber(build_ver) >= 19041, "DirectXTK requires Windows SDK to be at least 10.0.19041.0")
+            end
+        end)
+    end
+
     on_install("windows", function (package)
         local configs = {}
-        local vs_sdkver = import("core.tool.toolchain").load("msvc"):config("vs_sdkver")
+        local vs_sdkver = package:toolchain("msvc"):config("vs_sdkver")
         if vs_sdkver then
-            local build_ver = string.match(vs_sdkver, "%d+%.%d+%.(%d+)%.?%d*")
-            assert(tonumber(build_ver) >= 19041, "DirectXTK requires Windows SDK to be at least 10.0.19041.0")
             table.insert(configs, "-DCMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION=" .. vs_sdkver)
             table.insert(configs, "-DCMAKE_SYSTEM_VERSION=" .. vs_sdkver)
         end
@@ -39,11 +53,9 @@ package("directxtk")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            void test()
-            {
+            void test() {
                 DirectX::SimpleMath::Vector3 eye(0.0f, 0.7f, 1.5f);
                 DirectX::SimpleMath::Vector3 at(0.0f, -0.1f, 0.0f);
-
                 auto lookAt = DirectX::SimpleMath::Matrix::CreateLookAt(eye, at, DirectX::SimpleMath::Vector3::UnitY);
             }
         ]]}, {configs = {languages = "c++11"}, includes = { "windows.h", "SimpleMath.h" } }))

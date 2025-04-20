@@ -1,5 +1,4 @@
 package("ormpp")
-
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/qicosmos/ormpp")
     set_description("modern C++ ORM, C++17, support mysql, postgresql,sqlite")
@@ -8,6 +7,7 @@ package("ormpp")
     set_urls("https://github.com/qicosmos/ormpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/qicosmos/ormpp.git")
 
+    add_versions("0.1.3", "671f2f19965d630d7147f94dd12f4212a9cce58c5455f892f321f2243acb8ea4")
     add_versions("v0.1.2", "990e88eb176d996cdbbbdfa3e1522b48d135d809f14094771f8d6f02e94573c4")
     add_versions("v0.1.1", "a3c93599950a4c5822ebd0750ac7964c59c9b3f84f638525f01578bac6d898c2")
 
@@ -15,7 +15,18 @@ package("ormpp")
     add_configs("postgresql", {description = "Using postgresql", default = false, type = "boolean"})
     add_configs("sqlite3", {description = "Using sqlite3", default = false, type = "boolean"})
 
-    on_load(function(package) 
+    on_load(function (package)
+        local iguana_vers = {
+            ["0.1.3"] = "1.0.5",
+            ["v0.1.2"] = "1.0.5",
+            ["v0.1.1"] = "1.0.5",
+        }
+        if package:gitref() then
+            package:add("deps", "iguana")
+        else
+            package:add("deps", "iguana " .. iguana_vers[package:version_str()])
+        end
+
         local configs = {
             mysql = "ORMPP_ENABLE_MYSQL",
             postgresql = "ORMPP_ENABLE_PG",
@@ -30,13 +41,11 @@ package("ormpp")
         end
     end)
 
-    add_deps("frozen", "iguana")
-
     on_install(function (package)
-        if package:version():ge("0.1.2") then
-            os.vcp("ormpp/*", package:installdir("include"))
-        else
+        if package:version() and package:version():lt("0.1.2") then
             os.vcp("include/*", package:installdir("include"))
+        else
+            os.vcp("ormpp/*", package:installdir("include"))
         end
     end)
 
@@ -46,14 +55,33 @@ package("ormpp")
             languages = "c++20"
         end
 
-        assert(package:check_cxxsnippets({test = [[
-            using namespace ormpp;
-            struct student {
-                std::string name;
-                int age;
-                int id;
-            };
-            REGISTER_AUTO_KEY(student, id)
-            REFLECTION_WITH_NAME(student, "t_student", id, name, age)        
-        ]]}, {configs = {languages = languages}, includes = {"dbng.hpp"} }))
+        local snippets
+        if package:gitref() or package:version():gt("0.1.3") then
+            snippets = [[
+                #include <algorithm>
+                #include <dbng.hpp>
+                using namespace ormpp;
+                struct person {
+                    std::string name;
+                    int age;
+                    int id;
+                };
+                REGISTER_AUTO_KEY(person, id)
+                YLT_REFL(person, id, name, age)
+            ]]
+        else
+            snippets = [[
+                #include <algorithm>
+                #include <dbng.hpp>
+                using namespace ormpp;
+                struct student {
+                    std::string name;
+                    int age;
+                    int id;
+                };
+                REGISTER_AUTO_KEY(student, id)
+                REFLECTION_WITH_NAME(student, "t_student", id, name, age)
+            ]]
+        end
+        assert(package:check_cxxsnippets({test = snippets}, {configs = {languages = languages}}))
     end)

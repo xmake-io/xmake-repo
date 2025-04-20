@@ -1,0 +1,22 @@
+diff --git a/modules/highgui/CMakeLists.txt b/modules/highgui/CMakeLists.txt
+index a9b6701..cf36137 100644
+--- a/modules/highgui/CMakeLists.txt
++++ b/modules/highgui/CMakeLists.txt
+@@ -75,7 +75,7 @@ if(OPENCV_VERSION_MAJOR EQUAL 2)
+     add_definitions(-DHIGHGUI_EXPORTS)
+   endif()
+ 
+-  if(MSVC)
++  if(MSVC AND NOT BUILD_SHARED_LIBS AND BUILD_WITH_STATIC_CRT)
+     set_target_properties(${the_module} PROPERTIES LINK_FLAGS "/NODEFAULTLIB:atlthunk.lib /NODEFAULTLIB:atlsd.lib /NODEFAULTLIB:libcmt.lib /DEBUG")
+   endif()
+ 
+@@ -86,7 +86,7 @@ else()
+     add_apple_compiler_options(the_module)
+   endif()
+ 
+-  if(MSVC)
++  if(MSVC AND NOT BUILD_SHARED_LIBS AND BUILD_WITH_STATIC_CRT)
+     set_target_properties(${the_module} PROPERTIES LINK_FLAGS "/NODEFAULTLIB:atlthunk.lib /NODEFAULTLIB:atlsd.lib /NODEFAULTLIB:libcmt.lib /DEBUG")
+   endif()
+ 

@@ -1,0 +1,12 @@
+diff --git a/munkres.hpp b/munkres.hpp
+index 694aff1..ac2ecca 100644
+--- a/munkres.hpp
++++ b/munkres.hpp
+@@ -12,6 +12,7 @@
+ #include <limits>
+ #include <vector>
+ #include <algorithm>
++#include <cstdint>
+ 
+ namespace detail
+ {

@@ -4,6 +4,8 @@ package("sfparse")
     set_license("MIT")
 
     set_urls("https://github.com/ngtcp2/sfparse.git", {submodules = false})
+
+    add_versions("2024.12.15", "930bdf8421f29cf0109f0f1baaafffa376973ed5")
     add_versions("2024.05.12", "c669673012f9d535ec3bcf679fe911c8c75a479f")
 
     add_includedirs("include", "include/sfparse")
@@ -23,5 +25,9 @@ package("sfparse")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("sf_parser_param", {includes = "sfparse.h"}))
+        if package:gitref() or package:version():ge("2024.12.15") then
+            assert(package:has_cfuncs("sfparse_parser_init", {includes = "sfparse.h"}))
+        else
+            assert(package:has_cfuncs("sf_parser_param", {includes = "sfparse.h"}))
+        end
     end)

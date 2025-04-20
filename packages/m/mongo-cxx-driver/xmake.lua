@@ -2,6 +2,7 @@ package("mongo-cxx-driver")
 
     set_homepage("https://github.com/mongodb/mongo-cxx-driver")
     set_description("mongodb c++ driver")
+    set_license("Apache-2.0")
 
     add_urls("https://github.com/mongodb/mongo-cxx-driver/archive/r$(version).zip")
     add_versions("3.6.6", "4413de483c5070b48dc5b5c8ee3e32c8e7a2b74b892fe2a55ef78fb758bc01e0")

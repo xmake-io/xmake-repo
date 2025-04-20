@@ -29,7 +29,7 @@ package("glfw")
         add_frameworks("Cocoa", "IOKit")
     elseif is_plat("windows") then
         add_syslinks("user32", "shell32", "gdi32")
-    elseif is_plat("mingw") then
+    elseif is_plat("mingw", "msys") then
         add_syslinks("gdi32")
     elseif is_plat("linux") then
         add_syslinks("dl", "pthread")
@@ -44,16 +44,16 @@ package("glfw")
             package:add("deps", "libx11", "libxrandr", "libxrender", "libxinerama", "libxfixes", "libxcursor", "libxi", "libxext")
         end
         if package:config("wayland") then
-            package:add("deps", "wayland")
+            package:add("deps", "wayland", "wayland-protocols")
         end
     end)
 
-    on_install("macosx", "windows", "linux", "mingw", function (package)
+    on_install("!wasm and !iphoneos", function (package)
         local configs = {"-DGLFW_BUILD_DOCS=OFF", "-DGLFW_BUILD_TESTS=OFF", "-DGLFW_BUILD_EXAMPLES=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DUSE_MSVC_RUNTIME_LIBRARY_DLL=" .. (package:config("vs_runtime"):startswith("MT") and "OFF" or "ON"))
+            table.insert(configs, "-DUSE_MSVC_RUNTIME_LIBRARY_DLL=" .. (package:has_runtime("MT") and "OFF" or "ON"))
         end
         table.insert(configs, "-DGLFW_BUILD_X11=" .. (package:config("x11") and "ON" or "OFF"))
         table.insert(configs, "-DGLFW_BUILD_WAYLAND=" .. (package:config("wayland") and "ON" or "OFF"))

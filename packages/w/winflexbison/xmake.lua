@@ -18,6 +18,9 @@ package("winflexbison")
         -- we always set it, because flex may be modified as library
         -- by add_deps("winflexbison", {kind = "library"})
         package:addenv("PATH", "bin")
+        if package:config("flex") and package:is_library() then
+            package:set("kind", "library", {headeronly = true})
+        end
     end)
 
     on_install("windows", function (package)
@@ -42,7 +45,7 @@ package("winflexbison")
         end
         if package:config("flex") then
             os.vrun("flex.exe -h")
-            if not package:is_binary() then
+            if package:is_library() then
                 assert(package:has_cxxincludes("FlexLexer.h"))
             end
         end

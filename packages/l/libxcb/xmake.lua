@@ -37,6 +37,7 @@ package("libxcb")
     add_versions("1.13.1", "f09a76971437780a602303170fd51b5f7474051722bc39d566a272d2c4bde1b5")
     add_versions("1.14", "2c7fcddd1da34d9b238c9caeda20d3bd7486456fc50b3cc6567185dbd5b0ad02")
     add_versions("1.16", "bc0f75f84b28e6496a19a1d094d7e47def861a50cb7cce5b23b62eecdc2a4479")
+    add_versions("1.17.0", "2c69287424c9e2128cb47ffe92171e10417041ec2963bceafb65cb3fcf8f0b85")
 
     for name, opt in pairs(components) do
         add_configs(name, {description = format("Enable %s submodule (default is %s).", name, opt.default_value), default = opt.default_value})
@@ -46,7 +47,7 @@ package("libxcb")
         add_extsources("apt::libxcb1-dev", "pacman::libxcb")
     end
 
-    if is_plat("macosx", "linux") then
+    if is_plat("macosx", "linux", "bsd", "cross") then
         add_deps("pkg-config", "python 3.x", {kind = "binary"})
         add_deps("xcb-proto", "libpthread-stubs", "libxau", "libxdmcp")
     end
@@ -59,7 +60,7 @@ package("libxcb")
         end
     end)
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx", "linux", "bsd", "cross", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
                          "--localstatedir=" .. package:installdir("var"),
                          "--disable-dependency-tracking",

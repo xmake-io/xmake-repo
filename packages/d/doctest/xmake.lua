@@ -3,6 +3,7 @@ package("doctest")
     set_kind("library", {headeronly = true})
     set_homepage("http://bit.ly/doctest-docs")
     set_description("The fastest feature-rich C++11/14/17/20 single-header testing framework for unit tests and TDD")
+    set_license("MIT")
 
     set_urls("https://github.com/doctest/doctest/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/doctest/doctest/archive/refs/tags/$(version).tar.gz",

@@ -1,20 +1,23 @@
 package("libhv")
-
     set_homepage("https://github.com/ithewei/libhv")
     set_description("Like libevent, libev, and libuv, libhv provides event-loop with non-blocking IO and timer, but simpler api and richer protocols.")
+    set_license("BSD-3-Clause")
 
-    add_urls("https://github.com/ithewei/libhv/archive/v$(version).zip", {excludes = {"*/html/*"}})
-    add_versions("1.0.0", "39adb77cc7addaba82b69fa9a433041c8288f3d9c773fa360162e3391dcf6a7b")
-    add_versions("1.1.0", "a753c268976d9c4f85dcc10be2377bebc36d4cb822ac30345cf13f2a7285dbe3")
-    add_versions("1.1.1", "e012d9752fe8fb3f788cb6360cd9abe61d4ccdc1d2085501d85f1068eba8603e")
-    add_versions("1.2.1", "d658a8e7f1a3b2f3b0ddcabe3b13595b70246c94d57f2c27bf9a9946431b2e63")
-    add_versions("1.2.2", "a15ec12cd77d1fb745a74465b8bdee5a45247e854371db9d0863573beca08466")
-    add_versions("1.2.3", "c30ace04597a0558ce957451d64acc7cd3260d991dc21628e048c8dec3028f34")
-    add_versions("1.2.4", "389fa60f0d6697b5267ddc69de00e4844f1d8ac8ee4d2ad3742850589c20d46e")
-    add_versions("1.2.6", "dd5ed854f5cdc0bdd3a3310a9f0452ec194e2907006551aebbb603825a989ed1")
-    add_versions("1.3.0", "e7a129dcabb541baeb8599e419380df6aa98afc6e04874ac88a6d2bdb5a973a5")
-    add_versions("1.3.1", "66fb17738bc51bee424b6ddb1e3b648091fafa80c8da6d75626d12b4188e0bdc")
-    add_versions("1.3.2", "61d6d5fadf13d81c111df4514e0e61062fead21c2a8b6c4caf7706f9b002fae1")
+    add_urls("https://github.com/ithewei/libhv.git")
+    add_urls("https://github.com/ithewei/libhv/archive/archive/refs/$(version).zip", {excludes = {"*/html/*"}})
+
+    add_versions("v1.0.0", "39adb77cc7addaba82b69fa9a433041c8288f3d9c773fa360162e3391dcf6a7b")
+    add_versions("v1.1.0", "a753c268976d9c4f85dcc10be2377bebc36d4cb822ac30345cf13f2a7285dbe3")
+    add_versions("v1.1.1", "e012d9752fe8fb3f788cb6360cd9abe61d4ccdc1d2085501d85f1068eba8603e")
+    add_versions("v1.2.1", "d658a8e7f1a3b2f3b0ddcabe3b13595b70246c94d57f2c27bf9a9946431b2e63")
+    add_versions("v1.2.2", "a15ec12cd77d1fb745a74465b8bdee5a45247e854371db9d0863573beca08466")
+    add_versions("v1.2.3", "c30ace04597a0558ce957451d64acc7cd3260d991dc21628e048c8dec3028f34")
+    add_versions("v1.2.4", "389fa60f0d6697b5267ddc69de00e4844f1d8ac8ee4d2ad3742850589c20d46e")
+    add_versions("v1.2.6", "dd5ed854f5cdc0bdd3a3310a9f0452ec194e2907006551aebbb603825a989ed1")
+    add_versions("v1.3.0", "e7a129dcabb541baeb8599e419380df6aa98afc6e04874ac88a6d2bdb5a973a5")
+    add_versions("v1.3.1", "66fb17738bc51bee424b6ddb1e3b648091fafa80c8da6d75626d12b4188e0bdc")
+    add_versions("v1.3.2", "61d6d5fadf13d81c111df4514e0e61062fead21c2a8b6c4caf7706f9b002fae1")
+    add_versions("v1.3.3", "f78d1012ddf82506c28dda573ce303912e6cd5e707a358a249db1cc7e1e82238")
 
     add_configs("protocol",    {description = "compile protocol", default = false, type = "boolean"})
     add_configs("http",        {description = "compile http", default = true, type = "boolean"})
@@ -29,7 +32,7 @@ package("libhv")
     add_configs("nghttp2",     {description = "with nghttp2 library", default = false, type = "boolean"})
     add_configs("openssl",     {description = "with openssl library", default = false, type = "boolean"})
     add_configs("mbedtls",     {description = "with mbedtls library", default = false, type = "boolean"})
-    add_configs("GNUTLS",      {description="with gnutls library",default=false,type="boolean"})
+    add_configs("gnutls",      {description = "with gnutls library", default = false, type = "boolean"})
 
     if is_plat("linux") then
         add_syslinks("pthread")
@@ -52,17 +55,20 @@ package("libhv")
         elseif package:config("curl") then
             package:add("deps", "libcurl")
         elseif package:config("nghttp2") then
-            -- TODO
+            package:add("deps", "nghttp2")
         end
+
         if not package:config("shared") then
             package:add("defines", "HV_STATICLIB")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "android", "iphoneos", "mingw", function(package)
+    on_install("windows", "linux", "macosx", "android", "iphoneos", "mingw@windows", function(package)
         local configs = {"-DBUILD_EXAMPLES=OFF", "-DBUILD_UNITTEST=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
+
         for _, name in ipairs({"with_protocol",
                                "with_http",
                                "with_http_server",
@@ -76,7 +82,7 @@ package("libhv")
                                "enable_uds",
                                "enable_windump",
                                "use_multimap",
-                               "WITH_GNUTLS"}) do
+                               "with_gnutls"}) do
             local config_name = name:gsub("with_", ""):gsub("use_", ""):gsub("enable_", "")
             table.insert(configs, "-D" .. name:upper() .. "=" .. (package:config(config_name) and "ON" or "OFF"))
         end
@@ -106,4 +112,3 @@ package("libhv")
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
-

@@ -5,6 +5,7 @@ package("apr")
 
     add_urls("https://github.com/apache/apr/archive/refs/tags/$(version).tar.gz",
              "https://github.com/apache/apr.git")
+    add_versions("1.7.5", "6d0712c529503cd2457011d03164491bbc16d0050bc40ef89568b1ac491c6600")
     add_versions("1.7.4", "060b6e5ca8b3251545a93777c9ef744ceff02d4a59bb60a7dd9b3da9da33673e")
     add_versions("1.7.0", "a7e2c5e6d60f6c7b1611b31a2f914a3e58f44eded5b064f0bae43ff30b16a4e6")
 

@@ -1,5 +1,4 @@
 package("glm")
-
     set_homepage("https://glm.g-truc.net/")
     set_description("OpenGL Mathematics (GLM)")
     set_license("MIT")
@@ -7,7 +6,8 @@ package("glm")
     add_urls("https://github.com/g-truc/glm/archive/refs/tags/$(version).tar.gz", 
              {version = function(version) return version:gsub("%+", ".") end})
     add_urls("https://github.com/g-truc/glm.git")
-    add_versions("1.0.1", "55a195bacf76cc48226292ada71b26abc980cde53180120a7b2a4ea8718e1507")
+
+    add_versions("1.0.1", "9f3174561fd26904b23f0db5e560971cbf9b3cbda0b280f04d5c379d03bf234c")
     add_versions("1.0.0", "e51f6c89ff33b7cfb19daafb215f293d106cd900f8d681b9b1295312ccadbd23")
     add_versions("0.9.9+8", "7d508ab72cb5d43227a3711420f06ff99b0a0cb63ee2f93631b162bfe1fe9592")
 
@@ -19,8 +19,9 @@ package("glm")
         if package:config("modules") then
             package:config_set("header_only", false)
             package:config_set("cxx_standard", "20")
-        end
-        if not package:config("header_only") and not package:config("modules") then
+        elseif package:config("header_only") then
+            package:set("kind", "library", {headeronly = true})
+        else
             package:add("deps", "cmake")
         end
     end)

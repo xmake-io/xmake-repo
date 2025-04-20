@@ -2,6 +2,7 @@ package("mpmcqueue")
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/rigtorp/MPMCQueue")
     set_description("A bounded multi-producer multi-consumer concurrent queue written in C++11")
+    set_license("MIT")
 
     add_urls("https://github.com/rigtorp/MPMCQueue/archive/refs/tags/$(version).tar.gz",
              "https://github.com/rigtorp/MPMCQueue.git")

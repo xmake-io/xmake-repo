@@ -3,9 +3,10 @@ package("fast_obj")
     set_description("Fast C OBJ parser")
     set_license("MIT")
 
-    add_urls("https://github.com/thisistherk/fast_obj.git")
+    add_urls("https://github.com/thisistherk/fast_obj/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/thisistherk/fast_obj.git")
 
-    add_versions("2023.08.08", "2bb0b1f6509a4f63f04df5019b805f14e199a681")
+    add_versions("v1.3", "f0f175edbe60db2099b3d8266ff0085b21862a17d9a1dc00fd195258c5b622b1")
 
     add_configs("header_only", {description = "Use header only version.", default = true, type = "boolean"})
 

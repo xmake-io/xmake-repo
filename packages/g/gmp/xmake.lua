@@ -26,7 +26,10 @@ package("gmp")
 
     add_deps("m4")
 
-    on_install("macosx", "linux", function (package)
+    on_install("@!windows and !wasm", function (package)
+        if is_host("windows") then
+            io.replace("configure", "LIBTOOL='$(SHELL) $(top_builddir)/libtool'", "LIBTOOL='\"$(SHELL)\" $(top_builddir)/libtool'", {plain = true})
+        end
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))

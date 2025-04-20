@@ -5,6 +5,7 @@ package("zimg")
 
     add_urls("https://github.com/sekrit-twc/zimg/archive/refs/tags/release-$(version).tar.gz")
     add_versions("3.0.3", "5e002992bfe8b9d2867fdc9266dc84faca46f0bfd931acc2ae0124972b6170a7")
+    add_versions("3.0.5", "a9a0226bf85e0d83c41a8ebe4e3e690e1348682f6a2a7838f1b8cbff1b799bcf")
 
     add_deps("autoconf", "automake", "libtool")
 

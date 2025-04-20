@@ -1,14 +1,26 @@
 package("rocksdb")
     set_homepage("http://rocksdb.org")
     set_description("A library that provides an embeddable, persistent key-value store for fast storage.")
+    set_license("Apache-2.0")
 
     add_urls("https://github.com/facebook/rocksdb/archive/refs/tags/$(version).tar.gz",
              "https://github.com/facebook/rocksdb.git")
+
+    add_versions("v10.0.1", "3fdc9ca996971c4c039959866382c4a3a6c8ade4abf888f3b2ff77153e07bf28")
+    add_versions("v9.11.2", "0466a3c220464410687c45930f3fa944052229c894274fddb7d821397f2b8fba")
+    add_versions("v9.10.0", "fdccab16133c9d927a183c2648bcea8d956fb41eb1df2aacaa73eb0b95e43724")
+    add_versions("v9.9.3", "126c8409e98a3acea57446fb17faf22767f8ac763a4516288dd7c05422e33df2")
+    add_versions("v9.7.4", "9b810c81731835fda0d4bbdb51d3199d901fa4395733ab63752d297da84c5a47")
+    add_versions("v9.7.3", "acfabb989cbfb5b5c4d23214819b059638193ec33dad2d88373c46448d16d38b")
+    add_versions("v9.7.2", "13e9c41d290199ee0185590d4fa9d327422aaf75765b3193945303c3c314e07d")
+    add_versions("v9.6.1", "98cf497c1d6d0a927142d2002a0b6b4816a0998c74fda9ae7b1bdaf6b784e895")
+    add_versions("v9.5.2", "b20780586d3df4a3c5bcbde341a2c1946b03d18237960bda5bc5e9538f42af40")
+    add_versions("v9.4.0", "1f829976aa24b8ba432e156f52c9e0f0bd89c46dc0cc5a9a628ea70571c1551c")
+    add_versions("v9.3.1", "e63f1be162998c0f49a538a7fe3fcac0e40cad77ee47d5592a65bca50f7c4620")
+    add_versions("v9.2.1", "bb20fd9a07624e0dc1849a8e65833e5421960184f9c469d508b58ed8f40a780f")
     add_versions("v9.1.1", "54ca90dd782a988cd3ebc3e0e9ba9b4efd563d7eb78c5e690c2403f1b7d4a87a")
     add_versions("v9.0.0", "013aac178aa12837cbfa3b1e20e9e91ff87962ab7fdd044fd820e859f8964f9b")
     add_versions("v7.10.2", "4619ae7308cd3d11cdd36f0bfad3fb03a1ad399ca333f192b77b6b95b08e2f78")
-
-    add_deps("cmake")
 
     add_configs("jemalloc", {description = "Build with JeMalloc.", default = false, type = "boolean"})
     add_configs("liburing", {description = "Build with liburing.", default = false, type = "boolean"})
@@ -25,6 +37,14 @@ package("rocksdb")
         add_syslinks("shlwapi", "rpcrt4")
     end
 
+    add_deps("cmake")
+
+    if on_check then
+        on_check("mingw", function (package)
+            assert(not package:is_cross(), "package(rocksdb/mingw): cross compilation only support <= v9.1.1")
+        end)
+    end
+
     on_load(function (package)
         for name, enabled in pairs(package:configs()) do
             if (name ~= "rtti") and (not package:extraconf("configs", name, "builtin")) then
@@ -35,7 +55,7 @@ package("rocksdb")
         end
     end)
 
-    on_install("linux", "windows|arm", "windows|x64", "macosx", "mingw|x86_64", function (package)
+    on_install("linux", "windows|arm64", "windows|x64", "macosx", "mingw|x86_64", function (package)
         local configs = {
             "-DWITH_ALL_TESTS=OFF",
             "-DWITH_TESTS=OFF",
@@ -43,8 +63,9 @@ package("rocksdb")
             "-DWITH_CORE_TOOLS=OFF",
             "-DWITH_TOOLS=OFF",
             "-DFAIL_ON_WARNINGS=OFF",
-            "-DROCKSDB_INSTALL_ON_WINDOWS=ON"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+            "-DROCKSDB_INSTALL_ON_WINDOWS=ON",
+        }
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DROCKSDB_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         for name, enabled in pairs(package:configs()) do
             if name == "rtti" then

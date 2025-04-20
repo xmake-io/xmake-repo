@@ -4,38 +4,57 @@ package("minifb")
     set_license("MIT")
 
     add_urls("https://github.com/emoon/minifb.git")
-    add_versions("2022.11.12", "5312cb7ca07115c918148131d296864b8d67e2d7")
+    add_versions("2023.09.21", "2ce2449b1bc8d7c6d20c31b86244f1e540f2e788")
 
     add_deps("cmake")
 
-    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-    if is_plat("windows") then
-        add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MD", readonly = true})
-    end
-
     if is_plat("macosx") then
-        add_frameworks("CoreFoundation", "Foundation", "AppKit", "MetalKit", "Metal")
-    elseif is_plat("linux") then
+        add_frameworks("Cocoa", "QuartzCore", "Metal", "MetalKit")
+    elseif is_plat("iphoneos") then
+        add_frameworks("UIKit", "QuartzCore", "Metal", "MetalKit")
+    elseif is_plat("linux", "bsd") then
         add_deps("libx11", "libxkbcommon")
         add_deps("glx", "opengl", {optional = true})
-    elseif is_plat("windows") then
+    elseif is_plat("windows", "mingw") then
         add_syslinks("gdi32", "opengl32", "user32", "winmm")
     end
 
-    on_install("macosx", "linux", "windows", function (package)
-        local configs = {"-DMINIFB_BUILD_EXAMPLES=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        local packagedeps
-        if package:is_plat("linux") then
-            packagedeps = {"libx11", "libxkbcommon", "glx", "opengl"}
-            io.replace("CMakeLists.txt", 'set(CMAKE_C_FLAGS "")', "", {plain = true})
-            io.replace("CMakeLists.txt", 'set(CMAKE_CXX_FLAGS "")', "", {plain = true})
+    if on_check then
+        on_check("windows|arm64", function (package)
+            local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+            if vs_toolset then
+                local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
+                local minor = vs_toolset_ver:minor()
+                assert(minor and minor >= 30, "package(minifb) require vs_toolset >= 14.3")
+            end
+        end)
+    end
+
+    on_install("!android and !cross and !bsd", function (package)
+        if package:is_plat("windows") then
+            io.replace("CMakeLists.txt", "add_definitions(-D_DEBUG)", "", {plain = true}) -- fix M[D|T]d
         end
-        import("package.tools.cmake").install(package, configs, {buildir = "build", packagedeps = packagedeps})
-        os.cp("include", package:installdir())
-        os.trycp("build/*.a", package:installdir("lib"))
-        os.trycp("build/*.lib", package:installdir("lib"))
+        io.replace("CMakeLists.txt", "STATIC", "", {plain = true})
+        io.replace("CMakeLists.txt", 'set(CMAKE_C_FLAGS "")', "", {plain = true})
+        io.replace("CMakeLists.txt", 'set(CMAKE_CXX_FLAGS "")', "", {plain = true})
+
+        local configs = {"-DMINIFB_BUILD_EXAMPLES=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:config("shared") and package:is_plat("windows") then
+            table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
+        end
+
+        local opt = {}
+        if package:is_plat("linux", "bsd") then
+            opt.packagedeps = {"libx11", "libxkbcommon", "glx", "opengl"}
+        end
+        import("package.tools.cmake").install(package, configs, opt)
+
+        if package:is_plat("windows") and package:is_debug() then
+            local dir = package:installdir(package:config("shared") and "bin" or "lib")
+            os.trycp(path.join(package:buildir(), "minifb.pdb"), dir)
+        end
     end)
 
     on_test(function (package)

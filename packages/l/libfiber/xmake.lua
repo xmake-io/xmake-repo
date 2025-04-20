@@ -1,6 +1,7 @@
 package("libfiber")
     set_homepage("https://github.com/iqiyi/libfiber")
     set_description("The high performance coroutine library for Linux/FreeBSD/MacOS/Windows, supporting select/poll/epoll/kqueue/iocp/windows GUI")
+    set_license("LGPL-3.0")
 
     add_urls("https://github.com/iqiyi/libfiber/archive/refs/tags/$(version).tar.gz", {version = function (version)
         return version:gsub("%+", ".")

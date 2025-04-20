@@ -6,11 +6,21 @@ package("emmylua_debugger")
     add_urls("https://github.com/EmmyLua/EmmyLuaDebugger/archive/refs/tags/$(version).tar.gz",
              "https://github.com/EmmyLua/EmmyLuaDebugger.git")
 
+    add_versions("1.8.4", "e94590ae2ad6ad3ec6d238d6e5991b4d2a7f5942fc329f8f627e1d24315bdb88")
+    add_versions("1.8.3", "a2803b4eec21400ca61691824e9e7689c1f14735470081a3ef0c5234aa4e590f")
+    add_versions("1.8.2", "2ce5adbfad4055072d39302dccf794ec45800e84a5f3ba4784b373078a9dff8c")
+    add_versions("1.8.1", "0dbbfefe798425323bd1f531463675460fce3418d73ef29b495e7369f8c76475")
+    add_versions("1.8.0", "21e5ba1c82e4386cd8ad4f8c76511d70319b899b414d29ecdaba35649325d2ee")
     add_versions("1.7.1", "8757d372c146d9995b6e506d42f511422bcb1dc8bacbc3ea1a5868ebfb30015f")
     add_versions("1.6.3", "4e10cf1c729fc58f72880895e63618cb91d186ff3b55f270cdaa089a2f8b20bc")
 
     add_configs("luasrc", {description = "Use lua source.", default = true, type = "boolean"})
     add_configs("luaver", {description = "Set lua version.", default = "5.4", type = "string"})
+
+    if is_plat("windows") then
+        add_configs("emmy_tool", {description = "Build emmy_tool", default = false, type = "boolean"})
+        add_configs("emmy_hook", {description = "Build emmy_hook", default = false, type = "boolean"})
+    end
 
     add_deps("cmake")
 
@@ -40,6 +50,18 @@ package("emmylua_debugger")
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         io.replace("CMakeLists.txt", "set(CMAKE_INSTALL_PREFIX install)", "", {plain = true})
+        if package:is_plat("windows") then
+            if not (package:config("emmy_tool") or package:config("emmy_hook")) then
+                io.replace("CMakeLists.txt", "add_subdirectory(shared)", "", {plain = true})
+            end
+            if not package:config("emmy_tool") then
+                io.replace("CMakeLists.txt", "add_subdirectory(emmy_tool)", "", {plain = true})
+            end
+            if not package:config("emmy_hook") then
+                io.replace("CMakeLists.txt", "add_subdirectory(emmy_hook)", "", {plain = true})
+                io.replace("CMakeLists.txt", "add_subdirectory(third-party/EasyHook)", "", {plain = true})
+            end
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 

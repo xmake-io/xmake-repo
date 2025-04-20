@@ -3,6 +3,7 @@ package("simde")
     set_kind("library", {headeronly = true})
     set_homepage("simd-everywhere.github.io/blog/")
     set_description("Implementations of SIMD instruction sets for systems which don't natively support them.")
+    set_license("MIT")
 
     set_urls("https://github.com/simd-everywhere/simde/releases/download/v$(version)/simde-amalgamated-$(version).tar.xz")
 

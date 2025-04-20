@@ -1,40 +1,28 @@
 package("tree-sitter")
-
     set_homepage("https://tree-sitter.github.io/")
     set_description("An incremental parsing system for programming tools")
+    set_license("MIT")
 
-    add_urls("https://github.com/tree-sitter/tree-sitter/archive/refs/tags/v$(version).zip")
+    add_urls("https://github.com/tree-sitter/tree-sitter/archive/refs/tags/$(version).zip",
+             "https://github.com/tree-sitter/tree-sitter.git")
 
-    add_versions("0.22.6", "eb2d8bfcb6d21b820ac88add96d71ef9ebaec9d2a171b86a48c27c0511a17e4e")
-    add_versions("0.22.5", "b8c0da9f5cafa3214547bc3bbfa0d0f05a642f9d0c045e505a940cf487300849")
-    add_versions("0.22.2", "df0cd4aacc53b6feb9519dd4b74a7a6c8b7f3f7381fcf7793250db3e5e63fb80")
-    add_versions("0.21.0", "874794e6b3b985f7f9e87dfe29e4bfdbe5c0339e67740f35dfc4fa85804ba708")
+    add_versions("v0.25.3", "cae078014ebdb5a470116b814da9def5fb180653e0e47f9dc9b3a0308fd5786e")
+    add_versions("v0.24.6", "e0c657c1dfc09297a9277c346f2d8c56912c99c2ad6ec58c31a202d55ba1f1fe")
+    add_versions("v0.24.5", "d4646ea3ac5bb5db0ac1eb6ca4dcfe1fb47615adc22ee840048de97cc688c72f")
+    add_versions("v0.24.4", "b014d853193482c72e3eca12d98dddde57840ae73a8f6a6155605531e180be54")
+    add_versions("v0.24.3", "2bbcd5c0303d6a46fa822351848bf38b7c3cd59d7209d407df1c88e4a1958157")
+    add_versions("v0.24.2", "e3321bde397ba9ec7450c59912abb120d3d73f9381100fd2c6a3fc20668f67e2")
+    add_versions("v0.23.0", "e9f2772b12d4b12a0db5542ce72e8c85a34e397f2c3fd7b3fa08814f71fd35b3")
+    add_versions("v0.22.6", "eb2d8bfcb6d21b820ac88add96d71ef9ebaec9d2a171b86a48c27c0511a17e4e")
+    add_versions("v0.22.5", "b8c0da9f5cafa3214547bc3bbfa0d0f05a642f9d0c045e505a940cf487300849")
+    add_versions("v0.22.2", "df0cd4aacc53b6feb9519dd4b74a7a6c8b7f3f7381fcf7793250db3e5e63fb80")
+    add_versions("v0.21.0", "874794e6b3b985f7f9e87dfe29e4bfdbe5c0339e67740f35dfc4fa85804ba708")
 
     on_install(function(package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-
-        local configs = {}
-        if package:config("shared") then
-            configs.kind = "shared"
-        end
-        import("package.tools.xmake").install(package, configs)
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function(package)
-        assert(package:check_csnippets({
-            test = [[
-            #include <string.h>
-            #include <tree_sitter/api.h>
-            void test() {
-                TSParser *parser = ts_parser_new();
-                const char *source_code = "[1, null]";
-                TSTree *tree = ts_parser_parse_string(
-                    parser,
-                    NULL,
-                    source_code,
-                    strlen(source_code)
-                );
-            }
-        ]]
-        }))
+        assert(package:has_cfuncs("ts_parser_new", {includes = "tree_sitter/api.h"}))
     end)

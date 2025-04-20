@@ -5,6 +5,14 @@ package("flecs")
 
     add_urls("https://github.com/SanderMertens/flecs/archive/refs/tags/$(version).tar.gz",
              "https://github.com/SanderMertens/flecs.git")
+
+    add_versions("v4.0.5", "9a129284b2e79d61bf855e8aa627fe04464aa58a4fb3ce92bd47f7080dbc878d")
+    add_versions("v4.0.4", "a3b6238a913f65d90db18759ab5442393901da914e4a9bfe30aa8823687dce86")
+    add_versions("v4.0.3", "feb5185bca93eeadeb641329bfa88adedf4bd7aea5a4d89ade055b65c3af0517")
+    add_versions("v4.0.2", "131b703c30f53e08e30f2bac8da657276350b3f324a3321f753c3a9eccaa3f63")
+    add_versions("v4.0.1", "d88928226b3a6e7ebc7c818db50b2fb5828021ed3bcd206c4e2a3b0406472d2b")
+    add_versions("v4.0.0", "6c9826c8602f797acd775269d143763adfb3d3a93031cc81bced2b6d267469d2")
+    add_versions("v3.2.12", "976551dabeecf3ae109648034b8dbc47f39f50226b6d71d76bace1d0b6e2d8ae")
     add_versions("v3.2.11", "8ebc5f6f3ec7bbba30b0afe9d22f157437925772857ea1c6e4201eb5d31b4fe5")
     add_versions("v3.2.10", "b799e85d47b3e5c2e631ebbd3b81cc6af4be574fccbe07099c58252182827a88")
     add_versions("v3.2.9", "65d50d6058cd38308a0ad2a971afa9f64aef899ebf78d6a074d905922ec5fdf8")
@@ -41,6 +49,9 @@ package("flecs")
         table.insert(configs, "-DFLECS_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DFLECS_PIC=" .. (package:config("pic") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
+
+        local pdb = path.join(package:buildir(), "flecs.pdb")
+        os.trycp(pdb, package:installdir(package:config("shared") and "bin" or "lib"))
     end)
 
     on_test(function (package)

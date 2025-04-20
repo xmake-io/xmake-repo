@@ -6,7 +6,7 @@ function _find_package(package, opt)
     local suffix = (package:config("interface") == 32 and "lp64" or "ilp64")
     local paths = {
         "$(env MKL_ROOT)",
-        "$(env ONEAPI_ROOT)\\mkl\\latest"
+        "$(env ONEAPI_ROOT)/mkl/latest"
     }
 
     -- find library
