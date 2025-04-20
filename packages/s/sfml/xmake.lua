@@ -177,6 +177,19 @@ package("sfml")
     end)
 
     on_install("windows", "linux", "macosx", "mingw", function (package)
+        -- Resolves missing symbol for MinGW @ Mac OS X https://github.com/x64dbg/XEDParse/issues/11
+        -- https://stackoverflow.com/questions/30412951/unresolved-external-symbol-imp-fprintf-and-imp-iob-func-sdl2
+        if package:is_plat("mingw") and package:is_subhost("macosx") then
+            io.replace("src/CSFML/Audio/Music.cpp", [[namespace sf]], [[
+            #include <stdio.h>
+            FILE _iob[] = { *stdin, *stdout, *stderr };
+            extern "C" FILE * __cdecl __iob_func(void)
+            {
+                return _iob;
+            }
+            namespace sf]], {plain = true})
+        end
+
         local configs = {"-DSFML_BUILD_DOC=OFF", "-DSFML_BUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:config("shared") then

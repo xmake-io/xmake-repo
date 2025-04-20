@@ -36,13 +36,6 @@ package("csfml")
     on_install("windows", "linux", "macosx", "mingw", function (package)
         -- Mac OS X do not use BUILD_WITH_INSTALL_RPATH 1 INSTALL_NAME_DIR "@rpath"
         io.replace("cmake/Macros.cmake", "if(SFML_OS_MACOSX AND BUILD_SHARED_LIBS)", "if(0)", {plain = true})
-
-        local configs = {"-DCSFML_BUILD_DOC=OFF", "-DCSFML_BUILD_EXAMPLES=OFF"}
-
-        table.insert(configs, "-DCSFML_BUILD_GRAPHICS=".. (package:config("graphics") and "ON" or "OFF"))
-        table.insert(configs, "-DCSFML_BUILD_WINDOW=".. (package:config("window") and "ON" or "OFF"))
-        table.insert(configs, "-DCSFML_BUILD_AUDIO=".. (package:config("audio") and "ON" or "OFF"))
-        table.insert(configs, "-DCSFML_BUILD_NETWORK=".. (package:config("network") and "ON" or "OFF"))
         if package:is_plat("windows", "mingw") then
             if not package:config("shared") then
                 if package:is_plat("windows") then
@@ -71,12 +64,16 @@ package("csfml")
             io.replace("src/SFML/Graphics/CMakeLists.txt", 
                 "DEPENDS sfml-graphics)", [[DEPENDS sfml-graphics ZLIB::ZLIB)]], {plain = true})
         end
+        local configs = {"-DCSFML_BUILD_DOC=OFF", "-DCSFML_BUILD_EXAMPLES=OFF"}
+        table.insert(configs, "-DCSFML_BUILD_GRAPHICS=".. (package:config("graphics") and "ON" or "OFF"))
+        table.insert(configs, "-DCSFML_BUILD_WINDOW=".. (package:config("window") and "ON" or "OFF"))
+        table.insert(configs, "-DCSFML_BUILD_AUDIO=".. (package:config("audio") and "ON" or "OFF"))
+        table.insert(configs, "-DCSFML_BUILD_NETWORK=".. (package:config("network") and "ON" or "OFF"))
         -- If dependency SFML is static or shared
         local sfml = package:dep("sfml")
         if sfml then
             table.insert(configs, "-DCSFML_LINK_SFML_STATICALLY=" .. (sfml:config("shared") and "OFF" or "ON"))
         end
-
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
