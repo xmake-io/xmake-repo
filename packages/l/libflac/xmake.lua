@@ -35,6 +35,10 @@ package("libflac")
         end
     end)
 
+    on_load("android", function (package)
+        package:add("defines", "HAVE_FSEEKO")
+    end)
+
     on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", "wasm", function (package)
 
         local configs = {}
