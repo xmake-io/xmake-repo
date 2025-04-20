@@ -104,6 +104,9 @@ package("freerdp")
     end)
 
     on_install("!bsd and !iphoneos", function (package)
+        if package:is_plat("mingw") then
+            io.replace("winpr/include/winpr/wtypes.h", "typedef ssize_t SSIZE_T;", "#ifndef _SSIZE_T_DEFINED\ntypedef ssize_t SSIZE_T;\n#endif", {plain = true})
+        end
         io.replace("CMakeLists.txt", "include(${CMAKE_CPACK_INCLUDE_FILE})", "", {plain = true})
         io.replace("cmake/MSVCRuntime.cmake", "if(BUILD_SHARED_LIBS)", "if(0)", {plain = true})
 
@@ -141,7 +144,7 @@ package("freerdp")
         end
 
         local opt = {}
-        if package:is_plat("minwg") and package:has_tool("cc", "gcc") then
+        if package:is_plat("mingw") and package:has_tool("cc", "gcc") then
             opt.cxflags = "-Wno-error=incompatible-pointer-types"
         end
         if package:dep("libx11") then
