@@ -4,7 +4,7 @@ package("astc-encoder")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/ARM-software/astc-encoder/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/ARM-software/astc-encoder.git")
+             "https://github.com/ARM-software/astc-encoder.git", {submodules = false})
 
     add_versions("5.2.0", "1680d440b765c3809490b6b49664a2ba0798624629615da4ff834401c0f1fe23")
     add_versions("4.8.0", "6c12f4656be21a69cbacd9f2c817283405decb514072dc1dcf51fd9a0b659852")
@@ -19,17 +19,31 @@ package("astc-encoder")
     add_configs("native", {description = "Enable astcenc builds for native SIMD", default = false, type = "boolean"})
     add_configs("decompressor", {description = "Enable astcenc builds for decompression only", default = false, type = "boolean"})
     add_configs("diagnostics", {description = "Enable astcenc builds with diagnostic trace", default = false, type = "boolean"})
-    add_configs("asan", {description = "Enable astcenc builds with address sanitizer", default = false, type = "boolean"})
 
     add_configs("invariance", {description = "Enable astcenc floating point invariance", default = true, type = "boolean"})
     add_configs("cli", {description = "Enable build of astcenc command line tools", default = true, type = "boolean"})
 
     add_deps("cmake")
 
-    on_install("windows|x64", "windows|x86", "mingw|x86_64", "linux", function (package)
+    on_install(function (package)
+        if package:config("shared") then
+            package:add("defines", "ASTCENC_DYNAMIC_LIBRARY")
+        end
         io.replace("Source/cmake_core.cmake", "-Werror", "", {plain = true})
 
-        local configs = {}
+        local file = io.open("Source/cmake_core.cmake", "a")
+        local target_name = "${ASTCENC_TARGET}-" .. (package:config("shared") and "shared" or "static")
+        file:write(format([[
+            include(GNUInstallDirs)
+            install(TARGETS %s
+                RUNTIME DESTINATION bin
+                LIBRARY DESTINATION lib
+                ARCHIVE DESTINATION lib
+            )
+        ]], target_name))
+        file:close()
+
+        local configs = {"-DASTCENC_WERROR=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DASTCENC_SHAREDLIB=" .. (package:config("shared") and "ON" or "OFF"))
 
@@ -44,13 +58,14 @@ package("astc-encoder")
         table.insert(configs, "-DASTCENC_ASAN=" .. (package:config("asan") and "ON" or "OFF"))
         table.insert(configs, "-DASTCENC_INVARIANCE=" .. (package:config("invariance") and "ON" or "OFF"))
         table.insert(configs, "-DASTCENC_CLI=" .. (package:config("cli") and "ON" or "OFF"))
-
         import("package.tools.cmake").install(package, configs)
 
-        os.cp("Source/astcenc.h", package:installdir("include"))
         if package:config("shared") then
-            package:add("linkdirs", "bin")
+            io.replace("Source/astcenc.h",
+                [[#define ASTCENC_PUBLIC extern "C" __declspec(dllexport)]],
+                [[#define ASTCENC_PUBLIC extern "C" __declspec(dllimport)]], {plain = true})
         end
+        os.cp("Source/astcenc.h", package:installdir("include"))
         if package:config("cli") then
             local exe_prefix = package:is_plat("mingw", "windows") and ".exe" or ""
             os.mv(path.join(package:installdir("bin"), "astcenc-native" .. exe_prefix), path.join(package:installdir("bin"), "astcenc" .. exe_prefix))
