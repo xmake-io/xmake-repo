@@ -180,7 +180,7 @@ package("sfml")
         -- Resolves missing symbol for MinGW @ Mac OS X https://github.com/x64dbg/XEDParse/issues/11
         -- https://stackoverflow.com/questions/30412951/unresolved-external-symbol-imp-fprintf-and-imp-iob-func-sdl2
         if package:is_plat("mingw") and is_subhost("macosx") then
-            io.replace("src/CSFML/Audio/Music.cpp", [[namespace sf]], [[
+            io.replace("src/SFML/Audio/Music.cpp", [[namespace sf]], [[
             #include <stdio.h>
             FILE _iob[] = { *stdin, *stdout, *stderr };
             extern "C" FILE * __cdecl __iob_func(void)
