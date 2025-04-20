@@ -10,6 +10,7 @@ package("freerdp")
 
     add_configs("client", {description = "Build client", default = false, type = "boolean"})
     add_configs("server", {description = "Build server", default = false, type = "boolean"})
+    add_configs("rdtk", {description = "Build rdtk toolkit", default = false, type = "boolean"})
     add_configs("shadow", {description = "Compile with shadow server", default = false, type = "boolean"})
     add_configs("proxy", {description = "Compile with proxy server", default = false, type = "boolean"})
     add_configs("platform_server", {description = "Compile with platform server", default = false, type = "boolean"})
@@ -140,6 +141,9 @@ package("freerdp")
         end
 
         local opt = {}
+        if package:is_plat("minwg") and package:has_tool("cc", "gcc") then
+            opt.cxflags = "-Wno-error=incompatible-pointer-types"
+        end
         if package:dep("libx11") then
             opt.packagedeps = {"libx11", "xorgproto", "libxext", "libxcursor"}
         end
