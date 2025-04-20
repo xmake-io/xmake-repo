@@ -25,8 +25,10 @@ package("freerdp")
     add_configs("swscale", {description = "Use SWScale image library for screen resizing", default = false, type = "boolean"})
     add_configs("openh264", {description = "Build openh264", default = false, type = "boolean"})
     add_configs("krb5", {description = "Compile support for kerberos authentication.", default = false, type = "boolean"})
-
-    add_configs("simd", {description = "Build with simd", default = not is_plat("wasm"), type = "boolean"})
+    -- Try resolve emmintrin.h:740:1: error: inlining failed in call to 'always_inline' '_mm_storeu_si128': target specific option mismatch
+    if not (is_arch("i386") and is_plat("mingw") and is_subhost("macosx")) then
+        add_configs("simd", {description = "Build with simd", default = not is_plat("wasm"), type = "boolean"})
+    end
 
     -- winpr
     add_configs("unicode_builtin", {description = "Build builtin unicode", default = true, type = "boolean"})
