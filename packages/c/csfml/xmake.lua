@@ -64,7 +64,7 @@ package("csfml")
             io.replace("src/SFML/Graphics/CMakeLists.txt", 
                 "DEPENDS sfml-graphics)", [[DEPENDS sfml-graphics ZLIB::ZLIB)]], {plain = true})
         end
-        local configs = {"-DCSFML_BUILD_DOC=OFF", "-DCSFML_BUILD_EXAMPLES=OFF"}
+        local configs = {"-DCSFML_BUILD_EXAMPLES=OFF", "-DCSFML_BUILD_DOC=OFF"}
         table.insert(configs, "-DCSFML_BUILD_GRAPHICS=".. (package:config("graphics") and "ON" or "OFF"))
         table.insert(configs, "-DCSFML_BUILD_WINDOW=".. (package:config("window") and "ON" or "OFF"))
         table.insert(configs, "-DCSFML_BUILD_AUDIO=".. (package:config("audio") and "ON" or "OFF"))
