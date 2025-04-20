@@ -25,11 +25,22 @@ package("astc-encoder")
 
     add_deps("cmake")
 
+    on_load(function (package)
+        package:config_set("cli", not package:is_cross())
+        if package:is_plat("wasm", "cross") then
+            package:config_set("none", true)
+        end
+    end)
+
     on_install(function (package)
         if package:config("shared") then
             package:add("defines", "ASTCENC_DYNAMIC_LIBRARY")
         end
         io.replace("Source/cmake_core.cmake", "-Werror", "", {plain = true})
+        if package:is_plat("mingw") or package:has_tool("cxx", "clang") then
+            io.replace("Source/cmake_core.cmake", "$<${is_clangcl}:-mcpu=native -march=native>", "", {plain = true})
+            io.replace("Source/cmake_core.cmake", "$<${is_gnu_fe}:-mcpu=native -march=native>", "", {plain = true})
+        end
 
         local file = io.open("Source/cmake_core.cmake", "a")
         local target_name = "${ASTCENC_TARGET}-" .. (package:config("shared") and "shared" or "static")
@@ -65,6 +76,7 @@ package("astc-encoder")
                 [[#define ASTCENC_PUBLIC extern "C" __declspec(dllexport)]],
                 [[#define ASTCENC_PUBLIC extern "C" __declspec(dllimport)]], {plain = true})
         end
+        print(os.files(package:installdir("bin/*")))
         os.cp("Source/astcenc.h", package:installdir("include"))
         if package:config("cli") then
             local exe_prefix = package:is_plat("mingw", "windows") and ".exe" or ""
