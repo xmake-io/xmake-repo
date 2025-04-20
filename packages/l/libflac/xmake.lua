@@ -15,6 +15,8 @@ package("libflac")
     add_patches("1.4.2", "patches/1.4.2/cmake.patch", "0a99382d5d7bd33078572b6cc3af08ee7e5e3618c80754a5fdc400bd69f4e470")
     add_patches("1.3.3", "patches/1.3.3/cmake.patch", "49baa40ab70d63e74cfc3f0cc2f13824545a618ceaeffdd51d3333d90b37fd32")
 
+    add_patches("1.5.0", "https://patch-diff.githubusercontent.com/raw/xiph/flac/pull/831.diff", "75377f3a309094d91ff2e56727df09a00baa23cbec44b03193253cfec9b5324a")
+
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::flac")
     elseif is_plat("linux") then
@@ -33,10 +35,6 @@ package("libflac")
         if not package:config("shared") then
             package:add("defines", "FLAC__NO_DLL")
         end
-    end)
-
-    on_load("android", function (package)
-        package:add("defines", "HAVE_FSEEKO")
     end)
 
     on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", "wasm", function (package)
