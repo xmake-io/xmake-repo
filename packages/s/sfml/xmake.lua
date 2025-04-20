@@ -182,17 +182,6 @@ package("sfml")
         if package:is_plat("mingw") and is_subhost("macosx") then
             io.replace("src/SFML/Audio/Music.cpp", [[namespace sf]], [[
             #include <stdio.h>
-            FILE _iob[] = { *stdin, *stdout, *stderr };
-            extern "C" {
-                FILE * __cdecl __iob_func(void)
-                {
-                    static FILE iob[3];
-                    iob[0] = *stdin;
-                    iob[1] = *stdout;
-                    iob[2] = *stderr;
-                    return iob;
-                }
-            }
             namespace sf]], {plain = true})
         end
 
