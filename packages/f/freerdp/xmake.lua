@@ -40,7 +40,7 @@ package("freerdp")
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
     elseif is_plat("windows", "mingw") then
-        add_syslinks("rpcrt4", "ncrypt", "shell32", "ole32", "dbghelp", "shlwapi")
+        add_syslinks("rpcrt4", "ncrypt", "shell32", "ole32", "dbghelp", "shlwapi", "ntdll")
     end
 
     add_deps("cmake")
