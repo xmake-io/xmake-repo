@@ -14,13 +14,10 @@ package("v8")
         add_configs("runtimes", {description = "Set runtime.", default = "MT", readonly = true})
     end
 
-    add_includedirs("include", {public = true})
+    add_includedirs("include")
     add_links("v8_monolith")
 
     on_check(function (package)
-        import("core.tool.toolchain")
-        import("core.base.semver")
-
         -- Require C++20
         assert(package:check_cxxsnippets({test = [[
              #include <cstddef>
@@ -39,7 +36,7 @@ package("v8")
         assert(not package:is_debug() and not package:config("shared"), "package(v8): only configured for static + release usage")
 
         if is_host("windows") then
-            assert(package:config("runtimes") == "MT", "package(v8): only configured for MT on Windows")
+            assert(package:has_runtime("MT"), "package(v8): only configured for MT on Windows")
 
             -- Require MSVC / Visual Studio 2022
             local msvc = package:toolchain("msvc")
