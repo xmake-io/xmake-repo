@@ -11,6 +11,9 @@ package("acl-dev")
     add_includedirs("include", "include/acl-lib")
 
     add_deps("cmake")
+    if is_plat("cross") then
+        add_deps("zlib")
+    end
 
     if is_plat("windows") then
         add_syslinks("ws2_32", "iphlpapi", "kernel32", "user32", "gdi32")
@@ -34,6 +37,7 @@ package("acl-dev")
     end)
 
     on_install("android", "iphoneos", "macosx", "linux", "cross", "bsd", "windows", function (package)
+        -- Build only shared or only static library
         if package:config("shared") then
             io.replace("lib_fiber/c/CMakeLists.txt", "add_library(fiber_static STATIC ${lib_src})",
                 "add_library(fiber_static STATIC ${lib_src})\nset_target_properties(fiber_static PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
@@ -57,7 +61,35 @@ package("acl-dev")
             io.replace("lib_acl/CMakeLists.txt", "add_library(acl_shared SHARED ${acl_src})",
                 "add_library(acl_shared SHARED ${acl_src})\nset_target_properties(acl_shared PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
         end
-        local configs = {}
+
+        -- Fix install path for android
+        io.replace("lib_protocol/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../android/lib/${ANDROID_ABI})]], [[set(lib_output_path )]], {plain = true})
+        io.replace("lib_fiber/cpp/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../../android/lib/${ANDROID_ABI})]], [[set(lib_output_path )]], {plain = true})
+        io.replace("lib_fiber/c/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../../android/lib/${ANDROID_ABI})]], [[set(lib_output_path )]], {plain = true})
+        io.replace("lib_acl_cpp/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../android/lib/${ANDROID_ABI})]], [[set(lib_output_path )]], {plain = true})
+        io.replace("lib_acl/CMakeLists.txt", [[set(acl_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../android/lib/${ANDROID_ABI})]], [[set(acl_output_path )]], {plain = true})
+
+        -- Fix windows .pch file
+        io.replace("lib_acl_cpp/CMakeLists.txt", [["-Ycacl_stdafx.hpp"]], [[]], {plain = true})
+        io.replace("lib_acl_cpp/CMakeLists.txt", [[add_library(acl_cpp_static STATIC ${lib_src})]],
+            "add_library(acl_cpp_static STATIC ${lib_src})\ntarget_precompile_headers(acl_cpp_static PRIVATE src/acl_stdafx.hpp)", {plain = true})
+        io.replace("lib_acl_cpp/CMakeLists.txt", [[add_library(acl_cpp_shared SHARED ${lib_src})]],
+            "add_library(acl_cpp_shared SHARED ${lib_src})\ntarget_precompile_headers(acl_cpp_shared PRIVATE src/acl_stdafx.hpp)", {plain = true})
+
+        -- Disable -Wstrict-prototypes
+        for _, file in ipairs(os.files("**.txt")) do
+            io.replace(file, [["-Wstrict-prototypes"]], "", {plain = true})
+        end
+
+        -- Disable -Werror
+        for _, file in ipairs(os.files("**.txt")) do
+            io.replace(file, [["-Werror"]], "", {plain = true})
+        end
+
+        local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
+        if package:is_plat("iphoneos") then
+            table.insert(configs, "-DCMAKE_SYSTEM_NAME=Darwin")
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DACL_BUILD_SHARED=" .. (package:config("shared") and "YES" or "NO"))
