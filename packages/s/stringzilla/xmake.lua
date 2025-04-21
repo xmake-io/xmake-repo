@@ -9,6 +9,7 @@ package("stringzilla")
 
     add_configs("cpp", {description = "Enable C++ support.", default = true, type = "boolean"})
 
+    add_versions("v3.12.5", "52d107322b59c15b653d1eab3732c575b82eb44a9d5e3ff752b1f2902b71e8ee")
     add_versions("v3.12.4", "f5ae5ccc713e96e80dee92bc67efdc22b50cd7a1ba5d535191628606e0e2610b")
     add_versions("v3.12.3", "94f10a6ee4f9231afe3dd314cb1cbe5901e9098c44ba538362c529d79ff01ce5")
     add_versions("v3.12.2", "a9d8518766a29b605bcd3a26c1d12e00d6fcddfc3541687d6adafd4aa7fe1c5f")
