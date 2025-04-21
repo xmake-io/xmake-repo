@@ -1,9 +1,12 @@
 package("ktx")
     set_homepage("https://github.com/KhronosGroup/KTX-Software")
     set_description("KTX (Khronos Texture) Library and Tools")
+    set_license("Apache-2.0")
 
-    add_urls("https://github.com/KhronosGroup/KTX-Software/archive/refs/tags/$(version).tar.gz")
-    add_versions("v4.3.2", "74a114f465442832152e955a2094274b446c7b2427c77b1964c85c173a52ea1f")
+    add_urls("https://github.com/KhronosGroup/KTX-Software/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/KhronosGroup/KTX-Software.git", {submodules = false})
+
+    add_versions("v4.4.0", "3585d76edcdcbe3a671479686f8c81c1c10339f419e4b02a9a6f19cc6e4e0612")
 
     add_configs("tools", {description = "Create KTX tools", default = false, type = "boolean"})
     add_configs("decoder", {description = "ETC decoding support", default = false, type = "boolean"})
@@ -20,10 +23,26 @@ package("ktx")
 
     add_deps("cmake")
 
-    on_install("!iphoneos", function (package)
-        local configs = {"-DKTX_FEATURE_TESTS=OFF", "-DKTX_LOADTEST_APPS_USE_LOCAL_DEPENDENCIES=OFF"}
+    on_load(function (package)
+        if not package:config("shared") then
+            package:add("defines", "KHRONOS_STATIC")
+        end
+        if package:config("ktx1") then
+            package:add("defines", "KTX_FEATURE_KTX1")
+        end
+        if package:config("ktx2") then
+            package:add("defines", "KTX_FEATURE_KTX2")
+        end
+    end)
+
+    on_install(function (package)
+        local configs = {"-DKTX_FEATURE_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DKTX_FEATURE_STATIC_LIBRARY=" .. (package:config("shared") and "OFF" or "ON"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+
+        if not package:gitref() and package:version():startswith("v") then
+            table.insert(configs, "-DKTX_GIT_VERSION_FULL=" .. package:version())
+        end
 
         table.insert(configs, "-DKTX_FEATURE_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
         table.insert(configs, "-DKTX_FEATURE_ETC_UNPACK=" .. (package:config("decoder") and "ON" or "OFF"))
@@ -34,16 +53,6 @@ package("ktx")
         table.insert(configs, "-DKTX_FEATURE_VK_UPLOAD=" .. (package:config("vulkan") and "ON" or "OFF"))
         table.insert(configs, "-DKTX_FEATURE_GL_UPLOAD=" .. (package:config("opengl") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
-
-        if package:is_plat("windows", "mingw") and (not package:config("shared")) then
-            package:add("defines", "KHRONOS_STATIC")
-        end
-        if package:config("ktx1") then
-            package:add("defines", "KTX_FEATURE_KTX1")
-        end
-        if package:config("ktx2") then
-            package:add("defines", "KTX_FEATURE_KTX2")
-        end
     end)
 
     on_test(function (package)
