@@ -62,6 +62,9 @@ package("freerdp")
     end)
 
     on_load(function (package)
+        if package:is_plat("windows", "mingw") and not package:config("shared") then
+            package:add("defines", "FREERDP_EXPORTS")
+        end
         if package:config("shadow") or package:config("proxy") or package:config("platform_server") then
             package:config_set("server", true)
         end
@@ -158,11 +161,6 @@ package("freerdp")
         end
 
         import("package.tools.cmake").install(package, configs, opt)
-
-        if package:is_plat("windows") and not package:config("shared") then
-            io.replace(path.join(package:installdir("include/freerdp3"), "freerdp/api.h"), "__declspec(dllimport)", "", {plain = true})
-            io.replace(path.join(package:installdir("include/winpr3"), "winpr/platform.h"), "__declspec(dllimport)", "", {plain = true})
-        end
     end)
 
     on_test(function (package)
