@@ -30,7 +30,6 @@ package("astc-encoder")
     add_deps("cmake")
 
     on_load(function (package)
-        package:config_set("native", not package:is_cross())
         package:config_set("cli", not package:is_cross())
         if package:is_plat("wasm", "cross") then
             package:config_set("none", true)
