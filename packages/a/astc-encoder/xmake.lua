@@ -23,6 +23,10 @@ package("astc-encoder")
     add_configs("invariance", {description = "Enable astcenc floating point invariance", default = true, type = "boolean"})
     add_configs("cli", {description = "Enable build of astcenc command line tools", default = true, type = "boolean"})
 
+    if is_plat("linux", "bsd") then
+        add_syslinks("pthread")
+    end
+
     add_deps("cmake")
 
     on_load(function (package)
@@ -71,7 +75,13 @@ package("astc-encoder")
         table.insert(configs, "-DASTCENC_ASAN=" .. (package:config("asan") and "ON" or "OFF"))
         table.insert(configs, "-DASTCENC_INVARIANCE=" .. (package:config("invariance") and "ON" or "OFF"))
         table.insert(configs, "-DASTCENC_CLI=" .. (package:config("cli") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+
+        local opt = {}
+        if package:is_plat("linux", "bsd") then
+            opt.ldflags = "-lpthread"
+            opt.shflags = "-lpthread"
+        end
+        import("package.tools.cmake").install(package, configs, opt)
 
         if package:config("shared") then
             io.replace("Source/astcenc.h",
