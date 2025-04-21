@@ -76,13 +76,9 @@ package("acl-dev")
         io.replace("lib_acl_cpp/CMakeLists.txt", [[add_library(acl_cpp_shared SHARED ${lib_src})]],
             "add_library(acl_cpp_shared SHARED ${lib_src})\ntarget_precompile_headers(acl_cpp_shared PRIVATE src/acl_stdafx.hpp)", {plain = true})
 
-        -- Disable -Wstrict-prototypes
+        -- Disable -Wstrict-prototypes -Werror
         for _, file in ipairs(os.files("**.txt")) do
             io.replace(file, [["-Wstrict-prototypes"]], "", {plain = true})
-        end
-
-        -- Disable -Werror
-        for _, file in ipairs(os.files("**.txt")) do
             io.replace(file, [["-Werror"]], "", {plain = true})
         end
 
