@@ -179,7 +179,7 @@ package("sfml")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "mingw", "msys", function (package)
+    on_install("windows", "linux", "macosx", "mingw", function (package)
         local configs = {"-DSFML_BUILD_DOC=OFF", "-DSFML_BUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:config("shared") then
