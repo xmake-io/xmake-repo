@@ -16,7 +16,7 @@ package("astc-encoder")
     add_configs("sse2", {description = "Enable astcenc builds for SSE2 SIMD", default = false, type = "boolean"})
     add_configs("neon", {description = "Enable astcenc builds for NEON SIMD", default = false, type = "boolean"})
     add_configs("none", {description = "Enable astcenc builds for no SIMD", default = false, type = "boolean"})
-    add_configs("native", {description = "Enable astcenc builds for native SIMD", default = true, type = "boolean"})
+    add_configs("native", {description = "Enable astcenc builds for native SIMD", default = false, type = "boolean"})
     add_configs("decompressor", {description = "Enable astcenc builds for decompression only", default = false, type = "boolean"})
     add_configs("diagnostics", {description = "Enable astcenc builds with diagnostic trace", default = false, type = "boolean"})
 
@@ -30,6 +30,7 @@ package("astc-encoder")
     add_deps("cmake")
 
     on_load(function (package)
+        package:config_set("native", not package:is_cross())
         package:config_set("cli", not package:is_cross())
         if package:is_plat("wasm", "cross") then
             package:config_set("none", true)
