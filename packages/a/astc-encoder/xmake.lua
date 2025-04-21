@@ -33,13 +33,16 @@ package("astc-encoder")
         package:config_set("cli", not package:is_cross())
         if package:is_plat("wasm", "cross") then
             package:config_set("none", true)
+        elseif package:is_plat("linux") and package:is_arch("arm64") then
+            package:config_set("neon", true)
         end
-    end)
 
-    on_install("!linux or linux|!arm64", function (package)
         if package:config("shared") then
             package:add("defines", "ASTCENC_DYNAMIC_LIBRARY")
         end
+    end)
+
+    on_install(function (package)
         io.replace("Source/cmake_core.cmake", "-Werror", "", {plain = true})
         io.replace("Source/CMakeLists.txt", "-flto", "", {plain = true})
         io.replace("Source/CMakeLists.txt", "-flto=auto", "", {plain = true})
