@@ -40,7 +40,7 @@ package("freerdp")
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
     elseif is_plat("windows", "mingw") then
-        add_syslinks("rpcrt4", "ncrypt", "shell32", "ole32", "dbghelp", "shlwapi", "ntdll"
+        add_syslinks("rpcrt4", "ncrypt", "shell32", "ole32", "dbghelp", "shlwapi", "ntdll")
         if is_plat("mingw") then
             add_syslinks("uuid")
         end
