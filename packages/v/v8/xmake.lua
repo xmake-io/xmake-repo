@@ -36,8 +36,6 @@ package("v8")
         assert(not package:is_debug() and not package:config("shared"), "package(v8): only configured for static + release usage")
 
         if is_host("windows") then
-            assert(package:has_runtime("MT"), "package(v8): only configured for MT on Windows")
-
             -- Require MSVC / Visual Studio 2022
             local msvc = package:toolchain("msvc")
             if msvc then
