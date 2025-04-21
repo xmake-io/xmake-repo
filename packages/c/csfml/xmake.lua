@@ -61,8 +61,8 @@ package("csfml")
                 [[find_package(SFML 2.6 COMPONENTS ${SFML_MODULES} REQUIRED)]],
                 [[find_package(SFML 2.6 COMPONENTS ${SFML_MODULES} REQUIRED)
                 find_package(ZLIB)]], {plain = true})
-            io.replace("src/SFML/Graphics/CMakeLists.txt", 
-                "DEPENDS sfml-graphics)", [[DEPENDS sfml-graphics ZLIB::ZLIB)]], {plain = true})
+            io.replace("src/SFML/Graphics/CMakeLists.txt",
+                "DEPENDS sfml-graphics)", [[DEPENDS sfml-graphics INTERFACE ZLIB::ZLIB)]], {plain = true})
         end
         local configs = {"-DCSFML_BUILD_EXAMPLES=OFF", "-DCSFML_BUILD_DOC=OFF"}
         table.insert(configs, "-DCSFML_BUILD_GRAPHICS=".. (package:config("graphics") and "ON" or "OFF"))

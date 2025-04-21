@@ -162,6 +162,9 @@ package("sfml")
             if not (package:gitref() or package:version():ge("3.0.0")) then 
                 package:add("deps", "openal-soft") 
             end
+            if package:is_plat("mingw") and is_subhost("macosx") then
+                package:add("defines", "__iob_func()=(* __MINGW_IMP_SYMBOL(_iob))")
+            end
         end
 
         package:add("components", "system")
@@ -176,10 +179,7 @@ package("sfml")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "mingw", function (package)
-        if package:is_plat("mingw") and is_subhost("macosx") then
-            io.replace("include/SFML/Audio/Music.hpp", "#include <SFML/Audio/Export.hpp>", "#include <stdio.h>\n#include <SFML/Audio/Export.hpp>", {plain = true})
-        end
+    on_install("windows", "linux", "macosx", "mingw", "msys", function (package)
         local configs = {"-DSFML_BUILD_DOC=OFF", "-DSFML_BUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:config("shared") then
