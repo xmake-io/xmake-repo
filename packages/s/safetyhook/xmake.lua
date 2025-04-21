@@ -27,7 +27,7 @@ package("safetyhook")
     end)
 
     on_install("windows", "linux", "mingw", "msys", function (package)
-        local configs = {"-DSAFETYHOOK_FETCH_ZYDIS=OFF"}
+        local configs = {"-DSAFETYHOOK_FETCH_ZYDIS=OFF", "-DSAFETYHOOK_BUILD_TEST=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, {packagedeps = {"zycore-c"}})
