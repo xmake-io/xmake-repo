@@ -52,7 +52,7 @@ package("csfml")
                 -- Do not use CMAKE_SHARED_LIBRARY_SUFFIX when building static lib
                 io.replace("cmake/Macros.cmake", "if(SFML_OS_WINDOWS)", "if(0)", {plain = true})
             end
-            -- Add missing syslink for Windows
+            -- Add missing syslink
             io.replace("src/SFML/Audio/CMakeLists.txt", "DEPENDS sfml-audio)", "DEPENDS sfml-audio avrt)", {plain = true})
         end
         -- Add missing zlib headers
