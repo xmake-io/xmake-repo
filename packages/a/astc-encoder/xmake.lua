@@ -92,6 +92,8 @@ package("astc-encoder")
                 [[#define ASTCENC_PUBLIC extern "C" __declspec(dllimport)]], {plain = true})
         end
 
+        print(os.files(package:installdir("bin/*")))
+        print(os.files(package:installdir("lib/*")))
         os.cp("Source/astcenc.h", package:installdir("include"))
         if package:config("cli") then
             local exe_prefix = package:is_plat("mingw", "windows") and ".exe" or ""
