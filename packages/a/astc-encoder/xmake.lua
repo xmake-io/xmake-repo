@@ -32,12 +32,14 @@ package("astc-encoder")
         end
     end)
 
-    on_install(function (package)
+    on_install("!linux or linux|!arm64", function (package)
         if package:config("shared") then
             package:add("defines", "ASTCENC_DYNAMIC_LIBRARY")
         end
         io.replace("Source/cmake_core.cmake", "-Werror", "", {plain = true})
-        if package:is_plat("mingw") or package:has_tool("cxx", "clang") then
+        io.replace("Source/CMakeLists.txt", "-flto", "", {plain = true})
+        io.replace("Source/CMakeLists.txt", "-flto=auto", "", {plain = true})
+        if package:is_plat("mingw", "android", "bsd") or package:has_tool("cxx", "clang") then
             io.replace("Source/cmake_core.cmake", "$<${is_clangcl}:-mcpu=native -march=native>", "", {plain = true})
             io.replace("Source/cmake_core.cmake", "$<${is_gnu_fe}:-mcpu=native -march=native>", "", {plain = true})
         end
@@ -76,11 +78,11 @@ package("astc-encoder")
                 [[#define ASTCENC_PUBLIC extern "C" __declspec(dllexport)]],
                 [[#define ASTCENC_PUBLIC extern "C" __declspec(dllimport)]], {plain = true})
         end
-        print(os.files(package:installdir("bin/*")))
+
         os.cp("Source/astcenc.h", package:installdir("include"))
         if package:config("cli") then
             local exe_prefix = package:is_plat("mingw", "windows") and ".exe" or ""
-            os.mv(path.join(package:installdir("bin"), "astcenc-native" .. exe_prefix), path.join(package:installdir("bin"), "astcenc" .. exe_prefix))
+            os.trymv(path.join(package:installdir("bin"), "astcenc-native" .. exe_prefix), path.join(package:installdir("bin"), "astcenc" .. exe_prefix))
             package:addenv("PATH", "bin")
         end
     end)
