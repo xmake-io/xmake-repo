@@ -110,6 +110,10 @@ package("acl-dev")
             -- Enforce install of lib for Android
             io.replace(file, [[(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin")]],
                 [[(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin" OR CMAKE_SYSTEM_NAME MATCHES "Android")]], {plain = true})
+            -- Fix LTO for Android
+            io.replace(file, [[if (ANDROID_STL MATCHES "gnustl_shared")]], [[if (0)]], {plain = true})
+            io.replace(file, [[add_definitions("-flto")]], [[]], {plain = true})
+            io.replace(file, [[-flto]], [[]], {plain = true})
         end
         -- Use zlib instead z
         if not package:is_plat("windows") then
@@ -131,16 +135,17 @@ package("acl-dev")
                 io.replace("lib_acl_cpp/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})
                 io.replace("lib_fiber/cpp/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})
                 -- Do not use system iconv for FreeBSD
-                io.replace("CMakeLists.txt", "include_directories%(.-%)", "")
-                io.replace("CMakeLists.txt", "link_directories%(.-%)", "")
-                io.replace("lib_acl_cpp/CMakeLists.txt", "include_directories%(.-%).-set%(UNIX_OS true%)", "set(UNIX_OS true)")
+                io.replace("lib_acl_cpp/CMakeLists.txt", "include_directories%(.-%).-set%(UNIX_OS true%)", "include_directories(${ICONV_INCLUDE_DIR})\nset(UNIX_OS true)")
             end
         end
         local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         if package:is_plat("iphoneos") then
             table.insert(configs, "-DCMAKE_SYSTEM_NAME=Darwin")
         end
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        if not package:is_plat("windows") then
+            table.insert(configs, "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON")
+        end
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "DEBUG" or "RELEASE"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DACL_BUILD_SHARED=" .. (package:config("shared") and "YES" or "NO"))
         import("package.tools.cmake").install(package, configs)
