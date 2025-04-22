@@ -104,9 +104,9 @@ package("acl-dev")
             io.replace(file, [["-Wstrict-prototypes"]], "", {plain = true})
             io.replace(file, [["-Werror"]], "", {plain = true})
             io.replace(file, [[-Qunused-arguments]], [[]], {plain = true})
-            -- Enforce install of lib for Android
+            -- Enforce install of lib for Android/FreeBSD
             io.replace(file, [[(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin")]],
-                [[(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin" OR CMAKE_SYSTEM_NAME MATCHES "Android")]], {plain = true})
+                [[(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin" OR CMAKE_SYSTEM_NAME MATCHES "Android" OR CMAKE_SYSTEM_NAME MATCHES "FreeBSD")]], {plain = true})
             -- Fix LTO for Android
             io.replace(file, [[if (ANDROID_STL MATCHES "gnustl_shared")]], [[if (0)]], {plain = true})
             io.replace(file, [[add_definitions("-flto")]], [[]], {plain = true})
