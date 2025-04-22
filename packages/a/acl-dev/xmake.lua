@@ -24,7 +24,6 @@ package("acl-dev")
         add_syslinks("pthread", "dl")
     end
 
-
     on_load(function (package)
         if package:is_plat("android") then
             package:add("defines", "ANDROID")
