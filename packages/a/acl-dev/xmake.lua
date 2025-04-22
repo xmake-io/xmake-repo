@@ -84,11 +84,11 @@ package("acl-dev")
         end
 
         -- Fix install path for android
-        io.replace("lib_protocol/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../android/lib/${ANDROID_ABI})]], [[set(lib_output_path )]], {plain = true})
-        io.replace("lib_fiber/cpp/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../../android/lib/${ANDROID_ABI})]], [[set(lib_output_path )]], {plain = true})
-        io.replace("lib_fiber/c/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../../android/lib/${ANDROID_ABI})]], [[set(lib_output_path )]], {plain = true})
-        io.replace("lib_acl_cpp/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../android/lib/${ANDROID_ABI})]], [[set(lib_output_path )]], {plain = true})
-        io.replace("lib_acl/CMakeLists.txt", [[set(acl_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../android/lib/${ANDROID_ABI})]], [[set(acl_output_path )]], {plain = true})
+        io.replace("lib_protocol/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../android/lib/${ANDROID_ABI})]], [[set(acl_output_path ${PROJECT_BINARY_DIR}/../lib)]], {plain = true})
+        io.replace("lib_fiber/cpp/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../../android/lib/${ANDROID_ABI})]], [[set(acl_output_path ${PROJECT_BINARY_DIR}/../lib)]], {plain = true})
+        io.replace("lib_fiber/c/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../../android/lib/${ANDROID_ABI})]], [[set(acl_output_path ${PROJECT_BINARY_DIR}/../lib)]], {plain = true})
+        io.replace("lib_acl_cpp/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../android/lib/${ANDROID_ABI})]], [[set(acl_output_path ${PROJECT_BINARY_DIR}/../lib)]], {plain = true})
+        io.replace("lib_acl/CMakeLists.txt", [[set(acl_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../android/lib/${ANDROID_ABI})]], [[set(acl_output_path ${PROJECT_BINARY_DIR}/../lib)]], {plain = true})
 
         -- Fix windows .pch file
         io.replace("lib_acl_cpp/CMakeLists.txt", [["-Ycacl_stdafx.hpp"]], [[]], {plain = true})
@@ -117,18 +117,22 @@ package("acl-dev")
             io.replace("lib_protocol/CMakeLists.txt", "-lz", "", {plain = true})
             io.replace("lib_protocol/CMakeLists.txt", "target_link_libraries(protocol_shared acl)", "target_link_libraries(protocol_shared acl ZLIB::ZLIB)", {plain = true})
             io.replace("lib_protocol/CMakeLists.txt", "add_library(protocol_static STATIC ${lib_src})", "add_library(protocol_static STATIC ${lib_src})\ntarget_link_libraries(protocol_static ZLIB::ZLIB)", {plain = true})
+            -- Use libiconv instead iconv
+            if package:is_plat("iphoneos", "macosx", "bsd") then
+                io.replace("CMakeLists.txt", "project(acl)", "project(acl)\nfind_package(Iconv)", {plain = true})
+                io.replace("lib_protocol/CMakeLists.txt", "-liconv", "", {plain = true})
+                io.replace("lib_acl_cpp/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})
+                io.replace("lib_protocol/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})                
+            end
         end
         local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
-        local packagedeps = {}
         if package:is_plat("iphoneos") then
             table.insert(configs, "-DCMAKE_SYSTEM_NAME=Darwin")
-        elseif package:is_plat("bsd") then
-            table.insert(packagedeps, "libiconv")
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DACL_BUILD_SHARED=" .. (package:config("shared") and "YES" or "NO"))
-        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
+        import("package.tools.cmake").install(package, configs)
         if package:is_plat("windows") then
             if package:config("shared") then
                 os.vcp(path.join(package:buildir(), "*/shared/**.lib"), package:installdir("lib"))
