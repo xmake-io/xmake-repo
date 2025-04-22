@@ -32,7 +32,7 @@ package("acl-dev")
         elseif package:is_plat("linux") then
             package:add("defines", "LINUX2")
         elseif package:is_plat("bsd") then
-            package:add("defines", "FREEBSD", "USE_SYS_ICONV")
+            package:add("defines", "FREEBSD")
         end
     end)
 
@@ -131,6 +131,7 @@ package("acl-dev")
                 io.replace("lib_fiber/cpp/CMakeLists.txt", "-liconv", "", {plain = true})
                 io.replace("lib_acl_cpp/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})
                 io.replace("lib_fiber/cpp/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})
+                io.replace("lib_acl_cpp/CMakeLists.txt", "-DUSE_SYS_ICONV\")", "-DUSE_SYS_ICONV\")\nadd_definitions(\"-DUSE_SYS_ICONV\")", {plain = true})
             end
         end
         local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
