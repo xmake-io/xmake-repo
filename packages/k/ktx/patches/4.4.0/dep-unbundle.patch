@@ -1,0 +1,37 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 2f141ac..a9dbba2 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1236,18 +1236,20 @@ endif()
+ set(ASTCENC_CLI OFF) # Only build as library not the CLI astcencoder
+ # Force static build for astc-encoder
+ set(BUILD_SHARED_LIBS OFF)
+-add_subdirectory(external/astc-encoder)
++include(FindPkgConfig)
++pkg_search_module(astc-encoder REQUIRED IMPORTED_TARGET astc-encoder)
++set(ASTCENC_LIB_TARGET PkgConfig::astc-encoder)
+ set(BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS_RESET})
+-set_property(TARGET ${ASTCENC_LIB_TARGET} PROPERTY POSITION_INDEPENDENT_CODE ON)
+-target_compile_definitions(
+-    ${ASTCENC_LIB_TARGET}
+-PRIVATE
+-    # ASTC encoder uses std::mutex. For more info. see comment about
+-    # same setting in libktx starting about line 618. To be eventually
+-    # removed as noted in that comment.
+-    $<$<AND:${is_msvccl},$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,19.40.33811>>:_DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR>
+-    $<$<AND:${is_clangcl},$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,17.0.3>>:_DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR>
+-)
++# set_property(TARGET ${ASTCENC_LIB_TARGET} PROPERTY POSITION_INDEPENDENT_CODE ON)
++# target_compile_definitions(
++#     ${ASTCENC_LIB_TARGET}
++# PRIVATE
++#     # ASTC encoder uses std::mutex. For more info. see comment about
++#     # same setting in libktx starting about line 618. To be eventually
++#     # removed as noted in that comment.
++#     $<$<AND:${is_msvccl},$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,19.40.33811>>:_DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR>
++#     $<$<AND:${is_clangcl},$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,17.0.3>>:_DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR>
++# )
+ 
+ if(NOT BUILD_SHARED_LIBS AND APPLE)
+     # Make a single static library to simplify linking.
+ 
