@@ -8,7 +8,7 @@ package("ktx")
 
     add_versions("v4.4.0", "3585d76edcdcbe3a671479686f8c81c1c10339f419e4b02a9a6f19cc6e4e0612")
 
-    add_patches("4.4.0", "patches/4.4.0/dep-unbundle.patch", "0a5147c2031158c5c291a19427528d44872ad8dde1c8fb9e39fa89c7ffd784e9")
+    add_patches("4.4.0", "patches/4.4.0/dep-unbundle.patch", "2b883bcbfc19f80d72b812d68b606b6e2a4234d913ad92c45d8030bd94207a59")
 
     add_configs("tools", {description = "Create KTX tools", default = false, type = "boolean"})
     add_configs("decoder", {description = "ETC decoding support", default = false, type = "boolean"})
@@ -24,6 +24,11 @@ package("ktx")
     end
 
     add_deps("cmake")
+    if is_subhost("windows") then
+        add_deps("pkgconf")
+    else
+        add_deps("pkg-config")
+    end
     add_deps("astc-encoder")
 
     on_check("linux|arm64", function (package)
@@ -46,7 +51,6 @@ package("ktx")
         -- TODO: unbundle basisu & dfdutils
         -- io.replace("CMakeLists.txt", "external/dfdutils%g*.c\n", "")
         -- io.replace("CMakeLists.txt", "external%g*.cpp\n", "")
-        io.replace("CMakeLists.txt", "list(APPEND KTX_INSTALL_TARGETS ${ASTCENC_LIB_TARGET})", "", {plain = true})
 
         local configs = {"-DKTX_FEATURE_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
