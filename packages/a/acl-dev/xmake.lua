@@ -14,7 +14,7 @@ package("acl-dev")
     if not is_plat("windows") then
         add_deps("zlib")
     end
-    if is_plat("bsd") then
+    if is_plat("iphoneos", "macosx", "bsd") then
         add_deps("libiconv")
     end
 
