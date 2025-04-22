@@ -73,6 +73,7 @@ package("freerdp")
         end
 
         local configs_map_to_deps = {
+            client    = "libusb",
             wayland   = "wayland",
             fuse      = "libfuse",
             json      = package:config("json"),
@@ -96,15 +97,6 @@ package("freerdp")
             package:add("deps", "icu4c")
         end
 
-        if package:config("client") then
-            -- TODO: patch libusb dep(udev)
-            if package:is_plat("linux", "cross") then
-                package:add("deps", "libusb", {configs = {shared = true}})
-            else
-                package:add("deps", "libusb")
-            end
-        end
-
         if package:is_plat("windows", "mingw") and not package:config("shared") then
             package:add("defines", "FREERDP_EXPORTS")
         end
@@ -120,6 +112,15 @@ package("freerdp")
         end
         io.replace("CMakeLists.txt", "include(${CMAKE_CPACK_INCLUDE_FILE})", "", {plain = true})
         io.replace("cmake/MSVCRuntime.cmake", "if(BUILD_SHARED_LIBS)", "if(0)", {plain = true})
+
+        local libusb = package:dep("libusb")
+        if libusb and not libusb:is_system() and not libusb:config("shared") and package:is_plat("linux", "cross") then
+            io.replace("cmake/Findlibusb-1.0.cmake", "set(LIBUSB_1_LIBRARIES ${LIBUSB_1_LIBRARY})",
+                [[find_package(PkgConfig)
+                  pkg_check_modules(PC_LIBUDEV QUIET libudev)
+                  find_library(UDEV_LIBRARY NAMES udev PATHS ${PC_LIBUDEV_LIBRARY_DIRS} ${PC_LIBUDEV_LIBDIR} PATH_SUFFIXES lib)
+                  set(LIBUSB_1_LIBRARIES ${LIBUSB_1_LIBRARY} ${UDEV_LIBRARY})]], {plain = true})
+        end
 
         local configs = {
             "-DWITH_SAMPLE=OFF",
@@ -166,7 +167,6 @@ package("freerdp")
             opt.ldflags = "-Wl,-Bsymbolic"
             opt.shflags = "-Wl,-Bsymbolic"
         end
-
         import("package.tools.cmake").install(package, configs, opt)
     end)
 
