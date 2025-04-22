@@ -112,11 +112,11 @@ package("acl-dev")
         if not package:is_plat("windows") then
             io.replace("CMakeLists.txt", "project(acl)", "project(acl)\nfind_package(ZLIB)", {plain = true})
             io.replace("lib_acl_cpp/CMakeLists.txt", "-lz", "", {plain = true})
-            io.replace("lib_acl_cpp/CMakeLists.txt", "add_library(acl_cpp_shared SHARED ${lib_src})", "add_library(acl_cpp_shared SHARED ${lib_src})\ntarget_link_libraries(acl_cpp_shared PRIVATE ZLIB::ZLIB)", {plain = true})
-            io.replace("lib_acl_cpp/CMakeLists.txt", "add_library(acl_cpp_static STATIC ${lib_src})", "add_library(acl_cpp_static STATIC ${lib_src})\ntarget_link_libraries(acl_cpp_static PRIVATE ZLIB::ZLIB)", {plain = true})
+            io.replace("lib_acl_cpp/CMakeLists.txt", "target_link_libraries(acl_cpp_shared protocol acl)", "target_link_libraries(acl_cpp_shared protocol acl ZLIB::ZLIB)", {plain = true})
+            io.replace("lib_acl_cpp/CMakeLists.txt", "add_library(acl_cpp_static STATIC ${lib_src})", "add_library(acl_cpp_static STATIC ${lib_src})\ntarget_link_libraries(acl_cpp_static ZLIB::ZLIB)", {plain = true})
             io.replace("lib_protocol/CMakeLists.txt", "-lz", "", {plain = true})
-            io.replace("lib_protocol/CMakeLists.txt", "add_library(protocol_shared SHARED ${lib_src})", "add_library(protocol_shared SHARED ${lib_src})\ntarget_link_libraries(protocol_shared PRIVATE ZLIB::ZLIB)", {plain = true})
-            io.replace("lib_protocol/CMakeLists.txt", "add_library(protocol_static STATIC ${lib_src})", "add_library(protocol_static STATIC ${lib_src})\ntarget_link_libraries(protocol_static PRIVATE ZLIB::ZLIB)", {plain = true})
+            io.replace("lib_protocol/CMakeLists.txt", "target_link_libraries(protocol_shared acl)", "target_link_libraries(protocol_shared acl ZLIB::ZLIB)", {plain = true})
+            io.replace("lib_protocol/CMakeLists.txt", "add_library(protocol_static STATIC ${lib_src})", "add_library(protocol_static STATIC ${lib_src})\ntarget_link_libraries(protocol_static ZLIB::ZLIB)", {plain = true})
         end
         local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         local packagedeps = {}
