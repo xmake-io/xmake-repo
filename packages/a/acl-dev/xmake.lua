@@ -37,29 +37,47 @@ package("acl-dev")
     end)
 
     on_install("android", "iphoneos", "macosx", "linux", "cross", "bsd", "windows", function (package)
-        -- Build only shared or only static library
+        -- Build & install only shared or only static library
         if package:config("shared") then
             io.replace("lib_fiber/c/CMakeLists.txt", "add_library(fiber_static STATIC ${lib_src})",
                 "add_library(fiber_static STATIC ${lib_src})\nset_target_properties(fiber_static PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
+            io.replace("lib_fiber/c/CMakeLists.txt", "install%(TARGETS fiber_static.-%)", "")
+
             io.replace("lib_fiber/cpp/CMakeLists.txt", "add_library(fiber_cpp_static STATIC ${lib_src})",
                 "add_library(fiber_cpp_static STATIC ${lib_src})\nset_target_properties(fiber_cpp_static PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
+            io.replace("lib_fiber/cpp/CMakeLists.txt", "install%(TARGETS fiber_cpp_static.-%)", "")
+
             io.replace("lib_protocol/CMakeLists.txt", "add_library(protocol_static STATIC ${lib_src})",
                 "add_library(protocol_static STATIC ${lib_src})\nset_target_properties(protocol_static PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
+            io.replace("lib_protocol/CMakeLists.txt", "install%(TARGETS protocol_static.-%)", "")
+
             io.replace("lib_acl_cpp/CMakeLists.txt", "add_library(acl_cpp_static STATIC ${lib_src})",
                 "add_library(acl_cpp_static STATIC ${lib_src})\nset_target_properties(acl_cpp_static PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
+            io.replace("lib_acl_cpp/CMakeLists.txt", "install%(TARGETS acl_cpp_static.-%)", "")
+
             io.replace("lib_acl/CMakeLists.txt", "add_library(acl_static STATIC ${acl_src})",
                 "add_library(acl_static STATIC ${acl_src})\nset_target_properties(acl_static PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
+            io.replace("lib_acl/CMakeLists.txt", "install%(TARGETS acl_static.-%)", "")
         else
             io.replace("lib_fiber/c/CMakeLists.txt", "add_library(fiber_shared SHARED ${lib_src})",
                 "add_library(fiber_shared SHARED ${lib_src})\nset_target_properties(fiber_shared PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
+            io.replace("lib_fiber/c/CMakeLists.txt", "install%(TARGETS fiber_shared.-%)", "")
+
             io.replace("lib_fiber/cpp/CMakeLists.txt", "add_library(fiber_cpp_shared SHARED ${lib_src})",
                 "add_library(fiber_cpp_shared SHARED ${lib_src})\nset_target_properties(fiber_cpp_shared PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
+            io.replace("lib_fiber/cpp/CMakeLists.txt", "install%(TARGETS fiber_cpp_shared.-%)", "")
+
             io.replace("lib_protocol/CMakeLists.txt", "add_library(protocol_shared SHARED ${lib_src})",
                 "add_library(protocol_shared SHARED ${lib_src})\nset_target_properties(protocol_shared PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
+            io.replace("lib_protocol/CMakeLists.txt", "install%(TARGETS protocol_shared.-%)", "")
+
             io.replace("lib_acl_cpp/CMakeLists.txt", "add_library(acl_cpp_shared SHARED ${lib_src})",
                 "add_library(acl_cpp_shared SHARED ${lib_src})\nset_target_properties(acl_cpp_shared PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
+            io.replace("lib_acl_cpp/CMakeLists.txt", "install%(TARGETS acl_cpp_shared.-%)", "")
+
             io.replace("lib_acl/CMakeLists.txt", "add_library(acl_shared SHARED ${acl_src})",
                 "add_library(acl_shared SHARED ${acl_src})\nset_target_properties(acl_shared PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
+            io.replace("lib_acl/CMakeLists.txt", "install%(TARGETS acl_shared.-%)", "")
         end
 
         -- Fix install path for android
@@ -76,20 +94,24 @@ package("acl-dev")
         io.replace("lib_acl_cpp/CMakeLists.txt", [[add_library(acl_cpp_shared SHARED ${lib_src})]],
             "add_library(acl_cpp_shared SHARED ${lib_src})\ntarget_precompile_headers(acl_cpp_shared PRIVATE src/acl_stdafx.hpp)", {plain = true})
 
-        -- Disable -Wstrict-prototypes -Werror
         for _, file in ipairs(os.files("**.txt")) do
+            -- Disable -Wstrict-prototypes -Werror
             io.replace(file, [["-Wstrict-prototypes"]], "", {plain = true})
             io.replace(file, [["-Werror"]], "", {plain = true})
+            io.replace(file, [[-Qunused-arguments]], [[]], {plain = true})
         end
 
         local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
+        local packagedeps = {}
         if package:is_plat("iphoneos") then
             table.insert(configs, "-DCMAKE_SYSTEM_NAME=Darwin")
+        elseif package:is_plat("cross") then
+            table.insert(packagedeps, "zlib")
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DACL_BUILD_SHARED=" .. (package:config("shared") and "YES" or "NO"))
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
         if package:is_plat("windows") then
             if package:config("shared") then
                 os.vcp(path.join(package:buildir(), "*/shared/**.lib"), package:installdir("lib"))
