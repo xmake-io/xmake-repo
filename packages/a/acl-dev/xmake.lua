@@ -143,9 +143,7 @@ package("acl-dev")
         if package:is_plat("iphoneos") then
             table.insert(configs, "-DCMAKE_SYSTEM_NAME=Darwin")
         end
-        if not package:is_plat("windows") then
-            table.insert(configs, "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON")
-        end
+        table.insert(configs, "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=" .. (not package:is_plat("windows", "linux", "bsd", "cross") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "DEBUG" or "RELEASE"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DACL_BUILD_SHARED=" .. (package:config("shared") and "YES" or "NO"))
