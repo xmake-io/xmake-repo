@@ -135,6 +135,8 @@ package("acl-dev")
                 io.replace("lib_acl_cpp/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})
                 io.replace("lib_fiber/cpp/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})
                 -- Do not use system iconv for FreeBSD
+                io.replace("CMakeLists.txt", "include_directories%(.-%)", "")
+                io.replace("CMakeLists.txt", "link_directories%(.-%)", "")
                 io.replace("lib_acl_cpp/CMakeLists.txt", "include_directories%(.-/usr/include.-/usr/local/include.-%)", "include_directories(${ICONV_INCLUDE_DIR})")
             end
         end
