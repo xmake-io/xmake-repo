@@ -11,8 +11,11 @@ package("acl-dev")
     add_includedirs("include", "include/acl-lib")
 
     add_deps("cmake")
-    if is_plat("cross") then
+    if not is_plat("windows") then
         add_deps("zlib")
+    end
+    if is_plat("bsd") then
+        add_deps("libiconv")
     end
 
     if is_plat("windows") then
@@ -94,30 +97,31 @@ package("acl-dev")
         io.replace("lib_acl_cpp/CMakeLists.txt", [[add_library(acl_cpp_shared SHARED ${lib_src})]],
             "add_library(acl_cpp_shared SHARED ${lib_src})\ntarget_precompile_headers(acl_cpp_shared PRIVATE src/acl_stdafx.hpp)", {plain = true})
 
-        -- Fix windows .gas
+        -- Do not build .gas on windows
         if package:is_plat("windows") then
-            if package:is_arch("x86", "i386", "i686") then
-                io.replace("lib_fiber/c/CMakeLists.txt", [[${src}/fiber/boost/make_gas.S]], [[${src}/fiber/boost/make_i386_ms_pe_gas.asm]], {plain = true})
-                io.replace("lib_fiber/c/CMakeLists.txt", [[${src}/fiber/boost/jump_gas.S]], [[${src}/fiber/boost/jump_i386_ms_pe_gas.asm]], {plain = true})
-            else
-                io.replace("lib_fiber/c/CMakeLists.txt", [[${src}/fiber/boost/make_gas.S]], [[${src}/fiber/boost/make_x86_64_ms_pe_gas.asm]], {plain = true})
-                io.replace("lib_fiber/c/CMakeLists.txt", [[${src}/fiber/boost/jump_gas.S]], [[${src}/fiber/boost/jump_x86_64_ms_pe_gas.asm]], {plain = true})
-            end
+            io.replace("lib_fiber/c/CMakeLists.txt", [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]], [[]], {plain = true})
+            io.replace("lib_fiber/c/CMakeLists.txt", [[${src}/fiber/boost/jump_gas.S)]], [[]], {plain = true})
         end
-
+        -- Disable -Wstrict-prototypes -Werror -Qunused-arguments
         for _, file in ipairs(os.files("**.txt")) do
-            -- Disable -Wstrict-prototypes -Werror
             io.replace(file, [["-Wstrict-prototypes"]], "", {plain = true})
             io.replace(file, [["-Werror"]], "", {plain = true})
             io.replace(file, [[-Qunused-arguments]], [[]], {plain = true})
         end
-
+        -- Use zlib instead z
+        if not package:is_plat("windows") then
+            io.replace("CMakeLists.txt", "project(acl)", "project(acl)\nfind_package(ZLIB)", {plain = true})
+            io.replace("lib_acl_cpp/CMakeLists.txt", "-lz", "", {plain = true})
+            io.replace("lib_acl_cpp/CMakeLists.txt", "target_link_libraries(acl_cpp_shared protocol acl)", "target_link_libraries(acl_cpp_shared protocol acl PRIVATE ZLIB::ZLIB)", {plain = true})
+            io.replace("lib_protocol/CMakeLists.txt", "-lz", "", {plain = true})
+            io.replace("lib_protocol/CMakeLists.txt", "target_link_libraries(protocol_shared acl)", "target_link_libraries(protocol_shared acl PRIVATE ZLIB::ZLIB)", {plain = true})
+        end
         local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         local packagedeps = {}
         if package:is_plat("iphoneos") then
             table.insert(configs, "-DCMAKE_SYSTEM_NAME=Darwin")
-        elseif package:is_plat("cross") then
-            table.insert(packagedeps, "zlib")
+        elseif package:is_plat("bsd") then
+            table.insert(packagedeps, "libiconv")
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
