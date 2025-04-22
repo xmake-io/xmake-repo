@@ -117,12 +117,16 @@ package("acl-dev")
             io.replace("lib_protocol/CMakeLists.txt", "-lz", "", {plain = true})
             io.replace("lib_protocol/CMakeLists.txt", "target_link_libraries(protocol_shared acl)", "target_link_libraries(protocol_shared acl ZLIB::ZLIB)", {plain = true})
             io.replace("lib_protocol/CMakeLists.txt", "add_library(protocol_static STATIC ${lib_src})", "add_library(protocol_static STATIC ${lib_src})\ntarget_link_libraries(protocol_static ZLIB::ZLIB)", {plain = true})
+            io.replace("lib_fiber/CMakeLists.txt", "-lz", "", {plain = true})
+            io.replace("lib_fiber/CMakeLists.txt", "target_link_libraries(fiber_cpp_shared acl_cpp protocol acl fiber)", "target_link_libraries(fiber_cpp_shared acl_cpp protocol acl fiber ZLIB::ZLIB)", {plain = true})
+            io.replace("lib_fiber/CMakeLists.txt", "add_library(fiber_cpp_static STATIC ${lib_src})", "add_library(fiber_cpp_static STATIC ${lib_src})\ntarget_link_libraries(fiber_cpp_static ZLIB::ZLIB)", {plain = true})
             -- Use libiconv instead iconv
             if package:is_plat("iphoneos", "macosx", "bsd") then
                 io.replace("CMakeLists.txt", "project(acl)", "project(acl)\nfind_package(Iconv)", {plain = true})
-                io.replace("lib_protocol/CMakeLists.txt", "-liconv", "", {plain = true})
+                io.replace("lib_acl_cpp/CMakeLists.txt", "-liconv", "", {plain = true})
+                io.replace("lib_fiber/CMakeLists.txt", "-liconv", "", {plain = true})
                 io.replace("lib_acl_cpp/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})
-                io.replace("lib_protocol/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})                
+                io.replace("lib_fiber/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})                
             end
         end
         local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
