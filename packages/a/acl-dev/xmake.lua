@@ -94,6 +94,17 @@ package("acl-dev")
         io.replace("lib_acl_cpp/CMakeLists.txt", [[add_library(acl_cpp_shared SHARED ${lib_src})]],
             "add_library(acl_cpp_shared SHARED ${lib_src})\ntarget_precompile_headers(acl_cpp_shared PRIVATE src/acl_stdafx.hpp)", {plain = true})
 
+        -- Fix windows .gas
+        if package:is_plat("windows") then
+            if package:is_arch("x86", "i386", "i686") then
+                io.replace("lib_fiber/c/CMakeLists.txt", [[${src}/fiber/boost/make_gas.S]], [[${src}/fiber/boost/make_i386_ms_pe_gas.asm]], {plain = true})
+                io.replace("lib_fiber/c/CMakeLists.txt", [[${src}/fiber/boost/jump_gas.S]], [[${src}/fiber/boost/jump_i386_ms_pe_gas.asm]], {plain = true})
+            else
+                io.replace("lib_fiber/c/CMakeLists.txt", [[${src}/fiber/boost/make_gas.S]], [[${src}/fiber/boost/make_x86_64_ms_pe_gas.asm]], {plain = true})
+                io.replace("lib_fiber/c/CMakeLists.txt", [[${src}/fiber/boost/jump_gas.S]], [[${src}/fiber/boost/jump_x86_64_ms_pe_gas.asm]], {plain = true})
+            end
+        end
+
         for _, file in ipairs(os.files("**.txt")) do
             -- Disable -Wstrict-prototypes -Werror
             io.replace(file, [["-Wstrict-prototypes"]], "", {plain = true})
