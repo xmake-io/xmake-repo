@@ -52,7 +52,7 @@ package("freerdp")
     else
         add_deps("pkg-config")
     end
-    add_deps("zlib", "openssl3", "libusb")
+    add_deps("zlib", "openssl3")
 
     add_includedirs("include", "include/freerdp3", "include/winpr3")
 
@@ -65,9 +65,6 @@ package("freerdp")
     end)
 
     on_load(function (package)
-        if package:is_plat("windows", "mingw") and not package:config("shared") then
-            package:add("defines", "FREERDP_EXPORTS")
-        end
         if package:config("shadow") or package:config("proxy") or package:config("platform_server") then
             package:config_set("server", true)
         end
@@ -99,13 +96,21 @@ package("freerdp")
             package:add("deps", "icu4c")
         end
 
-        if package:config("winmm") and package:is_plat("windows", "mingw") then
-            package:add("syslinks", "winmm")
+        if package:config("client") then
+            -- TODO: patch libusb dep(udev)
+            if package:is_plat("linux", "cross") then
+                package:add("deps", "libusb", {configs = {shared = true}})
+            else
+                package:add("deps", "libusb")
+            end
         end
 
-        -- TODO: patch libusb dep(udev)
-        if package:config("client") and package:is_plat("linux") then
-            package:add("deps", "libusb", {configs = {shared = true}})
+        if package:is_plat("windows", "mingw") and not package:config("shared") then
+            package:add("defines", "FREERDP_EXPORTS")
+        end
+
+        if package:config("winmm") and package:is_plat("windows", "mingw") then
+            package:add("syslinks", "winmm")
         end
     end)
 
@@ -121,15 +126,14 @@ package("freerdp")
             "-DBUILD_TESTING=OFF",
             "-DWITH_CCACHE=OFF",
             "-DWITH_CLANG_FORMAT=OFF",
-
+            "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF",
+            -- build bundle winpr
             "-DFREERDP_UNIFIED_BUILD=ON",
 
             "-DWITH_CUPS=OFF",
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=" .. (package:config("lto") and "ON" or "OFF"))
-        table.insert(configs, "-DWITH_SIMD=" .. (package:config("simd") and "ON" or "OFF"))
 
         local dep = package:config("json")
         table.insert(configs, "-DWITH_JSON_DISABLED=" .. (dep and "OFF" or "ON"))
