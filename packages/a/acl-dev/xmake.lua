@@ -107,6 +107,9 @@ package("acl-dev")
             io.replace(file, [["-Wstrict-prototypes"]], "", {plain = true})
             io.replace(file, [["-Werror"]], "", {plain = true})
             io.replace(file, [[-Qunused-arguments]], [[]], {plain = true})
+            -- Enforce install of lib
+            io.replace(file, [[(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin")]],
+                [[(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin" OR CMAKE_SYSTEM_NAME MATCHES "Android")]], {plain = true})
         end
         -- Use zlib instead z
         if not package:is_plat("windows") then
