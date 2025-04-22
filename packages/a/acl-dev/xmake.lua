@@ -84,10 +84,10 @@ package("acl-dev")
         end
 
         -- Fix install path for android
-        io.replace("lib_protocol/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../android/lib/${ANDROID_ABI})]], [[set(acl_output_path ${PROJECT_BINARY_DIR}/../lib)]], {plain = true})
-        io.replace("lib_fiber/cpp/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../../android/lib/${ANDROID_ABI})]], [[set(acl_output_path ${PROJECT_BINARY_DIR}/../lib)]], {plain = true})
-        io.replace("lib_fiber/c/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../../android/lib/${ANDROID_ABI})]], [[set(acl_output_path ${PROJECT_BINARY_DIR}/../lib)]], {plain = true})
-        io.replace("lib_acl_cpp/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../android/lib/${ANDROID_ABI})]], [[set(acl_output_path ${PROJECT_BINARY_DIR}/../lib)]], {plain = true})
+        io.replace("lib_protocol/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../android/lib/${ANDROID_ABI})]], [[set(lib_output_path ${PROJECT_BINARY_DIR}/../lib)]], {plain = true})
+        io.replace("lib_fiber/cpp/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../../android/lib/${ANDROID_ABI})]], [[set(lib_output_path ${PROJECT_BINARY_DIR}/../lib)]], {plain = true})
+        io.replace("lib_fiber/c/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../../android/lib/${ANDROID_ABI})]], [[set(lib_output_path ${PROJECT_BINARY_DIR}/../lib)]], {plain = true})
+        io.replace("lib_acl_cpp/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../android/lib/${ANDROID_ABI})]], [[set(lib_output_path ${PROJECT_BINARY_DIR}/../lib)]], {plain = true})
         io.replace("lib_acl/CMakeLists.txt", [[set(acl_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../android/lib/${ANDROID_ABI})]], [[set(acl_output_path ${PROJECT_BINARY_DIR}/../lib)]], {plain = true})
 
         -- Fix windows .pch file
