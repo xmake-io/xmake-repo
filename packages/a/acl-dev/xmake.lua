@@ -135,6 +135,7 @@ package("acl-dev")
                 io.replace("lib_fiber/cpp/CMakeLists.txt", "-liconv", "", {plain = true})
                 io.replace("lib_acl_cpp/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})
                 io.replace("lib_fiber/cpp/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})
+                -- FreeBSD fallback to system iconv
                 io.replace("lib_acl_cpp/CMakeLists.txt", "-DUSE_SYS_ICONV\")", "-DUSE_SYS_ICONV\")\nadd_definitions(\"-DUSE_SYS_ICONV\")", {plain = true})
             end
         end
