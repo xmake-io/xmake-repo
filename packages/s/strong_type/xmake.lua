@@ -8,7 +8,7 @@ package("strong_type")
     add_urls("https://github.com/rollbear/strong_type/archive/refs/tags/$(version).tar.gz",
              "https://github.com/rollbear/strong_type.git")
 
-    add_versions("v15", "8a2b339474904887cbb9820c48cbe28d8d9af538")
+    add_versions("v15", "d445398d4c4d6795060ac2b60be146b3cd7e6039985244b2d56f9bc333f20bae")
 
     add_deps("cmake")
     on_install(function (package)
