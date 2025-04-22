@@ -107,7 +107,7 @@ package("acl-dev")
             io.replace(file, [["-Wstrict-prototypes"]], "", {plain = true})
             io.replace(file, [["-Werror"]], "", {plain = true})
             io.replace(file, [[-Qunused-arguments]], [[]], {plain = true})
-            -- Enforce install of lib
+            -- Enforce install of lib for Android
             io.replace(file, [[(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin")]],
                 [[(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin" OR CMAKE_SYSTEM_NAME MATCHES "Android")]], {plain = true})
         end
@@ -123,13 +123,17 @@ package("acl-dev")
             io.replace("lib_fiber/cpp/CMakeLists.txt", "-lz", "", {plain = true})
             io.replace("lib_fiber/cpp/CMakeLists.txt", "target_link_libraries(fiber_cpp_shared acl_cpp protocol acl fiber)", "target_link_libraries(fiber_cpp_shared acl_cpp protocol acl fiber ZLIB::ZLIB)", {plain = true})
             io.replace("lib_fiber/cpp/CMakeLists.txt", "add_library(fiber_cpp_static STATIC ${lib_src})", "add_library(fiber_cpp_static STATIC ${lib_src})\ntarget_link_libraries(fiber_cpp_static ZLIB::ZLIB)", {plain = true})
-            -- Use libiconv instead iconv
             if package:is_plat("iphoneos", "macosx", "bsd") then
+                -- Use libiconv instead iconv
                 io.replace("CMakeLists.txt", "project(acl)", "project(acl)\nfind_package(Iconv)", {plain = true})
                 io.replace("lib_acl_cpp/CMakeLists.txt", "-liconv", "", {plain = true})
                 io.replace("lib_fiber/cpp/CMakeLists.txt", "-liconv", "", {plain = true})
                 io.replace("lib_acl_cpp/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})
-                io.replace("lib_fiber/cpp/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})                
+                io.replace("lib_fiber/cpp/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})
+                -- Do not use system iconv for FreeBSD
+                io.replace("CMakeLists.txt", "include_directories%(.-%)", "")
+                io.replace("CMakeLists.txt", "link_directories%(.-%)", "")
+                io.replace("lib_acl_cpp/CMakeLists.txt", "include_directories%(.-%).-set%(UNIX_OS true%)", "set(UNIX_OS true)")
             end
         end
         local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
