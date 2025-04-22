@@ -13,7 +13,8 @@ package("acl-dev")
     add_deps("cmake")
     if not is_plat("windows") then
         add_deps("zlib")
-    elseif is_plat("iphoneos", "macosx", "bsd") then
+    end
+    if is_plat("iphoneos", "macosx", "bsd") then
         add_deps("libiconv")
     end
 
