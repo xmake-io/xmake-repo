@@ -20,7 +20,7 @@ package("acl-dev")
 
     if is_plat("windows") then
         add_syslinks("ws2_32", "iphlpapi", "kernel32", "user32", "gdi32")
-    elseif is_plat("bsd", "linux") then
+    elseif is_plat("bsd", "linux", "cross") then
         add_syslinks("pthread", "dl")
     end
 
@@ -29,7 +29,7 @@ package("acl-dev")
             package:add("defines", "ANDROID")
         elseif package:is_plat("macosx") then
             package:add("defines", "MACOSX")
-        elseif package:is_plat("linux") then
+        elseif package:is_plat("linux", "cross") then
             package:add("defines", "LINUX2")
         elseif package:is_plat("bsd") then
             package:add("defines", "FREEBSD")
