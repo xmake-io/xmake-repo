@@ -2,7 +2,7 @@ package("strong_type")
 
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/rollbear/strong_type")
-    set_description("Implementation of strong types in C++.")
+    set_description("An additive strong typedef library for C++14/17/20.")
     set_license("BSL-1.0")
 
     add_urls("https://github.com/rollbear/strong_type/archive/refs/tags/$(version).tar.gz",
