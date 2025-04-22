@@ -38,9 +38,9 @@ package("acl-dev")
 
     on_install("android", "iphoneos", "macosx", "linux", "cross", "bsd", "windows", function (package)
         io.replace("lib_acl/include/stdlib/acl_define_unix.h", "# define ACL_API",
-            "#if defined(__GNUC__)\n#define ACL_API __attribute__((visibility(\"default\")))\n#else\n# define ACL_API\n#endif", {plain = true})
+            "#if defined(__GNUC__)\n#if defined(__cplusplus)\n#define ACL_API extern \"C\" __attribute__((visibility(\"default\")))\n#else\n#define ACL_API __attribute__((visibility(\"default\")))\n#endif\n# define ACL_API\n#endif", {plain = true})
         io.replace("lib_acl/include/stdlib/acl_define_win32.h", "# define ACL_API",
-            "#if defined(__GNUC__)\n#define ACL_API __attribute__((visibility(\"default\")))\n#else\n# define ACL_API\n#endif", {plain = true})
+            "#if defined(__GNUC__)\n#if defined(__cplusplus)\n#define ACL_API extern \"C\" __attribute__((visibility(\"default\")))\n#else\n#define ACL_API __attribute__((visibility(\"default\")))\n#endif\n# define ACL_API\n#endif", {plain = true})
         -- Build & install only shared or only static library
         if package:config("shared") then
             io.replace("lib_fiber/c/CMakeLists.txt", "add_library(fiber_static STATIC ${lib_src})",
