@@ -44,6 +44,8 @@ package("freerdp")
         if is_plat("mingw") then
             add_syslinks("uuid")
         end
+    elseif is_plat("macosx") then
+        add_frameworks("CoreFoundation", "Carbon")
     end
 
     add_deps("cmake")
