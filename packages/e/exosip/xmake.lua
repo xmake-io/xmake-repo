@@ -32,6 +32,17 @@ package("exosip")
         add_syslinks("pthread", "resolv")
     end
 
+    on_load("bsd", "android", function (package)
+        if package:is_plat("android") then
+            local ndkver = tonumber(package:toolchain("ndk"):config("ndkver"))
+            if ndkver > 22 then
+                package:add("defines", "_GNU_SOURCE=1")
+            end
+        elseif package:is_plat("bsd") then
+            package:add("defines", "_GNU_SOURCE=1")
+        end
+    end)
+
     on_install("windows", function(package)
         import("package.tools.msbuild")
         os.cp("include", package:installdir())
@@ -112,8 +123,8 @@ package("exosip")
         end
     end)
 
-    on_install("linux", "macosx", "android@linux,macosx", "cross", "wasm", function (package)
-        local configs = {"--disable-trace", "--enable-pthread=force"}
+    on_install("bsd", "linux", "macosx", "android@linux,macosx", "cross", "wasm", function (package)
+        local configs = {"--disable-trace", "--enable-pthread=force", "--enable-tools=no"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if not package:debug() then
