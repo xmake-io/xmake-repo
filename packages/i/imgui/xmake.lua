@@ -7,6 +7,13 @@ package("imgui")
     add_urls("https://github.com/ocornut/imgui.git", {alias = "git"})
 
     -- don't forget to add the docking versions as well
+    add_versions("v1.91.8", "db3a2e02bfd6c269adf0968950573053d002f40bdfb9ef2e4a90bce804b0f286")
+    add_versions("v1.91.7", "2001dab4bdd7d178d8277d3b17c40aa1ff1e76e2ccac5e7ab8c6daf9756312c2")
+    add_versions("v1.91.6", "c5fbc5dcab1d46064001c3b84d7a88812985cde7e0e9ced03f5677bec1ba502a")
+    add_versions("v1.91.5", "2aa2d169c569368439e5d5667e0796d09ca5cc6432965ce082e516937d7db254")
+    add_versions("v1.91.4", "a455c28d987c78ddf56aab98ce0ff0fda791a23a2ec88ade46dd106b837f0923")
+    add_versions("v1.91.3", "29949d7b300c30565fbcd66398100235b63aa373acfee0b76853a7aeacd1be28")
+    add_versions("v1.91.2", "a3c4fd857a0a48f6edad3e25de68fa1e96d2437f1665039714d1de9ad579b8d0")
     add_versions("v1.91.1", "2c13a8909f75222c836abc9b3f60cef31c445f3f41f95d8242118ea789d145ca")
     add_versions("v1.91.0", "6e62c87252e6b3725ba478a1c04dc604aa0aaeec78fedcf4011f1e52548f4cc9")
     add_versions("v1.90.9", "04943919721e874ac75a2f45e6eb6c0224395034667bf508923388afda5a50bf")
@@ -43,6 +50,13 @@ package("imgui")
     add_versions("v1.76",   "e482dda81330d38c87bd81597cacaa89f05e20ed2c4c4a93a64322e97565f6dc")
     add_versions("v1.75",   "1023227fae4cf9c8032f56afcaea8902e9bfaad6d9094d6e48fb8f3903c7b866")
 
+    add_versions("git:v1.91.8-docking", "v1.91.8-docking")
+    add_versions("git:v1.91.7-docking", "v1.91.7-docking")
+    add_versions("git:v1.91.6-docking", "v1.91.6-docking")
+    add_versions("git:v1.91.5-docking", "v1.91.5-docking")
+    add_versions("git:v1.91.4-docking", "v1.91.4-docking")
+    add_versions("git:v1.91.3-docking", "v1.91.3-docking")
+    add_versions("git:v1.91.2-docking", "v1.91.2-docking")
     add_versions("git:v1.91.1-docking", "v1.91.1-docking")
     add_versions("git:v1.91.0-docking", "v1.91.0-docking")
     add_versions("git:v1.90.9-docking", "v1.90.9-docking")
@@ -78,6 +92,9 @@ package("imgui")
     add_configs("sdl2",             {description = "Enable the sdl2 backend with sdl2_renderer", default = false, type = "boolean"})
     add_configs("sdl2_no_renderer", {description = "Enable the sdl2 backend without sdl2_renderer", default = false, type = "boolean"})
     add_configs("sdl2_renderer",    {description = "Enable the sdl2 renderer backend", default = false, type = "boolean"})
+    add_configs("sdl3",             {description = "Enable the sdl3 backend with sdl3_renderer", default = false, type = "boolean"})
+    add_configs("sdl3_renderer",    {description = "Enable the sdl3 renderer backend", default = false, type = "boolean"})
+    add_configs("sdl3_gpu",         {description = "Enable the sdl3 gpu backend", default = false, type = "boolean"})
     add_configs("vulkan",           {description = "Enable the vulkan backend", default = false, type = "boolean"})
     add_configs("win32",            {description = "Enable the win32 backend", default = false, type = "boolean"})
     add_configs("wgpu",             {description = "Enable the wgpu backend", default = false, type = "boolean"})
@@ -97,7 +114,7 @@ package("imgui")
         add_syslinks("imm32")
     end
 
-    on_load("macosx", "linux", "windows", "mingw", "android", "iphoneos", function (package)
+    on_load(function (package)
         -- begin: backwards compatibility
         if package:config("sdl2") or package:config("sdlrenderer") then
             package:config_set("sdl2_renderer", true)
@@ -128,13 +145,16 @@ package("imgui")
             end
         end
         if package:config("sdl2_no_renderer") then
-            package:add("deps", "libsdl")
+            package:add("deps", "libsdl2")
         end
         if package:config("sdl2_renderer") then
-            package:add("deps", "libsdl >=2.0.17")
+            package:add("deps", "libsdl2 >=2.0.17")
+        end
+        if package:config("sdl3") or package:config("sdl3_renderer") or package:config("sdl3_gpu") then
+            package:add("deps", "libsdl3")
         end
         if package:config("vulkan") then
-            package:add("deps", "vulkansdk")
+            package:add("deps", "vulkan-headers")
         end
         if package:config("wgpu") then
             package:add("deps", "wgpu-native")
@@ -144,7 +164,7 @@ package("imgui")
         end
     end)
 
-    on_install("macosx", "linux", "windows", "mingw", "android", "iphoneos", function (package)
+    on_install(function (package)
         local configs = {
             dx9              = package:config("dx9"),
             dx10             = package:config("dx10"),
@@ -156,6 +176,9 @@ package("imgui")
             glad             = package:config("opengl3") and (not package:gitref() and package:version():lt("1.84")),
             sdl2             = package:config("sdl2") or package:config("sdl2_no_renderer"),
             sdl2_renderer    = package:config("sdl2_renderer"),
+            sdl3             = package:config("sdl3"),
+            sdl3_renderer    = package:config("sdl3_renderer"),
+            sdl3_gpu         = package:config("sdl3_gpu"),
             vulkan           = package:config("vulkan"),
             win32            = package:config("win32"),
             wgpu             = package:config("wgpu"),

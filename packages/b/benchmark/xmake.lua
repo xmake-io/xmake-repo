@@ -6,6 +6,8 @@ package("benchmark")
     add_urls("https://github.com/google/benchmark/archive/refs/tags/$(version).tar.gz",
              "https://github.com/google/benchmark.git")
 
+    add_versions("v1.9.2", "409075176168dc46bbb81b74c1b4b6900385b5d16bfc181d678afb060d928bd3")
+    add_versions("v1.9.1", "32131c08ee31eeff2c8968d7e874f3cb648034377dfc32a4c377fa8796d84981")
     add_versions("v1.9.0", "35a77f46cc782b16fac8d3b107fbfbb37dcd645f7c28eee19f3b8e0758b48994")
     add_versions("v1.8.5", "d26789a2b46d8808a48a4556ee58ccc7c497fcd4c0af9b90197674a81e04798a")
     add_versions("v1.8.4", "3e7059b6b11fb1bbe28e33e02519398ca94c1818874ebed18e504dc6f709be45")
@@ -67,15 +69,7 @@ package("benchmark")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBENCHMARK_ENABLE_LTO=" .. (package:config("lto") and "ON" or "OFF"))
         table.insert(configs, "-DBENCHMARK_ENABLE_EXCEPTIONS=" .. (package:config("exceptions") and "ON" or "OFF"))
-        if package:is_plat("windows") then
-            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
-        end
         import("package.tools.cmake").install(package, configs)
-
-        if package:is_plat("windows") and package:is_debug() then
-            local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.cp(path.join(package:buildir(), "src/*.pdb"), dir)
-        end
     end)
 
     on_test(function (package)

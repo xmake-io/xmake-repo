@@ -1,5 +1,4 @@
 package("m4")
-
     set_kind("binary")
     set_homepage("https://www.gnu.org/software/m4")
     set_description("Macro processing language")
@@ -7,6 +6,7 @@ package("m4")
     add_urls("https://ftpmirror.gnu.org/m4/m4-$(version).tar.xz",
              "https://ftp.gnu.org/gnu/m4/m4-$(version).tar.xz",
              "https://mirrors.ustc.edu.cn/gnu/m4/m4-$(version).tar.xz")
+
     add_versions("1.4.18", "f2c1e86ca0a404ff281631bdc8377638992744b175afb806e25871a24a934e07")
     add_versions("1.4.19", "63aede5c6d33b6d9b13511cd0be2cac046f2e70fd0a07aa9573a04a82783af96")
 
@@ -19,6 +19,7 @@ package("m4")
     end
 
     on_install("@macosx", "@linux", "@msys", "@cygwin", "@bsd", function (package)
+        io.writefile("tests/select.c", "int main(int argc, char **argv) { return 0; }\n") -- Bypass "select" function check
         if package:is_plat("linux") then
             -- fix freadahead.c:92:3: error: #error "Please port gnulib freadahead.c to your platform! Look at the definition of fflush, fread, ungetc on your system, then report this to bug-gnulib."
             -- https://git.savannah.gnu.org/cgit/gnulib.git
@@ -37,7 +38,13 @@ package("m4")
 #endif]])
             file:close()
         end
-        import("package.tools.autoconf").install(package, {"--disable-dependency-tracking"})
+
+        local configs = {"--disable-dependency-tracking"}
+
+        local opt = {}
+        -- https://mail.gnu.org/archive/html/bug-m4/2024-11/msg00000.html
+        opt.cflags = "-std=gnu99"
+        import("package.tools.autoconf").install(package, configs, opt)
     end)
 
     on_test(function (package)

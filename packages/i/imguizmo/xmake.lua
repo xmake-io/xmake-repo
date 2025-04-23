@@ -1,5 +1,4 @@
 package("imguizmo")
-
     set_homepage("https://github.com/CedricGuillemet/ImGuizmo")
     set_description("Immediate mode 3D gizmo for scene editing and other controls based on Dear Imgui")
     set_license("MIT")
@@ -10,10 +9,10 @@ package("imguizmo")
     add_versions("1.91.3+wip", "bcdd86bb8a8019b373e46921c52ef7f2fdaa8b16")
 
     on_load(function (package)
-        if package:version():lt("1.90") then
-            package:add("deps", "imgui <=1.89.3")
-        else
+        if package:gitref() or package:version():ge("1.90") then
             package:add("deps", "imgui")
+        else
+            package:add("deps", "imgui <=1.89.3")
         end
     end)
 
@@ -31,6 +30,7 @@ package("imguizmo")
 
             target("imguizmo")
                 set_kind("static")
+                add_defines("IMGUI_DEFINE_MATH_OPERATORS")
                 add_files("*.cpp")
                 add_headerfiles("*.h")
                 add_packages("imgui")

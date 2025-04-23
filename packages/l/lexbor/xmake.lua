@@ -6,6 +6,7 @@ package("lexbor")
     add_urls("https://github.com/lexbor/lexbor/archive/refs/tags/$(version).tar.gz",
              "https://github.com/lexbor/lexbor.git")
 
+    add_versions("v2.4.0", "8949744d425743828891de6d80327ccb64b5146f71ff6c992644e6234e63930e")
     add_versions("v2.2.0", "0583bad09620adea71980cff7c44b61a90019aa151d66d2fe298c679b554c57d")
     add_versions("v2.3.0", "522ad446cd01d89cb870c6561944674e897f8ada523f234d5be1f8d2d7d236b7")
 

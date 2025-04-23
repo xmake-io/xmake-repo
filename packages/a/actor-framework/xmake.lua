@@ -6,6 +6,7 @@ package("actor-framework")
     add_urls("https://github.com/actor-framework/actor-framework/archive/refs/tags/$(version).tar.gz",
              "https://github.com/actor-framework/actor-framework.git")
 
+    add_versions("1.0.2", "ef4dd00ca7c59cd61dc336b6a8efbd6150ca85c404d213ecb61f6bcee4094ffc")
     add_versions("1.0.1", "635bdd6e3b70886f1d9aa75c48e5bdb4084afae1f159bbfe5ea91f99b0460f6b")
     add_versions("1.0.0", "602018239d23a1805d35ebda704fd5c969a0693fc513fcf7459063b628459e5b")
     add_versions("0.19.6", "48dc4c4abf5ab5a7c6f84b9259cc8be1b02c601d31893647ab44e143cdc4b6d5")
@@ -13,7 +14,7 @@ package("actor-framework")
 
     add_configs("profiler", {description = "Enable experimental profiler API", default = false, type = "boolean"})
     add_configs("runtime_checks", {description = "Build CAF with extra runtime assertions", default = false, type = "boolean"})
-    add_configs("exceptions", {description = "Build CAF with support for exceptions", default = false, type = "boolean"})
+    add_configs("exceptions", {description = "Build CAF with support for exceptions", default = true, type = "boolean"})
     add_configs("io", {description = "Build legacy networking I/O module", default = false, type = "boolean"})
     add_configs("net", {description = "Build networking I/O module", default = false, type = "boolean"})
     add_configs("openssl", {description = "Build OpenSSL module", default = false, type = "boolean"})
@@ -35,6 +36,9 @@ package("actor-framework")
     end)
 
     on_install("windows", "linux", "macosx", "bsd", function (package)
+        io.replace("CMakeLists.txt", "add_library(libcaf_test)", "", {plain = true})
+        io.replace("CMakeLists.txt", "add_subdirectory(libcaf_test)", "", {plain = true})
+
         local configs =
         {
             "-DCAF_ENABLE_EXAMPLES=OFF",

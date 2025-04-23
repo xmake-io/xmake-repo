@@ -14,11 +14,11 @@ if has_config("glfw") then
 end
 
 if has_config("sdl2") then
-    add_requires("libsdl")
+    add_requires("libsdl2")
 end
 
 if has_config("vulkan") then
-    add_requires("vulkansdk")
+    add_requires("vulkan-headers")
 end
 
 if has_config("freetype") then
@@ -63,13 +63,13 @@ target("cimgui")
             add_files("imgui/backends/imgui_impl_sdl.cpp")
             add_headerfiles("imgui/(backends/imgui_impl_sdl.h)")
         end
-        add_packages("libsdl")
+        add_packages("libsdl2")
     end
 
     if has_config("vulkan") then
         add_files("imgui/backends/imgui_impl_vulkan.cpp")
         add_headerfiles("imgui/(backends/imgui_impl_vulkan.h)")
-        add_packages("vulkansdk")
+        add_packages("vulkan-headers")
     end
 
     if has_config("freetype") then

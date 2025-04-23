@@ -12,6 +12,8 @@ package("urdfdom")
 
     add_patches("1.0.4", path.join(os.scriptdir(), "patches", "1.0.4", "build.patch"), "1f51148afccef7b9bf079ef4137c12d578fb7a76f7aed6e282ca2ceaf4a188ba")
 
+    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+
     add_deps("cmake")
     add_deps("urdfdom-headers", "console-bridge")
     on_load("windows", "linux", "macosx", function (package)

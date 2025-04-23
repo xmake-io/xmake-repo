@@ -18,7 +18,14 @@ package("libdicom")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    on_install("!android and (windows|!arm64 or !windows)", function (package)
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk"):config("ndkver")
+            assert(ndk and tonumber(ndk) > 22, "package(libdicom) require ndk version > 22")
+        end)
+    end
+
+    on_install("windows|!arm64 or !windows", function (package)
         local configs = {"-Dtests=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         import("package.tools.meson").install(package, configs)

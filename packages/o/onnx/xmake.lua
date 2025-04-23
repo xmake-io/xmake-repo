@@ -4,8 +4,9 @@ package("onnx")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/onnx/onnx/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/onnx/onnx.git")
+             "https://github.com/onnx/onnx.git", {submodules = false})
 
+    add_versions("v1.17.0", "8d5e983c36037003615e5a02d36b18fc286541bf52de1a78f6cf9f32005a820e")
     add_versions("v1.16.2", "84fc1c3d6133417f8a13af6643ed50983c91dacde5ffba16cc8bb39b22c2acbb")
     add_versions("v1.16.1", "0e6aa2c0a59bb2d90858ad0040ea1807117cc2f05b97702170f18e6cd6b66fb3")
     add_versions("v1.16.0", "0ce153e26ce2c00afca01c331a447d86fbf21b166b640551fe04258b4acfc6a4")
@@ -18,45 +19,46 @@ package("onnx")
     add_configs("exceptions", {description = "Enable exception handling", default = true, type = "boolean"})
     add_configs("registration", {description = "Enable static registration for onnx operator schemas.", default = true, type = "boolean"})
 
-    add_deps("cmake")
+    add_deps("cmake", "protoc", "python", {kind = "binary"})
     add_deps("protobuf-cpp")
-    add_deps("python", {kind = "binary"})
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    on_load("linux", "macosx", "windows", function (package)
+    on_load(function (package)
         package:add("defines", "ONNX_ML")
         package:add("defines", "ONNX_NAMESPACE=onnx")
     end)
 
-    on_install("linux", "macosx", "windows|x64", "windows|x86", function (package)
+    on_install("!mingw", function (package)
+        local version = package:version()
+
+        io.replace("CMakeLists.txt", [[set(ONNX_PROTOC_EXECUTABLE ${Protobuf_PROTOC_EXECUTABLE})]],
+            "set(ONNX_PROTOC_EXECUTABLE protoc)", {plain = true})
+        io.replace("cmake/Utils.cmake", "target_compile_options(${lib} PRIVATE $<$<NOT:$<CONFIG:Debug>>:/MT> $<$<CONFIG:Debug>:/MTd>)", "", {plain = true})
+        io.replace("cmake/Utils.cmake", "target_compile_options(${lib} PRIVATE $<$<NOT:$<CONFIG:Debug>>:/MD> $<$<CONFIG:Debug>:/MDd>)", "", {plain = true})
+
         local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        if package:version():lt("1.16.0") then
+        if version and version:lt("1.16.0") then
             table.insert(configs, "-DCMAKE_CXX_STANDARD=" .. (package:is_plat("windows") and "17" or "11"))
         end
         table.insert(configs, "-DONNX_USE_PROTOBUF_SHARED_LIBS=" .. (package:dep("protobuf-cpp"):config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DONNX_DISABLE_EXCEPTIONS=" .. (package:config("exceptions") and "OFF" or "ON"))
         table.insert(configs, "-DONNX_DISABLE_STATIC_REGISTRATION=" .. (package:config("registration") and "OFF" or "ON"))
-        if package:is_plat("windows") then
-            local vs_runtime = package:config("vs_runtime")
-            if vs_runtime then
-                table.insert(configs, "-DONNX_USE_MSVC_STATIC_RUNTIME=" .. (vs_runtime:startswith("MT") and "ON" or "OFF"))
-            end
-            if package:config("shared") then
-                package:add("defines", "PROTOBUF_USE_DLLS")
-            end
-        end
         import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
         local languages = "c++11"
-        if package:is_plat("windows") or package:version():ge("1.16.0") then
+        if package:is_plat("windows") or package:gitref() or package:version():ge("1.16.0") then
             languages = "c++17"
         end
-        assert(package:has_cxxtypes("onnx::ModelProto", {includes = "onnx/proto_utils.h", configs = {languages = languages}}))
+        assert(package:check_cxxsnippets({test = [[
+            void test() {
+                onnx::ModelProto model;
+            }
+        ]]}, {configs = {languages = languages}, includes = "onnx/proto_utils.h"}))
     end)

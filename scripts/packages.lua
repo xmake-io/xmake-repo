@@ -5,6 +5,7 @@ import("private.core.base.select_script")
 
 -- is supported platform and architecture?
 function is_supported(instance, plat, arch, opt)
+    opt = opt or {}
     if instance:is_template() then
         return false
     end

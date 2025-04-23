@@ -1,4 +1,5 @@
 local sorted_libs = {
+  "asio",
   "wave",
   "url",
   "type_erasure",
@@ -37,6 +38,9 @@ local sorted_libs = {
 }
 
 local libs_dep = {
+  asio = {
+    "date_time",
+  },
   json = {
     "container",
     "system"
@@ -89,7 +93,11 @@ local libs_dep = {
     "atomic",
     "system"
   },
-  date_time = { },
+  date_time = {
+    "container",
+    "exception",
+    "regex"
+  },
   atomic = { },
   url = {
     "system"

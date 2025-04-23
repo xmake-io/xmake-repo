@@ -6,6 +6,7 @@ package("libvips")
     add_urls("https://github.com/libvips/libvips/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libvips/libvips.git")
 
+    add_versions("v8.16.0", "d28d7bf7e3f8fa17390c255ace4a05a1c56459e1f6015319f4847ea0733593b3")
     add_versions("v8.15.5", "bf11abb23da9152241ba52621efe418995c7f315fd0baf2e125323d28efd8780")
     add_versions("v8.15.4", "16afc1bf2218a98c1dc35ec4d94ef61d66c293eeb2b399fd40282dfb2211ea95")
     add_versions("v8.15.3", "c23a820443241c35e62f1f1f0a1f6c199b37e07d98e3268a7fa9db43309fd67d")
@@ -81,6 +82,13 @@ package("libvips")
     elseif is_plat("macosx") then
         add_extsources("brew::vips")
     end
+
+    on_check("windows", function (package)
+        local version = package:version()
+        if version:eq("8.16.0") then
+            raise("package(libvips 8.16.0) unsupported msvc toolchain")
+        end
+    end)
 
     on_load(function (package)
         for _, dep in ipairs(deps) do

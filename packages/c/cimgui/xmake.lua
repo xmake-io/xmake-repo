@@ -25,9 +25,15 @@ package("cimgui")
 
     add_deps("luajit", {private = true})
 
+    on_check(function (package)
+        if package:is_arch("arm.*") then
+            raise("package(cimgui/arm64): unsupported arch, because it depends on luajit, we need to improve luajit first.")
+        end
+    end)
+
     on_load(function (package)
         if package:config("sdl2") then
-            package:add("deps", "libsdl")
+            package:add("deps", "libsdl2")
             package:add("defines", "CIMGUI_USE_SDL2")
         end
         if package:config("opengl2") then
@@ -41,7 +47,7 @@ package("cimgui")
             package:add("defines", "CIMGUI_USE_GLFW")
         end
         if package:config("vulkan") then
-            package:add("deps", "vulkansdk")
+            package:add("deps", "vulkan-headers")
         end
         if package:config("freetype") then
             package:add("deps", "freetype")

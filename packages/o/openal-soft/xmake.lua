@@ -9,6 +9,7 @@ package("openal-soft")
     end})
     add_urls("https://github.com/kcat/openal-soft.git")
 
+    add_versions("1.24.3", "7e1fecdeb45e7f78722b776c5cf30bd33934b961d7fd2a11e0494e064cc631ce")
     add_versions("1.23.1", "dfddf3a1f61059853c625b7bb03de8433b455f2f79f89548cbcbd5edca3d4a4a")
     add_versions("1.22.2", "3e58f3d4458f5ee850039b1a6b4dac2343b3a5985a6a2e7ae2d143369c5b8135")
     add_versions("1.22.0", "814831a8013d7365dfd1917b27f1fb6e723f3be3fe1c6a7ff4516425d8392f68")
@@ -28,11 +29,14 @@ package("openal-soft")
     end
 
     if is_plat("windows", "mingw") then
-        add_syslinks("ole32", "shell32", "user32", "winmm", "kernel32")
+        add_syslinks("ole32", "shell32", "user32", "winmm", "kernel32", "Avrt")
+        if is_plat("mingw") then
+            add_syslinks("uuid")
+        end
     elseif is_plat("linux", "cross") then
         add_syslinks("dl", "pthread")
-     elseif is_plat("bsd", "cross") then
-        add_syslinks("pthread")
+     elseif is_plat("bsd") then
+        add_syslinks("stdthreads", "pthread")
     elseif is_plat("android") then
         add_syslinks("dl", "OpenSLES")
     elseif is_plat("macosx", "iphoneos") then

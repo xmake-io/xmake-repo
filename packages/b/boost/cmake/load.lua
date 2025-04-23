@@ -48,16 +48,19 @@ function _add_iostreams_deps(package)
         package:add("deps", "zstd")
 
         package:add("deps", (is_subhost("windows") and "pkgconf") or "pkg-config")
-        package:add("patches", "1.86.0", "patches/1.86.0/find-zstd.patch", "7a90f2cbf01fc26bc8a98d58468c20627974f30e45bdd4a00c52644b60af1ef6")
+        package:add("patches", ">=1.86.0", "patches/1.86.0/find-zstd.patch", "7a90f2cbf01fc26bc8a98d58468c20627974f30e45bdd4a00c52644b60af1ef6")
     end
 end
 
 function _add_deps(package)
-    if package:config("regex") then
+    if package:config("regex") and package:config("icu") then
         package:add("deps", "icu4c")
     end
     if package:config("locale") then
-        package:add("deps", "libiconv", "icu4c")
+        package:add("deps", "libiconv")
+        if package:config("icu") then
+            package:add("deps", "icu4c")
+        end
     end
     if package:config("python") then
         package:add("deps", "python", {configs = {headeronly = true}})

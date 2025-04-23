@@ -5,6 +5,8 @@ package("icu4c")
     add_urls("https://github.com/unicode-org/icu/releases/download/release-$(version)-src.tgz", {version = function (version)
             return (version:gsub("%.", "-")) .. "/icu4c-" .. (version:gsub("%.", "_"))
         end})
+    add_versions("77.1", "588e431f77327c39031ffbb8843c0e3bc122c211374485fa87dc5f3faff24061")
+    add_versions("76.1", "dfacb46bfe4747410472ce3e1144bf28a102feeaa4e3875bac9b4c6cf30f4f3e")
     add_versions("75.1", "cb968df3e4d2e87e8b11c49a5d01c787bd13b9545280fc6642f826527618caef")
     add_versions("73.2", "818a80712ed3caacd9b652305e01afc7fa167e6f2e94996da44b90c2ab604ce1")
     add_versions("73.1", "a457431de164b4aa7eca00ed134d00dfbf88a77c6986a10ae7774fc076bb8c45")
@@ -18,9 +20,6 @@ package("icu4c")
 
     add_patches("69.1", path.join(os.scriptdir(), "patches", "69.1", "replace-py-3.patch"), "ae27a55b0e79a8420024d6d349a7bae850e1dd403a8e1131e711c405ddb099b9")
     add_patches("70.1", path.join(os.scriptdir(), "patches", "70.1", "replace-py-3.patch"), "6469739da001721122b62af513370ed62901caf43af127de3f27ea2128830e35")
-    if is_plat("mingw") then
-        add_patches(">=69.1", path.join(os.scriptdir(), "patches", "72.1", "mingw.patch"), "9ddbe7f691224ccf69f8c0218f788f0a39ab8f1375cc9aad2cc92664ffcf46a5")
-    end
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::icu")
@@ -40,6 +39,15 @@ package("icu4c")
     end
 
     on_load(function (package)
+        if package:is_plat("mingw", "msys", "cygwin") then
+            package:add("patches", ">=69.1", path.join(os.scriptdir(), "patches", "72.1", "mingw.patch"), "9ddbe7f691224ccf69f8c0218f788f0a39ab8f1375cc9aad2cc92664ffcf46a5")
+        end
+        if package:is_cross() then
+            package:add("deps", "icu4c~host", {kind = "binary", private = true})
+        else
+            package:addenv("PATH", "bin")
+        end
+
         if package:is_plat("windows") then
             if package:config("tools") then
                 package:add("deps", "python 3.x", {kind = "binary"})
@@ -51,9 +59,9 @@ package("icu4c")
             end
         end
 
-        local libsuffix = package:is_debug() and package:is_plat("mingw", "windows") and "d" or ""
+        local libsuffix = package:is_debug() and package:is_plat("windows", "mingw", "msys", "cygwin") and "d" or ""
         package:add("links", "icutu" .. libsuffix, "icuio" .. libsuffix)
-        if package:is_plat("mingw", "windows") then
+        if package:is_plat("windows", "mingw", "msys", "cygwin") then
             package:add("links", "icuin" .. libsuffix, "icuuc" .. libsuffix, "icudt" .. libsuffix)
         else
             package:add("links", "icui18n" .. libsuffix, "icuuc" .. libsuffix, "icudata" .. libsuffix)
@@ -62,24 +70,6 @@ package("icu4c")
 
     on_install("windows", function (package)
         import("package.tools.msbuild")
-
-        local projectfiles = os.files("source/**.vcxproj")
-        local sln = path.join("source", "allinone", "allinone.sln")
-        table.join2(projectfiles, sln, os.files("source/**.props"))
-
-        if package:is_cross() then
-            -- icu build requires native tools
-            local configs = {
-                sln,
-                "/p:Configuration=Release",
-                "/target:pkgdata,genrb"
-            }
-
-            local arch_prev = package:arch()
-            package:arch_set(os.arch())
-            msbuild.build(package, configs, {upgrade = projectfiles})
-            package:arch_set(arch_prev)
-        end
 
         if package:has_runtime("MT", "MTd") then
             local files = {
@@ -95,6 +85,36 @@ package("icu4c")
             end
         end
 
+        local projectfiles = os.files("source/**.vcxproj")
+        local sln = path.join("source", "allinone", "allinone.sln")
+        table.join2(projectfiles, sln, os.files("source/**.props"))
+
+        local suffix = package:is_arch("arm.*") and "ARM" or ""
+        if package:is_arch64() then
+            suffix = suffix .. "64"
+        end
+
+        if package:is_binary() then
+            local configs = {
+                sln,
+                "/p:Configuration=Release",
+                "/target:pkgdata,genrb"
+            }
+
+            msbuild.build(package, configs, {upgrade = projectfiles})
+            os.vcp("bin" .. suffix .. "/*", package:installdir("bin"))
+            return
+        elseif package:is_cross() then
+            local arch_prev = package:arch()
+            package:arch_set(os.arch())
+            local host_suffix = package:is_arch("arm.*") and "ARM" or ""
+            if package:is_arch64() then
+                host_suffix = host_suffix .. "64"
+            end
+            package:arch_set(arch_prev)
+            os.vcp(package:dep("icu4c"):installdir("bin/*"), "bin" .. host_suffix .. "/")
+        end
+
         local configs = {
             sln,
             "/p:SkipUWP=True",
@@ -106,23 +126,26 @@ package("icu4c")
         end
         msbuild.build(package, configs, {upgrade = projectfiles})
 
-        local suffix = package:is_arch("arm.*") and "ARM" or ""
-        if package:is_arch(".*64") then
-            suffix = suffix .. "64"
-        end
-
         os.vcp("include", package:installdir())
         os.vcp("bin" .. suffix .. "/*", package:installdir("bin"))
         os.vcp("lib" .. suffix .. "/*", package:installdir("lib"))
-        package:addenv("PATH", "bin")
     end)
 
-    on_install("macosx", "linux", "mingw@msys", function (package)
+    on_install("@!windows and !wasm", function (package)
         import("package.tools.autoconf")
 
         os.cd("source")
+        if is_host("macosx") then
+            -- On Mac OS X, the echo command does not support the -n option
+            -- @see https://unicode-org.atlassian.net/browse/ICU-22418
+            local mkfiles = {"Makefile.in"}
+            table.join2(mkfiles, os.files("config/mh-*"))
+            for _, mkfile in ipairs(mkfiles) do
+                io.replace(mkfile, "@echo%s+-n%s+\"", "@printf \"") -- replace @echo -n with @printf
+            end
+        end
         local configs = {"--disable-samples", "--disable-tests"}
-        if package:debug() then
+        if package:is_debug() then
             table.insert(configs, "--enable-debug")
             table.insert(configs, "--disable-release")
         end
@@ -133,10 +156,14 @@ package("icu4c")
             table.insert(configs, "--disable-shared")
             table.insert(configs, "--enable-static")
         end
-        if package:is_plat("mingw") then
+        if package:is_plat("mingw", "msys", "cygwin") then
             table.insert(configs, "--with-data-packaging=dll")
+        elseif package:is_plat("iphoneos") then
+            table.insert(configs, "--disable-tools")
         end
-
+        if package:is_cross() then
+            table.insert(configs, "--with-cross-build=" .. path.unix(package:dep("icu4c"):installdir()))
+        end
 
         local envs = {}
         local cxxflags = "-std=gnu++17"
@@ -148,9 +175,16 @@ package("icu4c")
         -- suppress ar errors when passing --toolchain=clang
         envs.ARFLAGS = nil
         autoconf.install(package, configs, {envs = envs})
-        package:addenv("PATH", "bin")
+
+        if not package:is_cross() then
+            os.trycp("config/icucross.mk", package:installdir("config"))
+            os.trycp("config/icucross.inc", package:installdir("config"))
+            os.trycp("bin/icupkg*", package:installdir("bin"))
+        end
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("ucnv_convert", {includes = "unicode/ucnv.h"}))
+        if package:is_library() then
+            assert(package:has_cfuncs("ucnv_convert", {includes = "unicode/ucnv.h"}))
+        end
     end)

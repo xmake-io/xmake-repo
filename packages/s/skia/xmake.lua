@@ -1,35 +1,49 @@
 package("skia")
-
     set_homepage("https://skia.org/")
     set_description("A complete 2D graphic library for drawing Text, Geometries, and Images.")
     set_license("BSD-3-Clause")
 
-    local commits = {["88"] = "158dc9d7d4cafb177b99b68c5dc502f8f4282092",
-                     ["89"] = "109bfc9052ce1bde7acf07321d605601d7b7ec24",
-                     ["90"] = "adbb69cd7fe4e1c321e1526420e30265655e809c"}
+    local commits = {
+        ["88"] = "158dc9d7d4cafb177b99b68c5dc502f8f4282092",
+        ["89"] = "109bfc9052ce1bde7acf07321d605601d7b7ec24",
+        ["90"] = "adbb69cd7fe4e1c321e1526420e30265655e809c",
+        ["132"] = "07f41bcb8ee32fd84ae845095d49055d5122e606",
+    }
     add_urls("https://github.com/google/skia/archive/$(version).zip", {version = function (version) return commits[tostring(version)] end})
+
     add_versions("88", "3334fd7d0705e803fe2dd606a2a7d67cc428422a3e2ba512deff84a4bc5c48fa")
     add_versions("89", "b4c8260ad7d1a60e0382422d76ea6174fc35ce781b01030068fcad08364dd334")
     add_versions("90", "5201386a026d1dd55e662408acf9df6ff9d8c1df24ef6a5b3d51b006b516ac90")
+    add_versions("132", "1246975f106a2fc98a167bf5d56053a6e8618e42db0394228c6f152daa298116")
 
-    add_deps("gn", "python", "ninja", {kind = "binary"})
+    local components = {"gpu", "pdf", "nvpr"}
+    for _, component in ipairs(components) do
+        add_configs(component, {description = "Enable " .. component .. " support.", default = true, type = "boolean"})
+    end
 
-    add_includedirs("include")
-    add_includedirs("include/..")
-    add_includedirs("include/ports")
     if is_plat("windows") then
         add_syslinks("gdi32", "user32", "opengl32")
     elseif is_plat("macosx") then
         add_frameworks("CoreFoundation", "CoreGraphics", "CoreText", "CoreServices")
     elseif is_plat("linux") then
-        add_deps("fontconfig", "freetype >=2.10")
         add_syslinks("pthread", "GL", "dl", "rt")
     end
+
+    add_includedirs("include", "include/..", "include/ports")
+
     add_links("skia")
 
-    local components = {"gpu", "pdf", "nvpr"}
-    for _, component in ipairs(components) do
-        add_configs(component, {description = "Enable " .. component .. " support.", default = true, type = "boolean"})
+    add_deps("gn", "python", "ninja", {kind = "binary"})
+    if is_plat("linux") then
+        add_deps("fontconfig", "freetype >=2.10")
+    end
+
+    if on_check then
+        on_check(function (package)
+            if package:is_cross() then
+                raise("package(skia) unsupported cross-compilation now.")
+            end
+        end)
     end
 
     on_install("macosx", "linux", "windows", function (package)
@@ -87,8 +101,19 @@ package("skia")
 
         -- patches
         io.replace("bin/fetch-gn", "import os\n", "import os\nimport ssl\nssl._create_default_https_context = ssl._create_unverified_context\n", {plain = true})
-        os.vrunv("python", {"tools/git-sync-deps"}, {envs = {LD_LIBRARY_PATH = LD_LIBRARY_PATH}})
-        io.replace("gn/BUILD.gn", "libs += [ \"pthread\" ]", "libs += [ \"pthread\", \"m\", \"stdc++\" ]", {plain = true})
+        os.vrunv("python", {"tools/git-sync-deps"}, {
+            envs = {
+                LD_LIBRARY_PATH = LD_LIBRARY_PATH,
+                HTTP_PROXY = os.getenv("HTTP_PROXY"),
+                HTTPS_PROXY = os.getenv("HTTPS_PROXY"),
+            }})
+        local skia_gn = "gn/skia/BUILD.gn"
+
+        if not os.exists(skia_gn) then
+            skia_gn = "gn/BUILD.gn"
+        end
+
+        io.replace(skia_gn, "libs += [ \"pthread\" ]", "libs += [ \"pthread\", \"m\", \"stdc++\" ]", {plain = true})
         io.replace("gn/toolchain/BUILD.gn", "$shell $win_sdk/bin/SetEnv.cmd /x86 && ", "", {plain = true})
         io.replace("third_party/externals/dng_sdk/source/dng_pthread.cpp", "auto_ptr", "unique_ptr", {plain = true})
         io.replace("BUILD.gn", 'executable%("skia_c_api_example"%) {.-}', "")
@@ -113,10 +138,10 @@ package("skia")
             end
         end
         if #cflags > 0 then
-            io.replace("gn/BUILD.gn", "cflags = []", 'cflags = ["' .. table.concat(cflags, '", "') .. '"]', {plain = true})
+            io.replace(skia_gn, "cflags = []", 'cflags = ["' .. table.concat(cflags, '", "') .. '"]', {plain = true})
         end
         if #ldflags > 0 then
-            io.replace("gn/BUILD.gn", "ldflags = []", 'ldflags = ["' .. table.concat(ldflags, '", "') .. '"]', {plain = true})
+            io.replace(skia_gn, "ldflags = []", 'ldflags = ["' .. table.concat(ldflags, '", "') .. '"]', {plain = true})
         end
 
         -- installation
@@ -145,5 +170,5 @@ package("skia")
                 SkPaint paint;
                 paint.setStyle(SkPaint::kFill_Style);
             }
-        ]]}, {configs = {languages = "c++14"}, includes = "core/SkPaint.h"}))
+        ]]}, {configs = {languages = "c++17"}, includes = "core/SkPaint.h"}))
     end)

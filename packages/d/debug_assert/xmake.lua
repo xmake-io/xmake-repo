@@ -5,7 +5,8 @@ package("debug_assert")
     set_license("zlib")
 
     add_urls("https://github.com/foonathan/debug_assert.git")
-    add_versions("2022.11.13", "7ea47091830eec9a9c6a338c8a29da70494692a5")
+    add_urls("https://github.com/foonathan/debug_assert/archive/refs/tags/$(version).tar.gz")
+    add_versions("v1.3.4", "6d8749eaa6b571b6b53e2355ed0e916a83842cd623ce7e5f65b521ec71b70454")
 
     add_deps("cmake")
 

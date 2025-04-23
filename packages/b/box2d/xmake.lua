@@ -19,7 +19,7 @@ package("box2d")
 
     if on_check then
         on_check(function (package)
-            if package:version():ge("3.0.0") then
+            if package:gitref() or package:version():ge("3.0.0") then
                 if package:check_sizeof("void*") == "4" then
                     raise("package(box2d >=3.0.0) unsupported 32-bit")
                 end

@@ -1,0 +1,15 @@
+diff --git a/extra/script_wrappers/nanopb_generator.py.in b/extra/script_wrappers/nanopb_generator.py.in
+index 36540f74..4afedaf9 100644
+--- a/extra/script_wrappers/nanopb_generator.py.in
++++ b/extra/script_wrappers/nanopb_generator.py.in
+@@ -21,4 +21,7 @@ if python_instdir[0] != '@':
+ 
+ from nanopb.generator.nanopb_generator import main_cli, main_plugin
+ if __name__ == '__main__':
+-    sys.exit(main_cli())
+\ No newline at end of file
++    if 'protoc-gen-' in sys.argv[0] or '--protoc-plugin' in sys.argv:
++        main_plugin()
++    else:
++        main_cli()
+\ No newline at end of file

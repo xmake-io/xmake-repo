@@ -6,14 +6,15 @@ package("jthread")
     add_urls("https://github.com/j0r1/JThread.git")
 
     add_versions("2023.08.18", "719413043807b77448df3ba1c749798fb72ee459")
-    add_deps("cmake")
 
     add_patches("2023.08.18", "patches/2023.08.18/cmakelist.patch", "62304c64bf7a84ce7d3f95042d2307b4306d934e00cc033837610d9cef8401d5")
 
+    add_deps("cmake")
+
     add_includedirs("include", "include/jthread")
-    
-    on_install("windows", "linux", "macosx", function(package)
-        local configs = {}
+
+    on_install(function(package)
+        local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DJTHREAD_COMPILE_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         import("package.tools.cmake").install(package, configs)

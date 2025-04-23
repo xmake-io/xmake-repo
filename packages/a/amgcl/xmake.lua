@@ -9,16 +9,17 @@ package("amgcl")
     add_versions("1.4.0", "018b824396494c8958faa6337cebcaba48a2584d828f279eef0bbf9e05f900a7")
     add_versions("1.4.2", "db0de6b75e6c205f44542c3ac8d9935c8357a58072963228d0bb11a54181aea8")
     add_versions("1.4.3", "e920d5767814ce697d707d1f359a16c9b9eb79eba28fe19e14c18c2a505fe0ad")
+    add_versions("1.4.4", "02fd5418e14d669422f65fc739ce72bf9516ced2d8942574d4b8caa05dda9d8c")
 
     add_deps("cmake")
-    add_deps("boost", {configs = {serialization = true, program_options = true}})
-    on_install("windows", "macosx", "linux", function (package)
+    add_deps("boost", {configs = {cmake = false, serialization = true, program_options = true}})
+    on_install("windows", "mingw", "macosx", "linux", function (package)
         io.replace("CMakeLists.txt", "unit_test_framework", "", {plain = true})
         local configs = {"-DBoost_USE_STATIC_LIBS=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
         else
             table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=OFF")
         end

@@ -114,9 +114,6 @@ function main(package)
     local configs = {"-DBOOST_INSTALL_LAYOUT=system"}
     table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
     table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-    if package:is_plat("windows") then
-        table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
-    end
 
     _add_libs_configs(package, configs)
 

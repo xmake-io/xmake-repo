@@ -3,7 +3,7 @@ package("yyjson")
     set_description("The fastest JSON library in C.")
     set_license("MIT")
 
-    add_urls("https://github.com/ibireme/yyjson/archive/$(version).tar.gz",
+    add_urls("https://github.com/ibireme/yyjson/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ibireme/yyjson.git")
 
     add_versions("0.10.0", "0d901cb2c45c5586e3f3a4245e58c2252d6b24bf4b402723f6179523d389b165")
@@ -15,24 +15,26 @@ package("yyjson")
     add_versions("0.3.0", "f5ad3e3be40f0307a732c2b8aff9a1ba6014a6b346f3ec0b128459607748e990")    
     add_versions("0.2.0", "43aacdc6bc3876dc1322200c74031b56d8d7838c04e46ca8a8e52e37ea6128da")
 
+    add_configs("cmake", {description = "Use cmake build system", default = true, type = "boolean"})
+
     on_load(function (package)
-        local version = package:version()
-        if version and version:ge("0.9.0") then
+        if package:config("cmake") then
             package:add("deps", "cmake")
+        end
+
+        if package:config("shared") and package:is_plat("windows") then
+            package:add("defines", "YYJSON_IMPORTS")
         end
     end)
 
     on_install(function (package)
-        local version = package:version()
-        if version and version:ge("0.9.0") then
+        if package:config("cmake") then
+            io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
+
             local configs = {}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
             import("package.tools.cmake").install(package, configs)
-
-            if package:config("shared") and package:is_plat("windows") then
-                package:add("defines", "YYJSON_IMPORTS")
-            end
         else
             io.writefile("xmake.lua", [[
                 add_rules("mode.debug", "mode.release")

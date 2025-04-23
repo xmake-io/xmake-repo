@@ -26,6 +26,12 @@ package("libxslt")
         if package:is_plat("windows", "mingw") and not package:config("shared") then
             package:add("defines", "LIBXSLT_STATIC")
         end
+        if package:config("tools") then
+            package:addenv("PATH", "bin")
+        end
+        if package:is_binary() then
+            package:config_set("tools", true)
+        end
     end)
 
     on_install("!iphoneos", function (package)
@@ -43,5 +49,10 @@ package("libxslt")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("xsltInit", {includes = {"libxslt/xslt.h"}}))
+        if not package:is_cross() and package:config("tools") then
+            os.vrun("xsltproc --version")
+        end
+        if package:is_library() then
+            assert(package:has_cfuncs("xsltInit", {includes = {"libxslt/xslt.h"}}))
+        end
     end)

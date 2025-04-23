@@ -23,10 +23,17 @@ package("log4cplus")
         if package:config("unicode") then
             package:add("defines", "UNICODE")
         end
+        if package:is_plat("windows") and package:config("shared") then
+            package:add("defines", "LOG4CPLUS_BUILD_DLL")
+        end
     end)
 
     on_install(function (package)
-        local configs = {"-DLOG4CPLUS_BUILD_TESTING=OFF", "-DWITH_UNIT_TESTS=OFF"}
+        local configs = {
+            "-DLOG4CPLUS_BUILD_TESTING=OFF",
+            "-DWITH_UNIT_TESTS=OFF",
+            "-DLOG4CPLUS_ENABLE_DECORATED_LIBRARY_NAME=OFF",
+        }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DUNICODE=" .. (package:config("unicode") and "ON" or "OFF"))

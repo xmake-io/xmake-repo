@@ -6,6 +6,10 @@ package("simdutf")
     add_urls("https://github.com/simdutf/simdutf/archive/refs/tags/$(version).tar.gz",
              "https://github.com/simdutf/simdutf.git")
 
+    add_versions("v6.2.0", "f3ef16cb86d866d2271a9a2a539b6ed9ef9083d524963919ce6792a0e3750fe3")
+    add_versions("v5.7.2", "6884f4978cf8a0bab0c39e86d9b6e6057dca41a1d591ca2623fb87f9d5dc83bf")
+    add_versions("v5.7.1", "fb63e8a3a495253ba36c545fac8aa311a7e3bdfd0cce505a5ded9c48491323d8")
+    add_versions("v5.6.3", "503070ddf27e26c051b9500dfc7354ec8850e11076f47db32635931c85b630c0")
     add_versions("v5.5.0", "47090a770b8eecf610ac4d1fafadde60bb7ba3c9d576d2a3a545aba989a3d749")
     add_versions("v5.4.15", "188a9516ee208659cab9a1e5063c1b8385d63d171c2381e9ce18af97936d9879")
     add_versions("v5.3.11", "7926ae62d903a27452997e85d60c5dc04667d7a5ff44c2086ae90cf32bc4bc2c")

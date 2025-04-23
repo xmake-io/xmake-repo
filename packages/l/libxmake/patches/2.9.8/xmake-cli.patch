@@ -1,0 +1,154 @@
+diff --git a/core/src/xmake/engine.c b/core/src/xmake/engine.c
+index 8753607d4..500bca5c0 100644
+--- a/core/src/xmake/engine.c
++++ b/core/src/xmake/engine.c
+@@ -98,6 +98,11 @@ typedef struct __xm_engine_t
+ #ifdef XM_EMBED_ENABLE
+     // the temporary directory
+     tb_char_t               tmpdir[TB_PATH_MAXN];
++
++    // the embed files
++    tb_byte_t const*        embeddata[32];
++    tb_size_t               embedsize[32];
++    tb_size_t               embedcount;
+ #endif
+ 
+ }xm_engine_t;
+@@ -812,8 +817,15 @@ static tb_bool_t xm_engine_get_program_directory(xm_engine_t* engine, tb_char_t*
+     do
+     {
+ #ifdef XM_EMBED_ENABLE
+-        // get it from the temporary directory
+-        tb_strlcpy(path, engine->tmpdir, maxn);
++        tb_size_t embedcount = engine->embedcount;
++        if (embedcount)
++        {
++            tb_uint32_t crc32 = 0;
++            for (tb_size_t i = 0; i < embedcount; i++)
++                crc32 += tb_crc32_make(engine->embeddata[i], engine->embedsize[i], 0);
++            tb_snprintf(path, maxn, "%s/%x", engine->tmpdir, crc32);
++        }
++        else tb_strlcpy(path, engine->tmpdir, maxn);
+         ok = tb_true;
+         break;
+ #endif
+@@ -1189,14 +1201,8 @@ static tb_pointer_t xm_engine_lua_realloc(tb_pointer_t udata, tb_pointer_t data,
+ #endif
+ 
+ #ifdef XM_EMBED_ENABLE
+-static tb_bool_t xm_engine_extract_programfiles(xm_engine_t* engine, tb_char_t const* programdir)
++static tb_bool_t xm_engine_extract_programfiles_impl(xm_engine_t* engine, tb_char_t const* programdir, tb_byte_t const* data, tb_size_t size)
+ {
+-    tb_file_info_t info = {0};
+-    if (tb_file_info(programdir, &info)) return tb_true;
+-
+-    tb_byte_t const* data = g_xmake_xmz_data;
+-    tb_size_t size = sizeof(g_xmake_xmz_data);
+-
+     // do decompress
+     tb_bool_t ok = tb_false;
+     LZ4F_errorCode_t code;
+@@ -1289,6 +1295,28 @@ static tb_bool_t xm_engine_extract_programfiles(xm_engine_t* engine, tb_char_t c
+     tb_buffer_exit(&result);
+     return ok;
+ }
++
++static tb_bool_t xm_engine_extract_programfiles(xm_engine_t* engine, tb_char_t const* programdir)
++{
++    tb_file_info_t info = {0};
++    if (!tb_file_info(programdir, &info))
++    {
++        tb_byte_t const* data = g_xmake_xmz_data;
++        tb_size_t size = sizeof(g_xmake_xmz_data);
++        if (!xm_engine_extract_programfiles_impl(engine, programdir, data, size))
++            return tb_false;
++
++        tb_size_t embedcount = engine->embedcount;
++        for (tb_size_t i = 0; i < embedcount; i++)
++        {
++            data = engine->embeddata[i];
++            size = engine->embedsize[i];
++            if (!xm_engine_extract_programfiles_impl(engine, programdir, data, size))
++                return tb_false;
++        }
++    }
++    return tb_true;
++}
+ #endif
+ 
+ /* //////////////////////////////////////////////////////////////////////////////////////
+@@ -1560,6 +1588,18 @@ tb_void_t xm_engine_register(xm_engine_ref_t self, tb_char_t const* module, luaL
+     xm_lua_register(engine->lua, tb_null, funcs);
+     lua_rawset(engine->lua, -3);
+ }
++#ifdef XM_EMBED_ENABLE
++tb_void_t xm_engine_add_embedfiles(xm_engine_ref_t self, tb_byte_t const* data, tb_size_t size)
++{
++    // check
++    xm_engine_t* engine = (xm_engine_t*)self;
++    tb_assert_and_check_return(engine && engine->embedcount < tb_arrayn(engine->embedsize) && data && size);
++
++    engine->embeddata[engine->embedcount] = data;
++    engine->embedsize[engine->embedcount] = size;
++    engine->embedcount++;
++}
++#endif
+ tb_int_t xm_engine_run(tb_char_t const* name, tb_int_t argc, tb_char_t** argv, tb_char_t** taskargv, xm_engine_lni_initalizer_cb_t lni_initalizer)
+ {
+     tb_int_t ok = -1;
+@@ -1575,3 +1615,4 @@ tb_int_t xm_engine_run(tb_char_t const* name, tb_int_t argc, tb_char_t** argv, t
+     }
+     return ok;
+ }
++
+diff --git a/core/src/xmake/engine.h b/core/src/xmake/engine.h
+index cc5a533ca..901e3997e 100644
+--- a/core/src/xmake/engine.h
++++ b/core/src/xmake/engine.h
+@@ -79,6 +79,14 @@ tb_int_t                    xm_engine_main(xm_engine_ref_t engine, tb_int_t argc
+  */
+ tb_void_t                   xm_engine_register(xm_engine_ref_t engine, tb_char_t const* module, luaL_Reg const funcs[]);
+ 
++/*! add the embed files
++ *
++ * @param name              the engine name
++ * @param data              the embedfiles data
++ * @param size              the data size
++ */
++tb_void_t                   xm_engine_add_embedfiles(xm_engine_ref_t engine, tb_byte_t const* data, tb_size_t size);
++
+ /*! run main entry of the engine singleton
+  *
+  * @param name              the engine name
+diff --git a/core/src/xmake/prefix.h b/core/src/xmake/prefix.h
+index 5d6fba582..3c5c0679f 100644
+--- a/core/src/xmake/prefix.h
++++ b/core/src/xmake/prefix.h
+@@ -117,14 +117,21 @@ static __tb_inline__ tb_pointer_t xm_lua_topointer(lua_State* lua, tb_int_t idx)
+ static __tb_inline__ tb_void_t xm_lua_register(lua_State *lua, tb_char_t const* libname, luaL_Reg const* l)
+ {
+ #if LUA_VERSION_NUM >= 504
+-    lua_getglobal(lua, libname);
+-    if (lua_isnil(lua, -1))
++    if (libname)
+     {
+-        lua_pop(lua, 1);
+-        lua_newtable(lua);
++        lua_getglobal(lua, libname);
++        if (lua_isnil(lua, -1))
++        {
++            lua_pop(lua, 1);
++            lua_newtable(lua);
++        }
++        luaL_setfuncs(lua, l, 0);
++        lua_setglobal(lua, libname);
++    }
++    else
++    {
++        luaL_setfuncs(lua, l, 0);
+     }
+-    luaL_setfuncs(lua, l, 0);
+-    lua_setglobal(lua, libname);
+ #else
+     luaL_register(lua, libname, l);
+ #endif

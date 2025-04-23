@@ -6,6 +6,9 @@ package("libassert")
     add_urls("https://github.com/jeremy-rifkin/libassert/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jeremy-rifkin/libassert.git")
 
+    add_versions("v2.1.5", "0812721d4bbc0193ef2509909b05bb0226d5718284ad9419d478e091ed2101de")
+    add_versions("v2.1.4", "9fa5f5b69e24d020a72b706f05802bf0028587b93a43b59bc99b5bef305b0c72")
+    add_versions("v2.1.2", "a7220ca354270deca08a7a162b93523c738ba3c8037a4df1a46ababfdc664196")
     add_versions("v2.1.1", "2bdf27523f964f41668d266cfdbd7f5f58988af963d976577195969ed44359d1")
     add_versions("v2.1.0", "e42405b49cde017c44c78aacac35c6e03564532838709031e73d10ab71f5363d")
     add_versions("v2.0.2", "4a0b52e6523bdde0116231a67583131ea1a84bb574076fad939fc13fc7490443")
@@ -29,7 +32,7 @@ package("libassert")
     end)
 
     on_install("windows", "linux", "macosx", function (package)
-        if package:version():lt("2.0.0") then
+        if package:version() and package:version():lt("2.0.0") then
             if package:config("decompose") then
                 package:add("defines", "ASSERT_DECOMPOSE_BINARY_LOGICAL")
             end
@@ -53,6 +56,7 @@ package("libassert")
                 "-DLIBASSERT_USE_MAGIC_ENUM=ON",
                 "-DLIBASSERT_BUILD_TESTING=OFF",
                 "-DLIBASSERT_SANITIZER_BUILD=OFF",
+                "-DLIBASSERT_USE_EXTERNAL_MAGIC_ENUM=ON",
             }
             io.replace("CMakeLists.txt", "/WX", "", {plain = true})
             if not package:config("shared") then
