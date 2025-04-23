@@ -21,14 +21,14 @@ package("acl-dev")
     end
     if is_plat("iphoneos", "macosx") then
         add_deps("libiconv")
+    elseif is_plat("bsd") then
+        add_deps("libiconv", {system = true})
     end
 
     if is_plat("windows") then
         add_syslinks("ws2_32", "iphlpapi", "kernel32", "user32", "gdi32")
-    elseif is_plat("linux", "cross") then
+    elseif is_plat("linux", "bsd", "cross") then
         add_syslinks("pthread", "dl")
-    elseif is_plat("bsd") then
-        add_syslinks("iconv", "pthread", "dl")
     end
 
     on_load(function (package)
