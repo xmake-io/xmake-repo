@@ -28,7 +28,7 @@ package("exosip")
         add_syslinks("dnsapi")
     elseif is_plat("macosx", "iphoneos") then
         add_syslinks("resolv")
-        add_frameworks("CoreFoundation")
+        add_frameworks("CoreFoundation", "CFNetwork")
     elseif is_plat("bsd", "linux") then
         add_syslinks("pthread", "resolv")
     end
