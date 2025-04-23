@@ -10,7 +10,6 @@ package("exosip")
     
     if is_plat("windows") then
         add_resources("5.3.0", "nameser_header", "https://raw.githubusercontent.com/c-ares/c-ares/refs/tags/curl-7_20_0/nameser.h", "8acc1a774896c0d02180b355bcb67dba4935a10e5ef54f4290600ae61bb9aa3d")
-        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
     if not is_plat("windows") then
@@ -28,7 +27,7 @@ package("exosip")
         add_syslinks("dnsapi")
     elseif is_plat("macosx") then
         add_syslinks("resolv")
-        add_frameworks("CoreFoundation", "Security")
+        add_frameworks("CoreFoundation", "CoreServices", "Security")
     elseif is_plat("bsd", "linux") then
         add_syslinks("pthread", "resolv")
     end
@@ -38,6 +37,7 @@ package("exosip")
         os.cp("include", package:installdir())
         local headerdir = package:resourcedir("nameser_header")
         os.cp(path.join(headerdir, "../nameser.h"), "include/nameser.h")
+        os.cp(path.join(package:scriptdir(), "port", "eXosip2.def"), "platform/vsnet/eXosip2.def")
         local arch = package:is_arch("x64") and "x64" or "Win32"
         if package:is_arch("arm64") then
             arch = "ARM64"
@@ -49,8 +49,9 @@ package("exosip")
         table.insert(configs, "/property:Configuration=" .. mode)
         table.insert(configs, "/property:Platform=" .. arch)
         table.insert(configs, "/p:BuildProjectReferences=false")
-        include_paths = {}
-        lib_paths = {}
+        local include_paths = {}
+        local lib_paths = {}
+        local libs = {"dnsapi.lib"}
         for _, dep in ipairs({"osip", "c-ares", "openssl3"}) do
             local packagedep = package:dep(dep)
             if packagedep then
@@ -62,14 +63,23 @@ package("exosip")
                     for _, linkdir in ipairs(fetchinfo.linkdirs) do
                         table.insert(lib_paths, linkdir)
                     end
+                    for _, syslink in ipairs(fetchinfo.syslinks) do
+                        table.insert(libs, syslink .. ".lib")
+                    end
+                    for _, link in ipairs(fetchinfo.libfiles) do
+                        -- Exclude ossl-modules/legacy.lib
+                        if not link:lower():match("legacy.dll") then
+                            table.insert(libs, link)
+                        end
+                    end
                 end
             end
         end
         os.cd("platform/vsnet")    
-        io.replace("eXosip.vcxproj", 
-            "<AdditionalIncludeDirectories>.-</AdditionalIncludeDirectories>", 
-            "<AdditionalIncludeDirectories>" .. table.concat(include_paths, ";") .. "</AdditionalIncludeDirectories><AdditionalLibraryDirectories>" .. table.concat(lib_paths, ";") .. "</AdditionalLibraryDirectories>")
-        io.replace("eXosip.vcxproj", "<AdditionalIncludeDirectories>", [[<AdditionalIncludeDirectories>..\..\..\source\include;]], {plain = true})
+        io.replace("eXosip.vcxproj",
+            "<AdditionalIncludeDirectories>.-</AdditionalIncludeDirectories>",
+            "<AdditionalIncludeDirectories>" .. table.concat(include_paths, ";") .. "</AdditionalIncludeDirectories>")
+        io.replace("eXosip.vcxproj", [[<AdditionalIncludeDirectories>]], [[<AdditionalIncludeDirectories>..\..\..\source\include;]], {plain = true})
         if package:is_arch("arm64") then
             io.replace("eXosip.vcxproj", "|x64", "|ARM64", {plain = true})
             io.replace("eXosip.vcxproj", "<Platform>x64", "<Platform>ARM64", {plain = true})
@@ -78,6 +88,15 @@ package("exosip")
             -- Allow MD, MDd
             io.replace("eXosip.vcxproj", "MultiThreadedDebug", "MultiThreadedDebugDLL", {plain = true})
             io.replace("eXosip.vcxproj", "MultiThreaded", "MultiThreadedDLL", {plain = true})
+        end
+        if package:config("shared") then
+            -- Pass .def file
+            io.replace("eXosip.vcxproj", [[</ClCompile>]],
+                [[</ClCompile><Link><ModuleDefinitionFile>$(ProjectDir)/eXosip2.def</ModuleDefinitionFile></Link>]], {plain = true})
+            io.replace("eXosip.vcxproj", [[</Link>]],
+                [[<AdditionalLibraryDirectories>]] .. table.concat(lib_paths, ";") .. [[</AdditionalLibraryDirectories><AdditionalDependencies>]] .. table.concat(libs, ";") .. [[</AdditionalDependencies></Link>]], {plain = true})
+            -- Allow build shared lib
+            io.replace("eXosip.vcxproj", "StaticLibrary", "DynamicLibrary", {plain = true})
         end
         -- Allow use another Win SDK
         io.replace("eXosip.vcxproj", "<WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>", "", {plain = true})
@@ -88,6 +107,9 @@ package("exosip")
         io.replace("eXosip.vcxproj", "<ProjectReference.-</ProjectReference>", "")
         msbuild.build(package, configs)
         os.cp("**.lib", package:installdir("lib"))
+        if package:config("shared") then
+            os.cp("**.dll", package:installdir("bin"))
+        end
     end)
 
     on_install("linux", "macosx", "android@linux,macosx", "cross", "wasm", function (package)
