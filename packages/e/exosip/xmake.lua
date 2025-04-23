@@ -14,7 +14,7 @@ package("exosip")
     end
 
     if not is_plat("windows") then
-        add_deps("autotools")
+        add_deps("autotools", "pkg-config")
     end
     add_deps("osip", "c-ares", "openssl3")
 
