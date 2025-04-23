@@ -41,9 +41,10 @@ package("astc-encoder")
     end)
     -- arm_neon_sve_bridge.h: No such file or directory
     on_install("!linux or linux|!arm64", function (package)
-        io.replace("Source/cmake_core.cmake", "-Werror", "", {plain = true})
         io.replace("Source/CMakeLists.txt", "-flto", "", {plain = true})
         io.replace("Source/CMakeLists.txt", "-flto=auto", "", {plain = true})
+        io.replace("Source/cmake_core.cmake", "-Werror", "", {plain = true})
+        io.replace("Source/cmake_core.cmake", "if(${ASTCENC_CLI})\n        # Enable LTO on release builds", "if(0)", {plain = true})
         if package:is_plat("mingw", "android", "bsd") or package:has_tool("cxx", "clang") then
             io.replace("Source/cmake_core.cmake", "$<${is_clangcl}:-mcpu=native -march=native>", "", {plain = true})
             io.replace("Source/cmake_core.cmake", "$<${is_gnu_fe}:-mcpu=native -march=native>", "", {plain = true})
