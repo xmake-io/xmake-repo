@@ -34,6 +34,7 @@ package("ktx")
     if is_plat("iphoneos") then
         add_includedirs("lib/ktx.framework/Headers")
         add_linkdirs("lib/ktx.framework")
+        add_frameworkdirs("lib/ktx.framework")
         add_frameworks("ktx")
     end
 
