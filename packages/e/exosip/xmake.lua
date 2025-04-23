@@ -37,7 +37,7 @@ package("exosip")
         os.cp("include", package:installdir())
         local headerdir = package:resourcedir("nameser_header")
         os.cp(path.join(headerdir, "../nameser.h"), "include/nameser.h")
-        os.cp(path.join(package:scriptdir(), "port", "eXosip2.def"), "platform/vsnet/eXosip2.def")
+        os.cp(path.join(package:scriptdir(), "port", "exosip2.def"), "platform/vsnet/eXosip2.def")
         local arch = package:is_arch("x64") and "x64" or "Win32"
         if package:is_arch("arm64") then
             arch = "ARM64"
