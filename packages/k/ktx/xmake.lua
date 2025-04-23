@@ -31,6 +31,12 @@ package("ktx")
     end
     add_deps("astc-encoder", "zstd")
 
+    if is_plat("iphoneos") then
+        add_includedirs("lib/ktx.framework/Headers")
+        add_linkdirs("lib/ktx.framework")
+        add_frameworks("ktx")
+    end
+
     on_check(function (package)
         if is_subhost("windows") and os.arch() == "arm64" then
             raise("package(ktx) require python (from pkgconf) for building, but windows arm64 python binaries are unsupported")
