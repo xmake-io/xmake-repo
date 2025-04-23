@@ -28,7 +28,7 @@ package("exosip")
         add_syslinks("dnsapi")
     elseif is_plat("macosx") then
         add_syslinks("resolv")
-        add_frameworks("CoreFoundation", "Security")
+        add_frameworks("CoreFoundation", "CoreServices", "Security")
     elseif is_plat("bsd", "linux") then
         add_syslinks("pthread", "resolv")
     end
