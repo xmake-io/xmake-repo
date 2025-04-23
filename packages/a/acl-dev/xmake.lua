@@ -19,7 +19,7 @@ package("acl-dev")
     if not is_plat("windows") then
         add_deps("zlib")
     end
-    if is_plat("iphoneos", "macosx", "bsd") then
+    if is_plat("iphoneos", "macosx") then
         add_deps("libiconv")
     end
 
@@ -116,13 +116,12 @@ package("acl-dev")
             -- Enforce install of lib for Android/FreeBSD
             io.replace(file, [[(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin")]],
                 [[(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin" OR CMAKE_SYSTEM_NAME MATCHES "Android" OR CMAKE_SYSTEM_NAME MATCHES "FreeBSD")]], {plain = true})
-            -- Fix LTO for Android
-            io.replace(file, [[if (ANDROID_STL MATCHES "gnustl_shared")]], [[if (0)]], {plain = true})
+            -- Do not enforce LTO
             io.replace(file, [[add_definitions("-flto")]], [[]], {plain = true})
             io.replace(file, [[-flto]], [[]], {plain = true})
         end
-        -- Use zlib instead z
         if not package:is_plat("windows") then
+            -- Use zlib instead z
             io.replace("CMakeLists.txt", "project(acl)", "project(acl)\nfind_package(ZLIB)", {plain = true})
             io.replace("lib_acl_cpp/CMakeLists.txt", "-lz", "", {plain = true})
             io.replace("lib_acl_cpp/CMakeLists.txt", "target_link_libraries(acl_cpp_shared protocol acl)", "target_link_libraries(acl_cpp_shared protocol acl ZLIB::ZLIB)", {plain = true})
@@ -133,22 +132,23 @@ package("acl-dev")
             io.replace("lib_fiber/cpp/CMakeLists.txt", "-lz", "", {plain = true})
             io.replace("lib_fiber/cpp/CMakeLists.txt", "target_link_libraries(fiber_cpp_shared acl_cpp protocol acl fiber)", "target_link_libraries(fiber_cpp_shared acl_cpp protocol acl fiber ZLIB::ZLIB)", {plain = true})
             io.replace("lib_fiber/cpp/CMakeLists.txt", "add_library(fiber_cpp_static STATIC ${lib_src})", "add_library(fiber_cpp_static STATIC ${lib_src})\ntarget_link_libraries(fiber_cpp_static ZLIB::ZLIB)", {plain = true})
-            if package:is_plat("iphoneos", "macosx", "bsd") then
+            -- FreeBSD enforce fallback to system iconv
+            io.replace("lib_acl_cpp/CMakeLists.txt", [[elseif(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")]], 
+                [[elseif(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+                add_definitions("-DUSE_SYS_ICONV")]], {plain = true})
+            if package:is_plat("iphoneos", "macosx") then
                 -- Use libiconv instead iconv
                 io.replace("CMakeLists.txt", "project(acl)", "project(acl)\nfind_package(Iconv)", {plain = true})
                 io.replace("lib_acl_cpp/CMakeLists.txt", "-liconv", "", {plain = true})
                 io.replace("lib_fiber/cpp/CMakeLists.txt", "-liconv", "", {plain = true})
                 io.replace("lib_acl_cpp/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})
                 io.replace("lib_fiber/cpp/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})
-                -- FreeBSD fallback to system iconv
-                io.replace("lib_acl_cpp/CMakeLists.txt", "-DUSE_SYS_ICONV\")", "-DUSE_SYS_ICONV\")\nadd_definitions(\"-DUSE_SYS_ICONV\")", {plain = true})
             end
         end
         local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         if package:is_plat("iphoneos") then
             table.insert(configs, "-DCMAKE_SYSTEM_NAME=Darwin")
         end
-        table.insert(configs, "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=" .. (not package:is_plat("windows", "linux", "bsd", "cross") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "DEBUG" or "RELEASE"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DACL_BUILD_SHARED=" .. (package:config("shared") and "YES" or "NO"))
