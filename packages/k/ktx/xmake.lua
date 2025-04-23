@@ -29,7 +29,7 @@ package("ktx")
     else
         add_deps("pkg-config")
     end
-    add_deps("astc-encoder")
+    add_deps("astc-encoder", "zstd")
 
     on_check(function (package)
         if is_subhost("windows") and os.arch() == "arm64" then
@@ -41,6 +41,9 @@ package("ktx")
     end)
 
     on_load(function (package)
+        if package:config("tools") then
+            package:add("deps", "fmt", "cxxopts", {private = true})
+        end
         if not package:config("shared") then
             package:add("defines", "KHRONOS_STATIC")
         end
@@ -52,11 +55,24 @@ package("ktx")
         end
     end)
 
-    on_install("!iphoneos", function (package)
-        io.replace("lib/texture2.c", "#include <zstd_errors.h>", [[#include "../other_include/zstd_errors.h"]], {plain = true})
+    on_install(function (package)
         -- TODO: unbundle basisu & dfdutils
         -- io.replace("CMakeLists.txt", "external/dfdutils%g*.c\n", "")
         -- io.replace("CMakeLists.txt", "external%g*.cpp\n", "")
+        io.writefile("external/basisu/zstd/zstd.c", "")
+        io.replace("CMakeLists.txt", "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/external/basisu/zstd>", "", {plain = true})
+        io.replace("CMakeLists.txt", "$ $<INSTALL_INTERFACE:external/basisu/zstd>", "", {plain = true})
+        local file = io.open("CMakeLists.txt", "a")
+        file:write([[
+            find_package(zstd REQUIRED CONFIG)
+            target_link_libraries(ktx PUBLIC zstd::libzstd)
+            target_link_libraries(ktx_read PUBLIC zstd::libzstd)
+        ]])
+        file:close()
+        if package:config("tools") then
+            io.replace("CMakeLists.txt", "add_subdirectory(external/fmt)", "find_package(fmt CONFIG REQUIRED)", {plain = true})
+            io.replace("CMakeLists.txt", "add_subdirectory(external/cxxopts)", "find_package(cxxopts CONFIG REQUIRED)", {plain = true})
+        end
 
         local configs = {"-DKTX_FEATURE_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
