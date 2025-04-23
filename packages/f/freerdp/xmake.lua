@@ -9,7 +9,9 @@ package("freerdp")
     add_versions("3.15.0", "e8cd58decef4c970faea2fbea675970eea60e440ebe8033c54889acb83787371")
 
     add_configs("client", {description = "Build client", default = false, type = "boolean"})
+    add_configs("client_channels", {description = "Build virtual channel plugins", default = false, type = "boolean"})
     add_configs("server", {description = "Build server", default = false, type = "boolean"})
+    add_configs("server_channels", {description = "Build virtual channel plugins", default = false, type = "boolean"})
     add_configs("rdtk", {description = "Build rdtk toolkit", default = false, type = "boolean"})
     add_configs("shadow", {description = "Compile with shadow server", default = false, type = "boolean"})
     add_configs("proxy", {description = "Compile with proxy server", default = false, type = "boolean"})
@@ -49,22 +51,11 @@ package("freerdp")
     end
 
     add_deps("cmake")
-    if is_subhost("windows") then
-        add_deps("pkgconf")
-    else
-        add_deps("pkg-config")
-    end
     add_deps("zlib", "openssl3")
 
     add_includedirs("include", "include/freerdp3", "include/winpr3")
 
     add_links("freerdp-server3", "freerdp-server-proxy3", "freerdp-client3", "freerdp3", "rdtk0", "winpr3")
-
-    on_check(function (package)
-        if is_subhost("windows") and os.arch() == "arm64" then
-            raise("package(freerdp) require python (from pkgconf) for building, but windows arm64 python binaries are unsupported")
-        end
-    end)
 
     on_load(function (package)
         if package:config("shadow") or package:config("proxy") or package:config("platform_server") then
@@ -99,6 +90,19 @@ package("freerdp")
             package:add("deps", "icu4c")
         end
 
+        if package:dep("libusb") then
+            if is_subhost("windows") then
+                package:add("deps", "pkgconf")
+            else
+                package:add("deps", "pkg-config")
+            end
+        end
+
+        -- https://github.com/libfuse/libfuse/issues/383
+        if package:config("fuse") then
+            package:add("deps", "libfuse", {configs = {shared = true}})
+        end
+
         if package:is_plat("windows", "mingw") and not package:config("shared") then
             package:add("defines", "FREERDP_EXPORTS")
         end
@@ -114,6 +118,10 @@ package("freerdp")
         end
         io.replace("CMakeLists.txt", "include(${CMAKE_CPACK_INCLUDE_FILE})", "", {plain = true})
         io.replace("cmake/MSVCRuntime.cmake", "if(BUILD_SHARED_LIBS)", "if(0)", {plain = true})
+        if package:config("fuse") then
+            io.replace("client/common/CMakeLists.txt", "pkg_check_modules(FUSE3 REQUIRED fuse3)", "pkg_check_modules(FUSE3 REQUIRED IMPORTED_TARGET fuse3)", {plain = true})
+            io.replace("client/common/CMakeLists.txt", "${FUSE3_LIBRARIES}", "PkgConfig::FUSE3", {plain = true})
+        end
 
         local libusb = package:dep("libusb")
         if libusb and not libusb:is_system() and not libusb:config("shared") and package:is_plat("linux", "cross") then
@@ -126,6 +134,7 @@ package("freerdp")
 
         local configs = {
             "-DWITH_SAMPLE=OFF",
+            "-DWITH_MANPAGES=OFF",
             "-DBUILD_TESTING=OFF",
             "-DWITH_CCACHE=OFF",
             "-DWITH_CLANG_FORMAT=OFF",
