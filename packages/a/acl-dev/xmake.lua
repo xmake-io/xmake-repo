@@ -19,10 +19,8 @@ package("acl-dev")
     if not is_plat("windows") then
         add_deps("zlib")
     end
-    if is_plat("iphoneos", "macosx") then
+    if is_plat("iphoneos", "macosx", "bsd") then
         add_deps("libiconv")
-    elseif is_plat("bsd") then
-        add_deps("libiconv", {system = true})
     end
 
     if is_plat("windows") then
@@ -138,11 +136,11 @@ package("acl-dev")
             io.replace("lib_acl_cpp/CMakeLists.txt", [[elseif(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")]], 
                 [[elseif(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
                 add_definitions("-DUSE_SYS_ICONV")]], {plain = true})
+            io.replace("lib_acl_cpp/CMakeLists.txt", "-liconv", "", {plain = true})
+            io.replace("lib_fiber/cpp/CMakeLists.txt", "-liconv", "", {plain = true})
             if package:is_plat("iphoneos", "macosx") then
                 -- Use libiconv instead iconv
                 io.replace("CMakeLists.txt", "project(acl)", "project(acl)\nfind_package(Iconv)", {plain = true})
-                io.replace("lib_acl_cpp/CMakeLists.txt", "-liconv", "", {plain = true})
-                io.replace("lib_fiber/cpp/CMakeLists.txt", "-liconv", "", {plain = true})
                 io.replace("lib_acl_cpp/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})
                 io.replace("lib_fiber/cpp/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})
             end
