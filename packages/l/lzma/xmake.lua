@@ -9,8 +9,7 @@ package("lzma")
     add_versions("23.01", "317dd834d6bbfd95433488b832e823cd3d4d420101436422c03af88507dd1370")
     add_versions("24.09", "79b39f10b7b69eea293caa90c3e7ea07faf8f01f8ae9db1bb1b90c092375e5f3")
 
-    add_links("lzma")
-    if is_plat("bsd") then
+    if is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
     on_install(function (package) 
@@ -24,15 +23,15 @@ package("lzma")
                 if is_plat("windows") then
                     add_files("Util/LzmaLib/LzmaLib.def")
                 end
+                if is_plat("linux", "bsd") then
+                    add_syslinks("pthread")
+                end
         ]])
-        local flags = ""
+        local cxflags = ""
         if not package:is_plat("windows") and package:is_arch("arm.*") then
-            flags = "-march=armv8-a+crc+crypto"
+            cxflags = "-march=armv8-a+crc+crypto"
         end
-        import("package.tools.xmake").install(package, {
-            cxflags = flags,
-            kind = package:config("shared") and "shared" or "static"
-        })
+        import("package.tools.xmake").install(package, {cxflags = cxflags})
     end)
 
     on_test(function (package)
