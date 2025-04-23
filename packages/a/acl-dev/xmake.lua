@@ -138,7 +138,7 @@ package("acl-dev")
                 add_definitions("-DUSE_SYS_ICONV")]], {plain = true})
             io.replace("lib_acl_cpp/CMakeLists.txt", "-liconv", "", {plain = true})
             io.replace("lib_fiber/cpp/CMakeLists.txt", "-liconv", "", {plain = true})
-            if package:is_plat("iphoneos", "macosx") then
+            if package:is_plat("iphoneos", "macosx", "bsd") then
                 -- Use libiconv instead iconv
                 io.replace("CMakeLists.txt", "project(acl)", "project(acl)\nfind_package(Iconv)", {plain = true})
                 io.replace("lib_acl_cpp/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})
