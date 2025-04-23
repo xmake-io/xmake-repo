@@ -31,8 +31,13 @@ package("ktx")
     end
     add_deps("astc-encoder")
 
-    on_check("linux|arm64", function (package)
-        raise("package(ktx) dep(astc-encoder) unsupported linux arm64")
+    on_check(function (package)
+        if is_subhost("windows") and os.arch() == "arm64" then
+            raise("package(ktx) require python (from pkgconf) for building, but windows arm64 python binaries are unsupported")
+        end
+        if package:is_plat("linux") and package:is_arch("arm64") then
+            raise("package(ktx) dep(astc-encoder) unsupported linux arm64")
+        end
     end)
 
     on_load(function (package)
@@ -47,7 +52,8 @@ package("ktx")
         end
     end)
 
-    on_install(function (package)
+    on_install("!iphoneos", function (package)
+        io.replace("lib/texture2.c", "#include <zstd_errors.h>", [[#include "../other_include/zstd_errors.h"]], {plain = true})
         -- TODO: unbundle basisu & dfdutils
         -- io.replace("CMakeLists.txt", "external/dfdutils%g*.c\n", "")
         -- io.replace("CMakeLists.txt", "external%g*.cpp\n", "")
