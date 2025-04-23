@@ -26,9 +26,9 @@ package("exosip")
 
     if is_plat("windows") then
         add_syslinks("dnsapi")
-    elseif is_plat("macosx", "iphoneos") then
+    elseif is_plat("macosx") then
         add_syslinks("resolv")
-        add_frameworks("CoreFoundation", "CFNetwork")
+        add_frameworks("CoreFoundation", "Security")
     elseif is_plat("bsd", "linux") then
         add_syslinks("pthread", "resolv")
     end
@@ -90,7 +90,7 @@ package("exosip")
         os.cp("**.lib", package:installdir("lib"))
     end)
 
-    on_install("linux", "macosx", "bsd", "android@linux,macosx", "iphoneos", "cross", "wasm", function (package)
+    on_install("linux", "macosx", "android@linux,macosx", "cross", "wasm", function (package)
         local configs = {"--disable-trace", "--enable-pthread=force"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
