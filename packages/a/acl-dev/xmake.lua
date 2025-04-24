@@ -10,9 +10,10 @@ package("acl-dev")
 
     add_patches("v3.6.2", "patches/v3.6.2/export_unix.diff", "13376d9374de1b97ec25f709205f927a7157852075c2583e57615b617c45c62d")
     add_patches("v3.6.2", "patches/v3.6.2/fix_android_install_path.diff", "19917bd1852af4ddecc27ef402ecf9806b89ec78d91e62c806ba00fc05f41e94")
+    add_patches("v3.6.2", "patches/v3.6.2/debundle_zlib.diff", "33cbbdcf9919e7ad23b4d1b9be3af113773f03e90a02d138a81a60d4903632b1")
 
     if is_plat("windows") then
-        add_configs("vs", {description = "Use Visual Studio buildsystem (.sln/.vcxproj)", default = true, type = "boolean"})
+        add_configs("vs", {description = "Use Visual Studio buildsystem (.sln/.vcxproj)", default = false, type = "boolean"})
     end
 
     add_includedirs("include", "include/acl-lib")
@@ -37,15 +38,12 @@ package("acl-dev")
     end
 
     on_load(function (package)
-        if not is_plat("windows") then
-            package:add("patches", "v3.6.2", "patches/v3.6.2/debundle_zlib.diff", "d67c99cbbc65803852c1122f152786efdfc4744cc89ffe48dceaa7ca34bc7848")
-        end
         -- Build & install only shared or only static library & Enforce install of lib for Android/FreeBSD
         if not (package:is_plat("windows") and package:config("vs")) then
             if package:config("shared") then
-                package:add("patches", "v3.6.2", "patches/v3.6.2/build_install_only_shared.diff", "48cb126538aebd61f37dc6f3bf589db3621db839e9b7e8cbb422144392a6016d")
+                package:add("patches", "v3.6.2", "patches/v3.6.2/build_install_only_shared.diff", "49fad7f3b83838da99b639846188d27a49fbd8f23ba3fa6c0c0916d2412d34c3")
             else
-                package:add("patches", "v3.6.2", "patches/v3.6.2/build_install_only_static.diff", "83d3dbd5c0915d173ec6a4359f21dbe38f3c14421c502c086a4da94733b642c4")
+                package:add("patches", "v3.6.2", "patches/v3.6.2/build_install_only_static.diff", "6171e6c1e5716ab3a6128955e1011b1469be0dc5fa0bdf158a2079f8c3421568")
             end
         end
         if package:is_plat("android") then
@@ -94,6 +92,10 @@ package("acl-dev")
                 os.cp("**.dll", package:installdir("bin"))
             end
         else
+            if not package:is_plat("windows") then
+                -- Use zlib instead z
+                io.replace("CMakeLists.txt", "project(acl)", "project(acl)\nfind_package(ZLIB)", {plain = true})
+            end
             -- Fix windows .pch file
             io.replace("lib_acl_cpp/CMakeLists.txt", [["-Ycacl_stdafx.hpp"]], [[]], {plain = true})
             io.replace("lib_acl_cpp/CMakeLists.txt", [[add_library(acl_cpp_static STATIC ${lib_src})]],

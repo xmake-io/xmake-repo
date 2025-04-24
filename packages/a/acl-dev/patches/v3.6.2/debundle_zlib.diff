@@ -1,17 +1,5 @@
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 4848fd3..50f085b 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -78,6 +78,7 @@ endif()
- if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
- 	set(CMAKE_MACOSX_RPATH build)
- endif()
-+find_package(ZLIB)
- 
- add_subdirectory(lib_acl acl)
- add_subdirectory(lib_protocol protocol)
 diff --git a/lib_acl_cpp/CMakeLists.txt b/lib_acl_cpp/CMakeLists.txt
-index 08c558e..36ec03a 100644
+index afb3936..e3235d3 100644
 --- a/lib_acl_cpp/CMakeLists.txt
 +++ b/lib_acl_cpp/CMakeLists.txt
 @@ -263,6 +263,7 @@ set(LIBRARY_OUTPUT_PATH ${lib_output_path})
@@ -61,7 +49,7 @@ index 08c558e..36ec03a 100644
  
  	if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin")
 diff --git a/lib_fiber/cpp/CMakeLists.txt b/lib_fiber/cpp/CMakeLists.txt
-index 4d70233..fcf470b 100644
+index 1c41f9b..7ad023e 100644
 --- a/lib_fiber/cpp/CMakeLists.txt
 +++ b/lib_fiber/cpp/CMakeLists.txt
 @@ -139,6 +139,7 @@ set(LIBRARY_OUTPUT_PATH ${lib_output_path})
@@ -106,7 +94,7 @@ index 4d70233..fcf470b 100644
  
  	if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin")
 diff --git a/lib_protocol/CMakeLists.txt b/lib_protocol/CMakeLists.txt
-index b53ee88..aac440e 100644
+index e047e59..eeca881 100644
 --- a/lib_protocol/CMakeLists.txt
 +++ b/lib_protocol/CMakeLists.txt
 @@ -140,6 +140,7 @@ set(LIBRARY_OUTPUT_PATH ${lib_output_path})
