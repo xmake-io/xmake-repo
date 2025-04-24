@@ -120,14 +120,18 @@ package("acl-dev")
                 io.replace("lib_acl_cpp/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})
                 io.replace("lib_fiber/cpp/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})
             end
-            -- Disable -Wstrict-prototypes -Werror -Qunused-arguments
             for _, file in ipairs(os.files("**.txt")) do
+                -- Disable -Wstrict-prototypes -Werror -Qunused-arguments
                 io.replace(file, [["-Wstrict-prototypes"]], "", {plain = true})
                 io.replace(file, [["-Werror"]], "", {plain = true})
                 io.replace(file, [[-Qunused-arguments]], [[]], {plain = true})
                 -- Do not enforce LTO
                 io.replace(file, [[add_definitions("-flto")]], [[]], {plain = true})
                 io.replace(file, [[-flto]], [[]], {plain = true})
+                if is_plat("windows") then
+                    -- Cleanup ZLIB after patch for Windows OS
+                    io.replace(file, [[ZLIB::ZLIB]], [[]], {plain = true})
+                end
             end
             local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
             if package:is_plat("iphoneos") then
