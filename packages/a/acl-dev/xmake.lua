@@ -8,6 +8,8 @@ package("acl-dev")
 
     add_versions("v3.6.2", "888fd9b8fb19db4f8e7760a12a28f37f24ba0a2952bb0409b8380413a4b6506b")
 
+    add_patches("v3.6.2", "patches/v3.6.2/export_unix.diff", "13376d9374de1b97ec25f709205f927a7157852075c2583e57615b617c45c62d")
+
     if is_plat("windows") then
         add_configs("vs", {description = "Use Visual Studio buildsystem (.sln/.vcxproj)", default = true, type = "boolean"})
     end
@@ -34,6 +36,14 @@ package("acl-dev")
     end
 
     on_load(function (package)
+        -- Build & install only shared or only static library & Enforce install of lib for Android/FreeBSD
+        if not (package:is_plat("windows") and package:config("vs")) then
+            if package:config("shared") then
+                package:add("patches", "v3.6.2", "patches/v3.6.2/build_install_only_shared.diff", "48cb126538aebd61f37dc6f3bf589db3621db839e9b7e8cbb422144392a6016d")
+            else
+                package:add("patches", "v3.6.2", "patches/v3.6.2/build_install_only_static.diff", "83d3dbd5c0915d173ec6a4359f21dbe38f3c14421c502c086a4da94733b642c4")
+            end
+        end
         if package:is_plat("android") then
             package:add("defines", "ANDROID")
         elseif package:is_plat("macosx") then
@@ -80,53 +90,6 @@ package("acl-dev")
                 os.cp("**.dll", package:installdir("bin"))
             end
         else
-            io.replace("lib_acl/include/stdlib/acl_define_unix.h", "# define ACL_API",
-                "#if defined(__GNUC__)\n#define ACL_API __attribute__((visibility(\"default\")))\n#else\n# define ACL_API\n#endif", {plain = true})
-            io.replace("lib_acl/include/stdlib/acl_define_win32.h", "# define ACL_API",
-                "#if defined(__GNUC__)\n#define ACL_API __attribute__((visibility(\"default\")))\n#else\n# define ACL_API\n#endif", {plain = true})
-            -- Build & install only shared or only static library
-            if package:config("shared") then
-                io.replace("lib_fiber/c/CMakeLists.txt", "add_library(fiber_static STATIC ${lib_src})",
-                    "add_library(fiber_static STATIC ${lib_src})\nset_target_properties(fiber_static PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
-                io.replace("lib_fiber/c/CMakeLists.txt", "install%(TARGETS fiber_static.-%)", "")
-
-                io.replace("lib_fiber/cpp/CMakeLists.txt", "add_library(fiber_cpp_static STATIC ${lib_src})",
-                    "add_library(fiber_cpp_static STATIC ${lib_src})\nset_target_properties(fiber_cpp_static PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
-                io.replace("lib_fiber/cpp/CMakeLists.txt", "install%(TARGETS fiber_cpp_static.-%)", "")
-
-                io.replace("lib_protocol/CMakeLists.txt", "add_library(protocol_static STATIC ${lib_src})",
-                    "add_library(protocol_static STATIC ${lib_src})\nset_target_properties(protocol_static PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
-                io.replace("lib_protocol/CMakeLists.txt", "install%(TARGETS protocol_static.-%)", "")
-
-                io.replace("lib_acl_cpp/CMakeLists.txt", "add_library(acl_cpp_static STATIC ${lib_src})",
-                    "add_library(acl_cpp_static STATIC ${lib_src})\nset_target_properties(acl_cpp_static PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
-                io.replace("lib_acl_cpp/CMakeLists.txt", "install%(TARGETS acl_cpp_static.-%)", "")
-
-                io.replace("lib_acl/CMakeLists.txt", "add_library(acl_static STATIC ${acl_src})",
-                    "add_library(acl_static STATIC ${acl_src})\nset_target_properties(acl_static PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
-                io.replace("lib_acl/CMakeLists.txt", "install%(TARGETS acl_static.-%)", "")
-            else
-                io.replace("lib_fiber/c/CMakeLists.txt", "add_library(fiber_shared SHARED ${lib_src})",
-                    "add_library(fiber_shared SHARED ${lib_src})\nset_target_properties(fiber_shared PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
-                io.replace("lib_fiber/c/CMakeLists.txt", "install%(TARGETS fiber_shared.-%)", "")
-
-                io.replace("lib_fiber/cpp/CMakeLists.txt", "add_library(fiber_cpp_shared SHARED ${lib_src})",
-                    "add_library(fiber_cpp_shared SHARED ${lib_src})\nset_target_properties(fiber_cpp_shared PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
-                io.replace("lib_fiber/cpp/CMakeLists.txt", "install%(TARGETS fiber_cpp_shared.-%)", "")
-
-                io.replace("lib_protocol/CMakeLists.txt", "add_library(protocol_shared SHARED ${lib_src})",
-                    "add_library(protocol_shared SHARED ${lib_src})\nset_target_properties(protocol_shared PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
-                io.replace("lib_protocol/CMakeLists.txt", "install%(TARGETS protocol_shared.-%)", "")
-
-                io.replace("lib_acl_cpp/CMakeLists.txt", "add_library(acl_cpp_shared SHARED ${lib_src})",
-                    "add_library(acl_cpp_shared SHARED ${lib_src})\nset_target_properties(acl_cpp_shared PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
-                io.replace("lib_acl_cpp/CMakeLists.txt", "install%(TARGETS acl_cpp_shared.-%)", "")
-
-                io.replace("lib_acl/CMakeLists.txt", "add_library(acl_shared SHARED ${acl_src})",
-                    "add_library(acl_shared SHARED ${acl_src})\nset_target_properties(acl_shared PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
-                io.replace("lib_acl/CMakeLists.txt", "install%(TARGETS acl_shared.-%)", "")
-            end
-
             -- Fix install path for android
             io.replace("lib_protocol/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../android/lib/${ANDROID_ABI})]], [[set(lib_output_path ${PROJECT_BINARY_DIR}/../lib)]], {plain = true})
             io.replace("lib_fiber/cpp/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../../android/lib/${ANDROID_ABI})]], [[set(lib_output_path ${PROJECT_BINARY_DIR}/../lib)]], {plain = true})
@@ -151,9 +114,6 @@ package("acl-dev")
                 io.replace(file, [["-Wstrict-prototypes"]], "", {plain = true})
                 io.replace(file, [["-Werror"]], "", {plain = true})
                 io.replace(file, [[-Qunused-arguments]], [[]], {plain = true})
-                -- Enforce install of lib for Android/FreeBSD
-                io.replace(file, [[(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin")]],
-                    [[(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin" OR CMAKE_SYSTEM_NAME MATCHES "Android" OR CMAKE_SYSTEM_NAME MATCHES "FreeBSD")]], {plain = true})
                 -- Do not enforce LTO
                 io.replace(file, [[add_definitions("-flto")]], [[]], {plain = true})
                 io.replace(file, [[-flto]], [[]], {plain = true})
