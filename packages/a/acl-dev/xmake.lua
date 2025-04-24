@@ -100,6 +100,10 @@ package("acl-dev")
                 -- Use zlib instead z
                 io.replace("CMakeLists.txt", "project(acl)", "project(acl)\nfind_package(ZLIB)", {plain = true})
             end
+            if package:is_plat("iphoneos", "macosx", "bsd") then
+                -- Use libiconv instead iconv
+                io.replace("CMakeLists.txt", "project(acl)", "project(acl)\nfind_package(Iconv)", {plain = true})
+            end
             -- Fix windows .pch file
             io.replace("lib_acl_cpp/CMakeLists.txt", [["-Ycacl_stdafx.hpp"]], [[]], {plain = true})
             io.replace("lib_acl_cpp/CMakeLists.txt", [[add_library(acl_cpp_static STATIC ${lib_src})]],
@@ -111,7 +115,6 @@ package("acl-dev")
                 io.replace("lib_fiber/c/CMakeLists.txt", [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]], [[]], {plain = true})
                 io.replace("lib_fiber/c/CMakeLists.txt", [[${src}/fiber/boost/jump_gas.S)]], [[]], {plain = true})
             end
-            -- elseif package:is_plat("iphoneos", "macosx", "bsd") then
             if package:is_plat("bsd") then
                 -- FreeBSD enforce fallback to system iconv
                 io.replace("lib_acl_cpp/CMakeLists.txt", [[elseif(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")]], 
