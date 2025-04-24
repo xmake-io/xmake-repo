@@ -33,8 +33,8 @@ package("osip")
         end
         local mode = package:is_debug() and "Debug" or "Release"
         local configs = { "osip.sln" }
-        table.insert(configs, "/property:Configuration=" .. mode)
-        table.insert(configs, "/property:Platform=" .. arch)
+        table.insert(configs, "/p:Configuration=" .. mode)
+        table.insert(configs, "/p:Platform=" .. arch)
         os.cd("platform/vsnet")
         -- Use *source* folder instead of *osip* folder
         io.replace("osip2.vcxproj", [[<ProjectReference Include="..\..\..\osip\platform\vsnet\osipparser2.vcxproj">]], [[<ProjectReference Include="..\..\..\source\platform\vsnet\osipparser2.vcxproj">]], {plain = true})
