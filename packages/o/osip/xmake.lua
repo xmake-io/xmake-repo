@@ -3,10 +3,13 @@ package("osip")
     set_description("oSIP is an LGPL implementation of SIP. It is used mostly with eXosip2 stack (GPL) which provides simpler API for User-Agent implementation.")
     set_license("LGPL")
 
-    add_urls("https://git.savannah.gnu.org/cgit/osip.git/snapshot/osip-$(version).tar.gz",
-             "https://git.savannah.gnu.org/git/osip.git")
+    add_urls("https://www.antisip.com/download/exosip2/libosip2-$(version).tar.gz", {alias = "mirror"})
+    -- add_urls("https://git.savannah.gnu.org/cgit/osip.git/snapshot/osip-$(version).tar.gz", {alias = "archive"})
+    -- add_urls("https://git.savannah.gnu.org/git/osip.git", {alias = "github"})
 
-    add_versions("5.3.0", "593c9d61150b230f7e757b652d70d5fe336c84db7e4db190658f9ef1597d59ed")
+    add_versions("mirror:5.3.0", "593c9d61150b230f7e757b652d70d5fe336c84db7e4db190658f9ef1597d59ed")
+    -- add_versions("archive:5.3.0", "593c9d61150b230f7e757b652d70d5fe336c84db7e4db190658f9ef1597d59ed")
+    -- add_versions("github:5.3.0", "63846b845929236dbd4d9e51cbd256baf84b8dad")
 
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
@@ -24,13 +27,6 @@ package("osip")
         import("package.tools.msbuild")
 
         os.cp("include", package:installdir())
-
-        -- rename *source* directory to *osip* directory
-        local curdir = os.curdir()
-        os.cd("..")
-        os.mv(curdir, "osip")
-        os.cd("osip")
-
         local arch = package:is_arch("x64") and "x64" or "Win32"
         if package:is_arch("arm64") then
             arch = "ARM64"
@@ -41,7 +37,8 @@ package("osip")
         table.insert(configs, "/property:Configuration=" .. mode)
         table.insert(configs, "/property:Platform=" .. arch)
         os.cd("platform/vsnet")
-
+        -- Use *source* dir
+        io.replace("osip2.vcxproj", [[<ProjectReference Include="..\..\..\osip\platform\vsnet\osipparser2.vcxproj">]], [[<ProjectReference Include="..\..\..\source\platform\vsnet\osipparser2.vcxproj">]], {plain = true})
         -- Add external symbols into .def file for .DLL library
         local osip2_def_content = io.readfile("osip2.def")
         io.writefile("osip2.def", osip2_def_content .. [[
@@ -68,8 +65,8 @@ package("osip")
             end
             if not package:has_runtime("MT", "MTd") then
                 -- Allow MD, MDd
-                io.replace(vcxproj, "MultiThreaded", "MultiThreadedDLL", {plain = true})
                 io.replace(vcxproj, "MultiThreadedDebug", "MultiThreadedDebugDLL", {plain = true})
+                io.replace(vcxproj, "MultiThreaded", "MultiThreadedDLL", {plain = true})
             end
             if package:config("shared") then
                 -- Pass .def file
@@ -80,6 +77,10 @@ package("osip")
             end
             -- Allow use another Win SDK
             io.replace(vcxproj, "<WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>", "", {plain = true})
+            -- Use *source* dir
+            io.replace(vcxproj, [[<AdditionalIncludeDirectories>..\..\..\osip\include;]], [[<AdditionalIncludeDirectories>..\..\..\source\include;]], {plain = true})
+            io.replace(vcxproj, [[<ClCompile Include="..\..\..\osip\]], [[<ClCompile Include="..\..\..\source\]], {plain = true})
+            io.replace(vcxproj, [[<ClInclude Include="..\..\..\osip\]], [[<ClInclude Include="..\..\..\source\]], {plain = true})
         end
 
         msbuild.build(package, configs)
