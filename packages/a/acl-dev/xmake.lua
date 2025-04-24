@@ -93,7 +93,6 @@ package("acl-dev")
             end
         else
             if not package:is_plat("windows") then
-                -- Use zlib instead z
                 io.replace("CMakeLists.txt", "project(acl)", "project(acl)\nfind_package(ZLIB)", {plain = true})
             end
             -- Fix windows .pch file
