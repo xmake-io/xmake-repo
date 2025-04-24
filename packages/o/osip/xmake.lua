@@ -3,11 +3,11 @@ package("osip")
     set_description("oSIP is an LGPL implementation of SIP. It is used mostly with eXosip2 stack (GPL) which provides simpler API for User-Agent implementation.")
     set_license("LGPL")
 
-    -- add_urls("https://www.antisip.com/download/exosip2/libosip2-$(version).tar.gz", {alias = "mirror"})
+    add_urls("https://www.antisip.com/download/exosip2/libosip2-$(version).tar.gz", {alias = "mirror"})
     add_urls("https://git.savannah.gnu.org/cgit/osip.git/snapshot/osip-$(version).tar.gz", {alias = "archive"})
     add_urls("https://git.savannah.gnu.org/git/osip.git", {alias = "github"})
 
-    -- add_versions("mirror:5.3.0", "f4725916c22cf514969efb15c3c207233d64739383f7d42956038b78f6cae8c8")
+    add_versions("mirror:5.3.0", "f4725916c22cf514969efb15c3c207233d64739383f7d42956038b78f6cae8c8")
     add_versions("archive:5.3.0", "593c9d61150b230f7e757b652d70d5fe336c84db7e4db190658f9ef1597d59ed")
     add_versions("github:5.3.0", "63846b845929236dbd4d9e51cbd256baf84b8dad")
 
