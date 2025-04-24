@@ -70,7 +70,7 @@ package("acl-dev")
                     io.replace(vcxproj, "MultiThreadedDebugDLL", "MultiThreadedDebug", {plain = true})
                     io.replace(vcxproj, "MultiThreadedDLL", "MultiThreaded", {plain = true})
                 end
-                -- Disble LTCG
+                -- Disable LTCG
                 io.replace(vcxproj, "<WholeProgramOptimization>true</WholeProgramOptimization>", "<WholeProgramOptimization>false</WholeProgramOptimization>", {plain = true})
                 io.replace(vcxproj, "<IgnoreSpecificDefaultLibraries>libcmt;libc</IgnoreSpecificDefaultLibraries>", "", {plain = true})
             end
