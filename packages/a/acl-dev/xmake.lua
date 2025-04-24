@@ -9,6 +9,7 @@ package("acl-dev")
     add_versions("v3.6.2", "888fd9b8fb19db4f8e7760a12a28f37f24ba0a2952bb0409b8380413a4b6506b")
 
     add_patches("v3.6.2", "patches/v3.6.2/export_unix.diff", "13376d9374de1b97ec25f709205f927a7157852075c2583e57615b617c45c62d")
+    add_patches("v3.6.2", "patches/v3.6.2/fix_android_install_path.diff", "19917bd1852af4ddecc27ef402ecf9806b89ec78d91e62c806ba00fc05f41e94")
 
     if is_plat("windows") then
         add_configs("vs", {description = "Use Visual Studio buildsystem (.sln/.vcxproj)", default = true, type = "boolean"})
@@ -90,20 +91,12 @@ package("acl-dev")
                 os.cp("**.dll", package:installdir("bin"))
             end
         else
-            -- Fix install path for android
-            io.replace("lib_protocol/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../android/lib/${ANDROID_ABI})]], [[set(lib_output_path ${PROJECT_BINARY_DIR}/../lib)]], {plain = true})
-            io.replace("lib_fiber/cpp/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../../android/lib/${ANDROID_ABI})]], [[set(lib_output_path ${PROJECT_BINARY_DIR}/../lib)]], {plain = true})
-            io.replace("lib_fiber/c/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../../android/lib/${ANDROID_ABI})]], [[set(lib_output_path ${PROJECT_BINARY_DIR}/../lib)]], {plain = true})
-            io.replace("lib_acl_cpp/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../android/lib/${ANDROID_ABI})]], [[set(lib_output_path ${PROJECT_BINARY_DIR}/../lib)]], {plain = true})
-            io.replace("lib_acl/CMakeLists.txt", [[set(acl_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../android/lib/${ANDROID_ABI})]], [[set(acl_output_path ${PROJECT_BINARY_DIR}/../lib)]], {plain = true})
-
             -- Fix windows .pch file
             io.replace("lib_acl_cpp/CMakeLists.txt", [["-Ycacl_stdafx.hpp"]], [[]], {plain = true})
             io.replace("lib_acl_cpp/CMakeLists.txt", [[add_library(acl_cpp_static STATIC ${lib_src})]],
                 "add_library(acl_cpp_static STATIC ${lib_src})\ntarget_precompile_headers(acl_cpp_static PRIVATE src/acl_stdafx.hpp)", {plain = true})
             io.replace("lib_acl_cpp/CMakeLists.txt", [[add_library(acl_cpp_shared SHARED ${lib_src})]],
                 "add_library(acl_cpp_shared SHARED ${lib_src})\ntarget_precompile_headers(acl_cpp_shared PRIVATE src/acl_stdafx.hpp)", {plain = true})
-
             -- Do not build .gas on windows
             if package:is_plat("windows") then
                 io.replace("lib_fiber/c/CMakeLists.txt", [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]], [[]], {plain = true})
