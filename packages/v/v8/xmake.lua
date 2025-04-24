@@ -33,7 +33,9 @@ package("v8")
          ]]}, {configs = {languages = "c++20"}}), "package(v8): require at least C++20.")
 
         -- Only configured and tested for:
-        assert(not package:is_debug() and not package:config("shared"), "package(v8): only configured for static + release usage")
+        assert(not package:is_debug() and not package:config("shared"), "package(v8): only configured for static + release usage.")
+        assert(not is_host("arch"), "package(v8): Archlinux is not supported.")
+        assert(not is_host("fedora"), "package(v8): Fedora is not supported.")
 
         if is_host("windows") then
             -- Require MSVC / Visual Studio 2022
@@ -45,6 +47,10 @@ package("v8")
             else
                 assert(false, "package(v8): only configured for MSVC on Windows.")
             end
+
+            assert(not (winos.version == 11 and is_arch("arm64")), "package(v8): Windows 11 arm64 is not supported.")
+        elseif is_host("linux") then
+            assert(not is_arch("arm64"), "package(v8): Linux arm64 is not supported.")
         end
     end)
 
