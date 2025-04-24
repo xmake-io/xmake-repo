@@ -92,16 +92,16 @@ package("acl-dev")
                 os.cp("**.dll", package:installdir("bin"))
             end
         else
-            if not package:is_plat("windows") then
-                -- Use zlib instead z
-                io.replace("CMakeLists.txt", "project(acl)", "project(acl)\nfind_package(ZLIB)", {plain = true})
-            end
             -- Fix windows .pch file
             io.replace("lib_acl_cpp/CMakeLists.txt", [["-Ycacl_stdafx.hpp"]], [[]], {plain = true})
             io.replace("lib_acl_cpp/CMakeLists.txt", [[add_library(acl_cpp_static STATIC ${lib_src})]],
                 "add_library(acl_cpp_static STATIC ${lib_src})\ntarget_precompile_headers(acl_cpp_static PRIVATE src/acl_stdafx.hpp)", {plain = true})
             io.replace("lib_acl_cpp/CMakeLists.txt", [[add_library(acl_cpp_shared SHARED ${lib_src})]],
                 "add_library(acl_cpp_shared SHARED ${lib_src})\ntarget_precompile_headers(acl_cpp_shared PRIVATE src/acl_stdafx.hpp)", {plain = true})
+            if not package:is_plat("windows") then
+                -- Use zlib instead z
+                io.replace("CMakeLists.txt", "project(acl)", "project(acl)\nfind_package(ZLIB)", {plain = true})
+            end
             -- Do not build .gas on windows
             if package:is_plat("windows") then
                 io.replace("lib_fiber/c/CMakeLists.txt", [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]], [[]], {plain = true})
