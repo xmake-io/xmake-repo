@@ -46,10 +46,6 @@ package("acl-dev")
                 package:add("patches", "v3.6.2", "patches/v3.6.2/build_install_only_static.diff", "6171e6c1e5716ab3a6128955e1011b1469be0dc5fa0bdf158a2079f8c3421568")
             end
         end
-        -- Use libiconv instead iconv
-        if package:is_plat("iphoneos", "macosx", "bsd") then
-            package:add("patches", "v3.6.2", "patches/v3.6.2/debundle_iconv.diff", "a4bf643010f2d21b3171e4fde7369629041205b3edc326037edb399a4bbaccda")
-        end
         if package:is_plat("android") then
             package:add("defines", "ANDROID")
         elseif package:is_plat("macosx") then
@@ -70,7 +66,7 @@ package("acl-dev")
                     io.replace(vcxproj, "MultiThreadedDebugDLL", "MultiThreadedDebug", {plain = true})
                     io.replace(vcxproj, "MultiThreadedDLL", "MultiThreaded", {plain = true})
                 end
-                -- Disable LTCG
+                -- Disble LTCG
                 io.replace(vcxproj, "<WholeProgramOptimization>true</WholeProgramOptimization>", "<WholeProgramOptimization>false</WholeProgramOptimization>", {plain = true})
                 io.replace(vcxproj, "<IgnoreSpecificDefaultLibraries>libcmt;libc</IgnoreSpecificDefaultLibraries>", "", {plain = true})
             end
@@ -100,10 +96,6 @@ package("acl-dev")
                 -- Use zlib instead z
                 io.replace("CMakeLists.txt", "project(acl)", "project(acl)\nfind_package(ZLIB)", {plain = true})
             end
-            if package:is_plat("iphoneos", "macosx", "bsd") then
-                -- Use libiconv instead iconv
-                io.replace("CMakeLists.txt", "project(acl)", "project(acl)\nfind_package(Iconv)", {plain = true})
-            end
             -- Fix windows .pch file
             io.replace("lib_acl_cpp/CMakeLists.txt", [["-Ycacl_stdafx.hpp"]], [[]], {plain = true})
             io.replace("lib_acl_cpp/CMakeLists.txt", [[add_library(acl_cpp_static STATIC ${lib_src})]],
@@ -114,12 +106,19 @@ package("acl-dev")
             if package:is_plat("windows") then
                 io.replace("lib_fiber/c/CMakeLists.txt", [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]], [[]], {plain = true})
                 io.replace("lib_fiber/c/CMakeLists.txt", [[${src}/fiber/boost/jump_gas.S)]], [[]], {plain = true})
-            end
-            if package:is_plat("bsd") then
-                -- FreeBSD enforce fallback to system iconv
-                io.replace("lib_acl_cpp/CMakeLists.txt", [[elseif(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")]], 
+            elseif package:is_plat("iphoneos", "macosx", "bsd") then
+                if package:is_plat("bsd") then
+                    -- FreeBSD enforce fallback to system iconv
+                    io.replace("lib_acl_cpp/CMakeLists.txt", [[elseif(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")]], 
                         [[elseif(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
                         add_definitions("-DUSE_SYS_ICONV")]], {plain = true})
+                end
+                -- Use libiconv instead iconv
+                io.replace("lib_acl_cpp/CMakeLists.txt", "-liconv", "", {plain = true})
+                io.replace("lib_fiber/cpp/CMakeLists.txt", "-liconv", "", {plain = true})
+                io.replace("CMakeLists.txt", "project(acl)", "project(acl)\nfind_package(Iconv)", {plain = true})
+                io.replace("lib_acl_cpp/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})
+                io.replace("lib_fiber/cpp/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})
             end
             for _, file in ipairs(os.files("**.txt")) do
                 -- Disable -Wstrict-prototypes -Werror -Qunused-arguments
