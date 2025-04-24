@@ -32,6 +32,19 @@ package("exosip")
         add_syslinks("pthread", "resolv")
     end
 
+    on_check("macosx", function (package)
+        assert(package:check_cxxsnippets({test = [[
+            #include "TargetConditionals.h"
+            #include <CoreFoundation/CoreFoundation.h>
+            #include <CoreServices/CoreServices.h>
+            #include <Security/Security.h>
+            void test() {
+                SInt32 osx_version = 0;
+                OSErr res = Gestalt(gestaltSystemVersion, &osx_version);
+            }
+        ]]}))
+    end)
+
     on_install("windows", function(package)
         import("package.tools.msbuild")
         os.cp("include", package:installdir())
