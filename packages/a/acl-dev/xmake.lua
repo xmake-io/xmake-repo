@@ -10,9 +10,6 @@ package("acl-dev")
 
     add_patches("v3.6.2", "patches/v3.6.2/export_unix.diff", "13376d9374de1b97ec25f709205f927a7157852075c2583e57615b617c45c62d")
     add_patches("v3.6.2", "patches/v3.6.2/fix_android_install_path.diff", "19917bd1852af4ddecc27ef402ecf9806b89ec78d91e62c806ba00fc05f41e94")
-    if not is_plat("windows") then
-        add_patches("v3.6.2", "patches/v3.6.2/debundle_zlib.diff", "d67c99cbbc65803852c1122f152786efdfc4744cc89ffe48dceaa7ca34bc7848")
-    end
 
     if is_plat("windows") then
         add_configs("vs", {description = "Use Visual Studio buildsystem (.sln/.vcxproj)", default = true, type = "boolean"})
@@ -40,6 +37,9 @@ package("acl-dev")
     end
 
     on_load(function (package)
+        if not is_plat("windows") then
+            package:add("patches", "v3.6.2", "patches/v3.6.2/debundle_zlib.diff", "d67c99cbbc65803852c1122f152786efdfc4744cc89ffe48dceaa7ca34bc7848")
+        end
         -- Build & install only shared or only static library & Enforce install of lib for Android/FreeBSD
         if not (package:is_plat("windows") and package:config("vs")) then
             if package:config("shared") then
