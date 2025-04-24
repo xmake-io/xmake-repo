@@ -42,7 +42,7 @@ index 08c558e..0440d0f 100644
  if (CMAKE_INSTALL_INCLUDEDIR MATCHES "")
  	set(CMAKE_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_PREFIX}/include)
 @@ -337,7 +331,7 @@ if (ACL_BUILD_SHARED MATCHES "YES")
- 		target_link_libraries(acl_cpp_shared protocol acl)
+ 		target_link_libraries(acl_cpp_shared protocol acl ZLIB::ZLIB)
  	endif()
  
 -	if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin")
@@ -94,7 +94,7 @@ index 4d70233..5fa9dcc 100644
  if (CMAKE_INSTALL_INCLUDEDIR MATCHES "")
  	set(CMAKE_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_PREFIX}/include)
 @@ -210,7 +204,7 @@ if (ACL_BUILD_SHARED MATCHES "YES")
- 		target_link_libraries(fiber_cpp_shared acl_cpp protocol acl fiber)
+ 		target_link_libraries(fiber_cpp_shared acl_cpp protocol acl fiber ZLIB::ZLIB)
  	endif()
  
 -	if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin")
@@ -120,7 +120,7 @@ index b53ee88..a13115f 100644
  if (CMAKE_INSTALL_INCLUDEDIR MATCHES "")
  	set(CMAKE_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_PREFIX}/include)
 @@ -211,7 +205,7 @@ if (ACL_BUILD_SHARED MATCHES "YES")
- 		target_link_libraries(protocol_shared acl)
+ 		target_link_libraries(protocol_shared acl ZLIB::ZLIB)
  	endif()
  
 -	if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin")
