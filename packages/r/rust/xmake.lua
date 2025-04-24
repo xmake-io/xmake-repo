@@ -1,5 +1,5 @@
 package("rust")
-    set_kind("binary")
+    set_kind("toolchain")
     set_homepage("https://rust-lang.org")
 
     if is_host("windows") then
@@ -15,22 +15,19 @@ package("rust")
         add_extsources("brew::rustup")
     end
 
-    on_install("@windows", function (package)
+    on_install(function (package)
         local cachedir = package:cachedir()
         local installdir = package:installdir()
-        os.execv(package:originfile(), { "--no-modify-path", "--profile", "minimal", "--quiet", "-y" }, { envs = { RUSTUP_HOME = path.join(cachedir, ".rustup"), CARGO_HOME = path.join(cachedir, ".cargo") } })
-        os.mv(path.join(cachedir, ".rustup", "toolchains", "*", "*"), installdir)
-        package:addenv("PATH", path.join(installdir, "bin"))
-    end)
-
-    on_install("!windows", function (package)
-        local cachedir = path.join(package:cachedir(), ".rustdir")
-        local installdir = package:installdir()
-        local outdata, _ = os.iorun("curl https://sh.rustup.rs -sSf")
-        io.writefile(path.join(cachedir, "rustup-init.sh"), outdata)
-        os.execv(os.shell(), { path.join(cachedir, "rustup-init.sh"), "--no-modify-path", "--profile", "minimal", "--quiet", "-y" }, { envs = { RUSTUP_HOME = path.join(cachedir, ".rustup"), CARGO_HOME= path.join(cachedir, ".cargo") } })
-        os.mv(path.join(cachedir, ".rustup", "toolchains", "*", "*"), installdir)
-        package:addenv("PATH", path.join(installdir, "bin"))
+        if is_host("windows") then
+            os.execv(package:originfile(), { "--no-modify-path", "--profile", "minimal", "--quiet", "-y" }, { envs = { RUSTUP_HOME = path.join(cachedir, ".rustup"), CARGO_HOME = path.join(cachedir, ".cargo") } })
+        else
+            local outdata, _ = os.iorun("curl https://sh.rustup.rs -sSf")
+            io.writefile(path.join(cachedir, "rustup-init.sh"), outdata)
+            os.execv(os.shell(), { path.join(cachedir, "rustup-init.sh"), "--no-modify-path", "--profile", "minimal", "--quiet", "-y" }, { envs = { RUSTUP_HOME = path.join(cachedir, ".rustup"), CARGO_HOME= path.join(cachedir, ".cargo") } })
+        end
+        os.mv(path.join(cachedir, ".rustup"), installdir)
+        os.mv(path.join(cachedir, ".cargo"), installdir)
+        package:addenv("PATH", path.join(installdir, ".cargo/bin"))
     end)
 
     on_test(function (package)
