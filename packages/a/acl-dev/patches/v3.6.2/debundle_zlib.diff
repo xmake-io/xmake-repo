@@ -1,5 +1,5 @@
 diff --git a/lib_acl_cpp/CMakeLists.txt b/lib_acl_cpp/CMakeLists.txt
-index afb3936..e3235d3 100644
+index 9c0aaaf..844239c 100644
 --- a/lib_acl_cpp/CMakeLists.txt
 +++ b/lib_acl_cpp/CMakeLists.txt
 @@ -263,6 +263,7 @@ set(LIBRARY_OUTPUT_PATH ${lib_output_path})
@@ -10,7 +10,7 @@ index afb3936..e3235d3 100644
  
  if (${WIN_OS})
  	set_target_properties(acl_cpp_static PROPERTIES
-@@ -295,23 +296,23 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/acl_cpp/
+@@ -289,23 +290,23 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/acl_cpp/
  if (ACL_BUILD_SHARED MATCHES "YES")
  	if (CMAKE_SYSTEM_NAME MATCHES "Android")
  		if (ANDROID_STL MATCHES "gnustl_shared")
@@ -39,7 +39,7 @@ index afb3936..e3235d3 100644
  		target_compile_options(acl_cpp_static PRIVATE
  			-fvisibility=hidden -fvisibility-inlines-hidden)
  	endif()
-@@ -334,7 +335,7 @@ if (ACL_BUILD_SHARED MATCHES "YES")
+@@ -328,7 +329,7 @@ if (ACL_BUILD_SHARED MATCHES "YES")
  		set(lc_flags "-Wl,-rpath,${CMAKE_INSTALL_PREFIX}/lib -L${lib_output_path}")
  		set(CMAKE_SHARED_LINKER_FLAGS "${lc_flags} ${sys_ldflags}")
  		set_target_properties(acl_cpp_shared PROPERTIES OUTPUT_NAME "acl_cpp")
@@ -47,9 +47,9 @@ index afb3936..e3235d3 100644
 +		target_link_libraries(acl_cpp_shared protocol acl ZLIB::ZLIB)
  	endif()
  
- 	if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin")
+ 	if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin" OR CMAKE_SYSTEM_NAME MATCHES "Android" OR CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
 diff --git a/lib_fiber/cpp/CMakeLists.txt b/lib_fiber/cpp/CMakeLists.txt
-index 1c41f9b..7ad023e 100644
+index d43928f..9aec6df 100644
 --- a/lib_fiber/cpp/CMakeLists.txt
 +++ b/lib_fiber/cpp/CMakeLists.txt
 @@ -139,6 +139,7 @@ set(LIBRARY_OUTPUT_PATH ${lib_output_path})
@@ -60,7 +60,7 @@ index 1c41f9b..7ad023e 100644
  
  if (${WIN_OS})
  	set_target_properties(fiber_cpp_static PROPERTIES
-@@ -171,19 +172,19 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/fiber/
+@@ -165,19 +166,19 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/fiber/
  if (ACL_BUILD_SHARED MATCHES "YES")
  	if (CMAKE_SYSTEM_NAME MATCHES "Android")
  		if (ANDROID_STL MATCHES "gnustl_shared")
@@ -84,7 +84,7 @@ index 1c41f9b..7ad023e 100644
  		target_compile_options(fiber_cpp_static PRIVATE
  			-fvisibility=hidden -fvisibility-inlines-hidden)
  	endif()
-@@ -207,7 +208,7 @@ if (ACL_BUILD_SHARED MATCHES "YES")
+@@ -201,7 +202,7 @@ if (ACL_BUILD_SHARED MATCHES "YES")
  		set_target_properties(fiber_cpp_shared PROPERTIES OUTPUT_NAME "fiber_cpp")
  		set(lc_ldflags "-Wl,-rpath,${CMAKE_INSTALL_PREFIX}/lib -L${lib_output_path}")
  		set(CMAKE_SHARED_LINKER_FLAGS "${lc_ldflags} ${sys_ldflags}")
@@ -92,9 +92,9 @@ index 1c41f9b..7ad023e 100644
 +		target_link_libraries(fiber_cpp_shared acl_cpp protocol acl fiber ZLIB::ZLIB)
  	endif()
  
- 	if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin")
+ 	if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin" OR CMAKE_SYSTEM_NAME MATCHES "Android" OR CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
 diff --git a/lib_protocol/CMakeLists.txt b/lib_protocol/CMakeLists.txt
-index e047e59..eeca881 100644
+index 6e5a7b3..767955a 100644
 --- a/lib_protocol/CMakeLists.txt
 +++ b/lib_protocol/CMakeLists.txt
 @@ -140,6 +140,7 @@ set(LIBRARY_OUTPUT_PATH ${lib_output_path})
@@ -105,7 +105,7 @@ index e047e59..eeca881 100644
  
  if (${WIN_OS})
  	set_target_properties(protocol_static PROPERTIES
-@@ -172,16 +173,16 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
+@@ -166,16 +167,16 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
  if (ACL_BUILD_SHARED MATCHES "YES")
  	if (CMAKE_SYSTEM_NAME MATCHES "Android")
  		if (ANDROID_STL MATCHES "gnustl_shared")
@@ -126,7 +126,7 @@ index e047e59..eeca881 100644
  #		target_compile_options(protocol_static PRIVATE -fvisibility=hidden)
  
  		if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
-@@ -208,7 +209,7 @@ if (ACL_BUILD_SHARED MATCHES "YES")
+@@ -202,7 +203,7 @@ if (ACL_BUILD_SHARED MATCHES "YES")
  		set_target_properties(protocol_shared PROPERTIES OUTPUT_NAME "protocol")
  		set(lc_flags "-Wl,-rpath,${CMAKE_INSTALL_PREFIX}/lib -L${lib_output_path}")
  		set(CMAKE_SHARED_LINKER_FLAGS "${lc_flags} ${sys_ldflags}")
@@ -134,4 +134,4 @@ index e047e59..eeca881 100644
 +		target_link_libraries(protocol_shared acl ZLIB::ZLIB)
  	endif()
  
- 	if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin")
+ 	if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin" OR CMAKE_SYSTEM_NAME MATCHES "Android" OR CMAKE_SYSTEM_NAME MATCHES "FreeBSD")

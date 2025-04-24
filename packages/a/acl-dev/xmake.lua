@@ -10,7 +10,6 @@ package("acl-dev")
 
     add_patches("v3.6.2", "patches/v3.6.2/export_unix.diff", "13376d9374de1b97ec25f709205f927a7157852075c2583e57615b617c45c62d")
     add_patches("v3.6.2", "patches/v3.6.2/fix_android_install_path.diff", "19917bd1852af4ddecc27ef402ecf9806b89ec78d91e62c806ba00fc05f41e94")
-    add_patches("v3.6.2", "patches/v3.6.2/debundle_zlib.diff", "33cbbdcf9919e7ad23b4d1b9be3af113773f03e90a02d138a81a60d4903632b1")
 
     if is_plat("windows") then
         add_configs("vs", {description = "Use Visual Studio buildsystem (.sln/.vcxproj)", default = false, type = "boolean"})
@@ -41,10 +40,13 @@ package("acl-dev")
         -- Build & install only shared or only static library & Enforce install of lib for Android/FreeBSD
         if not (package:is_plat("windows") and package:config("vs")) then
             if package:config("shared") then
-                package:add("patches", "v3.6.2", "patches/v3.6.2/build_install_only_shared.diff", "49fad7f3b83838da99b639846188d27a49fbd8f23ba3fa6c0c0916d2412d34c3")
+                package:add("patches", "v3.6.2", "patches/v3.6.2/build_install_only_shared.diff", "48cb126538aebd61f37dc6f3bf589db3621db839e9b7e8cbb422144392a6016d")
             else
-                package:add("patches", "v3.6.2", "patches/v3.6.2/build_install_only_static.diff", "6171e6c1e5716ab3a6128955e1011b1469be0dc5fa0bdf158a2079f8c3421568")
+                package:add("patches", "v3.6.2", "patches/v3.6.2/build_install_only_static.diff", "83d3dbd5c0915d173ec6a4359f21dbe38f3c14421c502c086a4da94733b642c4")
             end
+        end
+        if not package:is_plat("windows") then
+            package:add("patches", "v3.6.2", "patches/v3.6.2/debundle_zlib.diff", "1ed55ac74591df3b89ff2751a97f2e8b4200676dc8c30a0e15d9bfd80df7b849")
         end
         if package:is_plat("android") then
             package:add("defines", "ANDROID")
@@ -128,10 +130,6 @@ package("acl-dev")
                 -- Do not enforce LTO
                 io.replace(file, [[add_definitions("-flto")]], [[]], {plain = true})
                 io.replace(file, [[-flto]], [[]], {plain = true})
-                if is_plat("windows") then
-                    -- Cleanup ZLIB after patch for Windows OS
-                    io.replace(file, [[ZLIB::ZLIB]], [[]], {plain = true})
-                end
             end
             local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
             if package:is_plat("iphoneos") then

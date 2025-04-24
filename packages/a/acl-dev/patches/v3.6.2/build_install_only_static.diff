@@ -38,7 +38,7 @@ index 08c558e..6f88470 100644
  		EXPORT acl_cpp_static-targets
  		ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 @@ -337,12 +337,6 @@ if (ACL_BUILD_SHARED MATCHES "YES")
- 		target_link_libraries(acl_cpp_shared protocol acl ZLIB::ZLIB)
+ 		target_link_libraries(acl_cpp_shared protocol acl)
  	endif()
  
 -	if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin")
@@ -90,7 +90,7 @@ index 4d70233..5c5851b 100644
  		EXPORT fiber_cpp_static-targets
  		ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 @@ -210,12 +210,6 @@ if (ACL_BUILD_SHARED MATCHES "YES")
- 		target_link_libraries(fiber_cpp_shared acl_cpp protocol acl fiber ZLIB::ZLIB)
+ 		target_link_libraries(fiber_cpp_shared acl_cpp protocol acl fiber)
  	endif()
  
 -	if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin")
@@ -116,7 +116,7 @@ index b53ee88..9cd89c1 100644
  		EXPORT protocol_static-targets
  		ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 @@ -211,12 +211,6 @@ if (ACL_BUILD_SHARED MATCHES "YES")
- 		target_link_libraries(protocol_shared acl ZLIB::ZLIB)
+ 		target_link_libraries(protocol_shared acl)
  	endif()
  
 -	if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin")
