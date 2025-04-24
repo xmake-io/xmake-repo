@@ -8,8 +8,6 @@ package("acl-dev")
 
     add_versions("v3.6.2", "888fd9b8fb19db4f8e7760a12a28f37f24ba0a2952bb0409b8380413a4b6506b")
 
-    add_patches("v3.6.2", "patches/msvc-sln-2022.diff", "070128c245b7aaf1bacb5a2a3b21d23a49e46ea029163706d1a0e781ec3c8b7c")
-
     if is_plat("windows") then
         add_configs("vs", {description = "Use Visual Studio buildsystem (.sln/.vcxproj)", default = true, type = "boolean"})
     end
