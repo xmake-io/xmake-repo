@@ -25,26 +25,24 @@ package("osip")
 
     on_install("windows", function(package)
         import("package.tools.msbuild")
-
         os.cp("include", package:installdir())
         local arch = package:is_arch("x64") and "x64" or "Win32"
         if package:is_arch("arm64") then
             arch = "ARM64"
             io.replace("platform/vsnet/osip.sln", "|x64", "|ARM64", {plain = true})
         end
-        local mode = package:debug() and "Debug" or "Release"
+        local mode = package:is_debug() and "Debug" or "Release"
         local configs = { "osip.sln" }
         table.insert(configs, "/property:Configuration=" .. mode)
         table.insert(configs, "/property:Platform=" .. arch)
         os.cd("platform/vsnet")
-        -- Use *source* dir
+        -- Use *source* folder instead of *osip* folder
         io.replace("osip2.vcxproj", [[<ProjectReference Include="..\..\..\osip\platform\vsnet\osipparser2.vcxproj">]], [[<ProjectReference Include="..\..\..\source\platform\vsnet\osipparser2.vcxproj">]], {plain = true})
         -- Add external symbols into .def file for .DLL library
         local osip2_def_content = io.readfile("osip2.def")
         io.writefile("osip2.def", osip2_def_content .. [[
             osip_transaction_set_naptr_record @138
         ]])
-
         local osipparser2_def_content = io.readfile("osipparser2.def")
         io.writefile("osipparser2.def", osipparser2_def_content .. [[
             osip_realloc @417
@@ -52,13 +50,8 @@ package("osip")
             __osip_uri_escape_userinfo @419
             osip_list_clone @420
         ]])
-
-        local files = {
-            "osip2.vcxproj",
-            "osipparser2.vcxproj"
-        }
-
-        for _, vcxproj in ipairs(files) do
+        local vcxprojs = { "osip2.vcxproj", "osipparser2.vcxproj" }
+        for _, vcxproj in ipairs(vcxprojs) do
             if package:is_arch("arm64") then
                 io.replace(vcxproj, "|x64", "|ARM64", {plain = true})
                 io.replace(vcxproj, "<Platform>x64", "<Platform>ARM64", {plain = true})
@@ -77,14 +70,12 @@ package("osip")
             end
             -- Allow use another Win SDK
             io.replace(vcxproj, "<WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>", "", {plain = true})
-            -- Use *source* dir
+            -- Use *source* folder instead of *osip* folder
             io.replace(vcxproj, [[<AdditionalIncludeDirectories>..\..\..\osip\include;]], [[<AdditionalIncludeDirectories>..\..\..\source\include;]], {plain = true})
             io.replace(vcxproj, [[<ClCompile Include="..\..\..\osip\]], [[<ClCompile Include="..\..\..\source\]], {plain = true})
             io.replace(vcxproj, [[<ClInclude Include="..\..\..\osip\]], [[<ClInclude Include="..\..\..\source\]], {plain = true})
         end
-
         msbuild.build(package, configs)
-
         os.cp("**.lib", package:installdir("lib"))
         if package:config("shared") then
             os.cp("**.dll", package:installdir("bin"))
