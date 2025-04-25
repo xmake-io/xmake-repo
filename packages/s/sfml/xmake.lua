@@ -162,9 +162,6 @@ package("sfml")
             if not (package:gitref() or package:version():ge("3.0.0")) then 
                 package:add("deps", "openal-soft") 
             end
-            if package:is_plat("mingw") and is_subhost("macosx") then
-                package:add("defines", "__iob_func()=(* __MINGW_IMP_SYMBOL(_iob))")
-            end
         end
 
         package:add("components", "system")
