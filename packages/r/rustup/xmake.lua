@@ -1,5 +1,4 @@
-
-package("rustup-init")
+package("rustup")
     set_kind("binary")
     set_homepage("https://rustup.rs")
     set_description("A little script to install rustup")
@@ -24,17 +23,24 @@ package("rustup-init")
         add_versions("1.28.1", "b25b33de9e5678e976905db7f21b42a58fb124dd098b35a962f963734b790a9b")
     end
 
+    if is_host("linux") then
+        add_extsources("apt::rustup")
+        add_extsources("pacman::rustup")
+    elseif is_host("macosx") then
+        add_extsources("brew::rustup")
+    end
+
     on_install("@windows|x86", "@windows|x64", "@windows|arm64", "@msys", "@cygwin", "@bsd", "@linux", "@macosx", function (package)
-        os.mv(package:originfile(), package:installdir("bin"))
-        if not is_host("windows") then
-            os.vrunv("chmod", {"+x", path.join(package:installdir("bin"), "rustup-init.sh")})
-        end
+        local installdir = package:installdir()
+        local argv = {"--no-modify-path", "--profile=minimal", "--default-toolchain=none", "-y"}
+        local envs = {CARGO_HOME = path.join(installdir, ".cargo"), RUSTUP_HOME = path.join(installdir, ".rustup"), RUSTUP_INIT_SKIP_PATH_CHECK = "yes"}
+        os.vrunv(package:originfile(), argv, {envs = envs, shell = not is_host("windows")})
+        package:setenv("CARGO_HOME", ".cargo")
+        package:setenv("RUSTUP_HOME", ".rustup")
+        package:mark_as_pathenv("CARGO_HOME")
+        package:mark_as_pathenv("RUSTUP_HOME")
     end)
 
     on_test(function (package)
-        if is_host("windows") then
-            os.vrunv("rustup-init.exe", {"--version"})
-        else
-            os.vrunv("rustup-init.sh", {"--version"}, {shell = true})
-        end
+        os.vrunv("rustup", {"--version"})
     end)
