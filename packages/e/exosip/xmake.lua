@@ -3,10 +3,13 @@ package("exosip")
     set_description("eXosip is a library that hides the complexity of using the SIP protocol for mutlimedia session establishement")
     set_license("GPL-2.0")
 
-    add_urls("https://git.savannah.nongnu.org/cgit/exosip.git/snapshot/exosip-$(version).tar.gz",
-             "git://git.savannah.gnu.org/exosip.git")
+    add_urls("https://www.antisip.com/download/exosip2/libexosip2-$(version).tar.gz", {alias = "mirror"})
+    add_urls("https://git.savannah.nongnu.org/cgit/exosip.git/snapshot/exosip-$(version).tar.gz", {alias = "archive"})
+    add_urls("git://git.savannah.gnu.org/exosip.git", {alias = "github"})
 
-    add_versions("5.3.0", "66c2b2ddcfdc8807054fa31f72a6068ef66d98bedd9aedb25b9031718b9906a2")
+    add_versions("mirror:5.3.0", "5b7823986431ea5cedc9f095d6964ace966f093b2ae7d0b08404788bfcebc9c2")
+    add_versions("archive:5.3.0", "66c2b2ddcfdc8807054fa31f72a6068ef66d98bedd9aedb25b9031718b9906a2")
+    add_versions("github:5.3.0", "7b0983106eaf7f9bad227922e8905bcf0a7b4f59")
     
     if is_plat("windows") then
         add_resources("5.3.0", "nameser_header", "https://raw.githubusercontent.com/c-ares/c-ares/refs/tags/curl-7_20_0/nameser.h", "8acc1a774896c0d02180b355bcb67dba4935a10e5ef54f4290600ae61bb9aa3d")
@@ -46,8 +49,8 @@ package("exosip")
         local mode = package:is_debug() and "Debug" or "Release"
         local configs = { "eXosip.sln" }
         table.insert(configs, "/t:eXosip")
-        table.insert(configs, "/property:Configuration=" .. mode)
-        table.insert(configs, "/property:Platform=" .. arch)
+        table.insert(configs, "/p:Configuration=" .. mode)
+        table.insert(configs, "/p:Platform=" .. arch)
         table.insert(configs, "/p:BuildProjectReferences=false")
         local include_paths = {}
         local lib_paths = {}
