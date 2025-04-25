@@ -120,7 +120,7 @@ package("exosip")
             local ndkver = tonumber(package:toolchain("ndk"):config("ndkver"))
             if ndkver > 22 then
                 io.replace("src/eXutils.c", [[#elif (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || __APPLE__ || defined(ANDROID)) && !_GNU_SOURCE]],
-                        [[#elif 0]], {plain = true})
+                        [[#elif 1]], {plain = true})
             end
         end
         local configs = {"--disable-trace", "--enable-pthread=force", "--enable-tools=no"}
