@@ -2,6 +2,7 @@ package("rust")
     set_kind("toolchain")
     set_homepage("https://rust-lang.org")
 
+    -- note that the version passed to add_versions is the Rust toolchain version, but the hash is the one of rustup-init executable
     if is_host("windows") then
         add_urls("https://static.rust-lang.org/rustup/archive/1.28.1/x86_64-pc-windows-msvc/rustup-init.exe")
 
@@ -20,25 +21,21 @@ package("rust")
     end
 
     on_install(function (package)
-        local cachedir = package:cachedir()
+        local argv = {"--no-modify-path", "--profile", "minimal", "-y", "--default-toolchain=" .. package:version():shortstr()}
+        local envs = {RUSTUP_HOME = path.absolute(".rustup"), CARGO_HOME = path.absolute(".cargo"), RUSTUP_INIT_SKIP_PATH_CHECK = "yes"}
         if is_host("windows") then
-            os.execv(package:originfile(), { "--no-modify-path", "--profile", "minimal", "--quiet", "-y", "--default-toolchain=" .. package:version():shortstr() }, { envs = { RUSTUP_HOME = path.join(cachedir, ".rustup"), CARGO_HOME = path.join(cachedir, ".cargo") } })
+            os.vrunv(package:originfile(), argv, {envs = envs})
         else
-            local envs = {
-                CARGO_HOME = path.join(cachedir, ".cargo"),
-                RUSTUP_HOME = path.join(cachedir, ".rustup"),
-                RUSTUP_INIT_SKIP_PATH_CHECK = "yes"
-            }
-            os.vrunv(os.shell(), { path.join(cachedir, "rustup-init.sh"), "--no-modify-path", "--profile", "minimal", "--quiet", "-y", "--default-toolchain=" .. package:version():shortstr() }, { envs = envs })
+            os.vrunv(package:originfile(), argv, {envs = envs, shell = true})
         end
         local installdir = package:installdir()
-        os.mv(path.join(cachedir, ".rustup"), installdir)
-        os.mv(path.join(cachedir, ".cargo"), installdir)
+        os.mv(".rustup", installdir)
+        os.mv(".cargo", installdir)
         package:addenv("PATH", ".cargo/bin")
         package:addenv("RC", ".cargo/bin/rustc" .. (is_host("windows") and ".exe" or ""))
         -- setup toolchain
         os.cd(installdir)
-        os.addenv("PATH", path.join(installdir, ".cargo/bin"))
+        os.addenv("PATH", path.absolute(".cargo/bin"))
         os.vrunv("rustup", { "default", package:version():shortstr() })
     end)
 
