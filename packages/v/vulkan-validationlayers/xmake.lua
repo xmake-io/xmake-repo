@@ -113,6 +113,7 @@ package("vulkan-validationlayers")
             cmake.install(package, configs, {buildir = os.tmpfile() .. ".dir"})
         elseif package:is_plat("linux") then
             cmake.install(package, configs, {buildir = os.tmpfile() .. ".dir", cmake_generator = "Ninja", envs = envs})
+            os.cp(package:installdir("share/vulkan/explicit_layer.d/VkLayer_khronos_validation.json"), package:installdir("lib"))
         end
         os.mv("layers", package:installdir("include"))
     end)
@@ -130,5 +131,8 @@ package("vulkan-validationlayers")
         elseif package:is_plat("windows") then
             assert(os.isfile(path.join(package:installdir("bin"), "VkLayer_khronos_validation.dll")))
             assert(os.isfile(path.join(package:installdir("bin"), "VkLayer_khronos_validation.json")))
+        elseif package:is_plat("linux") then
+            assert(os.isfile(path.join(package:installdir("lib"), "libVkLayer_khronos_validation.so")))
+            assert(os.isfile(path.join(package:installdir("lib"), "VkLayer_khronos_validation.json")))
         end
     end)
