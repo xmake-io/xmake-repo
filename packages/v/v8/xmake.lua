@@ -18,6 +18,10 @@ package("v8")
     add_links("v8_monolith")
 
     on_check(function (package)
+        local is_release = not package:is_debug()
+        local is_static = not package:config("shared")
+        local is_arm64 = package:is_arch("arm64")
+
         -- Require C++20
         assert(package:check_cxxsnippets({test = [[
              #include <cstddef>
@@ -33,11 +37,9 @@ package("v8")
          ]]}, {configs = {languages = "c++20"}}), "package(v8): require at least C++20.")
 
         -- Only configured and tested for:
-        assert(not package:is_debug() and not package:config("shared"), "package(v8): only configured for static + release usage.")
-        assert(not is_host("arch"), "package(v8): Archlinux is not supported.")
-        assert(not is_host("fedora"), "package(v8): Fedora is not supported.")
+        assert(is_release and is_static, "package(v8): only configured for static + release usage.")
 
-        if is_host("windows") then
+        if package:is_plat("windows") then
             -- Require MSVC / Visual Studio 2022
             local msvc = package:toolchain("msvc")
             if msvc then
@@ -48,9 +50,14 @@ package("v8")
                 assert(false, "package(v8): only configured for MSVC on Windows.")
             end
 
-            assert(not (winos.version == 11 and is_arch("arm64")), "package(v8): Windows 11 arm64 is not supported.")
-        elseif is_host("linux") then
-            assert(not is_arch("arm64"), "package(v8): Linux arm64 is not supported.")
+            local is_win11 = winos.version():ge("10.0.22000+194")
+            assert(not (is_win11 and is_arm64), "package(v8): Windows 11 arm64 is not supported.")
+        elseif package:is_plat("linux") then
+            local distrib = linuxos.name()
+
+            assert(distrib ~= "archlinux", "package(v8): Archlinux is not supported.")
+            assert(distrib ~= "fedora", "package(v8): Fedora is not supported.")
+            assert(not is_arm64, "package(v8): Linux arm64 is not supported.")
         end
     end)
 
@@ -79,7 +86,7 @@ package("v8")
             envs.GYP_MSVS_VERSION = "2022"
         end
 
-        local gclient = is_host("windows") and "gclient.bat" or "gclient"
+        local gclient = package:is_plat("windows") and "gclient.bat" or "gclient"
 
         -- A Git account needs to be configured
         os.vrunv("git", {"config", "user.email", "dummy@dummy.com"})
@@ -110,7 +117,7 @@ package("v8")
             v8_enable_test_features = false,
             v8_use_external_startup_data = false
         }
-        if not is_host("windows") then
+        if not package:is_plat("windows") then
             configs.is_clang = false
         end
 
@@ -125,7 +132,7 @@ package("v8")
     end)
 
     on_test(function (package)
-        local cxxflags = is_host("windows") and "/Zc:__cplusplus" or ""
+        local cxxflags = package:is_plat("windows") and "/Zc:__cplusplus" or ""
 
         assert(package:has_cxxfuncs("v8::V8::InitializePlatform(0)", {
             configs = {
