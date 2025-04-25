@@ -58,13 +58,19 @@ package("cpuinfo")
         end
 
         if package:is_plat("windows") then
-            table.insert(configs, "-DCPUINFO_RUNTIME_TYPE=" .. (package:runtimes():startswith("MT") and "static" or "shared"))
+            table.insert(configs, "-DCPUINFO_RUNTIME_TYPE=default")
+            if package:is_arch("arm64") then
+                table.insert(configs, "-DCPUINFO_TARGET_PROCESSOR=arm64")
+            end
             local vs_sdkver = import("core.tool.toolchain").load("msvc"):config("vs_sdkver")
             if vs_sdkver then
                 local build_ver = string.match(vs_sdkver, "%d+%.%d+%.(%d+)%.?%d*")
                 assert(tonumber(build_ver) >= 18362, "cpuinfo requires Windows SDK to be at least 10.0.18362.0")
                 table.insert(configs, "-DCMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION=" .. vs_sdkver)
                 table.insert(configs, "-DCMAKE_SYSTEM_VERSION=" .. vs_sdkver)
+                if package:is_arch("arm64") then
+                    table.insert(configs, "-DCMAKE_VS_PLATFORM_NAME=ARM64")
+                end
             end
         end
         import("package.tools.cmake").install(package, configs)
