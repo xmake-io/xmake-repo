@@ -118,7 +118,7 @@ package("exosip")
     end)
 
     on_install("linux", "macosx", "android@linux,macosx", "iphoneos", "cross", "wasm", function (package)
-        if is_plat("iphoneos") then
+        if package:is_plat("iphoneos") then
             io.replace("src/Makefile.am",
                 "libeXosip2_la_LDFLAGS = -version-info $(LIBEXOSIP_SO_VERSION) -no-undefined",
                 "libeXosip2_la_LDFLAGS = -version-info $(LIBEXOSIP_SO_VERSION) -no-undefined\nlibeXosip2_la_LDFLAGS += -framework CoreFoundation -framework CFNetwork", {plain = true})
