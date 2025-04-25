@@ -24,7 +24,7 @@ index 287d5f3..5d42c9e 100644
 -		EXPORT acl_static-targets
 -		ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 -	)
-+if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|Android|FreeBSD")
++if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS|Android|FreeBSD")
 +	if (NOT BUILD_SHARED_LIBS)
 +		install(TARGETS acl_static
 +			EXPORT acl_static-targets
@@ -43,7 +43,7 @@ index 287d5f3..5d42c9e 100644
 -			EXPORT acl_shared-targets
 -			LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 -		)
-+	if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|Android|FreeBSD")
++	if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS|Android|FreeBSD")
 +		if (BUILD_SHARED_LIBS)
 +			install(TARGETS acl_shared
 +				EXPORT acl_shared-targets
@@ -72,7 +72,7 @@ index 08c558e..ef3cf7c 100644
 -		EXPORT acl_cpp_static-targets
 -		ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 -	)
-+if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|Android|FreeBSD")
++if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS|Android|FreeBSD")
 +	if (NOT BUILD_SHARED_LIBS)
 +		install(TARGETS acl_cpp_static
 +			EXPORT acl_cpp_static-targets
@@ -91,7 +91,7 @@ index 08c558e..ef3cf7c 100644
 -			EXPORT acl_cpp_shared-targets
 -			LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 -		)
-+	if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|Android|FreeBSD")
++	if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS|Android|FreeBSD")
 +		if (BUILD_SHARED_LIBS)
 +			install(TARGETS acl_cpp_shared
 +				EXPORT acl_cpp_shared-targets
@@ -120,7 +120,7 @@ index c784212..fe6fb71 100644
 -		EXPORT fiber_static-targets
 -		ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 -	)
-+if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|Android|FreeBSD")
++if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS|Android|FreeBSD")
 +	if (NOT BUILD_SHARED_LIBS)
 +		install(TARGETS fiber_static
 +			EXPORT fiber_static-targets
@@ -139,7 +139,7 @@ index c784212..fe6fb71 100644
 -			EXPORT fiber_shared-targets
 -			LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 -		)
-+	if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|Android|FreeBSD")
++	if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS|Android|FreeBSD")
 +		if (BUILD_SHARED_LIBS)
 +			install(TARGETS fiber_shared
 +				EXPORT fiber_shared-targets
@@ -168,7 +168,7 @@ index 4d70233..87c99f1 100644
 -		EXPORT fiber_cpp_static-targets
 -		ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 -	)
-+if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|Android|FreeBSD")
++if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS|Android|FreeBSD")
 +	if (NOT BUILD_SHARED_LIBS)
 +		install(TARGETS fiber_cpp_static
 +			EXPORT fiber_cpp_static-targets
@@ -187,7 +187,7 @@ index 4d70233..87c99f1 100644
 -			EXPORT fiber_cpp_shared-targets
 -			LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 -		)
-+	if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|Android|FreeBSD")
++	if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS|Android|FreeBSD")
 +		if (BUILD_SHARED_LIBS)
 +			install(TARGETS fiber_cpp_shared
 +				EXPORT fiber_cpp_shared-targets
@@ -216,7 +216,7 @@ index b53ee88..b26bdf0 100644
 -		EXPORT protocol_static-targets
 -		ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 -	)
-+if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|Android|FreeBSD")
++if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS|Android|FreeBSD")
 +	if (NOT BUILD_SHARED_LIBS)
 +		install(TARGETS protocol_static
 +			EXPORT protocol_static-targets
@@ -235,7 +235,7 @@ index b53ee88..b26bdf0 100644
 -			EXPORT protocol_shared-targets
 -			LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 -		)
-+	if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|Android|FreeBSD")
++	if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS|Android|FreeBSD")
 +		if (BUILD_SHARED_LIBS)
 +			install(TARGETS protocol_shared
 +				EXPORT protocol_shared-targets

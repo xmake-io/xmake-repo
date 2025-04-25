@@ -47,7 +47,7 @@ index ea3868d..52f868f 100644
 +		target_link_libraries(acl_cpp_shared protocol acl ZLIB::ZLIB)
  	endif()
  
- 	if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|Android|FreeBSD")
+ 	if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS|Android|FreeBSD")
 diff --git a/lib_fiber/cpp/CMakeLists.txt b/lib_fiber/cpp/CMakeLists.txt
 index 96c1fee..5398551 100644
 --- a/lib_fiber/cpp/CMakeLists.txt
@@ -92,7 +92,7 @@ index 96c1fee..5398551 100644
 +		target_link_libraries(fiber_cpp_shared acl_cpp protocol acl fiber ZLIB::ZLIB)
  	endif()
  
- 	if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|Android|FreeBSD")
+ 	if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS|Android|FreeBSD")
 diff --git a/lib_protocol/CMakeLists.txt b/lib_protocol/CMakeLists.txt
 index 545c78b..79bb706 100644
 --- a/lib_protocol/CMakeLists.txt
@@ -134,4 +134,4 @@ index 545c78b..79bb706 100644
 +		target_link_libraries(protocol_shared acl ZLIB::ZLIB)
  	endif()
  
- 	if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|Android|FreeBSD")
+ 	if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS|Android|FreeBSD")
