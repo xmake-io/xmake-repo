@@ -102,8 +102,8 @@ package("acl-dev")
                 "add_library(acl_cpp_static STATIC ${lib_src})\ntarget_precompile_headers(acl_cpp_static PRIVATE src/acl_stdafx.hpp)", {plain = true})
             io.replace("lib_acl_cpp/CMakeLists.txt", [[add_library(acl_cpp_shared SHARED ${lib_src})]],
                 "add_library(acl_cpp_shared SHARED ${lib_src})\ntarget_precompile_headers(acl_cpp_shared PRIVATE src/acl_stdafx.hpp)", {plain = true})
-            -- Do not build .gas on windows
             if package:is_plat("windows") then
+                -- Do not build .gas on windows
                 io.replace("lib_fiber/c/CMakeLists.txt", [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]], [[]], {plain = true})
                 io.replace("lib_fiber/c/CMakeLists.txt", [[${src}/fiber/boost/jump_gas.S)]], [[]], {plain = true})
             else
