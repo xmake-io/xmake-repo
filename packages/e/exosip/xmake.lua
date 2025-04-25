@@ -31,6 +31,8 @@ package("exosip")
     elseif is_plat("macosx") then
         add_syslinks("resolv")
         add_frameworks("CoreFoundation", "CoreServices", "Security")
+    elseif is_plat("iphoneos") then
+        add_frameworks("CoreFoundation", "CFNetwork")
     elseif is_plat("bsd", "linux") then
         add_syslinks("pthread", "resolv")
     end
@@ -115,7 +117,12 @@ package("exosip")
         end
     end)
 
-    on_install("linux", "macosx", "android@linux,macosx", "cross", "wasm", function (package)
+    on_install("linux", "macosx", "android@linux,macosx", "iphoneos", "cross", "wasm", function (package)
+        if is_plat("iphoneos") then
+            io.replace("src/Makefile.am",
+                "libeXosip2_la_LDFLAGS = -version-info $(LIBEXOSIP_SO_VERSION) -no-undefined",
+                "libeXosip2_la_LDFLAGS = -version-info $(LIBEXOSIP_SO_VERSION) -no-undefined\nlibeXosip2_la_LDFLAGS += -framework CoreFoundation -framework CFNetwork", {plain = true})
+        end
         if package:is_plat("macosx") then
             io.replace("src/Makefile.am",
                 "libeXosip2_la_LDFLAGS = -version-info $(LIBEXOSIP_SO_VERSION) -no-undefined",
