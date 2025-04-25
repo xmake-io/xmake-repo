@@ -15,7 +15,7 @@ package("rust")
     add_deps("rustup-init", {private = true})
 
     on_install("@windows|x86", "@windows|x64", "@windows|arm64", "@msys", "@cygwin", "@bsd", "@linux", "@macosx", function (package)
-        local argv = {"--no-modify-path", "--profile=minimal", "--default-toolchain=" .. package:version():shortstr(), "-y"}
+        local argv = {"--no-modify-path", "--profile=minimal", "-y", "--default-toolchain=" .. package:version():shortstr()}
         local envs = {RUSTUP_HOME = path.absolute(".rustup"), CARGO_HOME = path.absolute(".cargo"), RUSTUP_INIT_SKIP_PATH_CHECK = "yes"}
         if is_host("windows") then
             os.vrunv("rustup-init.exe", argv, {envs = envs})
