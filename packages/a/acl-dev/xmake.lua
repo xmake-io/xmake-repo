@@ -89,7 +89,14 @@ package("acl-dev")
             msbuild.build(package, configs)
             os.cp("**.lib", package:installdir("lib"))
             if package:config("shared") then
-                os.cp("**.dll", package:installdir("bin"))
+                for _, dll in ipairs(os.files("**.dll")) do
+                    if not dll:lower():find("mfc71%.dll") and
+                    not dll:lower():find("msvcp71%.dll") and
+                    not dll:lower():find("msvcr71%.dll") and
+                    not dll:lower():find("vld%.dll") then
+                        os.cp(dll, package:installdir("bin"))
+                    end
+                end
             end
         else
             if not package:is_plat("windows") then
