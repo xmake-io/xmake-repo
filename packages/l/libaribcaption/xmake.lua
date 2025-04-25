@@ -21,7 +21,7 @@ package("libaribcaption")
         add_configs("gdi",          {description = "Enable Win32 GDI font provider", default = false, type = "boolean"})
     end
 
-    add_configs("fontconfig",       {description = "Enable Fontconfig font provider", default = is_plat("linux"), type = "boolean"})
+    add_configs("fontconfig",       {description = "Enable Fontconfig font provider", default = is_plat("linux", "cross", "bsd", "mingw"), type = "boolean"})
     add_configs("freetype",         {description = "Enable FreeType text rendering backend", default = is_plat("android", "linux", "cross", "bsd", "mingw"), type = "boolean"})
 
     if is_plat("macosx", "iphoneos") then
