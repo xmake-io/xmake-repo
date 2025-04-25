@@ -33,7 +33,7 @@ package("csfml")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "mingw", function (package)
+    on_install("windows", "linux", "macosx", "mingw@windows,msys", function (package)
         -- Mac OS X do not use BUILD_WITH_INSTALL_RPATH 1 INSTALL_NAME_DIR "@rpath"
         io.replace("cmake/Macros.cmake", "if(SFML_OS_MACOSX AND BUILD_SHARED_LIBS)", "if(0)", {plain = true})
         if package:is_plat("windows", "mingw") then
