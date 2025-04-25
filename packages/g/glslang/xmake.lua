@@ -91,8 +91,8 @@ package("glslang")
             package:add("links", "glslang", "glslang-default-resource-limits")
         end
 
-        os.mv("glslang/MachineIndependent", path.join(package:installdir("include"), "glslang"))
-        os.mv("glslang/Include", path.join(package:installdir("include"), "glslang"))
+        os.cp("glslang/MachineIndependent/**.h", path.join(package:installdir("include"), "glslang", "MachineIndependent"))
+        os.cp("glslang/Include/**.h", path.join(package:installdir("include"), "glslang", "Include"))
 
         -- https://github.com/KhronosGroup/glslang/releases/tag/12.3.0
         local bindir = package:installdir("bin")
