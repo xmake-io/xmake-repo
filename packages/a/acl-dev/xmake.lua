@@ -131,7 +131,7 @@ package("acl-dev")
                 -- Do not enforce LTO
                 io.replace(file, [[add_definitions("-flto")]], [[]], {plain = true})
                 io.replace(file, [[-flto]], [[]], {plain = true})
-                if is_plat("windows") then
+                if package:is_plat("windows") then
                     -- Cleanup ZLIB after patch for Windows OS
                     io.replace(file, [[ZLIB::ZLIB]], [[]], {plain = true})
                 end
