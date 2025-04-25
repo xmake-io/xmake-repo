@@ -14,7 +14,7 @@ package("acl-dev")
     add_patches("v3.6.2", "patches/v3.6.2/debundle_zlib.diff", "43043fb8fe84ef8f37a6a637e0447a849d38155e6d6ca20a9512c38023077a04")
 
     if is_plat("windows") then
-        add_configs("vs", {description = "Use Visual Studio buildsystem (.sln/.vcxproj)", default = false, type = "boolean"})
+        add_configs("vs", {description = "Use Visual Studio buildsystem (.sln/.vcxproj)", default = true, type = "boolean"})
     end
 
     add_includedirs("include", "include/acl-lib")
@@ -61,10 +61,11 @@ package("acl-dev")
                 if package:has_runtime("MT", "MTd") then
                     io.replace(vcxproj, "MultiThreadedDebugDLL", "MultiThreadedDebug", {plain = true})
                     io.replace(vcxproj, "MultiThreadedDLL", "MultiThreaded", {plain = true})
+                    io.replace(vcxproj, "<IgnoreSpecificDefaultLibraries>libcmt;libc</IgnoreSpecificDefaultLibraries>", "", {plain = true})
+                    io.replace(vcxproj, "<IgnoreSpecificDefaultLibraries>libcmtd;libcmt;libc</IgnoreSpecificDefaultLibraries>", "", {plain = true})
                 end
                 -- Disble LTCG
                 io.replace(vcxproj, "<WholeProgramOptimization>true</WholeProgramOptimization>", "<WholeProgramOptimization>false</WholeProgramOptimization>", {plain = true})
-                io.replace(vcxproj, "<IgnoreSpecificDefaultLibraries>libcmt;libc</IgnoreSpecificDefaultLibraries>", "", {plain = true})
             end
             os.cp("lib_fiber/c/include/fiber/**", package:installdir("include/acl-lib/fiber"))
             os.cp("lib_protocol/include/**", package:installdir("include/acl-lib/protocol"))
