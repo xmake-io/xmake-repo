@@ -4,34 +4,36 @@ package("ultralight")
     set_license("LGPL")
 
     if is_plat("windows") then
-        add_urls("https://github.com/ultralight-ux/Ultralight/releases/download/v1.3.0/ultralight-sdk-1.3.0-win-x64.7z")
-        add_versions("1.3.0", "cc8bfc66a4c40c88fa02691febe6f21c248a2a30d17cfe5470fccc3a461ce49e")
+        if is_arch("x86_64", "x64") then
+            add_urls("https://ultralight-sdk.sfo2.cdn.digitaloceanspaces.com/ultralight-sdk-$(version)-win-x64.7z", {alias = "release"})
+            add_versions("release:208d653", "4fa7aadd1e4ba4a7dc04d17b1d82b37b141c6e4e7196501150486fa6ac1635c5") -- 2023-07-24T22:00:29.614Z
+        end
     elseif is_plat("linux") then
-        add_urls("https://github.com/ultralight-ux/Ultralight/releases/download/v1.3.0/ultralight-sdk-1.3.0-linux-x64.7z")
-        add_versions("1.3.0", "1de6298b5ed3c5e0c22ac27e0e30fcb0ba6d195467a58ee44ef4e13dd1a6d352")
+        if is_arch("x86_64", "x64") then
+            add_urls("https://ultralight-sdk.sfo2.cdn.digitaloceanspaces.com/ultralight-sdk-$(version)-linux-x64.7z", {alias = "release"})
+            add_versions("release:208d653", "1de6298b5ed3c5e0c22ac27e0e30fcb0ba6d195467a58ee44ef4e13dd1a6d352") -- 2023-07-24T22:00:06.347Z
+        end
     elseif is_plat("macosx") then
-        add_urls("https://github.com/ultralight-ux/Ultralight/releases/download/v1.3.0/ultralight-sdk-1.3.0-mac-x64.7z")
-        add_versions("1.3.0", "bbf81ed456a617a60a19e9a76946e4479d5bac877f859005c50f66e9ec3c77a2")
+        if is_arch("x86_64", "x64") then
+            add_urls("https://ultralight-sdk.sfo2.cdn.digitaloceanspaces.com/ultralight-sdk-$(version)-mac-x64.7z", {alias = "release"})
+            add_versions("release:208d653", "bbf81ed456a617a60a19e9a76946e4479d5bac877f859005c50f66e9ec3c77a2") -- 2023-07-24T21:59:44.717Z
+        end
     end
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
     on_install("windows|x64", "linux|x86_64", "macosx|x86_64", function (package)
-        if package:is_plat("linux") then
-            if linuxos.name() ~= "ubuntu" and linuxos.name() ~= "debian" or (linuxos.version():major() < 9 and linuxos.version():minor() < 5) then
-                print("Ultralight is officially supported on Ubuntu/Debian 9.5+. use it at your own risks")
-            end
-        end
         os.cp("include", package:installdir())
-        os.trycp("lib", package:installdir())
-        os.trycp("bin", package:installdir())
+        os.trycp("bin/*.dll", package:installdir("bin"))
+        os.trycp("lib/*.lib", package:installdir("lib"))
+        os.trycp("bin/*.so", package:installdir("lib"))
+        os.trycp("bin/*.dylib", package:installdir("lib"))
     end)
 
     on_test(function (package)
          assert(package:check_cxxsnippets({test = [[
             #include <AppCore/App.h>
             #include <Ultralight/platform/Platform.h>
-
             void test()
             {
                 auto app = ultralight::App::Create();
