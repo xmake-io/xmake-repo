@@ -54,7 +54,7 @@ package("acl-dev")
         if package:is_plat("windows") and package:config("vs") then
             import("package.tools.msbuild")
             for _, vcxproj in ipairs(os.files("**.vcxproj")) do
-                -- Switch MD/MDd -> MT/MTd
+                -- Switch vs_runtime MD / MDd -> MT / MTd
                 if package:has_runtime("MT", "MTd") then
                     io.replace(vcxproj, "MultiThreadedDebugDLL", "MultiThreadedDebug", {plain = true})
                     io.replace(vcxproj, "MultiThreadedDLL", "MultiThreaded", {plain = true})
