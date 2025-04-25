@@ -8,7 +8,7 @@ package("acl-dev")
 
     add_versions("v3.6.2", "888fd9b8fb19db4f8e7760a12a28f37f24ba0a2952bb0409b8380413a4b6506b")
 
-    add_patches("v3.6.2", "patches/v3.6.2/build_install_only_static_or_shared.diff", "9fb738d432e2d3be731192f8fb49fdf6d004d24c08f5ce8ce9147b48586f37ab")
+    add_patches("v3.6.2", "patches/v3.6.2/build_install_only_static_or_shared.diff", "f8b6fe442084a1d39898deac0802bfc68888c56968e5126fb125ad30e92ea8bc")
     add_patches("v3.6.2", "patches/v3.6.2/export_unix.diff", "13376d9374de1b97ec25f709205f927a7157852075c2583e57615b617c45c62d")
     add_patches("v3.6.2", "patches/v3.6.2/fix_android_install_path.diff", "19917bd1852af4ddecc27ef402ecf9806b89ec78d91e62c806ba00fc05f41e94")
     add_patches("v3.6.2", "patches/v3.6.2/debundle_zlib.diff", "43043fb8fe84ef8f37a6a637e0447a849d38155e6d6ca20a9512c38023077a04")
