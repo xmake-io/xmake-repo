@@ -76,7 +76,7 @@ package("acl-dev")
             if package:config("shared") then
                 mode = package:is_debug() and "DebugDll" or "ReleaseDll"
             end
-            local configs = { "acl_cpp_vc2022.sln", "/t:lib_acl;libfiber;lib_protocol;lib_acl_cpp;libfiber_cpp" }
+            local configs = {"acl_cpp_vc2022.sln", "/t:lib_acl;libfiber;lib_protocol;lib_acl_cpp;libfiber_cpp"}
             table.insert(configs, "/p:Configuration=" .. mode)
             table.insert(configs, "/p:Platform=" .. arch)
             msbuild.build(package, configs)
