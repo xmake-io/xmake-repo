@@ -39,6 +39,9 @@ package("acl-dev")
     end
 
     on_load(function (package)
+        if package:is_plat("iphoneos", "macosx", "bsd") then
+            package:add("patches", "v3.6.2", "patches/v3.6.2/debundle_iconv.diff", "03db2a366167c865eb6bcd73d06b5d87fa3ed87307aa86bc2d0de9528dd29e10")
+        end
         if package:is_plat("android") then
             package:add("defines", "ANDROID")
         elseif package:is_plat("macosx") then
@@ -109,12 +112,7 @@ package("acl-dev")
                         [[elseif(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
                         add_definitions("-DUSE_SYS_ICONV")]], {plain = true})
                 end
-                -- Use libiconv instead iconv
-                io.replace("lib_acl_cpp/CMakeLists.txt", "-liconv", "", {plain = true})
-                io.replace("lib_fiber/cpp/CMakeLists.txt", "-liconv", "", {plain = true})
                 io.replace("CMakeLists.txt", "project(acl)", "project(acl)\nfind_package(Iconv)", {plain = true})
-                io.replace("lib_acl_cpp/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})
-                io.replace("lib_fiber/cpp/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})
             end
             for _, file in ipairs(os.files("**.txt")) do
                 -- Disable -Wstrict-prototypes -Werror -Qunused-arguments
