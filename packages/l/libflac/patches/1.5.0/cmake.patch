@@ -1,0 +1,15 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 9396130..90443bc 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -197,6 +197,10 @@ include_directories("include")
+ include_directories("${CMAKE_CURRENT_BINARY_DIR}")
+ add_definitions(-DHAVE_CONFIG_H)
+ 
++if(WIN32 AND NOT BUILD_SHARED_LIBS)
++    add_definitions(-DFLAC__NO_DLL)
++endif()
++
+ if(MSVC)
+     add_definitions(
+         -D_CRT_SECURE_NO_WARNINGS
