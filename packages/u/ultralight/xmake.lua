@@ -4,7 +4,7 @@ package("ultralight")
     set_license("LGPL")
 
     local versions = {
-        ["2023.07.24"] = "208d653"
+        ["2023.07.24"] = "208d653",
     }
 
     if is_plat("windows") then
