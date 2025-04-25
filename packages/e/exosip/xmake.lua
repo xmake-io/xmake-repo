@@ -115,16 +115,12 @@ package("exosip")
         end
     end)
 
-    on_install("bsd", "linux", "macosx", "android@linux,macosx", "cross", "wasm", function (package)
+    on_install("linux", "macosx", "android@linux,macosx", "cross", "wasm", function (package)
         if package:is_plat("android") then
             local ndkver = tonumber(package:toolchain("ndk"):config("ndkver"))
             if ndkver > 22 then
-                io.replace("configure.ac", [[AC_CONFIG_FILES([Makefile]],
-                        "AC_DEFINE([_GNU_SOURCE], [1], [Enable GNU and other extensions to the C environment for glibc])\nAC_CONFIG_FILES([Makefile", {plain = true})
-            end
-        elseif package:is_plat("bsd") then
-            io.replace("configure.ac", [[AC_CONFIG_FILES([Makefile]],
-                    "AC_DEFINE([_GNU_SOURCE], [1], [Enable GNU and other extensions to the C environment for glibc])\nAC_CONFIG_FILES([Makefile", {plain = true})
+                io.replace("src/eXutils.c", [[#elif (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || __APPLE__ || defined(ANDROID)) && !_GNU_SOURCE]],
+                        [[#elif 0]], {plain = true})
         end
         local configs = {"--disable-trace", "--enable-pthread=force", "--enable-tools=no"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
