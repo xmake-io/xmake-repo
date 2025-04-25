@@ -6,6 +6,7 @@ package("steam-audio")
     add_urls("https://github.com/ValveSoftware/steam-audio/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ValveSoftware/steam-audio.git")
 
+    add_versions("v4.6.1", "9965993d9df46d0585bd1dcb0acd3c5ae031656c75c87bbd49429db37757b65d")
     add_versions("v4.6.0", "b81479bf8fc55c3bbd49c1f9eb1356d7ff7a3a5efc553ba6653ed41715aaf368")
 
     add_configs("fft", {description = "Choice fft library", default = "pffft", type = "string", values = {"ipp", "ffts", "pffft"}})

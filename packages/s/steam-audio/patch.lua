@@ -14,6 +14,11 @@ function main(package)
         _unsafe_patch(package)
     end
 
+    if package:is_plat("windows") and package:is_arch("arm64") then
+        -- https://github.com/microsoft/vcpkg/blob/218f0d9ad10eb7b56624d3a6de5ad7a44bdf2927/ports/steam-audio/fix-arm64-windows.patch
+        io.replace("CMakeLists.txt", "set(IPL_CPU_X64 TRUE)", "set(IPL_CPU_ARMV8 TRUE)", {plain = true})
+    end
+
     if package:is_cross() then
         io.replace("CMakeLists.txt", "add_compile_options(-m32 -mfpmath=sse -march=native)", "", {plain = true})
     end
