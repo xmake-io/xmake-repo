@@ -121,6 +121,7 @@ package("exosip")
             if ndkver > 22 then
                 io.replace("src/eXutils.c", [[#elif (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || __APPLE__ || defined(ANDROID)) && !_GNU_SOURCE]],
                         [[#elif 0]], {plain = true})
+            end
         end
         local configs = {"--disable-trace", "--enable-pthread=force", "--enable-tools=no"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
