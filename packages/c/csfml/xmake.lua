@@ -21,7 +21,7 @@ package("csfml")
 
     on_load(function (package)
         if package:version():ge("2.6.0") and package:version():le("2.6.1") then
-            package:add("deps", "sfml 2.6.1", {configs = {
+            package:add("deps", "sfml " .. package:version(), {configs = {
                 graphics = package:config("graphics"),
                 window = package:config("window"),
                 audio = package:config("audio"),
