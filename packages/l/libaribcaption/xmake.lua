@@ -22,7 +22,11 @@ package("libaribcaption")
     end
 
     add_configs("fontconfig",       {description = "Enable Fontconfig font provider", default = is_plat("linux"), type = "boolean"})
-    add_configs("freetype",         {description = "Enable FreeType text rendering backend", default = is_plat("android", "linux"), type = "boolean"})
+    add_configs("freetype",         {description = "Enable FreeType text rendering backend", default = is_plat("android", "linux", "cross", "bsd", "mingw"), type = "boolean"})
+
+    if is_plat("macosx", "iphoneos") then
+        add_frameworks("CoreFoundation", "CoreGraphics", "CoreText")
+    end
 
     on_load(function (package)
         if package:config("renderer") then
@@ -34,27 +38,16 @@ package("libaribcaption")
                     package:add("syslinks", "gdi32")
                 end
             end
-            if package:is_plat("macosx", "iphoneos") then
-                package:add("frameworks", "CoreFoundation", "CoreGraphics", "CoreText")
-            end
             if package:config("fontconfig") then
-                if package:is_plat("linux") then
-                    package:add("deps", "fontconfig", { configs = { shared = package:config("shared")}})
-                else
-                    package:add("deps", "fontconfig")
-                end
+                package:add("deps", "fontconfig")
             end
             if package:config("freetype") then
-                if package:is_plat("linux") then
-                    package:add("deps", "freetype", { configs = { shared = package:config("shared")}})
-                else
-                    package:add("deps", "freetype")
-                end
+                package:add("deps", "freetype")
             end
         end
     end)
 
-    on_install("windows", "linux", "macosx", "iphoneos", "android", function (package)
+    on_install("windows", "linux", "cross", "bsd", "mingw", "macosx", "iphoneos", "android", function (package)
         local configs = {"-DARIBCC_BUILD_TESTS=OFF", "-DARIBCC_USE_EMBEDDED_FREETYPE=OFF"}
         if package:is_plat("windows") then
             table.insert(configs, "-DARIBCC_USE_DIRECTWRITE=" .. (package:config("directwrite") and "ON" or "OFF"))
