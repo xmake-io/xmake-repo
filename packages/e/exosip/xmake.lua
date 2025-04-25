@@ -116,6 +116,11 @@ package("exosip")
     end)
 
     on_install("linux", "macosx", "android@linux,macosx", "cross", "wasm", function (package)
+        if package:is_plat("macosx") then
+            io.replace("src/Makefile.am",
+                "libeXosip2_la_LDFLAGS = -version-info $(LIBEXOSIP_SO_VERSION) -no-undefined",
+                "libeXosip2_la_LDFLAGS = -version-info $(LIBEXOSIP_SO_VERSION) -no-undefined\nlibeXosip2_la_LDFLAGS += -framework CoreFoundation -framework CoreServices -framework Security", {plain = true})
+        end
         if package:is_plat("android") then
             local ndkver = tonumber(package:toolchain("ndk"):config("ndkver"))
             if ndkver > 22 then
