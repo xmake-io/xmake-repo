@@ -38,8 +38,10 @@ package("openjdk")
     end
 
     add_configs("shared", {description = "Download shared binaries.", default = true, type = "boolean", readonly = true})
-    add_configs("runtimes", {description = "Set compiler runtimes.", default = "MD", readonly = true})
     add_configs("debug", {description = "Enable debug symbols.", default = false, type = "boolean", readonly = true})
+    if is_plat("windows") then
+        add_configs("runtimes", {description = "Set compiler runtimes.", default = "MD", readonly = true})
+    end
 
     if is_plat("linux") then
         add_extsources("pacman::jdk-openjdk", "apt::default-jdk")
