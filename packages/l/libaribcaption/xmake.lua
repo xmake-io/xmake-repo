@@ -10,6 +10,8 @@ package("libaribcaption")
 
     add_deps("cmake")
 
+    add_links("fontconfig", "freetype", "expat", "aribcaption")
+
     add_configs("exceptions",       {description = "Enable C++ Exceptions", default = true, type = "boolean"})
     add_configs("rtti",             {description = "Enable C++ RTTI", default = true, type = "boolean"})
     add_configs("renderer",         {description = "Enable renderer", default = true, type = "boolean"})
