@@ -80,5 +80,16 @@ package("csfml")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("sfWindow_create", {includes = "SFML/Window.h"}))
+        if package:config("graphics") then
+            assert(package:has_cfuncs("sfImage_create", {includes = "SFML/Graphics.h"}))
+        end
+        if package:config("window") then
+            assert(package:has_cfuncs("sfWindow_create", {includes = "SFML/Window.h"}))
+        end
+        if package:config("audio") then
+            assert(package:has_cfuncs("sfMusic_createFromMemory", {includes = "SFML/Audio.h"}))
+        end
+        if package:config("network") then
+            assert(package:has_cfuncs("sfTcpSocket_create", {includes = "SFML/Network.h"}))
+        end
     end)
