@@ -5,6 +5,7 @@ package("cpuinfo")
 
     add_urls("https://github.com/pytorch/cpuinfo.git")
 
+    add_versions("2025.03.28", "39ea79a3c132f4e678695c579ea9353d2bd29968")
     add_versions("2024.09.26", "1e83a2fdd3102f65c6f1fb602c1b320486218a99")
     add_versions("2023.07.21", "60480b7098c8ddc73d611285fc478dec66e4edf9")
 
@@ -57,7 +58,7 @@ package("cpuinfo")
         end
 
         if package:is_plat("windows") then
-            table.insert(configs, "-DCPUINFO_RUNTIME_TYPE=" .. (package:config("vs_runtime"):startswith("MT") and "static" or "shared"))
+            table.insert(configs, "-DCPUINFO_RUNTIME_TYPE=" .. (package:runtimes():startswith("MT") and "static" or "shared"))
             local vs_sdkver = import("core.tool.toolchain").load("msvc"):config("vs_sdkver")
             if vs_sdkver then
                 local build_ver = string.match(vs_sdkver, "%d+%.%d+%.(%d+)%.?%d*")
