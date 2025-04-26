@@ -18,9 +18,24 @@ package("resip")
 
     on_install("windows", function(package)
         import("package.tools.msbuild")
+        
+        local arch = package:is_arch("x64") and "x64" or "Win32"
+        if package:is_arch("arm64") then
+            arch = "ARM64"
+            io.replace("reSIProcate_15_0.sln", "|x64", "|ARM64", {plain = true})
+        end
+        local mode = package:is_debug() and "Debug" or "Release"
+        local configs = { "reSIProcate_15_0.sln" }
+        table.insert(configs, "/t:resiprocate;dum;rutil")
+        table.insert(configs, "/p:Configuration=" .. mode)
+        table.insert(configs, "/p:Platform=" .. arch)
         for _, vcxproj in ipairs(os.files("**.vcxproj")) do
+            if package:is_arch("arm64") then
+                io.replace(vcxproj, "|x64", "|ARM64", {plain = true})
+                io.replace(vcxproj, "<Platform>x64", "<Platform>ARM64", {plain = true})
+            end
             if package:has_runtime("MT", "MTd") then
-                -- Allow MD, MDd
+                -- Allow MT, MTd
                 io.replace(vcxproj, "<RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>", "<RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>", {plain = true})
                 io.replace(vcxproj, "<RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>", "<RuntimeLibrary>MultiThreaded</RuntimeLibrary>", {plain = true})
             end
@@ -33,20 +48,8 @@ package("resip")
         end
         -- std::binary_function requires #include <functional>
         io.replace("rutil/dns/RRCache.hxx", "#include <memory>", "#include <memory>\n#include <functional>", {plain = true})
-
-        -- io.replace("resip/stack/resiprocate_15_0.vcxproj", "</ItemDefinitionGroup>", 
-        --     "<Link><AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies></Link></ItemDefinitionGroup>", {plain = true})
-
-        local arch = package:is_arch("x64") and "x64" or "Win32"
-        if package:is_arch("arm64") then
-            arch = "ARM64"
-            io.replace("reSIProcate_15_0.sln", "|x64", "|ARM64", {plain = true})
-        end
-        local mode = package:is_debug() and "Debug" or "Release"
-        local configs = { "reSIProcate_15_0.sln" }
-        table.insert(configs, "/t:resiprocate;dum;rutil")
-        table.insert(configs, "/p:Configuration=" .. mode)
-        table.insert(configs, "/p:Platform=" .. arch)
+        io.replace("resip/stack/resiprocate_15_0.vcxproj", "</ItemDefinitionGroup>",
+            "<Link><ModuleDefinitionFile>$(ProjectDir)$(TargetName).def</ModuleDefinitionFile><AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies></Link></ItemDefinitionGroup>", {plain = true})
         msbuild.build(package, configs)
         os.cp("rutil/**.hxx", package:installdir("include/rutil"), {rootdir = "rutil"})
         os.cp("rutil/**.h", package:installdir("include/rutil"), {rootdir = "rutil"})
