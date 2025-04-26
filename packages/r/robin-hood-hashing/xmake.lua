@@ -25,5 +25,5 @@ package("robin-hood-hashing")
                 robin_hood::unordered_flat_map<int, int> map;
                 map[123] = 333;
             }
-        ]]}, {configs = {languages = "c++14"}, includes = "robin_hood.h"}))
+        ]]}, {configs = {languages = "c++14"}, includes = {"robin_hood.h","cstdint"}}))
     end)
