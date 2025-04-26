@@ -220,7 +220,7 @@ target("iconv")
     add_deps("charset", {inherit = false})
     add_defines("HAVE_CONFIG_H", "NO_XMALLOC", "IN_LIBRARY")
     if is_kind("shared") then
-        add_defines("BUILDING_LIBICONV", "BUILDING_DLL")
+        add_defines("BUILDING_LIBICONV", "BUILDING_DLL", "DLL_EXPORT")
     end
     set_configdir(".")
     set_configvar("DLL_VARIABLE", (is_plat("windows") and is_kind("shared")) and "__declspec(dllimport)" or "")
