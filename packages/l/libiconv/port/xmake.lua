@@ -1,6 +1,6 @@
 set_project("libiconv")
 
-add_rules("mode.debug", "mode.release")
+add_rules("mode.debug", "mode.release", "set_language")
 
 set_configvar("PACKAGE", "libiconv")
 set_configvar("PACKAGE_NAME", "libiconv")
@@ -220,7 +220,7 @@ target("iconv")
     add_deps("charset", {inherit = false})
     add_defines("HAVE_CONFIG_H", "NO_XMALLOC", "IN_LIBRARY")
     if is_kind("shared") then
-        add_defines("BUILDING_LIBICONV", "BUILDING_DLL")
+        add_defines("BUILDING_LIBICONV", "BUILDING_DLL", "DLL_EXPORT")
     end
     set_configdir(".")
     set_configvar("DLL_VARIABLE", (is_plat("windows") and is_kind("shared")) and "__declspec(dllimport)" or "")
@@ -265,3 +265,15 @@ target("iconv_no_i18n")
         -- https://www.gnu.org/software/gnulib/manual/html_node/fcntl_002eh.html
         add_defines("O_BINARY=0")
     end
+
+rule("set_language")
+    on_load(function (target)
+        import("core.base.semver")
+
+        local ver = semver.new(get_config("vers"))
+        if ver:ge("1.18") then
+            target:set("languages", "c23")
+        else
+            target:set("languages", "c99")
+        end
+    end)
