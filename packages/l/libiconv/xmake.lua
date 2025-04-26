@@ -39,7 +39,7 @@ package("libiconv")
         io.gsub("libcharset/config.h.in", "# ?undef (.-)\n", "${define %1}\n")
 
         if package:is_plat("windows") then
-            io.gsub("srclib/safe-read.c", "#include <unistd.h>", "")
+            io.gsub("srclib/safe-read.c", "#include <unistd.h>", "#include <io.h>")
             io.gsub("srclib/progreloc.c", "#include <unistd.h>", "")
             for _, file in ipairs(os.files("**")) do
                 io.gsub(file, "#include <stdbool.h>", "#include <cstdbool>")
