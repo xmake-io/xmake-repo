@@ -9,6 +9,7 @@ package("resip")
     if is_plat("windows") then
         add_syslinks("ws2_32", "advapi32")
     else
+        add_links("rutil", "dum", "resipares", "resip")
         add_deps("patchelf")
     end
 
@@ -65,7 +66,7 @@ package("resip")
         end
     end)
 
-    on_install("!windows", function(package)
+    on_install("!windows and !mingw", function(package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
