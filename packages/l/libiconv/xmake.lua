@@ -6,6 +6,7 @@ package("libiconv")
     set_urls("https://ftpmirror.gnu.org/gnu/libiconv/libiconv-$(version).tar.gz",
              "https://ftp.gnu.org/gnu/libiconv/libiconv-$(version).tar.gz")
 
+    add_versions("1.18", "3b08f5f4f9b4eb82f151a7040bfd6fe6c6fb922efe4b1659c66ea933276965e8")
     add_versions("1.17", "8f74213b56238c85a50a5329f77e06198771e70dd9a739779f4c02f65d971313")
     add_versions("1.16", "e6a1b1b589654277ee790cce3734f07876ac4ccfaecbee8afa0b649cf529cc04")
     add_versions("1.15", "ccf536620a45458d26ba83887a983b96827001e92a13847b45e4925cc8913178")

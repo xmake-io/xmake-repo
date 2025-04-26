@@ -1,6 +1,6 @@
 set_project("libiconv")
 
-add_rules("mode.debug", "mode.release")
+add_rules("mode.debug", "mode.release", "set_language")
 
 set_configvar("PACKAGE", "libiconv")
 set_configvar("PACKAGE_NAME", "libiconv")
@@ -265,3 +265,15 @@ target("iconv_no_i18n")
         -- https://www.gnu.org/software/gnulib/manual/html_node/fcntl_002eh.html
         add_defines("O_BINARY=0")
     end
+
+rule("set_language")
+    on_load(function (target)
+        import("core.base.semver")
+
+        local ver = semver.new(get_config("vers"))
+        if ver:ge("1.18") then
+            target:set("languages", "c23")
+        else
+            target:set("languages", "c99")
+        end
+    end)
