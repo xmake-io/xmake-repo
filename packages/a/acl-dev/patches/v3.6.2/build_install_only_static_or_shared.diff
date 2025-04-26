@@ -1,0 +1,253 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 4848fd3..767ad0a 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -79,6 +79,8 @@ if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+ 	set(CMAKE_MACOSX_RPATH build)
+ endif()
+ 
++option (BUILD_SHARED_LIBS "Build shared libraries" ON)
++
+ add_subdirectory(lib_acl acl)
+ add_subdirectory(lib_protocol protocol)
+ add_subdirectory(lib_acl_cpp acl_cpp)
+diff --git a/lib_acl/CMakeLists.txt b/lib_acl/CMakeLists.txt
+index 287d5f3..5d42c9e 100644
+--- a/lib_acl/CMakeLists.txt
++++ b/lib_acl/CMakeLists.txt
+@@ -202,11 +202,13 @@ endif()
+ 
+ link_directories(${acl_output_path})
+ 
+-if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin")
+-	install(TARGETS acl_static
+-		EXPORT acl_static-targets
+-		ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+-	)
++if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS|Android|FreeBSD")
++	if (NOT BUILD_SHARED_LIBS)
++		install(TARGETS acl_static
++			EXPORT acl_static-targets
++			ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++		)
++	endif()
+ endif()
+ 
+ if (CMAKE_INSTALL_INCLUDEDIR MATCHES "")
+@@ -253,12 +255,19 @@ if (ACL_BUILD_SHARED MATCHES "YES")
+ 		set_target_properties(acl_shared PROPERTIES OUTPUT_NAME "acl")
+ 	endif()
+ 
+-	if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin")
+-		install(TARGETS acl_shared
+-			EXPORT acl_shared-targets
+-			LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+-		)
++	if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS|Android|FreeBSD")
++		if (BUILD_SHARED_LIBS)
++			install(TARGETS acl_shared
++				EXPORT acl_shared-targets
++				LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++			)
++		endif()
+ 	endif()
++	if (BUILD_SHARED_LIBS)
++		set_target_properties(acl_static PROPERTIES EXCLUDE_FROM_ALL 1)
++	else()
++		set_target_properties(acl_shared PROPERTIES EXCLUDE_FROM_ALL 1)
++	endif()
+ endif()
+ 
+ ##############################################################################
+diff --git a/lib_acl_cpp/CMakeLists.txt b/lib_acl_cpp/CMakeLists.txt
+index 08c558e..ef3cf7c 100644
+--- a/lib_acl_cpp/CMakeLists.txt
++++ b/lib_acl_cpp/CMakeLists.txt
+@@ -276,11 +276,13 @@ endif()
+ 
+ link_directories(${lib_output_path})
+ 
+-if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin")
+-	install(TARGETS acl_cpp_static
+-		EXPORT acl_cpp_static-targets
+-		ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+-	)
++if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS|Android|FreeBSD")
++	if (NOT BUILD_SHARED_LIBS)
++		install(TARGETS acl_cpp_static
++			EXPORT acl_cpp_static-targets
++			ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++		)
++	endif()
+ endif()
+ 
+ if (CMAKE_INSTALL_INCLUDEDIR MATCHES "")
+@@ -337,12 +339,19 @@ if (ACL_BUILD_SHARED MATCHES "YES")
+ 		target_link_libraries(acl_cpp_shared protocol acl)
+ 	endif()
+ 
+-	if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin")
+-		install(TARGETS acl_cpp_shared
+-			EXPORT acl_cpp_shared-targets
+-			LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+-		)
++	if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS|Android|FreeBSD")
++		if (BUILD_SHARED_LIBS)
++			install(TARGETS acl_cpp_shared
++				EXPORT acl_cpp_shared-targets
++				LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++			)
++		endif()
+ 	endif()
++	if (BUILD_SHARED_LIBS)
++		set_target_properties(acl_cpp_static PROPERTIES EXCLUDE_FROM_ALL 1)
++	else()
++		set_target_properties(acl_cpp_shared PROPERTIES EXCLUDE_FROM_ALL 1)
++	endif()
+ endif()
+ 
+ ##############################################################################
+diff --git a/lib_fiber/c/CMakeLists.txt b/lib_fiber/c/CMakeLists.txt
+index c784212..fe6fb71 100644
+--- a/lib_fiber/c/CMakeLists.txt
++++ b/lib_fiber/c/CMakeLists.txt
+@@ -163,11 +163,13 @@ endif()
+ 
+ link_directories(${lib_output_path})
+ 
+-if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin")
+-	install(TARGETS fiber_static
+-		EXPORT fiber_static-targets
+-		ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+-	)
++if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS|Android|FreeBSD")
++	if (NOT BUILD_SHARED_LIBS)
++		install(TARGETS fiber_static
++			EXPORT fiber_static-targets
++			ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++		)
++	endif()
+ endif()
+ 
+ if (CMAKE_INSTALL_INCLUDEDIR MATCHES "")
+@@ -215,12 +217,19 @@ if (ACL_BUILD_SHARED MATCHES "YES")
+ 		set(CMAKE_SHARED_LINKER_FLAGS "${sys_ldflags}")
+ 	endif()
+ 
+-	if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin")
+-		install(TARGETS fiber_shared
+-			EXPORT fiber_shared-targets
+-			LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+-		)
++	if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS|Android|FreeBSD")
++		if (BUILD_SHARED_LIBS)
++			install(TARGETS fiber_shared
++				EXPORT fiber_shared-targets
++				LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++			)
++		endif()
+ 	endif()
++	if (BUILD_SHARED_LIBS)
++		set_target_properties(fiber_static PROPERTIES EXCLUDE_FROM_ALL 1)
++	else()
++		set_target_properties(fiber_shared PROPERTIES EXCLUDE_FROM_ALL 1)
++	endif()
+ endif()
+ 
+ ##############################################################################
+diff --git a/lib_fiber/cpp/CMakeLists.txt b/lib_fiber/cpp/CMakeLists.txt
+index 4d70233..87c99f1 100644
+--- a/lib_fiber/cpp/CMakeLists.txt
++++ b/lib_fiber/cpp/CMakeLists.txt
+@@ -152,11 +152,13 @@ endif()
+ 
+ link_directories(${lib_output_path})
+ 
+-if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin")
+-	install(TARGETS fiber_cpp_static
+-		EXPORT fiber_cpp_static-targets
+-		ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+-	)
++if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS|Android|FreeBSD")
++	if (NOT BUILD_SHARED_LIBS)
++		install(TARGETS fiber_cpp_static
++			EXPORT fiber_cpp_static-targets
++			ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++		)
++	endif()
+ endif()
+ 
+ if (CMAKE_INSTALL_INCLUDEDIR MATCHES "")
+@@ -210,12 +212,19 @@ if (ACL_BUILD_SHARED MATCHES "YES")
+ 		target_link_libraries(fiber_cpp_shared acl_cpp protocol acl fiber)
+ 	endif()
+ 
+-	if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin")
+-		install(TARGETS fiber_cpp_shared
+-			EXPORT fiber_cpp_shared-targets
+-			LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+-		)
++	if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS|Android|FreeBSD")
++		if (BUILD_SHARED_LIBS)
++			install(TARGETS fiber_cpp_shared
++				EXPORT fiber_cpp_shared-targets
++				LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++			)
++		endif()
+ 	endif()
++	if (BUILD_SHARED_LIBS)
++		set_target_properties(fiber_cpp_static PROPERTIES EXCLUDE_FROM_ALL 1)
++	else()
++		set_target_properties(fiber_cpp_shared PROPERTIES EXCLUDE_FROM_ALL 1)
++	endif()
+ endif()
+ 
+ ##############################################################################
+diff --git a/lib_protocol/CMakeLists.txt b/lib_protocol/CMakeLists.txt
+index b53ee88..b26bdf0 100644
+--- a/lib_protocol/CMakeLists.txt
++++ b/lib_protocol/CMakeLists.txt
+@@ -153,11 +153,13 @@ endif()
+ 
+ link_directories(${lib_output_path})
+ 
+-if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin")
+-	install(TARGETS protocol_static
+-		EXPORT protocol_static-targets
+-		ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+-	)
++if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS|Android|FreeBSD")
++	if (NOT BUILD_SHARED_LIBS)
++		install(TARGETS protocol_static
++			EXPORT protocol_static-targets
++			ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++		)
++	endif()
+ endif()
+ 
+ if (CMAKE_INSTALL_INCLUDEDIR MATCHES "")
+@@ -211,12 +213,19 @@ if (ACL_BUILD_SHARED MATCHES "YES")
+ 		target_link_libraries(protocol_shared acl)
+ 	endif()
+ 
+-	if(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin")
+-		install(TARGETS protocol_shared
+-			EXPORT protocol_shared-targets
+-			LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+-		)
++	if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS|Android|FreeBSD")
++		if (BUILD_SHARED_LIBS)
++			install(TARGETS protocol_shared
++				EXPORT protocol_shared-targets
++				LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++			)
++		endif()
+ 	endif()
++	if (BUILD_SHARED_LIBS)
++		set_target_properties(protocol_static PROPERTIES EXCLUDE_FROM_ALL 1)
++	else()
++		set_target_properties(protocol_shared PROPERTIES EXCLUDE_FROM_ALL 1)
++	endif()
+ endif()
+ 
+ ##############################################################################
