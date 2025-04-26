@@ -48,8 +48,6 @@ package("resip")
         end
         -- std::binary_function requires #include <functional>
         io.replace("rutil/dns/RRCache.hxx", "#include <memory>", "#include <memory>\n#include <functional>", {plain = true})
-        io.replace("resip/stack/resiprocate_15_0.vcxproj", "</ItemDefinitionGroup>",
-            "<Link><ModuleDefinitionFile>$(ProjectDir)$(TargetName).def</ModuleDefinitionFile><AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies></Link></ItemDefinitionGroup>", {plain = true})
         msbuild.build(package, configs)
         os.cp("rutil/**.hxx", package:installdir("include/rutil"), {rootdir = "rutil"})
         os.cp("rutil/**.h", package:installdir("include/rutil"), {rootdir = "rutil"})
