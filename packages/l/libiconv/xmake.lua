@@ -45,6 +45,7 @@ package("libiconv")
                 io.gsub(file, "#include <stdbool.h>", "#include <cstdbool>")
             end
             io.gsub("config.h.in", "#  if HAVE_STDBOOL_H", "#  if 1")
+            io.replace("srclib/binary-io.h", "#  define __gl_setmode _setmode", "#  include <io.h>\n#  define __gl_setmode _setmode", {plain = true})
         end
 
         os.cp(path.join(os.scriptdir(), "port", "xmake.lua"), ".")
