@@ -38,7 +38,7 @@ package("libiconv")
         io.gsub("libcharset/config.h.in", "%$", "")
         io.gsub("libcharset/config.h.in", "# ?undef (.-)\n", "${define %1}\n")
 
-        if package:is_plat("windows") or (package:is_plat("android") and is_subhost("windows")) then
+        if package:is_plat("windows") then
             io.gsub("srclib/safe-read.c", "#include <unistd.h>", "#include <io.h>")
             io.gsub("srclib/progreloc.c", "#include <unistd.h>", "")
             for _, file in ipairs(os.files("**")) do
@@ -46,6 +46,10 @@ package("libiconv")
             end
             io.gsub("config.h.in", "#  if HAVE_STDBOOL_H", "#  if 1")
             io.replace("srclib/binary-io.h", "#  define __gl_setmode _setmode", "#  include <io.h>\n#  define __gl_setmode _setmode", {plain = true})
+        end
+        -- Enforce #include <stdbool.h>
+        if package:is_plat("android") then
+            io.gsub("config.h.in", "#  if HAVE_STDBOOL_H", "#  if 1")
         end
 
         os.cp(path.join(os.scriptdir(), "port", "xmake.lua"), ".")
