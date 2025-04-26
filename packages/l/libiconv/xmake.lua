@@ -1,11 +1,12 @@
 package("libiconv")
-
     set_homepage("https://www.gnu.org/software/libiconv")
     set_description("Character set conversion library.")
     set_license("LGPL-2.0")
 
     set_urls("https://ftpmirror.gnu.org/gnu/libiconv/libiconv-$(version).tar.gz",
              "https://ftp.gnu.org/gnu/libiconv/libiconv-$(version).tar.gz")
+
+    add_versions("1.18", "3b08f5f4f9b4eb82f151a7040bfd6fe6c6fb922efe4b1659c66ea933276965e8")
     add_versions("1.17", "8f74213b56238c85a50a5329f77e06198771e70dd9a739779f4c02f65d971313")
     add_versions("1.16", "e6a1b1b589654277ee790cce3734f07876ac4ccfaecbee8afa0b649cf529cc04")
     add_versions("1.15", "ccf536620a45458d26ba83887a983b96827001e92a13847b45e4925cc8913178")
@@ -57,7 +58,10 @@ package("libiconv")
         if package:debug() then
             table.insert(configs, "--enable-debug")
         end
-        os.vrunv("make", {"-f", "Makefile.devel", "CFLAGS=" .. (package:config("cflags") or "")})
+
+        if package:version():lt("1.18") then
+            os.vrunv("make", {"-f", "Makefile.devel", "CFLAGS=" .. (package:config("cflags") or "")})
+        end
         import("package.tools.autoconf").install(package, configs)
     end)
 
