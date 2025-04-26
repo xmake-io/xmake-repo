@@ -67,9 +67,6 @@ package("vulkan-validationlayers")
     on_load("windows", "linux", function (package)
         local sdkver = package:version():split("%+")[1]
         package:add("deps", "vulkan-headers " .. sdkver)
-        if package:version():ge("1.2.189") then
-            package:add("deps", "robin-hood-hashing")
-        end
 
         if package:version():ge("1.3.275") then
             package:add("deps", "vulkan-utility-libraries " .. sdkver)
@@ -104,10 +101,6 @@ package("vulkan-validationlayers")
         table.insert(configs, "-DGLSLANG_INSTALL_DIR=" .. package:dep("glslang"):installdir())
         table.insert(configs, "-DSPIRV_HEADERS_INSTALL_DIR=" .. package:dep("spirv-headers"):installdir())
         table.insert(configs, "-DSPIRV_TOOLS_INSTALL_DIR=" .. package:dep("spirv-tools"):installdir())
-        if package:version():ge("1.2.189") then
-            io.replace("CMakeLists.txt", "/src/include", "/include", {plain = true})
-            table.insert(configs, "-DROBIN_HOOD_HASHING_INSTALL_DIR=" .. package:dep("robin-hood-hashing"):installdir())
-        end
 
         if package:is_plat("windows") then
             cmake.install(package, configs, {buildir = os.tmpfile() .. ".dir"})
