@@ -42,7 +42,8 @@ package("libxkbcommon")
             "-Dxkb-config-root=/usr/share/X11/xkb",
             "-Dx-locale-root=/usr/share/X11/locale",
             format("-Denable-x11=%s", package:config("x11")),
-            format("-Denable-wayland=%s", package:config("wayland"))
+            format("-Denable-wayland=%s", package:config("wayland")),
+            format("-Dbash-completion-path=%s", package:installdir() .. "share/bash-completion/completions")
         }
 
         import("package.tools.meson").install(package, configs)
