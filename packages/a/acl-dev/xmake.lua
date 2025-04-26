@@ -8,6 +8,15 @@ package("acl-dev")
 
     add_versions("v3.6.2", "888fd9b8fb19db4f8e7760a12a28f37f24ba0a2952bb0409b8380413a4b6506b")
 
+    add_patches("v3.6.2", "patches/v3.6.2/build_install_only_static_or_shared.diff", "179136ceec3a54c9d8a60d92bc67d691271ffcf8214160224b0b9339a26cd0a1")
+    add_patches("v3.6.2", "patches/v3.6.2/export_unix.diff", "13376d9374de1b97ec25f709205f927a7157852075c2583e57615b617c45c62d")
+    add_patches("v3.6.2", "patches/v3.6.2/fix_android_install_path.diff", "19917bd1852af4ddecc27ef402ecf9806b89ec78d91e62c806ba00fc05f41e94")
+    add_patches("v3.6.2", "patches/v3.6.2/debundle_zlib.diff", "43043fb8fe84ef8f37a6a637e0447a849d38155e6d6ca20a9512c38023077a04")
+
+    if is_plat("windows") then
+        add_configs("vs", {description = "Use Visual Studio buildsystem (.sln/.vcxproj)", default = true, type = "boolean"})
+    end
+
     add_includedirs("include", "include/acl-lib")
 
     add_deps("cmake")
@@ -30,6 +39,9 @@ package("acl-dev")
     end
 
     on_load(function (package)
+        if package:is_plat("iphoneos", "macosx", "bsd") then
+            package:add("patches", "v3.6.2", "patches/v3.6.2/debundle_iconv.diff", "03db2a366167c865eb6bcd73d06b5d87fa3ed87307aa86bc2d0de9528dd29e10")
+        end
         if package:is_plat("android") then
             package:add("defines", "ANDROID")
         elseif package:is_plat("macosx") then
@@ -41,124 +53,96 @@ package("acl-dev")
         end
     end)
 
-    on_install("android", "iphoneos", "macosx", "linux", "cross", "bsd", "windows", function (package)
-        io.replace("lib_acl/include/stdlib/acl_define_unix.h", "# define ACL_API",
-            "#if defined(__GNUC__)\n#define ACL_API __attribute__((visibility(\"default\")))\n#else\n# define ACL_API\n#endif", {plain = true})
-        io.replace("lib_acl/include/stdlib/acl_define_win32.h", "# define ACL_API",
-            "#if defined(__GNUC__)\n#define ACL_API __attribute__((visibility(\"default\")))\n#else\n# define ACL_API\n#endif", {plain = true})
-        -- Build & install only shared or only static library
-        if package:config("shared") then
-            io.replace("lib_fiber/c/CMakeLists.txt", "add_library(fiber_static STATIC ${lib_src})",
-                "add_library(fiber_static STATIC ${lib_src})\nset_target_properties(fiber_static PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
-            io.replace("lib_fiber/c/CMakeLists.txt", "install%(TARGETS fiber_static.-%)", "")
-
-            io.replace("lib_fiber/cpp/CMakeLists.txt", "add_library(fiber_cpp_static STATIC ${lib_src})",
-                "add_library(fiber_cpp_static STATIC ${lib_src})\nset_target_properties(fiber_cpp_static PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
-            io.replace("lib_fiber/cpp/CMakeLists.txt", "install%(TARGETS fiber_cpp_static.-%)", "")
-
-            io.replace("lib_protocol/CMakeLists.txt", "add_library(protocol_static STATIC ${lib_src})",
-                "add_library(protocol_static STATIC ${lib_src})\nset_target_properties(protocol_static PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
-            io.replace("lib_protocol/CMakeLists.txt", "install%(TARGETS protocol_static.-%)", "")
-
-            io.replace("lib_acl_cpp/CMakeLists.txt", "add_library(acl_cpp_static STATIC ${lib_src})",
-                "add_library(acl_cpp_static STATIC ${lib_src})\nset_target_properties(acl_cpp_static PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
-            io.replace("lib_acl_cpp/CMakeLists.txt", "install%(TARGETS acl_cpp_static.-%)", "")
-
-            io.replace("lib_acl/CMakeLists.txt", "add_library(acl_static STATIC ${acl_src})",
-                "add_library(acl_static STATIC ${acl_src})\nset_target_properties(acl_static PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
-            io.replace("lib_acl/CMakeLists.txt", "install%(TARGETS acl_static.-%)", "")
-        else
-            io.replace("lib_fiber/c/CMakeLists.txt", "add_library(fiber_shared SHARED ${lib_src})",
-                "add_library(fiber_shared SHARED ${lib_src})\nset_target_properties(fiber_shared PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
-            io.replace("lib_fiber/c/CMakeLists.txt", "install%(TARGETS fiber_shared.-%)", "")
-
-            io.replace("lib_fiber/cpp/CMakeLists.txt", "add_library(fiber_cpp_shared SHARED ${lib_src})",
-                "add_library(fiber_cpp_shared SHARED ${lib_src})\nset_target_properties(fiber_cpp_shared PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
-            io.replace("lib_fiber/cpp/CMakeLists.txt", "install%(TARGETS fiber_cpp_shared.-%)", "")
-
-            io.replace("lib_protocol/CMakeLists.txt", "add_library(protocol_shared SHARED ${lib_src})",
-                "add_library(protocol_shared SHARED ${lib_src})\nset_target_properties(protocol_shared PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
-            io.replace("lib_protocol/CMakeLists.txt", "install%(TARGETS protocol_shared.-%)", "")
-
-            io.replace("lib_acl_cpp/CMakeLists.txt", "add_library(acl_cpp_shared SHARED ${lib_src})",
-                "add_library(acl_cpp_shared SHARED ${lib_src})\nset_target_properties(acl_cpp_shared PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
-            io.replace("lib_acl_cpp/CMakeLists.txt", "install%(TARGETS acl_cpp_shared.-%)", "")
-
-            io.replace("lib_acl/CMakeLists.txt", "add_library(acl_shared SHARED ${acl_src})",
-                "add_library(acl_shared SHARED ${acl_src})\nset_target_properties(acl_shared PROPERTIES EXCLUDE_FROM_ALL 1)", {plain = true})
-            io.replace("lib_acl/CMakeLists.txt", "install%(TARGETS acl_shared.-%)", "")
-        end
-
-        -- Fix install path for android
-        io.replace("lib_protocol/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../android/lib/${ANDROID_ABI})]], [[set(lib_output_path ${PROJECT_BINARY_DIR}/../lib)]], {plain = true})
-        io.replace("lib_fiber/cpp/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../../android/lib/${ANDROID_ABI})]], [[set(lib_output_path ${PROJECT_BINARY_DIR}/../lib)]], {plain = true})
-        io.replace("lib_fiber/c/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../../android/lib/${ANDROID_ABI})]], [[set(lib_output_path ${PROJECT_BINARY_DIR}/../lib)]], {plain = true})
-        io.replace("lib_acl_cpp/CMakeLists.txt", [[set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../android/lib/${ANDROID_ABI})]], [[set(lib_output_path ${PROJECT_BINARY_DIR}/../lib)]], {plain = true})
-        io.replace("lib_acl/CMakeLists.txt", [[set(acl_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../android/lib/${ANDROID_ABI})]], [[set(acl_output_path ${PROJECT_BINARY_DIR}/../lib)]], {plain = true})
-
-        -- Fix windows .pch file
-        io.replace("lib_acl_cpp/CMakeLists.txt", [["-Ycacl_stdafx.hpp"]], [[]], {plain = true})
-        io.replace("lib_acl_cpp/CMakeLists.txt", [[add_library(acl_cpp_static STATIC ${lib_src})]],
-            "add_library(acl_cpp_static STATIC ${lib_src})\ntarget_precompile_headers(acl_cpp_static PRIVATE src/acl_stdafx.hpp)", {plain = true})
-        io.replace("lib_acl_cpp/CMakeLists.txt", [[add_library(acl_cpp_shared SHARED ${lib_src})]],
-            "add_library(acl_cpp_shared SHARED ${lib_src})\ntarget_precompile_headers(acl_cpp_shared PRIVATE src/acl_stdafx.hpp)", {plain = true})
-
-        -- Do not build .gas on windows
-        if package:is_plat("windows") then
-            io.replace("lib_fiber/c/CMakeLists.txt", [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]], [[]], {plain = true})
-            io.replace("lib_fiber/c/CMakeLists.txt", [[${src}/fiber/boost/jump_gas.S)]], [[]], {plain = true})
-        end
-        -- Disable -Wstrict-prototypes -Werror -Qunused-arguments
-        for _, file in ipairs(os.files("**.txt")) do
-            io.replace(file, [["-Wstrict-prototypes"]], "", {plain = true})
-            io.replace(file, [["-Werror"]], "", {plain = true})
-            io.replace(file, [[-Qunused-arguments]], [[]], {plain = true})
-            -- Enforce install of lib for Android/FreeBSD
-            io.replace(file, [[(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin")]],
-                [[(CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Darwin" OR CMAKE_SYSTEM_NAME MATCHES "Android" OR CMAKE_SYSTEM_NAME MATCHES "FreeBSD")]], {plain = true})
-            -- Do not enforce LTO
-            io.replace(file, [[add_definitions("-flto")]], [[]], {plain = true})
-            io.replace(file, [[-flto]], [[]], {plain = true})
-        end
-        if not package:is_plat("windows") then
-            -- Use zlib instead z
-            io.replace("CMakeLists.txt", "project(acl)", "project(acl)\nfind_package(ZLIB)", {plain = true})
-            io.replace("lib_acl_cpp/CMakeLists.txt", "-lz", "", {plain = true})
-            io.replace("lib_acl_cpp/CMakeLists.txt", "target_link_libraries(acl_cpp_shared protocol acl)", "target_link_libraries(acl_cpp_shared protocol acl ZLIB::ZLIB)", {plain = true})
-            io.replace("lib_acl_cpp/CMakeLists.txt", "add_library(acl_cpp_static STATIC ${lib_src})", "add_library(acl_cpp_static STATIC ${lib_src})\ntarget_link_libraries(acl_cpp_static ZLIB::ZLIB)", {plain = true})
-            io.replace("lib_protocol/CMakeLists.txt", "-lz", "", {plain = true})
-            io.replace("lib_protocol/CMakeLists.txt", "target_link_libraries(protocol_shared acl)", "target_link_libraries(protocol_shared acl ZLIB::ZLIB)", {plain = true})
-            io.replace("lib_protocol/CMakeLists.txt", "add_library(protocol_static STATIC ${lib_src})", "add_library(protocol_static STATIC ${lib_src})\ntarget_link_libraries(protocol_static ZLIB::ZLIB)", {plain = true})
-            io.replace("lib_fiber/cpp/CMakeLists.txt", "-lz", "", {plain = true})
-            io.replace("lib_fiber/cpp/CMakeLists.txt", "target_link_libraries(fiber_cpp_shared acl_cpp protocol acl fiber)", "target_link_libraries(fiber_cpp_shared acl_cpp protocol acl fiber ZLIB::ZLIB)", {plain = true})
-            io.replace("lib_fiber/cpp/CMakeLists.txt", "add_library(fiber_cpp_static STATIC ${lib_src})", "add_library(fiber_cpp_static STATIC ${lib_src})\ntarget_link_libraries(fiber_cpp_static ZLIB::ZLIB)", {plain = true})
-            -- FreeBSD enforce fallback to system iconv
-            io.replace("lib_acl_cpp/CMakeLists.txt", [[elseif(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")]], 
-                [[elseif(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
-                add_definitions("-DUSE_SYS_ICONV")]], {plain = true})
-            if package:is_plat("iphoneos", "macosx", "bsd") then
-                -- Use libiconv instead iconv
-                io.replace("lib_acl_cpp/CMakeLists.txt", "-liconv", "", {plain = true})
-                io.replace("lib_fiber/cpp/CMakeLists.txt", "-liconv", "", {plain = true})
-                io.replace("CMakeLists.txt", "project(acl)", "project(acl)\nfind_package(Iconv)", {plain = true})
-                io.replace("lib_acl_cpp/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})
-                io.replace("lib_fiber/cpp/CMakeLists.txt", "ZLIB::ZLIB", "ZLIB::ZLIB Iconv::Iconv", {plain = true})
+    on_install("windows", "android", "iphoneos", "macosx", "linux", "cross", "bsd", function (package)
+        if package:is_plat("windows") and package:config("vs") then
+            import("package.tools.msbuild")
+            for _, vcxproj in ipairs(os.files("**.vcxproj")) do
+                -- Switch vs_runtime MD / MDd -> MT / MTd
+                if package:has_runtime("MT", "MTd") then
+                    io.replace(vcxproj, "MultiThreadedDebugDLL", "MultiThreadedDebug", {plain = true})
+                    io.replace(vcxproj, "MultiThreadedDLL", "MultiThreaded", {plain = true})
+                    io.replace(vcxproj, "<IgnoreSpecificDefaultLibraries>libcmt;libc</IgnoreSpecificDefaultLibraries>", "", {plain = true})
+                    io.replace(vcxproj, "<IgnoreSpecificDefaultLibraries>libcmtd;libcmt;libc</IgnoreSpecificDefaultLibraries>", "", {plain = true})
+                end
+                -- Disble LTCG
+                io.replace(vcxproj, "<WholeProgramOptimization>true</WholeProgramOptimization>", "<WholeProgramOptimization>false</WholeProgramOptimization>", {plain = true})
             end
-        end
-        local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
-        if package:is_plat("iphoneos") then
-            table.insert(configs, "-DCMAKE_SYSTEM_NAME=Darwin")
-        end
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "DEBUG" or "RELEASE"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DACL_BUILD_SHARED=" .. (package:config("shared") and "YES" or "NO"))
-        import("package.tools.cmake").install(package, configs)
-        if package:is_plat("windows") then
+            os.cp("lib_fiber/c/include/fiber/**", package:installdir("include/acl-lib/fiber"))
+            os.cp("lib_protocol/include/**", package:installdir("include/acl-lib/protocol"))
+            os.cp("lib_acl_cpp/include/acl_cpp/**", package:installdir("include/acl-lib/acl_cpp"))
+            os.cp("lib_acl/include/**", package:installdir("include/acl-lib/acl"))
+            os.cp("lib_fiber/cpp/include/fiber/**", package:installdir("include/acl-lib/fiber_cpp"))
+            local arch = package:is_arch("x64") and "x64" or "Win32"
+            if package:is_arch("arm64") then
+                arch = "ARM64"
+            end
+            local mode = package:is_debug() and "Debug" or "Release"
             if package:config("shared") then
-                os.vcp(path.join(package:buildir(), "*/shared/**.lib"), package:installdir("lib"))
-                os.vcp(path.join(package:buildir(), "*/shared/**.dll"), package:installdir("bin"))
+                mode = package:is_debug() and "DebugDll" or "ReleaseDll"
+            end
+            local configs = {"acl_cpp_vc2022.sln", "/t:lib_acl;libfiber;lib_protocol;lib_acl_cpp;libfiber_cpp"}
+            table.insert(configs, "/p:Configuration=" .. mode)
+            table.insert(configs, "/p:Platform=" .. arch)
+            msbuild.build(package, configs)
+            os.cp("**.lib", package:installdir("lib"))
+            if package:config("shared") then
+                for _, dll in ipairs(os.files("**.dll")) do
+                    if not dll:lower():find("71.dll") and not dll:lower():find("vld.dll") then
+                        os.cp(dll, package:installdir("bin"))
+                    end
+                end
+            end
+        else
+            -- Fix windows .pch file
+            io.replace("lib_acl_cpp/CMakeLists.txt", [["-Ycacl_stdafx.hpp"]], [[]], {plain = true})
+            io.replace("lib_acl_cpp/CMakeLists.txt", [[add_library(acl_cpp_static STATIC ${lib_src})]],
+                "add_library(acl_cpp_static STATIC ${lib_src})\ntarget_precompile_headers(acl_cpp_static PRIVATE src/acl_stdafx.hpp)", {plain = true})
+            io.replace("lib_acl_cpp/CMakeLists.txt", [[add_library(acl_cpp_shared SHARED ${lib_src})]],
+                "add_library(acl_cpp_shared SHARED ${lib_src})\ntarget_precompile_headers(acl_cpp_shared PRIVATE src/acl_stdafx.hpp)", {plain = true})
+            if package:is_plat("windows") then
+                -- Do not build .gas on windows
+                io.replace("lib_fiber/c/CMakeLists.txt", [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]], [[]], {plain = true})
+                io.replace("lib_fiber/c/CMakeLists.txt", [[${src}/fiber/boost/jump_gas.S)]], [[]], {plain = true})
             else
-                os.vcp(path.join(package:buildir(), "*/static/**.lib"), package:installdir("lib"))
+                io.replace("CMakeLists.txt", "project(acl)", "project(acl)\nfind_package(ZLIB)", {plain = true})
+            end
+            if package:is_plat("iphoneos", "macosx", "bsd") then
+                if package:is_plat("bsd") then
+                    -- FreeBSD enforce fallback to system iconv
+                    io.replace("lib_acl_cpp/CMakeLists.txt", [[elseif(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")]], 
+                        [[elseif(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+                        add_definitions("-DUSE_SYS_ICONV")]], {plain = true})
+                end
+                io.replace("CMakeLists.txt", "project(acl)", "project(acl)\nfind_package(Iconv)", {plain = true})
+            end
+            for _, file in ipairs(os.files("**.txt")) do
+                -- Disable -Wstrict-prototypes -Werror -Qunused-arguments
+                io.replace(file, [["-Wstrict-prototypes"]], "", {plain = true})
+                io.replace(file, [["-Werror"]], "", {plain = true})
+                io.replace(file, [[-Qunused-arguments]], [[]], {plain = true})
+                -- Do not enforce LTO
+                io.replace(file, [[add_definitions("-flto")]], [[]], {plain = true})
+                io.replace(file, [[-flto]], [[]], {plain = true})
+                if package:is_plat("windows") then
+                    -- Cleanup ZLIB after patch for Windows OS
+                    io.replace(file, [[ZLIB::ZLIB]], [[]], {plain = true})
+                end
+            end
+            local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
+            if package:is_plat("iphoneos") then
+                table.insert(configs, "-DCMAKE_SYSTEM_NAME=Darwin")
+            end
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "DEBUG" or "RELEASE"))
+            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+            table.insert(configs, "-DACL_BUILD_SHARED=" .. (package:config("shared") and "YES" or "NO"))
+            import("package.tools.cmake").install(package, configs)
+            if package:is_plat("windows") then
+                if package:config("shared") then
+                    os.vcp(path.join(package:buildir(), "*/shared/**.lib"), package:installdir("lib"))
+                    os.vcp(path.join(package:buildir(), "*/shared/**.dll"), package:installdir("bin"))
+                else
+                    os.vcp(path.join(package:buildir(), "*/static/**.lib"), package:installdir("lib"))
+                end
             end
         end
     end)
