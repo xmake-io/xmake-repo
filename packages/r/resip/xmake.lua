@@ -11,6 +11,7 @@ package("resip")
         add_syslinks("ws2_32", "advapi32")
     else
         add_links("resip", "dum", "rutil", "resipares")
+        add_deps("autotools")
         add_deps("openssl", "c-ares")
         add_syslinks("pthread")
     end
@@ -21,7 +22,6 @@ package("resip")
 
     on_install("windows", function(package)
         import("package.tools.msbuild")
-        
         local arch = package:is_arch("x64") and "x64" or "Win32"
         if package:is_arch("arm64") then
             arch = "ARM64"
@@ -42,10 +42,6 @@ package("resip")
                 io.replace(vcxproj, "<RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>", "<RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>", {plain = true})
                 io.replace(vcxproj, "<RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>", "<RuntimeLibrary>MultiThreaded</RuntimeLibrary>", {plain = true})
             end
-            if package:config("shared") then
-                -- Allow build shared lib
-                io.replace(vcxproj, "StaticLibrary", "DynamicLibrary", {plain = true})
-            end
             -- Allow use another Win SDK
             io.replace(vcxproj, "<WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>", "", {plain = true})
         end
@@ -60,12 +56,6 @@ package("resip")
         os.cp("*/*/dum.lib", package:installdir("lib"))
         os.cp("*/*/ares.lib", package:installdir("lib"))
         os.cp("*/*/rutil.lib", package:installdir("lib"))
-        if package:config("shared") then
-            os.cp("*/*/resiprocate.dll", package:installdir("bin"))
-            os.cp("*/*/dum.dll", package:installdir("bin"))
-            os.cp("*/*/ares.dll", package:installdir("bin"))
-            os.cp("*/*/rutil.dll", package:installdir("bin"))
-        end
     end)
 
     on_install("!windows", function(package)
