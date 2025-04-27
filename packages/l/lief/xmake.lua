@@ -6,6 +6,7 @@ package("lief")
     set_urls("https://github.com/lief-project/LIEF/archive/refs/tags/$(version).tar.gz",
              "https://github.com/lief-project/LIEF.git")
 
+    add_versions("0.16.5", "10ef46bc958d7936feb155040c874504ab0bd40dc59b4678f807691ccd0d138f")
     add_versions("0.16.4", "311fff5ea9ecbe57b8d02e68739b97673cb14763129ce53af3eac8fee6bf845e")
     add_versions("0.16.3", "465121937c0b7885e9ceb0f6fc452a0b06b8cf2b3aabb454bfa9d4cb985d33d3")
     add_versions("0.16.2", "895ce0321b233a6d610ed89ccbe8dc4aa2cf0bb959919a1db0693ba264f3d29a")
@@ -37,7 +38,7 @@ package("lief")
     add_deps("cmake")
     add_deps("spdlog", {configs = {header_only = false, noexcept = true}})
     add_deps("nlohmann_json", {configs = {cmake = true}})
-    add_deps("tl_expected", "utfcpp", "mbedtls <3.6.0", "tcb-span", "frozen")
+    add_deps("tl_expected", "utfcpp", "tcb-span", "frozen")
 
     if on_check then
         on_check(function (package)
@@ -49,11 +50,21 @@ package("lief")
                     assert(minor and minor >= 30, "package(lief) require vs_toolset >= 14.3")
                 end
             end
-            if package:is_arch("arm.*") then
-                raise("package(lief) dep(mbedtls <3.6.0) unsupported arm arch")
+            if package:version():lt("0.16.5") then
+                if package:is_arch("arm.*") then
+                    raise("package(lief) dep(mbedtls <3.6.0) unsupported arm arch")
+                end
             end
         end)
     end
+
+    on_load(function (package)
+        if package:version():lt("0.16.5") then
+            package:add("deps", "mbedtls <3.6.0")
+        else
+            package:add("deps", "mbedtls 3.6.1")
+        end
+    end)
 
     on_install(function (package)
         if package:config("shared") then
