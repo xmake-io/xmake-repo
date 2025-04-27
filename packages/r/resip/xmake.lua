@@ -72,8 +72,8 @@ package("resip")
             table.insert(configs, "--enable-debug")
         end
         if package:is_plat("bsd") then
-            -- std::auto_ptr requires _LIBCPP_ENABLE_CXX17_REMOVED_AUTO_PTR because removed since C++17 std
-            table.insert(configs, "CXXFLAGS=-D_LIBCPP_ENABLE_CXX17_REMOVED_AUTO_PTR")
+            -- std::auto_ptr requires _LIBCPP_ENABLE_CXX17_REMOVED_AUTO_PTR std::binary_function requires _LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION
+            table.insert(configs, "CXXFLAGS=-D_LIBCPP_ENABLE_CXX17_REMOVED_AUTO_PTR -D_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION")
             -- std::binary_function requires #include <functional>
             io.replace("rutil/dns/RRCache.hxx", "#include <memory>", "#include <memory>\n#include <functional>", {plain = true})
         end
