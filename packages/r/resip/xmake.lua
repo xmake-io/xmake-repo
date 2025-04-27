@@ -1,5 +1,4 @@
 package("resip")
-
     set_homepage("https://resiprocate.org/Main_Page")
     set_description("C++ implementation of SIP, ICE, TURN and related protocols.")
 
@@ -13,7 +12,12 @@ package("resip")
         add_links("resip", "dum", "rutil", "resipares")
         add_deps("autotools")
         add_deps("openssl", "c-ares")
+    end
+
+    if is_plat("linux", "bsd") then
         add_syslinks("pthread")
+    elseif is_plat("macosx", "iphoneos") then
+        add_deps("pkg-config")
     end
 
     on_load("windows", function(package)
@@ -58,7 +62,7 @@ package("resip")
         os.cp("*/*/rutil.lib", package:installdir("lib"))
     end)
 
-    on_install("!windows", function(package)
+    on_install("!windows and !wasm", function(package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
