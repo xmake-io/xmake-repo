@@ -3,9 +3,7 @@ package("ultralight")
     set_description("Ultralight makes it easy for C/C++ developers to seamlessly integrate web-content into games and desktop apps.")
     set_license("LGPL")
 
-    local versions = {
-        ["1.3.0"] = "208d653",
-    }
+    local versions = { ["1.3.0"] = "208d653" }
 
     if is_plat("windows") then
         if is_arch("x86_64", "x64") then
