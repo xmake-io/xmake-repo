@@ -15,7 +15,7 @@ package("ultralight")
             add_versions("release:1.3.0", "4fa7aadd1e4ba4a7dc04d17b1d82b37b141c6e4e7196501150486fa6ac1635c5")
             add_urls("https://github.com/xmake-mirror/Ultralight/releases/download/$(version)", {alias = "mirror", version = function (version)
                 local beta_version = version:gsub("-beta$", "b")
-                return version .. "/ultralight-sdk-" .. beta_version .. "-win-x64.7z" --https://github.com/xmake-mirror/Ultralight/releases/download/1.4.0-beta/ultralight-sdk-1.4.0b-win-x64.7z
+                return version .. "/ultralight-sdk-" .. beta_version .. "-win-x64.7z"
             end})
             add_versions("mirror:1.4.0-beta", "6749c3d1aef49ba1c4ca783a453fe2f68b827b5935534751b68623b4b0eb91f1")
         end
@@ -27,7 +27,7 @@ package("ultralight")
             add_versions("release:1.3.0", "1de6298b5ed3c5e0c22ac27e0e30fcb0ba6d195467a58ee44ef4e13dd1a6d352")
             add_urls("https://github.com/xmake-mirror/Ultralight/releases/download/$(version)", {alias = "mirror", version = function (version)
                 local beta_version = version:gsub("-beta$", "b")
-                return version .. "/ultralight-sdk-" .. beta_version .. "-linux-x64.7z" --https://github.com/xmake-mirror/Ultralight/releases/download/1.4.0-beta/ultralight-sdk-1.4.0b-win-x64.7z
+                return version .. "/ultralight-sdk-" .. beta_version .. "-linux-x64.7z"
             end})
             add_versions("mirror:1.4.0-beta", "1d5092bfd7d96417547872a5c5b5950207f495ea299d713fa105314f4185c760")
         end
@@ -39,7 +39,7 @@ package("ultralight")
             add_versions("release:1.3.0", "bbf81ed456a617a60a19e9a76946e4479d5bac877f859005c50f66e9ec3c77a2")
             add_urls("https://github.com/xmake-mirror/Ultralight/releases/download/$(version)", {alias = "mirror", version = function (version)
                 local beta_version = version:gsub("-beta$", "b")
-                return version .. "/ultralight-sdk-" .. beta_version .. "-mac-x64.7z" --https://github.com/xmake-mirror/Ultralight/releases/download/1.4.0-beta/ultralight-sdk-1.4.0b-win-x64.7z
+                return version .. "/ultralight-sdk-" .. beta_version .. "-mac-x64.7z"
             end})
             add_versions("mirror:1.4.0-beta", "ac2abd395a5080d35d36a482b7c8e2f4e7bb89bfb6705d35ec07d9dcb4528fa7")
         end
