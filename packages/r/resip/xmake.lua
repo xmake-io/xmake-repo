@@ -9,8 +9,7 @@ package("resip")
     if is_plat("windows") then
         add_syslinks("ws2_32", "advapi32")
     else
-        add_links("rutil", "dum", "resipares", "resip")
-        add_deps("patchelf")
+        add_links("resip", "rutil", "dum", "resipares")
     end
 
     on_load("windows", function(package)
