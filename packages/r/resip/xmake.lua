@@ -21,12 +21,6 @@ package("resip")
         add_deps("pkg-config")
     end
 
-    on_check("android", function (package)
-        if package:is_plat("android") and is_subhost("windows") then
-            raise("package(resip) does not support android@windows.")
-        end
-    end)
-
     on_load("windows", function(package)
         package:add("defines", "WIN32")
     end)
@@ -69,7 +63,7 @@ package("resip")
         os.cp("*/*/rutil.lib", package:installdir("lib"))
     end)
 
-    on_install("!windows and !wasm and !mingw", function(package)
+    on_install("!windows and !wasm and !mingw and !android", function(package)
         local opt = {}
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
@@ -77,8 +71,11 @@ package("resip")
         if package:is_debug() then
             table.insert(configs, "--enable-debug")
         end
-        if package:is_plat("bsd", "android") then
+        if package:is_plat("bsd") then
+            -- std::auto_ptr requires _LIBCPP_ENABLE_CXX17_REMOVED_AUTO_PTR because removed since C++17 std
             table.insert(configs, "CXXFLAGS=-D_LIBCPP_ENABLE_CXX17_REMOVED_AUTO_PTR")
+            -- std::binary_function requires #include <functional>
+            io.replace("rutil/dns/RRCache.hxx", "#include <memory>", "#include <memory>\n#include <functional>", {plain = true})
         end
         import("package.tools.autoconf").install(package, configs)
     end)
