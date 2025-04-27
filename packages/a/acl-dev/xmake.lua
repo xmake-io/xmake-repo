@@ -41,7 +41,7 @@ package("acl-dev")
 
     on_load(function (package)
         if package:is_plat("iphoneos", "macosx", "bsd") then
-            package:add("patches", "v3.6.2", "patches/v3.6.2/debundle_iconv.diff", "03db2a366167c865eb6bcd73d06b5d87fa3ed87307aa86bc2d0de9528dd29e10")
+            package:add("patches", ">=3.6.2 <3.6.3", "patches/v3.6.2/debundle_iconv.diff", "03db2a366167c865eb6bcd73d06b5d87fa3ed87307aa86bc2d0de9528dd29e10")
         end
         if package:is_plat("android") then
             package:add("defines", "ANDROID")
