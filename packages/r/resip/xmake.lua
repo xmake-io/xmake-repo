@@ -21,6 +21,12 @@ package("resip")
         add_deps("pkg-config")
     end
 
+    on_check("android", function (package)
+        if package:is_plat("android") and is_subhost("windows") then
+            raise("package(resip) does not support android@windows.")
+        end
+    end)
+
     on_load("windows", function(package)
         package:add("defines", "WIN32")
     end)
@@ -64,11 +70,15 @@ package("resip")
     end)
 
     on_install("!windows and !wasm and !mingw", function(package)
+        local opt = {}
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:is_debug() then
             table.insert(configs, "--enable-debug")
+        end
+        if package:is_plat("bsd", "android") then
+            opt.cxxflags = "-std=c++11"
         end
         import("package.tools.autoconf").install(package, configs)
     end)
