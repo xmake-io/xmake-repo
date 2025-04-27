@@ -10,7 +10,7 @@ package("mbedtls")
         return version:ge("v2.23.0") and version or ("mbedtls-" .. tostring(version):sub(2))
     end})
     add_urls("https://github.com/Mbed-TLS/mbedtls.git")
-
+    add_versions("v3.6.3", "64cd73842cdc05e101172f7b437c65e7312e476206e1dbfd644433d11bc56327")
     add_versions("v3.6.1", "fc8bef0991b43629b7e5319de6f34f13359011105e08e3e16eed3a9fe6ffd3a3")
     add_versions("v3.6.0", "3ecf94fcfdaacafb757786a01b7538a61750ebd85c4b024f56ff8ba1490fcd38")
     add_versions("v3.5.1", "959a492721ba036afc21f04d1836d874f93ac124cf47cf62c9bcd3a753e49bdb")
