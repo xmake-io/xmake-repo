@@ -46,16 +46,14 @@ package("ultralight")
     end
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
-    
-    on_load(function (package)
-        if package:is_plat("linux") then
-            if package:version():gt("1.3.0") then
-                package:add("deps", "fontconfig", {configs = {shared = true}})
-                package:add("deps", "gtk3", {configs = {shared = true}})
-            else
-                package:add("deps", "fontconfig")
-            end
-        end
+
+    on_check("linux", function (package)
+        assert(distrib ~= "archlinux", "package(v8): Archlinux is not supported.")
+        assert(distrib ~= "fedora", "package(v8): Fedora is not supported.")
+    end)
+
+    on_load("linux", function (package)
+        package:add("deps", "fontconfig")
     end)
 
     on_install("windows|x64", "linux|x86_64", "macosx|x86_64", function (package)
