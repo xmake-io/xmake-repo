@@ -78,7 +78,7 @@ package("resip")
             table.insert(configs, "--enable-debug")
         end
         if package:is_plat("bsd", "android") then
-            opt.cxxflags = "-std=c++11"
+            opt.cxflags = "-D_LIBCPP_ENABLE_CXX17_REMOVED_AUTO_PTR"
         end
         import("package.tools.autoconf").install(package, configs)
     end)
