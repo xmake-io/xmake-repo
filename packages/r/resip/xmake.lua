@@ -68,7 +68,7 @@ package("resip")
         end
     end)
 
-    on_install("!windows and !mingw", function(package)
+    on_install("!windows", function(package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
