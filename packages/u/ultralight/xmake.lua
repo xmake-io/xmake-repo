@@ -48,7 +48,7 @@ package("ultralight")
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
     
     on_load(function (package)
-        if is_plat("linux") then
+        if package:is_plat("linux") then
             if package:version():gt("1.3.0") then
                 package:add("deps", "fontconfig", {configs = {shared = true}})
                 package:add("deps", "gtk3", {configs = {shared = true}})
