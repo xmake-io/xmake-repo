@@ -33,6 +33,7 @@ package("mbedtls")
     end
 
     on_install(function (package)
+        io.replace("library/CMakeLists.txt", [[string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")]], "", {plain = true})
         local configs = {"-DENABLE_TESTING=OFF", "-DENABLE_PROGRAMS=OFF", "-DMBEDTLS_FATAL_WARNINGS=OFF"}
         if package:config("shared") then
             table.insert(configs, "-DUSE_SHARED_MBEDTLS_LIBRARY=ON")
