@@ -16,7 +16,7 @@ package("resip")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
-    elseif is_plat("macosx", "iphoneos") then
+    elseif is_plat("macosx", "iphoneos", "bsd") then
         add_deps("pkg-config")
     end
 
@@ -62,7 +62,7 @@ package("resip")
         os.cp("*/*/rutil.lib", package:installdir("lib"))
     end)
 
-    on_install("!windows and !wasm", function(package)
+    on_install("!windows and !wasm and !mingw", function(package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
