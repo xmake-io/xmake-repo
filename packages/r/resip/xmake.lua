@@ -16,7 +16,8 @@ package("resip")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
-    elseif is_plat("macosx", "iphoneos", "bsd") then
+    end
+    if is_plat("macosx", "iphoneos", "bsd") then
         add_deps("pkg-config")
     end
 
