@@ -1,24 +1,30 @@
-package("resip")
+package("resiprocate")
     set_homepage("https://resiprocate.org/Main_Page")
     set_description("C++ implementation of SIP, ICE, TURN and related protocols.")
+    set_license("VSL-1.0")
 
-    add_urls("https://github.com/resiprocate/resiprocate/archive/refs/tags/resiprocate-$(version).tar.gz")
+    add_urls("https://github.com/resiprocate/resiprocate/archive/refs/tags/resiprocate-$(version).tar.gz",
+             "https://github.com/resiprocate/resiprocate.git")
     add_versions("1.12.0", "aa8906082e4221bffbfab3210df68a6ba1f57ba1532d89ea4572b4fa9877914f")
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-        add_syslinks("ws2_32", "advapi32")
-    else
-        add_links("resip", "dum", "rutil", "resipares")
-        add_deps("autotools")
-        add_deps("openssl", "c-ares")
     end
 
-    if is_plat("linux", "bsd") then
-        add_syslinks("pthread")
-    end
     if is_plat("macosx", "iphoneos", "bsd") then
         add_deps("pkg-config")
+    end
+
+    if not is_plat("windows") then
+        add_deps("autotools")
+        add_deps("openssl", "c-ares")
+        add_links("resip", "dum", "rutil", "resipares")
+    end
+
+    if is_plat("windows") then
+        add_syslinks("ws2_32", "advapi32")
+    elseif is_plat("linux", "bsd") then
+        add_syslinks("pthread")
     end
 
     on_load("windows", function(package)
