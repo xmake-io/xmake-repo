@@ -59,6 +59,10 @@ package("ultralight")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
+    if is_plat("linux") then
+        add_deps("fontconfig")
+    end
+
     on_check(function (package)
         if package:version():gt("1.3.0") then
             if package:is_plat("linux") then
@@ -70,10 +74,6 @@ package("ultralight")
             assert(not package:is_arch("arm.*"), "package(ultralight): version older than 1.4.0 does not support arm.")
         end
         assert(not package:is_arch("x86", "i386", "i686"), "package(ultralight): does not support x86/i386/i686.")
-    end)
-
-    on_load("linux", function (package)
-        package:add("deps", "fontconfig")
     end)
 
     on_install("windows|!arm*", "linux", "macosx", function (package)
