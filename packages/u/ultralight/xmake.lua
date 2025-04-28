@@ -67,9 +67,9 @@ package("ultralight")
                 assert(distrib ~= "fedora", "package(ultralight): Fedora is not supported.")
             end
         else
-            assert(not package:is_arch("arm.*"), "package(ultralight): ultralight 1.3.0 does not support arm.")
+            assert(not package:is_arch("arm.*"), "package(ultralight): version older than 1.3.0 does not support arm.")
         end
-        assert(not package:is_arch("x86", "i386", "i686"), "package(ultralight): ultralight does not support x86/i386/i686.")
+        assert(not package:is_arch("x86", "i386", "i686"), "package(ultralight): does not support x86/i386/i686.")
     end)
 
     on_load("linux", function (package)
