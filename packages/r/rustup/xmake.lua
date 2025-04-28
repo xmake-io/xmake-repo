@@ -35,6 +35,7 @@ package("rustup")
         local argv = {"--no-modify-path", "--profile=minimal", "--default-toolchain=none", "-y"}
         local envs = {CARGO_HOME = path.join(installdir, ".cargo"), RUSTUP_HOME = path.join(installdir, ".rustup"), RUSTUP_INIT_SKIP_PATH_CHECK = "yes"}
         os.vrunv(package:originfile(), argv, {envs = envs, shell = not is_host("windows")})
+        package:addenv("PATH", path.join(".cargo", "bin"))
         package:setenv("CARGO_HOME", ".cargo")
         package:setenv("RUSTUP_HOME", ".rustup")
         package:mark_as_pathenv("CARGO_HOME")
