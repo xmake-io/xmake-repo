@@ -50,8 +50,8 @@ package("ultralight")
     on_check("linux", function (package)
         if package:version():gt("1.3.0") then
             local distrib = linuxos.name()
-            assert(distrib ~= "archlinux", "package(v8): Archlinux is not supported.")
-            assert(distrib ~= "fedora", "package(v8): Fedora is not supported.")
+            assert(distrib ~= "archlinux", "package(ultralight): Archlinux is not supported.")
+            assert(distrib ~= "fedora", "package(ultralight): Fedora is not supported.")
         end
     end)
 
