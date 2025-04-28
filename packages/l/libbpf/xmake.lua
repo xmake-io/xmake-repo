@@ -27,7 +27,7 @@ package("libbpf")
             table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
             table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
             os.cd("src")
-            import("package.tools.autoconf").install(package, configs)
+            import("package.tools.make").install(package, configs)
         else
             io.writefile("xmake.lua", [[
                 add_rules("mode.debug", "mode.release")
