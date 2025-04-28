@@ -16,6 +16,9 @@ package("cmsis")
                     "include/CMSIS/RTOS2", "include/CMSIS/Driver")
 
     on_install(function (package)
+        for _, file in ipairs(os.files("**")) do
+            io.replace(file, [[#include "RTE_Components.h"]], [[#include <RTE_Components.h>]], {plain = true})
+        end
         os.cp("CMSIS/Core/Include/**", package:installdir("include/CMSIS/Core"))
         if package:config("rtos2") then
             io.writefile("xmake.lua", [[
