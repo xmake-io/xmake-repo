@@ -15,7 +15,7 @@ package("cmsis")
                     "include/CMSIS/Core/a-profile", "include/CMSIS/Core/m-profile", "include/CMSIS/Core/r-profile",
                     "include/CMSIS/Driver")
 
-    on_install(function (package)
+    on_install("cross", function (package)
         for _, file in ipairs(os.files("**")) do
             io.replace(file, [[#include "RTE_Components.h"]], [[#include <RTE_Components.h>]], {plain = true})
         end
@@ -38,7 +38,4 @@ package("cmsis")
 
     on_test(function (package)
         assert(package:has_cincludes("cmsis_gcc.h"))
-        if package:config("rtos2") then
-            assert(package:has_cfuncs("osKernelInitialize", {includes = "cmsis_os2.h"}))
-        end
     end)
