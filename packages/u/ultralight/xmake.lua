@@ -52,6 +52,9 @@ package("ultralight")
             local distrib = linuxos.name()
             assert(distrib ~= "archlinux", "package(ultralight): Archlinux is not supported.")
             assert(distrib ~= "fedora", "package(ultralight): Fedora is not supported.")
+        else
+            assert(not package:is_arch("arm.*"), "package(ultralight): ultralight 1.3.0 does not support arm.")
+            assert(not package:is_arch("x86", "i386", "i686"), "package(ultralight): ultralight 1.3.0 does not support x86/i386/i686.")
         end
     end)
 
@@ -59,7 +62,7 @@ package("ultralight")
         package:add("deps", "fontconfig")
     end)
 
-    on_install("windows|x64", "linux|x86_64", "macosx|x86_64", function (package)
+    on_install("windows", "linux", "macosx", function (package)
         os.cp("include", package:installdir())
         os.trycp("bin/*.dll", package:installdir("bin"))
         os.trycp("lib/*.lib", package:installdir("lib"))
