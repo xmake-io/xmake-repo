@@ -11,9 +11,9 @@ package("cmsis")
     add_configs("rtos2",    {description = "Use the RTOS2", default = true, type = "boolean"})
     add_configs("driver",   {description = "Use the Driver", default = true, type = "boolean"})
 
-    add_includedirs("include", "include/CMSIS/Core", 
+    add_includedirs("include", "include/CMSIS/Core", "include/CMSIS/RTOS2",
                     "include/CMSIS/Core/a-profile", "include/CMSIS/Core/m-profile", "include/CMSIS/Core/r-profile",
-                    "include/CMSIS/RTOS2", "include/CMSIS/Driver")
+                    "include/CMSIS/Driver")
 
     on_install(function (package)
         for _, file in ipairs(os.files("**")) do
