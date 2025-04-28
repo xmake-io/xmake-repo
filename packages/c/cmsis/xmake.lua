@@ -1,4 +1,5 @@
 package("cmsis")
+    set_kind("library", {headeronly = true})
     set_homepage("https://arm-software.github.io/CMSIS_6/latest/General/index.html")
     set_description("CMSIS (Cortex Microcontroller Software Interface Standard) is a vendor - neutral hardware abstraction layer for ARM processors.")
     set_license("Apache-2.0")
@@ -8,7 +9,7 @@ package("cmsis")
 
     add_versions("v6.1.0", "d8a044e4b50b7112476d6855a12c729ae2b70b3f77a2a038c23890e9a3515973")
 
-    add_configs("rtos2",    {description = "Use the RTOS2", default = true, type = "boolean"})
+    add_configs("rtos2",    {description = "Use the RTOS2", default = false, type = "boolean"})
     add_configs("driver",   {description = "Use the Driver", default = true, type = "boolean"})
 
     add_includedirs("include", "include/CMSIS/Core", "include/CMSIS/RTOS2",
@@ -16,11 +17,9 @@ package("cmsis")
                     "include/CMSIS/Driver")
 
     on_install("cross", function (package)
-        for _, file in ipairs(os.files("**")) do
-            io.replace(file, [[#include "RTE_Components.h"]], [[#include <RTE_Components.h>]], {plain = true})
-        end
         os.cp("CMSIS/Core/Include/**", package:installdir("include/CMSIS/Core"))
         if package:config("rtos2") then
+            package:set("kind", "library", {headeronly = false})
             io.writefile("xmake.lua", [[
                 add_rules("mode.release", "mode.debug")
                 target("CMSIS_RTOS2")
