@@ -1,7 +1,7 @@
 package("rustup")
     set_kind("binary")
     set_homepage("https://rustup.rs")
-    set_description("A little script to install rustup")
+    set_description("An installer for the systems programming language Rust")
 
     if is_host("windows") then
         if os.arch() == "x64" then
