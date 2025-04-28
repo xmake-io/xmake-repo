@@ -23,8 +23,9 @@ package("libbpf")
 
     on_install("linux", "android", function (package)
         if package:config("make") then
+            local configs = {"DESTDIR=" .. package:installdir()}
             os.cd("src")
-            import("package.tools.make").install(package)
+            import("package.tools.make").install(package, configs)
         else
             io.writefile("xmake.lua", [[
                 add_rules("mode.debug", "mode.release")
