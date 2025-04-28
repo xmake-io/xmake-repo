@@ -50,17 +50,14 @@ rule("g4")
                 end)
             end
         end)
-    end, {jobgraph = true, batch = true})
+    end, {jobgraph = true})
 
     on_build_files(function (target, jobgraph, sourcebatch, opt)
-        import("private.action.build.object", {alias = "build_objectfiles"})
-
-        local build_g4 = target:fullname() .. "/obj/g4"
-        jobgraph:group(build_g4, function()
+        jobgraph:group(target:fullname() .. "/obj/g4", function()
             for _, sourcefile in ipairs(sourcebatch.sourcefiles) do
                 local cxx_job = target:fullname() .. "/obj/" .. sourcefile
                 local sourcefile_dir = path.normalize(path.join(target:autogendir(), "rules/antlr4", path.directory(sourcefile)))
-                jobgraph:add(cxx_job, function (index, total, opt)
+                jobgraph:group(target:fullname() .. "/obj/g4/" .. sourcefile, function()
                     local batchcxx = {
                         rulename = "c++.build",
                         sourcekind = "cxx",
@@ -96,11 +93,11 @@ rule("g4")
                         table.insert(batchcxx.objectfiles, objectfile)
                         table.insert(batchcxx.dependfiles, dependfile)
                     end
-                    build_objectfiles.build(target, batchcxx, opt)
+                    import("private.action.build.object")(target, jobgraph, batchcxx, opt)
                 end)
             end
         end)
-    end, {jobgraph = true, batch = true, distcc = true})
+    end, {jobgraph = true, distcc = true})
 
     before_buildcmd_file(function (target, batchcmds, sourcefile_g4, opt)
         local autogendir = path.join(target:autogendir(), "rules/antlr4")
