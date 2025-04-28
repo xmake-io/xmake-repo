@@ -30,6 +30,12 @@ package("ultralight")
                 return version .. "/ultralight-sdk-" .. beta_version .. "-linux-x64.7z"
             end})
             add_versions("mirror:1.4.0-beta", "1d5092bfd7d96417547872a5c5b5950207f495ea299d713fa105314f4185c760")
+        else
+            add_urls("https://github.com/xmake-mirror/Ultralight/releases/download/$(version)", {alias = "mirror", version = function (version)
+                local beta_version = version:gsub("-beta$", "b")
+                return version .. "/ultralight-sdk-" .. beta_version .. "-linux-arm64.7z"
+            end})
+            add_versions("mirror:1.4.0-beta", "efa8f6c8b351daa42570f11bcb162f280cca2ce8e167f854a5e0687db854f268")
         end
     elseif is_plat("macosx") then
         if is_arch("x86_64", "x64") then
@@ -42,6 +48,12 @@ package("ultralight")
                 return version .. "/ultralight-sdk-" .. beta_version .. "-mac-x64.7z"
             end})
             add_versions("mirror:1.4.0-beta", "ac2abd395a5080d35d36a482b7c8e2f4e7bb89bfb6705d35ec07d9dcb4528fa7")
+        else
+            add_urls("https://github.com/xmake-mirror/Ultralight/releases/download/$(version)", {alias = "mirror", version = function (version)
+                local beta_version = version:gsub("-beta$", "b")
+                return version .. "/ultralight-sdk-" .. beta_version .. "-mac-arm64.7z"
+            end})
+            add_versions("mirror:1.4.0-beta", "3b8c71cf8e403738dcdb12cacc233838c168d48322c31d40ec1c6fcaa761a016")
         end
     end
 
