@@ -59,15 +59,14 @@ package("ultralight")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
-    on_check("linux", function (package)
-        if package:version():gt("1.3.0") then
+    on_check(function (package)
+        if package:is_plat("linux") and package:version():gt("1.3.0") then
             local distrib = linuxos.name()
             assert(distrib ~= "archlinux", "package(ultralight): Archlinux is not supported.")
             assert(distrib ~= "fedora", "package(ultralight): Fedora is not supported.")
-        else
-            assert(not package:is_arch("arm.*"), "package(ultralight): ultralight 1.3.0 does not support arm.")
-            assert(not package:is_arch("x86", "i386", "i686"), "package(ultralight): ultralight 1.3.0 does not support x86/i386/i686.")
         end
+        assert(not package:is_arch("arm.*"), "package(ultralight): ultralight 1.3.0 does not support arm.")
+        assert(not package:is_arch("x86", "i386", "i686"), "package(ultralight): ultralight 1.3.0 does not support x86/i386/i686.")
     end)
 
     on_load("linux", function (package)
