@@ -21,11 +21,11 @@ rule("g4")
         import("core.project.depend")
         import("utils.progress")
 
-        local g4_job = target:fullname() .. "/generate/g4"
+        local group = path.join(target:fullname(), "generate/g4")
         local autogendir = path.join(target:autogendir(), "rules/antlr4")
-        jobgraph:group(g4_job, function()
+        jobgraph:group(group, function()
             for _, sourcefile in ipairs(sourcebatch.sourcefiles) do
-                local jave_job = target:fullname() .. "/generate/" .. sourcefile
+                local jave_job = path.join(group, sourcefile)
                 local sourcefile_dir = path.normalize(path.join(autogendir, path.directory(sourcefile)))
                 target:add("includedirs", sourcefile_dir, {public = true})
                 os.mkdir(sourcefile_dir)
@@ -53,57 +53,55 @@ rule("g4")
     end, {jobgraph = true})
 
     on_build_files(function (target, jobgraph, sourcebatch, opt)
-        jobgraph:group(target:fullname() .. "/obj/g4", function()
-            for _, sourcefile in ipairs(sourcebatch.sourcefiles) do
-                local cxx_job = target:fullname() .. "/obj/" .. sourcefile
-                local sourcefile_dir = path.normalize(path.join(target:autogendir(), "rules/antlr4", path.directory(sourcefile)))
-                jobgraph:group(target:fullname() .. "/obj/g4/" .. sourcefile, function()
-                    local batchcxx = {
-                        rulename = "c++.build",
-                        sourcekind = "cxx",
-                        sourcefiles = {},
-                        objectfiles = {},
-                        dependfiles = {}
-                    }
-                    -- g4 file have 3 case
-                    -- lexer grammar LuaLexer;
-                    -- parser grammar LuaParser;
-                    -- grammar C;
-                    local sourcefile_string = io.readfile(sourcefile)
-                    local lexer_name = sourcefile_string:match("lexer grammar (%w+);")
-                    local parser_name = sourcefile_string:match("parser grammar (%w+);")
-                    -- lexer and parser same name
-                    local grammar_name = sourcefile_string:match("grammar (%w+);")
-                    if lexer_name or parser_name then
-                        if lexer_name then
-                            table.insert(batchcxx.sourcefiles, path.join(sourcefile_dir, lexer_name .. ".cpp"))
-                        end
-                        if parser_name then
-                            table.insert(batchcxx.sourcefiles, path.join(sourcefile_dir, parser_name .. ".cpp"))
-                        end
-                    elseif grammar_name then
-                        table.insert(batchcxx.sourcefiles, path.join(sourcefile_dir, grammar_name .. "Parser.cpp"))
-                        table.insert(batchcxx.sourcefiles, path.join(sourcefile_dir, grammar_name .. "Lexer.cpp"))
+        for _, sourcefile in ipairs(sourcebatch.sourcefiles) do
+            local group = path.join(target:fullname(), "obj", sourcefile)
+            local sourcefile_dir = path.normalize(path.join(target:autogendir(), "rules/antlr4", path.directory(sourcefile)))
+            jobgraph:group(group, function()
+                local batchcxx = {
+                    rulename = "c++.build",
+                    sourcekind = "cxx",
+                    sourcefiles = {},
+                    objectfiles = {},
+                    dependfiles = {}
+                }
+                -- g4 file have 3 case
+                -- lexer grammar LuaLexer;
+                -- parser grammar LuaParser;
+                -- grammar C;
+                local sourcefile_string = io.readfile(sourcefile)
+                local lexer_name = sourcefile_string:match("lexer grammar (%w+);")
+                local parser_name = sourcefile_string:match("parser grammar (%w+);")
+                -- lexer and parser same name
+                local grammar_name = sourcefile_string:match("grammar (%w+);")
+                if lexer_name or parser_name then
+                    if lexer_name then
+                        table.insert(batchcxx.sourcefiles, path.join(sourcefile_dir, lexer_name .. ".cpp"))
                     end
+                    if parser_name then
+                        table.insert(batchcxx.sourcefiles, path.join(sourcefile_dir, parser_name .. ".cpp"))
+                    end
+                elseif grammar_name then
+                    table.insert(batchcxx.sourcefiles, path.join(sourcefile_dir, grammar_name .. "Parser.cpp"))
+                    table.insert(batchcxx.sourcefiles, path.join(sourcefile_dir, grammar_name .. "Lexer.cpp"))
+                end
 
-                    for _, sourcefile in ipairs(batchcxx.sourcefiles) do
-                        local objectfile = target:objectfile(sourcefile)
-                        local dependfile = target:dependfile(objectfile)
-                        table.insert(target:objectfiles(), objectfile)
-                        table.insert(batchcxx.objectfiles, objectfile)
-                        table.insert(batchcxx.dependfiles, dependfile)
-                    end
-                    import("private.action.build.object")(target, jobgraph, batchcxx, opt)
-                end)
-            end
-        end)
+                for _, sourcefile in ipairs(batchcxx.sourcefiles) do
+                    local objectfile = target:objectfile(sourcefile)
+                    local dependfile = target:dependfile(objectfile)
+                    table.insert(target:objectfiles(), objectfile)
+                    table.insert(batchcxx.objectfiles, objectfile)
+                    table.insert(batchcxx.dependfiles, dependfile)
+                end
+                import("private.action.build.object")(target, jobgraph, batchcxx, opt)
+            end)
+        end
     end, {jobgraph = true, distcc = true})
 
     before_buildcmd_file(function (target, batchcmds, sourcefile_g4, opt)
         local autogendir = path.join(target:autogendir(), "rules/antlr4")
         local sourcefile_dir = path.normalize(path.join(autogendir, path.directory(sourcefile_g4)))
         target:add("includedirs", sourcefile_dir, {public = true})
-        os.mkdir(sourcefile_dir)
+        batchcmds:mkdir(sourcefile_dir)
 
         local java = target:data("antlr4.tool")
         local argv = target:data("antlr4.tool.argv")
@@ -112,7 +110,7 @@ rule("g4")
         table.insert(argv, autogendir)
         table.insert(argv, "-lib")
         table.insert(argv, sourcefile_dir)
-        table.insert(argv, sourcefile_g4)
+        table.insert(argv, path(sourcefile_g4))
 
         batchcmds:show_progress(opt.progress, "${color.build.object}compiling.g4 %s", sourcefile_g4)
         batchcmds:vrunv(java.program, argv)
