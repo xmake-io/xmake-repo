@@ -69,6 +69,7 @@ package("ultralight")
         else
             assert(not package:is_arch("arm.*"), "package(ultralight): version older than 1.4.0 does not support arm.")
         end
+        assert(not (package:is_arch("arm.*") and package:is_plat("windows")), "package(ultralight): does not support windows@arm.")
         assert(not package:is_arch("x86", "i386", "i686"), "package(ultralight): does not support x86/i386/i686.")
     end)
 
