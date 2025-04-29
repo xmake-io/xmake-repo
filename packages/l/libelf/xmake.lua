@@ -21,7 +21,6 @@ package("libelf")
         end
         local cxflags = {}
         if package:is_plat("android") then
-            io.replace("./configure", "#define off_t long", "")
             io.replace("lib/private.h", "HAVE_MEMMOVE", "1")
             io.replace("lib/private.h", "HAVE_MEMCPY", "1")
             io.replace("lib/private.h", "STDC_HEADERS", "1")
