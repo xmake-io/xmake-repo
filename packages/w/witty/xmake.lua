@@ -1,6 +1,7 @@
 package("witty")
     set_homepage("http://www.webtoolkit.eu/wt")
     set_description("Wt, C++ Web Toolkit")
+    set_license("GPL-2.0")
 
     add_urls("https://github.com/emweb/wt/archive/refs/tags/$(version).tar.gz",
              "https://github.com/emweb/wt.git")
@@ -18,8 +19,9 @@ package("witty")
             phoenix = true, pool = true, program_options = true,
             range = true, serialization = true, smart_ptr = true,
             spirit = true, system = true, thread = true,
-            tokenizer = true, tuple = true, ublas = true, variant = true
-        }
+            tokenizer = true, tuple = true, ublas = true, variant = true,
+            shared = true
+        } -- include\boost\filesystem\config.hpp(96,1): error C1189: #error:  Must not define both BOOST_FILESYSTEM_DYN_LINK and BOOST_FILESYSTEM_STATIC_LINK
     })
     add_deps("glew", "libharu", "libpng", "zlib")
     if not is_plat(windows) then
@@ -79,10 +81,8 @@ package("witty")
             button->clicked().connect([=]() { std::cerr << "Hello there, " << nameEdit_->text() << std::endl; });
         }
         void HelloApplication::greet() {  greeting_->setText("Hello there, " + nameEdit_->text()); }
-        int test() { 
-            return Wt::WRun(argc, argv, [](const Wt::WEnvironment &env) {
-                return std::make_unique<HelloApplication>(env);
-            });
+        int main(int argc, char **argv) {
+            return Wt::WRun(argc, argv, [](const Wt::WEnvironment &env) { return std::make_unique<HelloApplication>(env); });
         }
         ]]}, {configs = {languages = "c++20"}}))
     end)
