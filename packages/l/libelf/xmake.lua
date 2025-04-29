@@ -32,6 +32,10 @@ package("libelf")
             package:add("defines", "__libelf_i64_t=int64_t")
         end
         os.rm("configure", "config.guess", "config.sub")
+        local autotools = package:dep("autotools")
+        local automake_dir = path.join(autotools:installdir(), "share", "automake-*")
+        os.cp(path.join(automake_dir, "config.guess"), ".")
+        os.cp(path.join(automake_dir, "config.sub"), ".")
         import("package.tools.autoconf").install(package, configs, {cxflags = cxflags})
     end)
 
