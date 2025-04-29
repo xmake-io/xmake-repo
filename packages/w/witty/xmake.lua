@@ -30,15 +30,59 @@ package("witty")
         local configs = {
             "-DBUILD_EXAMPLES=OFF", "-DBUILD_TESTS=OFF", "-DCONNECTOR_HTTP=ON", "-DENABLE_HARU=ON",
             "-DENABLE_MYSQL=OFF", "-DENABLE_FIREBIRD=OFF", "-DENABLE_QT4=OFF", "-DENABLE_QT5=OFF",
-            "-DENABLE_LIBWTTEST=ON", "-DENABLE_OPENGL=ON"
+            "-DENABLE_LIBWTTEST=ON", "-DENABLE_OPENGL=ON", "-DCMAKE_INSTALL_DIR=share"
         }
+        if package:is_plat("windows") then
+            table.join2(configs, {"-DWT_WRASTERIMAGE_IMPLEMENTATION=Direct2D", "-DCONNECTOR_ISAPI=ON", "-DENABLE_PANGO=OFF"})
+        else
+            table.join2(configs, {"-DCONNECTOR_FCGI=OFF", "-DENABLE_PANGO=ON"})
+            table.insert(configs, "-DWT_WRASTERIMAGE_IMPLEMENTATION=" .. (package:config("graphicsmagick") and "GraphicsMagick" or "none"))
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DSHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBOOST_DYNAMIC=" .. (package:dep("boost"):config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DHARU_DYNAMIC=" .. (package:dep("libharu"):config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
+        io.replace(path.join(package:installdir("include"), "Wt", "WConfig.h"), [[#define RUNDIR]], [[//#define RUNDIR]], {plain = true})
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("foo", {includes = "foo.h"}))
+        assert(package:check_cxxsnippets({test = [[
+        //#include <memory>
+        //#include <iostream>
+        #include <Wt/WApplication.h>
+        #include <Wt/WBreak.h>
+        #include <Wt/WContainerWidget.h>
+        #include <Wt/WLineEdit.h>
+        #include <Wt/WPushButton.h>
+        #include <Wt/WText.h>
+        class HelloApplication : public Wt::WApplication {
+            public:
+                HelloApplication(const Wt::WEnvironment& env);
+            private:
+                Wt::WLineEdit *nameEdit_;
+                Wt::WText     *greeting_;
+                void greet();
+        };
+
+        HelloApplication::HelloApplication(const Wt::WEnvironment& env) : WApplication(env) {
+            setTitle("Hello world");
+            root()->addWidget(std::make_unique<Wt::WText>("Your name, please ? "));
+            nameEdit_ = root()->addWidget(std::make_unique<Wt::WLineEdit>());
+            nameEdit_->setFocus();
+            auto button = root()->addWidget(std::make_unique<Wt::WPushButton>("Greet me."));
+            button->setMargin(5, Wt::Side::Left);
+            root()->addWidget(std::make_unique<Wt::WBreak>());
+            greeting_ = root()->addWidget(std::make_unique<Wt::WText>());
+            button->clicked().connect(this, &HelloApplication::greet);
+            nameEdit_->enterPressed().connect(std::bind(&HelloApplication::greet, this));
+            button->clicked().connect([=]() { std::cerr << "Hello there, " << nameEdit_->text() << std::endl; });
+        }
+        void HelloApplication::greet() {  greeting_->setText("Hello there, " + nameEdit_->text()); }
+        int test() { 
+            return Wt::WRun(argc, argv, [](const Wt::WEnvironment &env) {
+                return std::make_unique<HelloApplication>(env);
+            });
+        }
+        ]]}, {configs = {languages = "c++20"}}))
     end)
