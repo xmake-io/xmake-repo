@@ -23,8 +23,8 @@ package("libbpf")
 
     on_install("linux", "android", function (package)
         if package:config("make") then
-            io.replace([[PREFIX ?= /usr]], [[PREFIX =]] .. package:installdir(), {plain = true})
             os.cd("src")
+            io.replace("Makefile", [[PREFIX ?= /usr]], [[PREFIX =]] .. package:installdir(), {plain = true})
             import("package.tools.make").install(package, configs)
         else
             io.writefile("xmake.lua", [[
