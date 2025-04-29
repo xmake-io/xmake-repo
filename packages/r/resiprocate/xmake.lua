@@ -5,6 +5,7 @@ package("resiprocate")
 
     add_urls("https://github.com/resiprocate/resiprocate/archive/refs/tags/resiprocate-$(version).tar.gz",
              "https://github.com/resiprocate/resiprocate.git")
+
     add_versions("1.12.0", "aa8906082e4221bffbfab3210df68a6ba1f57ba1532d89ea4572b4fa9877914f")
 
     if is_plat("windows") then
@@ -69,19 +70,19 @@ package("resiprocate")
         os.cp("*/*/rutil.lib", package:installdir("lib"))
     end)
 
-    on_install("!windows and !wasm and !mingw and !android", function(package)
-        local opt = {}
-        local configs = {}
-        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
-        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
-        if package:is_debug() then
-            table.insert(configs, "--enable-debug")
-        end
+    on_install("linux", "macosx", "bsd", "iphoneos", "cross", function(package)
         if package:is_plat("bsd") then
             -- std::auto_ptr requires _LIBCPP_ENABLE_CXX17_REMOVED_AUTO_PTR std::binary_function requires _LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION
             table.insert(configs, "CXXFLAGS=-D_LIBCPP_ENABLE_CXX17_REMOVED_AUTO_PTR -D_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION")
             -- std::binary_function requires #include <functional>
             io.replace("rutil/dns/RRCache.hxx", "#include <memory>", "#include <memory>\n#include <functional>", {plain = true})
+        end
+
+        local configs = {}
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        if package:is_debug() then
+            table.insert(configs, "--enable-debug")
         end
         import("package.tools.autoconf").install(package, configs)
     end)
