@@ -24,9 +24,12 @@ package("witty")
         } -- include\boost\filesystem\config.hpp(96,1): error C1189: #error:  Must not define both BOOST_FILESYSTEM_DYN_LINK and BOOST_FILESYSTEM_STATIC_LINK
     })
     add_deps("glew", "libharu", "libpng", "openssl", "zlib")
-
     if not is_plat("windows") then
         add_deps("harfbuzz", "pango")
+    end
+
+    if is_plat("windows") then
+        add_syslinks("d2d1", "dwrite", "windowscodecs", "shlwapi")
     end
 
     on_install("!wasm and !mingw and !iphoneos and !android and !cross", function (package)
