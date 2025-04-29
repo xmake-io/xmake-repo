@@ -32,7 +32,7 @@ package("witty")
         add_syslinks("d2d1", "dwrite", "windowscodecs", "shlwapi")
     end
 
-    on_install("!wasm and !mingw and !iphoneos and !android and !cross", function (package)
+    on_install("!wasm and !mingw and !iphoneos and !android and !cross and !bsd", function (package)
         local configs = {
             "-DBUILD_EXAMPLES=OFF", "-DBUILD_TESTS=OFF", "-DCONNECTOR_HTTP=ON", "-DENABLE_HARU=ON",
             "-DENABLE_MYSQL=OFF", "-DENABLE_FIREBIRD=OFF", "-DENABLE_QT4=OFF", "-DENABLE_QT5=OFF",
