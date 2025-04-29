@@ -28,12 +28,12 @@ package("libbpf")
             io.replace("Makefile", [[PREFIX ?= /usr]], [[PREFIX =]] .. package:installdir(), {plain = true})
             -- Fix installdir for .so / .a to expected *lib*
             io.replace("Makefile", [[LIBSUBDIR := lib64]], [[LIBSUBDIR := lib]], {plain = true})
-            -- Wrap BUILD_STATIC_ONLY to install only .so or .a
-            local configs = {}
-            if not package:config("shared") then
-                table.insert(configs, "BUILD_STATIC_ONLY=y")
+            import("package.tools.make").make(package)
+            if package:config("shared") then
+                os.cp("**.so", package:installdir("lib"))
+            else
+                os.cp("**.a", package:installdir("lib"))
             end
-            import("package.tools.make").install(package, configs)
         else
             io.writefile("xmake.lua", [[
                 add_rules("mode.debug", "mode.release")
