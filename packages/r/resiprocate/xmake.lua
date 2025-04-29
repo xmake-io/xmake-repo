@@ -71,6 +71,7 @@ package("resiprocate")
     end)
 
     on_install("linux", "macosx", "bsd", "iphoneos", "cross", function(package)
+        local configs = {}
         if package:is_plat("bsd") then
             -- std::auto_ptr requires _LIBCPP_ENABLE_CXX17_REMOVED_AUTO_PTR std::binary_function requires _LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION
             table.insert(configs, "CXXFLAGS=-D_LIBCPP_ENABLE_CXX17_REMOVED_AUTO_PTR -D_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION")
@@ -78,7 +79,6 @@ package("resiprocate")
             io.replace("rutil/dns/RRCache.hxx", "#include <memory>", "#include <memory>\n#include <functional>", {plain = true})
         end
 
-        local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:is_debug() then
