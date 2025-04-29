@@ -31,7 +31,7 @@ package("libelf")
             package:add("defines", "__libelf_u64_t=uint64_t")
             package:add("defines", "__libelf_i64_t=int64_t")
         end
-        os.rm("configure")
+        os.rm("configure", "config.guess", "config.sub")
         import("package.tools.autoconf").install(package, configs, {cxflags = cxflags})
     end)
 
