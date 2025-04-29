@@ -24,8 +24,14 @@ package("libbpf")
     on_install("linux", "android", function (package)
         if package:config("make") then
             os.cd("src")
+            -- Fix installdir for headers & libs expected installdir()
             io.replace("Makefile", [[PREFIX ?= /usr]], [[PREFIX =]] .. package:installdir(), {plain = true})
+            -- Fix installdir for .so / .a to expected *lib*
             io.replace("Makefile", [[LIBSUBDIR := lib64]], [[LIBSUBDIR := lib]], {plain = true})
+            -- Wrap BUILD_STATIC_ONLY to install only .so or .a
+            io.replace("Makefile", [[STATIC_LIBS := $(OBJDIR)/libbpf.a]], "ifdef BUILD_STATIC_ONLY\nSTATIC_LIBS := $(OBJDIR)/libbpf.a", {plain = true})
+            io.replace("Makefile", [[ifndef BUILD_STATIC_ONLY]], [[else]], {plain = true})
+            local configs = {"BUILD_STATIC_ONLY=" .. (package:config("shared") and "n" or "y")}
             import("package.tools.make").install(package, configs)
         else
             io.writefile("xmake.lua", [[
