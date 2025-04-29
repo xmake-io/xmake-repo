@@ -31,7 +31,10 @@ package("libbpf")
             -- Wrap BUILD_STATIC_ONLY to install only .so or .a
             io.replace("Makefile", [[STATIC_LIBS := $(OBJDIR)/libbpf.a]], "ifdef BUILD_STATIC_ONLY\nSTATIC_LIBS := $(OBJDIR)/libbpf.a", {plain = true})
             io.replace("Makefile", [[ifndef BUILD_STATIC_ONLY]], [[else]], {plain = true})
-            local configs = {"BUILD_STATIC_ONLY=" .. (package:config("shared") and "n" or "y")}
+            local configs = {}
+            if package:config("shared") then
+                table.insert(configs, "BUILD_STATIC_ONLY=y")
+            end
             import("package.tools.make").install(package, configs)
         else
             io.writefile("xmake.lua", [[
