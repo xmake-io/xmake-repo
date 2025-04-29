@@ -18,9 +18,6 @@ package("libelf")
             table.insert(configs, "--enable-debug")
         end
         local cxflags = {}
-        if package:config("pic") ~= false then
-            table.insert(cxflags, "-fPIC")
-        end
         if package:is_plat("android") then
             io.replace("./configure", "#define off_t long", "")
             io.replace("lib/private.h", "HAVE_MEMMOVE", "1")
@@ -34,6 +31,9 @@ package("libelf")
             package:add("defines", "__libelf_i64_t=int64_t")
         end
         io.replace("./configure", "main(){return(0);}", "int main(){return(0);}", {plain = true})
+
+        os.vrunv("autoreconf", {"-fiv"})
+
         import("package.tools.autoconf").install(package, configs, {cxflags = cxflags})
     end)
 
