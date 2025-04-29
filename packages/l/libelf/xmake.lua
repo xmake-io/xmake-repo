@@ -9,6 +9,8 @@ package("libelf")
 
     add_includedirs("include", "include/libelf")
 
+    add_deps("autotools")
+
     on_install("linux", "android", function (package)
         local configs = {"--disable-dependency-tracking",
                          "--disable-compat"}
