@@ -33,20 +33,17 @@ package("witty")
     end
 
     on_install("!wasm and !mingw and !iphoneos and !android and !cross and !bsd", function (package)
-
         local zlib = package:dep("zlib")
         local zlib_prefix = "";
         if zlib and not zlib:is_system() then
             zlib_prefix = zlib:installdir()
         end
-
         local configs = {
             "-DBUILD_EXAMPLES=OFF", "-DBUILD_TESTS=OFF", "-DCONNECTOR_HTTP=ON", "-DENABLE_HARU=ON",
             "-DENABLE_MYSQL=OFF", "-DENABLE_FIREBIRD=OFF", "-DENABLE_QT4=OFF", "-DENABLE_QT5=OFF",
             "-DENABLE_LIBWTTEST=ON", "-DENABLE_OPENGL=ON", "-DCMAKE_INSTALL_DIR=share"
         }
         table.insert(configs, "-DZLIB_PREFIX=" .. zlib_prefix)
-        table.insert(configs, "-DLIBPNG_PREFIX=" .. libpng_prefix)
         if package:is_plat("windows") then
             table.join2(configs, {"-DWT_WRASTERIMAGE_IMPLEMENTATION=Direct2D", "-DCONNECTOR_ISAPI=ON", "-DENABLE_PANGO=OFF"})
         else
