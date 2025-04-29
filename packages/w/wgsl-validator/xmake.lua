@@ -12,7 +12,13 @@ package("wgsl-validator")
 
     add_deps("rust")
 
-    on_install(function (package)
+    on_load("windows", function (package)
+        if not package:config("shared") then
+            package:add("Advapi32", "User32", "Userenv", "WS2_32", "RuntimeObject", "NtDll")
+        end
+    end)
+
+    on_install("windows|x64", "windows|x86", "windows|arm64", "linux|arm64", "linux|x86_64", "macosx|x86_64", "macosx|arm64", function (package)
         io.writefile("xmake.lua", [[
             add_requires("rust")
             add_requires("cargo::naga latest", { configs = { features = "wgsl-in" } })
