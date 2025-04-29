@@ -23,7 +23,7 @@ package("libbpf")
 
     on_install("linux", "android", function (package)
         if package:config("make") then
-            local configs = {"DESTDIR=" .. package:installdir()}
+            io.replace([[PREFIX ?= /usr]], [[PREFIX =]] .. package:installdir(), {plain = true})
             os.cd("src")
             import("package.tools.make").install(package, configs)
         else
