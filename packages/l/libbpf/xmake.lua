@@ -25,6 +25,7 @@ package("libbpf")
         if package:config("make") then
             os.cd("src")
             io.replace("Makefile", [[PREFIX ?= /usr]], [[PREFIX =]] .. package:installdir(), {plain = true})
+            io.replace("Makefile", [[LIBSUBDIR := lib64]], [[LIBSUBDIR := lib]], {plain = true})
             import("package.tools.make").install(package, configs)
         else
             io.writefile("xmake.lua", [[
