@@ -11,7 +11,7 @@ package("libelf")
 
     add_deps("autotools")
 
-    on_install("linux", "android", function (package)
+    on_install("cross", "linux", "android@linux,macosx", function (package)
         local configs = {"--disable-dependency-tracking",
                          "--disable-compat"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
