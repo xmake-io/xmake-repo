@@ -1,5 +1,4 @@
 package("libbpf")
-
     set_homepage("https://github.com/libbpf/libbpf")
     set_description("Automated upstream mirror for libbpf stand-alone build.")
 
@@ -17,7 +16,7 @@ package("libbpf")
 
     on_load(function (package)
         if package:config("make") then
-            package:add("deps", "autotools")
+            package:add("deps", "autotools", "pkg-config")
         end
     end)
 
@@ -29,9 +28,11 @@ package("libbpf")
             -- Fix installdir for .so / .a to expected *lib*
             io.replace("Makefile", [[LIBSUBDIR := lib64]], [[LIBSUBDIR := lib]], {plain = true})
             if package:config("shared") then
+                -- Install only .so
                 io.replace("Makefile", [[all: $(STATIC_LIBS) $(SHARED_LIBS) $(PC_FILE)]], [[all: $(SHARED_LIBS) $(PC_FILE)]], {plain = true})
                 io.replace("Makefile", [[$(call do_s_install,$(STATIC_LIBS) $(SHARED_LIBS),$(LIBDIR))]], [[$(call do_s_install,$(SHARED_LIBS),$(LIBDIR))]], {plain = true})
             else
+                -- Install only .a
                 io.replace("Makefile", [[all: $(STATIC_LIBS) $(SHARED_LIBS) $(PC_FILE)]], [[all: $(STATIC_LIBS) $(PC_FILE)]], {plain = true})
                 io.replace("Makefile", [[$(call do_s_install,$(STATIC_LIBS) $(SHARED_LIBS),$(LIBDIR))]], [[$(call do_s_install,$(STATIC_LIBS),$(LIBDIR))]], {plain = true})
             end
