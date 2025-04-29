@@ -23,13 +23,13 @@ package("witty")
             shared = true
         } -- include\boost\filesystem\config.hpp(96,1): error C1189: #error:  Must not define both BOOST_FILESYSTEM_DYN_LINK and BOOST_FILESYSTEM_STATIC_LINK
     })
-    add_deps("glew", "libharu", "libpng", "zlib")
+    add_deps("glew", "libharu", "libpng", "openssl", "zlib")
 
     if not is_plat("windows") then
         add_deps("harfbuzz", "pango")
     end
 
-    on_install(function (package)
+    on_install("!wasm and !mingw and !iphoneos and !android and !cross", function (package)
         local configs = {
             "-DBUILD_EXAMPLES=OFF", "-DBUILD_TESTS=OFF", "-DCONNECTOR_HTTP=ON", "-DENABLE_HARU=ON",
             "-DENABLE_MYSQL=OFF", "-DENABLE_FIREBIRD=OFF", "-DENABLE_QT4=OFF", "-DENABLE_QT5=OFF",
@@ -42,6 +42,7 @@ package("witty")
             table.insert(configs, "-DWT_WRASTERIMAGE_IMPLEMENTATION=" .. (package:config("graphicsmagick") and "GraphicsMagick" or "none"))
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBOOST_DYNAMIC=" .. (package:dep("boost"):config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DHARU_DYNAMIC=" .. (package:dep("libharu"):config("shared") and "ON" or "OFF"))
@@ -65,7 +66,6 @@ package("witty")
                 Wt::WText     *greeting_;
                 void greet();
         };
-
         HelloApplication::HelloApplication(const Wt::WEnvironment& env) : WApplication(env) {
             setTitle("Hello world");
             root()->addWidget(std::make_unique<Wt::WText>("Your name, please ? "));
@@ -79,7 +79,7 @@ package("witty")
             nameEdit_->enterPressed().connect(std::bind(&HelloApplication::greet, this));
             button->clicked().connect([=]() { std::cerr << "Hello there, " << nameEdit_->text() << std::endl; });
         }
-        void HelloApplication::greet() {  greeting_->setText("Hello there, " + nameEdit_->text()); }
+        void HelloApplication::greet() { greeting_->setText("Hello there, " + nameEdit_->text()); }
         int main(int argc, char **argv) {
             return Wt::WRun(argc, argv, [](const Wt::WEnvironment &env) { return std::make_unique<HelloApplication>(env); });
         }
