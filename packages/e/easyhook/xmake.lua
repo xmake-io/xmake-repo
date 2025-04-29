@@ -15,7 +15,7 @@ package("easyhook")
 
     add_syslinks("psapi", "Aux_ulib")
 
-    on_install("windows", function (package)
+    on_install("windows|!arm*", function (package)
         import("package.tools.msbuild")
         -- Debundle
         os.rm("EasyHookDll/AUX_ULIB_x64.LIB", "EasyHookDll/AUX_ULIB_x86.LIB")
@@ -23,11 +23,6 @@ package("easyhook")
         io.replace("EasyHookDll/EasyHookDll.vcxproj", "Aux_ulib_x64.lib", "Aux_ulib.lib", {plain = true})
         os.cp("Public/easyhook.h", package:installdir("include"))
         local arch = package:is_arch("x64") and "x64" or "Win32"
-        if package:is_arch("arm64") then
-            arch = "ARM64"
-            io.replace("EasyHook.sln", "|x64", "|ARM64", {plain = true})
-            io.replace("EasyHookDll/EasyHookDll.vcxproj", "|x64", "|ARM64", {plain = true})
-        end
         if not package:has_runtime("MT", "MTd") then
             -- Allow MD, MDd
             io.replace("EasyHookDll/EasyHookDll.vcxproj",
