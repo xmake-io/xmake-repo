@@ -26,9 +26,9 @@ jobs:
         with:
           usesh: true
           sync: sshfs
-          mem: 4096
+          mem: 12288
           copyback: false
-          prepare: pkg install -y git curl unzip gmake llvm gsed bash perl5 openssl
+          prepare: pkg install -y git curl unzip gmake llvm gsed bash perl5 openssl 7-zip
           run: |
             git config --global --add safe.directory `pwd`
             git clone --recurse-submodules https://github.com/xmake-io/xmake.git /tmp/xmake -b dev
