@@ -24,7 +24,8 @@ package("witty")
         } -- include\boost\filesystem\config.hpp(96,1): error C1189: #error:  Must not define both BOOST_FILESYSTEM_DYN_LINK and BOOST_FILESYSTEM_STATIC_LINK
     })
     add_deps("glew", "libharu", "libpng", "zlib")
-    if not is_plat(windows) then
+
+    if not is_plat("windows") then
         add_deps("harfbuzz", "pango")
     end
 
@@ -50,8 +51,6 @@ package("witty")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-        //#include <memory>
-        //#include <iostream>
         #include <Wt/WApplication.h>
         #include <Wt/WBreak.h>
         #include <Wt/WContainerWidget.h>
