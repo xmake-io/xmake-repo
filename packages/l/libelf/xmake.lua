@@ -32,10 +32,7 @@ package("libelf")
             package:add("defines", "__libelf_u64_t=uint64_t")
             package:add("defines", "__libelf_i64_t=int64_t")
         end
-        io.replace("./configure", "main(){return(0);}", "int main(){return(0);}", {plain = true})
-
-        os.vrunv("autoreconf", {"-fiv"})
-
+        os.rm("./configure")
         import("package.tools.autoconf").install(package, configs, {cxflags = cxflags})
     end)
 
