@@ -13,8 +13,14 @@ package("easyhook")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
+    add_syslinks("psapi", "Aux_ulib")
+
     on_install("windows", function (package)
         import("package.tools.msbuild")
+        -- Debundle
+        os.rm("EasyHookDll/AUX_ULIB_x64.LIB", "EasyHookDll/AUX_ULIB_x86.LIB")
+        io.replace("EasyHookDll/EasyHookDll.vcxproj", "Aux_ulib_x86.lib", "Aux_ulib.lib", {plain = true})
+        io.replace("EasyHookDll/EasyHookDll.vcxproj", "Aux_ulib_x64.lib", "Aux_ulib.lib", {plain = true})
         os.cp("Public/easyhook.h", package:installdir("include"))
         local arch = package:is_arch("x64") and "x64" or "Win32"
         if package:is_arch("arm64") then
@@ -24,8 +30,10 @@ package("easyhook")
         end
         if not package:has_runtime("MT", "MTd") then
             -- Allow MD, MDd
-            io.replace("EasyHookDll/EasyHookDll.vcxproj", "MultiThreadedDebug", "MultiThreadedDebugDLL", {plain = true})
-            io.replace("EasyHookDll/EasyHookDll.vcxproj", "MultiThreaded", "MultiThreadedDLL", {plain = true})
+            io.replace("EasyHookDll/EasyHookDll.vcxproj",
+                "<RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>", "<RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>", {plain = true})
+            io.replace("EasyHookDll/EasyHookDll.vcxproj",
+                "<RuntimeLibrary>MultiThreaded</RuntimeLibrary>", "<RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>", {plain = true})
         end
         local mode = package:is_debug() and "netfx4-Debug" or "netfx4-Release"
         local configs = { "EasyHook.sln" }
