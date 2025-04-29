@@ -32,7 +32,7 @@ package("witty")
         add_syslinks("d2d1", "dwrite", "windowscodecs", "shlwapi")
     end
 
-    on_install("!wasm and !mingw and !iphoneos and !android and !cross", function (package)
+    on_install("!wasm and !mingw and !iphoneos and !android and !cross and !bsd", function (package)
 
         local zlib = package:dep("zlib")
         local zlib_prefix = "";
