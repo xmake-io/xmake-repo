@@ -59,10 +59,11 @@ package("libbpf")
             -- Use expected pkg-config .pc filename provided from xrepo
             io.replace("Makefile", [[--cflags libelf]], [[--cflags elfutils]], {plain = true})
             io.replace("Makefile", [[--libs libelf]], [[--libs elfutils]], {plain = true})
+            local configs = {}
             if package:is_plat("android") then
                 table.insert(configs, "EXTRA_CFLAGS=__user= __force= __poll_t=uint32_t")
             end
-            import("package.tools.make").install(package)
+            import("package.tools.make").install(package, configs)
         else
             io.writefile("xmake.lua", [[
                 add_rules("mode.debug", "mode.release")
