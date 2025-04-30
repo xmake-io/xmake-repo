@@ -25,9 +25,8 @@ package("pybind11")
 
         local configs = {"-DPYBIND11_TEST=OFF"}
         local python = find_python3()
-        local pythondir = path.directory(python)
-        if pythondir and path.is_absolute(pythondir) then
-            table.insert(configs, "-DPython_ROOT_DIR=" .. pythondir)
+        if python and path.is_absolute(python) then
+            table.insert(configs, "-DPython_EXECUTABLE=" .. python)
         end
         import("package.tools.cmake").install(package, configs)
     end)
