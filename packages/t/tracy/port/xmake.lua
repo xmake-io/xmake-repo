@@ -3,20 +3,20 @@ add_rules("utils.install.cmake_importfiles")
 
 option("tracy_enable",                      {type = "boolean", default = true,  description = "Enable profiling"})
 option("on_demand",                         {type = "boolean", default = false, description = "On-demand profiling"})
-option("callstack",                         {type = "boolean", default = false,  description = "Enfore callstack collection for tracy regions"})
-option("no_callstack",                      {type = "boolean", default = false, description = "Disable all callstack related functionality"})
-option("no_callstack_inlines",              {type = "boolean", default = false, description = "Disables the inline functions in callstacks"})
+option("enforce_callstack",                         {type = "boolean", default = false,  description = "Enfore callstack collection for tracy regions"})
+option("callstack",                      {type = "boolean", default = false, description = "Disable all callstack related functionality"})
+option("callstack_inlines",              {type = "boolean", default = false, description = "Disables the inline functions in callstacks"})
 option("only_localhost",                    {type = "boolean", default = false, description = "Only listen on the localhost interface"})
-option("no_broadcast",                      {type = "boolean", default = false, description = "Disable client discovery by broadcast to local network"})
+option("broadcast",                      {type = "boolean", default = false, description = "Disable client discovery by broadcast to local network"})
 option("only_ipv4",                         {type = "boolean", default = false, description = "Tracy will only accept connections on IPv4 addresses (disable IPv6)"})
-option("no_code_transfer",                  {type = "boolean", default = false, description = "Disable collection of source code"})
-option("no_context_switch",                 {type = "boolean", default = false, description = "Disable capture of context switches"})
-option("no_exit",                           {type = "boolean", default = false, description = "Client executable does not exit until all profile data is sent to server"})
-option("no_sampling",                       {type = "boolean", default = false, description = "Disable call stack sampling"})
-option("no_verify",                         {type = "boolean", default = false, description = "Disable zone validation for C API"})
-option("no_vsync_capture",                  {type = "boolean", default = false, description = "Disable capture of hardware Vsync events"})
-option("no_frame_image",                    {type = "boolean", default = false, description = "Disable the frame image support and its thread"})
-option("no_system_tracing",                 {type = "boolean", default = false, description = "Disable systrace sampling"})
+option("code_transfer",                     {type = "boolean", default = false, description = "Disable collection of source code"})
+option("context_switch",                 {type = "boolean", default = false, description = "Disable capture of context switches"})
+option("exit",                           {type = "boolean", default = false, description = "Client executable does not exit until all profile data is sent to server"})
+option("sampling",                       {type = "boolean", default = false, description = "Disable call stack sampling"})
+option("verify",                         {type = "boolean", default = false, description = "Disable zone validation for C API"})
+option("vsync_capture",                  {type = "boolean", default = false, description = "Disable capture of hardware Vsync events"})
+option("frame_image",                    {type = "boolean", default = false, description = "Disable the frame image support and its thread"})
+option("system_tracing",                 {type = "boolean", default = false, description = "Disable systrace sampling"})
 option("patchable_nopsleds",                {type = "boolean", default = false, description = "Enable nopsleds for efficient patching by system-level tools (e.g. rr)"})
 option("timer_fallback",                    {type = "boolean", default = false, description = "Use lower resolution timers"})
 option("libunwind_backtrace",               {type = "boolean", default = false, description = "Use libunwind backtracing where supported"})
@@ -25,7 +25,7 @@ option("libbacktrace_elf_dynload_support",  {type = "boolean", default = false, 
 option("delayed_init",                      {type = "boolean", default = false, description = "Enable delayed initialization of the library (init on first call)"})
 option("manual_lifetime",                   {type = "boolean", default = false, description = "Enable the manual lifetime management of the profile"})
 option("fibers",                            {type = "boolean", default = true,  description = "Enable fibers support"})
-option("no_crash_handler",                  {type = "boolean", default = false, description = "Disable crash handling"})
+option("crash_handler",                  {type = "boolean", default = false, description = "Disable crash handling"})
 option("verb",                              {type = "boolean", default = false, description = "Enable verbose logging"})
 
 if has_config("libunwind_backtrace") then
@@ -56,15 +56,15 @@ target("tracy")
         add_defines("TRACY_ON_DEMAND")
     end
 
-    if has_config("callstack") then
+    if has_config("enforce_callstack") then
         add_defines("TRACY_CALLSTACK")
     end
 
-    if has_config("no_callstack") then
+    if has_config("callstack") then
         add_defines("TRACY_NO_CALLSTACK")
     end
 
-    if has_config("no_callstack_inlines") then
+    if has_config("callstack_inlines") then
         add_defines("TRACY_NO_CALLSTACK_INLINES")
     end
 
@@ -72,7 +72,7 @@ target("tracy")
         add_defines("TRACY_ONLY_LOCALHOST")
     end
 
-    if has_config("no_broadcast") then
+    if has_config("broadcast") then
         add_defines("TRACY_NO_BROADCAST")
     end
 
@@ -80,35 +80,35 @@ target("tracy")
         add_defines("TRACY_ONLY_IPV4")
     end
 
-    if has_config("no_code_transfer") then
+    if has_config("code_transfer") then
         add_defines("TRACY_NO_CODE_TRANSFER")
     end
 
-    if has_config("no_context_switch") then
+    if has_config("context_switch") then
         add_defines("TRACY_NO_CONTEXT_SWITCH")
     end
 
-    if has_config("no_exit") then
+    if has_config("exit") then
         add_defines("TRACY_NO_EXIT")
     end
 
-    if has_config("no_sampling") then
+    if has_config("sampling") then
         add_defines("TRACY_NO_SAMPLING")
     end
 
-    if has_config("no_verify") then
+    if has_config("verify") then
         add_defines("TRACY_NO_VERIFY")
     end
 
-    if has_config("no_vsync_capture") then
+    if has_config("vsync_capture") then
         add_defines("TRACY_NO_VSYNC_CAPTURE")
     end
 
-    if has_config("no_frame_image") then
+    if has_config("frame_image") then
         add_defines("TRACY_NO_FRAME_IMAGE")
     end
 
-    if has_config("no_system_tracing") then
+    if has_config("system_tracing") then
         add_defines("TRACY_NO_SYSTEM_TRACING")
     end
 
@@ -132,7 +132,7 @@ target("tracy")
         add_defines("TRACY_TIMER_FALLBACK")
     end
 
-    if has_config("no_crash_handler") then
+    if has_config("crash_handler") then
         add_defines("TRACY_NO_CRASH_HANDLER")
     end
 
@@ -149,7 +149,7 @@ target("tracy")
         add_defines("TRACY_LIBBACKTRACE_ELF_DYNLOAD_SUPPORT")
     end
 
-    if has_config("verbose") then
+    if has_config("verb") then
         add_defines("TRACY_VERBOSE")
     end
 
@@ -157,6 +157,6 @@ target("tracy")
         add_defines("TRACY_EXPORTS")
     end
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_defines("_WIN32")
     end
