@@ -48,16 +48,20 @@ package("libbpf")
             -- Fix installdir for .so / .a to expected *lib*
             io.replace("Makefile", [[LIBSUBDIR := lib64]], [[LIBSUBDIR := lib]], {plain = true})
             if package:config("shared") then
-                -- Install only .so
+                -- Build & install only .so
                 io.replace("Makefile", [[all: $(STATIC_LIBS) $(SHARED_LIBS) $(PC_FILE)]], [[all: $(SHARED_LIBS) $(PC_FILE)]], {plain = true})
                 io.replace("Makefile", [[$(call do_s_install,$(STATIC_LIBS) $(SHARED_LIBS),$(LIBDIR))]], [[$(call do_s_install,$(SHARED_LIBS),$(LIBDIR))]], {plain = true})
             else
-                -- Install only .a
+                -- Build & install only .a
                 io.replace("Makefile", [[all: $(STATIC_LIBS) $(SHARED_LIBS) $(PC_FILE)]], [[all: $(STATIC_LIBS) $(PC_FILE)]], {plain = true})
                 io.replace("Makefile", [[$(call do_s_install,$(STATIC_LIBS) $(SHARED_LIBS),$(LIBDIR))]], [[$(call do_s_install,$(STATIC_LIBS),$(LIBDIR))]], {plain = true})
             end
+            -- Use expected pkg-config .pc filename provided from xrepo
             io.replace("Makefile", [[--cflags libelf]], [[--cflags elfutils]], {plain = true})
             io.replace("Makefile", [[--libs libelf]], [[--libs elfutils]], {plain = true})
+            if package:is_plat("android") then
+                table.insert(configs, "EXTRA_CFLAGS=__user= __force= __poll_t=uint32_t")
+            end
             import("package.tools.make").install(package)
         else
             io.writefile("xmake.lua", [[
