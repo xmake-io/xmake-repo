@@ -33,9 +33,11 @@ package("libelf")
         end
         os.rm("configure", "config.guess", "config.sub")
         local automake = package:dep("automake")
-        local automake_dir = path.join(automake:installdir(), "share", "automake-*")
-        os.cp(path.join(automake_dir, "config.guess"), ".")
-        os.cp(path.join(automake_dir, "config.sub"), ".")
+        if not automake:is_system() then
+            local automake_dir = path.join(automake:installdir(), "share", "automake-*")
+            os.cp(path.join(automake_dir, "config.guess"), ".")
+            os.cp(path.join(automake_dir, "config.sub"), ".")
+        end
         import("package.tools.autoconf").install(package, configs, {cxflags = cxflags})
     end)
 
