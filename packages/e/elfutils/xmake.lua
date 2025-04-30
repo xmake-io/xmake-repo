@@ -85,6 +85,7 @@ package("elfutils")
             table.join2(packagedeps, "libintl", "argp-standalone")
         end
         os.rm("configure")
+        os.vrunv("autoreconf", {"-fiv"})
         import("package.tools.autoconf").install(package, configs, {cflags = cflags,
             packagedeps = packagedeps})
         if package:config("shared") then
