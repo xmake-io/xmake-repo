@@ -41,6 +41,8 @@ package("libbpf")
                 io.replace("Makefile", [[all: $(STATIC_LIBS) $(SHARED_LIBS) $(PC_FILE)]], [[all: $(STATIC_LIBS) $(PC_FILE)]], {plain = true})
                 io.replace("Makefile", [[$(call do_s_install,$(STATIC_LIBS) $(SHARED_LIBS),$(LIBDIR))]], [[$(call do_s_install,$(STATIC_LIBS),$(LIBDIR))]], {plain = true})
             end
+            io.replace("Makefile", [[--cflags libelf]], [[--cflags elfutils]], {plain = true})
+            io.replace("Makefile", [[--libs libelf]], [[--libs elfutils]], {plain = true})
             import("package.tools.make").install(package)
         else
             io.writefile("xmake.lua", [[
