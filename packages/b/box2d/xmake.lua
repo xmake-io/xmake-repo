@@ -54,6 +54,8 @@ package("box2d")
         end
 
         io.replace("CMakeLists.txt", [[set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")]], "", {plain = true})
+        io.replace("src/CMakeLists.txt", "COMPILE_WARNING_AS_ERROR ON", "", {plain = true})
+        io.replace("src/CMakeLists.txt", "-Werror", "", {plain = true})
 
         local configs = {
             "-DBOX2D_BUILD_UNIT_TESTS=OFF",
