@@ -11,15 +11,7 @@ package("witty")
     add_deps("cmake")
     add_deps("boost", {
         configs = {
-            algorithm = true, array = true, asio = true,
-            bind = true, config = true, container_hash = true,
-            filesystem = true, foreach = true, fusion = true,
-            interprocess = true, lexical_cast = true, logic = true,
-            math = true, multi_index = true, optional = true,
-            phoenix = true, pool = true, program_options = true,
-            range = true, serialization = true, smart_ptr = true,
-            spirit = true, system = true, thread = true,
-            tokenizer = true, tuple = true, ublas = true, variant = true,
+            all = true,
             shared = true
         } -- include\boost\filesystem\config.hpp(96,1): error C1189: #error:  Must not define both BOOST_FILESYSTEM_DYN_LINK and BOOST_FILESYSTEM_STATIC_LINK
     })
@@ -32,7 +24,7 @@ package("witty")
         add_syslinks("d2d1", "dwrite", "windowscodecs", "shlwapi")
     end
 
-    on_install("!wasm and !mingw and !iphoneos and !android and !cross and !bsd", function (package)
+    on_install("windows", "linux", "macosx", function (package)
         local zlib = package:dep("zlib")
         local zlib_prefix = "";
         if zlib and not zlib:is_system() then
