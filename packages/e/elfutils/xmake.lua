@@ -10,10 +10,12 @@ package("elfutils")
     add_versions("0.183", "c3637c208d309d58714a51e61e63f1958808fead882e9b607506a29e5474f2c5")
     add_versions("0.189", "39bd8f1a338e2b7cd4abc3ff11a0eddc6e690f69578a57478d8179b4148708c8")
     add_versions("0.190", "8e00a3a9b5f04bc1dc273ae86281d2d26ed412020b391ffcc23198f10231d692")
+    add_versions("0.193", "7857f44b624f4d8d421df851aaae7b1402cfe6bcdd2d8049f15fc07d3dde7635")
 
     add_patches("0.183", path.join(os.scriptdir(), "patches", "0.183", "configure.patch"), "7a16719d9e3d8300b5322b791ba5dd02986f2663e419c6798077dd023ca6173a")
     add_patches("0.189", path.join(os.scriptdir(), "patches", "0.189", "configure.patch"), "b4016a97e6aaad92b15fad9a594961b1fc77a6d054ebadedef9bb3a55e99a8f8")
     add_patches("0.190", path.join(os.scriptdir(), "patches", "0.190", "configure.patch"), "8118132b8499ba54b0dbed823295d17f79670060c2cee9f3a186ce966bed9a75")
+    add_patches("0.193", path.join(os.scriptdir(), "patches", "0.193", "configure.patch"), "f8017ec7f15d571238d5435d221003d91587b820111ef646b731c033788da3ff")
 
     add_configs("libelf",   {description = "Enable libelf", default = true, type = "boolean"})
     add_configs("libdw",    {description = "Enable libdw", default = true, type = "boolean"})
@@ -36,17 +38,6 @@ package("elfutils")
             package:add("deps", "libintl", "argp-standalone")
         end
     end)
-
-    if on_check then
-        -- https://github.com/xmake-io/xmake-repo/issues/3182
-        on_check("android", function (package)
-            local ndk = package:toolchain("ndk")
-            local ndk_sdkver = ndk:config("ndk_sdkver")
-            local ndkver = ndk:config("ndkver")
-            assert(ndkver and tonumber(ndkver) < 26, "package(elfutils): need ndk version < 26 for android")
-            assert(ndk_sdkver and tonumber(ndk_sdkver) <= 23, "package(elfutils): need ndk api level <= 23 for android")
-        end)
-    end
 
     on_install("linux", "android", function (package)
         local configs = {"--disable-dependency-tracking",
