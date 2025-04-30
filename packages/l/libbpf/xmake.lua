@@ -60,7 +60,7 @@ package("libbpf")
             io.replace("Makefile", [[--cflags libelf]], [[--cflags elfutils]], {plain = true})
             io.replace("Makefile", [[--libs libelf]], [[--libs elfutils]], {plain = true})
             if package:is_plat("android") then
-                io.replace("Makefile", "$(EXTRA_CFLAGS) -D__user= -D__force= -D__poll_t=unsigned -Wno-tautological-constant-out-of-range-compare")
+                io.replace("Makefile", "$(EXTRA_CFLAGS)", "$(EXTRA_CFLAGS) -D__user= -D__force= -D__poll_t=unsigned -Wno-tautological-constant-out-of-range-compare", {plain = true})
             end
             import("package.tools.make").install(package)
         else
