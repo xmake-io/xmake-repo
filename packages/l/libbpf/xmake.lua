@@ -7,6 +7,8 @@ package("libbpf")
 
     add_versions("v0.3", "c168d84a75b541f753ceb49015d9eb886e3fb5cca87cdd9aabce7e10ad3a1efc")
     add_versions("v1.3.4", "236f404707977c4856ad53c58182862cf79671bc244b906ee1137cfd3c7d9688")
+    add_versions("v1.4.7", "15ffcd76eb7277539410b2f72f0acc3571a1c4a32412e57eaf116d7b3cbf7acf")
+    add_versions("v1.5.0", "53492aff6dd47e4da04ef5e672d753b9743848bdb38e9d90eafbe190b7983c44")
 
     add_configs("make", {description = "Use make buildsystem", default = true, type = "boolean"})
 
@@ -25,7 +27,20 @@ package("libbpf")
         end
     end)
 
-    on_install("linux", "android", function (package)
+    if on_check then
+        -- https://github.com/xmake-io/xmake-repo/issues/3182
+        on_check("android", function (package)
+            if package:version():gt("0.3") then
+                local ndk = package:toolchain("ndk")
+                local ndk_sdkver = ndk:config("ndk_sdkver")
+                local ndkver = ndk:config("ndkver")
+                assert(ndkver and tonumber(ndkver) < 26, "package(libbpf): need ndk version < 26 for android")
+                assert(ndk_sdkver and tonumber(ndk_sdkver) <= 23, "package(libbpf): need ndk api level <= 23 for android")
+            end
+        end)
+    end
+
+    on_install("linux", "android@linux,macosx", function (package)
         if package:config("make") then
             os.cd("src")
             -- Fix installdir for headers & libs expected installdir()
