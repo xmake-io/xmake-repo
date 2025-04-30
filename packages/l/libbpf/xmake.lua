@@ -19,9 +19,9 @@ package("libbpf")
             package:add("deps", "autotools", "pkg-config")
         end
         if package:version():gt("0.3") then
-            package:add("deps", "libelf")
-        else
             package:add("deps", "elfutils")
+        else
+            package:add("deps", "libelf")
         end
     end)
 
