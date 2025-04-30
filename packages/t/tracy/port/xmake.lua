@@ -40,6 +40,14 @@ target("tracy")
                     "public/(client/**.h)", "public/(client/**.hpp)",
                     "public/(common/**.h)", "public/(common/**.hpp)")
 
+    if is_plat("windows", "mingw") then
+        add_syslinks("ws2_32", "dbghelp")
+    elseif is_plat("linux") then
+        add_syslinks("pthread")
+    elseif is_plat("bsd") then
+        add_syslinks("pthread", "execinfo")
+    end
+
     if has_config("tracy_enable") then
         add_defines("TRACY_ENABLE")
     end
