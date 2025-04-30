@@ -17,7 +17,7 @@ package("libbpf")
     add_includedirs("include", "include/uapi")
 
     on_load(function (package)
-        package:add("defines", "-D_GNU_SOURCE=1", "-D_POSIX_C_SOURCE=200809L")
+        package:add("defines", "_GNU_SOURCE=1", "_POSIX_C_SOURCE=200809L")
         if package:config("make") then
             package:add("deps", "autotools", "pkg-config")
         end
