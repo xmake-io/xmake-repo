@@ -10,13 +10,18 @@ package("libbpf")
 
     add_configs("make", {description = "Use make buildsystem", default = true, type = "boolean"})
 
-    add_deps("libelf", "zlib")
+    add_deps("zlib")
 
     add_includedirs("include", "include/uapi")
 
     on_load(function (package)
         if package:config("make") then
             package:add("deps", "autotools", "pkg-config")
+        end
+        if package:version():gt("0.3") then
+            package:add("deps", "libelf")
+        else
+            package:add("deps", "elfutils")
         end
     end)
 
