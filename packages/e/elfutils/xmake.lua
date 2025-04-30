@@ -15,7 +15,7 @@ package("elfutils")
     add_patches("0.183", path.join(os.scriptdir(), "patches", "0.183", "configure.patch"), "7a16719d9e3d8300b5322b791ba5dd02986f2663e419c6798077dd023ca6173a")
     add_patches("0.189", path.join(os.scriptdir(), "patches", "0.189", "configure.patch"), "b4016a97e6aaad92b15fad9a594961b1fc77a6d054ebadedef9bb3a55e99a8f8")
     add_patches("0.190", path.join(os.scriptdir(), "patches", "0.190", "configure.patch"), "8118132b8499ba54b0dbed823295d17f79670060c2cee9f3a186ce966bed9a75")
-    add_patches("0.193", path.join(os.scriptdir(), "patches", "0.193", "configure.patch"), "f8017ec7f15d571238d5435d221003d91587b820111ef646b731c033788da3ff")
+    add_patches("0.193", path.join(os.scriptdir(), "patches", "0.193", "configure.diff"), "8f226341200d56ceff5440309b2659fca018835bc64ecfbfbf65eb69574a1701")
 
     add_configs("libelf",   {description = "Enable libelf", default = true, type = "boolean"})
     add_configs("libdw",    {description = "Enable libdw", default = true, type = "boolean"})
