@@ -21,7 +21,8 @@ package("elfutils")
     add_configs("libdw",    {description = "Enable libdw", default = true, type = "boolean"})
     add_configs("libasm",   {description = "Enable libasm", default = false, type = "boolean"})
 
-    add_deps("autotools", "zstd", "zlib")
+    add_deps("autotools", "gettext")
+    add_deps("zstd", "zlib")
 
     if on_source then
         on_source(function (package)
