@@ -61,7 +61,8 @@ package("libbpf")
             io.replace("Makefile", [[--libs libelf]], [[--libs elfutils]], {plain = true})
             if package:is_plat("android") then
                 -- Resolve unresolved symbol https://man7.org/linux/man-pages/man3/fmemopen.3.html
-                io.replace("Makefile", "$(EXTRA_CFLAGS) -D__user= -D__force= -D__poll_t=unsigned -D_GNU_SOURCE=1 -D_POSIX_C_SOURCE=200809L -Wno-tautological-constant-out-of-range-compare")
+                io.replace("Makefile", "$(EXTRA_CFLAGS)",
+                    "$(EXTRA_CFLAGS) -D__user= -D__force= -D__poll_t=unsigned -D_GNU_SOURCE=1 -D_POSIX_C_SOURCE=200809L -Wno-tautological-constant-out-of-range-compare", {plain = true})
             end
             import("package.tools.make").install(package)
         else
