@@ -1,0 +1,44 @@
+diff --git a/configure.ac b/configure.ac
+index 0670e01..7111b96 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -208,23 +208,6 @@ fi
+ 
+ AC_SUBST([dso_LDFLAGS])
+ 
+-AC_CACHE_CHECK([for __thread support], ac_cv_tls, [dnl
+-# Use the same flags that we use for our DSOs, so the test is representative.
+-# Some old compiler/linker/libc combinations fail some ways and not others.
+-save_CFLAGS="$CFLAGS"
+-save_LDFLAGS="$LDFLAGS"
+-CFLAGS="$fpic_CFLAGS $CFLAGS"
+-LDFLAGS="$dso_LDFLAGS $LDFLAGS"
+-AC_LINK_IFELSE([dnl
+-AC_LANG_PROGRAM([[#include <stdlib.h>
+-#undef __thread
+-static __thread int a; int foo (int b) { return a + b; }]],
+-		[[exit (foo (0));]])],
+-	       ac_cv_tls=yes, ac_cv_tls=no)
+-CFLAGS="$save_CFLAGS"
+-LDFLAGS="$save_LDFLAGS"])
+-AS_IF([test "x$ac_cv_tls" != xyes],
+-      AC_MSG_ERROR([__thread support required]))
+ 
+ dnl Although we test for C11 above that doesn't mean we have stdatomic.h
+ dnl We need at least gcc 4.9+ for that.
+@@ -667,15 +650,6 @@ case "$ac_cv_search_fts_close" in
+ esac
+ AC_SUBST([fts_LIBS])
+ 
+-saved_LIBS="$LIBS"
+-AC_SEARCH_LIBS([_obstack_free], [obstack])
+-LIBS="$saved_LIBS"
+-case "$ac_cv_search__obstack_free" in
+-        no) AC_MSG_FAILURE([failed to find _obstack_free]) ;;
+-        -l*) obstack_LIBS="$ac_cv_search__obstack_free" ;;
+-        *) obstack_LIBS= ;;
+-esac
+-AC_SUBST([obstack_LIBS])
+ 
+ dnl The directories with content.
+ 
