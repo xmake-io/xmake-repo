@@ -34,7 +34,7 @@ package("tracy")
     add_configs("no_crash_handler",                  {type = "boolean", default = false, description = "Disable crash handling"})
     add_configs("verb",                              {type = "boolean", default = false, description = "Enable verbose logging"})
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("ws2_32", "dbghelp")
     elseif is_plat("linux") then
         add_syslinks("pthread")
