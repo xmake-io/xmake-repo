@@ -93,9 +93,9 @@ package("python")
         if version:ge("3.10") then
             -- starting with Python 3.10, Python requires OpenSSL 1.1.1 or newer
             -- see https://peps.python.org/pep-0644/
-            package:add("deps", "openssl >=1.1.1-a", "ca-certificates", {host = true})
+            package:add("deps", "openssl >=1.1.1-a", "ca-certificates", {host = true, private = package:config("headeronly")})
         else
-            package:add("deps", "openssl", "ca-certificates", {host = true})
+            package:add("deps", "openssl", "ca-certificates", {host = true, private = package:config("headeronly")})
         end
 
         -- set includedirs
