@@ -21,7 +21,7 @@ package("elfutils")
     add_configs("libdw",    {description = "Enable libdw", default = true, type = "boolean"})
     add_configs("libasm",   {description = "Enable libasm", default = false, type = "boolean"})
 
-    add_deps("m4", "zstd", "zlib")
+    add_deps("autotools", "zstd", "zlib")
 
     if on_source then
         on_source(function (package)
@@ -39,7 +39,7 @@ package("elfutils")
         end
     end)
 
-    on_install("linux", "android", function (package)
+    on_install("linux", "android@linux,macosx", function (package)
         local configs = {"--disable-dependency-tracking",
                          "--disable-silent-rules",
                          "--program-prefix=elfutils-",
