@@ -37,6 +37,11 @@ package("libelf")
             local automake_dir = path.join(automake:installdir(), "share", "automake-*")
             os.cp(path.join(automake_dir, "config.guess"), ".")
             os.cp(path.join(automake_dir, "config.sub"), ".")
+        else
+            import("net.http")
+            import("core.base.global")
+            http.download("http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD", path.join(package:buildir(), "config.guess"), {insecure = global.get("insecure-ssl")})
+            http.download("http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD", path.join(package:buildir(), "config.sub"), {insecure = global.get("insecure-ssl")})
         end
         import("package.tools.autoconf").install(package, configs, {cxflags = cxflags})
     end)
