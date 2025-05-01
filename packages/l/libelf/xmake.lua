@@ -42,6 +42,7 @@ package("libelf")
             io.replace("configure", [[{ echo "configure: error: installation or configuration problem: C compiler cannot create executables." 1>&2; exit 1; }]], [[ac_cv_prog_cc_works=yes]], {plain = true})
             io.replace("configure", [[libelf_cv_int64=no]], [[libelf_cv_int64='long']], {plain = true})
             io.replace("configure", [[libelf_cv_int32=no]], [[libelf_cv_int32='int']], {plain = true})
+            io.replace("configure", [[libelf_cv_int16=no]], [[libelf_cv_int16='short']], {plain = true})
         end
         os.cp(path.join(package:resourcedir("config"), "config.guess"), "config.guess")
         os.cp(path.join(package:resourcedir("config"), "config.sub"), "config.sub")
