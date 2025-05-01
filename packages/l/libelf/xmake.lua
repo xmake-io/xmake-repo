@@ -7,8 +7,7 @@ package("libelf")
 
     add_versions("0.8.13", "591a9b4ec81c1f2042a97aa60564e0cb79d041c52faa7416acb38bc95bd2c76d")
 
-    add_resources("0.8.13", "guess", "https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=00b15927496058d23e6258a28d8996f87cf1f191", "e3d148130e9151735f8b9a8e69a70d06890ece51468a9762eb7ac0feddddcc2f")
-    add_resources("0.8.13", "sub", "https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=00b15927496058d23e6258a28d8996f87cf1f191", "11c54f55c3ac99e5d2c3dc2bb0bcccbf69f8223cc68f6b2438daa806cf0d16d8")
+    add_resources("0.8.13", "config", "https://git.savannah.gnu.org/gitweb/?p=config.git;a=snapshot;h=00b15927496058d23e6258a28d8996f87cf1f191;sf=tgz", "a34b169e0cd5a1f4febcfe17d52f2c78f80add2887fdd33f233c12acffbd25b3")
 
     add_includedirs("include", "include/libelf")
 
@@ -32,8 +31,8 @@ package("libelf")
             package:add("defines", "__libelf_u64_t=uint64_t")
             package:add("defines", "__libelf_i64_t=int64_t")
         end
-        os.cp(path.join(package:resourcedir("guess"), "../config.sub"), "config.guess")
-        os.cp(path.join(package:resourcedir("sub"), "../config.sub"), "config.sub")
+        os.cp(path.join(package:resourcedir("config"), "config.guess"), "config.guess")
+        os.cp(path.join(package:resourcedir("config"), "config.sub"), "config.sub")
         import("package.tools.autoconf").install(package, configs, {cxflags = cxflags})
     end)
 
