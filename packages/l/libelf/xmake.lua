@@ -10,10 +10,12 @@ package("libelf")
     add_resources("0.8.13", "config", "https://dev.gentoo.org/~sam/distfiles/sys-devel/gnuconfig/gnuconfig-20240728.tar.xz", "6e3a7389d780cb0cf81bec0bba96ca278d5b76afd548352f70b4a444344430b7")
 
     add_includedirs("include", "include/libelf")
+    
+    if is_subhost("windows") then
+        add_deps("autotools")
+    end
 
-    add_deps("autotools")
-
-    on_install("cross", "linux", "android@linux,macosx", function (package)
+    on_install("cross", "linux", "android", function (package)
         local configs = {"--disable-dependency-tracking",
                          "--disable-compat"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
@@ -33,7 +35,9 @@ package("libelf")
             package:add("defines", "__libelf_u64_t=uint64_t")
             package:add("defines", "__libelf_i64_t=int64_t")
         end
-        os.rm("configure")
+        if is_subhost("windows") then
+            os.rm("configure")
+        end
         os.cp(path.join(package:resourcedir("config"), "config.guess"), "config.guess")
         os.cp(path.join(package:resourcedir("config"), "config.sub"), "config.sub")
         import("package.tools.autoconf").install(package, configs, {cxflags = cxflags})
