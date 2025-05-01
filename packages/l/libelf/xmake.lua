@@ -40,6 +40,8 @@ package("libelf")
             io.replace("lib/Makefile.in", [[$(SHELL) $(top_srcdir)/mkinstalldirs $(instroot)$$dir;]], [["$(SHELL)" "$(top_srcdir)/mkinstalldirs" "$(instroot)$$dir";]], {plain = true})
             io.replace("po/Makefile.in", [[$(SHELL) $(top_srcdir)/mkinstalldirs $(instroot)$$dir;]], [["$(SHELL)" "$(top_srcdir)/mkinstalldirs" "$(instroot)$$dir";]], {plain = true})
             io.replace("configure", [[{ echo "configure: error: installation or configuration problem: C compiler cannot create executables." 1>&2; exit 1; }]], [[ac_cv_prog_cc_works=yes]], {plain = true})
+            io.replace("configure", [[libelf_cv_int64=no]], [[libelf_cv_int64='long']], {plain = true})
+            io.replace("configure", [[libelf_cv_int32=no]], [[libelf_cv_int32='int']], {plain = true})
         end
         os.cp(path.join(package:resourcedir("config"), "config.guess"), "config.guess")
         os.cp(path.join(package:resourcedir("config"), "config.sub"), "config.sub")
