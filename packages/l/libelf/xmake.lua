@@ -7,7 +7,7 @@ package("libelf")
 
     add_versions("0.8.13", "591a9b4ec81c1f2042a97aa60564e0cb79d041c52faa7416acb38bc95bd2c76d")
 
-    add_resources("0.8.13", "config", "https://git.savannah.gnu.org/gitweb/?p=config.git;a=snapshot;h=00b15927496058d23e6258a28d8996f87cf1f191;sf=tgz", "a34b169e0cd5a1f4febcfe17d52f2c78f80add2887fdd33f233c12acffbd25b3")
+    add_resources("0.8.13", "config", "http://distfiles.exherbo.org/distfiles/gnuconfig-20240728.tar.gz", "a34b169e0cd5a1f4febcfe17d52f2c78f80add2887fdd33f233c12acffbd25b3")
 
     add_includedirs("include", "include/libelf")
 
