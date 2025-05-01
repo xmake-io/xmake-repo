@@ -6,7 +6,6 @@ package("libelf")
              "https://github.com/xmake-mirror/libelf.git")
 
     add_versions("0.8.13", "591a9b4ec81c1f2042a97aa60564e0cb79d041c52faa7416acb38bc95bd2c76d")
-
     add_resources("0.8.13", "config", "https://dev.gentoo.org/~sam/distfiles/sys-devel/gnuconfig/gnuconfig-20240728.tar.xz", "6e3a7389d780cb0cf81bec0bba96ca278d5b76afd548352f70b4a444344430b7")
 
     add_includedirs("include", "include/libelf")
