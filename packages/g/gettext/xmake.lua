@@ -9,6 +9,9 @@ package("gettext")
     add_versions("0.19.8-1", "105556dbc5c3fbbc2aa0edb46d22d055748b6f5c7cd7a8d99f8e7eb84e938be4")
     add_versions("0.21", "d20fcbb537e02dcf1383197ba05bd0734ef7bf5db06bdb241eb69b7d16b73192")
     add_versions("0.21.1", "50dbc8f39797950aa2c98e939947c527e5ac9ebd2c1b99dd7b06ba33a6767ae6")
+    add_versions("0.22.5", "fe10c37353213d78a5b83d48af231e005c4da84db5ce88037d88355938259640")
+    add_versions("0.23.1", "c1f97a72a7385b7e71dd07b5fea6cdaf12c9b88b564976b23bd8c11857af2970")
+    add_versions("0.24", "e1620d518b26d7d3b16ac570e5018206e8b0d725fb65c02d048397718b5cf318")
 
     if is_plat("macosx") then
         add_deps("libiconv", {system = true})
@@ -71,7 +74,8 @@ package("gettext")
             io.replace("./gettext-tools/gnulib-lib/langinfo.in.h", "@HAVE_LANGINFO_H@", "0")
             io.replace("./gettext-runtime/gnulib-lib/langinfo.in.h", "@HAVE_LANGINFO_H@", "0")
         end
-        local cflags = {}
+        -- disable -Wincompatible-function-pointer-types to fix compilation on macOS
+        local cflags = {"-Wno-incompatible-function-pointer-types"}
         local ldflags = {}
         for _, dep in ipairs(package:orderdeps()) do
             local fetchinfo = dep:fetch()
