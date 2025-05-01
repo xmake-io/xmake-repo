@@ -10,11 +10,10 @@ package("libelf")
     add_resources("0.8.13", "config", "https://dev.gentoo.org/~sam/distfiles/sys-devel/gnuconfig/gnuconfig-20240728.tar.xz", "6e3a7389d780cb0cf81bec0bba96ca278d5b76afd548352f70b4a444344430b7")
 
     add_includedirs("include", "include/libelf")
-    if not is_subhost("windows") then
-        add_deps("autotools")
-    end
 
-    on_install("cross", "linux", "android", function (package)
+    add_deps("autotools")
+
+    on_install("cross", "linux", "android@linux,macosx", function (package)
         local configs = {"--disable-dependency-tracking",
                          "--disable-compat"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
