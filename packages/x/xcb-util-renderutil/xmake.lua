@@ -21,6 +21,9 @@ package("xcb-util-renderutil")
         local configs = {"--sysconfdir=" .. package:installdir("etc"), 
                          "--localstatedir=" .. package:installdir("var"), 
                          "--disable-silent-rules"}
+        if package:config("shared") then
+            table.insert(configs, "--disable-static")
+        end
         import("package.tools.autoconf").install(package, configs)
     end)
 

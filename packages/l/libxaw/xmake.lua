@@ -21,6 +21,12 @@ package("libxaw")
                          "--disable-dependency-tracking",
                          "--disable-silent-rules",
                          "--disable-specs"}
+        if package:config("shared") then
+            table.insert(configs, "--disable-static")
+        end
+        if package:config("pic") then
+            table.insert(configs, "--with-pic")
+        end
         -- fix undefined reference on macOS
         if package:is_plat("macosx") then
             local cflags = {}

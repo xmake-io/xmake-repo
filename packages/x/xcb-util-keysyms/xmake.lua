@@ -22,6 +22,12 @@ package("xcb-util-keysyms")
         local configs = {"--sysconfdir=" .. package:installdir("etc"), 
                          "--localstatedir=" .. package:installdir("var"), 
                          "--disable-silent-rules"}
+        if package:config("shared") then
+            table.insert(configs, "--disable-static")
+        end
+        if package:config("pic") then
+            table.insert(configs, "--with-pic")
+        end
         import("package.tools.autoconf").install(package, configs)
     end)
 

@@ -68,7 +68,9 @@ package("libxcb")
                          "--enable-devel-docs=no",
                          "--with-doxygen=no",
                          "PYTHON=python3"}
-        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        if package:config("shared") then
+            table.insert(configs, "--disable-static")
+        end
         if package:is_plat("linux") and package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end

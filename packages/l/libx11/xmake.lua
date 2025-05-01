@@ -20,8 +20,6 @@ package("libx11")
         add_syslinks("dl")
     end
 
-    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"})
-
     if is_plat("macosx", "linux", "bsd", "cross") then
         add_deps("pkg-config", "util-macros", "xtrans", "libxcb", "xorgproto")
     end
@@ -41,8 +39,9 @@ package("libx11")
                          "--enable-loadable-i18n",
                          "--enable-xthreads",
                          "--enable-specs=no"}
-        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
-        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        if package:config("shared") then
+            table.insert(configs, "--disable-static")
+        end
         if package:config("pic") then
             table.insert(configs, "--with-pic")
         end

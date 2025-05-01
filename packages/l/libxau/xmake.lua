@@ -20,9 +20,11 @@ package("libxau")
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
                          "--localstatedir=" .. package:installdir("var"),
                          "--disable-dependency-tracking",
-                         "--disable-silent-rules"}
-        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
-        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+                         "--disable-silent-rules",
+                         "--disable-specs"}
+        if package:config("shared") then
+            table.insert(configs, "--disable-static")
+        end
         if package:config("pic") then
             table.insert(configs, "--with-pic")
         end

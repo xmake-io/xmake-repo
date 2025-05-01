@@ -12,14 +12,21 @@ package("libxvmc")
     end
 
     if is_plat("macosx", "linux") then
-        add_deps("pkg-config", "util-macros", "libx11", "libxext", "libxv", "xorgproto")
+        add_deps("pkg-config", "util-macros", "libx11", "libxext", "libxv", "xorgproto", "meson")
     end
 
     on_install("macosx", "linux", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
                          "--localstatedir=" .. package:installdir("var"),
                          "--disable-dependency-tracking",
-                         "--disable-silent-rules"}
+                         "--disable-silent-rules",
+                         "--disable-specs"}
+        if package:config("shared") then
+            table.insert(configs, "--disable-static")
+        end
+        if package:config("pic") then
+            table.insert(configs, "--with-pic")
+        end
         import("package.tools.autoconf").install(package, configs)
     end)
 
