@@ -36,6 +36,8 @@ package("libelf")
         end
         if not is_subhost("windows") then
             os.rm("configure")
+        else
+            io.replace("lib/Makefile.in", [[$(SHELL) $(top_srcdir)/mkinstalldirs $(instroot)$$dir;]], [["$(SHELL)" "$(top_srcdir)/mkinstalldirs" "$(instroot)$$dir";]], {plain = true})
         end
         os.cp(path.join(package:resourcedir("config"), "config.guess"), "config.guess")
         os.cp(path.join(package:resourcedir("config"), "config.sub"), "config.sub")
