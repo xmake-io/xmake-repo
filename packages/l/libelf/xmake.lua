@@ -10,7 +10,7 @@ package("libelf")
 
     add_includedirs("include", "include/libelf")
     
-    if is_subhost("windows") then
+    if not is_subhost("windows") then
         add_deps("autotools")
     end
 
@@ -34,7 +34,7 @@ package("libelf")
             package:add("defines", "__libelf_u64_t=uint64_t")
             package:add("defines", "__libelf_i64_t=int64_t")
         end
-        if is_subhost("windows") then
+        if not is_subhost("windows") then
             os.rm("configure")
         end
         os.cp(path.join(package:resourcedir("config"), "config.guess"), "config.guess")
