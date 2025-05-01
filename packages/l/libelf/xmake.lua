@@ -38,6 +38,7 @@ package("libelf")
             os.rm("configure")
         else
             io.replace("lib/Makefile.in", [[$(SHELL) $(top_srcdir)/mkinstalldirs $(instroot)$$dir;]], [["$(SHELL)" "$(top_srcdir)/mkinstalldirs" "$(instroot)$$dir";]], {plain = true})
+            io.replace("po/Makefile.in", [[$(SHELL) $(top_srcdir)/mkinstalldirs $(instroot)$$dir;]], [["$(SHELL)" "$(top_srcdir)/mkinstalldirs" "$(instroot)$$dir";]], {plain = true})
         end
         os.cp(path.join(package:resourcedir("config"), "config.guess"), "config.guess")
         os.cp(path.join(package:resourcedir("config"), "config.sub"), "config.sub")
