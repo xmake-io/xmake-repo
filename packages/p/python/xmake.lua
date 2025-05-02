@@ -42,6 +42,7 @@ package("python")
             add_urls("https://github.com/xmake-mirror/python-windows/releases/download/$(version)/python-$(version).winarm64.zip")
             add_versions("3.13.2", "f121c4a9a1118d297814155c93e75ef376f3d0bbccbd5cf38598d6e833b0e858")
         end
+        set_policy("package.precompiled", false)
     else
         add_urls("https://www.python.org/ftp/python/$(version)/Python-$(version).tgz")
         add_versions("2.7.18", "da3080e3b488f648a3d7a4560ddee895284c3380b11d6de75edb986526b9a814")
