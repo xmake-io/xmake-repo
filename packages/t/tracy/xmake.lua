@@ -126,6 +126,55 @@ package("tracy")
                 verb = package:config("verb"),
             }
             import("package.tools.xmake").install(package, configs)
+
+            local defines = {
+                tracy_enable = "TRACY_ENABLE",
+                on_demand = "TRACY_ON_DEMAND",
+                enforce_callstack = "TRACY_ENABLE_CALLSTACK",
+                callstack = { define = "TRACY_NO_CALLSTACK", invert = true },
+                callstack_inlines = { define = "TRACY_NO_CALLSTACK_INLINES", invert = true },
+                only_localhost = "TRACY_ONLY_LOCALHOST",
+                broadcast = { define = "TRACY_NO_BROADCAST", invert = true },
+                only_ipv4 = "TRACY_ONLY_IPV4",
+                code_transfer = { define = "TRACY_NO_CODE_TRANSFER", invert = true },
+                context_switch = { define = "TRACY_NO_CONTEXT_SWITCH", invert = true },
+                exit = { define = "TRACY_NO_EXIT", invert = true },
+                sampling = { define = "TRACY_NO_SAMPLING", invert = true },
+                verify = { define = "TRACY_NO_VERIFY", invert = true },
+                vsync_capture = { define = "TRACY_NO_VSYNC_CAPTURE", invert = true },
+                frame_image = { define = "TRACY_NO_FRAME_IMAGE", invert = true },
+                system_tracing = { define = "TRACY_NO_SYSTEM_TRACING", invert = true },
+                patchable_nopsleds = "TRACY_PATCHABLE_NOPSLEDS",
+                timer_fallback = "TRACY_TIMER_FALLBACK",
+                libunwind_backtrace = "TRACY_LIBUNWIND_BACKTRACE",
+                symbol_offline_resolve = "TRACY_SYMBOL_OFFLINE_RESOLVE",
+                libbacktrace_elf_dynload_support = "TRACY_LIBBACKTRACE_ELF_DYNLOAD_SUPPORT",
+                delayed_init = "TRACY_DELAYED_INIT",
+                manual_lifetime = "TRACY_MANUAL_LIFETIME",
+                fibers = "TRACY_FIBERS",
+                crash_handler = { define = "TRACY_NO_CRASH_HANDLER", invert = true },
+                verb = "TRACY_VERBOSE"
+            }
+
+            for name, def in pairs(defines) do
+                local define, invert
+                if type(def) == "table" then
+                    define = def.define
+                    invert = def.invert
+                else
+                    define = def
+                    invert = false
+                end
+                local value = package:config(name)
+                if value ~= nil then
+                    if invert then
+                        value = not value
+                    end
+                    if value then
+                        package:add("defines", define)
+                    end
+                end
+            end
         end
     end)
 
