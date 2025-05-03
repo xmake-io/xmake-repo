@@ -73,7 +73,7 @@ index 6af0f44..eb05d60 100644
          target_link_libraries(Diligent-Archiver-static PRIVATE GLESv3 EGL)
      elseif(PLATFORM_EMSCRIPTEN)
 diff --git a/Graphics/GraphicsEngineOpenGL/CMakeLists.txt b/Graphics/GraphicsEngineOpenGL/CMakeLists.txt
-index 839dad7..d8efd89 100644
+index 839dad7..92c8f6c 100644
 --- a/Graphics/GraphicsEngineOpenGL/CMakeLists.txt
 +++ b/Graphics/GraphicsEngineOpenGL/CMakeLists.txt
 @@ -175,6 +175,7 @@ endif()
@@ -89,29 +89,21 @@ index 839dad7..d8efd89 100644
  
  if(PLATFORM_WIN32)
 -    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} GLEW::glew opengl32.lib)
-+    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${GLEW_LINK_LIBRARIES} opengl32.lib)
++    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${GLEW_LIBRARIES} opengl32.lib)
  elseif(PLATFORM_ANDROID)
      set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} GLESv3 EGL)
  elseif(PLATFORM_LINUX)
      find_package(X11 REQUIRED)
      find_package(OpenGL REQUIRED)
 -    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} GLEW::glew OpenGL::GL X11::X11)
-+    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${GLEW_LINK_LIBRARIES} OpenGL::GL X11::X11)
++    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${GLEW_LIBRARIES} OpenGL::GL X11::X11)
  elseif(PLATFORM_MACOS)
      find_package(OpenGL REQUIRED)
 -    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} GLEW::glew OpenGL::GL)
-+    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${GLEW_LINK_LIBRARIES} OpenGL::GL)
++    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${GLEW_LIBRARIES} OpenGL::GL)
  elseif(PLATFORM_IOS)
      set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${OPENGLES})
  elseif(PLATFORM_EMSCRIPTEN)
-@@ -258,6 +259,7 @@ PUBLIC
- )
- target_link_libraries(Diligent-GraphicsEngineOpenGL-shared
- PRIVATE
-+    ${GLEW_LIBRARIES}
-     Diligent-BuildSettings
-     ${WHOLE_ARCHIVE_FLAG} Diligent-GraphicsEngineOpenGL-static ${NO_WHOLE_ARCHIVE_FLAG}
- PUBLIC
 diff --git a/Graphics/GraphicsTools/CMakeLists.txt b/Graphics/GraphicsTools/CMakeLists.txt
 index c7f8706..dbaba43 100644
 --- a/Graphics/GraphicsTools/CMakeLists.txt
@@ -160,7 +152,7 @@ index bf956ea..7cc93b5 100644
  
  if (TARGET Diligent-HLSL2GLSLConverterLib AND NOT ${DILIGENT_NO_HLSL})
 diff --git a/ThirdParty/CMakeLists.txt b/ThirdParty/CMakeLists.txt
-index 00670f0..07f11b1 100644
+index 00670f0..b013b85 100644
 --- a/ThirdParty/CMakeLists.txt
 +++ b/ThirdParty/CMakeLists.txt
 @@ -6,132 +6,46 @@ cmake_minimum_required (VERSION 3.11)
@@ -178,7 +170,7 @@ index 00670f0..07f11b1 100644
 -    endif()
 -    install(FILES glew/LICENSE.txt DESTINATION "Licenses/ThirdParty/${DILIGENT_CORE_DIR}" RENAME GLEW-License.txt)
 +if (GL_SUPPORTED AND (PLATFORM_WIN32 OR PLATFORM_LINUX OR PLATFORM_MACOS) AND (NOT GLEW_FOUND))
-+    pkg_check_modules(GLEW REQUIRED GLEW)
++    find_package(GLEW REQUIRED)
  endif()
  
  if (VULKAN_SUPPORTED)
