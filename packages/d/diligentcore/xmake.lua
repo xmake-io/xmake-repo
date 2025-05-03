@@ -7,7 +7,7 @@ package("diligentcore")
              "https://github.com/DiligentGraphics/DiligentCore.git", {submodules = false})
 
     add_versions("v2.5.6", "abc190c05ee7e5ef2bba52fcbc5fdfe2256cce3435efba9cfe263a386653f671")
-    add_patches("v2.5.6", "patches/build.diff", "9cf7ec06e126f68d39f8f045d83a7a3d6beb43d951bf5a422def77900a16a9ad")
+    add_patches("v2.5.6", "patches/build.diff", "988ef419e65ec7530773910c85d2a8f23a40610722e66811336b782b5af0512e")
 
     add_includedirs("include", "include/DiligentCore")
 
@@ -86,13 +86,6 @@ package("diligentcore")
     end)
 
     on_install("!bsd", function (package)
-        -- glslang::SPIRV
-        io.replace("Graphics/ShaderTools/src/GLSLangUtils.cpp", "SPIRV/GlslangToSpv.h", "glslang/SPIRV/GlslangToSpv.h", {plain = true})
-
-        -- spirv-cross
-        io.replace("Graphics/ShaderTools/src/SPIRVShaderResources.cpp", "spirv_parser.hpp", "spirv_cross/spirv_parser.hpp", {plain = true})
-        io.replace("Graphics/ShaderTools/src/SPIRVUtils.cpp", "spirv_cross.hpp", "spirv_cross/spirv_cross.hpp", {plain = true})
-
         -- Dump CMakeLists.txt variables related for platform & rendering backend for package defines
         local CMakeLists_content = io.readfile("CMakeLists.txt")
         io.writefile("CMakeLists.txt", CMakeLists_content .. [[
@@ -108,17 +101,21 @@ foreach(var IN LISTS vars)
     if(var IN_LIST TARGET_VARS)
         file(APPEND "${CMAKE_BINARY_DIR}/variables.txt" "${var}=${${var}}\n")
     endif()
-endforeach()]])
+endforeach()
+message(STATUS "Writing all vars into ${CMAKE_BINARY_DIR}/all_variables.txt")
+file(WRITE "${CMAKE_BINARY_DIR}/all_variables.txt" "")
+foreach(var IN LISTS vars)
+    file(APPEND "${CMAKE_BINARY_DIR}/all_variables.txt" "${var}=${${var}}\n")
+endforeach()
+]])
 
         local configs = {"-DDILIGENT_INSTALL_CORE=ON"}
 
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
 
-        if package:is_debug() then
-            table.insert(configs, "-DDILIGENT_INSTALL_PDB=ON")
-            table.insert(configs, "-DDILIGENT_DEVELOPMENT=ON")
-        end
+        table.insert(configs, "-DDILIGENT_INSTALL_PDB=" .. (package:is_debug() and "ON" or "OFF"))
+        table.insert(configs, "-DDILIGENT_DEVELOPMENT=" .. (package:is_debug() and "ON" or "OFF"))
 
         table.insert(configs, "-DDILIGENT_NO_OPENGL=" .. (package:config("opengl") and "OFF" or "ON"))
 
@@ -134,7 +131,7 @@ endforeach()]])
 
         import("package.tools.cmake").install(package, configs) --, {packagedeps = {"glslang", "spirv-cross"}}
 
-        -- Gather missing defines
+        -- Gather missing defines into *data* so we could gather *data* for on_test
         local vars_file = path.join(package:buildir(), "variables.txt")
         if os.isfile(vars_file) then
             local content = io.readfile(vars_file)
@@ -143,15 +140,15 @@ endforeach()]])
                 if #line > 0 then
                     local var, value = line:match("^([^=]+)=(.+)$")
                     if var and value == "TRUE" then
+                        package:add("defines", var)
                         package:data_set(var, true)
                     else
                         package:data_set(var, false)
                     end
-                    package:add("defines", var .. "=" .. value)
                 end
             end
         end
-        -- Move folders into prepended folder DiligentCore
+        -- Move every folder of $(builddir)/include into prepended folder include/DiligentCore
         local target_dir = path.join(package:installdir("include"), "DiligentCore")
         os.mkdir(target_dir)
         for _, dir in ipairs(os.dirs(package:installdir("include/*"))) do
@@ -159,6 +156,12 @@ endforeach()]])
                 os.mv(dir, target_dir)
             end
         end
+        -- Move libs into install dirs
+        os.trycp("**.lib", package:installdir("lib"))
+        os.trycp("**.dll", package:installdir("bin"))
+        os.trycp("**.a", package:installdir("lib"))
+        os.trycp("**.so", package:installdir("bin"))
+        os.trycp("**.dylib", package:installdir("lib"))
     end)
 
     on_test(function (package)
