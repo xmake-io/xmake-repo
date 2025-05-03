@@ -53,6 +53,9 @@ package("tracy")
         if package:config("cmake") then
             package:add("deps", "cmake")
         end
+        if package:is_plat("windows", "mingw") then
+            add_defines("_WIN32")
+        end
     end)
 
     on_install(function (package)
