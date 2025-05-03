@@ -54,7 +54,7 @@ package("tracy")
             package:add("deps", "cmake")
         end
         if package:is_plat("windows", "mingw") then
-            add_defines("_WIN32")
+            package:add("defines", "_WIN32")
         end
     end)
 
