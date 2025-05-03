@@ -1,0 +1,370 @@
+diff --git a/BuildTools/CMake/BuildUtils.cmake b/BuildTools/CMake/BuildUtils.cmake
+index e97b96b..bf9d26e 100644
+--- a/BuildTools/CMake/BuildUtils.cmake
++++ b/BuildTools/CMake/BuildUtils.cmake
+@@ -292,14 +292,22 @@ function(install_core_lib _TARGET)
+     if(TARGET_TYPE STREQUAL STATIC_LIBRARY)
+         list(APPEND DILIGENT_CORE_INSTALL_LIBS_LIST ${_TARGET})
+         set(DILIGENT_CORE_INSTALL_LIBS_LIST ${DILIGENT_CORE_INSTALL_LIBS_LIST} CACHE INTERNAL "Core libraries installation list")
++        install(TARGETS                 ${_TARGET}
++                ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++                LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
++        )
++        if (DILIGENT_INSTALL_PDB)
++            install(FILES $<TARGET_PDB_FILE:${_TARGET}> DESTINATION "${CMAKE_INSTALL_BINDIR}" OPTIONAL)
++        endif()
+     elseif(TARGET_TYPE STREQUAL SHARED_LIBRARY)
+         install(TARGETS                 ${_TARGET}
+-                ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
+-                LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
+-                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
++                ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++                LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+         )
+         if (DILIGENT_INSTALL_PDB)
+-            install(FILES $<TARGET_PDB_FILE:${_TARGET}> DESTINATION "${CMAKE_INSTALL_BINDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>" OPTIONAL)
++            install(FILES $<TARGET_PDB_FILE:${_TARGET}> DESTINATION "${CMAKE_INSTALL_BINDIR}" OPTIONAL)
+         endif()
+     endif()
+ 
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index fc3c5d8..a877768 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -4,6 +4,7 @@ project(DiligentCore)
+ 
+ # Define GNU standard installation directories such as CMAKE_INSTALL_INCLUDEDIR, CMAKE_INSTALL_LIBDIR, etc.
+ include(GNUInstallDirs)
++include(FindPkgConfig)
+ 
+ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+ 
+@@ -625,7 +626,7 @@ if(DILIGENT_INSTALL_CORE)
+         "${DILIGENT_CORE_INSTALL_LIBS_LIST}"
+         DiligentCore-static                     # Custom target name
+         DiligentCore                            # Folder
+-        "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"    # Install destination
++        "${CMAKE_INSTALL_LIBDIR}"    # Install destination
+     )
+ 
+     install(FILES License.txt DESTINATION "Licenses" RENAME DiligentEngine-License.txt)
+diff --git a/Graphics/Archiver/CMakeLists.txt b/Graphics/Archiver/CMakeLists.txt
+index 6af0f44..eb05d60 100644
+--- a/Graphics/Archiver/CMakeLists.txt
++++ b/Graphics/Archiver/CMakeLists.txt
+@@ -138,14 +138,14 @@ if(GL_SUPPORTED OR GLES_SUPPORTED)
+     target_include_directories(Diligent-Archiver-static PRIVATE ../GraphicsEngineOpenGL/include)
+ 
+     if(PLATFORM_WIN32)
+-        target_link_libraries(Diligent-Archiver-static PRIVATE GLEW::glew opengl32.lib)
++        target_link_libraries(Diligent-Archiver-static PRIVATE ${GLEW_LIBRARIES} opengl32.lib)
+     elseif(PLATFORM_LINUX)
+         find_package(X11 REQUIRED)
+         find_package(OpenGL REQUIRED)
+-        target_link_libraries(Diligent-Archiver-static PRIVATE GLEW::glew OpenGL::GL X11::X11)
++        target_link_libraries(Diligent-Archiver-static PRIVATE ${GLEW_LIBRARIES} OpenGL::GL X11::X11)
+     elseif(PLATFORM_MACOS)
+         find_package(OpenGL REQUIRED)
+-        target_link_libraries(Diligent-Archiver-static PRIVATE GLEW::glew OpenGL::GL)
++        target_link_libraries(Diligent-Archiver-static PRIVATE ${GLEW_LIBRARIES} OpenGL::GL)
+     elseif(PLATFORM_ANDROID)
+         target_link_libraries(Diligent-Archiver-static PRIVATE GLESv3 EGL)
+     elseif(PLATFORM_EMSCRIPTEN)
+diff --git a/Graphics/GraphicsEngineOpenGL/CMakeLists.txt b/Graphics/GraphicsEngineOpenGL/CMakeLists.txt
+index 839dad7..d8efd89 100644
+--- a/Graphics/GraphicsEngineOpenGL/CMakeLists.txt
++++ b/Graphics/GraphicsEngineOpenGL/CMakeLists.txt
+@@ -175,6 +175,7 @@ endif()
+ target_include_directories(Diligent-GraphicsEngineOpenGL-static
+ PRIVATE
+     include
++    ${GLEW_INCLUDE_DIRS}
+ )
+ 
+ set(PRIVATE_DEPENDENCIES
+@@ -198,16 +199,16 @@ set(PUBLIC_DEPENDENCIES
+ )
+ 
+ if(PLATFORM_WIN32)
+-    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} GLEW::glew opengl32.lib)
++    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${GLEW_LINK_LIBRARIES} opengl32.lib)
+ elseif(PLATFORM_ANDROID)
+     set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} GLESv3 EGL)
+ elseif(PLATFORM_LINUX)
+     find_package(X11 REQUIRED)
+     find_package(OpenGL REQUIRED)
+-    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} GLEW::glew OpenGL::GL X11::X11)
++    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${GLEW_LINK_LIBRARIES} OpenGL::GL X11::X11)
+ elseif(PLATFORM_MACOS)
+     find_package(OpenGL REQUIRED)
+-    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} GLEW::glew OpenGL::GL)
++    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${GLEW_LINK_LIBRARIES} OpenGL::GL)
+ elseif(PLATFORM_IOS)
+     set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${OPENGLES})
+ elseif(PLATFORM_EMSCRIPTEN)
+@@ -258,6 +259,7 @@ PUBLIC
+ )
+ target_link_libraries(Diligent-GraphicsEngineOpenGL-shared
+ PRIVATE
++    ${GLEW_LIBRARIES}
+     Diligent-BuildSettings
+     ${WHOLE_ARCHIVE_FLAG} Diligent-GraphicsEngineOpenGL-static ${NO_WHOLE_ARCHIVE_FLAG}
+ PUBLIC
+diff --git a/Graphics/GraphicsTools/CMakeLists.txt b/Graphics/GraphicsTools/CMakeLists.txt
+index c7f8706..dbaba43 100644
+--- a/Graphics/GraphicsTools/CMakeLists.txt
++++ b/Graphics/GraphicsTools/CMakeLists.txt
+@@ -122,19 +122,20 @@ target_include_directories(Diligent-GraphicsTools
+ PUBLIC
+     interface
+ PRIVATE
++    ${XXHASH_INCLUDE_DIRS}
+     ../GraphicsEngineD3DBase/include
+     include
+ )
+ 
+ target_link_libraries(Diligent-GraphicsTools
+ PRIVATE
++    ${XXHASH_LIBRARIES}
+     Diligent-Common
+     Diligent-BuildSettings
+     Diligent-PlatformInterface
+     Diligent-GraphicsAccessories
+     Diligent-ShaderTools
+     Diligent-GraphicsEngine
+-    xxHash::xxhash
+     ${DEPENDENCIES}
+ PUBLIC
+     Diligent-GraphicsEngineInterface
+diff --git a/Graphics/ShaderTools/CMakeLists.txt b/Graphics/ShaderTools/CMakeLists.txt
+index bf956ea..7cc93b5 100644
+--- a/Graphics/ShaderTools/CMakeLists.txt
++++ b/Graphics/ShaderTools/CMakeLists.txt
+@@ -133,6 +133,7 @@ PUBLIC
+     include
+ PRIVATE
+     ../GraphicsEngine/include
++    "${spirv-cross-c_INCLUDE_DIRS}"
+ )
+ 
+ if (DXC_SUPPORTED)
+@@ -157,6 +158,8 @@ PRIVATE
+     Diligent-Common
+ PUBLIC
+     Diligent-GraphicsEngineInterface
++INTERFACE
++    "${glslang_INCLUDE_DIRS}"
+ )
+ 
+ if (TARGET Diligent-HLSL2GLSLConverterLib AND NOT ${DILIGENT_NO_HLSL})
+diff --git a/ThirdParty/CMakeLists.txt b/ThirdParty/CMakeLists.txt
+index 00670f0..07f11b1 100644
+--- a/ThirdParty/CMakeLists.txt
++++ b/ThirdParty/CMakeLists.txt
+@@ -6,132 +6,46 @@ cmake_minimum_required (VERSION 3.11)
+ # instead:
+ set(CMAKE_POLICY_DEFAULT_CMP0063 NEW)
+ 
+-if (GL_SUPPORTED AND (PLATFORM_WIN32 OR PLATFORM_LINUX OR PLATFORM_MACOS) AND (NOT TARGET GLEW::glew))
+-    add_subdirectory(glew)
+-    if (DILIGENT_INSTALL_CORE)
+-        install(TARGETS glew-static
+-                ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
+-                LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
+-                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
+-        )
+-    endif()
+-    install(FILES glew/LICENSE.txt DESTINATION "Licenses/ThirdParty/${DILIGENT_CORE_DIR}" RENAME GLEW-License.txt)
++if (GL_SUPPORTED AND (PLATFORM_WIN32 OR PLATFORM_LINUX OR PLATFORM_MACOS) AND (NOT GLEW_FOUND))
++    pkg_check_modules(GLEW REQUIRED GLEW)
+ endif()
+ 
+ if (VULKAN_SUPPORTED)
+-    if (NOT TARGET Vulkan::Headers)
+-        # Manually add the Vulkan-Headers target as this is all we need and the
+-        # project's CMake creates unnecessary targets
+-        add_library(Vulkan-Headers INTERFACE)
+-        # Vulkan-Headers_SOURCE_DIR variable is normally created by project(Vulkan-Headers)
+-        set(Vulkan-Headers_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Vulkan-Headers")
+-        add_library(Vulkan::Headers ALIAS Vulkan-Headers)
+-        target_include_directories(Vulkan-Headers INTERFACE "${Vulkan-Headers_SOURCE_DIR}/include")
+-        install(FILES "${Vulkan-Headers_SOURCE_DIR}/LICENSE.md" DESTINATION "Licenses/ThirdParty/${DILIGENT_CORE_DIR}" RENAME Vulkan-Headers-License.md)
++    if (NOT vulkan-headers_FOUND)
++        find_package(Vulkan-Headers REQUIRED)
+     endif()
+ endif()
+ 
+ if (VULKAN_SUPPORTED OR METAL_SUPPORTED OR WEBGPU_SUPPORTED OR (ARCHIVER_SUPPORTED AND (GL_SUPPORTED OR GLES_SUPPORTED)))
+     set(DILIGENT_USE_SPIRV_TOOLCHAIN TRUE CACHE INTERNAL "Use SPIRV Toolchain")
+ 
+-    if (NOT TARGET SPIRV-Headers)
+-        # Manually add the SPIRV-Headers target as this is all we need and the
+-        # project's CMake creates unnecessary install targets
+-        add_library(SPIRV-Headers INTERFACE)
+-        # Note that SPIRV-Headers_SOURCE_DIR variable is normally created by project(SPIRV-Headers)
+-        set(SPIRV-Headers_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/SPIRV-Headers")
+-        target_include_directories(SPIRV-Headers INTERFACE "${SPIRV-Headers_SOURCE_DIR}/include")
+-        install(FILES "${SPIRV-Headers_SOURCE_DIR}/LICENSE" DESTINATION "Licenses/ThirdParty/${DILIGENT_CORE_DIR}" RENAME SPIRV-Headers-License.txt)
++    if (NOT spirv-headers_FOUND)
++        find_package(spirv-headers REQUIRED)
+     endif()
+ 
+     option(DILIGENT_NO_GLSLANG "Do NOT build glslang compiler" OFF)
+     option(DILIGENT_IMPROVE_SPIRV_TOOLS_DEBUG_PERF "Enable some optimizations for SPIRV-Tools, glslang, SPIRV-Cross and related projects in debug build to improve performance" ON)
+ 
+-    if (NOT (${DILIGENT_NO_GLSLANG} AND ${DILIGENT_NO_HLSL}) AND (NOT TARGET SPIRV-Tools-static))
+-        set(SPIRV_SKIP_TESTS ON CACHE BOOL "Skip SPIRV tests")
+-        set(SPIRV_BUILD_COMPRESSION OFF CACHE BOOL "Do not build SPIRV compressing codec")
+-        set(SPIRV_SKIP_EXECUTABLES ON CACHE BOOL "Skip building SPIRV executable and tests along with the library")
+-        set(SKIP_SPIRV_TOOLS_INSTALL ON CACHE BOOL "Skip SPIRV tools installation")
+-        set(SPIRV_WERROR OFF CACHE BOOL "Do not enable error on warning")
+-        if (${DILIGENT_IMPROVE_SPIRV_TOOLS_DEBUG_PERF})
+-            set(SPIRV_CHECK_CONTEXT OFF CACHE BOOL "Do not check if the IR context is in a valid state")
+-        endif()
+-        set(CMAKE_MACOSX_RPATH TRUE)
+-        add_subdirectory(SPIRV-Tools)
+-        set_directory_root_folder("SPIRV-Tools" "DiligentCore/ThirdParty/SPIRV-Tools")
+-        # We only need SPIRV-Tools-opt for glslang that also depends on SPIRV-Tools-static.
+-        # Exclude all other targets from the build to save build time
+-        set(SPIRV_TOOLS_EXCLUDE_TARGETS SPIRV-Tools-link SPIRV-Tools-lint SPIRV-Tools-reduce SPIRV-Tools-shared)
+-        set_target_properties(${SPIRV_TOOLS_EXCLUDE_TARGETS} PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+-
+-        set(THIRD_PARTY_LIBS SPIRV-Tools-static SPIRV-Tools-opt)
+-        install(FILES "${spirv-tools_SOURCE_DIR}/LICENSE" DESTINATION "Licenses/ThirdParty/${DILIGENT_CORE_DIR}" RENAME SPIRV-Tools-License.txt)
++    if (NOT (${DILIGENT_NO_GLSLANG} AND ${DILIGENT_NO_HLSL}) AND (NOT spirv-tools_FOUND))
++        find_package(spirv-tools REQUIRED)
+     endif()
+ 
+-    if (NOT ${DILIGENT_NO_GLSLANG} AND (NOT TARGET glslang))
+-        set(ENABLE_GLSLANG_BINARIES OFF CACHE BOOL "Do not build glslang binaries")
+-        set(ENABLE_SPVREMAPPER OFF CACHE BOOL "Do not build SPIRV remapper")
+-        set(SKIP_GLSLANG_INSTALL ON CACHE BOOL "Skip glslang installation")
+-        set(ENABLE_CTEST OFF CACHE BOOL "Disable testing")
+-        if (PLATFORM_EMSCRIPTEN)
+-            # Optimization has to be disabled on Web, see build instructions on https://github.com/KhronosGroup/glslang
+-            set(ENABLE_OPT OFF)
+-        endif()
+-        add_subdirectory(glslang)
+-        set_directory_root_folder("glslang" "DiligentCore/ThirdParty/glslang")
+-
+-        if (PLATFORM_EMSCRIPTEN)
+-             set_targets_emscripten_properties(MachineIndependent)
+-        endif()
+-
+-        # glslang "kindly" sets global CMAKE_DEBUG_POSTFIX to "d", which we have to unset now
+-        unset(CMAKE_DEBUG_POSTFIX CACHE)
+-
+-        list(APPEND THIRD_PARTY_LIBS GenericCodeGen glslang OSDependent SPIRV MachineIndependent)
+-        install(FILES "${glslang_SOURCE_DIR}/LICENSE.txt" DESTINATION "Licenses/ThirdParty/${DILIGENT_CORE_DIR}" RENAME GLSLang-License.txt)
++    if (NOT ${DILIGENT_NO_GLSLANG} AND (NOT glslang_FOUND))
++        find_package(glslang REQUIRED)
+     endif()
+ 
+-    if (NOT TARGET spirv-cross-core)
+-        set(SPIRV_CROSS_CLI OFF CACHE BOOL "Build the CLI binary. Requires SPIRV_CROSS_STATIC.")
+-        set(SPIRV_CROSS_ENABLE_TESTS OFF CACHE BOOL "Enable SPIRV-Cross tests.")
+-        set(SPIRV_CROSS_ENABLE_MSL ${METAL_SUPPORTED} CACHE BOOL "Enable MSL target support.")
+-        # MSL support requires GLSL
+-        if (${SPIRV_CROSS_ENABLE_MSL} OR ${GL_SUPPORTED} OR ${GLES_SUPPORTED})
+-            set(SPIRV_CROSS_ENABLE_GLSL TRUE CACHE BOOL "Enable GLSL support.")
+-        else()
+-            set(SPIRV_CROSS_ENABLE_GLSL OFF CACHE BOOL "Enable GLSL support.")
+-        endif()
+-        set(SPIRV_CROSS_ENABLE_HLSL OFF CACHE BOOL "Enable HLSL target support.")
+-        set(SPIRV_CROSS_ENABLE_CPP OFF CACHE BOOL "Enable C++ target support.")
+-        set(SPIRV_CROSS_ENABLE_REFLECT OFF CACHE BOOL "Enable JSON reflection target support.")
+-        set(SPIRV_CROSS_ENABLE_C_API OFF CACHE BOOL "Enable C API wrapper support in static library.")
+-        set(SPIRV_CROSS_ENABLE_UTIL OFF CACHE BOOL "Enable util module support.")
+-        set(SPIRV_CROSS_FORCE_PIC ON CACHE BOOL "Force position-independent code.")
+-        set(SPIRV_CROSS_SKIP_INSTALL ON CACHE BOOL "Skip SPIRV-Cross installation.")
+-        set(SPIRV_CROSS_NAMESPACE_OVERRIDE diligent_spirv_cross CACHE STRING "Override the namespace used in the C++ API.")
+-        add_subdirectory(SPIRV-Cross)
+-        set_directory_root_folder("SPIRV-Cross" "DiligentCore/ThirdParty/SPIRV-Cross")
+-
+-        list(APPEND THIRD_PARTY_LIBS spirv-cross-core)
+-        if(SPIRV_CROSS_ENABLE_GLSL)
+-            list(APPEND THIRD_PARTY_LIBS spirv-cross-glsl)
+-        endif()
+-        if (SPIRV_CROSS_ENABLE_MSL)
+-            list(APPEND THIRD_PARTY_LIBS spirv-cross-msl)
+-        endif()
+-
+-        install(FILES "${SPIRV-Cross_SOURCE_DIR}/LICENSE" DESTINATION "Licenses/ThirdParty/${DILIGENT_CORE_DIR}" RENAME SPIRV-Cross-License.txt)
++    if (NOT spirv-cross_FOUND)
++        find_package(spirv-cross REQUIRED)
+     endif()
+ 
+-    if (DILIGENT_INSTALL_CORE)
++    if (0)
+         install(TARGETS ${THIRD_PARTY_LIBS}
+                 ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
+                 LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
+                 RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
+         )
+     endif()
+-
+-    if (MSVC)
++    if (0)
+         foreach(TARGET ${THIRD_PARTY_LIBS}) 
+             if (${DILIGENT_IMPROVE_SPIRV_TOOLS_DEBUG_PERF})
+                 # Enable function inlining (/Ob1) in Debug build to improve shader compilation performance
+@@ -144,34 +58,21 @@ if (VULKAN_SUPPORTED OR METAL_SUPPORTED OR WEBGPU_SUPPORTED OR (ARCHIVER_SUPPORT
+         endforeach()
+     endif()
+ 
+-    # Make sure that symbols do not leak out when third-party
+-    # libs are linked into shared libraries
+-    set_target_properties(${THIRD_PARTY_LIBS} PROPERTIES
+-        CXX_VISIBILITY_PRESET hidden # -fvisibility=hidden
+-        C_VISIBILITY_PRESET hidden # -fvisibility=hidden
+-        VISIBILITY_INLINES_HIDDEN TRUE
+-     )
+ else()
+     set(DILIGENT_USE_SPIRV_TOOLCHAIN FALSE CACHE INTERNAL "")
+ endif()
+ 
+-if (VULKAN_SUPPORTED AND (PLATFORM_WIN32 OR PLATFORM_LINUX OR PLATFORM_MACOS OR PLATFORM_ANDROID) AND (NOT TARGET volk::volk_headers))
+-    set(VOLK_PULL_IN_VULKAN OFF)
+-    set(VOLK_INSTALL OFF)
+-    set(VOLK_HEADERS_ONLY ON)
+-    add_subdirectory(volk)
+-    install(FILES "${volk_SOURCE_DIR}/LICENSE.md" DESTINATION "Licenses/ThirdParty/${DILIGENT_CORE_DIR}" RENAME Volk-License.md)
++if (VULKAN_SUPPORTED AND (PLATFORM_WIN32 OR PLATFORM_LINUX OR PLATFORM_MACOS OR PLATFORM_ANDROID) AND (NOT volk_FOUND))
++    find_package(volk REQUIRED)
+ endif()
+ 
+ if (WEBGPU_SUPPORTED)
+-    add_subdirectory(abseil-cpp EXCLUDE_FROM_ALL)
+-    set_directory_root_folder("abseil-cpp" "DiligentCore/ThirdParty")
++    find_package(abseil REQUIRED)
+ 
+-    add_subdirectory(dawn EXCLUDE_FROM_ALL)
+-    set_directory_root_folder("dawn" "DiligentCore/ThirdParty/dawn")
++    find_package(dawn REQUIRED)
+ endif()
+ 
+-if ((${DILIGENT_BUILD_GOOGLE_TEST}) AND (NOT TARGET gtest))
++if (0)
+     set(INSTALL_GTEST OFF CACHE BOOL "Do not install googletest")
+     set(BUILD_GMOCK OFF CACHE BOOL "Do not build gmock")
+     set(gtest_force_shared_crt ON CACHE BOOL "Use shared (DLL) run-time lib even when Google Test is built as static lib.")
+@@ -192,15 +93,7 @@ if ((${DILIGENT_BUILD_GOOGLE_TEST}) AND (NOT TARGET gtest))
+     endif()
+ endif()
+ 
+-if (NOT TARGET xxHash::xxhash)
+-    option(BUILD_SHARED_LIBS "Build shared library" OFF)
+-    set(XXHASH_BUILD_XXHSUM OFF)
+-    set(XXHASH_BUILD_ENABLE_INLINE_API OFF)
+-    add_subdirectory(xxHash/cmake_unofficial)
+-    set_directory_root_folder("xxHash/cmake_unofficial" "DiligentCore/ThirdParty/xxHash")
+-    install(FILES "${xxHash_SOURCE_DIR}/../LICENSE" DESTINATION "Licenses/ThirdParty/${DILIGENT_CORE_DIR}" RENAME xxHash-License.txt)
++if (NOT XXHASH_FOUND)
++    pkg_check_modules(XXHASH REQUIRED libxxhash)
+ endif()
+ 
+-install(FILES stb/stb_image_write_license.txt DESTINATION "Licenses/ThirdParty/${DILIGENT_CORE_DIR}")
+-install(FILES DirectXShaderCompiler/LICENSE.TXT DESTINATION "Licenses/ThirdParty/${DILIGENT_CORE_DIR}" RENAME DXC-License.txt)
+-install(FILES DirectXShaderCompiler/ThirdPartyNotices.txt DESTINATION "Licenses/ThirdParty/${DILIGENT_CORE_DIR}" RENAME DXC-ThirdPartyNotices.txt)
