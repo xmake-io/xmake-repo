@@ -26,11 +26,11 @@ package("unicorn")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows|!arm64", "macosx", "linux", "cross", function (package)
         io.replace("CMakeLists.txt", "if(UNICORN_INSTALL AND NOT MSVC)", "if(1)", {plain = true})
 
         local configs = {"-DUNICORN_BUILD_TESTS=OFF"}
-        -- Do not install .o file into lib folder or it would fil to link against it
+        -- Do not install .o file into lib folder or it would fail to link against it
         io.replace("CMakeLists.txt", [[install(FILES $<TARGET_FILE_DIR:unicorn_archive>/$<TARGET_PROPERTY:unicorn_archive,SYMLINK_NAME> DESTINATION ${CMAKE_INSTALL_LIBDIR})]], [[]], {plain = true})
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
