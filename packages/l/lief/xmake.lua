@@ -17,9 +17,10 @@ package("lief")
     add_versions("0.11.5", "6d6d57304a56850958e4ce54f3da2ea2b9eb856ccbab61c6cde9cba15d7c9da5")
     add_versions("0.14.0", "400804e38cb5ce8d15fb52a4db6345f02da7b2e5cb773665712283001482b808")
     add_versions("0.14.1", "92916dcb3178353d863aef4f409186889983c56e025b774741d5316a72ec3a7d")
+
     add_patches("0.15.1", "patches/0.15.1/algorithm.patch", "3e110539c3db037b2b24cd32f97ad8cc6241b1f69d4a65dab9fd6c84e482bbd9")
     add_patches("0.16.0", "https://github.com/lief-project/LIEF/commit/41166332a2435fdb7d2bdc5c73f9ff9b442c5459.patch", "e42e5dd7e4c7a24bf712c1a7c9efa19c9daf835fc85dd35c8ab4b81d1807d833")
-    add_patches("0.16.5", "https://github.com/lief-project/LIEF/commit/5d35ebfbef9fe48209468107c0c382501d353d56.patch", "6f2f1000583db4c24358515fe72b7fa100045aa8272efaf64f96b4a4c62f14bd")
+    add_patches("0.16.5", "patches/0.16.5/cstdint.patch", "67956ae49cc529e2b9f98b20544a721bc539ac500da5358c8357751bfcf9b5bc")
 
     add_configs("elf",    {description = "Enable ELF module.", default = true, type = "boolean"})
     add_configs("pe",     {description = "Enable PE module.", default = true, type = "boolean"})

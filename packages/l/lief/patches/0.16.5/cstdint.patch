@@ -1,0 +1,13 @@
+diff --git a/include/LIEF/PE/ResourceNode.hpp b/include/LIEF/PE/ResourceNode.hpp
+index fbea63b40..4db05119a 100644
+--- a/include/LIEF/PE/ResourceNode.hpp
++++ b/include/LIEF/PE/ResourceNode.hpp
+@@ -19,6 +19,7 @@
+ #include <string>
+ #include <vector>
+ #include <memory>
++#include <cstdint>
+ 
+ #include "LIEF/Object.hpp"
+ #include "LIEF/visibility.h"
+ 
