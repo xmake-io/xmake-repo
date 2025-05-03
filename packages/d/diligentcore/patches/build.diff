@@ -1,24 +1,36 @@
 diff --git a/BuildTools/CMake/BuildUtils.cmake b/BuildTools/CMake/BuildUtils.cmake
-index e97b96b..8555883 100644
+index e97b96b..bf9d26e 100644
 --- a/BuildTools/CMake/BuildUtils.cmake
 +++ b/BuildTools/CMake/BuildUtils.cmake
-@@ -292,6 +292,14 @@ function(install_core_lib _TARGET)
+@@ -292,14 +292,22 @@ function(install_core_lib _TARGET)
      if(TARGET_TYPE STREQUAL STATIC_LIBRARY)
          list(APPEND DILIGENT_CORE_INSTALL_LIBS_LIST ${_TARGET})
          set(DILIGENT_CORE_INSTALL_LIBS_LIST ${DILIGENT_CORE_INSTALL_LIBS_LIST} CACHE INTERNAL "Core libraries installation list")
 +        install(TARGETS                 ${_TARGET}
-+                ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
-+                LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
-+                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
++                ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++                LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
 +        )
 +        if (DILIGENT_INSTALL_PDB)
-+            install(FILES $<TARGET_PDB_FILE:${_TARGET}> DESTINATION "${CMAKE_INSTALL_BINDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>" OPTIONAL)
++            install(FILES $<TARGET_PDB_FILE:${_TARGET}> DESTINATION "${CMAKE_INSTALL_BINDIR}" OPTIONAL)
 +        endif()
      elseif(TARGET_TYPE STREQUAL SHARED_LIBRARY)
          install(TARGETS                 ${_TARGET}
-                 ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
+-                ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
+-                LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
+-                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
++                ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++                LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+         )
+         if (DILIGENT_INSTALL_PDB)
+-            install(FILES $<TARGET_PDB_FILE:${_TARGET}> DESTINATION "${CMAKE_INSTALL_BINDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>" OPTIONAL)
++            install(FILES $<TARGET_PDB_FILE:${_TARGET}> DESTINATION "${CMAKE_INSTALL_BINDIR}" OPTIONAL)
+         endif()
+     endif()
+ 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index fc3c5d8..a877768 100644
+index fc3c5d8..ab09b3d 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -4,6 +4,7 @@ project(DiligentCore)
@@ -29,7 +41,19 @@ index fc3c5d8..a877768 100644
  
  set_property(GLOBAL PROPERTY USE_FOLDERS ON)
  
-@@ -625,7 +626,7 @@ if(DILIGENT_INSTALL_CORE)
+@@ -614,18 +615,17 @@ add_subdirectory(Primitives)
+ add_subdirectory(Platforms)
+ add_subdirectory(Common)
+ add_subdirectory(Graphics)
+-add_subdirectory(Tests)
+ 
+ 
+ # Installation instructions
+-if(DILIGENT_INSTALL_CORE)
++if(DILIGENT_INSTALL_CORE AND NOT(BUILD_SHARED_LIBS))
+ 
+     install_combined_static_lib(
+         "${CMAKE_STATIC_LIBRARY_PREFIX}DiligentCore${CMAKE_STATIC_LIBRARY_SUFFIX}"
          "${DILIGENT_CORE_INSTALL_LIBS_LIST}"
          DiligentCore-static                     # Custom target name
          DiligentCore                            # Folder
@@ -39,7 +63,7 @@ index fc3c5d8..a877768 100644
  
      install(FILES License.txt DESTINATION "Licenses" RENAME DiligentEngine-License.txt)
 diff --git a/Graphics/Archiver/CMakeLists.txt b/Graphics/Archiver/CMakeLists.txt
-index 6af0f44..5a820e5 100644
+index 6af0f44..5954281 100644
 --- a/Graphics/Archiver/CMakeLists.txt
 +++ b/Graphics/Archiver/CMakeLists.txt
 @@ -138,14 +138,14 @@ if(GL_SUPPORTED OR GLES_SUPPORTED)
@@ -61,7 +85,7 @@ index 6af0f44..5a820e5 100644
          target_link_libraries(Diligent-Archiver-static PRIVATE GLESv3 EGL)
      elseif(PLATFORM_EMSCRIPTEN)
 diff --git a/Graphics/GraphicsEngineOpenGL/CMakeLists.txt b/Graphics/GraphicsEngineOpenGL/CMakeLists.txt
-index 839dad7..d9c84a6 100644
+index 839dad7..f9baa07 100644
 --- a/Graphics/GraphicsEngineOpenGL/CMakeLists.txt
 +++ b/Graphics/GraphicsEngineOpenGL/CMakeLists.txt
 @@ -175,6 +175,7 @@ endif()
@@ -93,10 +117,10 @@ index 839dad7..d9c84a6 100644
      set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${OPENGLES})
  elseif(PLATFORM_EMSCRIPTEN)
 diff --git a/Graphics/GraphicsTools/CMakeLists.txt b/Graphics/GraphicsTools/CMakeLists.txt
-index c7f8706..dbaba43 100644
+index c7f8706..282bfde 100644
 --- a/Graphics/GraphicsTools/CMakeLists.txt
 +++ b/Graphics/GraphicsTools/CMakeLists.txt
-@@ -122,19 +122,20 @@ target_include_directories(Diligent-GraphicsTools
+@@ -122,6 +122,7 @@ target_include_directories(Diligent-GraphicsTools
  PUBLIC
      interface
  PRIVATE
@@ -104,43 +128,17 @@ index c7f8706..dbaba43 100644
      ../GraphicsEngineD3DBase/include
      include
  )
- 
- target_link_libraries(Diligent-GraphicsTools
- PRIVATE
-+    ${XXHASH_LIBRARIES}
-     Diligent-Common
-     Diligent-BuildSettings
-     Diligent-PlatformInterface
+@@ -134,7 +135,7 @@ PRIVATE
      Diligent-GraphicsAccessories
      Diligent-ShaderTools
      Diligent-GraphicsEngine
 -    xxHash::xxhash
++    ${XXHASH_LIBRARIES}
      ${DEPENDENCIES}
  PUBLIC
      Diligent-GraphicsEngineInterface
-diff --git a/Graphics/ShaderTools/CMakeLists.txt b/Graphics/ShaderTools/CMakeLists.txt
-index bf956ea..7cc93b5 100644
---- a/Graphics/ShaderTools/CMakeLists.txt
-+++ b/Graphics/ShaderTools/CMakeLists.txt
-@@ -133,6 +133,7 @@ PUBLIC
-     include
- PRIVATE
-     ../GraphicsEngine/include
-+    "${spirv-cross-c_INCLUDE_DIRS}"
- )
- 
- if (DXC_SUPPORTED)
-@@ -157,6 +158,8 @@ PRIVATE
-     Diligent-Common
- PUBLIC
-     Diligent-GraphicsEngineInterface
-+INTERFACE
-+    "${glslang_INCLUDE_DIRS}"
- )
- 
- if (TARGET Diligent-HLSL2GLSLConverterLib AND NOT ${DILIGENT_NO_HLSL})
 diff --git a/ThirdParty/CMakeLists.txt b/ThirdParty/CMakeLists.txt
-index 00670f0..e8199f5 100644
+index 00670f0..349eb4d 100644
 --- a/ThirdParty/CMakeLists.txt
 +++ b/ThirdParty/CMakeLists.txt
 @@ -6,132 +6,47 @@ cmake_minimum_required (VERSION 3.11)
@@ -280,9 +278,12 @@ index 00670f0..e8199f5 100644
 -    if (DILIGENT_INSTALL_CORE)
 +    if (0)
          install(TARGETS ${THIRD_PARTY_LIBS}
-                 ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
-                 LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
-                 RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
+-                ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
+-                LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
+-                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
++                ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++                LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
          )
      endif()
 -
