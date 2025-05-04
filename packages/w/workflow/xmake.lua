@@ -19,6 +19,7 @@ package("workflow")
         add_versions("v0.11.2", "cc2d18ab2b292e2f0163ef67ef6976912e2a21c271396da0e2151ca8cd22abd3")
         add_versions("v0.11.3", "af7adcdd8151f8e72247599a43c28aa849d61ed39e58058cfa80649d011575bc")
         add_versions("v0.11.4", "844fd03db120141fa61600b26a4ef35716dc0e75d1e8c8018078eb385cf746a4")
+        add_versions("v0.11.5", "e37ba93c59da1fbeadb4f1ca413e6d26a3d8979aa00a806c0129f84e92b7925a")
     end
 
     add_deps("openssl")
