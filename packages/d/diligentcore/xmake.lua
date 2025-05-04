@@ -13,7 +13,7 @@ package("diligentcore")
 
     add_deps("pkgconf")
 
-    if is_plat("windows", "linux") then
+    if is_plat("windows", "linux", "mingw", "macosx", "android", "iphoneos") then
         add_configs("opengl",           {description = "Enable OpenGL/GLES backend", default = true, type = "boolean"})
     end
 
@@ -23,7 +23,7 @@ package("diligentcore")
     end
 
     if is_plat("macosx", "iphoneos") then
-        add_configs("metal",            {description = "Enable Metal backend", default = true, type = "boolean"})
+        add_configs("metal",            {description = "Enable Metal backend", default = false, type = "boolean"})
     end
 
     add_configs("vulkan",               {description = "Enable Vulkan backend", default = false, type = "boolean"})
@@ -65,7 +65,7 @@ package("diligentcore")
         end
 
         if package:config("opengl") then
-            package:add("deps", "glew")
+            package:add("deps", "opengl", "glew")
             if package:is_plat("macosx") then
                 package:add("frameworks", "OpenGL")
             end
