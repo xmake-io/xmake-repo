@@ -59,11 +59,15 @@ index fc3c5d8..7548499 100644
  
      install(FILES License.txt DESTINATION "Licenses" RENAME DiligentEngine-License.txt)
 diff --git a/Graphics/Archiver/CMakeLists.txt b/Graphics/Archiver/CMakeLists.txt
-index 6af0f44..ed0556f 100644
+index 6af0f44..b9254e7 100644
 --- a/Graphics/Archiver/CMakeLists.txt
 +++ b/Graphics/Archiver/CMakeLists.txt
-@@ -138,14 +138,15 @@ if(GL_SUPPORTED OR GLES_SUPPORTED)
-     target_include_directories(Diligent-Archiver-static PRIVATE ../GraphicsEngineOpenGL/include)
+@@ -135,17 +135,18 @@ if(GL_SUPPORTED OR GLES_SUPPORTED)
+         spirv-cross-core
+         spirv-cross-glsl
+     )
+-    target_include_directories(Diligent-Archiver-static PRIVATE ../GraphicsEngineOpenGL/include)
++    target_include_directories(Diligent-Archiver-static PRIVATE ../GraphicsEngineOpenGL/include ${glew_INCLUDE_DIRS})
  
      if(PLATFORM_WIN32)
 -        target_link_libraries(Diligent-Archiver-static PRIVATE GLEW::glew opengl32.lib)
@@ -83,8 +87,65 @@ index 6af0f44..ed0556f 100644
      elseif(PLATFORM_ANDROID)
          target_link_libraries(Diligent-Archiver-static PRIVATE GLESv3 EGL)
      elseif(PLATFORM_EMSCRIPTEN)
+@@ -176,6 +177,18 @@ if(WEBGPU_SUPPORTED)
+     )
+ endif()
+ 
++if (glew_FOUND)
++    target_link_directories(Diligent-Archiver-shared PRIVATE ${glew_LIBRARY_DIRS})
++endif()
++
++if(spirv-cross-c_FOUND)
++    target_link_directories(Diligent-Archiver-shared PRIVATE ${spirv-cross-c_LIBDIR})
++endif()
++
++if(glslang_FOUND)
++    target_link_directories(Diligent-Archiver-shared PRIVATE ${glslang_LIBDIR})
++endif()
++
+ target_link_libraries(Diligent-Archiver-shared
+ PUBLIC
+     Diligent-ArchiverInterface
+diff --git a/Graphics/GraphicsEngineD3D11/CMakeLists.txt b/Graphics/GraphicsEngineD3D11/CMakeLists.txt
+index adef784..38d7036 100644
+--- a/Graphics/GraphicsEngineD3D11/CMakeLists.txt
++++ b/Graphics/GraphicsEngineD3D11/CMakeLists.txt
+@@ -136,6 +136,14 @@ PUBLIC
+     Diligent-GraphicsEngineD3D11Interface
+ )
+ 
++if(spirv-cross-c_FOUND)
++    target_link_directories(Diligent-GraphicsEngineD3D11-shared PRIVATE ${spirv-cross-c_LIBRARY_DIRS})
++endif()
++
++if(glslang_FOUND)
++    target_link_directories(Diligent-GraphicsEngineD3D11-shared PRIVATE ${glslang_LIBDIR})
++endif()
++
+ target_link_libraries(Diligent-GraphicsEngineD3D11-shared
+ PRIVATE
+     Diligent-BuildSettings 
+diff --git a/Graphics/GraphicsEngineD3D12/CMakeLists.txt b/Graphics/GraphicsEngineD3D12/CMakeLists.txt
+index 4b01eff..a8cf6cb 100644
+--- a/Graphics/GraphicsEngineD3D12/CMakeLists.txt
++++ b/Graphics/GraphicsEngineD3D12/CMakeLists.txt
+@@ -206,6 +206,14 @@ if(NOT ${USE_D3D12_LOADER})
+     target_link_libraries(Diligent-GraphicsEngineD3D12-static PRIVATE d3d12.lib)
+ endif()
+ 
++if(spirv-cross-c_FOUND)
++    target_link_directories(Diligent-GraphicsEngineD3D12-shared PRIVATE ${spirv-cross-c_LIBRARY_DIRS})
++endif()
++
++if(glslang_FOUND)
++    target_link_directories(Diligent-GraphicsEngineD3D12-shared PRIVATE ${glslang_LIBDIR})
++endif()
++
+ target_link_libraries(Diligent-GraphicsEngineD3D12-shared
+ PRIVATE
+     Diligent-BuildSettings
 diff --git a/Graphics/GraphicsEngineOpenGL/CMakeLists.txt b/Graphics/GraphicsEngineOpenGL/CMakeLists.txt
-index 839dad7..7e7b8a4 100644
+index 839dad7..867232f 100644
 --- a/Graphics/GraphicsEngineOpenGL/CMakeLists.txt
 +++ b/Graphics/GraphicsEngineOpenGL/CMakeLists.txt
 @@ -175,6 +175,7 @@ endif()
@@ -118,10 +179,18 @@ index 839dad7..7e7b8a4 100644
  elseif(PLATFORM_IOS)
      set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${OPENGLES})
  elseif(PLATFORM_EMSCRIPTEN)
-@@ -264,6 +266,7 @@ PUBLIC
+@@ -264,6 +266,15 @@ PUBLIC
      ${PUBLIC_DEPENDENCIES}
  )
  
++if(spirv-cross-c_FOUND)
++    target_link_directories(Diligent-GraphicsEngineOpenGL-shared PRIVATE ${spirv-cross-c_LIBRARY_DIRS})
++endif()
++
++if(glslang_FOUND)
++    target_link_directories(Diligent-GraphicsEngineOpenGL-shared PRIVATE ${glslang_LIBDIR})
++endif()
++
 +target_link_directories(Diligent-GraphicsEngineOpenGL-shared PRIVATE ${glew_LIBRARY_DIRS})
  target_compile_definitions(Diligent-GraphicsEngineOpenGL-shared PUBLIC ENGINE_DLL=1)
  if(PLATFORM_MACOS)
@@ -147,6 +216,56 @@ index c7f8706..282bfde 100644
      ${DEPENDENCIES}
  PUBLIC
      Diligent-GraphicsEngineInterface
+diff --git a/Graphics/ShaderTools/CMakeLists.txt b/Graphics/ShaderTools/CMakeLists.txt
+index bf956ea..384f08b 100644
+--- a/Graphics/ShaderTools/CMakeLists.txt
++++ b/Graphics/ShaderTools/CMakeLists.txt
+@@ -133,6 +133,9 @@ PUBLIC
+     include
+ PRIVATE
+     ../GraphicsEngine/include
++    $<$<BOOL:${ENABLE_SPIRV}>:${spirv-cross-c_INCLUDEDIR}>
++    $<$<BOOL:${USE_GLSLANG}>:${glslang_INCLUDEDIR}>
++    $<$<BOOL:${USE_GLSLANG}>:${glslang_INCLUDEDIR}/glslang>
+ )
+ 
+ if (DXC_SUPPORTED)
+@@ -150,6 +153,12 @@ if (DXC_SUPPORTED)
+     endif()
+ endif()
+ 
++target_link_directories(Diligent-ShaderTools
++PRIVATE
++    $<$<BOOL:${ENABLE_SPIRV}>:${spirv-cross-c_LIBDIR}>
++    $<$<BOOL:${USE_GLSLANG}>:${glslang_LIBDIR}>
++)
++
+ target_link_libraries(Diligent-ShaderTools
+ PRIVATE
+     Diligent-BuildSettings
+@@ -171,9 +180,7 @@ if(ENABLE_SPIRV)
+     PRIVATE
+         spirv-cross-core
+     )
+-    if(SPIRV_CROSS_NAMESPACE_OVERRIDE)
+-        target_compile_definitions(Diligent-ShaderTools PUBLIC DILIGENT_SPIRV_CROSS_NAMESPACE=${SPIRV_CROSS_NAMESPACE_OVERRIDE})
+-    endif()
++        target_compile_definitions(Diligent-ShaderTools PUBLIC DILIGENT_SPIRV_CROSS_NAMESPACE=spirv_cross)
+ 
+     if (${USE_SPIRV_TOOLS})
+         target_link_libraries(Diligent-ShaderTools
+diff --git a/Graphics/ShaderTools/src/SPIRVUtils.cpp b/Graphics/ShaderTools/src/SPIRVUtils.cpp
+index 8265ad9..c6a669d 100644
+--- a/Graphics/ShaderTools/src/SPIRVUtils.cpp
++++ b/Graphics/ShaderTools/src/SPIRVUtils.cpp
+@@ -25,6 +25,7 @@
+  */
+ 
+ #include "SPIRVUtils.hpp"
++#include "SPIRVShaderResources.hpp" // required for diligent_spirv_cross
+ 
+ #include "spirv_cross.hpp"
+ 
 diff --git a/Platforms/Apple/CMakeLists.txt b/Platforms/Apple/CMakeLists.txt
 index d43c57e..d59c96a 100644
 --- a/Platforms/Apple/CMakeLists.txt
@@ -200,10 +319,10 @@ index 5ef3acb..d55f41f 100644
  
  target_include_directories(Diligent-Win32Platform
 diff --git a/ThirdParty/CMakeLists.txt b/ThirdParty/CMakeLists.txt
-index 00670f0..2b2b69a 100644
+index 00670f0..8cb4926 100644
 --- a/ThirdParty/CMakeLists.txt
 +++ b/ThirdParty/CMakeLists.txt
-@@ -6,132 +6,46 @@ cmake_minimum_required (VERSION 3.11)
+@@ -6,132 +6,49 @@ cmake_minimum_required (VERSION 3.11)
  # instead:
  set(CMAKE_POLICY_DEFAULT_CMP0063 NEW)
  
@@ -232,7 +351,7 @@ index 00670f0..2b2b69a 100644
 -        target_include_directories(Vulkan-Headers INTERFACE "${Vulkan-Headers_SOURCE_DIR}/include")
 -        install(FILES "${Vulkan-Headers_SOURCE_DIR}/LICENSE.md" DESTINATION "Licenses/ThirdParty/${DILIGENT_CORE_DIR}" RENAME Vulkan-Headers-License.md)
 +    if (NOT vulkan-headers_FOUND)
-+        find_package(Vulkan-Headers REQUIRED)
++        pkg_check_modules(vulkan-headers REQUIRED vulkan-headers)
      endif()
  endif()
  
@@ -248,7 +367,7 @@ index 00670f0..2b2b69a 100644
 -        target_include_directories(SPIRV-Headers INTERFACE "${SPIRV-Headers_SOURCE_DIR}/include")
 -        install(FILES "${SPIRV-Headers_SOURCE_DIR}/LICENSE" DESTINATION "Licenses/ThirdParty/${DILIGENT_CORE_DIR}" RENAME SPIRV-Headers-License.txt)
 +    if (NOT spirv-headers_FOUND)
-+        find_package(spirv-headers REQUIRED)
++        pkg_check_modules(SPIRV-Headers REQUIRED SPIRV-Headers)
      endif()
  
      option(DILIGENT_NO_GLSLANG "Do NOT build glslang compiler" OFF)
@@ -273,8 +392,8 @@ index 00670f0..2b2b69a 100644
 -
 -        set(THIRD_PARTY_LIBS SPIRV-Tools-static SPIRV-Tools-opt)
 -        install(FILES "${spirv-tools_SOURCE_DIR}/LICENSE" DESTINATION "Licenses/ThirdParty/${DILIGENT_CORE_DIR}" RENAME SPIRV-Tools-License.txt)
-+    if (NOT (${DILIGENT_NO_GLSLANG} AND ${DILIGENT_NO_HLSL}) AND (NOT spirv-tools_FOUND))
-+        find_package(spirv-tools REQUIRED)
++    if (NOT (${DILIGENT_NO_GLSLANG} AND ${DILIGENT_NO_HLSL}) AND (NOT SPIRV-Tools_FOUND))
++        pkg_check_modules(SPIRV-Tools REQUIRED SPIRV-Tools)
      endif()
  
 -    if (NOT ${DILIGENT_NO_GLSLANG} AND (NOT TARGET glslang))
@@ -299,7 +418,7 @@ index 00670f0..2b2b69a 100644
 -        list(APPEND THIRD_PARTY_LIBS GenericCodeGen glslang OSDependent SPIRV MachineIndependent)
 -        install(FILES "${glslang_SOURCE_DIR}/LICENSE.txt" DESTINATION "Licenses/ThirdParty/${DILIGENT_CORE_DIR}" RENAME GLSLang-License.txt)
 +    if (NOT ${DILIGENT_NO_GLSLANG} AND (NOT glslang_FOUND))
-+        find_package(glslang REQUIRED)
++        pkg_check_modules(glslang REQUIRED glslang)
      endif()
  
 -    if (NOT TARGET spirv-cross-core)
@@ -332,8 +451,11 @@ index 00670f0..2b2b69a 100644
 -        endif()
 -
 -        install(FILES "${SPIRV-Cross_SOURCE_DIR}/LICENSE" DESTINATION "Licenses/ThirdParty/${DILIGENT_CORE_DIR}" RENAME SPIRV-Cross-License.txt)
-+    if (NOT spirv-cross_FOUND)
-+        find_package(spirv-cross REQUIRED)
++    if ((NOT spirv_cross_glsl_FOUND) OR (NOT spirv_cross_msl_FOUND) OR (NOT spirv_cross_core_FOUND))
++        #find_package(spirv_cross_core REQUIRED)
++        #find_package(spirv_cross_glsl REQUIRED)
++        #find_package(spirv_cross_msl REQUIRED)
++        pkg_check_modules(spirv-cross-c REQUIRED spirv-cross-c)
      endif()
  
 -    if (DILIGENT_INSTALL_CORE)
@@ -353,7 +475,7 @@ index 00670f0..2b2b69a 100644
          foreach(TARGET ${THIRD_PARTY_LIBS}) 
              if (${DILIGENT_IMPROVE_SPIRV_TOOLS_DEBUG_PERF})
                  # Enable function inlining (/Ob1) in Debug build to improve shader compilation performance
-@@ -144,34 +58,21 @@ if (VULKAN_SUPPORTED OR METAL_SUPPORTED OR WEBGPU_SUPPORTED OR (ARCHIVER_SUPPORT
+@@ -144,34 +61,21 @@ if (VULKAN_SUPPORTED OR METAL_SUPPORTED OR WEBGPU_SUPPORTED OR (ARCHIVER_SUPPORT
          endforeach()
      endif()
  
@@ -375,17 +497,17 @@ index 00670f0..2b2b69a 100644
 -    add_subdirectory(volk)
 -    install(FILES "${volk_SOURCE_DIR}/LICENSE.md" DESTINATION "Licenses/ThirdParty/${DILIGENT_CORE_DIR}" RENAME Volk-License.md)
 +if (VULKAN_SUPPORTED AND (PLATFORM_WIN32 OR PLATFORM_LINUX OR PLATFORM_MACOS OR PLATFORM_ANDROID) AND (NOT volk_FOUND))
-+    find_package(volk REQUIRED)
++    pkg_check_modules(volk REQUIRED volk)
  endif()
  
  if (WEBGPU_SUPPORTED)
 -    add_subdirectory(abseil-cpp EXCLUDE_FROM_ALL)
 -    set_directory_root_folder("abseil-cpp" "DiligentCore/ThirdParty")
-+    find_package(abseil REQUIRED)
++    pkg_check_modules(abseil REQUIRED abseil)
  
 -    add_subdirectory(dawn EXCLUDE_FROM_ALL)
 -    set_directory_root_folder("dawn" "DiligentCore/ThirdParty/dawn")
-+    find_package(dawn REQUIRED)
++    pkg_check_modules(dawn REQUIRED dawn)
  endif()
  
 -if ((${DILIGENT_BUILD_GOOGLE_TEST}) AND (NOT TARGET gtest))
@@ -393,7 +515,7 @@ index 00670f0..2b2b69a 100644
      set(INSTALL_GTEST OFF CACHE BOOL "Do not install googletest")
      set(BUILD_GMOCK OFF CACHE BOOL "Do not build gmock")
      set(gtest_force_shared_crt ON CACHE BOOL "Use shared (DLL) run-time lib even when Google Test is built as static lib.")
-@@ -192,15 +93,7 @@ if ((${DILIGENT_BUILD_GOOGLE_TEST}) AND (NOT TARGET gtest))
+@@ -192,15 +96,7 @@ if ((${DILIGENT_BUILD_GOOGLE_TEST}) AND (NOT TARGET gtest))
      endif()
  endif()
  

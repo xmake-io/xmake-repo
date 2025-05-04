@@ -7,7 +7,7 @@ package("diligentcore")
              "https://github.com/DiligentGraphics/DiligentCore.git", {submodules = false})
 
     add_versions("v2.5.6", "abc190c05ee7e5ef2bba52fcbc5fdfe2256cce3435efba9cfe263a386653f671")
-    add_patches("v2.5.6", "patches/build.diff", "65fa6291b0d08c93d5556ce2574e1608389b83dd10fc4c3f1b3b1869e6caac26")
+    add_patches("v2.5.6", "patches/build.diff", "260dfb33b49a4fe3f4b5fda923f14e34d76c80428fb3bf82a3218c5726fc3ad9")
 
     add_includedirs("include", "include/DiligentCore")
 
@@ -29,7 +29,7 @@ package("diligentcore")
     add_configs("vulkan",               {description = "Enable Vulkan backend", default = false, type = "boolean"})
 
     add_configs("hlsl",                 {description = "Enable HLSL", default = false, type = "boolean"})
-    add_configs("archiver",             {description = "Enable archiver", default = false, type = "boolean"})
+    add_configs("archiver",             {description = "Enable archiver", default = true, type = "boolean"})
     add_configs("format_validation",    {description = "Enable format validation", default = false, type = "boolean"})
 
     add_configs("x11",                  {description = "Build support for X11", default = true, type = "boolean"})
@@ -84,14 +84,22 @@ package("diligentcore")
             package:add("deps", "spirv-headers")
         end
 
-        if package:config("hlsl") then
+        if package:config("hlsl") or package:config("archiver") then
             package:add("deps", "spirv-tools")
             package:add("deps", "glslang")
-            package:add("deps", "spirv-cross")
         end
+
+        package:add("deps", "spirv-cross")
+        -- package:dd("defines", "DILIGENT_SPIRV_CROSS_NAMESPACE=")
     end)
 
     on_install("!bsd and !iphoneos and !android and !wasm and !cross and !mingw", function (package)
+        
+        -- io.replace("Graphics/ShaderTools/include/SPIRVShaderResources.hpp", [[#ifdef DILIGENT_SPIRV_CROSS_NAMESPACE]], [[#if 1]], {plain = true})
+        -- io.replace("Graphics/ShaderTools/include/SPIRVShaderResources.hpp", 
+        --     [[#    define diligent_spirv_cross DILIGENT_SPIRV_CROSS_NAMESPACE]],
+        --     [[#    define diligent_spirv_cross SPIRV_CROSS_NAMESPACE]], {plain = true})
+        
         -- Dump CMakeLists.txt variables related for platform & rendering backend for package defines
         local CMakeLists_content = io.readfile("CMakeLists.txt")
         io.writefile("CMakeLists.txt", CMakeLists_content .. [[
@@ -136,7 +144,7 @@ endforeach()
         table.insert(configs, "-DDILIGENT_NO_FORMAT_VALIDATION=" .. (package:config("format_validation") and "OFF" or "ON"))
 
         import("package.tools.cmake").install(package, configs)
-
+        io.cat("all_variables.txt")
         -- Gather missing defines into *data* so we could gather *data* for on_test
         local vars_file = path.join(package:buildir(), "variables.txt")
         if os.isfile(vars_file) then
