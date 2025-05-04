@@ -161,10 +161,10 @@ index 5ef3acb..d55f41f 100644
  
  target_include_directories(Diligent-Win32Platform
 diff --git a/ThirdParty/CMakeLists.txt b/ThirdParty/CMakeLists.txt
-index 00670f0..6969b2d 100644
+index 00670f0..2b2b69a 100644
 --- a/ThirdParty/CMakeLists.txt
 +++ b/ThirdParty/CMakeLists.txt
-@@ -6,132 +6,47 @@ cmake_minimum_required (VERSION 3.11)
+@@ -6,132 +6,46 @@ cmake_minimum_required (VERSION 3.11)
  # instead:
  set(CMAKE_POLICY_DEFAULT_CMP0063 NEW)
  
@@ -178,8 +178,7 @@ index 00670f0..6969b2d 100644
 -        )
 -    endif()
 -    install(FILES glew/LICENSE.txt DESTINATION "Licenses/ThirdParty/${DILIGENT_CORE_DIR}" RENAME GLEW-License.txt)
-+if (GL_SUPPORTED AND (PLATFORM_WIN32 OR PLATFORM_LINUX OR PLATFORM_MACOS) AND (NOT opengl_FOUND) AND (NOT glew_FOUND))
-+    find_package(opengl REQUIRED)
++if (GL_SUPPORTED AND (PLATFORM_WIN32 OR PLATFORM_LINUX OR PLATFORM_MACOS) AND (NOT glew_FOUND))
 +    pkg_check_modules(glew REQUIRED glew)
  endif()
  
@@ -315,7 +314,7 @@ index 00670f0..6969b2d 100644
          foreach(TARGET ${THIRD_PARTY_LIBS}) 
              if (${DILIGENT_IMPROVE_SPIRV_TOOLS_DEBUG_PERF})
                  # Enable function inlining (/Ob1) in Debug build to improve shader compilation performance
-@@ -144,34 +59,21 @@ if (VULKAN_SUPPORTED OR METAL_SUPPORTED OR WEBGPU_SUPPORTED OR (ARCHIVER_SUPPORT
+@@ -144,34 +58,21 @@ if (VULKAN_SUPPORTED OR METAL_SUPPORTED OR WEBGPU_SUPPORTED OR (ARCHIVER_SUPPORT
          endforeach()
      endif()
  
@@ -355,7 +354,7 @@ index 00670f0..6969b2d 100644
      set(INSTALL_GTEST OFF CACHE BOOL "Do not install googletest")
      set(BUILD_GMOCK OFF CACHE BOOL "Do not build gmock")
      set(gtest_force_shared_crt ON CACHE BOOL "Use shared (DLL) run-time lib even when Google Test is built as static lib.")
-@@ -192,15 +94,7 @@ if ((${DILIGENT_BUILD_GOOGLE_TEST}) AND (NOT TARGET gtest))
+@@ -192,15 +93,7 @@ if ((${DILIGENT_BUILD_GOOGLE_TEST}) AND (NOT TARGET gtest))
      endif()
  endif()
  

@@ -13,7 +13,7 @@ package("diligentcore")
 
     add_deps("pkgconf")
 
-    if is_plat("windows", "mingw", "linux", "macosx") then
+    if is_plat("windows", "linux") then
         add_configs("opengl",           {description = "Enable OpenGL/GLES backend", default = true, type = "boolean"})
     end
 
@@ -63,29 +63,33 @@ package("diligentcore")
         if package:config("shared") then
             package:add("defines", "ENGINE_DLL=1")
         end
+
         if package:config("opengl") then
             package:add("deps", "glew")
             if package:is_plat("macosx") then
                 package:add("frameworks", "OpenGL")
             end
-            if package:config("archiver") then
-                package:add("deps", "spirv-headers")
-            end
         end
+
         if package:config("metal") then
             package:add("frameworks", "Metal")
+        end
+
+        if package:config("vulkan") then
+            package:add("deps", "vulkan-headers")
+            package:add("deps", "volk", {header_only = true})
+        end
+
+        if package:config("vulkan") or package:config("metal") or (package:config("archiver") and package:config("opengl")) then
             package:add("deps", "spirv-headers")
         end
-        if package:config("vulkan") or package:config("hlsl") then
-            package:add("deps", "vulkan-headers")
-            if package:config("vulkan") and package:is_plat("windows", "linux", "macosx", "android") then
-                package:add("deps", "volk", {header_only = true})
-            end
-            package:add("deps", "spirv-headers")
+
+        if package:config("hlsl") then
             package:add("deps", "spirv-tools")
             package:add("deps", "glslang")
+            package:add("deps", "spirv-cross")
         end
-        package:add("deps", "spirv-cross")
+
     end)
 
     on_install("!bsd", function (package)
