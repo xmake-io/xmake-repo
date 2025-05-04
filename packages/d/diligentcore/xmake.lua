@@ -92,7 +92,7 @@ package("diligentcore")
 
     end)
 
-    on_install("!bsd", function (package)
+    on_install("!bsd and !iphoneos and !android", function (package)
         -- Dump CMakeLists.txt variables related for platform & rendering backend for package defines
         local CMakeLists_content = io.readfile("CMakeLists.txt")
         io.writefile("CMakeLists.txt", CMakeLists_content .. [[
