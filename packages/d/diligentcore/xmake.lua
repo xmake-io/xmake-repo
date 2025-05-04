@@ -7,7 +7,7 @@ package("diligentcore")
              "https://github.com/DiligentGraphics/DiligentCore.git", {submodules = false})
 
     add_versions("v2.5.6", "abc190c05ee7e5ef2bba52fcbc5fdfe2256cce3435efba9cfe263a386653f671")
-    add_patches("v2.5.6", "patches/build.diff", "fe5bd55e003abc45931319c5080786a16c5e584b3a1aab402a197cbd18ec4722")
+    add_patches("v2.5.6", "patches/build.diff", "65fa6291b0d08c93d5556ce2574e1608389b83dd10fc4c3f1b3b1869e6caac26")
 
     add_includedirs("include", "include/DiligentCore")
 
@@ -59,8 +59,6 @@ package("diligentcore")
         end
         if package:is_plat("windows") then
             package:add("defines", "NOMINMAX", "WIN32_LEAN_AND_MEAN", "UNICODE")
-        elseif package:is_plat("mingw") then
-            package:add("defines", "MINGW_BUILD")
         end
         if package:config("shared") then
             package:add("defines", "ENGINE_DLL=1")
@@ -93,7 +91,7 @@ package("diligentcore")
         end
     end)
 
-    on_install("!bsd and !iphoneos and !android and !wasm and !cross", function (package)
+    on_install("!bsd and !iphoneos and !android and !wasm and !cross and !mingw", function (package)
         -- Dump CMakeLists.txt variables related for platform & rendering backend for package defines
         local CMakeLists_content = io.readfile("CMakeLists.txt")
         io.writefile("CMakeLists.txt", CMakeLists_content .. [[
