@@ -65,6 +65,9 @@ package("diligentcore")
         end
         if package:config("opengl") then
             package:add("deps", "glew")
+            if package:is_plat("macosx") then
+                package:add("frameworks", "OpenGL")
+            end
             if package:config("archiver") then
                 package:add("deps", "spirv-headers")
             end
