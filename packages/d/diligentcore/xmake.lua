@@ -7,7 +7,7 @@ package("diligentcore")
              "https://github.com/DiligentGraphics/DiligentCore.git", {submodules = false})
 
     add_versions("v2.5.6", "abc190c05ee7e5ef2bba52fcbc5fdfe2256cce3435efba9cfe263a386653f671")
-    add_patches("v2.5.6", "patches/build.diff", "682937898a536f0dc988e5e7560092f8f00cb85afd14bc47a76b5dc361ea0f04")
+    add_patches("v2.5.6", "patches/build.diff", "183dbbfaca5fe579c65fb066cb6b5f23d5cb009d58db09554c5e4395a0c1257f")
 
     add_includedirs("include", "include/DiligentCore")
 
@@ -129,7 +129,7 @@ endforeach()
         table.insert(configs, "-DDILIGENT_NO_HLSL=" .. (package:config("hlsl") and "OFF" or "ON"))
         table.insert(configs, "-DDILIGENT_NO_FORMAT_VALIDATION=" .. (package:config("format_validation") and "OFF" or "ON"))
 
-        import("package.tools.cmake").install(package, configs) --, {packagedeps = {"glslang", "spirv-cross"}}
+        import("package.tools.cmake").install(package, configs)
 
         -- Gather missing defines into *data* so we could gather *data* for on_test
         local vars_file = path.join(package:buildir(), "variables.txt")
@@ -156,6 +156,12 @@ endforeach()
                 os.mv(dir, target_dir)
             end
         end
+        -- Move libs into install dirs
+        os.trycp("**.lib", package:installdir("lib"))
+        os.trycp("**.dll", package:installdir("bin"))
+        os.trycp("**.a", package:installdir("lib"))
+        os.trycp("**.so", package:installdir("bin"))
+        os.trycp("**.dylib", package:installdir("lib"))
     end)
 
     on_test(function (package)

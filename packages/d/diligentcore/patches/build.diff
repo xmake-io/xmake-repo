@@ -1,36 +1,24 @@
 diff --git a/BuildTools/CMake/BuildUtils.cmake b/BuildTools/CMake/BuildUtils.cmake
-index e97b96b..bf9d26e 100644
+index e97b96b..8555883 100644
 --- a/BuildTools/CMake/BuildUtils.cmake
 +++ b/BuildTools/CMake/BuildUtils.cmake
-@@ -292,14 +292,22 @@ function(install_core_lib _TARGET)
+@@ -292,6 +292,14 @@ function(install_core_lib _TARGET)
      if(TARGET_TYPE STREQUAL STATIC_LIBRARY)
          list(APPEND DILIGENT_CORE_INSTALL_LIBS_LIST ${_TARGET})
          set(DILIGENT_CORE_INSTALL_LIBS_LIST ${DILIGENT_CORE_INSTALL_LIBS_LIST} CACHE INTERNAL "Core libraries installation list")
 +        install(TARGETS                 ${_TARGET}
-+                ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-+                LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-+                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
++                ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
++                LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
++                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
 +        )
 +        if (DILIGENT_INSTALL_PDB)
-+            install(FILES $<TARGET_PDB_FILE:${_TARGET}> DESTINATION "${CMAKE_INSTALL_BINDIR}" OPTIONAL)
++            install(FILES $<TARGET_PDB_FILE:${_TARGET}> DESTINATION "${CMAKE_INSTALL_BINDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>" OPTIONAL)
 +        endif()
      elseif(TARGET_TYPE STREQUAL SHARED_LIBRARY)
          install(TARGETS                 ${_TARGET}
--                ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
--                LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
--                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
-+                ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-+                LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-+                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-         )
-         if (DILIGENT_INSTALL_PDB)
--            install(FILES $<TARGET_PDB_FILE:${_TARGET}> DESTINATION "${CMAKE_INSTALL_BINDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>" OPTIONAL)
-+            install(FILES $<TARGET_PDB_FILE:${_TARGET}> DESTINATION "${CMAKE_INSTALL_BINDIR}" OPTIONAL)
-         endif()
-     endif()
- 
+                 ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index fc3c5d8..ab09b3d 100644
+index fc3c5d8..625dae8 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -4,6 +4,7 @@ project(DiligentCore)
@@ -41,7 +29,7 @@ index fc3c5d8..ab09b3d 100644
  
  set_property(GLOBAL PROPERTY USE_FOLDERS ON)
  
-@@ -614,18 +615,17 @@ add_subdirectory(Primitives)
+@@ -614,7 +615,6 @@ add_subdirectory(Primitives)
  add_subdirectory(Platforms)
  add_subdirectory(Common)
  add_subdirectory(Graphics)
@@ -49,73 +37,74 @@ index fc3c5d8..ab09b3d 100644
  
  
  # Installation instructions
--if(DILIGENT_INSTALL_CORE)
-+if(DILIGENT_INSTALL_CORE AND NOT(BUILD_SHARED_LIBS))
- 
-     install_combined_static_lib(
-         "${CMAKE_STATIC_LIBRARY_PREFIX}DiligentCore${CMAKE_STATIC_LIBRARY_SUFFIX}"
-         "${DILIGENT_CORE_INSTALL_LIBS_LIST}"
-         DiligentCore-static                     # Custom target name
-         DiligentCore                            # Folder
--        "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"    # Install destination
-+        "${CMAKE_INSTALL_LIBDIR}"    # Install destination
-     )
- 
-     install(FILES License.txt DESTINATION "Licenses" RENAME DiligentEngine-License.txt)
 diff --git a/Graphics/Archiver/CMakeLists.txt b/Graphics/Archiver/CMakeLists.txt
-index 6af0f44..5954281 100644
+index 6af0f44..51df8fb 100644
 --- a/Graphics/Archiver/CMakeLists.txt
 +++ b/Graphics/Archiver/CMakeLists.txt
-@@ -138,14 +138,14 @@ if(GL_SUPPORTED OR GLES_SUPPORTED)
+@@ -138,14 +138,15 @@ if(GL_SUPPORTED OR GLES_SUPPORTED)
      target_include_directories(Diligent-Archiver-static PRIVATE ../GraphicsEngineOpenGL/include)
  
      if(PLATFORM_WIN32)
 -        target_link_libraries(Diligent-Archiver-static PRIVATE GLEW::glew opengl32.lib)
-+        target_link_libraries(Diligent-Archiver-static PRIVATE ${GLEW_STATIC_LIBRARY_RELEASE})
++        target_link_directories(Diligent-Archiver-static PRIVATE ${glew_LIBRARY_DIRS})
++        target_link_libraries(Diligent-Archiver-static PRIVATE ${glew_LIBRARIES})
      elseif(PLATFORM_LINUX)
          find_package(X11 REQUIRED)
-         find_package(OpenGL REQUIRED)
+-        find_package(OpenGL REQUIRED)
 -        target_link_libraries(Diligent-Archiver-static PRIVATE GLEW::glew OpenGL::GL X11::X11)
-+        target_link_libraries(Diligent-Archiver-static PRIVATE ${GLEW_STATIC_LIBRARY_RELEASE} X11::X11)
++        target_link_directories(Diligent-Archiver-static PRIVATE ${glew_LIBRARY_DIRS})
++        target_link_libraries(Diligent-Archiver-static PRIVATE ${glew_LIBRARIES} X11::X11)
      elseif(PLATFORM_MACOS)
-         find_package(OpenGL REQUIRED)
+-        find_package(OpenGL REQUIRED)
 -        target_link_libraries(Diligent-Archiver-static PRIVATE GLEW::glew OpenGL::GL)
-+        target_link_libraries(Diligent-Archiver-static PRIVATE ${GLEW_STATIC_LIBRARY_RELEASE})
++        target_link_directories(Diligent-Archiver-static PRIVATE ${glew_LIBRARY_DIRS})
++        target_link_libraries(Diligent-Archiver-static PRIVATE ${glew_LIBRARIES})
      elseif(PLATFORM_ANDROID)
          target_link_libraries(Diligent-Archiver-static PRIVATE GLESv3 EGL)
      elseif(PLATFORM_EMSCRIPTEN)
 diff --git a/Graphics/GraphicsEngineOpenGL/CMakeLists.txt b/Graphics/GraphicsEngineOpenGL/CMakeLists.txt
-index 839dad7..f9baa07 100644
+index 839dad7..ba0d716 100644
 --- a/Graphics/GraphicsEngineOpenGL/CMakeLists.txt
 +++ b/Graphics/GraphicsEngineOpenGL/CMakeLists.txt
 @@ -175,6 +175,7 @@ endif()
  target_include_directories(Diligent-GraphicsEngineOpenGL-static
  PRIVATE
      include
-+    ${GLEW_INCLUDE_DIR}
++    ${glew_INCLUDE_DIRS}
  )
  
  set(PRIVATE_DEPENDENCIES
-@@ -198,16 +199,14 @@ set(PUBLIC_DEPENDENCIES
+@@ -198,16 +199,17 @@ set(PUBLIC_DEPENDENCIES
  )
  
  if(PLATFORM_WIN32)
 -    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} GLEW::glew opengl32.lib)
-+    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${GLEW_STATIC_LIBRARY_RELEASE} opengl32)
++    target_link_directories(Diligent-GraphicsEngineOpenGL-static PRIVATE ${glew_LIBRARY_DIRS})
++    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${glew_LIBRARIES} opengl32)
  elseif(PLATFORM_ANDROID)
      set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} GLESv3 EGL)
  elseif(PLATFORM_LINUX)
      find_package(X11 REQUIRED)
 -    find_package(OpenGL REQUIRED)
 -    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} GLEW::glew OpenGL::GL X11::X11)
-+    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${GLEW_STATIC_LIBRARY_RELEASE} OpenGL::GL X11::X11)
++    target_link_directories(Diligent-GraphicsEngineOpenGL-static PRIVATE ${glew_LIBRARY_DIRS})
++    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${glew_LIBRARIES} OpenGL::GL X11::X11)
  elseif(PLATFORM_MACOS)
 -    find_package(OpenGL REQUIRED)
 -    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} GLEW::glew OpenGL::GL)
-+    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${GLEW_STATIC_LIBRARY_RELEASE} OpenGL::GL)
++    target_link_directories(Diligent-GraphicsEngineOpenGL-static PRIVATE ${glew_LIBRARY_DIRS})
++    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${glew_LIBRARIES} OpenGL::GL)
  elseif(PLATFORM_IOS)
      set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${OPENGLES})
  elseif(PLATFORM_EMSCRIPTEN)
+@@ -264,6 +266,7 @@ PUBLIC
+     ${PUBLIC_DEPENDENCIES}
+ )
+ 
++target_link_directories(Diligent-GraphicsEngineOpenGL-shared PRIVATE ${glew_LIBRARY_DIRS})
+ target_compile_definitions(Diligent-GraphicsEngineOpenGL-shared PUBLIC ENGINE_DLL=1)
+ if(PLATFORM_MACOS)
+     # Silence OpenGL deprecation warnings
 diff --git a/Graphics/GraphicsTools/CMakeLists.txt b/Graphics/GraphicsTools/CMakeLists.txt
 index c7f8706..282bfde 100644
 --- a/Graphics/GraphicsTools/CMakeLists.txt
@@ -138,7 +127,7 @@ index c7f8706..282bfde 100644
  PUBLIC
      Diligent-GraphicsEngineInterface
 diff --git a/ThirdParty/CMakeLists.txt b/ThirdParty/CMakeLists.txt
-index 00670f0..349eb4d 100644
+index 00670f0..6969b2d 100644
 --- a/ThirdParty/CMakeLists.txt
 +++ b/ThirdParty/CMakeLists.txt
 @@ -6,132 +6,47 @@ cmake_minimum_required (VERSION 3.11)
@@ -157,7 +146,7 @@ index 00670f0..349eb4d 100644
 -    install(FILES glew/LICENSE.txt DESTINATION "Licenses/ThirdParty/${DILIGENT_CORE_DIR}" RENAME GLEW-License.txt)
 +if (GL_SUPPORTED AND (PLATFORM_WIN32 OR PLATFORM_LINUX OR PLATFORM_MACOS) AND (NOT opengl_FOUND) AND (NOT glew_FOUND))
 +    find_package(opengl REQUIRED)
-+    find_package(glew REQUIRED)
++    pkg_check_modules(glew REQUIRED glew)
  endif()
  
  if (VULKAN_SUPPORTED)
