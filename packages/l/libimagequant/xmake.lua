@@ -6,6 +6,7 @@ package("libimagequant")
 
     add_urls("https://github.com/ImageOptim/libimagequant/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ImageOptim/libimagequant.git")
+    add_versions("4.3.4", "b86f4ac0eb707af88b0a000e2e2409e399c6969c9d0d988efafaff138cebaf96")
     add_versions("2.15.1", "3a9548f99be8c3b20a5d9407d0ca95bae8b0fb424a2735a87cb6cf3fdd028225")
 
     add_configs("sse", {description = "Use SSE.", default = true, type = "boolean"})
