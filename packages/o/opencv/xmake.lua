@@ -77,7 +77,7 @@ package("opencv")
         end
     end)
 
-    on_load("linux", "macosx", "windows", "mingw@windows,msys", function (package)
+    on_load("android", "linux", "macosx", "windows", "mingw@windows,msys", function (package)
         if package:is_plat("windows") then
             local arch = "x64"
             if     package:is_arch("x86")   then arch = "x86"
@@ -97,6 +97,10 @@ package("opencv")
             local arch = (package:is_arch("x86_64") and "x64" or "x86")
             local linkdir = (package:config("shared") and "lib" or "staticlib")
             package:add("linkdirs", path.join(arch, "mingw", linkdir))
+        elseif package:is_plat("android") then
+            local arch = package:targetarch()
+            local linkdir = (package:config("shared") and "lib" or "staticlibs")
+            package:add("linkdirs", path.join("sdk/native", linkdir, package:targetarch()))
         elseif package:version():ge("4.0") then
             package:add("includedirs", "include/opencv4")
             package:add("linkdirs", "lib", "lib/opencv4/3rdparty")
@@ -136,7 +140,7 @@ package("opencv")
         end)
     end
 
-    on_install("linux", "macosx", "windows", "mingw@windows,msys", function (package)
+    on_install("android", "linux", "macosx", "windows", "mingw@windows,msys", function (package)
         io.replace("cmake/OpenCVUtils.cmake", "if(PKG_CONFIG_FOUND OR PkgConfig_FOUND)", "if(NOT WIN32 AND (PKG_CONFIG_FOUND OR PkgConfig_FOUND))", {plain = true})
         local configs = {"-DCMAKE_OSX_DEPLOYMENT_TARGET=",
                          "-DBUILD_PERF_TESTS=OFF",
@@ -179,8 +183,18 @@ package("opencv")
                 table.insert(configs, "-DCMAKE_SYSTEM_NAME=Darwin")
             elseif package:is_plat("linux") then
                 table.insert(configs, "-DCMAKE_SYSTEM_NAME=Linux")
+            elseif package:is_plat("android") then
+                table.insert(configs, "-DCMAKE_SYSTEM_NAME=Android")
+                -- from https://github.com/opencv/opencv/issues/15769#issuecomment-549570072
+                table.insert(configs, "-DBUILD_ANDROID_EXAMPLES=OFF")
             end
-            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. package:targetarch())
+
+            -- In case of android we prefer to set CMAKE_ANDROID_ARCH_ABI rather than CMAKE_SYSTEM_PROCESSOR
+            if package:is_plat("android") then
+                table.insert(configs, "-DCMAKE_ANDROID_ARCH_ABI=" .. package:targetarch())
+            else
+                table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. package:targetarch())
+            end
         end
         local resourcedir = package:resourcedir("opencv_contrib")
         if resourcedir then
@@ -223,7 +237,18 @@ package("opencv")
             end
             package:add("links", reallink)
         end
-        if package:is_plat("windows") then
+        if package:is_plat("android") then
+            local linkdir = (package:config("shared") and "lib" or "staticlibs")
+            local libfiles = {}
+            table.join2(libfiles, os.files(path.join(package:installdir(), "sdk/native", linkdir, package:targetarch(), "lib*.a")))
+            for _, f in ipairs(libfiles) do
+                if f:match("libopencv_.+") then
+                    package:add("links", path.basename(f))
+                end
+            end
+            package:addenv("PATH", "bin")
+
+        elseif package:is_plat("windows") then
             local arch = "x64"
             if     package:is_arch("x86")   then arch = "x86"
             elseif package:is_arch("arm64") then arch = "ARM64"
