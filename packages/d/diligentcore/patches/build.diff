@@ -30,18 +30,10 @@ index e97b96b..bf9d26e 100644
      endif()
  
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index fc3c5d8..7548499 100644
+index fc3c5d8..9edc6a4 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -4,6 +4,7 @@ project(DiligentCore)
- 
- # Define GNU standard installation directories such as CMAKE_INSTALL_INCLUDEDIR, CMAKE_INSTALL_LIBDIR, etc.
- include(GNUInstallDirs)
-+include(FindPkgConfig)
- 
- set_property(GLOBAL PROPERTY USE_FOLDERS ON)
- 
-@@ -614,7 +615,6 @@ add_subdirectory(Primitives)
+@@ -614,7 +614,6 @@ add_subdirectory(Primitives)
  add_subdirectory(Platforms)
  add_subdirectory(Common)
  add_subdirectory(Graphics)
@@ -49,7 +41,7 @@ index fc3c5d8..7548499 100644
  
  
  # Installation instructions
-@@ -625,7 +625,7 @@ if(DILIGENT_INSTALL_CORE)
+@@ -625,7 +624,7 @@ if(DILIGENT_INSTALL_CORE)
          "${DILIGENT_CORE_INSTALL_LIBS_LIST}"
          DiligentCore-static                     # Custom target name
          DiligentCore                            # Folder
@@ -319,10 +311,10 @@ index 5ef3acb..d55f41f 100644
  
  target_include_directories(Diligent-Win32Platform
 diff --git a/ThirdParty/CMakeLists.txt b/ThirdParty/CMakeLists.txt
-index 00670f0..8cb4926 100644
+index 00670f0..5486b48 100644
 --- a/ThirdParty/CMakeLists.txt
 +++ b/ThirdParty/CMakeLists.txt
-@@ -6,132 +6,49 @@ cmake_minimum_required (VERSION 3.11)
+@@ -6,132 +6,48 @@ cmake_minimum_required (VERSION 3.11)
  # instead:
  set(CMAKE_POLICY_DEFAULT_CMP0063 NEW)
  
@@ -336,6 +328,8 @@ index 00670f0..8cb4926 100644
 -        )
 -    endif()
 -    install(FILES glew/LICENSE.txt DESTINATION "Licenses/ThirdParty/${DILIGENT_CORE_DIR}" RENAME GLEW-License.txt)
++include(FindPkgConfig)
++
 +if (GL_SUPPORTED AND (PLATFORM_WIN32 OR PLATFORM_LINUX OR PLATFORM_MACOS) AND (NOT glew_FOUND))
 +    pkg_check_modules(glew REQUIRED glew)
  endif()
@@ -366,7 +360,7 @@ index 00670f0..8cb4926 100644
 -        set(SPIRV-Headers_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/SPIRV-Headers")
 -        target_include_directories(SPIRV-Headers INTERFACE "${SPIRV-Headers_SOURCE_DIR}/include")
 -        install(FILES "${SPIRV-Headers_SOURCE_DIR}/LICENSE" DESTINATION "Licenses/ThirdParty/${DILIGENT_CORE_DIR}" RENAME SPIRV-Headers-License.txt)
-+    if (NOT spirv-headers_FOUND)
++    if (NOT SPIRV-Headers_FOUND)
 +        pkg_check_modules(SPIRV-Headers REQUIRED SPIRV-Headers)
      endif()
  
@@ -451,10 +445,7 @@ index 00670f0..8cb4926 100644
 -        endif()
 -
 -        install(FILES "${SPIRV-Cross_SOURCE_DIR}/LICENSE" DESTINATION "Licenses/ThirdParty/${DILIGENT_CORE_DIR}" RENAME SPIRV-Cross-License.txt)
-+    if ((NOT spirv_cross_glsl_FOUND) OR (NOT spirv_cross_msl_FOUND) OR (NOT spirv_cross_core_FOUND))
-+        #find_package(spirv_cross_core REQUIRED)
-+        #find_package(spirv_cross_glsl REQUIRED)
-+        #find_package(spirv_cross_msl REQUIRED)
++    if (NOT spirv-cross-c_FOUND)
 +        pkg_check_modules(spirv-cross-c REQUIRED spirv-cross-c)
      endif()
  
@@ -475,7 +466,7 @@ index 00670f0..8cb4926 100644
          foreach(TARGET ${THIRD_PARTY_LIBS}) 
              if (${DILIGENT_IMPROVE_SPIRV_TOOLS_DEBUG_PERF})
                  # Enable function inlining (/Ob1) in Debug build to improve shader compilation performance
-@@ -144,34 +61,21 @@ if (VULKAN_SUPPORTED OR METAL_SUPPORTED OR WEBGPU_SUPPORTED OR (ARCHIVER_SUPPORT
+@@ -144,34 +60,21 @@ if (VULKAN_SUPPORTED OR METAL_SUPPORTED OR WEBGPU_SUPPORTED OR (ARCHIVER_SUPPORT
          endforeach()
      endif()
  
@@ -500,9 +491,10 @@ index 00670f0..8cb4926 100644
 +    pkg_check_modules(volk REQUIRED volk)
  endif()
  
- if (WEBGPU_SUPPORTED)
+-if (WEBGPU_SUPPORTED)
 -    add_subdirectory(abseil-cpp EXCLUDE_FROM_ALL)
 -    set_directory_root_folder("abseil-cpp" "DiligentCore/ThirdParty")
++if (WEBGPU_SUPPORTED AND ((NOT abseil_FOUND) OR (NOT dawn_FOUND)))
 +    pkg_check_modules(abseil REQUIRED abseil)
  
 -    add_subdirectory(dawn EXCLUDE_FROM_ALL)
@@ -515,7 +507,7 @@ index 00670f0..8cb4926 100644
      set(INSTALL_GTEST OFF CACHE BOOL "Do not install googletest")
      set(BUILD_GMOCK OFF CACHE BOOL "Do not build gmock")
      set(gtest_force_shared_crt ON CACHE BOOL "Use shared (DLL) run-time lib even when Google Test is built as static lib.")
-@@ -192,15 +96,7 @@ if ((${DILIGENT_BUILD_GOOGLE_TEST}) AND (NOT TARGET gtest))
+@@ -192,15 +95,7 @@ if ((${DILIGENT_BUILD_GOOGLE_TEST}) AND (NOT TARGET gtest))
      endif()
  endif()
  
