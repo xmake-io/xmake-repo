@@ -51,10 +51,28 @@ index fc3c5d8..9edc6a4 100644
  
      install(FILES License.txt DESTINATION "Licenses" RENAME DiligentEngine-License.txt)
 diff --git a/Graphics/Archiver/CMakeLists.txt b/Graphics/Archiver/CMakeLists.txt
-index 6af0f44..b9254e7 100644
+index 6af0f44..6b91db4 100644
 --- a/Graphics/Archiver/CMakeLists.txt
 +++ b/Graphics/Archiver/CMakeLists.txt
-@@ -135,17 +135,18 @@ if(GL_SUPPORTED OR GLES_SUPPORTED)
+@@ -88,9 +88,16 @@ PRIVATE
+     ../GraphicsEngineNextGenBase/include
+ )
+ 
++if (NOT DILIGENT_NO_GLSLANG)
++    target_include_directories(Diligent-Archiver-static
++    PRIVATE
++        ${spirv-cross-c_INCLUDEDIR}
++    )
++endif()
++
+ target_compile_definitions(Diligent-Archiver-static
+ PRIVATE
+-    DILIGENT_NO_GLSLANG=$<BOOL:$<NOT:$<TARGET_EXISTS:glslang>>>
++    DILIGENT_NO_GLSLANG=$<BOOL:${DILIGENT_NO_GLSLANG}>
+ )
+ if(DEFINED DILIGENT_CORE_COMMIT_HASH)
+     target_compile_definitions(Diligent-Archiver-static PRIVATE DILIGENT_CORE_COMMIT_HASH="${DILIGENT_CORE_COMMIT_HASH}")
+@@ -135,17 +142,18 @@ if(GL_SUPPORTED OR GLES_SUPPORTED)
          spirv-cross-core
          spirv-cross-glsl
      )
@@ -79,7 +97,7 @@ index 6af0f44..b9254e7 100644
      elseif(PLATFORM_ANDROID)
          target_link_libraries(Diligent-Archiver-static PRIVATE GLESv3 EGL)
      elseif(PLATFORM_EMSCRIPTEN)
-@@ -176,6 +177,18 @@ if(WEBGPU_SUPPORTED)
+@@ -176,12 +184,28 @@ if(WEBGPU_SUPPORTED)
      )
  endif()
  
@@ -95,9 +113,35 @@ index 6af0f44..b9254e7 100644
 +    target_link_directories(Diligent-Archiver-shared PRIVATE ${glslang_LIBDIR})
 +endif()
 +
++if (NOT DILIGENT_NO_GLSLANG)
++    target_link_directories(Diligent-Archiver-shared PRIVATE ${SPIRV-Tools_LIBDIR})
++endif()
++
  target_link_libraries(Diligent-Archiver-shared
  PUBLIC
      Diligent-ArchiverInterface
+ PRIVATE
+     Diligent-BuildSettings
+-    ${WHOLE_ARCHIVE_FLAG} Diligent-Archiver-static ${NO_WHOLE_ARCHIVE_FLAG}
++    ${WHOLE_ARCHIVE_FLAG} Diligent-Archiver-static ${NO_WHOLE_ARCHIVE_FLAG} $<$<NOT:$<BOOL:${DILIGENT_NO_GLSLANG}>>:${SPIRV-Tools_LIBRARIES}>
+ )
+ 
+ if(PLATFORM_WIN32)
+diff --git a/Graphics/Archiver/src/Archiver_Inc.hpp b/Graphics/Archiver/src/Archiver_Inc.hpp
+index 36b9f89..40fbbdb 100644
+--- a/Graphics/Archiver/src/Archiver_Inc.hpp
++++ b/Graphics/Archiver/src/Archiver_Inc.hpp
+@@ -33,7 +33,9 @@
+ #include <algorithm>
+ 
+ #include "PSOSerializer.hpp"
+-
++#if !DILIGENT_NO_GLSLANG
++#include "SPIRVShaderResources.hpp" // required for diligent_spirv_cross
++#endif
+ namespace Diligent
+ {
+ 
 diff --git a/Graphics/GraphicsEngineD3D11/CMakeLists.txt b/Graphics/GraphicsEngineD3D11/CMakeLists.txt
 index adef784..38d7036 100644
 --- a/Graphics/GraphicsEngineD3D11/CMakeLists.txt

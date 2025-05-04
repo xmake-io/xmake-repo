@@ -7,7 +7,7 @@ package("diligentcore")
              "https://github.com/DiligentGraphics/DiligentCore.git", {submodules = false})
 
     add_versions("v2.5.6", "abc190c05ee7e5ef2bba52fcbc5fdfe2256cce3435efba9cfe263a386653f671")
-    add_patches("v2.5.6", "patches/build.diff", "484fe2759fcf088dcec464723d6339d9a059aa40d3eefcfb1fde0df6d9590c95")
+    add_patches("v2.5.6", "patches/build.diff", "498b971d3ad6c0805e620c2788f13445c25f89f4a1762a0d5757a14bd37edd30")
 
     add_includedirs("include", "include/DiligentCore")
 
@@ -22,18 +22,12 @@ package("diligentcore")
         add_configs("d3d12",            {description = "Enable Direct3D12 backend", default = true, type = "boolean"})
     end
 
-    if is_plat("macosx", "iphoneos") then
-        add_configs("metal",            {description = "Enable Metal backend", default = false, type = "boolean"})
-    end
-
     add_configs("vulkan",               {description = "Enable Vulkan backend", default = false, type = "boolean"})
 
     add_configs("hlsl",                 {description = "Enable HLSL", default = true, type = "boolean"})
+    add_configs("glslang",              {description = "Enable GLSLang", default = true, type = "boolean"})
     add_configs("archiver",             {description = "Enable archiver", default = true, type = "boolean"})
     add_configs("format_validation",    {description = "Enable format validation", default = false, type = "boolean"})
-
-    add_configs("x11",                  {description = "Build support for X11", default = true, type = "boolean"})
-    add_configs("wayland",              {description = "Build support for Wayland", default = false, type = "boolean"})
 
     if is_plat("linux") then
         add_syslinks("pthread", "dl")
@@ -48,15 +42,11 @@ package("diligentcore")
     add_deps("cmake")
     add_deps("xxhash")
 
+    if is_plat("linux") then
+        add_deps("libx11", "libxrandr", "libxrender", "libxinerama", "libxfixes", "libxcursor", "libxi", "libxext", "wayland")
+    end
+
     on_load(function (package)
-        if package:is_plat("linux") then
-            if package:config("x11") then
-                package:add("deps", "libx11", "libxrandr", "libxrender", "libxinerama", "libxfixes", "libxcursor", "libxi", "libxext")
-            end
-            if package:config("wayland") then
-                package:add("deps", "wayland")
-            end
-        end
         if package:is_plat("windows") then
             package:add("defines", "NOMINMAX", "WIN32_LEAN_AND_MEAN", "UNICODE")
         end
@@ -71,10 +61,6 @@ package("diligentcore")
             end
         end
 
-        if package:config("metal") then
-            package:add("frameworks", "Metal")
-        end
-
         if package:config("vulkan") then
             package:add("deps", "vulkan-headers")
             package:add("deps", "volk", {header_only = true})
@@ -84,7 +70,7 @@ package("diligentcore")
             package:add("deps", "spirv-headers")
         end
 
-        if package:config("hlsl") or package:config("archiver") then
+        if package:config("hlsl") or package:config("archiver") or package:config("glslang") then
             package:add("deps", "spirv-tools")
             package:add("deps", "glslang")
         end
@@ -92,7 +78,7 @@ package("diligentcore")
         package:add("deps", "spirv-cross")
     end)
 
-    on_install("!bsd and !iphoneos and !android and !wasm and !cross and !mingw", function (package)
+    on_install("windows", "linux", "macosx", function (package)
         -- Dump CMakeLists.txt variables related for platform & rendering backend for package defines
         local CMakeLists_content = io.readfile("CMakeLists.txt")
         io.writefile("CMakeLists.txt", CMakeLists_content .. [[
@@ -129,11 +115,11 @@ endforeach()
         table.insert(configs, "-DDILIGENT_NO_DIRECT3D11=" .. (package:config("d3d11") and "OFF" or "ON"))
         table.insert(configs, "-DDILIGENT_NO_DIRECT3D12=" .. (package:config("d3d12") and "OFF" or "ON"))
 
-        table.insert(configs, "-DDILIGENT_NO_METAL=" .. (package:config("metal") and "OFF" or "ON"))
         table.insert(configs, "-DDILIGENT_NO_VULKAN=" .. (package:config("vulkan") and "OFF" or "ON"))
 
         table.insert(configs, "-DDILIGENT_NO_ARCHIVER=" .. (package:config("archiver") and "OFF" or "ON"))
         table.insert(configs, "-DDILIGENT_NO_HLSL=" .. (package:config("hlsl") and "OFF" or "ON"))
+        table.insert(configs, "-DDILIGENT_NO_GLSLANG=" .. (package:config("glslang") and "OFF" or "ON"))
         table.insert(configs, "-DDILIGENT_NO_FORMAT_VALIDATION=" .. (package:config("format_validation") and "OFF" or "ON"))
 
         import("package.tools.cmake").install(package, configs)
