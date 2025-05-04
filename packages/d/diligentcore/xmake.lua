@@ -91,7 +91,6 @@ package("diligentcore")
             package:add("deps", "glslang")
             package:add("deps", "spirv-cross")
         end
-
     end)
 
     on_install("!bsd and !iphoneos and !android and !wasm and !cross", function (package)
