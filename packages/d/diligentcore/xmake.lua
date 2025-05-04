@@ -7,7 +7,7 @@ package("diligentcore")
              "https://github.com/DiligentGraphics/DiligentCore.git", {submodules = false})
 
     add_versions("v2.5.6", "abc190c05ee7e5ef2bba52fcbc5fdfe2256cce3435efba9cfe263a386653f671")
-    add_patches("v2.5.6", "patches/build.diff", "183dbbfaca5fe579c65fb066cb6b5f23d5cb009d58db09554c5e4395a0c1257f")
+    add_patches("v2.5.6", "patches/build.diff", "02d41f3fe094ee606cc1cb15715681aee0ed49e20e1d98234bf3dbc592b0ee73")
 
     add_includedirs("include", "include/DiligentCore")
 
@@ -18,8 +18,8 @@ package("diligentcore")
     end
 
     if is_plat("windows") then
-        add_configs("d3d11",            {description = "Enable Direct3D11 backend", default = false, type = "boolean"})
-        add_configs("d3d12",            {description = "Enable Direct3D12 backend", default = false, type = "boolean"})
+        add_configs("d3d11",            {description = "Enable Direct3D11 backend", default = true, type = "boolean"})
+        add_configs("d3d12",            {description = "Enable Direct3D12 backend", default = true, type = "boolean"})
     end
 
     if is_plat("macosx", "iphoneos") then

@@ -126,6 +126,19 @@ index c7f8706..282bfde 100644
      ${DEPENDENCIES}
  PUBLIC
      Diligent-GraphicsEngineInterface
+diff --git a/Platforms/Win32/CMakeLists.txt b/Platforms/Win32/CMakeLists.txt
+index 5ef3acb..d55f41f 100644
+--- a/Platforms/Win32/CMakeLists.txt
++++ b/Platforms/Win32/CMakeLists.txt
+@@ -16,7 +16,7 @@ set(SOURCE
+     src/Win32PlatformMisc.cpp
+ )
+ 
+-add_library(Diligent-Win32Platform ${SOURCE} ${INTERFACE} ${PLATFORM_INTERFACE_HEADERS})
++add_library(Diligent-Win32Platform STATIC ${SOURCE} ${INTERFACE} ${PLATFORM_INTERFACE_HEADERS})
+ set_common_target_properties(Diligent-Win32Platform)
+ 
+ target_include_directories(Diligent-Win32Platform
 diff --git a/ThirdParty/CMakeLists.txt b/ThirdParty/CMakeLists.txt
 index 00670f0..6969b2d 100644
 --- a/ThirdParty/CMakeLists.txt
