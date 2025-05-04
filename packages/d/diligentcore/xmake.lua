@@ -13,7 +13,7 @@ package("diligentcore")
 
     add_deps("pkgconf")
 
-    if is_plat("windows", "linux", "mingw", "macosx", "android", "iphoneos") then
+    if is_plat("windows", "linux", "mingw", "macosx") then
         add_configs("opengl",           {description = "Enable OpenGL/GLES backend", default = true, type = "boolean"})
     end
 
