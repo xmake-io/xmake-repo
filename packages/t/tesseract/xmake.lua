@@ -6,6 +6,7 @@ package("tesseract")
 
     add_urls("https://github.com/tesseract-ocr/tesseract/archive/refs/tags/$(version).tar.gz",
              "https://github.com/tesseract-ocr/tesseract.git")
+    add_versions("5.4.1", "c4bc2a81c12a472f445b7c2fb4705a08bd643ef467f51ec84f0e148bd368051b")
     add_versions("4.1.1", "2a66ff0d8595bff8f04032165e6c936389b1e5727c3ce5a27b3e059d218db1cb")
     add_versions("4.1.3", "83dc56b544be938983f528c777e4e1d906205b0f6dc0110afc223f2cc1cec6d3")
     add_versions("5.0.1", "b5b0e561650ed67feb1e9de38d4746121d302ae4c876c95b99b8b6f9f89d5c58")
