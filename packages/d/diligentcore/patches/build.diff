@@ -1,24 +1,36 @@
 diff --git a/BuildTools/CMake/BuildUtils.cmake b/BuildTools/CMake/BuildUtils.cmake
-index e97b96b..8555883 100644
+index e97b96b..bf9d26e 100644
 --- a/BuildTools/CMake/BuildUtils.cmake
 +++ b/BuildTools/CMake/BuildUtils.cmake
-@@ -292,6 +292,14 @@ function(install_core_lib _TARGET)
+@@ -292,14 +292,22 @@ function(install_core_lib _TARGET)
      if(TARGET_TYPE STREQUAL STATIC_LIBRARY)
          list(APPEND DILIGENT_CORE_INSTALL_LIBS_LIST ${_TARGET})
          set(DILIGENT_CORE_INSTALL_LIBS_LIST ${DILIGENT_CORE_INSTALL_LIBS_LIST} CACHE INTERNAL "Core libraries installation list")
 +        install(TARGETS                 ${_TARGET}
-+                ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
-+                LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
-+                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
++                ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++                LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
 +        )
 +        if (DILIGENT_INSTALL_PDB)
-+            install(FILES $<TARGET_PDB_FILE:${_TARGET}> DESTINATION "${CMAKE_INSTALL_BINDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>" OPTIONAL)
++            install(FILES $<TARGET_PDB_FILE:${_TARGET}> DESTINATION "${CMAKE_INSTALL_BINDIR}" OPTIONAL)
 +        endif()
      elseif(TARGET_TYPE STREQUAL SHARED_LIBRARY)
          install(TARGETS                 ${_TARGET}
-                 ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
+-                ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
+-                LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
+-                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
++                ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++                LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+         )
+         if (DILIGENT_INSTALL_PDB)
+-            install(FILES $<TARGET_PDB_FILE:${_TARGET}> DESTINATION "${CMAKE_INSTALL_BINDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>" OPTIONAL)
++            install(FILES $<TARGET_PDB_FILE:${_TARGET}> DESTINATION "${CMAKE_INSTALL_BINDIR}" OPTIONAL)
+         endif()
+     endif()
+ 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index fc3c5d8..625dae8 100644
+index fc3c5d8..7548499 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -4,6 +4,7 @@ project(DiligentCore)
@@ -37,6 +49,15 @@ index fc3c5d8..625dae8 100644
  
  
  # Installation instructions
+@@ -625,7 +625,7 @@ if(DILIGENT_INSTALL_CORE)
+         "${DILIGENT_CORE_INSTALL_LIBS_LIST}"
+         DiligentCore-static                     # Custom target name
+         DiligentCore                            # Folder
+-        "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"    # Install destination
++        "${CMAKE_INSTALL_LIBDIR}"    # Install destination
+     )
+ 
+     install(FILES License.txt DESTINATION "Licenses" RENAME DiligentEngine-License.txt)
 diff --git a/Graphics/Archiver/CMakeLists.txt b/Graphics/Archiver/CMakeLists.txt
 index 6af0f44..51df8fb 100644
 --- a/Graphics/Archiver/CMakeLists.txt
@@ -63,7 +84,7 @@ index 6af0f44..51df8fb 100644
          target_link_libraries(Diligent-Archiver-static PRIVATE GLESv3 EGL)
      elseif(PLATFORM_EMSCRIPTEN)
 diff --git a/Graphics/GraphicsEngineOpenGL/CMakeLists.txt b/Graphics/GraphicsEngineOpenGL/CMakeLists.txt
-index 839dad7..ba0d716 100644
+index 839dad7..2c2cfa0 100644
 --- a/Graphics/GraphicsEngineOpenGL/CMakeLists.txt
 +++ b/Graphics/GraphicsEngineOpenGL/CMakeLists.txt
 @@ -175,6 +175,7 @@ endif()
@@ -80,7 +101,7 @@ index 839dad7..ba0d716 100644
  if(PLATFORM_WIN32)
 -    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} GLEW::glew opengl32.lib)
 +    target_link_directories(Diligent-GraphicsEngineOpenGL-static PRIVATE ${glew_LIBRARY_DIRS})
-+    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${glew_LIBRARIES} opengl32)
++    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${glew_LIBRARIES})
  elseif(PLATFORM_ANDROID)
      set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} GLESv3 EGL)
  elseif(PLATFORM_LINUX)
@@ -88,12 +109,12 @@ index 839dad7..ba0d716 100644
 -    find_package(OpenGL REQUIRED)
 -    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} GLEW::glew OpenGL::GL X11::X11)
 +    target_link_directories(Diligent-GraphicsEngineOpenGL-static PRIVATE ${glew_LIBRARY_DIRS})
-+    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${glew_LIBRARIES} OpenGL::GL X11::X11)
++    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${glew_LIBRARIES} X11::X11)
  elseif(PLATFORM_MACOS)
 -    find_package(OpenGL REQUIRED)
 -    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} GLEW::glew OpenGL::GL)
 +    target_link_directories(Diligent-GraphicsEngineOpenGL-static PRIVATE ${glew_LIBRARY_DIRS})
-+    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${glew_LIBRARIES} OpenGL::GL)
++    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${glew_LIBRARIES})
  elseif(PLATFORM_IOS)
      set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${OPENGLES})
  elseif(PLATFORM_EMSCRIPTEN)

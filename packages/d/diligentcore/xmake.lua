@@ -7,7 +7,7 @@ package("diligentcore")
              "https://github.com/DiligentGraphics/DiligentCore.git", {submodules = false})
 
     add_versions("v2.5.6", "abc190c05ee7e5ef2bba52fcbc5fdfe2256cce3435efba9cfe263a386653f671")
-    add_patches("v2.5.6", "patches/build.diff", "02d41f3fe094ee606cc1cb15715681aee0ed49e20e1d98234bf3dbc592b0ee73")
+    add_patches("v2.5.6", "patches/build.diff", "457b9f9a48c04f247f513c8bac56188067c88e1ac355b0144aeb15849a90916e")
 
     add_includedirs("include", "include/DiligentCore")
 
@@ -156,12 +156,6 @@ endforeach()
                 os.mv(dir, target_dir)
             end
         end
-        -- Move libs into install dirs
-        os.trycp("**.lib", package:installdir("lib"))
-        os.trycp("**.dll", package:installdir("bin"))
-        os.trycp("**.a", package:installdir("lib"))
-        os.trycp("**.so", package:installdir("bin"))
-        os.trycp("**.dylib", package:installdir("lib"))
     end)
 
     on_test(function (package)
