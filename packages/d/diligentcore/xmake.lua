@@ -30,7 +30,7 @@ package("diligentcore")
 
     add_configs("hlsl",                 {description = "Enable HLSL", default = false, type = "boolean"})
     add_configs("archiver",             {description = "Enable archiver", default = false, type = "boolean"})
-    add_configs("format_validation",    {description = "Enable format validation", default = true, type = "boolean"})
+    add_configs("format_validation",    {description = "Enable format validation", default = false, type = "boolean"})
 
     add_configs("x11",                  {description = "Build support for X11", default = true, type = "boolean"})
     add_configs("wayland",              {description = "Build support for Wayland", default = false, type = "boolean"})
