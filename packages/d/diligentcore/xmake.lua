@@ -18,8 +18,8 @@ package("diligentcore")
     end
 
     if is_plat("windows") then
-        add_configs("d3d11",            {description = "Enable Direct3D11 backend", default = false, type = "boolean"})
-        add_configs("d3d12",            {description = "Enable Direct3D12 backend", default = false, type = "boolean"})
+        add_configs("d3d11",            {description = "Enable Direct3D11 backend", default = true, type = "boolean"})
+        add_configs("d3d12",            {description = "Enable Direct3D12 backend", default = true, type = "boolean"})
     end
 
     if is_plat("macosx", "iphoneos") then
