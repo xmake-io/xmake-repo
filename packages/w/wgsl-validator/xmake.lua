@@ -13,9 +13,7 @@ package("wgsl-validator")
     add_deps("rust")
 
     on_load("windows", function (package)
-        if not package:config("shared") then
-            package:add("syslinks", "Advapi32", "User32", "Userenv", "WS2_32", "RuntimeObject", "NtDll")
-        end
+        package:add("syslinks", "Advapi32", "User32", "Userenv", "WS2_32", "RuntimeObject", "NtDll")
     end)
 
     on_install("windows", "linux", "macosx", function (package)
@@ -24,15 +22,11 @@ package("wgsl-validator")
             add_requires("cargo::naga latest", { configs = { features = "wgsl-in" } })
 
             target("wgsl-validator")
-                set_kind("$(kind)")
+                set_kind("static")
                 set_toolchains("rust@rust")
                 add_files("src/lib.rs")
                 add_headerfiles("ffi/*.h")
-                if is_kind("shared") then
-                    set_values("rust.cratetype", "cdylib")
-                else
-                    set_values("rust.cratetype", "staticlib")
-                end
+                set_values("rust.cratetype", "staticlib")
                 add_packages("cargo::naga")
         ]])
         import("package.tools.xmake").install(package, configs)
