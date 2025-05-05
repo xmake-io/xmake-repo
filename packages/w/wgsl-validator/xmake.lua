@@ -3,8 +3,6 @@ package("wgsl-validator")
     set_description("WGSL validator in Rust with C bindings.")
     set_license("MIT")
 
-    add_urls("https://github.com/NazaraEngine/wgsl-validator.git")
-
     add_urls("https://github.com/NazaraEngine/wgsl-validator/archive/refs/tags/$(version).tar.gz",
              "https://github.com/NazaraEngine/wgsl-validator.git")
 
@@ -12,11 +10,11 @@ package("wgsl-validator")
 
     add_deps("rust")
 
-    on_load("windows", function (package)
-        package:add("syslinks", "Advapi32", "User32", "Userenv", "WS2_32", "RuntimeObject", "NtDll")
-    end)
+    if is_plat("windows", "mingw") then
+        add_syslinks("Advapi32", "User32", "Userenv", "WS2_32", "RuntimeObject", "NtDll")
+    end
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install(function (package)
         io.writefile("xmake.lua", [[
             add_requires("rust")
             add_requires("cargo::naga latest", { configs = { features = "wgsl-in" } })
