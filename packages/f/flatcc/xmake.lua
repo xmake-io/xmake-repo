@@ -6,6 +6,7 @@ package("flatcc")
     add_urls("https://github.com/dvidelabs/flatcc/archive/refs/tags/$(version).tar.gz",
              "https://github.com/dvidelabs/flatcc.git")
 
+    add_versions("2024.04.08", "810821ea5bc87ac7b874a703d354ea4d75d83a06")
     add_versions("v0.6.1", "2533c2f1061498499f15acc7e0937dcf35bc68e685d237325124ae0d6c600c2b")
 
     add_configs("reflection", {description = "generation of binary flatbuffer schema files", default = false, type = "boolean"})
