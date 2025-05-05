@@ -64,6 +64,7 @@ package("diligentcore")
         if package:config("vulkan") then
             package:add("deps", "vulkan-headers")
             package:add("deps", "volk", {header_only = true})
+            package:add("deps", "vulkansdk")
         end
 
         if package:config("vulkan") or package:config("metal") or (package:config("archiver") and package:config("opengl")) then
@@ -71,8 +72,8 @@ package("diligentcore")
         end
 
         if package:config("hlsl") or package:config("archiver") or package:config("glslang") then
-            package:add("deps", "vulkansdk")
             package:add("deps", "glslang")
+            package:add("deps", "spirv-tools")
         end
 
         package:add("deps", "spirv-cross")
