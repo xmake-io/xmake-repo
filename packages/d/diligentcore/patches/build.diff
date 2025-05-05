@@ -128,17 +128,38 @@ index 6af0f44..6b91db4 100644
  
  if(PLATFORM_WIN32)
 diff --git a/Graphics/Archiver/src/Archiver_GL.cpp b/Graphics/Archiver/src/Archiver_GL.cpp
-index a7435c9..596a8b7 100644
+index a7435c9..86d7223 100644
 --- a/Graphics/Archiver/src/Archiver_GL.cpp
 +++ b/Graphics/Archiver/src/Archiver_GL.cpp
-@@ -42,6 +42,7 @@
- #    include "GLSLUtils.hpp"
- #    include "GLSLangUtils.hpp"
- #    include "spirv_glsl.hpp"
-+#    include "SPIRVShaderResources.hpp" // required for diligent_spirv_cross
- #endif
+@@ -420,7 +420,8 @@ private:
+         Bool          IsES = false;
+         GetGLSLVersion(ShaderCI, TargetGLSLCompiler::driver, DeviceType, GLShaderCI.DeviceInfo.MaxShaderVersion, GLSLVersion, IsES);
  
- namespace Diligent
+-        diligent_spirv_cross::CompilerGLSL::Options Options;
++        using CompilerGLSL = SPIRV_CROSS_NAMESPACE::CompilerGLSL;
++        CompilerGLSL::Options Options;
+         Options.es      = IsES;
+         Options.version = GLSLVersion.Major * 100 + GLSLVersion.Minor * 10;
+ 
+@@ -441,15 +442,15 @@ private:
+         // For opcodes where we have to perform explicit additional nan checks, very ugly code is generated.
+         Options.relax_nan_checks = true;
+ 
+-        Options.fragment.default_float_precision = diligent_spirv_cross::CompilerGLSL::Options::Precision::DontCare;
+-        Options.fragment.default_int_precision   = diligent_spirv_cross::CompilerGLSL::Options::Precision::DontCare;
++        Options.fragment.default_float_precision = CompilerGLSL::Options::Precision::DontCare;
++        Options.fragment.default_int_precision   = CompilerGLSL::Options::Precision::DontCare;
+ 
+ #    if PLATFORM_APPLE
+         // Apple does not support GL_ARB_shading_language_420pack extension
+         Options.enable_420pack_extension = false;
+ #    endif
+ 
+-        diligent_spirv_cross::CompilerGLSL Compiler{std::move(SPIRV)};
++        CompilerGLSL Compiler{std::move(SPIRV)};
+         Compiler.set_common_options(Options);
+ 
+         OptimizedGLSL = Compiler.compile();
 diff --git a/Graphics/GraphicsEngineD3D11/CMakeLists.txt b/Graphics/GraphicsEngineD3D11/CMakeLists.txt
 index adef784..38d7036 100644
 --- a/Graphics/GraphicsEngineD3D11/CMakeLists.txt
