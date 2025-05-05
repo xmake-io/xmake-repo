@@ -127,21 +127,18 @@ index 6af0f44..6b91db4 100644
  )
  
  if(PLATFORM_WIN32)
-diff --git a/Graphics/Archiver/src/Archiver_Inc.hpp b/Graphics/Archiver/src/Archiver_Inc.hpp
-index 36b9f89..40fbbdb 100644
---- a/Graphics/Archiver/src/Archiver_Inc.hpp
-+++ b/Graphics/Archiver/src/Archiver_Inc.hpp
-@@ -33,7 +33,9 @@
- #include <algorithm>
+diff --git a/Graphics/Archiver/src/Archiver_GL.cpp b/Graphics/Archiver/src/Archiver_GL.cpp
+index a7435c9..596a8b7 100644
+--- a/Graphics/Archiver/src/Archiver_GL.cpp
++++ b/Graphics/Archiver/src/Archiver_GL.cpp
+@@ -42,6 +42,7 @@
+ #    include "GLSLUtils.hpp"
+ #    include "GLSLangUtils.hpp"
+ #    include "spirv_glsl.hpp"
++#    include "SPIRVShaderResources.hpp" // required for diligent_spirv_cross
+ #endif
  
- #include "PSOSerializer.hpp"
--
-+#if !DILIGENT_NO_GLSLANG
-+#include "SPIRVShaderResources.hpp" // required for diligent_spirv_cross
-+#endif
  namespace Diligent
- {
- 
 diff --git a/Graphics/GraphicsEngineD3D11/CMakeLists.txt b/Graphics/GraphicsEngineD3D11/CMakeLists.txt
 index adef784..38d7036 100644
 --- a/Graphics/GraphicsEngineD3D11/CMakeLists.txt
