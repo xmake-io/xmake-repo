@@ -71,7 +71,7 @@ package("diligentcore")
         end
 
         if package:config("hlsl") or package:config("archiver") or package:config("glslang") then
-            package:add("deps", "spirv-tools")
+            package:add("deps", "vulkansdk")
             package:add("deps", "glslang")
         end
 
