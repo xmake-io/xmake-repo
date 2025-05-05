@@ -6,6 +6,7 @@ package("zydis")
     add_urls("https://github.com/zyantific/zydis/archive/refs/tags/$(version).tar.gz",
              "https://github.com/zyantific/zydis.git", {submodules = false})
 
+    add_versions("v4.1.1", "45c6d4d499a1cc80780f7834747c637509777c01dca1e98c5e7c0bfaccdb1514")
     add_versions("v4.1.0", "31f23de8abb4cc2efa0fd0e827bbabcaa0f3d00fcaed8598e05295ba7b3806ad")
     add_versions("v4.0.0", "14e991fd97b021e15c77a4726a0ae8a4196d6521ab505acb5c51fc2f9be9530a")
     add_versions("v3.2.1", "349a2d27270e54499b427051dd45f7b6064811b615588414b096cdeeaeb730ad")
