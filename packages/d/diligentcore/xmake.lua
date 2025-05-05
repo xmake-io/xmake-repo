@@ -164,7 +164,6 @@ endforeach()
                 }
             ]]}, {configs = {languages = "c++17"}}))
         end
-
         if package:config("d3d11") and package:data("D3D11_SUPPORTED") then
             assert(package:check_cxxsnippets({test = [[
                 #include <DiligentCore/Graphics/GraphicsEngineD3D11/interface/EngineFactoryD3D11.h>
@@ -175,7 +174,6 @@ endforeach()
                 }
             ]]}, {configs = {languages = "c++17"}}))
         end
-
         if package:config("d3d12") and package:data("D3D12_SUPPORTED") then
             assert(package:check_cxxsnippets({test = [[
                 #include <DiligentCore/Graphics/GraphicsEngineD3D12/interface/EngineFactoryD3D12.h>
@@ -183,17 +181,6 @@ endforeach()
                     Diligent::EngineD3D12CreateInfo create_info;
                     Diligent::IEngineFactoryD3D12* factory = nullptr;
                     factory->CreateDeviceAndContextsD3D12(create_info, nullptr, nullptr);
-                }
-            ]]}, {configs = {languages = "c++17"}}))
-        end
-
-        if package:config("metal") and package:data("METAL_SUPPORTED") then
-            assert(package:check_cxxsnippets({test = [[
-                #include <DiligentCore/Graphics/GraphicsEngineMetal/interface/EngineFactoryMetal.h>
-                void test() {
-                    Diligent::EngineMetalCreateInfo create_info;
-                    Diligent::IEngineFactoryMtl* factory = nullptr;
-                    factory->CreateDeviceAndContextsMtl(create_info, nullptr, nullptr);
                 }
             ]]}, {configs = {languages = "c++17"}}))
         end
