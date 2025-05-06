@@ -10,27 +10,16 @@ package("winpixevent")
 
     on_install("windows|!x86", function(package)
         import("package.tools.msbuild")
-        if package:has_runtime("MT", "MTd") then
-            if package:has_runtime("MTd") then
-                io.replace("decoder/lib/PixEventDecoder.lib.vcxproj", "</ClCompile>", "<RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>\n</ClCompile>", {plain = true})
-                io.replace("runtime/dll/desktop/WinPixEventRuntime.vcxproj", "</ClCompile>", "<RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>\n</ClCompile>", {plain = true})
-                io.replace("runtime/lib/WinPixEventRuntime.lib.vcxproj", "</ClCompile>", "<RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>\n</ClCompile>", {plain = true})
-            else
-                io.replace("decoder/lib/PixEventDecoder.lib.vcxproj", "</ClCompile>", "<RuntimeLibrary>MultiThreaded</RuntimeLibrary>\n</ClCompile>", {plain = true})
-                io.replace("runtime/dll/desktop/WinPixEventRuntime.vcxproj", "</ClCompile>", "<RuntimeLibrary>MultiThreaded</RuntimeLibrary>\n</ClCompile>", {plain = true})
-                io.replace("runtime/lib/WinPixEventRuntime.lib.vcxproj", "</ClCompile>", "<RuntimeLibrary>MultiThreaded</RuntimeLibrary>\n</ClCompile>", {plain = true})
-            end
-        else
-            if package:has_runtime("MDd") then
-                io.replace("decoder/lib/PixEventDecoder.lib.vcxproj", "</ClCompile>", "<RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>\n</ClCompile>", {plain = true})
-                io.replace("runtime/dll/desktop/WinPixEventRuntime.vcxproj", "</ClCompile>", "<RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>\n</ClCompile>", {plain = true})
-                io.replace("runtime/lib/WinPixEventRuntime.lib.vcxproj", "</ClCompile>", "<RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>\n</ClCompile>", {plain = true})
-            else
-                io.replace("decoder/lib/PixEventDecoder.lib.vcxproj", "</ClCompile>", "<RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>\n</ClCompile>", {plain = true})
-                io.replace("runtime/dll/desktop/WinPixEventRuntime.vcxproj", "</ClCompile>", "<RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>\n</ClCompile>", {plain = true})
-                io.replace("runtime/lib/WinPixEventRuntime.lib.vcxproj", "</ClCompile>", "<RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>\n</ClCompile>", {plain = true})
-            end
+        local runtime = "MultiThreaded"
+        if package:has_runtime("MDd", "MTd") then
+            runtime = runtime .. "Debug"
         end
+        if package:has_runtime("MDd", "MD") then
+            runtime = runtime .. "DLL"
+        end
+        io.replace("decoder/lib/PixEventDecoder.lib.vcxproj", "</ClCompile>", "<RuntimeLibrary>" .. runtime .. "</RuntimeLibrary>\n</ClCompile>", {plain = true})
+        io.replace("runtime/dll/desktop/WinPixEventRuntime.vcxproj", "</ClCompile>", "<RuntimeLibrary>" .. runtime .. "</RuntimeLibrary>\n</ClCompile>", {plain = true})
+        io.replace("runtime/lib/WinPixEventRuntime.lib.vcxproj", "</ClCompile>", "<RuntimeLibrary>" .. runtime .. "</RuntimeLibrary>\n</ClCompile>", {plain = true})
         os.cp("decoder/include", package:installdir())
         os.cp("include/*.h", path.join(package:installdir("include", "WinPixEventRuntime")))
         local configs = {}
