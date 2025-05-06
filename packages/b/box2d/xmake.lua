@@ -10,6 +10,8 @@ package("box2d")
     add_versions("v3.0.0", "64ad759006cd2377c99367f51fb36942b57f0e9ad690ed41548dd620e6f6c8b1")
     add_versions("v2.4.2", "85b9b104d256c985e6e244b4227d447897fac429071cc114e5cc819dae848852")
 
+    add_patches("3.1.0", "patches/3.1.0/cmake.patch", "22200ef3af453ef3a81735ad3700249110e3f26a7a68d712dbb3ad96309ce02b")
+
     add_configs("avx2", {description = "Enable AVX2.", default = false, type = "boolean"})
 
     if is_plat("linux", "bsd") then
@@ -54,8 +56,6 @@ package("box2d")
         end
 
         io.replace("CMakeLists.txt", [[set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")]], "", {plain = true})
-        io.replace("src/CMakeLists.txt", "COMPILE_WARNING_AS_ERROR ON", "", {plain = true})
-        io.replace("src/CMakeLists.txt", "-Werror", "", {plain = true})
 
         local configs = {
             "-DBOX2D_BUILD_UNIT_TESTS=OFF",
