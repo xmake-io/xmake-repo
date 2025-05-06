@@ -41,16 +41,21 @@ package("winpixevent")
         local mode = package:is_debug() and "Debug" or "Release"
         table.insert(configs, "/p:Configuration=" .. mode)
         table.insert(configs, "/p:Platform=" .. arch)
-        if package:config("shared") then
-            table.insert(configs, "runtime/dll/desktop/WinPixEventRuntime.vcxproj")
-            -- https://github.com/microsoft/PixEvents/blob/3a7e70dde7bf54f02f9d2e9dd6d3350c6cfb962f/runtime/lib/WinPixEventRuntime.lib.vcxproj#L33
-            -- Workaround for source\pixevents\runtime\lib\IncludePixEtw.h(21,10): error C1083: Cannot open include file: 'PIXETW.h': No such file or directory
-            os.vrun("mc runtime/lib/PixEtw.man -um -P ETW_EVENT")
-        else
-            -- Workaround for `msbuild.exe PixEvents.sln /t:WinPixEventRuntime.lib` *WinPixEventRuntime.lib* containing dot in name
-            table.insert(configs, "runtime/lib/WinPixEventRuntime.lib.vcxproj")
-        end
+        table.insert(configs, "runtime/lib/WinPixEventRuntime.lib.vcxproj")
         msbuild.build(package, configs)
+        if package:config("shared") then
+            -- Store only Configuration & Platform
+            configs = {table.unpack(configs, 1, 2)}
+            table.insert(configs, "runtime/dll/desktop/WinPixEventRuntime.vcxproj")
+            -- Workaround for source\pixevents\runtime\lib\IncludePixEtw.h(21,10): error C1083: Cannot open include file: 'PIXETW.h': No such file or directory
+            -- https://github.com/microsoft/PixEvents/blob/3a7e70dde7bf54f02f9d2e9dd6d3350c6cfb962f/runtime/lib/WinPixEventRuntime.lib.vcxproj#L33
+            -- Copy from static build generated files out of .man file into root
+            os.cp("runtime/lib/intermediates/MSG00001.bin", "MSG00001.bin")
+            os.cp("runtime/lib/intermediates/PixEtw.h", "PixEtw.h")
+            os.cp("runtime/lib/intermediates/PixEtw.rc", "PixEtw.rc")
+            os.cp("runtime/lib/intermediates/PixEtwTEMP.BIN", "PixEtwTEMP.BIN")
+            msbuild.build(package, configs)
+        end
         if package:config("shared") then
             os.cp("runtime/dll/desktop/output/*/*/WinPixEventRuntime/WinPixEventRuntime.dll", package:installdir("bin"))
             os.cp("runtime/dll/desktop/output/*/*/WinPixEventRuntime/WinPixEventRuntime.lib", package:installdir("lib"))
