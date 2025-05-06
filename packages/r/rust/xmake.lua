@@ -61,7 +61,7 @@ package("rust")
         end
         os.vrunv("rustup", {"target", "add", target})
 
-        os.mv(path.join(rustup, ".rustup", "toolchains", version .. "-*", "*"), package:installdir())
+        os.vcp(path.join(rustup, ".rustup", "toolchains", version .. "-*", "*"), package:installdir())
         package:addenv("RC", "bin/rustc" .. (is_host("windows") and ".exe" or ""))
         package:mark_as_pathenv("RC")
     end)
