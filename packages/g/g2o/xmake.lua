@@ -6,7 +6,7 @@ package("g2o")
         return version:gsub("%.", "") .. "_git"
     end})
     add_urls("https://github.com/RainerKuemmerle/g2o.git")
-    add_versions("2020.12.23", "20af80edf8fd237e29bd21859b8fc734e615680e8838824e8b3f120c5f4c1672")
+    add_versions("2024.12.28", "d691ead69184ebbb8256c9cd9f4121d1a880b169370efc0554dd31a64802a452")
 
     add_deps("cmake", "eigen")
 
