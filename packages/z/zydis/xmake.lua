@@ -44,6 +44,10 @@ package("zydis")
             package:add("patches", "4.0.0", "patches/v4.0.0/cmake.patch", "061b2286e8e96178294f8b25e0c570bf65f8739848ea1de57dd36be710001da4")
             package:add("patches", "4.1.0", "patches/v4.1.0/cmake.patch", "68f0b5d8e043503f26be441cf2f920a215cf1eb1b59205933c3653468f3ccd94")
         end
+
+        if not package:config("shared") then
+            package:add("defines", "ZYDIS_STATIC_BUILD")
+        end
     end)
 
     on_install("!wasm and !iphoneos", function (package)
