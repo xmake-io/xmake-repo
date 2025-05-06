@@ -43,8 +43,8 @@ package("rustup")
         local argv = {"--no-modify-path", "--no-update-default-toolchain", "--profile=minimal", "--default-toolchain=none", "-y"}
         local envs = {CARGO_HOME = path.join(installdir, ".cargo"), RUSTUP_HOME = path.join(installdir, ".rustup"), RUSTUP_INIT_SKIP_PATH_CHECK = "yes"}
         os.vrunv(package:originfile(), argv, {envs = envs, shell = not is_host("windows")})
-        os.addenvs({PATH = path.join(installdir, ".cargo", "bin")})
-        os.vrunv("rustup", {"set", "auto-self-update", "disable"}, {envs = envs})
+        --os.addenvs({PATH = path.join(installdir, ".cargo", "bin")})
+        --os.vrunv("rustup", {"set", "auto-self-update", "disable"}, {envs = envs})
     end)
 
     on_test(function (package)
