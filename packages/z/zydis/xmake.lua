@@ -30,7 +30,7 @@ package("zydis")
             ["v4.0.0"] = "v1.4.0",
             ["v3.2.1"] = "v1.1.0",
         }
-        local zycore_c_vers
+        local zycore_c_ver
         if package:version() then
             zycore_c_ver = zycore_c_vers[package:version_str()]
         end
