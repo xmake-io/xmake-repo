@@ -9,7 +9,7 @@ package("libuuid")
 
     add_versions("1.0.3", "46af3275291091009ad7f1b899de3d0cea0252737550e7919d17237997db5644")
 
-    on_install(function(package)
+    on_install("!windows and !mingw", function(package)
         io.writefile("xmake.lua", [[
             includes("@builtin/check")
             add_rules("mode.debug", "mode.release")
