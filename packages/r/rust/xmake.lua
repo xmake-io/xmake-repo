@@ -10,7 +10,7 @@ package("rust")
     on_install(function (package)
         local rustup = package:dep("rustup"):installdir()
         local version = package:version():shortstr()
-        os.vrunv("rustup", {"install", "--no-self-update", version})
+        os.vrunv("rustup", {"install", version})
 
         local target
         if package:is_targetarch("x86_64", "x64") then
