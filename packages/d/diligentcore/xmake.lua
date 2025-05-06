@@ -7,7 +7,7 @@ package("diligentcore")
              "https://github.com/DiligentGraphics/DiligentCore.git", {submodules = false})
 
     add_versions("v2.5.6", "abc190c05ee7e5ef2bba52fcbc5fdfe2256cce3435efba9cfe263a386653f671")
-    add_patches("v2.5.6", "patches/build.diff", "5d81d57cb1e07c04646621cb8c64ec6e10e3abdbdd39642541971ee1f426fb44")
+    add_patches("v2.5.6", "patches/build.diff", "1cd72a0b38a609452d35a72576f461707aff79052657f862e3cb985a02a8558b")
 
     add_includedirs("include", "include/DiligentCore")
 
@@ -22,7 +22,7 @@ package("diligentcore")
         add_configs("d3d12",            {description = "Enable Direct3D12 backend", default = true, type = "boolean"})
     end
 
-    add_configs("vulkan",               {description = "Enable Vulkan backend", default = false, type = "boolean"})
+    add_configs("vulkan",               {description = "Enable Vulkan backend", default = true, type = "boolean"})
 
     add_configs("hlsl",                 {description = "Enable HLSL", default = true, type = "boolean"})
     add_configs("glslang",              {description = "Enable GLSLang", default = true, type = "boolean"})
@@ -185,6 +185,16 @@ endforeach()
                     Diligent::EngineD3D12CreateInfo create_info;
                     Diligent::IEngineFactoryD3D12* factory = nullptr;
                     factory->CreateDeviceAndContextsD3D12(create_info, nullptr, nullptr);
+                }
+            ]]}, {configs = {languages = "c++17"}}))
+        end
+        if package:config("vulkan") and (package:data("VULKAN_SUPPORTED")) then
+            assert(package:check_cxxsnippets({test = [[
+                #include <DiligentCore/Graphics/GraphicsEngineVulkan/interface/EngineFactoryVk.h>
+                void test() {
+                    Diligent::EngineVkCreateInfo create_info;
+                    Diligent::IEngineFactoryVk* factory = nullptr;
+                    factory->CreateDeviceAndContextsVk(create_info, nullptr, nullptr);
                 }
             ]]}, {configs = {languages = "c++17"}}))
         end

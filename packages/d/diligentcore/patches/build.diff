@@ -51,7 +51,7 @@ index fc3c5d8..9edc6a4 100644
  
      install(FILES License.txt DESTINATION "Licenses" RENAME DiligentEngine-License.txt)
 diff --git a/Graphics/Archiver/CMakeLists.txt b/Graphics/Archiver/CMakeLists.txt
-index 6af0f44..6b91db4 100644
+index 6af0f44..2077ff7 100644
 --- a/Graphics/Archiver/CMakeLists.txt
 +++ b/Graphics/Archiver/CMakeLists.txt
 @@ -88,9 +88,16 @@ PRIVATE
@@ -72,7 +72,20 @@ index 6af0f44..6b91db4 100644
  )
  if(DEFINED DILIGENT_CORE_COMMIT_HASH)
      target_compile_definitions(Diligent-Archiver-static PRIVATE DILIGENT_CORE_COMMIT_HASH="${DILIGENT_CORE_COMMIT_HASH}")
-@@ -135,17 +142,18 @@ if(GL_SUPPORTED OR GLES_SUPPORTED)
+@@ -121,10 +128,11 @@ if(D3D12_SUPPORTED)
+ endif()
+ 
+ if(VULKAN_SUPPORTED)
+-    target_link_libraries(Diligent-Archiver-static PRIVATE Diligent-GraphicsEngineVk-static Vulkan::Headers)
++    target_link_libraries(Diligent-Archiver-static PRIVATE Diligent-GraphicsEngineVk-static)
+     target_include_directories(Diligent-Archiver-static
+     PRIVATE
+         ../GraphicsEngineVulkan/include
++        ${vulkan-headers_INCLUDEDIR}
+     )
+ endif()
+ 
+@@ -135,17 +143,18 @@ if(GL_SUPPORTED OR GLES_SUPPORTED)
          spirv-cross-core
          spirv-cross-glsl
      )
@@ -97,7 +110,7 @@ index 6af0f44..6b91db4 100644
      elseif(PLATFORM_ANDROID)
          target_link_libraries(Diligent-Archiver-static PRIVATE GLESv3 EGL)
      elseif(PLATFORM_EMSCRIPTEN)
-@@ -176,12 +184,28 @@ if(WEBGPU_SUPPORTED)
+@@ -176,12 +185,28 @@ if(WEBGPU_SUPPORTED)
      )
  endif()
  
@@ -161,13 +174,17 @@ index a7435c9..86d7223 100644
  
          OptimizedGLSL = Compiler.compile();
 diff --git a/Graphics/GraphicsEngineD3D11/CMakeLists.txt b/Graphics/GraphicsEngineD3D11/CMakeLists.txt
-index adef784..38d7036 100644
+index adef784..75944e8 100644
 --- a/Graphics/GraphicsEngineD3D11/CMakeLists.txt
 +++ b/Graphics/GraphicsEngineD3D11/CMakeLists.txt
-@@ -136,6 +136,14 @@ PUBLIC
+@@ -136,6 +136,18 @@ PUBLIC
      Diligent-GraphicsEngineD3D11Interface
  )
  
++if(SPIRV-Tools_FOUND)
++    target_link_directories(Diligent-GraphicsEngineD3D11-shared PRIVATE ${SPIRV-Tools_LIBDIR})
++endif()
++
 +if(spirv-cross-c_FOUND)
 +    target_link_directories(Diligent-GraphicsEngineD3D11-shared PRIVATE ${spirv-cross-c_LIBRARY_DIRS})
 +endif()
@@ -180,13 +197,17 @@ index adef784..38d7036 100644
  PRIVATE
      Diligent-BuildSettings 
 diff --git a/Graphics/GraphicsEngineD3D12/CMakeLists.txt b/Graphics/GraphicsEngineD3D12/CMakeLists.txt
-index 4b01eff..a8cf6cb 100644
+index 4b01eff..868e627 100644
 --- a/Graphics/GraphicsEngineD3D12/CMakeLists.txt
 +++ b/Graphics/GraphicsEngineD3D12/CMakeLists.txt
-@@ -206,6 +206,14 @@ if(NOT ${USE_D3D12_LOADER})
+@@ -206,6 +206,18 @@ if(NOT ${USE_D3D12_LOADER})
      target_link_libraries(Diligent-GraphicsEngineD3D12-static PRIVATE d3d12.lib)
  endif()
  
++if(SPIRV-Tools_FOUND)
++    target_link_directories(Diligent-GraphicsEngineD3D12-shared PRIVATE ${SPIRV-Tools_LIBDIR})
++endif()
++
 +if(spirv-cross-c_FOUND)
 +    target_link_directories(Diligent-GraphicsEngineD3D12-shared PRIVATE ${spirv-cross-c_LIBRARY_DIRS})
 +endif()
@@ -199,7 +220,7 @@ index 4b01eff..a8cf6cb 100644
  PRIVATE
      Diligent-BuildSettings
 diff --git a/Graphics/GraphicsEngineOpenGL/CMakeLists.txt b/Graphics/GraphicsEngineOpenGL/CMakeLists.txt
-index 839dad7..867232f 100644
+index 839dad7..c544296 100644
 --- a/Graphics/GraphicsEngineOpenGL/CMakeLists.txt
 +++ b/Graphics/GraphicsEngineOpenGL/CMakeLists.txt
 @@ -175,6 +175,7 @@ endif()
@@ -233,10 +254,14 @@ index 839dad7..867232f 100644
  elseif(PLATFORM_IOS)
      set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${OPENGLES})
  elseif(PLATFORM_EMSCRIPTEN)
-@@ -264,6 +266,15 @@ PUBLIC
+@@ -264,6 +266,19 @@ PUBLIC
      ${PUBLIC_DEPENDENCIES}
  )
  
++if(SPIRV-Tools_FOUND)
++    target_link_directories(Diligent-GraphicsEngineOpenGL-shared PRIVATE ${SPIRV-Tools_LIBDIR})
++endif()
++
 +if(spirv-cross-c_FOUND)
 +    target_link_directories(Diligent-GraphicsEngineOpenGL-shared PRIVATE ${spirv-cross-c_LIBRARY_DIRS})
 +endif()
@@ -249,11 +274,89 @@ index 839dad7..867232f 100644
  target_compile_definitions(Diligent-GraphicsEngineOpenGL-shared PUBLIC ENGINE_DLL=1)
  if(PLATFORM_MACOS)
      # Silence OpenGL deprecation warnings
+diff --git a/Graphics/GraphicsEngineVulkan/CMakeLists.txt b/Graphics/GraphicsEngineVulkan/CMakeLists.txt
+index 9d45358..fb650ee 100644
+--- a/Graphics/GraphicsEngineVulkan/CMakeLists.txt
++++ b/Graphics/GraphicsEngineVulkan/CMakeLists.txt
+@@ -164,15 +164,19 @@ endif()
+ target_include_directories(Diligent-GraphicsEngineVk-static
+ PRIVATE
+     include
++    ${vulkan-headers_INCLUDEDIR}
+ )
+ 
++if (SPIRV-Tools_FOUND)
++    target_include_directories(Diligent-GraphicsEngineVk-static PRIVATE ${SPIRV-Tools_INCLUDEDIR})
++endif()
++
+ set(PRIVATE_DEPENDENCIES
+     Diligent-BuildSettings
+     Diligent-Common
+     Diligent-TargetPlatform
+     Diligent-GraphicsEngineNextGenBase
+     Diligent-ShaderTools
+-    Vulkan::Headers
+ )
+ 
+ if (${DILIGENT_NO_HLSL})
+@@ -246,9 +250,9 @@ else()
+ endif()
+ 
+ if(PLATFORM_WIN32)
+-    list(APPEND PRIVATE_DEPENDENCIES volk::volk_headers)
++    target_include_directories(Diligent-GraphicsEngineVk-static PRIVATE ${volk_INCLUDEDIR})
+ elseif(PLATFORM_MACOS)
+-    list(APPEND PRIVATE_DEPENDENCIES volk::volk_headers)
++    target_include_directories(Diligent-GraphicsEngineVk-static PRIVATE ${volk_INCLUDEDIR})
+ elseif(PLATFORM_IOS OR PLATFORM_TVOS)
+     find_library(CORE_GRAPHICS CoreGraphics)
+     find_library(METAL_LIBRARY Metal)
+@@ -258,9 +262,9 @@ elseif(PLATFORM_IOS OR PLATFORM_TVOS)
+     # Note that volk may be defined by external CMake, but we don't use it on iOS/tvOS
+     list(APPEND PRIVATE_DEPENDENCIES ${MOLTENVK_LIBRARY} ${CORE_GRAPHICS} ${METAL_LIBRARY} ${QUARTZ_CORE} ${UI_KIT} ${IO_SURFACE})
+ elseif(PLATFORM_LINUX)
+-    list(APPEND PRIVATE_DEPENDENCIES volk::volk_headers)
++    target_include_directories(Diligent-GraphicsEngineVk-static PRIVATE ${volk_INCLUDEDIR})
+ elseif(PLATFORM_ANDROID)
+-    list(APPEND PRIVATE_DEPENDENCIES volk::volk_headers)
++    target_include_directories(Diligent-GraphicsEngineVk-static PRIVATE ${volk_INCLUDEDIR})
+ else()
+     find_library(Vulkan_LIBRARY NAMES vulkan)
+     list(APPEND PRIVATE_DEPENDENCIES ${Vulkan_LIBRARY})
+@@ -311,6 +315,19 @@ if (${DILIGENT_NO_GLSLANG})
+     message("GLSLang is not being built. Vulkan backend will only be able to consume SPIRV byte code.")
+ endif()
+ 
++if(SPIRV-Tools_FOUND)
++    target_link_directories(Diligent-GraphicsEngineVk-shared PRIVATE ${SPIRV-Tools_LIBDIR})
++    target_link_libraries(Diligent-GraphicsEngineVk-shared PRIVATE SPIRV-Tools-opt SPIRV-Tools)
++endif()
++
++if(spirv-cross-c_FOUND)
++    target_link_directories(Diligent-GraphicsEngineVk-shared PRIVATE ${spirv-cross-c_LIBRARY_DIRS})
++endif()
++
++if(glslang_FOUND)
++    target_link_directories(Diligent-GraphicsEngineVk-shared PRIVATE ${glslang_LIBDIR})
++endif()
++
+ target_compile_definitions(Diligent-GraphicsEngineVk-static
+ PRIVATE
+     ${PRIVATE_COMPILE_DEFINITIONS}
 diff --git a/Graphics/GraphicsTools/CMakeLists.txt b/Graphics/GraphicsTools/CMakeLists.txt
-index c7f8706..282bfde 100644
+index c7f8706..bb9e94a 100644
 --- a/Graphics/GraphicsTools/CMakeLists.txt
 +++ b/Graphics/GraphicsTools/CMakeLists.txt
-@@ -122,6 +122,7 @@ target_include_directories(Diligent-GraphicsTools
+@@ -88,7 +88,7 @@ if(D3D12_SUPPORTED)
+ endif()
+ 
+ if(VULKAN_SUPPORTED)
+-    list(APPEND DEPENDENCIES Diligent-GraphicsEngineVkInterface Vulkan::Headers)
++    list(APPEND DEPENDENCIES Diligent-GraphicsEngineVkInterface)
+ endif()
+ 
+ if(D3D12_SUPPORTED OR VULKAN_SUPPORTED)
+@@ -122,10 +122,15 @@ target_include_directories(Diligent-GraphicsTools
  PUBLIC
      interface
  PRIVATE
@@ -261,7 +364,15 @@ index c7f8706..282bfde 100644
      ../GraphicsEngineD3DBase/include
      include
  )
-@@ -134,7 +135,7 @@ PRIVATE
+ 
++if(VULKAN_SUPPORTED)
++    target_include_directories(Diligent-GraphicsTools PRIVATE ${vulkan-headers_INCLUDEDIR})
++endif()
++
+ target_link_libraries(Diligent-GraphicsTools
+ PRIVATE
+     Diligent-Common
+@@ -134,7 +139,7 @@ PRIVATE
      Diligent-GraphicsAccessories
      Diligent-ShaderTools
      Diligent-GraphicsEngine
@@ -271,20 +382,35 @@ index c7f8706..282bfde 100644
  PUBLIC
      Diligent-GraphicsEngineInterface
 diff --git a/Graphics/ShaderTools/CMakeLists.txt b/Graphics/ShaderTools/CMakeLists.txt
-index bf956ea..384f08b 100644
+index bf956ea..42bf3be 100644
 --- a/Graphics/ShaderTools/CMakeLists.txt
 +++ b/Graphics/ShaderTools/CMakeLists.txt
-@@ -133,6 +133,9 @@ PUBLIC
+@@ -102,11 +102,11 @@ if(DILIGENT_USE_SPIRV_TOOLCHAIN)
+     #     (e.g. added by external project), but DILIGENT_NO_GLSLANG may still be set
+     if (NOT ${DILIGENT_NO_GLSLANG})
+         set(USE_GLSLANG TRUE)
+-        if (TARGET SPIRV-Tools-opt)
++        if (SPIRV-Tools_FOUND)
+             set(USE_SPIRV_TOOLS TRUE)
+         endif()
+     endif()
+-    if (NOT ${DILIGENT_NO_HLSL} AND TARGET SPIRV-Tools-opt)
++    if (NOT ${DILIGENT_NO_HLSL})
+         set(USE_SPIRV_TOOLS TRUE)
+     endif()
+ endif()
+@@ -133,6 +133,10 @@ PUBLIC
      include
  PRIVATE
      ../GraphicsEngine/include
 +    $<$<BOOL:${ENABLE_SPIRV}>:${spirv-cross-c_INCLUDEDIR}>
 +    $<$<BOOL:${USE_GLSLANG}>:${glslang_INCLUDEDIR}>
 +    $<$<BOOL:${USE_GLSLANG}>:${glslang_INCLUDEDIR}/glslang>
++    $<$<BOOL:${USE_SPIRV_TOOLS}>:${SPIRV-Tools_INCLUDEDIR}>
  )
  
  if (DXC_SUPPORTED)
-@@ -150,6 +153,12 @@ if (DXC_SUPPORTED)
+@@ -150,6 +154,12 @@ if (DXC_SUPPORTED)
      endif()
  endif()
  
@@ -297,7 +423,7 @@ index bf956ea..384f08b 100644
  target_link_libraries(Diligent-ShaderTools
  PRIVATE
      Diligent-BuildSettings
-@@ -171,9 +180,7 @@ if(ENABLE_SPIRV)
+@@ -171,9 +181,7 @@ if(ENABLE_SPIRV)
      PRIVATE
          spirv-cross-core
      )
