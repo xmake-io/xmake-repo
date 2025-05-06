@@ -103,6 +103,7 @@ package("opencv")
             local arch = package:targetarch()
             local linkdir = (package:config("shared") and "lib" or "staticlibs")
             package:add("linkdirs", path.join("sdk/native", linkdir, package:targetarch()))
+            package:add("includedirs", "sdk/native/jni/include")
         elseif package:version():ge("4.0") then
             package:add("includedirs", "include/opencv4")
             package:add("linkdirs", "lib", "lib/opencv4/3rdparty")
@@ -243,8 +244,9 @@ package("opencv")
             local linkdir = (package:config("shared") and "lib" or "staticlibs")
             local libfiles = {}
             table.join2(libfiles, os.files(path.join(package:installdir(), "sdk/native", linkdir, package:targetarch(), "lib*.a")))
+            table.join2(libfiles, os.files(path.join(package:installdir(), "sdk/native/3rdparty/libs", package:targetarch(), "lib*.a")))
             for _, f in ipairs(libfiles) do
-                if f:match("libopencv_.+") then
+                if f:match("lib.+") then
                     package:add("links", path.basename(f))
                 end
             end
