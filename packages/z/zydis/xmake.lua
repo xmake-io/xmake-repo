@@ -49,7 +49,7 @@ package("zydis")
     on_install("!wasm and !iphoneos", function (package)
         local version = package:version()
         if version then
-            if package:is_plat("mingw") and version:ge("3.2.1") then
+            if package:is_plat("mingw") and version:ge("3.2.1") and version:le("4.1.0") then
                 local rc_str = io.readfile("resources/VersionInfo.rc", {encoding = "utf16le"})
                 io.writefile("resources/VersionInfo.rc", rc_str, {encoding = "utf8"})
             elseif package:is_plat("macosx") then
