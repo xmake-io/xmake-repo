@@ -10,7 +10,7 @@ package("rust")
     on_install(function (package)
         local rustup = package:dep("rustup"):installdir()
         local version = package:version():shortstr()
-        os.vrunv("rustup", {"install", version})
+        os.vrunv("rustup", {"install", "--no-self-update", version})
 
         local target
         if package:is_targetarch("x86_64", "x64") then
@@ -58,10 +58,15 @@ package("rust")
             elseif package:is_targetos("wasm") then
                 target = target .. "-unknown-unknown"
             end
+            os.vrunv("rustup", {"target", "add", target})
         end
-        os.vrunv("rustup", {"target", "add", target})
 
-        os.vcp(path.join(rustup, ".rustup", "toolchains", version .. "-*", "*"), package:installdir())
+        os.mv(path.join(rustup, ".rustup", "toolchains", version .. "-*", "*"), package:installdir())
+
+        -- cleanup to prevent rustup to think the toolchain is still installed
+        os.rm(path.join(rustup, ".rustup", "toolchains"))
+        os.rm(path.join(rustup, ".rustup", "update-hashes"))
+
         package:addenv("RC", "bin/rustc" .. (is_host("windows") and ".exe" or ""))
         package:mark_as_pathenv("RC")
     end)
