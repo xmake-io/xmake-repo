@@ -30,32 +30,32 @@ package("rust")
         end
 
         if target then
-            if package:is_plat("windows") then
+            if package:is_targetos("windows") then
                 target = target .. "-pc-windows-msvc"
-            elseif package:is_plat("mingw") then
+            elseif package:is_targetos("mingw") then
                 target = target .. "-pc-windows-gnu"
-            elseif package:is_plat("linux") then
+            elseif package:is_targetos("linux") then
                 target = target .. "-unknown-linux-gnu"
-            elseif package:is_plat("macosx") then
+            elseif package:is_targetos("macosx") then
                 target = target .. "-apple-darwin"
-            elseif package:is_plat("android") then
+            elseif package:is_targetos("android") then
                 target = target .. "-linux-"
-                if package:is_arch("armeabi-v7a", "armeabi", "armv7-a", "armv5te") then
+                if package:is_targetarch("armeabi-v7a", "armeabi", "armv7-a", "armv5te") then
                     target = target .. "androideabi"
                 else
                     target = target .. "android"
                 end
-            elseif package:is_plat("iphoneos", "appletvos", "watchos") then
-                if package:is_plat("iphoneos") then
+            elseif package:is_targetos("iphoneos", "appletvos", "watchos") then
+                if package:is_targetos("iphoneos") then
                     target = target .. "-apple-ios"
-                elseif package:is_plat("appletvos") then
+                elseif package:is_targetos("appletvos") then
                     target = target .. "-apple-tvos"
-                elseif package:is_plat("watchos") then
+                elseif package:is_targetos("watchos") then
                     target = target .. "-apple-watchos"
                 end
-            elseif package:is_plat("bsd") then
+            elseif package:is_targetos("bsd") then
                 target = target .. "-unknown-freebsd"
-            elseif package:is_plat("wasm") then
+            elseif package:is_targetos("wasm") then
                 target = target .. "-unknown-unknown"
             end
         end
