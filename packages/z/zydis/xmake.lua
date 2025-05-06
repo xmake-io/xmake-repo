@@ -25,12 +25,17 @@ package("zydis")
 
     on_load(function (package)
         local zycore_c_vers = {
-            ["v3.2.1"] = "v1.1.0",
-            ["v4.0.0"] = "v1.4.0",
+            ["v4.1.1"] = "v1.5.2",
             ["v4.1.0"] = "v1.5.0",
+            ["v4.0.0"] = "v1.4.0",
+            ["v3.2.1"] = "v1.1.0",
         }
+        local zycore_c_vers
         if package:version() then
-            package:add("deps", "zycore-c " .. zycore_c_vers[package:version_str()])
+            zycore_c_ver = zycore_c_vers[package:version_str()]
+        end
+        if zycore_c_ver then
+            package:add("deps", "zycore-c " .. zycore_c_ver)
         else
             package:add("deps", "zycore-c")
         end
