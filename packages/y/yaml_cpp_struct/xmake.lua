@@ -9,7 +9,7 @@ package("yaml_cpp_struct")
     add_versions("v1.0.2", "7635bb968690f97f9be420e42de2120b1101f0ab20173ddec8d24b5de16f25e5")
     add_versions("v1.0.4", "2ef2a087a12aa64a20e0ab98ec212d95a188d1fba1073ae15cd095e299a602f0")
 
-    add_deps("magic_enum", "visit_struct", "yaml-cpp")
+    add_deps("magic_enum", "visit_struct", "yaml-cpp 2f86d13775d119edbb69af52e5f566fd65c6953b")
 
     on_install("windows", "linux", "macosx", "mingw", function (package)
         os.cp("include", package:installdir())
