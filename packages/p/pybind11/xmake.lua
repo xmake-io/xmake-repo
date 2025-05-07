@@ -19,15 +19,26 @@ package("pybind11")
     add_versions("v2.12.0", "411f77380c43798506b39ec594fc7f2b532a13c4db674fcf2b1ca344efaefb68")
     add_versions("v2.13.1", "a3c9ea1225cb731b257f2759a0c12164db8409c207ea5cf851d4b95679dda072")
 
-    add_deps("cmake", "python 3.x")
+    add_deps("cmake")
+    if is_plat("macosx") then
+        add_deps("python 3.x", {configs = {headeronly = true}})
+    else
+        add_deps("python 3.x")
+    end
+
+    on_load("macosx", function (package)
+        -- fix segmentation fault for macosx
+        -- @see https://github.com/xmake-io/xmake/issues/2177#issuecomment-1209398292
+        package:add("shflags", "-undefined dynamic_lookup", {force = true})
+    end)
+
     on_install("windows|native", "macosx", "linux", function (package)
         import("detect.tools.find_python3")
 
         local configs = {"-DPYBIND11_TEST=OFF"}
         local python = find_python3()
-        local pythondir = path.directory(python)
-        if pythondir and path.is_absolute(pythondir) then
-            table.insert(configs, "-DPython_ROOT_DIR=" .. pythondir)
+        if python and path.is_absolute(python) then
+            table.insert(configs, "-DPython_EXECUTABLE=" .. python)
         end
         import("package.tools.cmake").install(package, configs)
     end)
