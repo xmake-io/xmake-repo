@@ -100,7 +100,6 @@ package("opencv")
             local linkdir = (package:config("shared") and "lib" or "staticlib")
             package:add("linkdirs", path.join(arch, "mingw", linkdir))
         elseif package:is_plat("android") then
-            local arch = package:targetarch()
             local linkdir = (package:config("shared") and "libs" or "staticlibs")
             package:add("linkdirs", path.join("sdk/native", linkdir, package:targetarch()))
             package:add("linkdirs", path.join("sdk/native/3rdparty/libs", package:targetarch()))
