@@ -7,7 +7,12 @@ package("diligentcore")
              "https://github.com/DiligentGraphics/DiligentCore.git", {submodules = false})
 
     add_versions("v2.5.6", "abc190c05ee7e5ef2bba52fcbc5fdfe2256cce3435efba9cfe263a386653f671")
-    add_patches("v2.5.6", "patches/build.diff", "1cd72a0b38a609452d35a72576f461707aff79052657f862e3cb985a02a8558b")
+
+    add_patches("v2.5.6", "patches/v2.5.6/debundle-thirdparty.diff", "3d276a78e9ae47516668229dcb644f328a3602d389a3d73784eeb52d8a53108d")
+    add_patches("v2.5.6", "patches/v2.5.6/enforce-static-lib-type-for-platform-libraries.diff", "43acdb7048b92e61969a90f34f83fdc8cd878f1d6d780ef30bb08e993d0b435f")
+    add_patches("v2.5.6", "patches/v2.5.6/fix-build-deps-pkgconf.diff", "9998204546cf551a48301e972b582eeeaf002607a4f474086d7d80f4762451ee")
+    add_patches("v2.5.6", "patches/v2.5.6/fix-install-path.diff", "f91db2886c7c8fdde956d57c1fade82ff898f16f3aaf87e59bd8398c7afa25ae")
+    add_patches("v2.5.6", "patches/v2.5.6/fix-spirv-cross-namespace.diff", "d5a866d4b5bce061a3597dcc026cb88c4b9f92af352ef4071750d355b8b924f0")
 
     add_includedirs("include", "include/DiligentCore")
 
@@ -92,17 +97,11 @@ set(TARGET_VARS
     PLATFORM_ANDROID PLATFORM_EMSCRIPTEN PLATFORM_IOS PLATFORM_LINUX PLATFORM_MACOS PLATFORM_TVOS PLATFORM_UNIVERSAL_WINDOWS PLATFORM_WIN32
     ARCHIVER_SUPPORTED D3D11_SUPPORTED D3D12_SUPPORTED GLES_SUPPORTED GL_SUPPORTED METAL_SUPPORTED VULKAN_SUPPORTED WEBGPU_SUPPORTED
 )
-message(STATUS "Writing into ${CMAKE_BINARY_DIR}/variables.txt")
 file(WRITE "${CMAKE_BINARY_DIR}/variables.txt" "")
 foreach(var IN LISTS vars)
     if(var IN_LIST TARGET_VARS)
         file(APPEND "${CMAKE_BINARY_DIR}/variables.txt" "${var}=${${var}}\n")
     endif()
-endforeach()
-message(STATUS "Writing all vars into ${CMAKE_BINARY_DIR}/all_variables.txt")
-file(WRITE "${CMAKE_BINARY_DIR}/all_variables.txt" "")
-foreach(var IN LISTS vars)
-    file(APPEND "${CMAKE_BINARY_DIR}/all_variables.txt" "${var}=${${var}}\n")
 endforeach()
 ]])
 
@@ -127,7 +126,6 @@ endforeach()
         table.insert(configs, "-DDILIGENT_NO_FORMAT_VALIDATION=" .. (package:config("format_validation") and "OFF" or "ON"))
 
         import("package.tools.cmake").install(package, configs)
-        io.cat("all_variables.txt")
         -- Gather missing defines into *data* so we could gather *data* for on_test
         local vars_file = path.join(package:buildir(), "variables.txt")
         if os.isfile(vars_file) then
@@ -138,9 +136,6 @@ endforeach()
                     local var, value = line:match("^([^=]+)=(.+)$")
                     if var and value == "TRUE" then
                         package:add("defines", var)
-                        package:data_set(var, true)
-                    else
-                        package:data_set(var, false)
                     end
                 end
             end
@@ -156,7 +151,7 @@ endforeach()
     end)
 
     on_test(function (package)
-        if package:config("opengl") and (package:data("GL_SUPPORTED") or package:data("GLES_SUPPORTED")) then
+        if package:config("opengl") then
             assert(package:check_cxxsnippets({test = [[
                 #include <DiligentCore/Graphics/GraphicsEngineOpenGL/interface/EngineFactoryOpenGL.h>
                 void test() {
@@ -167,7 +162,7 @@ endforeach()
                 }
             ]]}, {configs = {languages = "c++17"}}))
         end
-        if package:config("d3d11") and package:data("D3D11_SUPPORTED") then
+        if package:config("d3d11") then
             assert(package:check_cxxsnippets({test = [[
                 #include <DiligentCore/Graphics/GraphicsEngineD3D11/interface/EngineFactoryD3D11.h>
                 void test() {
@@ -177,7 +172,7 @@ endforeach()
                 }
             ]]}, {configs = {languages = "c++17"}}))
         end
-        if package:config("d3d12") and package:data("D3D12_SUPPORTED") then
+        if package:config("d3d12") then
             assert(package:check_cxxsnippets({test = [[
                 #include <DiligentCore/Graphics/GraphicsEngineD3D12/interface/EngineFactoryD3D12.h>
                 void test() {
@@ -187,7 +182,7 @@ endforeach()
                 }
             ]]}, {configs = {languages = "c++17"}}))
         end
-        if package:config("vulkan") and (package:data("VULKAN_SUPPORTED")) then
+        if package:config("vulkan") then
             assert(package:check_cxxsnippets({test = [[
                 #include <DiligentCore/Graphics/GraphicsEngineVulkan/interface/EngineFactoryVk.h>
                 void test() {
