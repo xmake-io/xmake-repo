@@ -251,7 +251,6 @@ package("opencv")
                     package:add("links", path.basename(f):match("lib(.+)"))
                 end
             end
-            package:addenv("PATH", "bin")
 
         elseif package:is_plat("windows") then
             local arch = "x64"
