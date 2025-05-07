@@ -246,8 +246,8 @@ package("opencv")
             table.join2(libfiles, os.files(path.join(package:installdir(), "sdk/native", linkdir, package:targetarch(), "lib*.a")))
             table.join2(libfiles, os.files(path.join(package:installdir(), "sdk/native/3rdparty/libs", package:targetarch(), "lib*.a")))
             for _, f in ipairs(libfiles) do
-                if f:match("lib.+") then
-                    package:add("links", path.basename(f))
+                if not f:match("opencv_.+") then
+                    package:add("links", path.basename(f):match("lib(.+)"))
                 end
             end
             package:addenv("PATH", "bin")
