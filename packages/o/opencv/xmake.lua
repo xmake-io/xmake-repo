@@ -103,6 +103,7 @@ package("opencv")
             local arch = package:targetarch()
             local linkdir = (package:config("shared") and "lib" or "staticlibs")
             package:add("linkdirs", path.join("sdk/native", linkdir, package:targetarch()))
+            package:add("linkdirs", path.join("sdk/native/3rdparty/libs", package:targetarch()))
             package:add("includedirs", "sdk/native/jni/include")
         elseif package:version():ge("4.0") then
             package:add("includedirs", "include/opencv4")
