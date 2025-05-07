@@ -64,7 +64,6 @@ package("diligentcore")
         if package:config("vulkan") then
             package:add("deps", "vulkan-headers")
             package:add("deps", "volk", {configs = {header_only = true}})
-            package:add("deps", "vulkansdk")
         end
 
         if package:config("vulkan") or (package:config("archiver") and package:config("opengl")) then
