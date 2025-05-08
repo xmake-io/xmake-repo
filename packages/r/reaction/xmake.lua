@@ -12,11 +12,11 @@ package("reaction")
     on_check(function (package)
         if package:is_plat("android") then
             local ndk = package:toolchain("ndk"):config("ndkver")
-            assert(ndk and tonumber(ndk) > 22, "package(ada >=3.0.0) require ndk version > 22")
+            assert(ndk and tonumber(ndk) > 22, "package(reaction) require ndk version > 22")
         elseif package:is_plat("macosx") then
             assert(package:check_cxxsnippets({test = [[#include <format>
                     #include <iostream>
-                    
+
                     template<typename... Args>
                     inline void println(const std::format_string<Args...> fmt, Args&&... args)
                     {

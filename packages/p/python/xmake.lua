@@ -20,7 +20,8 @@ package("python")
             add_versions("3.12.3", "49bbcd200cda1f56452feeaf0954045e85b27a93b929034cc03ab198c4d9662e")
             add_versions("3.12.8", "b4ec65bf24417c4098c8d1f30a30fec12680aedd7094de3caf35e5e2d55d9c46")
             add_versions("3.13.1", "f89b297ca94ced2fbdad7919518ebf05005f39637f8ec5b01e42f2c71d53a673")
-        else
+            add_versions("3.13.2", "67ccaa5e8fb05e8e15a46f9262368fcfef190b1cfab3e2511acada7d68cf6464")
+        elseif is_arch("x64", "x86_64") or os.arch() == "x64" then
             add_urls("https://github.com/xmake-mirror/python-windows/releases/download/$(version)/python-$(version).win64.zip")
             add_versions("2.7.18", "6680835ed5b818e2c041c7033bea47ace17f6f3b73b0d6efb6ded8598a266754")
             add_versions("3.7.9", "d0d879c934b463d46161f933db53a676790d72f24e92143f629ee5629ae286bc")
@@ -36,7 +37,12 @@ package("python")
             add_versions("3.12.3", "00a80ccce8738de45ebe73c6084b1ea92ad131ec79cbe5c033a925c761cb5fdc")
             add_versions("3.12.8", "7f8cf0a21a076d2646b26c5248ae47f1dbc870bc059670915e042f6eb1850ecb")
             add_versions("3.13.1", "104d1de9eb6ff7c345c3415a57880dc0b2c51695515f2a87097512e6d77e977d")
+            add_versions("3.13.2", "baee66e4d1b16a220bf61d64a210676f6d6fef69c65959ffd9828264c7fe8ef5")
+        elseif is_arch("arm64.*", "aarch64") or os.arch() == "arm64" then
+            add_urls("https://github.com/xmake-mirror/python-windows/releases/download/$(version)/python-$(version).winarm64.zip")
+            add_versions("3.13.2", "f121c4a9a1118d297814155c93e75ef376f3d0bbccbd5cf38598d6e833b0e858")
         end
+        set_policy("package.precompiled", false)
     else
         add_urls("https://www.python.org/ftp/python/$(version)/Python-$(version).tgz")
         add_versions("2.7.18", "da3080e3b488f648a3d7a4560ddee895284c3380b11d6de75edb986526b9a814")
@@ -55,6 +61,7 @@ package("python")
         add_versions("3.12.8", "5978435c479a376648cb02854df3b892ace9ed7d32b1fead652712bee9d03a45")
         add_versions("3.13.0", "12445c7b3db3126c41190bfdc1c8239c39c719404e844babbd015a1bc3fafcd4")
         add_versions("3.13.1", "1513925a9f255ef0793dbf2f78bb4533c9f184bdd0ad19763fd7f47a400a7c55")
+        add_versions("3.13.2", "b8d79530e3b7c96a5cb2d40d431ddb512af4a563e863728d8713039aa50203f9")
     end
 
     add_configs("headeronly", {description = "Use header only version.", default = false, type = "boolean"})
@@ -87,9 +94,9 @@ package("python")
         if version:ge("3.10") then
             -- starting with Python 3.10, Python requires OpenSSL 1.1.1 or newer
             -- see https://peps.python.org/pep-0644/
-            package:add("deps", "openssl >=1.1.1-a", "ca-certificates", {host = true})
+            package:add("deps", "openssl >=1.1.1-a", "ca-certificates", {host = true, private = package:config("headeronly")})
         else
-            package:add("deps", "openssl", "ca-certificates", {host = true})
+            package:add("deps", "openssl", "ca-certificates", {host = true, private = package:config("headeronly")})
         end
 
         -- set includedirs
@@ -113,7 +120,7 @@ package("python")
 
     on_fetch("fetch")
 
-    on_install("@windows|x86", "@windows|x64", "@msys", "@cygwin", function (package)
+    on_install("@windows|x86", "@windows|x64", "@windows|arm64*", "@msys", "@cygwin", function (package)
         if package:version():ge("3.0") then
             os.cp("python.exe", path.join(package:installdir("bin"), "python3.exe"))
         else

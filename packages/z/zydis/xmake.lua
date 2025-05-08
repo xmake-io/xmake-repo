@@ -6,6 +6,7 @@ package("zydis")
     add_urls("https://github.com/zyantific/zydis/archive/refs/tags/$(version).tar.gz",
              "https://github.com/zyantific/zydis.git", {submodules = false})
 
+    add_versions("v4.1.1", "45c6d4d499a1cc80780f7834747c637509777c01dca1e98c5e7c0bfaccdb1514")
     add_versions("v4.1.0", "31f23de8abb4cc2efa0fd0e827bbabcaa0f3d00fcaed8598e05295ba7b3806ad")
     add_versions("v4.0.0", "14e991fd97b021e15c77a4726a0ae8a4196d6521ab505acb5c51fc2f9be9530a")
     add_versions("v3.2.1", "349a2d27270e54499b427051dd45f7b6064811b615588414b096cdeeaeb730ad")
@@ -24,12 +25,17 @@ package("zydis")
 
     on_load(function (package)
         local zycore_c_vers = {
-            ["v3.2.1"] = "v1.1.0",
-            ["v4.0.0"] = "v1.4.0",
+            ["v4.1.1"] = "v1.5.2",
             ["v4.1.0"] = "v1.5.0",
+            ["v4.0.0"] = "v1.4.0",
+            ["v3.2.1"] = "v1.1.0",
         }
+        local zycore_c_ver
         if package:version() then
-            package:add("deps", "zycore-c " .. zycore_c_vers[package:version_str()])
+            zycore_c_ver = zycore_c_vers[package:version_str()]
+        end
+        if zycore_c_ver then
+            package:add("deps", "zycore-c " .. zycore_c_ver)
         else
             package:add("deps", "zycore-c")
         end
@@ -38,12 +44,16 @@ package("zydis")
             package:add("patches", "4.0.0", "patches/v4.0.0/cmake.patch", "061b2286e8e96178294f8b25e0c570bf65f8739848ea1de57dd36be710001da4")
             package:add("patches", "4.1.0", "patches/v4.1.0/cmake.patch", "68f0b5d8e043503f26be441cf2f920a215cf1eb1b59205933c3653468f3ccd94")
         end
+
+        if not package:config("shared") then
+            package:add("defines", "ZYDIS_STATIC_BUILD")
+        end
     end)
 
     on_install("!wasm and !iphoneos", function (package)
         local version = package:version()
         if version then
-            if package:is_plat("mingw") and version:ge("3.2.1") then
+            if package:is_plat("mingw") and version:ge("3.2.1") and version:le("4.1.0") then
                 local rc_str = io.readfile("resources/VersionInfo.rc", {encoding = "utf16le"})
                 io.writefile("resources/VersionInfo.rc", rc_str, {encoding = "utf8"})
             elseif package:is_plat("macosx") then

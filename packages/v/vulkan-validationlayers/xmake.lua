@@ -67,9 +67,6 @@ package("vulkan-validationlayers")
     on_load("windows", "linux", function (package)
         local sdkver = package:version():split("%+")[1]
         package:add("deps", "vulkan-headers " .. sdkver)
-        if package:version():ge("1.2.189") then
-            package:add("deps", "robin-hood-hashing")
-        end
 
         if package:version():ge("1.3.275") then
             package:add("deps", "vulkan-utility-libraries " .. sdkver)
@@ -104,15 +101,12 @@ package("vulkan-validationlayers")
         table.insert(configs, "-DGLSLANG_INSTALL_DIR=" .. package:dep("glslang"):installdir())
         table.insert(configs, "-DSPIRV_HEADERS_INSTALL_DIR=" .. package:dep("spirv-headers"):installdir())
         table.insert(configs, "-DSPIRV_TOOLS_INSTALL_DIR=" .. package:dep("spirv-tools"):installdir())
-        if package:version():ge("1.2.189") then
-            io.replace("CMakeLists.txt", "/src/include", "/include", {plain = true})
-            table.insert(configs, "-DROBIN_HOOD_HASHING_INSTALL_DIR=" .. package:dep("robin-hood-hashing"):installdir())
-        end
 
         if package:is_plat("windows") then
             cmake.install(package, configs, {buildir = os.tmpfile() .. ".dir"})
         elseif package:is_plat("linux") then
             cmake.install(package, configs, {buildir = os.tmpfile() .. ".dir", cmake_generator = "Ninja", envs = envs})
+            os.cp(package:installdir("share/vulkan/explicit_layer.d/VkLayer_khronos_validation.json"), package:installdir("lib"))
         end
         os.mv("layers", package:installdir("include"))
     end)
@@ -130,5 +124,8 @@ package("vulkan-validationlayers")
         elseif package:is_plat("windows") then
             assert(os.isfile(path.join(package:installdir("bin"), "VkLayer_khronos_validation.dll")))
             assert(os.isfile(path.join(package:installdir("bin"), "VkLayer_khronos_validation.json")))
+        elseif package:is_plat("linux") then
+            assert(os.isfile(path.join(package:installdir("lib"), "libVkLayer_khronos_validation.so")))
+            assert(os.isfile(path.join(package:installdir("lib"), "VkLayer_khronos_validation.json")))
         end
     end)
