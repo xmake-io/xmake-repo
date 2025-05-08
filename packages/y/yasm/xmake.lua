@@ -14,7 +14,7 @@ package("yasm")
     add_deps("python 3.x", {kind = "binary"})
 
     on_install("@windows", "@linux", "@macosx", function (package)
-        local configs = {"-DYASM_BUILD_TESTS=OFF", "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"}
+        local configs = {"-DYASM_BUILD_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
