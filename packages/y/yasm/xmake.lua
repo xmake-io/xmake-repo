@@ -13,17 +13,21 @@ package("yasm")
     add_deps("cmake")
     add_deps("python 3.x", {kind = "binary"})
 
-    on_install("@windows", "@linux", "@macosx", "@mingw", "@msys", function (package)
+    on_install("@windows", "@linux", "@macosx", function (package)
         local configs = {"-DYASM_BUILD_TESTS=OFF", "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        if package:is_plat("mingw") then
-            io.replace("frontends/yasm/yasm-plugin.c", "#if defined(_WIN32)", "#if 1", {plain = true})
-        end
         import("package.tools.cmake").install(package, configs)
+    end)
+
+    on_install("@mingw", "@msys", function (package)
+        local configs = {"--disable-python"}
+        if package:debug() then
+            table.insert(configs, "--enable-debug")
+        end
+        import("package.tools.autoconf").install(package)
     end)
 
     on_test(function (package)
         os.vrun("yasm --version")
     end)
-    
