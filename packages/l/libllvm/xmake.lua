@@ -12,7 +12,7 @@ package("libllvm")
     add_configs("ms_dia",  {description = "Enable DIA SDK to support non-native PDB parsing. (msvc only)", default = true, type = "boolean"})
     add_configs("libffi",  {description = "Enable libffi to support the LLVM interpreter to call external functions.", default = false, type = "boolean"})
     add_configs("httplib", {description = "Enable cpp-httplib to support llvm-debuginfod serve debug information over HTTP.", default = false, type = "boolean"})
-    add_configs("libcxx",  {description = "Use libc++ as C++ standard library instead of libstdc++, ", default = false, type = "boolean"})
+    add_configs("libcxx",  {description = "Use libc++ as C++ standard library instead of libstdc++", default = false, type = "boolean"})
 
     includes(path.join(os.scriptdir(), "constants.lua"))
     for _, project in ipairs(get_llvm_known_projects()) do
