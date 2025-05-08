@@ -241,11 +241,11 @@ package("opencv")
             package:add("links", reallink)
         end
         if package:is_plat("android") then
-            local linkdir = (package:config("shared") and "libs" or "staticlibs")
-            local libname = "lib*." .. (package:config("shared") and "so" or "a")
-            local libfiles = {}
-            table.join2(libfiles, os.files(path.join(package:installdir(), "sdk/native", linkdir, package:targetarch(), libname)))
-            table.join2(libfiles, os.files(path.join(package:installdir(), "sdk/native/3rdparty/libs", package:targetarch(), libname)))
+            for _, suffix in ipairs({"*.a", "*.so"}) do
+                for _, f in ipairs(os.files(path.join(package:installdir(path.join("sdk/native/3rdparty/libs", package:targetarch())), suffix))) do
+                    package:add("links", path.basename(f):match("lib(.+)"))
+                end
+            end
             for _, f in ipairs(libfiles) do
                 if not f:match("opencv_.+") then
                     package:add("links", path.basename(f):match("lib(.+)"))
