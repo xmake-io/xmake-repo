@@ -40,8 +40,8 @@ package("mpg123")
             -- using execv instead of vrunv is needed when compiling on windows, otherwise it fail with
             -- ../libtool: line 3331: 0: Bad file descriptor
             -- when -v is not supplied to xmake
-            os.vrunv("make", argv, {shell = true})
-            os.vrunv("make", table.join({"install"}, argv), {shell = true})
+            os.execv("make", argv, {shell = true})
+            os.execv("make", table.join({"install"}, argv), {shell = true})
         else
             import("package.tools.autoconf").install(package, configs)
         end
