@@ -9,23 +9,17 @@ package("yasm")
     add_versions("1.3.0", "3dce6601b495f5b3d45b59f7d2492a340ee7e84b5beca17e48f862502bd5603f")
     add_patches("1.3.0", path.join(os.scriptdir(), "patches", "fix-bool-gcc15.diff"), "bc58964451aec9495e1bd4ebb8f6a035dc7b01be6a041cba3fcf90decba7d6e1")
 
-    on_install("@windows", "@mingw", "@msys", function (package)
-        package:add("deps", "cmake", "python 3.x", {kind = "binary"})
-    end)
+    add_deps("cmake")
+    add_deps("python 3.x", {kind = "binary"})
 
-    on_install("@windows", "@mingw", "@msys", function (package)
+    on_install("@windows", "@linux", "@macosx", "@mingw", "@msys", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
-    end)
-    
-    on_install("@linux", "@macosx", function (package)
-        local configs = {"--disable-python"}
-        if package:debug() then
-            table.insert(configs, "--enable-debug")
+        if package:is_plat("mingw") then
+            io.replace("frontends/yasm/yasm-plugin.c", "#if defined(_WIN32)", "#if 1", {plain = true})
         end
-        import("package.tools.autoconf").install(package)
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
