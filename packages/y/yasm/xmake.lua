@@ -18,8 +18,6 @@ package("yasm")
         add_urls("https://www.tortall.net/projects/yasm/releases/yasm-$(version).tar.gz",
                  "https://ftp.openbsd.org/pub/OpenBSD/distfiles/yasm-$(version).tar.gz")
         add_versions("1.3.0", "3dce6601b495f5b3d45b59f7d2492a340ee7e84b5beca17e48f862502bd5603f")
-    end
-    if not is_host("windows") then
         add_patches("1.3.0", path.join(os.scriptdir(), "patches", "fix-bool-gcc15.diff"), "bc58964451aec9495e1bd4ebb8f6a035dc7b01be6a041cba3fcf90decba7d6e1")
     end
 
