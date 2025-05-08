@@ -4,26 +4,20 @@ package("yasm")
     set_homepage("https://yasm.tortall.net/")
     set_description("Modular BSD reimplementation of NASM.")
 
-    if is_host("windows") then
-        if os.arch() == "x64" then
-            add_urls("https://github.com/yasm/yasm/releases/download/v$(version)/vsyasm-$(version)-win64.zip",
-                     "http://www.tortall.net/projects/yasm/releases/vsyasm-$(version)-win64.zip")
-            add_versions("1.3.0", "6d991ca77e3827aade0091c87c89cb4c9fa6ad097afcea95ea736482bae707e2")
-        else
-            add_urls("https://github.com/yasm/yasm/releases/download/v$(version)/vsyasm-$(version)-win32.zip",
-                     "http://www.tortall.net/projects/yasm/releases/vsyasm-$(version)-win32.zip")
-            add_versions("1.3.0", "ff4585e2a03e7015b0b1d406d4231267c2d3733968ffc6fc633e586c85c16da5")
-        end
-    else
-        add_urls("https://www.tortall.net/projects/yasm/releases/yasm-$(version).tar.gz",
-                 "https://ftp.openbsd.org/pub/OpenBSD/distfiles/yasm-$(version).tar.gz")
-        add_versions("1.3.0", "3dce6601b495f5b3d45b59f7d2492a340ee7e84b5beca17e48f862502bd5603f")
-        add_patches("1.3.0", path.join(os.scriptdir(), "patches", "fix-bool-gcc15.diff"), "bc58964451aec9495e1bd4ebb8f6a035dc7b01be6a041cba3fcf90decba7d6e1")
-    end
+    add_urls("https://www.tortall.net/projects/yasm/releases/yasm-$(version).tar.gz",
+             "https://ftp.openbsd.org/pub/OpenBSD/distfiles/yasm-$(version).tar.gz")
+    add_versions("1.3.0", "3dce6601b495f5b3d45b59f7d2492a340ee7e84b5beca17e48f862502bd5603f")
+    add_patches("1.3.0", path.join(os.scriptdir(), "patches", "fix-bool-gcc15.diff"), "bc58964451aec9495e1bd4ebb8f6a035dc7b01be6a041cba3fcf90decba7d6e1")
 
     on_install("@windows", "@mingw", "@msys", function (package)
-        os.mv("vsyasm.exe", "yasm.exe")
-        os.cp("*", package:installdir("bin"))
+        package:add("deps", "cmake", "python 3.x", {kind = "binary"})
+    end)
+
+    on_install("@windows", "@mingw", "@msys", function (package)
+        local configs = {}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        import("package.tools.cmake").install(package, configs)
     end)
     
     on_install("@linux", "@macosx", function (package)
