@@ -23,25 +23,23 @@ package("mpg123")
     end)
 
     on_install("linux", "macosx", "android", "iphoneos", "bsd", "cross", function (package)
+        import("core.base.option")
+        import("package.tools.autoconf")
+        import("package.tools.make")
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         if package:debug() then
             table.insert(configs, "--enable-debug")
         end
         if is_subhost("windows") then
-            import("core.base.option")
-            import("package.tools.autoconf")
             autoconf.configure(package, configs)
             local njob = option.get("jobs") or tostring(os.default_njob())
             local argv = {"-j" .. njob}
             if option.get("verbose") then
                 table.insert(argv, "V=1")
             end
-            -- using execv instead of vrunv is needed when compiling on windows, otherwise it fail with
-            -- ../libtool: line 3331: 0: Bad file descriptor
-            -- when -v is not supplied to xmake
-            os.execv("make", argv, {shell = true})
-            os.execv("make", table.join({"install"}, argv), {shell = true})
+            make.make(package, argv)
+            make.install(package)
         else
             import("package.tools.autoconf").install(package, configs)
         end
