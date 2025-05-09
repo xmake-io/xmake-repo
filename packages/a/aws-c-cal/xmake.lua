@@ -6,6 +6,7 @@ package("aws-c-cal")
     add_urls("https://github.com/awslabs/aws-c-cal/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-cal.git")
 
+    add_versions("v0.9.0", "516ff370a45bfc49fd6d34a9bd2b1b3e753221046a9e2fbd117341d6f9d39edc")
     add_versions("v0.8.7", "5882096093f6f39d9442f9b8a4e377155a6846277d4277334a58cd36b736674f")
     add_versions("v0.8.3", "413a5226a881eb2d7c7b453707c90b6ad1c0f63edfc15e87087f56d7d10c2a1b")
     add_versions("v0.8.1", "4d603641758ef350c3e5401184804e8a6bba4aa5294593cc6228b0dca77b22f5")
