@@ -5,13 +5,19 @@ package("rust")
 
     add_versions("1.86.0", "")
 
-    add_deps("rustup", {host = true, private = true})
+    add_deps("ca-certificates", "rustup", {host = true, private = true})
 
     on_install(function (package)
-        local rustup = package:dep("rustup"):installdir()
+        local rustup = assert(os.getenv("RUSTUP_HOME"), "cannot find rustup home!")
         local version = package:version():shortstr()
         os.vrunv("rustup", {"install", "--no-self-update", version})
 
+        print("package arch", package:arch())
+        print("package targetarch", package:targetarch())
+
+        print("package plat", package:plat())
+        print("package targetos", package:targetos())
+        
         local target
         if package:is_targetarch("x86_64", "x64") then
             target = "x86_64"
