@@ -255,9 +255,9 @@ package("opencv")
             elseif package:is_arch("arm64") then arch = "ARM64"
             end
             -- Workaround for arm64
-            if package:is_arch("arm64") and not os.isdir("ARM64") then
-                if     os.isdir("x64") then arch = "x64"
-                elseif os.isdir("x86") then arch = "x86"
+            if package:is_arch("arm64") and not os.isdir(path.join(package:installdir(), "ARM64")) then
+                if     os.isdir(path.join(package:installdir(), "x64")) then arch = "x64"
+                elseif os.isdir(path.join(package:installdir(), "x86")) then arch = "x86"
                 end
             end
             local linkdir = (package:config("shared") and "lib" or "staticlib")
