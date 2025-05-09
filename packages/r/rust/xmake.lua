@@ -8,66 +8,42 @@ package("rust")
     add_deps("ca-certificates", {host = true, private = true})
     add_deps("rustup", {host = true, private = true, system = false})
 
+    -- required 
+    add_configs("target_plat", {description = "Target platform (for cross-compilation)", default = nil, type = "string"})
+    add_configs("target_arch", {description = "Target arch (for cross-compilation)", default = nil, type = "string"})
+
+    on_load(function (package)
+        if package:config("target_plat") == nil then
+            package:config_set("target_plat", package:plat())
+        end
+        if package:config("target_arch") == nil then
+            package:config_set("target_arch", package:arch())
+        end
+    end)
+
     on_install(function (package)
+        import("private.tools.rust.target_triple")
+
         local rustup = assert(os.getenv("RUSTUP_HOME"), "cannot find rustup home!")
         local version = package:version():shortstr()
 
-        os.vrunv("rustup", {"install", "--no-self-update", version})
+        local plat = package:config("target_plat")
+        local arch = package:config("target_arch")
 
-        local target
-        if package:is_targetarch("x86_64", "x64") then
-            target = "x86_64"
-        elseif package:is_targetarch("i386", "x86", "i686") then
-            target = "i686"
-        elseif package:is_targetarch("arm64", "aarch64", "arm64-v8a") then
-            target = "aarch64"
-        elseif package:is_targetarch("armeabi-v7a", "armv7-a") then
-            target = "armv7"
-        elseif package:is_targetarch("armeabi", "armv5te") then
-            target = "arm"
-        elseif package:is_targetarch("wasm32") then
-            target = "wasm32"
-        elseif package:is_targetarch("wasm64") then
-            target = "wasm64"
-        end
+        local host_target = assert(target_triple(package:plat(), package:arch()), "failed to build target triple for plat/arch, if you think this is a bug please create an issue")
+        local toolchain_name = version .. "-" .. host_target
+        os.vrunv("rustup", {"install", "--no-self-update", toolchain_name})
 
-        if target then
-            if is_plat("windows") then
-                target = target .. "-pc-windows-msvc"
-            elseif is_plat("mingw") then
-                target = target .. "-pc-windows-gnu"
-            elseif is_plat("linux") then
-                target = target .. "-unknown-linux-gnu"
-            elseif is_plat("macosx") then
-                target = target .. "-apple-darwin"
-            elseif is_plat("android") then
-                target = target .. "-linux-"
-                if package:is_targetarch("armeabi-v7a", "armeabi", "armv7-a", "armv5te") then
-                    target = target .. "androideabi"
-                else
-                    target = target .. "android"
-                end
-            elseif is_plat("iphoneos", "appletvos", "watchos") then
-                if is_plat("iphoneos") then
-                    target = target .. "-apple-ios"
-                elseif is_plat("appletvos") then
-                    target = target .. "-apple-tvos"
-                elseif is_plat("watchos") then
-                    target = target .. "-apple-watchos"
-                end
-            elseif is_plat("bsd") then
-                target = target .. "-unknown-freebsd"
-            elseif is_plat("wasm") then
-                target = target .. "-unknown-unknown"
-            end
+        local target = assert(target_triple(plat, arch), "failed to build target triple for target_plat/target_arch, if you think this is a bug please create an issue")
+        if target ~= host_target then
             os.vrunv("rustup", {"target", "add", target})
         end
 
-        os.mv(path.join(rustup, "toolchains", version .. "-*", "*"), package:installdir())
+        os.vmv(path.join(rustup, "toolchains", toolchain_name, "*"), package:installdir())
 
         -- cleanup to prevent rustup to think the toolchain is still installed
-        os.rm(path.join(rustup, "toolchains"))
-        os.rm(path.join(rustup, "update-hashes"))
+        os.vrm(path.join(rustup, "toolchains", toolchain_name))
+        os.vrm(path.join(rustup, "update-hashes", toolchain_name))
 
         package:addenv("RC", "bin/rustc" .. (is_host("windows") and ".exe" or ""))
         package:mark_as_pathenv("RC")
