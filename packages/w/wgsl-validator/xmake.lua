@@ -22,7 +22,7 @@ package("wgsl-validator")
 
     on_install(function (package)
         io.writefile("xmake.lua", [[
-            add_requires("rust", {configs = {target_plat = config.plat(), target_arch = config.arch()}})
+            add_requires("rust", {configs = {target_plat = get_config("plat"), target_arch = get_config("arch")}})
             add_requires("cargo::naga latest", {configs = {features = "wgsl-in"}})
 
             target("wgsl-validator")
