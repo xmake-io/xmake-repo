@@ -3,15 +3,18 @@ package("mcfgthread")
     set_description("Cornerstone of the MOST efficient std::thread on Windows for mingw-w64")
     set_license("GPL-3.0")
 
-    add_urls("https://github.com/lhmouse/mcfgthread.git")
+    add_urls("https://github.com/lhmouse/mcfgthread.git", {alias = "git"})
     add_urls("https://github.com/lhmouse/mcfgthread/archive/refs/tags/$(version).tar.gz", {
+        alias = "github",
         version = function (version)
             return format("v%d.%d-ga.%d", version:major(), version:minor(), version:patch())
     end})
 
-    add_versions("2.1.1", "73d4ea39e8eee30738ed3f4a35f6cc4e5c6cba62570908ee37d1fc0bf5a7d722")
-    add_versions("1.9.1", "311d0816971c27d379a0a8b3528e4469d1221856e9ee59c76c6e65daa8845914")
-    add_versions("1.8.4", "d2318ef761927860b7a8963308145065047d8ad2102313b26e6eb2d88d9ef1e3")
+    add_versions("github:2.1.1", "73d4ea39e8eee30738ed3f4a35f6cc4e5c6cba62570908ee37d1fc0bf5a7d722")
+    add_versions("github:1.9.1", "311d0816971c27d379a0a8b3528e4469d1221856e9ee59c76c6e65daa8845914")
+    add_versions("github:1.8.4", "d2318ef761927860b7a8963308145065047d8ad2102313b26e6eb2d88d9ef1e3")
+
+    add_versions("git:2.1.1", "v2.1-ga.1")
 
     add_patches("<=1.9.1", "patches/1.8.4/meson.patch", "89b98f9152719c44c2a7d8800b63ac621954fd0fe10884b9e90fc3298b76c6c9")
 
@@ -59,7 +62,7 @@ package("mcfgthread")
                 os.tryrm(path.join(package:installdir("lib"), "libmcfgthread.dll.a"))
                 os.tryrm(path.join(package:installdir("lib"), "libmcfgthread-minimal.dll.a"))
             end
-            os.rm(path.join(package:installdir("bin/*.dll")))
+            os.rm(package:installdir("bin/*.dll"))
         end
     end)
 
