@@ -35,14 +35,10 @@ package("mcfgthread")
 
     on_load(function (package)
         -- also can use `add_packages("mcfgthread", {links = "mcfgthread-minimal"})`
-        if package:is_plat("windows") then
-            if package:config("shared") then
-                package:add("links", "libmcfgthread")
-            else
-                package:add("links", "mcfgthread")
-            end
-        else
+        if package:is_plat("windows") and package:config("shared") then
             package:add("links", "libmcfgthread")
+        else
+            package:add("links", "mcfgthread")
         end
     end)
 
