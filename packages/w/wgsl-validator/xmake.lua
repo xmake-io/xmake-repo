@@ -18,10 +18,14 @@ package("wgsl-validator")
         add_syslinks("pthread")
     end
 
+    on_load(function (package)
+        package:add("deps", "rust", {configs = {target_plat = package:plat(), target_arch = package:arch()}})
+    end)
+
     on_install(function (package)
         io.writefile("xmake.lua", [[
-            add_requires("rust")
-            add_requires("cargo::naga latest", { configs = { features = "wgsl-in" } })
+            add_requires("rust", {configs = {target_plat = config.plat(), target_arch = config.arch()}})
+            add_requires("cargo::naga latest", {configs = {features = "wgsl-in"}})
 
             target("wgsl-validator")
                 set_kind("static")
