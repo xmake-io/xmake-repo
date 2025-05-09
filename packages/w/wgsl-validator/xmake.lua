@@ -8,10 +8,14 @@ package("wgsl-validator")
 
     add_versions("v1.0.0", "1ea4c13cc548bc785920d5b80ff94ccb97587ca69389c6b7d41f734e9f6b056b")
 
+    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+
     add_deps("rust")
 
     if is_plat("windows", "mingw") then
         add_syslinks("Advapi32", "User32", "Userenv", "WS2_32", "RuntimeObject", "NtDll")
+    elseif is_plat("linux", "bsd") then
+        add_syslinks("pthread")
     end
 
     on_install(function (package)
