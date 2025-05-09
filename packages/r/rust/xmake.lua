@@ -8,7 +8,8 @@ package("rust")
     add_deps("ca-certificates", "rustup", {host = true, private = true})
 
     on_install(function (package)
-        local rustup = assert(os.getenv("RUSTUP_HOME"), "cannot find rustup home!")
+        local rustup = package:dep("rustup"):installdir()
+        print("RUSTUP_HOME", os.getenv("RUSTUP_HOME"))
         local version = package:version():shortstr()
         os.vrunv("rustup", {"install", "--no-self-update", version})
 
