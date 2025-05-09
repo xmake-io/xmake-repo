@@ -5,20 +5,15 @@ package("rust")
 
     add_versions("1.86.0", "")
 
-    add_deps("ca-certificates", "rustup", {host = true, private = true})
+    add_deps("ca-certificates", {host = true, private = true})
+    add_deps("rustup", {host = true, private = true, system = false})
 
     on_install(function (package)
-        local rustup = package:dep("rustup"):installdir()
-        print("RUSTUP_HOME", os.getenv("RUSTUP_HOME"))
+        local rustup = assert(os.getenv("RUSTUP_HOME"), "cannot find rustup home!")
         local version = package:version():shortstr()
+
         os.vrunv("rustup", {"install", "--no-self-update", version})
 
-        print("package arch", package:arch())
-        print("package targetarch", package:targetarch())
-
-        print("package plat", package:plat())
-        print("package targetos", package:targetos())
-        
         local target
         if package:is_targetarch("x86_64", "x64") then
             target = "x86_64"
@@ -37,42 +32,42 @@ package("rust")
         end
 
         if target then
-            if package:is_targetos("windows") then
+            if is_plat("windows") then
                 target = target .. "-pc-windows-msvc"
-            elseif package:is_targetos("mingw") then
+            elseif is_plat("mingw") then
                 target = target .. "-pc-windows-gnu"
-            elseif package:is_targetos("linux") then
+            elseif is_plat("linux") then
                 target = target .. "-unknown-linux-gnu"
-            elseif package:is_targetos("macosx") then
+            elseif is_plat("macosx") then
                 target = target .. "-apple-darwin"
-            elseif package:is_targetos("android") then
+            elseif is_plat("android") then
                 target = target .. "-linux-"
                 if package:is_targetarch("armeabi-v7a", "armeabi", "armv7-a", "armv5te") then
                     target = target .. "androideabi"
                 else
                     target = target .. "android"
                 end
-            elseif package:is_targetos("iphoneos", "appletvos", "watchos") then
-                if package:is_targetos("iphoneos") then
+            elseif is_plat("iphoneos", "appletvos", "watchos") then
+                if is_plat("iphoneos") then
                     target = target .. "-apple-ios"
-                elseif package:is_targetos("appletvos") then
+                elseif is_plat("appletvos") then
                     target = target .. "-apple-tvos"
-                elseif package:is_targetos("watchos") then
+                elseif is_plat("watchos") then
                     target = target .. "-apple-watchos"
                 end
-            elseif package:is_targetos("bsd") then
+            elseif is_plat("bsd") then
                 target = target .. "-unknown-freebsd"
-            elseif package:is_targetos("wasm") then
+            elseif is_plat("wasm") then
                 target = target .. "-unknown-unknown"
             end
             os.vrunv("rustup", {"target", "add", target})
         end
 
-        os.mv(path.join(rustup, ".rustup", "toolchains", version .. "-*", "*"), package:installdir())
+        os.mv(path.join(rustup, "toolchains", version .. "-*", "*"), package:installdir())
 
         -- cleanup to prevent rustup to think the toolchain is still installed
-        os.rm(path.join(rustup, ".rustup", "toolchains"))
-        os.rm(path.join(rustup, ".rustup", "update-hashes"))
+        os.rm(path.join(rustup, "toolchains"))
+        os.rm(path.join(rustup, "update-hashes"))
 
         package:addenv("RC", "bin/rustc" .. (is_host("windows") and ".exe" or ""))
         package:mark_as_pathenv("RC")
