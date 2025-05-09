@@ -85,12 +85,6 @@ package("opencv")
             if     package:is_arch("x86")   then arch = "x86"
             elseif package:is_arch("arm64") then arch = "ARM64"
             end
-            -- Workaround for arm64
-            if package:is_arch("arm64") and not os.isdir("ARM64") then
-                if     os.isdir("x64") then arch = "x64"
-                elseif os.isdir("x86") then arch = "x86"
-                end
-            end
             local linkdir = (package:config("shared") and "lib" or "staticlib")
             local vs = package:toolchain("msvc"):config("vs")
             local vc_ver = "vc13"
@@ -259,6 +253,12 @@ package("opencv")
             local arch = "x64"
             if     package:is_arch("x86")   then arch = "x86"
             elseif package:is_arch("arm64") then arch = "ARM64"
+            end
+            -- Workaround for arm64
+            if package:is_arch("arm64") and not os.isdir("ARM64") then
+                if     os.isdir("x64") then arch = "x64"
+                elseif os.isdir("x86") then arch = "x86"
+                end
             end
             local linkdir = (package:config("shared") and "lib" or "staticlib")
             local vs = package:toolchain("msvc"):config("vs")
