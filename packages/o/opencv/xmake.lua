@@ -246,12 +246,6 @@ package("opencv")
                     package:add("links", path.basename(f):match("lib(.+)"))
                 end
             end
-            for _, f in ipairs(libfiles) do
-                if not f:match("opencv_.+") then
-                    package:add("links", path.basename(f):match("lib(.+)"))
-                end
-            end
-
         elseif package:is_plat("windows") then
             local arch = "x64"
             if     package:is_arch("x86")   then arch = "x86"
