@@ -10,8 +10,6 @@ package("wgsl-validator")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
-    add_deps("rust")
-
     if is_plat("windows", "mingw") then
         add_syslinks("Advapi32", "User32", "Userenv", "WS2_32", "RuntimeObject", "NtDll")
     elseif is_plat("linux", "bsd") then
