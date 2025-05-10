@@ -12,6 +12,9 @@ package("rust")
     add_configs("target_plat", {description = "Target platform (for cross-compilation)", default = nil, type = "string"})
     add_configs("target_arch", {description = "Target arch (for cross-compilation)", default = nil, type = "string"})
 
+    on_check("mingw", function (package)
+    end)
+
     on_load(function (package)
         if package:config("target_plat") == nil then
             package:config_set("target_plat", package:plat())
@@ -30,11 +33,11 @@ package("rust")
         local plat = package:config("target_plat")
         local arch = package:config("target_arch")
 
-        local host_target = assert(target_triple(package:plat(), package:arch()), "failed to build target triple for plat/arch, if you think this is a bug please create an issue")
+        local host_target = assert(target_triple(package:plat(), package:arch()), "failed to build target triple for plat %s and arch %s, if you think this is a bug please create an issue", package:plat(), package:arch())
         local toolchain_name = version .. "-" .. host_target
         os.vrunv("rustup", {"install", "--no-self-update", toolchain_name})
 
-        local target = assert(target_triple(plat, arch), "failed to build target triple for target_plat/target_arch, if you think this is a bug please create an issue")
+        local target = assert(target_triple(plat, arch), "failed to build target triple for target_plat %s and target_arch %s, if you think this is a bug please create an issue", plat, arch)
         if target ~= host_target then
             os.vrunv("rustup", {"target", "add", target})
         end
