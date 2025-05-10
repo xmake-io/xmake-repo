@@ -21,9 +21,15 @@ package("rust")
         end
     end)
 
-    on_check("mingw|i386", function (package)
+    on_check(function (package)
         print("on_check")
         -- MinGW 32bits exception model must match rustc LLVM exception model (dwarf2)
+        local plat = package:config("target_plat")
+        local arch = package:config("target_arch")
+        if plat ~= "mingw" or (plat ~= "i386" and plat ~= "i686") then
+            return
+        end
+
         local mingw = package:toolchain("mingw")
         if not mingw then
             print("toolchain not found")
