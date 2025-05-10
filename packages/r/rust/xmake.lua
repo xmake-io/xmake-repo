@@ -38,6 +38,7 @@ package("rust")
         if #output:trim() == 0 then
             output = errdata
         end
+        print("gcc -v", output)
         assert(output:find("--with-dwarf2", 1, true), "rustc is only compatible with dwarf2 exception model in 32bits mode, please use dwarf2 MinGW")
     end)
 
