@@ -22,18 +22,23 @@ package("rust")
     end)
 
     on_check("mingw|i386", function (package)
+        print("on_check")
         -- MinGW 32bits exception model must match rustc LLVM exception model (dwarf2)
         local mingw = package:toolchain("mingw")
         if not mingw then
+            print("toolchain not found")
             return
         end
 
         local compiler, toolname = mingw:tool("cc")
         if toolname ~= "gcc" then
+            print("toolname not gcc (" .. toolname .. ")")
             return
         end
 
         local output, errdata = os.iorunv(compiler, {"-v"})
+        print("stdout", output)
+        print("stderr", errdata)
         -- for some reason the output is in stderr
         if #output:trim() == 0 then
             output = errdata
