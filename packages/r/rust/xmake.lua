@@ -47,8 +47,17 @@ package("rust")
         local plat = package:config("target_plat")
         local arch = package:config("target_arch")
 
-        if not target_triple and (plat ~= package:plat() or arch ~= package:arch()) then
-            os.raise("rust cross-compilation requires xmake dev or xmake 3.0.0")
+        if not target_triple then
+            if plat == "mingw" or plat == "msys" then
+                plat = "windows"
+            end
+            local package_plat = package:plat()
+            if package_plat == "mingw" or package_plat == "msys" then
+                package_plat = "windows"
+            end
+            if plat ~= package_plat or arch ~= package:arch() then
+                os.raise("rust cross-compilation requires xmake dev or xmake 3.0.0")
+            end
         end
 
         local rustup = assert(os.getenv("RUSTUP_HOME"), "cannot find rustup home!")
@@ -62,6 +71,7 @@ package("rust")
             toolchain_name = toolchain_name .. "-" .. host_target
             toolchain_dir = toolchain_name
         elseif package:is_plat("msys", "mingw") and is_host("windows") then
+            -- we have to handle mingw case because rustup will install a msvc toolchain by default on Windows
             toolchain_name = toolchain_name .. (package:is_arch("i386") and "-x86_64-pc-windows-gnu" or "-i686-pc-windows-gnu")
             toolchain_dir = toolchain_name
         else
