@@ -27,6 +27,7 @@ package("rust")
         local plat = package:config("target_plat")
         local arch = package:config("target_arch")
         if plat ~= "mingw" or (plat ~= "i386" and plat ~= "i686") then
+            print("plat/arch isn't mingw (" .. plat .. "|" .. arch .. ")")
             return
         end
 
