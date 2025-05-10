@@ -8,6 +8,8 @@ package("woff2")
 
     add_versions("v1.0.2", "add272bb09e6384a4833ffca4896350fdb16e0ca22df68c0384773c67a175594")
 
+    add_patches("v1.0.2", path.join(os.scriptdir(), "patches", "missing-gcc15-header.diff"), "357213b88875a61af3f83d1082129a59e6caa1ea6c25e272543d2875a1abadf4")
+
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end

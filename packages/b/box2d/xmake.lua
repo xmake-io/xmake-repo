@@ -6,8 +6,11 @@ package("box2d")
     set_urls("https://github.com/erincatto/box2d/archive/refs/tags/$(version).tar.gz",
              "https://github.com/erincatto/box2d.git")
 
+    add_versions("v3.1.0", "7fac19801485efb31ee3745b2284d9d4601f9e8138a3383a7b0df6d788ea5785")
     add_versions("v3.0.0", "64ad759006cd2377c99367f51fb36942b57f0e9ad690ed41548dd620e6f6c8b1")
     add_versions("v2.4.2", "85b9b104d256c985e6e244b4227d447897fac429071cc114e5cc819dae848852")
+
+    add_patches("3.1.0", "patches/3.1.0/cmake.patch", "22200ef3af453ef3a81735ad3700249110e3f26a7a68d712dbb3ad96309ce02b")
 
     add_configs("avx2", {description = "Enable AVX2.", default = false, type = "boolean"})
 
