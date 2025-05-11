@@ -22,7 +22,8 @@ package("diligenttools")
     if is_plat("windows") then
         add_deps("imgui", {configs = {win32 = true}})
     elseif is_plat("linux") then
-        add_deps("imgui", "libxcb", "libx11", "libxrandr", "libxrender", "libxinerama", "libxfixes", "libxcursor", "libxi", "libxext", "wayland")
+        add_deps("imgui 1.86", 
+            "libxcb", "libx11", "libxrandr", "libxrender", "libxinerama", "libxfixes", "libxcursor", "libxi", "libxext", "wayland")
     end
 
     if is_plat("windows") then
