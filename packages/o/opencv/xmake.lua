@@ -193,6 +193,7 @@ package("opencv")
                 table.insert(configs, "-DCMAKE_SYSTEM_NAME=Android")
                 -- from https://github.com/opencv/opencv/issues/15769#issuecomment-549570072
                 table.insert(configs, "-DBUILD_ANDROID_EXAMPLES=OFF")
+                table.insert(configs, "-DBUILD_ANDROID_PROJECTS=OFF")
             end
 
             -- In case of android we prefer to set CMAKE_ANDROID_ARCH_ABI rather than CMAKE_SYSTEM_PROCESSOR
