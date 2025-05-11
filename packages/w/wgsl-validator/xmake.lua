@@ -20,6 +20,11 @@ package("wgsl-validator")
         package:add("deps", "rust", {configs = {target_plat = package:plat(), target_arch = package:arch()}})
     end)
 
+    on_check(function (package)
+        local rust = package:dep("rust")
+        rust:script("check")(package)
+    end)
+
     on_install(function (package)
         io.writefile("xmake.lua", [[
             add_requires("rust", {configs = {target_plat = get_config("plat"), target_arch = get_config("arch")}})
