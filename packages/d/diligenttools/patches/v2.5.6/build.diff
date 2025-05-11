@@ -214,7 +214,7 @@ index 0b1d39f..bdb7f36 100644
  namespace Diligent
  {
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 212a82e..9d4aab3 100644
+index 212a82e..d266157 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -21,31 +21,125 @@ function(install_tools_lib _TARGET)
@@ -318,7 +318,7 @@ index 212a82e..9d4aab3 100644
 +	set(Diligent-TargetPlatform Diligent-AndroidPlatform)
 +elseif(PLATFORM_LINUX)
 +	set(Diligent-TargetPlatform Diligent-LinuxPlatform)
-+elseif(PLATFORM_APPLE)
++elseif(PLATFORM_MACOS OR PLATFORM_IOS OR PLATFORM_TVOS)
 +	set(Diligent-TargetPlatform Diligent-ApplePlatform)
 +elseif(PLATFORM_WEB)
 +	set(Diligent-TargetPlatform Diligent-EmscriptenPlatform)
