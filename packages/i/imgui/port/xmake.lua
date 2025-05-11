@@ -17,6 +17,7 @@ option("sdl3_renderer",    {showmenu = true,  default = false})
 option("sdl3_gpu",         {showmenu = true,  default = false})
 option("vulkan",           {showmenu = true,  default = false})
 option("win32",            {showmenu = true,  default = false})
+option("osx",              {showmenu = true,  default = false})
 option("wgpu",             {showmenu = true,  default = false})
 option("freetype",         {showmenu = true,  default = false})
 option("user_config",      {showmenu = true,  default = nil, type = "string"})
@@ -152,6 +153,12 @@ target("imgui")
     if has_config("win32") then
         add_files("backends/imgui_impl_win32.cpp")
         add_headerfiles("(backends/imgui_impl_win32.h)")
+    end
+
+    if has_config("osx") then
+        add_frameworks("Cocoa", "Carbon", "GameController")
+        add_files("backends/imgui_impl_osx.mm")
+        add_headerfiles("(backends/imgui_impl_osx.h)")
     end
 
     if has_config("wgpu") then

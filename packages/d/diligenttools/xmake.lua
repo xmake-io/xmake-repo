@@ -23,7 +23,7 @@ package("diligenttools")
         add_deps("imgui 1.89", 
             "libxcb", "libx11", "libxrandr", "libxrender", "libxinerama", "libxfixes", "libxcursor", "libxi", "libxext", "wayland")
     elseif is_plat("macosx") then
-        add_deps("imgui")
+        add_deps("imgui", {configs = {osx = true}})
     end
 
     if is_plat("windows") then
