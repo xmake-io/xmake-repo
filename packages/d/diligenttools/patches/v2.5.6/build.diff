@@ -994,7 +994,7 @@ index a7a1974..95d77ca 100644
  using namespace Diligent;
  
 diff --git a/RenderStateNotation/CMakeLists.txt b/RenderStateNotation/CMakeLists.txt
-index 2f76ec8..512098a 100644
+index 2f76ec8..7fc5c91 100644
 --- a/RenderStateNotation/CMakeLists.txt
 +++ b/RenderStateNotation/CMakeLists.txt
 @@ -2,6 +2,7 @@ cmake_minimum_required (VERSION 3.6)
@@ -1005,9 +1005,14 @@ index 2f76ec8..512098a 100644
  set(REFLECTED
      ${Diligent-GraphicsEngine_SOURCE_DIR}/interface/BlendState.h
      ${Diligent-GraphicsEngine_SOURCE_DIR}/interface/DepthStencilState.h
-@@ -29,10 +30,6 @@ find_package(Python3 REQUIRED)
- set(LIBCLANG_INSTALL_CMD ${Python3_EXECUTABLE} -m pip install libclang==16.0.6)
- set(JINJA2_INSTALL_CMD ${Python3_EXECUTABLE} -m pip install jinja2)
+@@ -26,13 +27,9 @@ file(COPY ../.clang-format DESTINATION "${RSN_PARSER_GENERATED_HEADERS_DIR}")
+ 
+ find_package(Python3 REQUIRED)
+ 
+-set(LIBCLANG_INSTALL_CMD ${Python3_EXECUTABLE} -m pip install libclang==16.0.6)
+-set(JINJA2_INSTALL_CMD ${Python3_EXECUTABLE} -m pip install jinja2)
++set(LIBCLANG_INSTALL_CMD ${Python3_EXECUTABLE} -m pip install --user libclang==16.0.6)
++set(JINJA2_INSTALL_CMD ${Python3_EXECUTABLE} -m pip install --user jinja2)
  
 -if(${Python3_VERSION} VERSION_GREATER_EQUAL "3.12")
 -    set(LIBCLANG_INSTALL_CMD ${LIBCLANG_INSTALL_CMD} --break-system-packages)
