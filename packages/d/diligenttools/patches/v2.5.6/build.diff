@@ -994,7 +994,7 @@ index a7a1974..95d77ca 100644
  using namespace Diligent;
  
 diff --git a/RenderStateNotation/CMakeLists.txt b/RenderStateNotation/CMakeLists.txt
-index 2f76ec8..7fc5c91 100644
+index 2f76ec8..6129db8 100644
 --- a/RenderStateNotation/CMakeLists.txt
 +++ b/RenderStateNotation/CMakeLists.txt
 @@ -2,6 +2,7 @@ cmake_minimum_required (VERSION 3.6)
@@ -1005,7 +1005,7 @@ index 2f76ec8..7fc5c91 100644
  set(REFLECTED
      ${Diligent-GraphicsEngine_SOURCE_DIR}/interface/BlendState.h
      ${Diligent-GraphicsEngine_SOURCE_DIR}/interface/DepthStencilState.h
-@@ -26,13 +27,9 @@ file(COPY ../.clang-format DESTINATION "${RSN_PARSER_GENERATED_HEADERS_DIR}")
+@@ -26,8 +27,8 @@ file(COPY ../.clang-format DESTINATION "${RSN_PARSER_GENERATED_HEADERS_DIR}")
  
  find_package(Python3 REQUIRED)
  
@@ -1014,14 +1014,9 @@ index 2f76ec8..7fc5c91 100644
 +set(LIBCLANG_INSTALL_CMD ${Python3_EXECUTABLE} -m pip install --user libclang==16.0.6)
 +set(JINJA2_INSTALL_CMD ${Python3_EXECUTABLE} -m pip install --user jinja2)
  
--if(${Python3_VERSION} VERSION_GREATER_EQUAL "3.12")
--    set(LIBCLANG_INSTALL_CMD ${LIBCLANG_INSTALL_CMD} --break-system-packages)
--    set(JINJA2_INSTALL_CMD ${JINJA2_INSTALL_CMD} --break-system-packages)
--endif()
- 
- execute_process(COMMAND ${LIBCLANG_INSTALL_CMD}
-                 RESULT_VARIABLE PYTHON_PIP_LIBCLANG_RESULT)
-@@ -65,15 +62,9 @@ source_group("generated" FILES ${GENERATED})
+ if(${Python3_VERSION} VERSION_GREATER_EQUAL "3.12")
+     set(LIBCLANG_INSTALL_CMD ${LIBCLANG_INSTALL_CMD} --break-system-packages)
+@@ -65,15 +66,9 @@ source_group("generated" FILES ${GENERATED})
  source_group("source"    FILES ${SOURCE})
  source_group("scripts"   FILES ${SCRIPTS})
  
@@ -1037,7 +1032,7 @@ index 2f76ec8..7fc5c91 100644
                     WORKING_DIRECTORY "${RSN_PARSER_GENERATED_HEADERS_DIR}"
                     DEPENDS ${REFLECTED}
                     COMMENT "Generating RSN Parser Headers...")
-@@ -91,7 +82,10 @@ PUBLIC
+@@ -91,7 +86,10 @@ PUBLIC
      interface
  PRIVATE
      include
