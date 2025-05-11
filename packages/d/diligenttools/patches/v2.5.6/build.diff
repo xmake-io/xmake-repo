@@ -214,7 +214,7 @@ index 0b1d39f..bdb7f36 100644
  namespace Diligent
  {
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 212a82e..dd1d4eb 100644
+index 212a82e..9d4aab3 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -21,31 +21,125 @@ function(install_tools_lib _TARGET)
@@ -288,7 +288,7 @@ index 212a82e..dd1d4eb 100644
 +    set(GLES_SUPPORTED     TRUE CACHE INTERNAL "OpenGLES is supported on Web platform")
 +    set(WEBGPU_SUPPORTED   TRUE CACHE INTERNAL "WebGPU is supported on Web platform")
 +    set(ARCHIVER_SUPPORTED TRUE CACHE INTERNAL "Archiver is supported on Web platform")
-+    target_compile_definitions(Diligent-PublicBuildSettings INTERFACE PLATFORM_WEB=1 PLATFORM_EMSCRIPTEN=1)   
++    target_compile_definitions(Diligent-PublicBuildSettings INTERFACE PLATFORM_WEB=1 PLATFORM_EMSCRIPTEN=1)
 +else()
 +    message(FATAL_ERROR "No PLATFORM_XXX variable defined. Make sure that 'DiligentCore' folder is processed first")
 +endif()
@@ -917,6 +917,19 @@ index 76d7321..3f3de7d 100644
  
  #include <android/sensor.h>
  //#include <android/log.h>
+diff --git a/NativeApp/src/Android/AndroidMain.cpp b/NativeApp/src/Android/AndroidMain.cpp
+index 1f9b78b..a4e314d 100644
+--- a/NativeApp/src/Android/AndroidMain.cpp
++++ b/NativeApp/src/Android/AndroidMain.cpp
+@@ -27,7 +27,7 @@
+ #include <jni.h>
+ #include <errno.h>
+ 
+-#include "PlatformDefinitions.h"
++#include "DiligentCore/Platforms/interface/PlatformDefinitions.h"
+ #include "NativeAppBase.hpp"
+ 
+ 
 diff --git a/NativeApp/src/Emscripten/EmscriptenMain.cpp b/NativeApp/src/Emscripten/EmscriptenMain.cpp
 index ff90764..2766137 100644
 --- a/NativeApp/src/Emscripten/EmscriptenMain.cpp
@@ -931,12 +944,15 @@ index ff90764..2766137 100644
  
  struct NativeAppCallbackData
 diff --git a/NativeApp/src/Linux/LinuxMain.cpp b/NativeApp/src/Linux/LinuxMain.cpp
-index 5a2c8e9..93ac278 100644
+index 5a2c8e9..043197a 100644
 --- a/NativeApp/src/Linux/LinuxMain.cpp
 +++ b/NativeApp/src/Linux/LinuxMain.cpp
-@@ -29,9 +29,9 @@
+@@ -27,11 +27,11 @@
+ #include <iomanip>
+ #include <string>
  
- #include "PlatformDefinitions.h"
+-#include "PlatformDefinitions.h"
++#include "DiligentCore/Platforms/interface/PlatformDefinitions.h"
  #include "NativeAppBase.hpp"
 -#include "StringTools.hpp"
 -#include "Timer.hpp"
