@@ -1469,10 +1469,17 @@ index 324d06c..a9facb7 100644
  #include <cmath>
  
 diff --git a/Tests/DiligentToolsTest/src/PNGCodecTest.cpp b/Tests/DiligentToolsTest/src/PNGCodecTest.cpp
-index ac4da10..254404f 100644
+index ac4da10..ef19a99 100644
 --- a/Tests/DiligentToolsTest/src/PNGCodecTest.cpp
 +++ b/Tests/DiligentToolsTest/src/PNGCodecTest.cpp
-@@ -32,7 +32,7 @@
+@@ -26,13 +26,13 @@
+  */
+ 
+ #include "../interface/PNGCodec.h"
+-#include "png.h"
++#include <png.h>
+ 
+ #include "gtest/gtest.h"
  
  #include <vector>
  
@@ -1754,10 +1761,10 @@ index f2b7ac6..abef22f 100644
  #include "dxgiformat.h"
  
 diff --git a/TextureLoader/src/Image.cpp b/TextureLoader/src/Image.cpp
-index 1287d97..3d93a3e 100644
+index 1287d97..bdb8d88 100644
 --- a/TextureLoader/src/Image.cpp
 +++ b/TextureLoader/src/Image.cpp
-@@ -31,7 +31,7 @@
+@@ -31,21 +31,21 @@
  #include <array>
  
  #include "Image.h"
@@ -1765,8 +1772,9 @@ index 1287d97..3d93a3e 100644
 +#include "DiligentCore/Primitives/interface/Errors.hpp"
  
  #include "tiffio.h"
- #include "png.h"
-@@ -39,13 +39,13 @@
+-#include "png.h"
++#include <png.h>
+ #include "PNGCodec.h"
  #include "JPEGCodec.h"
  #include "SGILoader.h"
  
@@ -1812,14 +1820,16 @@ index 4eec002..6bba3c4 100644
  #define GL_RGBA32F            0x8814
  #define GL_RGBA32UI           0x8D70
 diff --git a/TextureLoader/src/PNGCodec.c b/TextureLoader/src/PNGCodec.c
-index 8958b3d..00a65bf 100644
+index 8958b3d..a917c20 100644
 --- a/TextureLoader/src/PNGCodec.c
 +++ b/TextureLoader/src/PNGCodec.c
-@@ -29,7 +29,7 @@
+@@ -28,8 +28,8 @@
+ #include <stdlib.h>
  #include <string.h>
  
- #include "png.h"
+-#include "png.h"
 -#include "GraphicsTypes.h"
++#include <png.h>
 +#include "DiligentCore/Graphics/GraphicsEngine/interface/GraphicsTypes.h"
  
  #include "PNGCodec.h"
