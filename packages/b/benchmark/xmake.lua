@@ -6,6 +6,7 @@ package("benchmark")
     add_urls("https://github.com/google/benchmark/archive/refs/tags/$(version).tar.gz",
              "https://github.com/google/benchmark.git")
 
+    add_versions("v1.9.3", "b94263b018042007eb53f79639f21ae47800808c73cf1b7df85622b6e2b1aa32")
     add_versions("v1.9.2", "409075176168dc46bbb81b74c1b4b6900385b5d16bfc181d678afb060d928bd3")
     add_versions("v1.9.1", "32131c08ee31eeff2c8968d7e874f3cb648034377dfc32a4c377fa8796d84981")
     add_versions("v1.9.0", "35a77f46cc782b16fac8d3b107fbfbb37dcd645f7c28eee19f3b8e0758b48994")
