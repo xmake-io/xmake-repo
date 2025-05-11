@@ -1469,17 +1469,10 @@ index 324d06c..a9facb7 100644
  #include <cmath>
  
 diff --git a/Tests/DiligentToolsTest/src/PNGCodecTest.cpp b/Tests/DiligentToolsTest/src/PNGCodecTest.cpp
-index ac4da10..ef19a99 100644
+index ac4da10..254404f 100644
 --- a/Tests/DiligentToolsTest/src/PNGCodecTest.cpp
 +++ b/Tests/DiligentToolsTest/src/PNGCodecTest.cpp
-@@ -26,13 +26,13 @@
-  */
- 
- #include "../interface/PNGCodec.h"
--#include "png.h"
-+#include <png.h>
- 
- #include "gtest/gtest.h"
+@@ -32,7 +32,7 @@
  
  #include <vector>
  
@@ -1545,10 +1538,10 @@ index 26bad65..541901d 100644
  
  namespace Diligent
 diff --git a/TextureLoader/CMakeLists.txt b/TextureLoader/CMakeLists.txt
-index eb1150b..2b99a43 100644
+index eb1150b..9ffcd31 100644
 --- a/TextureLoader/CMakeLists.txt
 +++ b/TextureLoader/CMakeLists.txt
-@@ -34,17 +34,14 @@ set(SOURCE
+@@ -34,17 +34,18 @@ set(SOURCE
  add_library(Diligent-TextureLoader STATIC ${SOURCE} ${INCLUDE} ${INTERFACE})
  set_common_target_properties(Diligent-TextureLoader)
  
@@ -1565,18 +1558,34 @@ index eb1150b..2b99a43 100644
      include
 +    ${diligentcore_INCLUDEDIR}
 +    ${stb_INCLUDEDIR}
++    ${libpng_INCLUDEDIR}
++    ${libtiff_INCLUDEDIR}
++    ${libjpeg_INCLUDEDIR}
++    ${zlib_INCLUDEDIR}
  )
  
  source_group("source" FILES ${SOURCE})
-@@ -64,7 +61,7 @@ PRIVATE
-     ZLIB::ZLIB
+@@ -59,15 +60,15 @@ PRIVATE
+     Diligent-GraphicsEngineInterface 
+     Diligent-GraphicsAccessories
+     Diligent-GraphicsTools
+-    PNG::PNG 
+-    TIFF::TIFF
+-    ZLIB::ZLIB
++    ${libpng_LINK_LIBRARIES}
++    ${libtiff_LINK_LIBRARIES}
++    ${zlib_LINK_LIBRARIES}
  )
  
 -if (NOT DILIGENT_EXTERNAL_LIBJPEG)
 +if (1)
      target_link_libraries(Diligent-TextureLoader
      PRIVATE
-         JPEG::JPEG
+-        JPEG::JPEG
++        ${libjpeg_LINK_LIBRARIES}
+     )
+ else()
+     target_link_libraries(Diligent-TextureLoader
 diff --git a/TextureLoader/include/TextureLoaderImpl.hpp b/TextureLoader/include/TextureLoaderImpl.hpp
 index 421ec0b..011ab52 100644
 --- a/TextureLoader/include/TextureLoaderImpl.hpp
@@ -1761,10 +1770,10 @@ index f2b7ac6..abef22f 100644
  #include "dxgiformat.h"
  
 diff --git a/TextureLoader/src/Image.cpp b/TextureLoader/src/Image.cpp
-index 1287d97..bdb8d88 100644
+index 1287d97..3d93a3e 100644
 --- a/TextureLoader/src/Image.cpp
 +++ b/TextureLoader/src/Image.cpp
-@@ -31,21 +31,21 @@
+@@ -31,7 +31,7 @@
  #include <array>
  
  #include "Image.h"
@@ -1772,9 +1781,8 @@ index 1287d97..bdb8d88 100644
 +#include "DiligentCore/Primitives/interface/Errors.hpp"
  
  #include "tiffio.h"
--#include "png.h"
-+#include <png.h>
- #include "PNGCodec.h"
+ #include "png.h"
+@@ -39,13 +39,13 @@
  #include "JPEGCodec.h"
  #include "SGILoader.h"
  
@@ -1820,16 +1828,14 @@ index 4eec002..6bba3c4 100644
  #define GL_RGBA32F            0x8814
  #define GL_RGBA32UI           0x8D70
 diff --git a/TextureLoader/src/PNGCodec.c b/TextureLoader/src/PNGCodec.c
-index 8958b3d..a917c20 100644
+index 8958b3d..00a65bf 100644
 --- a/TextureLoader/src/PNGCodec.c
 +++ b/TextureLoader/src/PNGCodec.c
-@@ -28,8 +28,8 @@
- #include <stdlib.h>
+@@ -29,7 +29,7 @@
  #include <string.h>
  
--#include "png.h"
+ #include "png.h"
 -#include "GraphicsTypes.h"
-+#include <png.h>
 +#include "DiligentCore/Graphics/GraphicsEngine/interface/GraphicsTypes.h"
  
  #include "PNGCodec.h"
@@ -1906,10 +1912,10 @@ index ab0956f..38b4b3e 100644
  namespace Diligent
  {
 diff --git a/ThirdParty/CMakeLists.txt b/ThirdParty/CMakeLists.txt
-index 49129b9..c744411 100644
+index 49129b9..690750f 100644
 --- a/ThirdParty/CMakeLists.txt
 +++ b/ThirdParty/CMakeLists.txt
-@@ -12,74 +12,57 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR
+@@ -12,74 +12,53 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR
  endif()
  
  
@@ -1972,14 +1978,10 @@ index 49129b9..c744411 100644
 +        message(STATUS "${var} = ${${var}}")
 +    endforeach()
 +endfunction()
-+# pkg_check_modules(libjpeg REQUIRED libjpeg)
-+# pkg_check_modules(libtiff REQUIRED libtiff-4)
-+# pkg_check_modules(zlib REQUIRED zlib)
-+# pkg_check_modules(libpng REQUIRED libpng)
-+find_package(PNG REQUIRED GLOBAL)
-+find_package(TIFF REQUIRED GLOBAL)
-+find_package(JPEG REQUIRED GLOBAL)
-+find_package(ZLIB REQUIRED GLOBAL)
++pkg_check_modules(libpng REQUIRED libpng)
++pkg_check_modules(libtiff REQUIRED libtiff-4)
++pkg_check_modules(libjpeg REQUIRED libjpeg)
++pkg_check_modules(zlib REQUIRED zlib)
 +pkg_check_modules(taywee_args REQUIRED taywee_args)
 +pkg_check_modules(nlohmann_json REQUIRED nlohmann_json)
 +pkg_check_modules(imgui REQUIRED imgui)
@@ -2022,7 +2024,7 @@ index 49129b9..c744411 100644
  # WARNING: JSON_DIAGNOSTICS must be consistently defined for all inclusions of json.hpp,
  #          or there will be hard-to-diagnose run-time crashes.
  #          It is required by RenderStatePackager even in release builds.
-@@ -87,14 +70,13 @@ target_compile_definitions(Diligent-JSON INTERFACE JSON_DIAGNOSTICS=1)
+@@ -87,14 +66,13 @@ target_compile_definitions(Diligent-JSON INTERFACE JSON_DIAGNOSTICS=1)
  
  
  if (NOT DILIGENT_DEAR_IMGUI_PATH)
@@ -2039,7 +2041,7 @@ index 49129b9..c744411 100644
      message("Fetching Draco repository - this may take a few moments...")
      include(FetchContent)
      FetchContent_Declare(
-@@ -106,7 +88,7 @@ if (DILIGENT_ENABLE_DRACO AND (NOT TARGET draco) AND (NOT TARGET draco_static))
+@@ -106,7 +84,7 @@ if (DILIGENT_ENABLE_DRACO AND (NOT TARGET draco) AND (NOT TARGET draco_static))
      set_directory_root_folder(${draco_SOURCE_DIR} DiligentTools/ThirdParty/draco)
  endif()
  
