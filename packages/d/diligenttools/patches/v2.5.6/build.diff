@@ -803,22 +803,24 @@ index 51be237..a7c100b 100644
  namespace Diligent
  {
 diff --git a/NativeApp/include/CommandLineParser.hpp b/NativeApp/include/CommandLineParser.hpp
-index a7e4b70..c919d42 100644
+index a7e4b70..1118c2b 100644
 --- a/NativeApp/include/CommandLineParser.hpp
 +++ b/NativeApp/include/CommandLineParser.hpp
-@@ -33,9 +33,9 @@
+@@ -33,10 +33,10 @@
  #include <sstream>
  #include <cstdlib>
  
 -#include "HashUtils.hpp"
 -#include "DebugUtilities.hpp"
 -#include "StringTools.hpp"
+-#include "ParsingTools.hpp"
 +#include "DiligentCore/Common/interface/HashUtils.hpp"
 +#include "DiligentCore/Platforms/Basic/interface/DebugUtilities.hpp"
 +#include "DiligentCore/Common/interface/StringTools.hpp"
- #include "ParsingTools.hpp"
++#include "DiligentCore/Common/interface/ParsingTools.hpp"
  
  namespace Diligent
+ {
 diff --git a/NativeApp/include/Emscripten/EmscriptenAppBase.hpp b/NativeApp/include/Emscripten/EmscriptenAppBase.hpp
 index eb9ee75..9c1853e 100644
 --- a/NativeApp/include/Emscripten/EmscriptenAppBase.hpp
