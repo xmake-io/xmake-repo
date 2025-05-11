@@ -88,6 +88,8 @@ package("diligentcore")
     end)
 
     on_install("windows", "linux", "macosx", function (package)
+        -- Do not enforce /GL
+        io.replace("CMakeLists.txt", [[set(DEFAULT_DILIGENT_MSVC_RELEASE_COMPILE_OPTIONS /GL)]], [[]], {plain = true})
         -- Dump CMakeLists.txt variables related for platform & rendering backend for package defines
         local CMakeLists_content = io.readfile("CMakeLists.txt")
         io.writefile("CMakeLists.txt", CMakeLists_content .. [[
