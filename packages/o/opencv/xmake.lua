@@ -135,15 +135,13 @@ package("opencv")
 
     if on_check then
         on_check("windows|arm64", function (package)
-            import("core.tool.toolchain")
             import("core.base.semver")
             if package:version() and package:version():lt("4.10.0") then
                 raise("current opencv version does not support windows/arm64!")
             end
             local vs = package:toolchain("msvc"):config("vs")
             assert(tonumber(vs) >= 2022, "opencv requires Visual Studio 2022 and later for arm targets")
-            local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
-            local vs_sdkver = msvc:config("vs_sdkver")
+            local vs_sdkver = package:toolchain("msvc"):config("vs_sdkver")
             assert(vs_sdkver and semver.match(vs_sdkver):gt("10.0.26100"), "package(opencv): need vs_sdkver > 10.0.26100")
         end)
     end
