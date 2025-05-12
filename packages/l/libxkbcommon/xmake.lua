@@ -50,14 +50,15 @@ package("libxkbcommon")
         local c_link_args = "-lm"
         -- fix undefined reference to XauGetBestAuthByAddr on linux
         if package:config("x11") then
-            for _, dep in table.ipair(package:deps()) do
-                local libxau = package:dep(dep)
-                local fetchinfo = libxau:fetch()
-                for _, linkdir in ipairs(fetchinfo.linkdirs) do
-                    c_link_args = c_link_args .. " -L" .. linkdir
-                end
-                for _, link in ipairs(fetchinfo.links) do
-                    c_link_args = c_link_args .. " -l" .. link
+            for _, dep in ipairs(package:orderdeps()) do
+                local fetchinfo = dep:fetch()
+                if fetchinfo then
+                    for _, linkdir in ipairs(fetchinfo.linkdirs) do
+                        c_link_args = c_link_args .. " -L" .. linkdir
+                    end
+                    for _, link in ipairs(fetchinfo.links) do
+                        c_link_args = c_link_args .. " -l" .. link
+                    end
                 end
             end
         end
