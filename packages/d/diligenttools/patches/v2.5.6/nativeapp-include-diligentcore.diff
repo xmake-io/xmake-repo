@@ -1,0 +1,258 @@
+diff --git a/NativeApp/Apple/Source/Classes/iOS/EAGLView.mm b/NativeApp/Apple/Source/Classes/iOS/EAGLView.mm
+index a16d4db..c44e5f5 100644
+--- a/NativeApp/Apple/Source/Classes/iOS/EAGLView.mm
++++ b/NativeApp/Apple/Source/Classes/iOS/EAGLView.mm
+@@ -8,7 +8,7 @@
+ 
+ #import "EAGLView.h"
+ 
+-#include "GraphicsTypes.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/GraphicsTypes.h"
+ 
+ @interface EAGLView ()
+ {
+diff --git a/NativeApp/Apple/Source/Classes/iOS/MVKView.mm b/NativeApp/Apple/Source/Classes/iOS/MVKView.mm
+index 76fd8a8..ff8167b 100644
+--- a/NativeApp/Apple/Source/Classes/iOS/MVKView.mm
++++ b/NativeApp/Apple/Source/Classes/iOS/MVKView.mm
+@@ -2,7 +2,7 @@
+ 
+ #import <QuartzCore/CAMetalLayer.h>
+ 
+-#include "GraphicsTypes.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/GraphicsTypes.h"
+ 
+ @implementation MVKView
+ 
+diff --git a/NativeApp/Apple/Source/Classes/iOS/MetalView.mm b/NativeApp/Apple/Source/Classes/iOS/MetalView.mm
+index 4263524..afc2844 100644
+--- a/NativeApp/Apple/Source/Classes/iOS/MetalView.mm
++++ b/NativeApp/Apple/Source/Classes/iOS/MetalView.mm
+@@ -2,7 +2,7 @@
+ 
+ #import <QuartzCore/CAMetalLayer.h>
+ 
+-#include "GraphicsTypes.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/GraphicsTypes.h"
+ 
+ @implementation MetalView
+ 
+diff --git a/NativeApp/Apple/Source/Classes/tvOS/MetalViewController.mm b/NativeApp/Apple/Source/Classes/tvOS/MetalViewController.mm
+index c5d4eee..28468f7 100644
+--- a/NativeApp/Apple/Source/Classes/tvOS/MetalViewController.mm
++++ b/NativeApp/Apple/Source/Classes/tvOS/MetalViewController.mm
+@@ -6,7 +6,7 @@ See LICENSE folder for this sample’s licensing information.
+ #import "MainUIView.h"
+ 
+ #include "NativeAppBase.hpp"
+-#include "GraphicsTypes.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/GraphicsTypes.h"
+ 
+ #import <QuartzCore/CAMetalLayer.h>
+ 
+diff --git a/NativeApp/include/AppBase.hpp b/NativeApp/include/AppBase.hpp
+index 51be237..a7c100b 100644
+--- a/NativeApp/include/AppBase.hpp
++++ b/NativeApp/include/AppBase.hpp
+@@ -27,8 +27,8 @@
+ 
+ #pragma once
+ 
+-#include "BasicTypes.h"
+-#include "FlagEnum.h"
++#include "DiligentCore/Primitives/interface/BasicTypes.h"
++#include "DiligentCore/Primitives/interface/FlagEnum.h"
+ 
+ namespace Diligent
+ {
+diff --git a/NativeApp/include/CommandLineParser.hpp b/NativeApp/include/CommandLineParser.hpp
+index a7e4b70..1118c2b 100644
+--- a/NativeApp/include/CommandLineParser.hpp
++++ b/NativeApp/include/CommandLineParser.hpp
+@@ -33,10 +33,10 @@
+ #include <sstream>
+ #include <cstdlib>
+ 
+-#include "HashUtils.hpp"
+-#include "DebugUtilities.hpp"
+-#include "StringTools.hpp"
+-#include "ParsingTools.hpp"
++#include "DiligentCore/Common/interface/HashUtils.hpp"
++#include "DiligentCore/Platforms/Basic/interface/DebugUtilities.hpp"
++#include "DiligentCore/Common/interface/StringTools.hpp"
++#include "DiligentCore/Common/interface/ParsingTools.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/NativeApp/include/Emscripten/EmscriptenAppBase.hpp b/NativeApp/include/Emscripten/EmscriptenAppBase.hpp
+index eb9ee75..9c1853e 100644
+--- a/NativeApp/include/Emscripten/EmscriptenAppBase.hpp
++++ b/NativeApp/include/Emscripten/EmscriptenAppBase.hpp
+@@ -25,7 +25,7 @@
+ #pragma once
+ 
+ #include "AppBase.hpp"
+-#include "Timer.hpp"
++#include "DiligentCore/Common/interface/Timer.hpp"
+ 
+ struct EmscriptenMouseEvent;
+ struct EmscriptenWheelEvent;
+diff --git a/NativeApp/include/IOS/IOSAppBase.hpp b/NativeApp/include/IOS/IOSAppBase.hpp
+index 9f76bee..f447ccb 100644
+--- a/NativeApp/include/IOS/IOSAppBase.hpp
++++ b/NativeApp/include/IOS/IOSAppBase.hpp
+@@ -26,7 +26,7 @@
+ #pragma once
+ 
+ #include "AppBase.hpp"
+-#include "Timer.hpp"
++#include "DiligentCore/Common/interface/Timer.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/NativeApp/include/MacOS/MacOSAppBase.hpp b/NativeApp/include/MacOS/MacOSAppBase.hpp
+index 8540053..6e2fd35 100644
+--- a/NativeApp/include/MacOS/MacOSAppBase.hpp
++++ b/NativeApp/include/MacOS/MacOSAppBase.hpp
+@@ -26,7 +26,7 @@
+ #pragma once
+ 
+ #include "AppBase.hpp"
+-#include "Timer.hpp"
++#include "DiligentCore/Common/interface/Timer.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/NativeApp/include/TVOS/TVOSAppBase.hpp b/NativeApp/include/TVOS/TVOSAppBase.hpp
+index 39b2c25..409add1 100644
+--- a/NativeApp/include/TVOS/TVOSAppBase.hpp
++++ b/NativeApp/include/TVOS/TVOSAppBase.hpp
+@@ -25,7 +25,7 @@
+ #pragma once
+ 
+ #include "AppBase.hpp"
+-#include "Timer.hpp"
++#include "DiligentCore/Common/interface/Timer.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/NativeApp/include/UWP/UWPAppBase.hpp b/NativeApp/include/UWP/UWPAppBase.hpp
+index 8db6157..a0e30d3 100644
+--- a/NativeApp/include/UWP/UWPAppBase.hpp
++++ b/NativeApp/include/UWP/UWPAppBase.hpp
+@@ -28,10 +28,10 @@
+ 
+ #include <memory>
+ 
+-#include "WinHPreface.h"
++#include "DiligentCore/Platforms/Win32/interface/WinHPreface.h"
+ #include <wrl.h>
+ #include <wrl/client.h>
+-#include "WinHPostface.h"
++#include "DiligentCore/Platforms/Win32/interface/WinHPostface.h"
+ 
+ #include "AppBase.hpp"
+ #include "Common/StepTimer.h"
+diff --git a/NativeApp/include/Win32/Win32AppBase.hpp b/NativeApp/include/Win32/Win32AppBase.hpp
+index e29df52..4bc8bc4 100644
+--- a/NativeApp/include/Win32/Win32AppBase.hpp
++++ b/NativeApp/include/Win32/Win32AppBase.hpp
+@@ -27,9 +27,9 @@
+ 
+ #pragma once
+ 
+-#include "WinHPreface.h"
++#include "DiligentCore/Platforms/Win32/interface/WinHPreface.h"
+ #include <Windows.h>
+-#include "WinHPostface.h"
++#include "DiligentCore/Platforms/Win32/interface/WinHPostface.h"
+ 
+ #include "AppBase.hpp"
+ 
+diff --git a/NativeApp/src/Android/AndroidAppBase.cpp b/NativeApp/src/Android/AndroidAppBase.cpp
+index 76d7321..3f3de7d 100644
+--- a/NativeApp/src/Android/AndroidAppBase.cpp
++++ b/NativeApp/src/Android/AndroidAppBase.cpp
+@@ -24,7 +24,7 @@
+  */
+ 
+ #include "AndroidAppBase.hpp"
+-#include "Timer.hpp"
++#include "DiligentCore/Common/interface/Timer.hpp"
+ 
+ #include <android/sensor.h>
+ //#include <android/log.h>
+diff --git a/NativeApp/src/Android/AndroidMain.cpp b/NativeApp/src/Android/AndroidMain.cpp
+index 1f9b78b..a4e314d 100644
+--- a/NativeApp/src/Android/AndroidMain.cpp
++++ b/NativeApp/src/Android/AndroidMain.cpp
+@@ -27,7 +27,7 @@
+ #include <jni.h>
+ #include <errno.h>
+ 
+-#include "PlatformDefinitions.h"
++#include "DiligentCore/Platforms/interface/PlatformDefinitions.h"
+ #include "NativeAppBase.hpp"
+ 
+ 
+diff --git a/NativeApp/src/Emscripten/EmscriptenMain.cpp b/NativeApp/src/Emscripten/EmscriptenMain.cpp
+index ff90764..2766137 100644
+--- a/NativeApp/src/Emscripten/EmscriptenMain.cpp
++++ b/NativeApp/src/Emscripten/EmscriptenMain.cpp
+@@ -29,7 +29,7 @@
+ #include <string>
+ 
+ #include "NativeAppBase.hpp"
+-#include "Timer.hpp"
++#include "DiligentCore/Common/interface/Timer.hpp"
+ 
+ 
+ struct NativeAppCallbackData
+diff --git a/NativeApp/src/Linux/LinuxMain.cpp b/NativeApp/src/Linux/LinuxMain.cpp
+index 5a2c8e9..043197a 100644
+--- a/NativeApp/src/Linux/LinuxMain.cpp
++++ b/NativeApp/src/Linux/LinuxMain.cpp
+@@ -27,11 +27,11 @@
+ #include <iomanip>
+ #include <string>
+ 
+-#include "PlatformDefinitions.h"
++#include "DiligentCore/Platforms/interface/PlatformDefinitions.h"
+ #include "NativeAppBase.hpp"
+-#include "StringTools.hpp"
+-#include "Timer.hpp"
+-#include "Errors.hpp"
++#include "DiligentCore/Common/interface/StringTools.hpp"
++#include "DiligentCore/Common/interface/Timer.hpp"
++#include "DiligentCore/Primitives/interface/Errors.hpp"
+ #include "CommandLineParser.hpp"
+ 
+ 
+diff --git a/NativeApp/src/UWP/App.cpp b/NativeApp/src/UWP/App.cpp
+index fbd5e78..90a3452 100644
+--- a/NativeApp/src/UWP/App.cpp
++++ b/NativeApp/src/UWP/App.cpp
+@@ -34,7 +34,7 @@
+ #endif
+ 
+ #include "App.h"
+-#include "StringTools.hpp"
++#include "DiligentCore/Common/interface/StringTools.hpp"
+ 
+ #include <ppltasks.h>
+ 
+diff --git a/NativeApp/src/Win32/WinMain.cpp b/NativeApp/src/Win32/WinMain.cpp
+index a7a1974..95d77ca 100644
+--- a/NativeApp/src/Win32/WinMain.cpp
++++ b/NativeApp/src/Win32/WinMain.cpp
+@@ -37,8 +37,8 @@
+ #include <crtdbg.h>
+ 
+ #include "NativeAppBase.hpp"
+-#include "StringTools.hpp"
+-#include "Timer.hpp"
++#include "DiligentCore/Common/interface/StringTools.hpp"
++#include "DiligentCore/Common/interface/Timer.hpp"
+ 
+ using namespace Diligent;
+ 
