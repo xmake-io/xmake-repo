@@ -1,0 +1,97 @@
+diff --git a/HLSL2GLSLConverter/src/HLSL2GLSLConverterApp.cpp b/HLSL2GLSLConverter/src/HLSL2GLSLConverterApp.cpp
+index b5eb7ca..a7a0a84 100644
+--- a/HLSL2GLSLConverter/src/HLSL2GLSLConverterApp.cpp
++++ b/HLSL2GLSLConverter/src/HLSL2GLSLConverterApp.cpp
+@@ -27,14 +27,14 @@
+ 
+ #include "HLSL2GLSLConverterApp.h"
+ 
+-#include "Errors.hpp"
+-#include "HLSL2GLSLConverter.h"
+-#include "RefCntAutoPtr.hpp"
+-#include "Errors.hpp"
+-#include "EngineFactoryOpenGL.h"
+-#include "RefCntAutoPtr.hpp"
+-#include "DataBlobImpl.hpp"
+-#include "FileWrapper.hpp"
++#include "DiligentCore/Primitives/interface/Errors.hpp"
++#include "DiligentCore/Graphics/HLSL2GLSLConverterLib/interface/HLSL2GLSLConverter.h"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Primitives/interface/Errors.hpp"
++#include "DiligentCore/Graphics/GraphicsEngineOpenGL/interface/EngineFactoryOpenGL.h"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Common/interface/DataBlobImpl.hpp"
++#include "DiligentCore/Common/interface/FileWrapper.hpp"
+ #include "args.hxx"
+ 
+ namespace Diligent
+diff --git a/HLSL2GLSLConverter/src/HLSL2GLSLConverterApp.h b/HLSL2GLSLConverter/src/HLSL2GLSLConverterApp.h
+index 9540075..ad1ab17 100644
+--- a/HLSL2GLSLConverter/src/HLSL2GLSLConverterApp.h
++++ b/HLSL2GLSLConverter/src/HLSL2GLSLConverterApp.h
+@@ -29,7 +29,7 @@
+ 
+ #include <string>
+ 
+-#include "RenderDevice.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
+ 
+ namespace Diligent
+ {
+diff --git a/HLSL2GLSLConverter/src/HLSL2GLSLConverterAppLinux.cpp b/HLSL2GLSLConverter/src/HLSL2GLSLConverterAppLinux.cpp
+index 42202d3..8b53db5 100644
+--- a/HLSL2GLSLConverter/src/HLSL2GLSLConverterAppLinux.cpp
++++ b/HLSL2GLSLConverter/src/HLSL2GLSLConverterAppLinux.cpp
+@@ -26,10 +26,10 @@
+  */
+ 
+ #include "HLSL2GLSLConverterApp.h"
+-#include "Errors.hpp"
+-#include "RenderDevice.h"
+-#include "EngineFactoryOpenGL.h"
+-#include "RefCntAutoPtr.hpp"
++#include "DiligentCore/Primitives/interface/Errors.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
++#include "DiligentCore/Graphics/GraphicsEngineOpenGL/interface/EngineFactoryOpenGL.h"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+ 
+ #include <GL/glx.h>
+ #include <GL/gl.h>
+diff --git a/HLSL2GLSLConverter/src/HLSL2GLSLConverterAppMacOS.cpp b/HLSL2GLSLConverter/src/HLSL2GLSLConverterAppMacOS.cpp
+index 79ba944..18e7a02 100644
+--- a/HLSL2GLSLConverter/src/HLSL2GLSLConverterAppMacOS.cpp
++++ b/HLSL2GLSLConverter/src/HLSL2GLSLConverterAppMacOS.cpp
+@@ -26,10 +26,10 @@
+  */
+ 
+ #include "HLSL2GLSLConverterApp.h"
+-#include "Errors.hpp"
+-#include "RenderDevice.h"
+-#include "EngineFactoryOpenGL.h"
+-#include "RefCntAutoPtr.hpp"
++#include "DiligentCore/Primitives/interface/Errors.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
++#include "DiligentCore/Graphics/GraphicsEngineOpenGL/interface/EngineFactoryOpenGL.h"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+ 
+ using namespace Diligent;
+ 
+diff --git a/HLSL2GLSLConverter/src/HLSL2GLSLConverterAppWin32.cpp b/HLSL2GLSLConverter/src/HLSL2GLSLConverterAppWin32.cpp
+index 6aa91de..ccba7d4 100644
+--- a/HLSL2GLSLConverter/src/HLSL2GLSLConverterAppWin32.cpp
++++ b/HLSL2GLSLConverter/src/HLSL2GLSLConverterAppWin32.cpp
+@@ -26,10 +26,10 @@
+  */
+ 
+ #include "HLSL2GLSLConverterApp.h"
+-#include "Errors.hpp"
+-#include "RenderDevice.h"
+-#include "EngineFactoryOpenGL.h"
+-#include "RefCntAutoPtr.hpp"
++#include "DiligentCore/Primitives/interface/Errors.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
++#include "DiligentCore/Graphics/GraphicsEngineOpenGL/interface/EngineFactoryOpenGL.h"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+ 
+ #include <Windows.h>
+ #include <crtdbg.h>
