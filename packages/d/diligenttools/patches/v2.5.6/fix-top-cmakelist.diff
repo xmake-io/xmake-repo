@@ -1,0 +1,154 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 212a82e..afede0f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -21,23 +21,116 @@ function(install_tools_lib _TARGET)
+     if(TARGET_TYPE STREQUAL STATIC_LIBRARY)
+         list(APPEND DILIGENT_TOOLS_INSTALL_LIBS_LIST ${_TARGET})
+         set(DILIGENT_TOOLS_INSTALL_LIBS_LIST ${DILIGENT_TOOLS_INSTALL_LIBS_LIST} CACHE INTERNAL "Diligent tools libraries installation list")
++        install(TARGETS				 ${_TARGET}
++                ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++                LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
++        )
++        if (DILIGENT_INSTALL_PDB)
++            install(FILES $<TARGET_PDB_FILE:${_TARGET}> DESTINATION "${CMAKE_INSTALL_BINDIR}" OPTIONAL)
++        endif()
+     elseif(TARGET_TYPE STREQUAL SHARED_LIBRARY)
+         install(TARGETS				 ${_TARGET}
+-                ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_TOOLS_DIR}/$<CONFIG>"
+-                LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_TOOLS_DIR}/$<CONFIG>"
+-                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}/${DILIGENT_TOOLS_DIR}/$<CONFIG>"
++                ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++                LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+         )
+         if (DILIGENT_INSTALL_PDB)
+-            install(FILES $<TARGET_PDB_FILE:${_TARGET}> DESTINATION "${CMAKE_INSTALL_BINDIR}/${DILIGENT_TOOLS_DIR}/$<CONFIG>" OPTIONAL)
++            install(FILES $<TARGET_PDB_FILE:${_TARGET}> DESTINATION "${CMAKE_INSTALL_BINDIR}" OPTIONAL)
+         endif()
+     endif()
+ 
+     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/interface")
+         install(DIRECTORY    interface
+-                DESTINATION  "${CMAKE_INSTALL_INCLUDEDIR}/${TARGET_RELATIVE_PATH}/"
++                DESTINATION  "include/DiligentTools/${TARGET_RELATIVE_PATH}"
+         )
+     endif()
+ endfunction()
++include(FindPkgConfig)
++include(BuildUtils.cmake)
++add_library(Diligent-PublicBuildSettings INTERFACE)
++if(PLATFORM_WIN32)
++    set(GL_SUPPORTED       TRUE CACHE INTERNAL "OpenGL is supported on Win32 platform")
++    set(VULKAN_SUPPORTED   TRUE CACHE INTERNAL "Vulkan is supported on Win32 platform")
++    set(WEBGPU_SUPPORTED   TRUE CACHE INTERNAL "WebGPU is supported on Win32 platform")
++    set(ARCHIVER_SUPPORTED TRUE CACHE INTERNAL "Archiver is supported on Win32 platform")
++    target_compile_definitions(Diligent-PublicBuildSettings INTERFACE PLATFORM_WIN32=1)
++elseif(PLATFORM_UNIVERSAL_WINDOWS)
++    set(ARCHIVER_SUPPORTED TRUE CACHE INTERNAL "Archiver is supported on Universal Windows platform")
++    target_compile_definitions(Diligent-PublicBuildSettings INTERFACE PLATFORM_UNIVERSAL_WINDOWS=1)
++elseif(PLATFORM_ANDROID)
++    set(GLES_SUPPORTED     TRUE CACHE INTERNAL "OpenGLES is supported on Android platform")
++    set(VULKAN_SUPPORTED   TRUE CACHE INTERNAL "Vulkan is supported on Android platform")
++    set(ARCHIVER_SUPPORTED TRUE CACHE INTERNAL "Archiver is supported on Android platform")
++    target_compile_definitions(Diligent-PublicBuildSettings INTERFACE PLATFORM_ANDROID=1)
++elseif(PLATFORM_LINUX)
++    set(GL_SUPPORTED       TRUE CACHE INTERNAL "OpenGL is supported on Linux platform")
++    set(VULKAN_SUPPORTED   TRUE CACHE INTERNAL "Vulkan is supported on Linux platform")
++    set(ARCHIVER_SUPPORTED TRUE CACHE INTERNAL "Archiver is supported on Linux platform")
++    target_compile_definitions(Diligent-PublicBuildSettings INTERFACE PLATFORM_LINUX=1)
++elseif(PLATFORM_MACOS)
++    set(GL_SUPPORTED       TRUE CACHE INTERNAL "OpenGL is supported on MacOS platform")
++    set(VULKAN_SUPPORTED   TRUE CACHE INTERNAL "Vulkan is enabled through MoltenVK on MacOS platform")
++    set(ARCHIVER_SUPPORTED TRUE CACHE INTERNAL "Archiver is supported on MacOS platform")
++    target_compile_definitions(Diligent-PublicBuildSettings INTERFACE PLATFORM_MACOS=1 PLATFORM_APPLE=1)
++elseif(PLATFORM_IOS)
++    set(GLES_SUPPORTED TRUE CACHE INTERNAL "OpenGLES is supported on iOS platform")
++    target_compile_definitions(Diligent-PublicBuildSettings INTERFACE PLATFORM_IOS=1 PLATFORM_APPLE=1)
++elseif(PLATFORM_TVOS)
++    target_compile_definitions(Diligent-PublicBuildSettings INTERFACE PLATFORM_TVOS=1 PLATFORM_APPLE=1)
++elseif(PLATFORM_WEB)
++    set(GLES_SUPPORTED     TRUE CACHE INTERNAL "OpenGLES is supported on Web platform")
++    set(WEBGPU_SUPPORTED   TRUE CACHE INTERNAL "WebGPU is supported on Web platform")
++    set(ARCHIVER_SUPPORTED TRUE CACHE INTERNAL "Archiver is supported on Web platform")
++    target_compile_definitions(Diligent-PublicBuildSettings INTERFACE PLATFORM_WEB=1 PLATFORM_EMSCRIPTEN=1)
++else()
++    message(FATAL_ERROR "No PLATFORM_XXX variable defined. Make sure that 'DiligentCore' folder is processed first")
++endif()
++target_compile_definitions(Diligent-PublicBuildSettings
++INTERFACE
++    D3D11_SUPPORTED=$<BOOL:${D3D11_SUPPORTED}>
++    D3D12_SUPPORTED=$<BOOL:${D3D12_SUPPORTED}>
++    GL_SUPPORTED=$<BOOL:${GL_SUPPORTED}>
++    GLES_SUPPORTED=$<BOOL:${GLES_SUPPORTED}>
++    VULKAN_SUPPORTED=$<BOOL:${VULKAN_SUPPORTED}>
++    METAL_SUPPORTED=$<BOOL:${METAL_SUPPORTED}>
++    WEBGPU_SUPPORTED=$<BOOL:${WEBGPU_SUPPORTED}>
++)
++add_library(Diligent-BuildSettings INTERFACE)
++if (PLATFORM_WEB)
++    target_compile_options(Diligent-BuildSettings INTERFACE
++        "-pthread"
++        "-mbulk-memory"
++    )
++endif()
++target_link_libraries(Diligent-BuildSettings INTERFACE Diligent-PublicBuildSettings)
++if(PLATFORM_WIN32)
++	set(Diligent-TargetPlatform Diligent-Win32Platform)
++elseif(PLATFORM_UNIVERSAL_WINDOWS)
++	set(Diligent-TargetPlatform Diligent-UniversalWindowsPlatform)
++elseif(PLATFORM_ANDROID)
++	set(Diligent-TargetPlatform Diligent-AndroidPlatform)
++elseif(PLATFORM_LINUX)
++	set(Diligent-TargetPlatform Diligent-LinuxPlatform)
++elseif(PLATFORM_MACOS OR PLATFORM_IOS OR PLATFORM_TVOS)
++	set(Diligent-TargetPlatform Diligent-ApplePlatform)
++elseif(PLATFORM_WEB)
++	set(Diligent-TargetPlatform Diligent-EmscriptenPlatform)
++else()
++	message(FATAL_ERROR "No PLATFORM_XXX variable defined. Make sure that 'DiligentCore' folder is processed first")
++endif()
++add_library(Diligent-PlatformInterface INTERFACE)
++target_include_directories(Diligent-PlatformInterface INTERFACE ${diligentcore_INCLUDEDIR}/DiligentCore/Platforms/interface)
++add_library(Diligent-GraphicsEngineInterface INTERFACE)
++target_include_directories(Diligent-GraphicsEngineInterface
++INTERFACE
++    ${diligentcore_INCLUDEDIR}/Graphics/GraphicsEngine/interface
++)
++target_link_libraries(Diligent-GraphicsEngineInterface
++INTERFACE
++    Diligent-Primitives
++    Diligent-PublicBuildSettings
++)
+ 
+ add_subdirectory(ThirdParty)
+ add_subdirectory(TextureLoader)
+@@ -46,7 +139,6 @@ add_subdirectory(Imgui)
+ add_subdirectory(NativeApp)
+ 
+ if((PLATFORM_WIN32 OR PLATFORM_LINUX OR PLATFORM_MACOS) AND GL_SUPPORTED)
+-    add_subdirectory(HLSL2GLSLConverter)
+ endif()
+ 
+ add_subdirectory(RenderStateNotation)
+@@ -55,7 +147,6 @@ if((PLATFORM_WIN32 OR PLATFORM_LINUX OR PLATFORM_MACOS) AND ARCHIVER_SUPPORTED A
+     add_subdirectory(RenderStatePackager)
+ endif()
+ 
+-add_subdirectory(Tests)
+ 
+ # Installation instructions
+ if(DILIGENT_INSTALL_TOOLS)
+@@ -65,10 +156,9 @@ if(DILIGENT_INSTALL_TOOLS)
+         "${DILIGENT_TOOLS_INSTALL_LIBS_LIST}"
+         DiligentTools-static                     # Custom target name
+         DiligentTools                            # Folder
+-        "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_TOOLS_DIR}/$<CONFIG>"    # Install destination
++        "${CMAKE_INSTALL_LIBDIR}"    # Install destination
+     )
+ 
+ endif()
+ 
+ # Create a custom target to run source code formatting validation command
+-add_format_validation_target(DiligentTools "${CMAKE_CURRENT_SOURCE_DIR}" DiligentTools)

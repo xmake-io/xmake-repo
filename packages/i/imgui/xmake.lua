@@ -97,6 +97,7 @@ package("imgui")
     add_configs("sdl3_gpu",         {description = "Enable the sdl3 gpu backend", default = false, type = "boolean"})
     add_configs("vulkan",           {description = "Enable the vulkan backend", default = false, type = "boolean"})
     add_configs("win32",            {description = "Enable the win32 backend", default = false, type = "boolean"})
+    add_configs("osx",              {description = "Enable the OS X backend", default = false, type = "boolean"})
     add_configs("wgpu",             {description = "Enable the wgpu backend", default = false, type = "boolean"})
     add_configs("freetype",         {description = "Use FreeType to build and rasterize the font atlas", default = false, type = "boolean"})
     add_configs("user_config",      {description = "Use user config (disables test!)", default = nil, type = "string"})
@@ -162,6 +163,9 @@ package("imgui")
         if package:config("freetype") then
             package:add("deps", "freetype")
         end
+        if package:config("osx") then
+            package:add("frameworks", "Cocoa", "Carbon", "GameController")
+        end
     end)
 
     on_install(function (package)
@@ -181,6 +185,7 @@ package("imgui")
             sdl3_gpu         = package:config("sdl3_gpu"),
             vulkan           = package:config("vulkan"),
             win32            = package:config("win32"),
+            osx              = package:config("osx"),
             wgpu             = package:config("wgpu"),
             freetype         = package:config("freetype"),
             user_config      = package:config("user_config"),
