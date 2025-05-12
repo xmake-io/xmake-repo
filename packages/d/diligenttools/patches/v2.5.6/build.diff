@@ -1,5 +1,5 @@
 diff --git a/AssetLoader/CMakeLists.txt b/AssetLoader/CMakeLists.txt
-index 2d147c2..3c738fa 100644
+index 2d147c2..540ad49 100644
 --- a/AssetLoader/CMakeLists.txt
 +++ b/AssetLoader/CMakeLists.txt
 @@ -28,6 +28,8 @@ PUBLIC
@@ -11,7 +11,32 @@ index 2d147c2..3c738fa 100644
  )
  
  source_group("source" FILES ${SOURCE})
-@@ -68,16 +70,7 @@ elseif (DRACO_PATH)
+@@ -46,38 +48,14 @@ PRIVATE
+     Diligent-JSON
+ )
+ 
+-if (TARGET draco OR TARGET draco_static)
+-    if(TARGET draco)
+-        set(DRACO_TARGET draco)
+-    else()
+-        set(DRACO_TARGET draco_static)
+-    endif()
+-    target_link_libraries(Diligent-AssetLoader PRIVATE ${DRACO_TARGET})
+-    get_target_property(DRACO_SOURCE_DIR ${DRACO_TARGET} SOURCE_DIR)
++if (DILIGENT_ENABLE_DRACO)
++    target_link_libraries(Diligent-AssetLoader PRIVATE ${draco_LINK_LIBRARIES})
+     target_compile_definitions(Diligent-AssetLoader PRIVATE TINYGLTF_ENABLE_DRACO)
+-    target_include_directories(Diligent-AssetLoader PRIVATE "${DRACO_SOURCE_DIR}/src" "${CMAKE_BINARY_DIR}")
+-elseif (DRACO_PATH)
+-    find_library(DRACO_LIBRARY NAMES draco draco_static PATHS "${DRACO_PATH}/lib")
+-    if(DRACO_LIBRARY)
+-        target_link_libraries(Diligent-AssetLoader PRIVATE ${DRACO_LIBRARY})
+-        target_include_directories(Diligent-AssetLoader PRIVATE "${DRACO_PATH}/include")
+-        target_compile_definitions(Diligent-AssetLoader PRIVATE TINYGLTF_ENABLE_DRACO)
+-    else()
+-        message(WARNING "Unable to find draco library. Draco support will be disabled")
+-    endif()
++    target_include_directories(Diligent-AssetLoader PRIVATE "${draco_INCLUDEDIR}")
  endif()
  
  if(DILIGENT_USE_RAPIDJSON)
@@ -25,7 +50,7 @@ index 2d147c2..3c738fa 100644
 -    set(RAPIDJSON_BUILD_TESTS OFF)
 -    FetchContent_MakeAvailable(rapidjson)
 -    target_include_directories(Diligent-AssetLoader PRIVATE ${rapidjson_SOURCE_DIR}/include/rapidjson)
-+    target_include_directories(Diligent-AssetLoader PRIVATE ${rapidjson_SOURCE_DIR})
++    target_include_directories(Diligent-AssetLoader PRIVATE ${rapidjson_INCLUDEDIR}/rapidjson)
      target_compile_definitions(Diligent-AssetLoader PRIVATE TINYGLTF_USE_RAPIDJSON TINYGLTF_USE_RAPIDJSON_CRTALLOCATOR)
  endif()
  
@@ -1912,7 +1937,7 @@ index ab0956f..38b4b3e 100644
  namespace Diligent
  {
 diff --git a/ThirdParty/CMakeLists.txt b/ThirdParty/CMakeLists.txt
-index 49129b9..690750f 100644
+index 49129b9..f6e2fee 100644
 --- a/ThirdParty/CMakeLists.txt
 +++ b/ThirdParty/CMakeLists.txt
 @@ -12,74 +12,53 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR
@@ -2024,7 +2049,7 @@ index 49129b9..690750f 100644
  # WARNING: JSON_DIAGNOSTICS must be consistently defined for all inclusions of json.hpp,
  #          or there will be hard-to-diagnose run-time crashes.
  #          It is required by RenderStatePackager even in release builds.
-@@ -87,14 +66,13 @@ target_compile_definitions(Diligent-JSON INTERFACE JSON_DIAGNOSTICS=1)
+@@ -87,26 +66,23 @@ target_compile_definitions(Diligent-JSON INTERFACE JSON_DIAGNOSTICS=1)
  
  
  if (NOT DILIGENT_DEAR_IMGUI_PATH)
@@ -2037,12 +2062,23 @@ index 49129b9..690750f 100644
 -install(FILES "${DILIGENT_DEAR_IMGUI_PATH}/LICENSE.txt" DESTINATION ${LICENSE_INSTALL_PATH} RENAME imgui-license.txt)
  
 -if (DILIGENT_ENABLE_DRACO AND (NOT TARGET draco) AND (NOT TARGET draco_static))
+-    message("Fetching Draco repository - this may take a few moments...")
+-    include(FetchContent)
+-    FetchContent_Declare(
+-        draco
+-        GIT_REPOSITORY https://github.com/google/draco
+-        GIT_TAG        1.5.6
+-    )
+-    FetchContent_MakeAvailable(draco)
+-    set_directory_root_folder(${draco_SOURCE_DIR} DiligentTools/ThirdParty/draco)
 +if (DILIGENT_ENABLE_DRACO)
-     message("Fetching Draco repository - this may take a few moments...")
-     include(FetchContent)
-     FetchContent_Declare(
-@@ -106,7 +84,7 @@ if (DILIGENT_ENABLE_DRACO AND (NOT TARGET draco) AND (NOT TARGET draco_static))
-     set_directory_root_folder(${draco_SOURCE_DIR} DiligentTools/ThirdParty/draco)
++    pkg_check_modules(draco REQUIRED draco)
++    DUMP_PKG_VARS(draco)
++endif()
++
++if(DILIGENT_USE_RAPIDJSON)
++    pkg_check_modules(rapidjson REQUIRED rapidjson)
++    DUMP_PKG_VARS(rapidjson)
  endif()
  
 -if(DILIGENT_INSTALL_TOOLS)

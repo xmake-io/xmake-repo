@@ -6,10 +6,13 @@ package("diligenttools")
     add_urls("https://github.com/DiligentGraphics/DiligentTools/archive/refs/tags/$(version).tar.gz",
              "https://github.com/DiligentGraphics/DiligentTools.git", {submodules = false})
     add_versions("v2.5.6", "6f2a99c15491396463cebe4f7fd1087db677b1531906ddf1864ad43346d3c2fc")
-    add_patches("v2.5.6", "patches/v2.5.6/build.diff", "93b99a795b01e1923166f171d520385dfdb918acebfb5cbc0405d4a6f682266d")
+    add_patches("v2.5.6", "patches/v2.5.6/build.diff", "847d50b03e216fc1c2c2c5d2455e6543c52562a9586e634384e7d2a6b5302716")
     add_resources("v2.5.6", "DiligentCore_source", "https://github.com/DiligentGraphics/DiligentCore/archive/refs/tags/v2.5.6.tar.gz", "abc190c05ee7e5ef2bba52fcbc5fdfe2256cce3435efba9cfe263a386653f671")
 
-    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    add_configs("shared",               {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    add_configs("rsp",                  {description = "Enable Render State Packager", default = true, type = "boolean"})
+    add_configs("rapidjson",            {description = "Enable rapidjson", default = true, type = "boolean"})
+    add_configs("draco",                {description = "Enable draco", default = true, type = "boolean"})
 
     add_includedirs("include", "include/DiligentTools")
 
@@ -20,8 +23,7 @@ package("diligenttools")
     if is_plat("windows") then
         add_deps("imgui", {configs = {win32 = true}})
     elseif is_plat("linux") then
-        add_deps("imgui 1.89", 
-            "libxcb", "libx11", "libxrandr", "libxrender", "libxinerama", "libxfixes", "libxcursor", "libxi", "libxext", "wayland")
+        add_deps("imgui 1.89", "libxcb", "libx11", "libxrandr", "libxrender", "libxinerama", "libxfixes", "libxcursor", "libxi", "libxext", "wayland")
     elseif is_plat("macosx") then
         add_deps("imgui 1.85", {configs = {osx = true}})
     end
@@ -43,6 +45,12 @@ package("diligenttools")
                     package:add("defines", define)
                 end
             end
+        end
+        if package:config("rapidjson") then
+            package:add("deps", "rapidjson")
+        end
+        if package:config("draco") then
+            package:add("deps", "draco")
         end
     end)
 
@@ -68,9 +76,16 @@ package("diligenttools")
                 end
             end
         end
+        table.insert(configs, "-DDILIGENT_NO_RENDER_STATE_PACKAGER=" .. (package:config("rsp") and "OFF" or "ON"))
+        table.insert(configs, "-DDILIGENT_USE_RAPIDJSON=" .. (package:config("rapidjson") and "ON" or "OFF"))
+        table.insert(configs, "-DDILIGENT_ENABLE_DRACO=" .. (package:config("draco") and "ON" or "OFF"))
+        local packagedeps = {}
+        if package:config("draco") then
+            table.insert(packagedeps, "draco")
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
     end)
 
     on_test(function (package)
