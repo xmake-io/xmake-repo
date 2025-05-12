@@ -1,0 +1,13 @@
+diff --git a/ThirdParty/imGuIZMO.quat/imGuIZMO.cpp b/ThirdParty/imGuIZMO.quat/imGuIZMO.cpp
+index 723dc77..c357d41 100644
+--- a/ThirdParty/imGuIZMO.quat/imGuIZMO.cpp
++++ b/ThirdParty/imGuIZMO.quat/imGuIZMO.cpp
+@@ -14,7 +14,7 @@
+ // Modified by Egor Yusov, Diligent Graphics LLC
+ 
+ 
+-#include "BasicMath.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
+ #include "imGuIZMO.h"
+ 
+ 
