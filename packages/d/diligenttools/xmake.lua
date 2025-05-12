@@ -6,7 +6,7 @@ package("diligenttools")
     add_urls("https://github.com/DiligentGraphics/DiligentTools/archive/refs/tags/$(version).tar.gz",
              "https://github.com/DiligentGraphics/DiligentTools.git", {submodules = false})
     add_versions("v2.5.6", "6f2a99c15491396463cebe4f7fd1087db677b1531906ddf1864ad43346d3c2fc")
-    add_patches("v2.5.6", "patches/v2.5.6/build.diff", "847d50b03e216fc1c2c2c5d2455e6543c52562a9586e634384e7d2a6b5302716")
+    add_patches("v2.5.6", "patches/v2.5.6/build.diff", "085b384d821b98fc51086f642b188723eafef9b44c4a0b3288a20f62d653dfd3")
     add_resources("v2.5.6", "DiligentCore_source", "https://github.com/DiligentGraphics/DiligentCore/archive/refs/tags/v2.5.6.tar.gz", "abc190c05ee7e5ef2bba52fcbc5fdfe2256cce3435efba9cfe263a386653f671")
 
     add_configs("shared",               {description = "Build shared library.", default = false, type = "boolean", readonly = true})

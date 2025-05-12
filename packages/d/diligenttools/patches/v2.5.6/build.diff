@@ -1937,7 +1937,7 @@ index ab0956f..38b4b3e 100644
  namespace Diligent
  {
 diff --git a/ThirdParty/CMakeLists.txt b/ThirdParty/CMakeLists.txt
-index 49129b9..f6e2fee 100644
+index 49129b9..b6c68d3 100644
 --- a/ThirdParty/CMakeLists.txt
 +++ b/ThirdParty/CMakeLists.txt
 @@ -12,74 +12,53 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR
@@ -2077,7 +2077,7 @@ index 49129b9..f6e2fee 100644
 +endif()
 +
 +if(DILIGENT_USE_RAPIDJSON)
-+    pkg_check_modules(rapidjson REQUIRED rapidjson)
++    pkg_check_modules(rapidjson REQUIRED RapidJSON)
 +    DUMP_PKG_VARS(rapidjson)
  endif()
  
