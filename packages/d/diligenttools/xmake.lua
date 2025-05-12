@@ -112,10 +112,11 @@ package("diligenttools")
             }
         ]]}, {configs = {languages = "c++17"}}))
         assert(package:check_cxxsnippets({test = [[
-            #include <DiligentTools/RenderStateNotation/interface/RenderStateNotationParser.h>
+            #include <DiligentTools/RenderStateNotation/interface/RenderStateNotationLoader.h>
             void test() {
-                Diligent::RenderStateNotationParserInfo ParserInfo;
-                auto info = ParserInfo.GetInfo();
+                Diligent::LoadPipelineStateInfo LoadInfo;
+                Diligent::GraphicsPipelineStateCreateInfo PipelineCI{};
+                LoadInfo.ModifyPipeline(PipelineCI, LoadInfo.pModifyPipelineData);
             }
         ]]}, {configs = {languages = "c++17"}}))
         assert(package:check_cxxsnippets({test = [[
