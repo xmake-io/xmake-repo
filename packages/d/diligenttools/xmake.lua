@@ -50,8 +50,6 @@ package("diligenttools")
         if diligentcore then
             if not diligentcore:is_system() then
                 local diligentcore_fetchinfo = diligentcore:fetch()
-                print("DiligentCore fetchinfo.defines => ")
-                print(diligentcore_fetchinfo.defines)
                 for _, define in ipairs(diligentcore_fetchinfo.defines) do
                     package:add("defines", define)
                 end
@@ -78,8 +76,6 @@ package("diligenttools")
         if diligentcore then
             if not diligentcore:is_system() then
                 local diligentcore_fetchinfo = diligentcore:fetch()
-                print("DiligentCore fetchinfo.defines => ")
-                print(diligentcore_fetchinfo.defines)
                 for _, define in ipairs(diligentcore_fetchinfo.defines) do
                     if define:find("PLATFORM") or define:find("_SUPPORTED") then
                         table.insert(configs, "-D" .. define .. "=ON")
@@ -107,9 +103,6 @@ package("diligenttools")
                 auto count = material.GetNumActiveTextureAttribs();
             }
         ]]}, {configs = {languages = "c++17"}}))
-    end)
-
-    on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <DiligentTools/Imgui/interface/ImGuiImplDiligent.hpp>
             void test() {
@@ -118,9 +111,6 @@ package("diligenttools")
                 impl.InvalidateDeviceObjects();
             }
         ]]}, {configs = {languages = "c++17"}}))
-    end)
-
-    on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <DiligentTools/RenderStateNotation/interface/RenderStateNotationParser.h>
             void test() {
@@ -128,9 +118,6 @@ package("diligenttools")
                 auto info = ParserInfo.GetInfo();
             }
         ]]}, {configs = {languages = "c++17"}}))
-    end)
-
-    on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <DiligentTools/TextureLoader/interface/TextureUtilities.h>
             void test() {
