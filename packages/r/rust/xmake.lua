@@ -13,45 +13,13 @@ package("rust")
     add_configs("target_arch", {description = "Target arch (for cross-compilation)", default = nil, type = "string"})
 
     on_load(function (package)
+        print("toolchain", package:config("toolchain"))
         if package:config("target_plat") == nil then
             package:config_set("target_plat", package:plat())
         end
         if package:config("target_arch") == nil then
             package:config_set("target_arch", package:arch())
         end
-    end)
-
-    on_check(function (package)
-        print("on_check")
-        -- MinGW 32bits exception model must match rustc LLVM exception model (dwarf2)
-        local plat = package:config("target_plat")
-        local arch = package:config("target_arch")
-        if plat ~= "mingw" or (plat ~= "i386" and plat ~= "i686") then
-            print("plat/arch isn't mingw (" .. plat .. "|" .. arch .. ")")
-            return
-        end
-
-        local mingw = package:toolchain("mingw")
-        if not mingw then
-            print("toolchain not found")
-            return
-        end
-
-        local compiler, toolname = mingw:tool("cc")
-        if toolname ~= "gcc" then
-            print("toolname not gcc (" .. toolname .. ")")
-            return
-        end
-
-        local output, errdata = os.iorunv(compiler, {"-v"})
-        print("stdout", output)
-        print("stderr", errdata)
-        -- for some reason the output is in stderr
-        if #output:trim() == 0 then
-            output = errdata
-        end
-        print("gcc -v", output)
-        assert(output:find("--with-dwarf2", 1, true), "rustc is only compatible with dwarf2 exception model in 32bits mode, please use dwarf2 MinGW")
     end)
 
     on_install(function (package)
