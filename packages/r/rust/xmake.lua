@@ -13,11 +13,15 @@ package("rust")
     add_configs("target_arch", {description = "Target arch (for cross-compilation)", default = nil, type = "string"})
 
     on_load(function (package)
-        print("toolchains")
-        local toolchains = package:toolchains()
-        for _, toolchain in ipairs(toolchains) do
-            print(toolchain:name())
+        print("compiler (rust)")
+        local compiler, toolname = package:tool("cc")
+        
+        local output, errdata = os.iorunv(compiler, {"-v"})
+        -- for some reason the output is in stderr
+        if #output:trim() == 0 then
+            output = errdata
         end
+        print(output)
         if package:config("target_plat") == nil then
             package:config_set("target_plat", package:plat())
         end
