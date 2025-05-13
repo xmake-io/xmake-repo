@@ -32,6 +32,7 @@ package("wgsl-validator")
                     if toolname == "gcc" then
                         target = target:replace("-none-", "-unknown-", {plain = true})
                     end
+                    package:data_set("cross_target", target)
                     local parts = target:split("-", {plain = true})
                     if #parts >= 3 then
                         toolchainconfigs.target_arch = parts[1]
@@ -71,6 +72,10 @@ package("wgsl-validator")
         local rcfile_path = os.tmpfile() .. ".lua"
         local rcfile = io.open(rcfile_path, 'w')
         rcfile:print("add_requires(\"rust\", %s)", string.serialize(rust:requireinfo(), {strip = true, indent = false}))
+        local cross_target = package:data("cross_target")
+        if cross_target then
+            rcfile:print("add_requireconfs(\"cargo::naga\", \"{arch = %s})", cross_target)
+        end
         rcfile:close()
 
         local envs = import("package.tools.xmake").buildenvs(package)
