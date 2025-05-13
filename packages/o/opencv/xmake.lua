@@ -259,10 +259,9 @@ package("opencv")
             elseif package:is_arch("arm64") then arch = "ARM64"
             end
             -- Workaround for arm64
-            if package:is_arch("arm64") and not os.isdir(path.join(package:installdir(), "ARM64")) then
-                if     os.isdir(path.join(package:installdir(), "x64")) then arch = "x64"
-                elseif os.isdir(path.join(package:installdir(), "x86")) then arch = "x86"
-                end
+            if package:is_arch("arm64") then
+                os.trymv(path.join(package:installdir(), "x64"), path.join(package:installdir(), "ARM64"))
+                os.trymv(path.join(package:installdir(), "x86"), path.join(package:installdir(), "ARM64"))
             end
             local linkdir = (package:config("shared") and "lib" or "staticlib")
             local vs = package:toolchain("msvc"):config("vs")
