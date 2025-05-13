@@ -13,7 +13,11 @@ package("rust")
     add_configs("target_arch", {description = "Target arch (for cross-compilation)", default = nil, type = "string"})
 
     on_load(function (package)
-        print("toolchain", package:config("toolchains"))
+        print("toolchains")
+        local toolchains = package:toolchains()
+        for _, toolchain in ipairs(toolchains) do
+            print(toolchain:name())
+        end
         if package:config("target_plat") == nil then
             package:config_set("target_plat", package:plat())
         end
