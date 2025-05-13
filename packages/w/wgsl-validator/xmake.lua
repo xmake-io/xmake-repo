@@ -30,7 +30,7 @@ package("wgsl-validator")
                 local target = output:match("Target: ([^\r\n]*)")
                 if target then
                     if toolname == "gcc" then
-                        target:replace("-none-", "-unknown-", {plain = true})
+                        target = target:replace("-none-", "-unknown-", {plain = true})
                     end
                     local parts = target:split("-", {plain = true})
                     if #parts >= 3 then
