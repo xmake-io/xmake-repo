@@ -17,22 +17,29 @@ package("wgsl-validator")
     end
 
     on_load(function (package)
-        print("toolchains (wgsl-validator)")
-        local toolchains = package:toolchains()
-        for _, toolchain in ipairs(toolchains) do
-            print(toolchain:name())
-        end
-        print("compiler")
-        local compiler, toolname = package:tool("cc")
-        
-        local output, errdata = os.iorunv(compiler, {"-v"})
-        -- for some reason the output is in stderr
-        if #output:trim() == 0 then
-            output = errdata
-        end
-        print(output)
+        local toolchainconfigs = {}
+        toolchainconfigs.target_plat = package:plat()
+        toolchainconfigs.target_arch = package:arch()
 
-        package:add("deps", "rust", {configs = {target_plat = package:plat(), target_arch = package:arch()}})
+        if package:is_plat("cross") then
+            -- detect cross configuration from the compiler, if possible
+            local compiler, toolname = package:tool("cc")
+            if toolname == "clang" or toolname == "gcc" then
+                local outdata, errdata = os.iorunv(compiler, {"-v"})
+                local output = #outdata:trim() > 0 and outdata or errdata
+                local target = output:match("Target: ([^\r\n]*)")
+                if target then
+                    local parts = target:split("-", {plain = true})
+                    if #parts >= 3 then
+                        toolchainconfigs.target_arch = parts[1]
+                        toolchainconfigs.target_system = table.concat(parts, "-", 2, #parts - 1)
+                        toolchainconfigs.target_abi = parts[#parts]
+                    end
+                end
+            end
+        end
+
+        package:add("deps", "rust", {configs = toolchainconfigs})
     end)
 
     on_check("mingw|i386", function (package)
@@ -56,8 +63,18 @@ package("wgsl-validator")
     end)
 
     on_install(function (package)
+        -- pass rust toolchain configuration
+        local rust = package:dep("rust")
+        local rcfile_path = os.tmpfile() .. ".lua"
+        local rcfile = io.open(rcfile_path, 'w')
+        rcfile:print("add_requireconfs(\"rust\", %s)", string.serialize(rust:requireinfo(), {strip = true, indent = false}))
+        rcfile:close()
+
+        local envs = import("package.tools.xmake").buildenvs(package)
+        table.insert(envs.XMAKE_RCFILES, rcfile_path)
+
         io.writefile("xmake.lua", [[
-            add_requires("rust", {configs = {target_plat = get_config("plat"), target_arch = get_config("arch")}})
+            add_requires("rust")
             add_requires("cargo::naga latest", {configs = {features = "wgsl-in"}})
 
             target("wgsl-validator")
@@ -68,7 +85,7 @@ package("wgsl-validator")
                 set_values("rust.cratetype", "staticlib")
                 add_packages("cargo::naga")
         ]])
-        import("package.tools.xmake").install(package, configs)
+        import("package.tools.xmake").install(package, nil, {envs = envs})
     end)
 
     on_test(function (package)
