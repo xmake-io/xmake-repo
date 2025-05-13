@@ -62,9 +62,9 @@ package("rust")
         end
         os.vrunv("rustup", {"install", "--no-self-update", toolchain_name})
 
-        if target_triple or package:is_plat("cross") then
+        if target_triple or plat == "cross" then
             local target
-            if package:is_plat("cross") then
+            if plat == "cross" then
                 local system = package:config("target_system")
                 local abi = package:config("target_abi")
                 target = arch .. "-" .. system .. "-" .. abi
