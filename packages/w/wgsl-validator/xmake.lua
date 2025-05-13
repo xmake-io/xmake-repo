@@ -75,6 +75,7 @@ package("wgsl-validator")
         local cross_target = package:data("cross_target")
         if cross_target then
             rcfile:print("add_requireconfs(\"cargo::naga\", {arch = \"%s\", override = true})", cross_target)
+            rcfile:print("set_rcflags(\"--target=%s\")", cross_target)
         end
         rcfile:close()
 
