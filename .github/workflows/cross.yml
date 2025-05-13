@@ -30,4 +30,4 @@ jobs:
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D -p cross --sdk=`pwd`/arm-gnu-toolchain-13.3.rel1-x86_64-${{ matrix.cross }}
+          xmake l ./scripts/test.lua -D -p cross --sdk=`pwd`/arm-gnu-toolchain-13.3.rel1-x86_64-${{ matrix.cross }} -vD
