@@ -8,20 +8,14 @@ package("rust")
     add_deps("ca-certificates", {host = true, private = true})
     add_deps("rustup", {host = true, private = true, system = false})
 
-    -- required 
     add_configs("target_plat", {description = "Target platform (for cross-compilation)", default = nil, type = "string"})
     add_configs("target_arch", {description = "Target arch (for cross-compilation)", default = nil, type = "string"})
+    if is_plat("cross") then
+        add_configs("target_system", {description = "Target system (for cross-compilation)", default = "unknown-linux", type = "string"})
+        add_configs("target_abi", {description = "Target ABI (for cross-compilation)", default = "gnu", type = "string"})
+    end
 
     on_load(function (package)
-        print("compiler (rust)")
-        local compiler, toolname = package:tool("cc")
-        
-        local output, errdata = os.iorunv(compiler, {"-v"})
-        -- for some reason the output is in stderr
-        if #output:trim() == 0 then
-            output = errdata
-        end
-        print(output)
         if package:config("target_plat") == nil then
             package:config_set("target_plat", package:plat())
         end
@@ -68,8 +62,16 @@ package("rust")
         end
         os.vrunv("rustup", {"install", "--no-self-update", toolchain_name})
 
-        if target_triple then
-            local target = assert(target_triple(plat, arch), "failed to build target triple for target_plat/target_arch, if you think this is a bug please create an issue")
+        if target_triple or package:is_plat("cross") then
+            local target
+            if package:is_plat("cross") then
+                local system = package:config("target_system")
+                local abi = package:config("target_abi")
+                target = arch .. "-" .. system .. "-" .. abi
+            else
+                target = assert(target_triple(plat, arch), "failed to build target triple for target_plat/target_arch, if you think this is a bug please create an issue")
+            end
+
             if target ~= host_target then
                 os.vrunv("rustup", {"target", "add", target})
             end
