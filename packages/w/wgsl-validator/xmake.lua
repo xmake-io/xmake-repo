@@ -24,16 +24,22 @@ package("wgsl-validator")
         if package:is_plat("cross") then
             -- detect cross configuration from the compiler, if possible
             local compiler, toolname = package:tool("cc")
+            print("compiler", compiler)
+            print("toolname", toolname)
             if toolname == "clang" or toolname == "gcc" then
                 local outdata, errdata = os.iorunv(compiler, {"-v"})
                 local output = #outdata:trim() > 0 and outdata or errdata
+                print("output of -v", output)
                 local target = output:match("Target: ([^\r\n]*)")
+                print("target", target)
                 if target then
                     local parts = target:split("-", {plain = true})
+                    print("parts", parts)
                     if #parts >= 3 then
                         toolchainconfigs.target_arch = parts[1]
                         toolchainconfigs.target_system = table.concat(parts, "-", 2, #parts - 1)
                         toolchainconfigs.target_abi = parts[#parts]
+                        print("config", toolchainconfigs)
                     end
                 end
             end
