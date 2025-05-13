@@ -17,6 +17,15 @@ package("wgsl-validator")
     end
 
     on_load(function (package)
+        print("toolchains (wgsl-validator)")
+        local toolchains = package:toolchains()
+        for _, toolchain in ipairs(toolchains) do
+            print(toolchain:name())
+        end
+        print("compiler")
+        print(package:tool("cc"))
+        
+
         package:add("deps", "rust", {configs = {target_plat = package:plat(), target_arch = package:arch()}})
     end)
 
