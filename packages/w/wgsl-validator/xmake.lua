@@ -23,8 +23,14 @@ package("wgsl-validator")
             print(toolchain:name())
         end
         print("compiler")
-        print(package:tool("cc"))
+        local compiler, toolname = package:tool("cc")
         
+        local output, errdata = os.iorunv(compiler, {"-v"})
+        -- for some reason the output is in stderr
+        if #output:trim() == 0 then
+            output = errdata
+        end
+        print(output)
 
         package:add("deps", "rust", {configs = {target_plat = package:plat(), target_arch = package:arch()}})
     end)
