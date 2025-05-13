@@ -74,7 +74,7 @@ package("wgsl-validator")
         rcfile:print("add_requires(\"rust\", %s)", string.serialize(rust:requireinfo(), {strip = true, indent = false}))
         local cross_target = package:data("cross_target")
         if cross_target then
-            rcfile:print("add_requireconfs(\"cargo::naga\", {arch = \"%s\"})", cross_target)
+            rcfile:print("add_requireconfs(\"cargo::naga\", {arch = \"%s\", override = true})", cross_target)
         end
         rcfile:close()
 
