@@ -6,6 +6,7 @@ package("cpu-features")
     add_urls("https://github.com/google/cpu_features/archive/refs/tags/$(version).tar.gz",
              "https://github.com/google/cpu_features.git")
 
+    add_versions("v0.10.0", "dc1be36d02b178e904aa91cce5c2701fe418d728f1c0a130a4196b66b087471a")
     add_versions("v0.6.0", "95a1cf6f24948031df114798a97eea2a71143bd38a4d07d9a758dda3924c1932")
     add_versions("v0.7.0", "df80d9439abf741c7d2fdcdfd2d26528b136e6c52976be8bd0cd5e45a27262c0")
     add_versions("v0.9.0", "bdb3484de8297c49b59955c3b22dba834401bc2df984ef5cfc17acbe69c5018e")
