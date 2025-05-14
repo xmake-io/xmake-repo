@@ -94,6 +94,7 @@ package("spdlog")
         table.insert(configs, "-DSPDLOG_WCHAR_SUPPORT=" .. (package:config("wchar") and "ON" or "OFF"))
         table.insert(configs, "-DSPDLOG_WCHAR_FILENAMES=" .. (package:config("wchar_filenames") and "ON" or "OFF"))
         table.insert(configs, "-DSPDLOG_UTF8_TO_WCHAR_CONSOLE=" .. (package:config("wchar_console") and "ON" or "OFF"))
+        table.insert(configs, "-DSPDLOG_WCHAR_CONSOLE=" .. (package:config("wchar_console") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
