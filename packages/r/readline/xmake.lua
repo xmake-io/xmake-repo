@@ -13,7 +13,7 @@ package("readline")
     add_deps("ncurses")
 
     on_install("linux", "macosx", function (package)
-        local configs = {"--with-curses"}
+        local configs = {"--with-curses", "--disable-install-examples"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         import("package.tools.autoconf").install(package, configs)
