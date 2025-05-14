@@ -31,9 +31,7 @@ package("diligentfx")
     add_deps("python 3.x", {kind = "binary"})
 
     on_check("linux", function (package)
-        if package:is_arch("arm.*") then
-            raise("package(diligentfx) does not support linux arm64.")
-        end
+        assert(not package:is_arch("arm.*"), "package(diligentfx) does not support linux arm64.")
     end)
 
     on_load(function (package)
