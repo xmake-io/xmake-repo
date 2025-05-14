@@ -19,7 +19,8 @@ package("wgsl-validator")
     end
 
     on_install(function (package)
-        local envs = package:base():script("install")(package)
+        package:base():script("install")(package)
+        local envs = package:data("xmake_envs")
 
         io.writefile("xmake.lua", [[
             add_requires("cargo::naga latest", {configs = {features = "wgsl-in"}})
