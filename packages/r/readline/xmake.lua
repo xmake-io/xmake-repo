@@ -16,7 +16,12 @@ package("readline")
         local configs = {"--with-curses", "--disable-install-examples"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
-        import("package.tools.autoconf").install(package, configs)
+
+        local cflags = {}
+        if package:version():le("8.2.13") then
+            table.insert(cflags, "-std=c17")
+        end
+        import("package.tools.autoconf").install(package, configs, {cflags = cflags})
     end)
 
     on_test(function (package)
