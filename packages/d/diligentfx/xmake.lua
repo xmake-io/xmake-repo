@@ -30,9 +30,11 @@ package("diligentfx")
     add_deps("diligentcore", "diligenttools", "entt", "usd", "imgui")
     add_deps("python 3.x", {kind = "binary"})
 
-    on_check("linux", function (package)
-        assert(not package:is_arch("arm.*"), "package(diligentfx) does not support linux arm64.")
-    end)
+    if on_check then
+        on_check("linux", function (package)
+            assert(not package:is_arch("arm.*"), "package(diligentfx) does not support linux arm.")
+        end)
+    end
 
     on_load(function (package)
         local diligentcore = package:dep("diligentcore")
@@ -62,7 +64,11 @@ package("diligentfx")
                 "DiligentCore-2.5.6"
             )
         end
-        local configs = {"-DDILIGENT_INSTALL_FX=ON"}
+        local configs = {
+            "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
+            "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"),
+            "-DDILIGENT_INSTALL_FX=ON"
+        }
         local diligentcore = package:dep("diligentcore")
         if diligentcore then
             if not diligentcore:is_system() then
@@ -74,8 +80,6 @@ package("diligentfx")
                 end
             end
         end
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
