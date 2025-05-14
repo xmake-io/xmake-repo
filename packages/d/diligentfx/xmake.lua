@@ -30,6 +30,12 @@ package("diligentfx")
     add_deps("diligentcore", "diligenttools", "entt", "usd", "imgui")
     add_deps("python 3.x", {kind = "binary"})
 
+    on_check("linux", function (package)
+        if package:is_arch("arm.*") then
+            raise("package(diligentfx) does not support linux arm64.")
+        end
+    end)
+
     on_load(function (package)
         local diligentcore = package:dep("diligentcore")
         if diligentcore then
@@ -42,7 +48,7 @@ package("diligentfx")
         end
     end)
 
-    on_install("linux|!arm64", "macosx|x86_64", "windows|x64", function (package)
+    on_install("linux", "macosx|x86_64", "windows|x64", function (package)
         local resourcedir = package:resourcedir("DiligentCore_source")
         if resourcedir then
             os.cp(
