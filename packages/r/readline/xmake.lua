@@ -6,6 +6,7 @@ package("readline")
     add_urls("https://ftpmirror.gnu.org/readline/readline-$(version).tar.gz",
              "https://ftp.gnu.org/gnu/readline/readline-$(version).tar.gz")
 
+    add_versions("8.2.13", "0e5be4d2937e8bd9b7cd60d46721ce79f88a33415dd68c2d738fb5924638f656")
     add_versions("8.2", "3feb7171f16a84ee82ca18a36d7b9be109a52c04f492a053331d7d1095007c35")
     add_versions("8.1", "f8ceb4ee131e3232226a17f51b164afc46cd0b9e6cef344be87c65962cb82b02")
 
