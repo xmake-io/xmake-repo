@@ -45,6 +45,8 @@ package("ncurses")
             "--with-gpm=no",
             "--without-tests",
             "--without-ada",
+            "--enable-pc-files",
+            "--with-pkg-config-libdir=" .. path.unix(package:installdir("lib", "pkgconfig")):gsub("^(%a):", "/%1"),
         }
 
         table.insert(configs, "--with-debug=" .. (package:is_debug() and "yes" or "no"))
