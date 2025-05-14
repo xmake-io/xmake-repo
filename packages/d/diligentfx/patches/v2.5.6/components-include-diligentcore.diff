@@ -1,0 +1,302 @@
+diff --git a/Components/interface/BoundBoxRenderer.hpp b/Components/interface/BoundBoxRenderer.hpp
+index 039f569..1ed4419 100644
+--- a/Components/interface/BoundBoxRenderer.hpp
++++ b/Components/interface/BoundBoxRenderer.hpp
+@@ -28,12 +28,12 @@
+ #include <vector>
+ #include <memory>
+ 
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/DeviceContext.h"
+-#include "../../../DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
+-#include "../../../DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+-#include "../../../DiligentCore/Common/interface/HashUtils.hpp"
+-#include "../../../DiligentCore/Common/interface/BasicMath.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/DeviceContext.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Common/interface/HashUtils.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Components/interface/CoordinateGridRenderer.hpp b/Components/interface/CoordinateGridRenderer.hpp
+index f02cb29..0ab3557 100644
+--- a/Components/interface/CoordinateGridRenderer.hpp
++++ b/Components/interface/CoordinateGridRenderer.hpp
+@@ -29,14 +29,14 @@
+ #include <unordered_map>
+ #include <vector>
+ 
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/DeviceContext.h"
+-#include "../../../DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
+-#include "../../../DiligentCore/Graphics/GraphicsTools/interface/ResourceRegistry.hpp"
+-#include "../../../DiligentCore/Graphics/GraphicsTools/interface/ShaderMacroHelper.hpp"
+-#include "../../../DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+-#include "../../../DiligentCore/Common/interface/BasicMath.hpp"
+-#include "../../../DiligentCore/Common/interface/HashUtils.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/DeviceContext.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ResourceRegistry.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ShaderMacroHelper.hpp"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
++#include "DiligentCore/Common/interface/HashUtils.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Components/interface/EnvMapRenderer.hpp b/Components/interface/EnvMapRenderer.hpp
+index e4e61f4..18815ce 100644
+--- a/Components/interface/EnvMapRenderer.hpp
++++ b/Components/interface/EnvMapRenderer.hpp
+@@ -29,12 +29,12 @@
+ #include <memory>
+ #include <array>
+ 
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/DeviceContext.h"
+-#include "../../../DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
+-#include "../../../DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+-#include "../../../DiligentCore/Common/interface/BasicMath.hpp"
+-#include "../../../DiligentCore/Common/interface/HashUtils.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/DeviceContext.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
++#include "DiligentCore/Common/interface/HashUtils.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Components/interface/GBuffer.hpp b/Components/interface/GBuffer.hpp
+index 4aa8dd0..a235bdc 100644
+--- a/Components/interface/GBuffer.hpp
++++ b/Components/interface/GBuffer.hpp
+@@ -26,8 +26,8 @@
+ 
+ #include <vector>
+ 
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
+-#include "../../../DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Components/interface/ShadowMapManager.hpp b/Components/interface/ShadowMapManager.hpp
+index 2897ad0..bde4dee 100644
+--- a/Components/interface/ShadowMapManager.hpp
++++ b/Components/interface/ShadowMapManager.hpp
+@@ -30,13 +30,13 @@
+ #include <vector>
+ #include <array>
+ 
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/DeviceContext.h"
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/Texture.h"
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/TextureView.h"
+-#include "../../../DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
+-#include "../../../DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+-#include "../../../DiligentCore/Common/interface/BasicMath.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/DeviceContext.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/Texture.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/TextureView.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Components/interface/ToneMapping.hpp b/Components/interface/ToneMapping.hpp
+index ff899c0..bf0e790 100644
+--- a/Components/interface/ToneMapping.hpp
++++ b/Components/interface/ToneMapping.hpp
+@@ -24,7 +24,7 @@
+  *  of the possibility of such damages.
+  */
+ 
+-#include "../../../DiligentCore/Common/interface/BasicMath.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Components/interface/VectorFieldRenderer.hpp b/Components/interface/VectorFieldRenderer.hpp
+index 68eb87a..6537408 100644
+--- a/Components/interface/VectorFieldRenderer.hpp
++++ b/Components/interface/VectorFieldRenderer.hpp
+@@ -27,12 +27,12 @@
+ #include <unordered_map>
+ #include <vector>
+ 
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/DeviceContext.h"
+-#include "../../../DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
+-#include "../../../DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+-#include "../../../DiligentCore/Common/interface/BasicMath.hpp"
+-#include "../../../DiligentCore/Common/interface/HashUtils.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/DeviceContext.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
++#include "DiligentCore/Common/interface/HashUtils.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Components/src/BoundBoxRenderer.cpp b/Components/src/BoundBoxRenderer.cpp
+index a4aa4cd..b1beecc 100644
+--- a/Components/src/BoundBoxRenderer.cpp
++++ b/Components/src/BoundBoxRenderer.cpp
+@@ -27,13 +27,13 @@
+ #include "BoundBoxRenderer.hpp"
+ 
+ #include "Utilities/interface/DiligentFXShaderSourceStreamFactory.hpp"
+-#include "ShaderMacroHelper.hpp"
+-#include "RenderStateCache.hpp"
+-#include "CommonlyUsedStates.h"
+-#include "MapHelper.hpp"
+-#include "GraphicsUtilities.h"
+-#include "ShaderSourceFactoryUtils.hpp"
+-#include "GraphicsAccessories.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ShaderMacroHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/CommonlyUsedStates.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/MapHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/GraphicsUtilities.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ShaderSourceFactoryUtils.hpp"
++#include "DiligentCore/Graphics/GraphicsAccessories/interface/GraphicsAccessories.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Components/src/CoordinateGridRenderer.cpp b/Components/src/CoordinateGridRenderer.cpp
+index ab7b833..1ca8c03 100644
+--- a/Components/src/CoordinateGridRenderer.cpp
++++ b/Components/src/CoordinateGridRenderer.cpp
+@@ -25,17 +25,17 @@
+  */
+ 
+ #include "imgui.h"
+-#include "ImGuiUtils.hpp"
++#include "DiligentTools/Imgui/interface/ImGuiUtils.hpp"
+ 
+ #include "CoordinateGridRenderer.hpp"
+-#include "GraphicsUtilities.h"
+-#include "ShaderMacroHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/GraphicsUtilities.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ShaderMacroHelper.hpp"
+ #include "PostFXRenderTechnique.hpp"
+-#include "GraphicsTypesX.hpp"
+-#include "RenderStateCache.hpp"
+-#include "CommonlyUsedStates.h"
+-#include "MapHelper.hpp"
+-#include "ScopedDebugGroup.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/GraphicsTypesX.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/CommonlyUsedStates.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/MapHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ScopedDebugGroup.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Components/src/EnvMapRenderer.cpp b/Components/src/EnvMapRenderer.cpp
+index 762bcf1..7b069e1 100644
+--- a/Components/src/EnvMapRenderer.cpp
++++ b/Components/src/EnvMapRenderer.cpp
+@@ -27,12 +27,12 @@
+ #include "EnvMapRenderer.hpp"
+ 
+ #include "Utilities/interface/DiligentFXShaderSourceStreamFactory.hpp"
+-#include "ShaderMacroHelper.hpp"
+-#include "RenderStateCache.hpp"
+-#include "CommonlyUsedStates.h"
+-#include "MapHelper.hpp"
+-#include "GraphicsUtilities.h"
+-#include "ShaderSourceFactoryUtils.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ShaderMacroHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/CommonlyUsedStates.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/MapHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/GraphicsUtilities.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ShaderSourceFactoryUtils.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Components/src/GBuffer.cpp b/Components/src/GBuffer.cpp
+index a5b5493..d20c8de 100644
+--- a/Components/src/GBuffer.cpp
++++ b/Components/src/GBuffer.cpp
+@@ -26,8 +26,8 @@
+ 
+ #include "GBuffer.hpp"
+ 
+-#include "GraphicsAccessories.hpp"
+-#include "PlatformMisc.hpp"
++#include "DiligentCore/Graphics/GraphicsAccessories/interface/GraphicsAccessories.hpp"
++#include "DiligentCore/Platforms/interface/PlatformMisc.hpp"
+ 
+ #include <array>
+ 
+diff --git a/Components/src/ShadowMapManager.cpp b/Components/src/ShadowMapManager.cpp
+index 06a9e2f..15317b0 100644
+--- a/Components/src/ShadowMapManager.cpp
++++ b/Components/src/ShadowMapManager.cpp
+@@ -28,13 +28,13 @@
+ #include <cfloat>
+ 
+ #include "ShadowMapManager.hpp"
+-#include "AdvancedMath.hpp"
++#include "DiligentCore/Common/interface/AdvancedMath.hpp"
+ #include "Utilities/interface/DiligentFXShaderSourceStreamFactory.hpp"
+-#include "GraphicsUtilities.h"
+-#include "MapHelper.hpp"
+-#include "CommonlyUsedStates.h"
+-#include "RenderStateCache.hpp"
+-#include "GraphicsAccessories.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/GraphicsUtilities.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/MapHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/CommonlyUsedStates.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.hpp"
++#include "DiligentCore/Graphics/GraphicsAccessories/interface/GraphicsAccessories.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Components/src/ToneMapping.cpp b/Components/src/ToneMapping.cpp
+index 5751484..262cd75 100644
+--- a/Components/src/ToneMapping.cpp
++++ b/Components/src/ToneMapping.cpp
+@@ -25,7 +25,7 @@
+  */
+ 
+ #include "imgui.h"
+-#include "ImGuiUtils.hpp"
++#include "DiligentTools/Imgui/interface/ImGuiUtils.hpp"
+ 
+ #include "ToneMapping.hpp"
+ 
+diff --git a/Components/src/VectorFieldRenderer.cpp b/Components/src/VectorFieldRenderer.cpp
+index 8fdf164..8204ad7 100644
+--- a/Components/src/VectorFieldRenderer.cpp
++++ b/Components/src/VectorFieldRenderer.cpp
+@@ -27,12 +27,12 @@
+ #include "VectorFieldRenderer.hpp"
+ 
+ #include "Utilities/interface/DiligentFXShaderSourceStreamFactory.hpp"
+-#include "ShaderMacroHelper.hpp"
+-#include "RenderStateCache.hpp"
+-#include "CommonlyUsedStates.h"
+-#include "MapHelper.hpp"
+-#include "GraphicsUtilities.h"
+-#include "ShaderSourceFactoryUtils.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ShaderMacroHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/CommonlyUsedStates.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/MapHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/GraphicsUtilities.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ShaderSourceFactoryUtils.hpp"
+ 
+ namespace Diligent
+ {

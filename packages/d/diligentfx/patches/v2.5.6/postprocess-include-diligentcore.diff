@@ -1,0 +1,343 @@
+diff --git a/PostProcess/Bloom/interface/Bloom.hpp b/PostProcess/Bloom/interface/Bloom.hpp
+index 9269811..1220889 100644
+--- a/PostProcess/Bloom/interface/Bloom.hpp
++++ b/PostProcess/Bloom/interface/Bloom.hpp
+@@ -29,11 +29,11 @@
+ #include <vector>
+ #include <memory>
+ 
+-#include "../../../../DiligentCore/Common/interface/Timer.hpp"
+-#include "../../../../DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
+-#include "../../../../DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
+-#include "../../../../DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+-#include "../../../../DiligentCore/Common/interface/BasicMath.hpp"
++#include "DiligentCore/Common/interface/Timer.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
+ 
+ #include "PostProcess/Common/interface/PostFXRenderTechnique.hpp"
+ #include "PostProcess/Common/interface/PostFXContext.hpp"
+diff --git a/PostProcess/Bloom/src/Bloom.cpp b/PostProcess/Bloom/src/Bloom.cpp
+index bda1835..41f80b5 100644
+--- a/PostProcess/Bloom/src/Bloom.cpp
++++ b/PostProcess/Bloom/src/Bloom.cpp
+@@ -26,16 +26,16 @@
+ 
+ 
+ #include "Bloom.hpp"
+-#include "CommonlyUsedStates.h"
+-#include "RenderStateCache.hpp"
+-#include "GraphicsUtilities.h"
+-#include "MapHelper.hpp"
+-#include "ScopedDebugGroup.hpp"
+-#include "GraphicsTypesX.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/CommonlyUsedStates.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/GraphicsUtilities.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/MapHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ScopedDebugGroup.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/GraphicsTypesX.hpp"
+ #include "imgui.h"
+-#include "ImGuiUtils.hpp"
++#include "DiligentTools/Imgui/interface/ImGuiUtils.hpp"
+ #include "ScreenSpaceReflection.hpp"
+-#include "ShaderMacroHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ShaderMacroHelper.hpp"
+ 
+ #include <numeric>
+ 
+diff --git a/PostProcess/DepthOfField/interface/DepthOfField.hpp b/PostProcess/DepthOfField/interface/DepthOfField.hpp
+index f98091a..9c77ddc 100644
+--- a/PostProcess/DepthOfField/interface/DepthOfField.hpp
++++ b/PostProcess/DepthOfField/interface/DepthOfField.hpp
+@@ -28,11 +28,11 @@
+ #include <unordered_map>
+ #include <memory>
+ 
+-#include "../../../../DiligentCore/Common/interface/Timer.hpp"
+-#include "../../../../DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
+-#include "../../../../DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
+-#include "../../../../DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+-#include "../../../../DiligentCore/Common/interface/BasicMath.hpp"
++#include "DiligentCore/Common/interface/Timer.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
+ 
+ #include "PostProcess/Common/interface/PostFXRenderTechnique.hpp"
+ #include "PostProcess/Common/interface/PostFXContext.hpp"
+diff --git a/PostProcess/DepthOfField/src/DepthOfField.cpp b/PostProcess/DepthOfField/src/DepthOfField.cpp
+index 1541cdb..9724bba 100644
+--- a/PostProcess/DepthOfField/src/DepthOfField.cpp
++++ b/PostProcess/DepthOfField/src/DepthOfField.cpp
+@@ -26,16 +26,16 @@
+ 
+ 
+ #include "DepthOfField.hpp"
+-#include "CommonlyUsedStates.h"
+-#include "RenderStateCache.hpp"
+-#include "GraphicsUtilities.h"
+-#include "MapHelper.hpp"
+-#include "ScopedDebugGroup.hpp"
+-#include "GraphicsTypesX.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/CommonlyUsedStates.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/GraphicsUtilities.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/MapHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ScopedDebugGroup.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/GraphicsTypesX.hpp"
+ #include "imgui.h"
+-#include "ImGuiUtils.hpp"
++#include "DiligentTools/Imgui/interface/ImGuiUtils.hpp"
+ #include "ScreenSpaceReflection.hpp"
+-#include "ShaderMacroHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ShaderMacroHelper.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/PostProcess/EpipolarLightScattering/interface/EpipolarLightScattering.hpp b/PostProcess/EpipolarLightScattering/interface/EpipolarLightScattering.hpp
+index b9b8000..f9de83c 100644
+--- a/PostProcess/EpipolarLightScattering/interface/EpipolarLightScattering.hpp
++++ b/PostProcess/EpipolarLightScattering/interface/EpipolarLightScattering.hpp
+@@ -26,15 +26,15 @@
+  */
+ #pragma once
+ 
+-#include "../../../../DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
+-#include "../../../../DiligentCore/Graphics/GraphicsEngine/interface/DeviceContext.h"
+-#include "../../../../DiligentCore/Graphics/GraphicsEngine/interface/Buffer.h"
+-#include "../../../../DiligentCore/Graphics/GraphicsEngine/interface/Texture.h"
+-#include "../../../../DiligentCore/Graphics/GraphicsEngine/interface/BufferView.h"
+-#include "../../../../DiligentCore/Graphics/GraphicsEngine/interface/TextureView.h"
+-#include "../../../../DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
+-#include "../../../../DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+-#include "../../../../DiligentCore/Common/interface/BasicMath.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/DeviceContext.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/Buffer.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/Texture.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/BufferView.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/TextureView.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/PostProcess/EpipolarLightScattering/src/EpipolarLightScattering.cpp b/PostProcess/EpipolarLightScattering/src/EpipolarLightScattering.cpp
+index 1e6d846..0fe771e 100644
+--- a/PostProcess/EpipolarLightScattering/src/EpipolarLightScattering.cpp
++++ b/PostProcess/EpipolarLightScattering/src/EpipolarLightScattering.cpp
+@@ -31,14 +31,14 @@
+ #include <cstring>
+ 
+ #include "EpipolarLightScattering.hpp"
+-#include "ShaderMacroHelper.hpp"
+-#include "GraphicsUtilities.h"
+-#include "GraphicsAccessories.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ShaderMacroHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/GraphicsUtilities.h"
++#include "DiligentCore/Graphics/GraphicsAccessories/interface/GraphicsAccessories.hpp"
+ #include "Utilities/interface/DiligentFXShaderSourceStreamFactory.hpp"
+-#include "MapHelper.hpp"
+-#include "CommonlyUsedStates.h"
+-#include "Align.hpp"
+-#include "RenderStateCache.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/MapHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/CommonlyUsedStates.h"
++#include "DiligentCore/Common/interface/Align.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.hpp"
+ 
+ #define _USE_MATH_DEFINES
+ #include <math.h>
+diff --git a/PostProcess/ScreenSpaceAmbientOcclusion/interface/ScreenSpaceAmbientOcclusion.hpp b/PostProcess/ScreenSpaceAmbientOcclusion/interface/ScreenSpaceAmbientOcclusion.hpp
+index 74085f6..3f1f892 100644
+--- a/PostProcess/ScreenSpaceAmbientOcclusion/interface/ScreenSpaceAmbientOcclusion.hpp
++++ b/PostProcess/ScreenSpaceAmbientOcclusion/interface/ScreenSpaceAmbientOcclusion.hpp
+@@ -29,11 +29,11 @@
+ #include <vector>
+ #include <memory>
+ 
+-#include "../../../../DiligentCore/Common/interface/Timer.hpp"
+-#include "../../../../DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
+-#include "../../../../DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
+-#include "../../../../DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+-#include "../../../../DiligentCore/Common/interface/BasicMath.hpp"
++#include "DiligentCore/Common/interface/Timer.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
+ 
+ #include "PostProcess/Common/interface/PostFXRenderTechnique.hpp"
+ #include "PostProcess/Common/interface/PostFXContext.hpp"
+diff --git a/PostProcess/ScreenSpaceAmbientOcclusion/src/ScreenSpaceAmbientOcclusion.cpp b/PostProcess/ScreenSpaceAmbientOcclusion/src/ScreenSpaceAmbientOcclusion.cpp
+index ba596a2..b1a387e 100644
+--- a/PostProcess/ScreenSpaceAmbientOcclusion/src/ScreenSpaceAmbientOcclusion.cpp
++++ b/PostProcess/ScreenSpaceAmbientOcclusion/src/ScreenSpaceAmbientOcclusion.cpp
+@@ -25,16 +25,16 @@
+  */
+ 
+ #include "ScreenSpaceAmbientOcclusion.hpp"
+-#include "CommonlyUsedStates.h"
+-#include "RenderStateCache.hpp"
+-#include "GraphicsUtilities.h"
+-#include "MapHelper.hpp"
+-#include "ScopedDebugGroup.hpp"
+-#include "GraphicsTypesX.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/CommonlyUsedStates.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/GraphicsUtilities.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/MapHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ScopedDebugGroup.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/GraphicsTypesX.hpp"
+ #include "imgui.h"
+-#include "ImGuiUtils.hpp"
++#include "DiligentTools/Imgui/interface/ImGuiUtils.hpp"
+ #include "ScreenSpaceReflection.hpp"
+-#include "ShaderMacroHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ShaderMacroHelper.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/PostProcess/ScreenSpaceReflection/interface/ScreenSpaceReflection.hpp b/PostProcess/ScreenSpaceReflection/interface/ScreenSpaceReflection.hpp
+index 7f1e350..2279036 100644
+--- a/PostProcess/ScreenSpaceReflection/interface/ScreenSpaceReflection.hpp
++++ b/PostProcess/ScreenSpaceReflection/interface/ScreenSpaceReflection.hpp
+@@ -30,12 +30,12 @@
+ #include <unordered_map>
+ #include <memory>
+ 
+-#include "../../../../DiligentCore/Common/interface/Timer.hpp"
+-#include "../../../../DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
+-#include "../../../../DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
+-#include "../../../../DiligentCore/Graphics/GraphicsTools/interface/ResourceRegistry.hpp"
+-#include "../../../../DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+-#include "../../../../DiligentCore/Common/interface/BasicMath.hpp"
++#include "DiligentCore/Common/interface/Timer.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ResourceRegistry.hpp"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
+ 
+ #include "PostProcess/Common/interface/PostFXContext.hpp"
+ #include "PostProcess/Common/interface/PostFXRenderTechnique.hpp"
+diff --git a/PostProcess/ScreenSpaceReflection/src/ScreenSpaceReflection.cpp b/PostProcess/ScreenSpaceReflection/src/ScreenSpaceReflection.cpp
+index 4c5fca4..6f9af51 100644
+--- a/PostProcess/ScreenSpaceReflection/src/ScreenSpaceReflection.cpp
++++ b/PostProcess/ScreenSpaceReflection/src/ScreenSpaceReflection.cpp
+@@ -25,15 +25,15 @@
+  */
+ 
+ #include "ScreenSpaceReflection.hpp"
+-#include "RenderStateCache.hpp"
+-#include "CommonlyUsedStates.h"
+-#include "GraphicsUtilities.h"
+-#include "ScopedDebugGroup.hpp"
+-#include "ShaderMacroHelper.hpp"
+-#include "GraphicsTypesX.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/CommonlyUsedStates.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/GraphicsUtilities.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ScopedDebugGroup.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ShaderMacroHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/GraphicsTypesX.hpp"
+ 
+ #include "imgui.h"
+-#include "ImGuiUtils.hpp"
++#include "DiligentTools/Imgui/interface/ImGuiUtils.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/PostProcess/SuperResolution/interface/SuperResolution.hpp b/PostProcess/SuperResolution/interface/SuperResolution.hpp
+index 7696f21..5f1892a 100644
+--- a/PostProcess/SuperResolution/interface/SuperResolution.hpp
++++ b/PostProcess/SuperResolution/interface/SuperResolution.hpp
+@@ -29,10 +29,10 @@
+ #include <vector>
+ #include <memory>
+ 
+-#include "../../../../DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
+-#include "../../../../DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
+-#include "../../../../DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+-#include "../../../../DiligentCore/Common/interface/BasicMath.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
+ 
+ #include "PostProcess/Common/interface/PostFXRenderTechnique.hpp"
+ #include "PostProcess/Common/interface/PostFXContext.hpp"
+diff --git a/PostProcess/SuperResolution/src/SuperResolution.cpp b/PostProcess/SuperResolution/src/SuperResolution.cpp
+index 6799b95..7d812f7 100644
+--- a/PostProcess/SuperResolution/src/SuperResolution.cpp
++++ b/PostProcess/SuperResolution/src/SuperResolution.cpp
+@@ -25,11 +25,11 @@
+  */
+ 
+ #include "SuperResolution.hpp"
+-#include "CommonlyUsedStates.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/CommonlyUsedStates.h"
+ #include "imgui.h"
+-#include "RenderStateCache.hpp"
+-#include "ScopedDebugGroup.hpp"
+-#include "ShaderMacroHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ScopedDebugGroup.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ShaderMacroHelper.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/PostProcess/TemporalAntiAliasing/interface/TemporalAntiAliasing.hpp b/PostProcess/TemporalAntiAliasing/interface/TemporalAntiAliasing.hpp
+index 6dcb328..6bb89f1 100644
+--- a/PostProcess/TemporalAntiAliasing/interface/TemporalAntiAliasing.hpp
++++ b/PostProcess/TemporalAntiAliasing/interface/TemporalAntiAliasing.hpp
+@@ -29,11 +29,11 @@
+ #include <unordered_map>
+ #include <memory>
+ 
+-#include "../../../../DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
+-#include "../../../../DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
+-#include "../../../../DiligentCore/Graphics/GraphicsTools/interface/ResourceRegistry.hpp"
+-#include "../../../../DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+-#include "../../../../DiligentCore/Common/interface/BasicMath.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ResourceRegistry.hpp"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
+ 
+ #include "PostProcess/Common/interface/PostFXContext.hpp"
+ #include "PostProcess/Common/interface/PostFXRenderTechnique.hpp"
+diff --git a/PostProcess/TemporalAntiAliasing/src/TemporalAntiAliasing.cpp b/PostProcess/TemporalAntiAliasing/src/TemporalAntiAliasing.cpp
+index 570cad6..497abe6 100644
+--- a/PostProcess/TemporalAntiAliasing/src/TemporalAntiAliasing.cpp
++++ b/PostProcess/TemporalAntiAliasing/src/TemporalAntiAliasing.cpp
+@@ -25,16 +25,16 @@
+  */
+ 
+ #include "imgui.h"
+-#include "ImGuiUtils.hpp"
++#include "DiligentTools/Imgui/interface/ImGuiUtils.hpp"
+ 
+ #include "TemporalAntiAliasing.hpp"
+ 
+-#include "CommonlyUsedStates.h"
+-#include "GraphicsTypesX.hpp"
+-#include "MapHelper.hpp"
+-#include "RenderStateCache.hpp"
+-#include "ScopedDebugGroup.hpp"
+-#include "ShaderMacroHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/CommonlyUsedStates.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/GraphicsTypesX.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/MapHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ScopedDebugGroup.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ShaderMacroHelper.hpp"
+ 
+ namespace Diligent
+ {

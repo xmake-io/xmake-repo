@@ -1,0 +1,107 @@
+diff --git a/BuildUtils.cmake b/BuildUtils.cmake
+index 0dcdf1e..60028c2 100644
+--- a/BuildUtils.cmake
++++ b/BuildUtils.cmake
+@@ -1,6 +1,7 @@
+ 
+ # Converts shaders to headers and generates master header with the list of all files
+ function(convert_shaders_to_headers _SHADERS _SHADER_OUTPUT_DIR _SHADERS_LIST_FILE _SHADERS_INC_LIST)
++    set(FILE2STRING_PATH "${CMAKE_CURRENT_SOURCE_DIR}/script.py" CACHE INTERNAL "File2String utility")
+     if(NOT FILE2STRING_PATH STREQUAL "")
+         find_package(Python3 REQUIRED)
+ 
+diff --git a/Hydrogent/CMakeLists.txt b/Hydrogent/CMakeLists.txt
+index d18254a..498ea58 100644
+--- a/Hydrogent/CMakeLists.txt
++++ b/Hydrogent/CMakeLists.txt
+@@ -2,16 +2,7 @@ cmake_minimum_required (VERSION 3.13)
+ 
+ project(Diligent-Hydrogent CXX)
+ 
+-include(FetchContent)
+-
+-message("Fetching entt repository...")
+-FetchContent_Declare(
+-    entt
+-    GIT_REPOSITORY https://github.com/skypjack/entt
+-    GIT_TAG        v3.13.1
+-)
+-FetchContent_MakeAvailable(entt)
+-set_directory_root_folder(${entt_SOURCE_DIR} "DiligentFX/ThirdParty/entt")
++pkg_check_modules(entt REQUIRED entt)
+ 
+ set(SOURCE
+     src/HnMaterial.cpp
+@@ -100,10 +91,9 @@ add_library(Diligent-Hydrogent STATIC ${HYDROGENT_SOURCE} ${SHADERS_LIST_FILE} $
+ 
+ set_common_target_properties(Diligent-Hydrogent)
+ 
+-add_library(USD-Libraries INTERFACE)
++pkg_check_modules(usd REQUIRED usd)
+ 
+-if(${CMAKE_GENERATOR} MATCHES "Visual Studio" OR
+-   ${CMAKE_GENERATOR} MATCHES "Xcode")
++if(0)
+     # Since we can't use wildcards in generator expressions, we have to
+     # find boost directory for each configuration
+     file(GLOB BOOST_INCLUDE_DEBUG "${DILIGENT_USD_PATH}/Debug/include/boost*")
+@@ -122,7 +112,6 @@ if(${CMAKE_GENERATOR} MATCHES "Visual Studio" OR
+     INTERFACE
+         ${DILIGENT_USD_PATH}/$<CONFIG>/lib
+     )
+-else()
+     # Load the pxr package, which will bring all USD libraries
+     set(pxr_DIR ${DILIGENT_USD_PATH})
+     find_package(pxr)
+@@ -166,7 +155,7 @@ set(USD_LIBS
+     usdLux
+ )
+ 
+-if (NOT pxr_FOUND)
++if (0)
+     # Add usd_ prefix to all USD libraries
+     set(_USD_LIBS "")
+     foreach(lib ${USD_LIBS})
+@@ -192,7 +181,6 @@ if (NOT pxr_FOUND)
+     target_link_libraries(USD-Libraries INTERFACE Python3::Python)
+ endif()
+ 
+-target_link_libraries(USD-Libraries INTERFACE ${USD_LIBS})
+ 
+ target_include_directories(Diligent-Hydrogent
+ PUBLIC
+@@ -200,6 +188,8 @@ PUBLIC
+ PRIVATE
+     include
+     ${SHADER_OUTPUT_DIR}
++    ${entt_INCLUDEDIR}
++    ${usd_INCLUDEDIR}
+ )
+ 
+ target_link_libraries(Diligent-Hydrogent
+@@ -213,8 +203,8 @@ PRIVATE
+     Diligent-Common
+     DiligentFX
+ PUBLIC
+-    EnTT
+-    USD-Libraries
++    ${entt_LINK_LIBRARIES}
++    ${usd_LINK_LIBRARIES}
+ )
+ 
+ set_target_properties(Diligent-Hydrogent PROPERTIES
+diff --git a/PBR/CMakeLists.txt b/PBR/CMakeLists.txt
+index 0824dc2..0d05274 100644
+--- a/PBR/CMakeLists.txt
++++ b/PBR/CMakeLists.txt
+@@ -17,4 +17,10 @@ target_sources(DiligentFX PRIVATE ${SOURCE} ${INCLUDE})
+ target_include_directories(DiligentFX
+ PUBLIC
+     "${CMAKE_CURRENT_SOURCE_DIR}/interface"
++PRIVATE
++    "${diligentcore_INCLUDEDIR}/DiligentCore/Graphics/HLSL2GLSLConverterLib/interface"
++    "${diligentcore_INCLUDEDIR}/DiligentCore/Common/interface"
++    "${diligentcore_INCLUDEDIR}/DiligentCore/Graphics/GraphicsEngine/interface"
++    "${CMAKE_CURRENT_SOURCE_DIR}/../DiligentCore-2.5.6/Graphics/HLSL2GLSLConverterLib/include"
++    "${CMAKE_CURRENT_SOURCE_DIR}/../DiligentCore-2.5.6/Graphics/ShaderTools/include"
+ )

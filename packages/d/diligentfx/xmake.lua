@@ -7,9 +7,21 @@ package("diligentfx")
              "https://github.com/DiligentGraphics/DiligentFX.git")
     add_versions("v2.5.6", "5adaf8df5297c0e4218b3945228b488fead21f15dac781c52677c03958833979")
 
-    add_patches("v2.5.6", "patches/v2.5.6/build.diff", "e42bfa8bf62485d0a7008a1b5c070e39e9ead31f15393da6b25724672841ffc8")
+    add_patches("v2.5.6", "patches/v2.5.6/components-include-diligentcore.diff", "1fc874df79fb8565bb560df42f52b5a5b81778807c1a392d4f556c2805b95a1f")
+    add_patches("v2.5.6", "patches/v2.5.6/debundle-thirdparty-cmakelist.diff", "e5b6095c35d49a018ed8c3bda6ba55647c882817429d9a1b73d8f05b71b58144")
+    add_patches("v2.5.6", "patches/v2.5.6/fix-top-cmakelist.diff", "a1485b9d6ddedd4e1f30cc2fb778fdc734dd09e747d7e27f49ee8e0992c6070c")
+    add_patches("v2.5.6", "patches/v2.5.6/hydrogent-include-diligentcore.diff", "2737c88f0772f4f1e2752683fe1cbc12b3762f200ba15ebd54b496c6abafe3e0")
+    add_patches("v2.5.6", "patches/v2.5.6/hydrogent-interface-include-diligentcore.diff", "9068fa0a206740c9517e87df7e9be4b793a9f666b94ca302fd3ff9e5fdfb258c")
+    add_patches("v2.5.6", "patches/v2.5.6/hydrogent-interface-tasks-include-diligentcore.diff", "12d3041762c70e0930042cece30025b8fe21271afeeb8b6ce114ffe3bfa8f500")
+    add_patches("v2.5.6", "patches/v2.5.6/hydrogent-src-include-diligentcore.diff", "7e2442f999b399d58340d89ff2e2a8d5f87cdd7abf694d928037ea7208f657d6")
+    add_patches("v2.5.6", "patches/v2.5.6/pbr-include-diligentcore.diff", "d8027308a8d7f217fd702035d2374235407eeb77c19df09a5a0e8a27f5b2d8a4")
+    add_patches("v2.5.6", "patches/v2.5.6/postprocess-common-include-diligentcore.diff", "81972463e0ea76d6ce5939d52e4aa21f040d67590b82da4a84b1ee8aa6032d1b")
+    add_patches("v2.5.6", "patches/v2.5.6/postprocess-include-diligentcore.diff", "752f957f7fcaed4e981882835458d426aee99d19ee0aaba5bfb3cdf95ada2007")
+    add_patches("v2.5.6", "patches/v2.5.6/utilities-include-diligentcore.diff", "983494a7b153bf7ba6b166e35a32b244e7a54d51e27cbd1fd33288a2f3700030")
 
     add_resources("v2.5.6", "DiligentCore_source", "https://github.com/DiligentGraphics/DiligentCore/archive/refs/tags/v2.5.6.tar.gz", "abc190c05ee7e5ef2bba52fcbc5fdfe2256cce3435efba9cfe263a386653f671")
+
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
     add_includedirs("include", "include/DiligentFX")
 

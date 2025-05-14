@@ -1,0 +1,28 @@
+diff --git a/Utilities/interface/DiligentFXShaderSourceStreamFactory.hpp b/Utilities/interface/DiligentFXShaderSourceStreamFactory.hpp
+index c2b98a8..0ecfd77 100644
+--- a/Utilities/interface/DiligentFXShaderSourceStreamFactory.hpp
++++ b/Utilities/interface/DiligentFXShaderSourceStreamFactory.hpp
+@@ -27,8 +27,8 @@
+ 
+ #pragma once
+ 
+-#include "Shader.h"
+-#include "RefCntAutoPtr.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/Shader.h"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Utilities/src/DiligentFXShaderSourceStreamFactory.cpp b/Utilities/src/DiligentFXShaderSourceStreamFactory.cpp
+index e787ea8..9898753 100644
+--- a/Utilities/src/DiligentFXShaderSourceStreamFactory.cpp
++++ b/Utilities/src/DiligentFXShaderSourceStreamFactory.cpp
+@@ -26,7 +26,7 @@
+  */
+ 
+ #include "../interface/DiligentFXShaderSourceStreamFactory.hpp"
+-#include "ShaderSourceFactoryUtils.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ShaderSourceFactoryUtils.h"
+ 
+ namespace Diligent
+ {
