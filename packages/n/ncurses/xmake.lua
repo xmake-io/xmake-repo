@@ -45,7 +45,12 @@ package("ncurses")
         table.insert(configs, "--with-debug=" .. (package:is_debug() and "yes" or "no"))
         table.insert(configs, "--with-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-widec=" .. (package:config("widec") and "yes" or "no"))
-        import("package.tools.autoconf").install(package, configs, {arflags = {"-curvU"}})
+
+        local cflags = {}
+        if package:version():le("6.5") then
+            table.insert(cflags, "-std=c17")
+        end
+        import("package.tools.autoconf").install(package, configs, {cflags = cflags, arflags = {"-curvU"}})
     end)
 
     on_test(function (package)
