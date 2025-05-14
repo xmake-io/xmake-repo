@@ -4,7 +4,11 @@ package("mbedtls")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/Mbed-TLS/mbedtls/releases/download/$(version).tar.bz2", {version = function (version)
-        return string.format("%s/mbedtls-%s", version, tostring(version):sub(2))
+        if version:lt("3.6.1") then
+            return string.format("%s/mbedtls-%s", version, tostring(version):sub(2))
+        else
+            return string.format("mbedtls-%s/mbedtls-%s", tostring(version):sub(2), tostring(version):sub(2))
+        end
     end})
     add_urls("https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/$(version).zip", {version = function (version)
         return version:ge("v2.23.0") and version or ("mbedtls-" .. tostring(version):sub(2))
