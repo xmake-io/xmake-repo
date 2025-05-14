@@ -41,7 +41,7 @@ package("diligentfx")
         end
     end)
 
-    on_install("linux", "macosx|x86_64", "windows|x64", function (package)
+    on_install("linux|!arm*", "macosx|x86_64", "windows|x64", function (package)
         local resourcedir = package:resourcedir("DiligentCore_source")
         if resourcedir then
             os.cp(
