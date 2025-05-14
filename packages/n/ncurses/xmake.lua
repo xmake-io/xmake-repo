@@ -20,6 +20,9 @@ package("ncurses")
     end
 
     on_load(function (package)
+        if package:is_cross() then
+            package:add("deps", "ncurses", {private = true, host = true})
+        end
         if package:config("widec") then
             package:add("links", "ncursesw", "formw", "panelw", "menuw")
             package:add("includedirs", "include/ncursesw", "include")
@@ -33,10 +36,12 @@ package("ncurses")
         end
     end)
 
-    on_install("linux", "macosx", "bsd", "msys", function (package)
+    on_install("!wasm and !iphoneos and @!windows", function (package)
         local configs = {
             "--without-manpages",
             "--enable-sigwinch",
+            -- Prevent `strip` command issues with cross-compiled binaries
+            "--disable-stripping",
             "--with-gpm=no",
             "--without-tests",
             "--without-ada",
@@ -45,10 +50,25 @@ package("ncurses")
         table.insert(configs, "--with-debug=" .. (package:is_debug() and "yes" or "no"))
         table.insert(configs, "--with-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-widec=" .. (package:config("widec") and "yes" or "no"))
+        if not package:is_cross() then
+            package:addenv("PATH", "bin")
+        else
+            local ncurses_host = package:dep("ncurses")
+            if ncurses_host then
+                local tic = path.join(ncurses_host:installdir("bin"), "tic" .. (is_host("windows") and ".exe" or ""))
+                if os.isexec(tic) then
+                    table.insert(configs, "--with-tic-path=" .. path.unix(tic))
+                end
+            end
+        end
 
         local cflags = {}
         if package:version():le("6.5") then
             table.insert(cflags, "-std=c17")
+        end
+        if package:is_plat("mingw", "cygwin", "msys") then
+            table.insert(configs, "--enable-term-driver")
+            table.insert(cflags, "-D__USE_MINGW_ACCESS") -- Pass X_OK to access() on Windows which isn't supported with ucrt
         end
         import("package.tools.autoconf").install(package, configs, {cflags = cflags, arflags = {"-curvU"}})
     end)
