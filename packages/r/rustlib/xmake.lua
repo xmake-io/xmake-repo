@@ -68,5 +68,5 @@ package("rustlib")
         local envs = import("package.tools.xmake").buildenvs(package)
         table.insert(envs.XMAKE_RCFILES, rcfile_path)
 
-        return envs
+        package:data_set("xmake_envs", envs)
     end)
