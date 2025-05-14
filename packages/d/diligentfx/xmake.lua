@@ -41,7 +41,7 @@ package("diligentfx")
         end
     end)
 
-    on_install("linux|!arm*", "macosx|x86_64", "windows|x64", function (package)
+    on_install("linux|!arm64", "macosx|x86_64", "windows|x64", function (package)
         local resourcedir = package:resourcedir("DiligentCore_source")
         if resourcedir then
             os.cp(
@@ -69,7 +69,6 @@ package("diligentfx")
                 end
             end
         end
-        print(configs)
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
