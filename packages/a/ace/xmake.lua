@@ -14,6 +14,9 @@ package("ace")
         if not package:config("shared") then
             package:add("defines", "ACE_AS_STATIC_LIBS")
         end
+        if package:is_arch("arm64") then
+            package:add("defines", "ACE_HAS_INTRIN_H")
+        end
     end)
 
     on_install("windows", function(package)
@@ -53,7 +56,6 @@ package("ace")
         local arch = package:is_arch("x64") and "x64" or "Win32"
         if package:is_arch("arm64") then
             arch = "ARM64"
-            table.insert(configs, "/p:WindowsTargetPlatformVersion=10.0.22621.0")
         end
         local mode = package:is_debug() and "Debug" or "Release"
         table.insert(configs, "/p:Configuration=" .. mode)
