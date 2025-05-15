@@ -31,6 +31,8 @@ package("ace")
             io.replace("ACE_vs2022.vcxproj", "DynamicLibrary", "StaticLibrary", {plain = true})
             io.replace("ACE_vs2022.vcxproj", "ACE_COMPRESSION_BUILD_DLL", "ACE_AS_STATIC_LIBS", {plain = true})
         end
+        -- Allow use another Win SDK
+        io.replace("ACE_vs2022.vcxproj", "<WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>", "", {plain = true})
         local arch = package:is_arch("x64") and "x64" or "Win32"
         if package:is_arch("arm64") then
             arch = "ARM64"
