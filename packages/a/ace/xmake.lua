@@ -10,7 +10,7 @@ package("ace")
 
     on_load("windows", function (package)
         package:add("syslinks", "advapi32")
-        package:add("defines", "WIN32")
+        package:add("defines", "WIN32", "ACE_HAS_CPP17")
         if not package:config("shared") then
             package:add("defines", "ACE_AS_STATIC_LIBS")
         end
