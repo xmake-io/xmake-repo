@@ -9,7 +9,11 @@ package("ace")
     add_versions("8.0.3", "d8fcd1f5fab609ab11ed86abdbd61e6d00d5305830fa6e57c17ce395af5e86dc")
 
     on_load("windows", function (package)
+        package:add("syslinks", "advapi32")
         package:add("defines", "WIN32")
+        if not package:config("shared") then
+            package:add("defines", "ACE_AS_STATIC_LIBS")
+        end
     end)
 
     on_install("windows", function(package)
@@ -22,23 +26,36 @@ package("ace")
         os.cp("ace/**.ipp", package:installdir("include/ace"), {rootdir = "ace"})
         os.cp("ace/**.hpp", package:installdir("include/ace"), {rootdir = "ace"})
         os.cd("ace")
-        if package:has_runtime("MT", "MTd") then
-            -- Allow MT, MTd
-            io.replace("ACE_vs2022.vcxproj", "<RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>", "<RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>", {plain = true})
-            io.replace("ACE_vs2022.vcxproj", "<RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>", "<RuntimeLibrary>MultiThreaded</RuntimeLibrary>", {plain = true})
+        for _, vcxproj in ipairs({"ACE_vs2022.vcxproj",
+                "Compression/ACE_Compression_vs2022.vcxproj",
+                "Compression/rle/ACE_RLECompression_vs2022.vcxproj",
+                "ETCL/ACE_ETCL_vs2022.vcxproj",
+                "ETCL/ACE_ETCL_Parser_vs2022.vcxproj",
+                "QoS/QoS_vs2022.vcxproj",
+                "Monitor_Control/Monitor_Control_vs2022.vcxproj"}) do
+            if package:has_runtime("MT", "MTd") then
+                -- Allow MT, MTd
+                io.replace(vcxproj, "<RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>", "<RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>", {plain = true})
+                io.replace(vcxproj, "<RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>", "<RuntimeLibrary>MultiThreaded</RuntimeLibrary>", {plain = true})
+            end
+            if not package:config("shared") then
+                io.replace(vcxproj, "DynamicLibrary", "StaticLibrary", {plain = true})
+                io.replace(vcxproj, "ACE_BUILD_DLL", "ACE_AS_STATIC_LIBS", {plain = true})
+                io.replace(vcxproj, "ACE_[%w_]+_BUILD_DLL", "ACE_AS_STATIC_LIBS", {plain = false})
+                io.replace(vcxproj, "[%w_]+_[%w_]+_BUILD_DLL", "ACE_AS_STATIC_LIBS", {plain = false})
+            end
+            -- Allow use another Win SDK
+            io.replace(vcxproj, "<WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>", "", {plain = true})
+            -- Disable LTCG
+            io.replace(vcxproj, "<WholeProgramOptimization>true</WholeProgramOptimization>", "", {plain = true})
         end
-        if not package:config("shared") then
-            io.replace("ACE_vs2022.vcxproj", "DynamicLibrary", "StaticLibrary", {plain = true})
-            io.replace("ACE_vs2022.vcxproj", "ACE_BUILD_DLL", "ACE_AS_STATIC_LIBS", {plain = true})
-        end
-        -- Allow use another Win SDK
-        io.replace("ACE_vs2022.vcxproj", "<WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>", "", {plain = true})
+        local configs = { "ACE_vs2022.sln" }
         local arch = package:is_arch("x64") and "x64" or "Win32"
         if package:is_arch("arm64") then
             arch = "ARM64"
+            table.insert(configs, "/p:WindowsTargetPlatformVersion=10.0.22621.0")
         end
         local mode = package:is_debug() and "Debug" or "Release"
-        local configs = { "ACE_vs2022.sln" }
         table.insert(configs, "/p:Configuration=" .. mode)
         table.insert(configs, "/p:Platform=" .. arch)
         -- Wrap vstool so it would build for another vstools
