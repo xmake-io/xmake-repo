@@ -27,6 +27,9 @@ package("ace")
             io.replace("ACE_vs2022.vcxproj", "<RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>", "<RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>", {plain = true})
             io.replace("ACE_vs2022.vcxproj", "<RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>", "<RuntimeLibrary>MultiThreaded</RuntimeLibrary>", {plain = true})
         end
+        if not package:config("shared") then
+            io.replace("ACE_vs2022.vcxproj", "DynamicLibrary", "StaticLibrary", {plain = true})
+        end
         local arch = package:is_arch("x64") and "x64" or "Win32"
         if package:is_arch("arm64") then
             arch = "ARM64"
