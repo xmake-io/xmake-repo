@@ -24,10 +24,10 @@ package("usd")
 
     on_load(function (package)
         if package:version():ge("v25.05") then
-            add_deps("tbb")
+            package:add("deps", "tbb")
         else
             -- usd only support tbb 2022 now https://github.com/PixarAnimationStudios/USD/issues/1471
-            add_deps("tbb 2020.3")
+            package:add("deps", "tbb 2020.3")
         end
     end)
 
