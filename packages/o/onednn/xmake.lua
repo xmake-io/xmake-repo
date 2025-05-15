@@ -6,6 +6,7 @@ package("onednn")
 
     add_urls("https://github.com/oneapi-src/oneDNN/archive/refs/tags/$(version).tar.gz",
              "https://github.com/oneapi-src/oneDNN.git")
+    add_versions("v3.8", "06c11b9e4d25ddaaec219f0e93f6bdbbbc27dcf8eb992f76b768a2a056a087a9")
     add_versions("v3.7.2", "21068e8cd2bf4077916bf31452eab5ac9998e620e1b22630a88f79c334857a5c")
     add_versions("v3.7.1", "580f56abe12f2bd9d628a47586b00c516d410b086d7227a800aedc4891f4e93a")
     add_versions("v3.6.2", "e79db0484dcefe2c7ff6604c295d1de2830c828941898878c80dfb062eb344d1")
