@@ -12,7 +12,7 @@ package("replxx")
     add_configs("shared",  {description = "Build shared library", default = false, type = "boolean", readonly = "true"})
     
     on_load(function(package)
-        if is_plat("linux", "bsd") then
+        if package:is_plat("linux", "bsd") then
             package:add("syslinks", "pthread")
         end
         if not package:config("shared") then
@@ -23,7 +23,7 @@ package("replxx")
     on_install("windows", "linux", "macosx", "bsd", function (package)
         local configs = {"-DCMAKE_CXX_STANDARD=11"}
         
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DREPLXX_BUILD_EXAMPLES=" .. (package:config("examples") and "ON" or "OFF"))
         table.insert(configs, "-DREPLXX_BUILD_PACKAGE=" .. (package:config("package") and "ON" or "OFF"))
@@ -37,7 +37,7 @@ package("replxx")
                 #include <replxx.hxx>
                 int main() {
                     replxx::Replxx rx;
-                    return 0;
+                    rx.invoke(replxx::Replxx::ACTION::CLEAR_SELF, 0);
                 }
             ]]
         }, {configs = {languages = "c++11"}}))
