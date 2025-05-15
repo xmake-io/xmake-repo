@@ -14,9 +14,6 @@ package("ace")
         if not package:config("shared") then
             package:add("defines", "ACE_AS_STATIC_LIBS")
         end
-        if package:is_arch("arm64") then
-            package:add("defines", "ACE_HAS_INTRIN_H")
-        end
     end)
 
     on_install("windows", function(package)
@@ -80,6 +77,8 @@ package("ace")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+                #define WIN32_LEAN_AND_MEAN
+                #include <windows.h>
                 #include <ace/ACE.h>
                 void test() {
                     auto c_name = ACE::compiler_name();
