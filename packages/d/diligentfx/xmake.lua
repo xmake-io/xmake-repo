@@ -30,12 +30,6 @@ package("diligentfx")
     add_deps("diligentcore", "diligenttools", "entt", "usd", "imgui")
     add_deps("python 3.x", {kind = "binary"})
 
-    if on_check then
-        on_check("linux", function (package)
-            assert(not package:is_arch("arm.*"), "package(diligentfx) does not support linux arm.")
-        end)
-    end
-
     on_load(function (package)
         local diligentcore = package:dep("diligentcore")
         if diligentcore then

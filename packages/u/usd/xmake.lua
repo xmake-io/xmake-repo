@@ -17,12 +17,19 @@ package("usd")
     add_configs("monolithic", {description = "Build single shared library", default = false, type = "boolean"})
 
     add_deps("cmake", "boost")
-    -- usd only support tbb 2022 now https://github.com/PixarAnimationStudios/USD/issues/1471
-    add_deps("tbb 2020.3")
 
     if is_plat("windows") then
         add_defines("NOMINMAX")
     end
+
+    on_load(function (package)
+        if package:version():ge("v25.05") then
+            add_deps("tbb")
+        else
+            -- usd only support tbb 2022 now https://github.com/PixarAnimationStudios/USD/issues/1471
+            add_deps("tbb 2020.3")
+        end
+    end)
 
     on_install("linux", "macosx|x86_64", "windows|x64", function (package)
         local configs = {
