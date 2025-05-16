@@ -15,7 +15,8 @@ package("onnx")
     add_versions("v1.11.0", "a20f2d9df805b16ac75ab4da0a230d3d1c304127d719e5c66a4e6df514e7f6c0")
     add_versions("v1.12.0", "052ad3d5dad358a33606e0fc89483f8150bb0655c99b12a43aa58b5b7f0cc507")
 
-    add_patches(">=1.16.0", "patches/1.16.0/cmake-abseil.patch", "d8cad2b231ce01aa3263692f88293be3eaa2b380e021eb5288f4c7ea930c19cb")
+    add_patches(">=1.18.0", "patches/1.18.0/cmake-abseil.patch", "f7c57011c7d0c14b6b7fcbfcb99b01a20a5586f22d5a30004fbb899b55c982b6")
+    add_patches(">=1.16.0<=1.17.0", "patches/1.16.0/cmake-abseil.patch", "d8cad2b231ce01aa3263692f88293be3eaa2b380e021eb5288f4c7ea930c19cb")
 
     add_configs("exceptions", {description = "Enable exception handling", default = true, type = "boolean"})
     add_configs("registration", {description = "Enable static registration for onnx operator schemas.", default = true, type = "boolean"})
@@ -33,12 +34,12 @@ package("onnx")
     end)
 
     on_install("!mingw", function (package)
-        local version = package:version()
-
         io.replace("CMakeLists.txt", [[set(ONNX_PROTOC_EXECUTABLE ${Protobuf_PROTOC_EXECUTABLE})]],
             "set(ONNX_PROTOC_EXECUTABLE protoc)", {plain = true})
         io.replace("cmake/Utils.cmake", "target_compile_options(${lib} PRIVATE $<$<NOT:$<CONFIG:Debug>>:/MT> $<$<CONFIG:Debug>:/MTd>)", "", {plain = true})
         io.replace("cmake/Utils.cmake", "target_compile_options(${lib} PRIVATE $<$<NOT:$<CONFIG:Debug>>:/MD> $<$<CONFIG:Debug>:/MDd>)", "", {plain = true})
+
+        local version = package:version()
 
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
@@ -54,7 +55,7 @@ package("onnx")
 
     on_test(function (package)
         local languages = "c++11"
-        if package:is_plat("windows") or package:gitref() or package:version():ge("1.16.0") then
+        if package:is_plat("windows") or (package:version() or package:version():ge("1.16.0")) then
             languages = "c++17"
         end
         assert(package:check_cxxsnippets({test = [[
