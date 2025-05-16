@@ -34,7 +34,7 @@ package("tao_idl")
             end
         end
         os.cd("TAO/TAO_IDL")
-        -- Prepare .vcxproj formatted
+        -- Prepare .vcxproj using config & de-bundle ace dependency
         for _, vcxproj in ipairs({
             "TAO_IDL_FE_vs2022.vcxproj",
             "TAO_IDL_BE_vs2022.vcxproj",
