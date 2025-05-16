@@ -7,7 +7,7 @@ package("replxx")
     add_versions("2021.11.25", "1f149bfe20bf6e49c1afd4154eaf0032c8c2fda2")
 
     add_deps("cmake")
-    add_configs("shared",  {description = "Build shared library", default = false, type = "boolean", readonly = "true"})
+    add_configs("shared",  {description = "Build shared library", default = false, type = "boolean", readonly = true})
     
     on_load(function(package)
         if package:is_plat("linux", "bsd") then
@@ -20,10 +20,8 @@ package("replxx")
 
     on_install("windows", "linux", "macosx", "bsd", function (package)
         local configs = {"-DCMAKE_CXX_STANDARD=11"}
-        
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-
         import("package.tools.cmake").install(package, configs)
     end)
 
