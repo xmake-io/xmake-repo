@@ -8,6 +8,14 @@ package("replxx")
 
     add_deps("cmake")
 
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) > 23, "package(replxx): need ndk api level > 23")
+        end)
+    end
+
     on_load(function(package)
         if package:is_plat("linux", "bsd") then
             package:add("syslinks", "pthread")
