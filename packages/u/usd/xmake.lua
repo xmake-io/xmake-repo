@@ -6,6 +6,7 @@ package("usd")
     add_urls("https://github.com/PixarAnimationStudios/USD/archive/refs/tags/$(version).tar.gz",
              "https://github.com/PixarAnimationStudios/USD.git")
 
+    add_versions("v25.05", "231faca9ab71fa63d6c1e0da18bda0c365f82d9bef1cfd4b3d3d6784c8d5fb96")
     add_versions("v24.08", "6640bb184bf602c6df14fa4a83af6ac5ae1ab8d1d38cf7bb7decfaa9a7ad5d06")
     add_versions("v24.05", "0352619895588efc8f9d4aa7004c92be4e4fa70e1ccce77e474ce23941c05828")
     add_versions("v24.03", "0724421cff8ae04d0a7108ffa7c104e6ec3f7295418d4d50caaae767e59795ef")
@@ -16,12 +17,19 @@ package("usd")
     add_configs("monolithic", {description = "Build single shared library", default = false, type = "boolean"})
 
     add_deps("cmake", "boost")
-    -- usd only support tbb 2022 now https://github.com/PixarAnimationStudios/USD/issues/1471
-    add_deps("tbb 2020.3")
 
     if is_plat("windows") then
         add_defines("NOMINMAX")
     end
+
+    on_load(function (package)
+        if package:version():ge("v25.05") then
+            package:add("deps", "tbb")
+        else
+            -- usd only support tbb 2022 now https://github.com/PixarAnimationStudios/USD/issues/1471
+            package:add("deps", "tbb 2020.3")
+        end
+    end)
 
     on_install("linux", "macosx|x86_64", "windows|x64", function (package)
         local configs = {

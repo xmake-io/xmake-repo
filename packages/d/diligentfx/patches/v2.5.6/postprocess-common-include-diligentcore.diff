@@ -1,0 +1,78 @@
+diff --git a/PostProcess/Common/interface/PostFXContext.hpp b/PostProcess/Common/interface/PostFXContext.hpp
+index 7d2983a..1c68265 100644
+--- a/PostProcess/Common/interface/PostFXContext.hpp
++++ b/PostProcess/Common/interface/PostFXContext.hpp
+@@ -29,11 +29,11 @@
+ #include <array>
+ #include <unordered_map>
+ 
+-#include "../../../../DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
+-#include "../../../../DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
+-#include "../../../../DiligentCore/Graphics/GraphicsTools/interface/ResourceRegistry.hpp"
+-#include "../../../../DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+-#include "../../../../DiligentCore/Common/interface/BasicMath.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ResourceRegistry.hpp"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
+ 
+ #include "PostFXRenderTechnique.hpp"
+ 
+diff --git a/PostProcess/Common/interface/PostFXRenderTechnique.hpp b/PostProcess/Common/interface/PostFXRenderTechnique.hpp
+index 9adc761..dea3906 100644
+--- a/PostProcess/Common/interface/PostFXRenderTechnique.hpp
++++ b/PostProcess/Common/interface/PostFXRenderTechnique.hpp
+@@ -28,10 +28,10 @@
+ 
+ #include <vector>
+ 
+-#include "../../../../DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
+-#include "../../../../DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
+-#include "../../../../DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+-#include "../../../../DiligentCore/Common/interface/BasicMath.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/PostProcess/Common/src/PostFXContext.cpp b/PostProcess/Common/src/PostFXContext.cpp
+index 78fd798..883414a 100644
+--- a/PostProcess/Common/src/PostFXContext.cpp
++++ b/PostProcess/Common/src/PostFXContext.cpp
+@@ -26,13 +26,13 @@
+ 
+ #include "PostFXContext.hpp"
+ 
+-#include "CommonlyUsedStates.h"
+-#include "GraphicsTypesX.hpp"
+-#include "GraphicsUtilities.h"
+-#include "MapHelper.hpp"
+-#include "RenderStateCache.hpp"
+-#include "ScopedDebugGroup.hpp"
+-#include "ShaderMacroHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/CommonlyUsedStates.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/GraphicsTypesX.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/GraphicsUtilities.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/MapHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ScopedDebugGroup.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ShaderMacroHelper.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/PostProcess/Common/src/PostFXRenderTechnique.cpp b/PostProcess/Common/src/PostFXRenderTechnique.cpp
+index 7d8540a..d7e8b1f 100644
+--- a/PostProcess/Common/src/PostFXRenderTechnique.cpp
++++ b/PostProcess/Common/src/PostFXRenderTechnique.cpp
+@@ -25,7 +25,7 @@
+  */
+ 
+ #include "PostFXRenderTechnique.hpp"
+-#include "RenderStateCache.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.hpp"
+ #include "Utilities/interface/DiligentFXShaderSourceStreamFactory.hpp"
+ 
+ namespace Diligent
