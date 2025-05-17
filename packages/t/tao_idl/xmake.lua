@@ -94,6 +94,8 @@ package("tao_idl")
         os.cp("**.exe", package:installdir("bin"))
         os.cp("**.lib", package:installdir("lib"))
         os.trycp("**.dll", package:installdir("bin"))
+        os.rm(path.join(package:installdir(), "bin", "PXI_Reset.exe"))
+        os.rm(path.join(package:installdir(), "bin", "Reboot_Target.exe"))
     end)
 
     on_test(function (package)
