@@ -2,7 +2,7 @@ package("tao_idl")
     set_kind("binary")
     set_homepage("https://www.dre.vanderbilt.edu/~schmidt/TAO.html")
     set_description("tao_idl is TAO's Interface Description Language (IDL) compiler, based on Sun Microsystems' OMG IDL Compiler Front End (CFE) version 1.3, implements most IDL v3 & some IDL v4 features.")
-    set_license("DocumentRef-COPYING:LicenseRef-DOC-License")
+    set_license("DOC")
 
     add_urls("https://github.com/DOCGroup/ACE_TAO/releases/download/$(version).tar.gz", {version = function (version) 
         return "ACE%2BTAO-" .. version:gsub("%.", "_")  .. "/ACE%2BTAO-" .. version
