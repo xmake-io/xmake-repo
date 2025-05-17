@@ -36,6 +36,7 @@ package("tao_idl")
         os.cd("TAO/TAO_IDL")
         -- Prepare .vcxproj using config & de-bundle ace dependency
         for _, vcxproj in ipairs({
+            "../../apps/gperf/src/gperf_vs2022.vcxproj",
             "TAO_IDL_FE_vs2022.vcxproj",
             "TAO_IDL_BE_vs2022.vcxproj",
             "TAO_IDL_BE_VIS_A_vs2022.vcxproj",
@@ -65,30 +66,37 @@ package("tao_idl")
             io.replace(vcxproj, "<WholeProgramOptimization>true</WholeProgramOptimization>", "", {plain = true})
         end
         -- Build & install .exe
-        local configs = { "TAO_IDL_vs2022.sln", 
-        "/t:TAO_IDL_FE;TAO_IDL_BE;TAO_IDL_BE_VIS_A;TAO_IDL_BE_VIS_C;TAO_IDL_BE_VIS_E;TAO_IDL_BE_VIS_I;TAO_IDL_BE_VIS_O;TAO_IDL_BE_VIS_S;TAO_IDL_BE_VIS_U;TAO_IDL_BE_VIS_V;TAO_IDL_EXE"}
-        local arch = package:is_arch("x64") and "x64" or "Win32"
-        if package:is_arch("arm64") then
-            arch = "ARM64"
+        for _, target in ipairs({"../../apps/gperf/src/gperf_vs2022.vcxproj", "TAO_IDL_vs2022.sln"}) do
+            local configs = { target }
+            if target:match("TAO_IDL_vs2022.sln") then
+                table.insert(configs, "/t:TAO_IDL_FE;TAO_IDL_BE;TAO_IDL_BE_VIS_A;TAO_IDL_BE_VIS_C;TAO_IDL_BE_VIS_E;TAO_IDL_BE_VIS_I;TAO_IDL_BE_VIS_O;TAO_IDL_BE_VIS_S;TAO_IDL_BE_VIS_U;TAO_IDL_BE_VIS_V;TAO_IDL_EXE")
+            end
+            local arch = package:is_arch("x64") and "x64" or "Win32"
+            if package:is_arch("arm64") then
+                arch = "ARM64"
+            end
+            local mode = package:is_debug() and "Debug" or "Release"
+            table.insert(configs, "/p:Configuration=" .. mode)
+            table.insert(configs, "/p:Platform=" .. arch)
+            -- Wrap vstool so it would build for another vstools
+            local msvc = import("core.tool.toolchain").load("msvc")
+            local vs = msvc:config("vs")
+            local vstool
+            if     vs == "2015" then vstool = "v140"
+            elseif vs == "2017" then vstool = "v141"
+            elseif vs == "2019" then vstool = "v142"
+            elseif vs == "2022" then vstool = "v143"
+            end
+            table.insert(configs, "/p:PlatformToolset=" .. vstool)
+            msbuild.build(package, configs)
         end
-        local mode = package:is_debug() and "Debug" or "Release"
-        table.insert(configs, "/p:Configuration=" .. mode)
-        table.insert(configs, "/p:Platform=" .. arch)
-        -- Wrap vstool so it would build for another vstools
-        local msvc = import("core.tool.toolchain").load("msvc")
-        local vs = msvc:config("vs")
-        local vstool
-        if     vs == "2015" then vstool = "v140"
-        elseif vs == "2017" then vstool = "v141"
-        elseif vs == "2019" then vstool = "v142"
-        elseif vs == "2022" then vstool = "v143"
-        end
-        table.insert(configs, "/p:PlatformToolset=" .. vstool)
-        msbuild.build(package, configs)
         os.cd("../..")
         os.cp("**.exe", package:installdir("bin"))
+        print(os.files("**.exe"))
         os.cp("**.lib", package:installdir("lib"))
+        print(os.files("**.lib"))
         os.trycp("**.dll", package:installdir("bin"))
+        print(os.files("**.dll"))
     end)
 
     on_test(function (package)
