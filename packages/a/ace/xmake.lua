@@ -1,6 +1,7 @@
 package("ace")
     set_homepage("https://www.dre.vanderbilt.edu/~schmidt/ACE.html")
     set_description("ACE (ADAPTIVE Communication Environment) is a C++ framework for implementing distributed and networked applications.")
+    set_license("DOC")
 
     add_urls("https://github.com/DOCGroup/ACE_TAO/releases/download/$(version).tar.gz", {version = function (version) 
         return "ACE%2BTAO-" .. version:gsub("%.", "_")  .. "/ACE-" .. version
