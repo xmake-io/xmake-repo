@@ -5,6 +5,7 @@ package("jansson")
     set_license("MIT")
 
     add_urls("https://github.com/akheron/jansson/releases/download/v$(version)/jansson-$(version).tar.gz")
+    add_versions("2.14.1", "2521cd51a9641d7a4e457f7215a4cd5bb176f690bc11715ddeec483e85d9e2b3")
     add_versions("2.14", "5798d010e41cf8d76b66236cfb2f2543c8d082181d16bc3085ab49538d4b9929")
 
     add_deps("cmake")
