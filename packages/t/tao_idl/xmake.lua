@@ -92,11 +92,8 @@ package("tao_idl")
         end
         os.cd("../..")
         os.cp("**.exe", package:installdir("bin"))
-        print(os.files("**.exe"))
         os.cp("**.lib", package:installdir("lib"))
-        print(os.files("**.lib"))
         os.trycp("**.dll", package:installdir("bin"))
-        print(os.files("**.dll"))
     end)
 
     on_test(function (package)
