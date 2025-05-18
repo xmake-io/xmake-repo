@@ -53,7 +53,7 @@ package("ace")
             io.replace("include/makeinclude/platform_macosx_iOS.GNU", "CCFLAGS += -DACE_HAS_IOS", "CCFLAGS += -DACE_HAS_IOS -std=c++17", {plain = true})
         else
             io.writefile("ace/config.h", [[#include "ace/config-win32.h"]])
-            io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_mingw32.GNU]])
+            io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_cygwin32.GNU]])
         end
         os.cp("ace/**.h", package:installdir("include/ace"), {rootdir = "ace"})
         os.cp("ace/**.inl", package:installdir("include/ace"), {rootdir = "ace"})
