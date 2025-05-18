@@ -30,10 +30,15 @@ package("ace")
         end
     end)
 
-    on_install("linux", function(package)
+    on_install("linux", "macosx", function(package)
         import("package.tools.make")
-        io.writefile("ace/config.h", [[#include "ace/config-linux.h"]])
-        io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_linux_common.GNU]])
+        if package:is_plat("linux") then
+            io.writefile("ace/config.h", [[#include "ace/config-linux.h"]])
+            io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_linux_common.GNU]])
+        else
+            io.writefile("ace/config.h", [[#include "ace/config-macosx.h"]])
+            io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_macosx.GNU]])
+        end
         os.cp("ace/**.h", package:installdir("include/ace"), {rootdir = "ace"})
         os.cp("ace/**.inl", package:installdir("include/ace"), {rootdir = "ace"})
         os.cp("ace/**.cpp", package:installdir("include/ace"), {rootdir = "ace"})
@@ -57,6 +62,7 @@ package("ace")
         table.insert(configs, "ACE_ROOT=" .. os.curdir())
         os.cd("ace")
         make.build(package, configs, {envs = envs})
+        os.trycp("**.dylib", package:installdir("lib"))
         os.trycp("**.so", package:installdir("lib"))
         os.trycp("**.a", package:installdir("lib"))
     end)
