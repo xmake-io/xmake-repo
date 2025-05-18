@@ -55,27 +55,17 @@ package("ace")
             "shared_libs=" .. (package:config("shared") and "1" or "0"),
             "static_libs=" .. (package:config("shared") and "0" or "1")
         }
-        local cflags = {}
-        local ldflags = {}
         if package:config("ssl") then
             table.insert(configs, "ssl=1")
-            for _, dep in ipairs(package:orderdeps()) do
-                local fetchinfo = dep:fetch()
-                if fetchinfo then
-                    for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
-                        table.insert(cflags, "-I" .. includedir)
-                    end
-                    for _, linkdir in ipairs(fetchinfo.linkdirs) do
-                        table.insert(ldflags, "-L" .. linkdir)
-                    end
-                    for _, link in ipairs(fetchinfo.links) do
-                        table.insert(ldflags, "-l" .. link)
-                    end
-                end
-            end
+            local root = package:dep("openssl"):installdir()
+            local openssl_include = package:dep("openssl"):installdir("include")
+            local openssl_lib = package:dep("openssl"):installdir("lib")
+            envs.SSL_ROOT = root
+            envs.SSL_INCDIR = openssl_include
+            envs.SSL_LIBDIR = openssl_lib
         end
         os.cd("ace")
-        make.build(package, configs, {envs = envs, cflags = cflags, ldflags = ldflags})
+        make.build(package, configs, {envs = envs})
         os.trycp("**.dylib", package:installdir("lib"))
         os.trycp("**.so", package:installdir("lib"))
         os.trycp("**.a", package:installdir("lib"))
