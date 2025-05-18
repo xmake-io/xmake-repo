@@ -32,7 +32,7 @@ package("ace")
         end
     end)
 
-    on_install("linux", "macosx", "bsd", function(package)
+    on_install("linux", "macosx", "bsd", "iphoneos", function(package)
         import("package.tools.make")
         if package:is_plat("linux") then
             io.writefile("ace/config.h", [[#include "ace/config-linux.h"]])
@@ -40,9 +40,12 @@ package("ace")
         elseif package:is_plat("macosx") then
             io.writefile("ace/config.h", [[#include "ace/config-macosx.h"]])
             io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_macosx.GNU]])
-        else
+        elseif package:is_plat("bsd") then
             io.writefile("ace/config.h", [[#include "ace/config-freebsd.h"]])
             io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_freebsd.GNU]])
+        else
+            io.writefile("ace/config.h", [[#include "ace/config-macosx-iOS.h"]])
+            io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_macosx_iOS.GNU]])
         end
         os.cp("ace/**.h", package:installdir("include/ace"), {rootdir = "ace"})
         os.cp("ace/**.inl", package:installdir("include/ace"), {rootdir = "ace"})
