@@ -1,0 +1,23 @@
+From d42286083917a8ff8495aaf777bab5936e2519b8 Mon Sep 17 00:00:00 2001
+From: star9029 <hengxings783@gmail.com>
+Date: Sun, 18 May 2025 16:38:43 +0800
+Subject: [PATCH] Fix listpedeps argv
+
+---
+ src/listpedeps.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/listpedeps.c b/src/listpedeps.c
+index 6087b4a..4a4bbc4 100644
+--- a/src/listpedeps.c
++++ b/src/listpedeps.c
+@@ -120,7 +120,7 @@ int main (int argc, char* argv[])
+       progdata.showimports = 1;
+       progdata.details = 0;
+     } else if (strcmp(argv[i], "-x") == 0 || strcmp(argv[i], "--exports") == 0) {
+-      progdata.showimports = 1;
++      progdata.showexports = 1;
+     } else {
+       printf("[%s]\n", argv[i]);
+       //open PE file
+ 
