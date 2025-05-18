@@ -74,10 +74,8 @@ package("ace")
                 end
             end
         end
-        envs.CFLAGS = table.concat(cflags, " ") .. " " .. (envs.CFLAGS or "")
-        envs.LDFLAGS = table.concat(ldflags, " ") .. " " .. (envs.LDFLAGS or "")
         os.cd("ace")
-        make.build(package, configs, {envs = envs})
+        make.build(package, configs, {envs = envs, cflags = cflags, ldflags = ldflags})
         os.trycp("**.dylib", package:installdir("lib"))
         os.trycp("**.so", package:installdir("lib"))
         os.trycp("**.a", package:installdir("lib"))
