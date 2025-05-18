@@ -25,9 +25,9 @@ package("ace")
             if package:is_plat("linux", "bsd") then
                 package:add("syslinks", "pthread")
             end
-            if package:config("ssl") then
-                package:add("deps", "openssl3")
-            end
+        end
+        if not package:is_plat("windows") and package:config("ssl") then
+            package:add("deps", "openssl3")
         end
         if not package:config("shared") then
             package:add("defines", "ACE_AS_STATIC_LIBS")
