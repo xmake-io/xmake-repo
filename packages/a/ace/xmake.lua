@@ -49,7 +49,12 @@ package("ace")
         os.cp("ace/**.hpp", package:installdir("include/ace"), {rootdir = "ace"})
         local envs = make.buildenvs(package)
         envs.ACE_ROOT = os.curdir()
-        configs = { "threads=1" }
+        local configs = {
+            "threads=1",
+            "debug=" .. (package:is_debug() and "1" or "0"),
+            "shared_libs=" .. (package:config("shared") and "1" or "0"),
+            "static_libs=" .. (package:config("shared") and "0" or "1")
+        }
         local cflags = {}
         local ldflags = {}
         if package:config("ssl") then
@@ -69,17 +74,8 @@ package("ace")
                 end
             end
         end
-        table.insert(configs, "EXTRA_CFLAGS=" .. table.concat(cflags, " "))
-        table.insert(configs, "LDFLAGS=" .. table.concat(ldflags, " "))
-        table.insert(configs, "debug=" .. (package:is_debug() and "1" or "0"))
-        if package:config("shared") then
-            table.insert(configs, "shared_libs=1")
-            table.insert(configs, "static_libs=0")
-        else
-            table.insert(configs, "static_libs=1")
-            table.insert(configs, "shared_libs=0")
-        end
-        table.insert(configs, "ACE_ROOT=" .. os.curdir())
+        envs.CFLAGS = table.concat(cflags, " ") .. " " .. (envs.CFLAGS or "")
+        envs.LDFLAGS = table.concat(ldflags, " ") .. " " .. (envs.LDFLAGS or "")
         os.cd("ace")
         make.build(package, configs, {envs = envs})
         os.trycp("**.dylib", package:installdir("lib"))
