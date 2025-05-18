@@ -18,7 +18,7 @@ package("libde265")
 
     add_deps("cmake")
 
-    on_load("windows", function (package)
+    on_load("windows", "mingw", "msys", function (package)
         if not package:config("shared") then
             package:add("defines", "LIBDE265_STATIC_BUILD")
         end
@@ -31,19 +31,7 @@ package("libde265")
         table.insert(configs, "-DDISABLE_SSE=" .. (package:is_arch("x86", "x64", "x86_64") and "OFF" or "ON"))
         table.insert(configs, "-DENABLE_ENCODER=" .. (package:config("tools") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_DECODER=" .. (package:config("tools") and "ON" or "OFF"))
-        if package:is_plat("windows") then
-            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
-        end
         import("package.tools.cmake").install(package, configs)
-
-        if package:is_plat("windows") and package:is_debug() then
-            local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.vcp(path.join(package:buildir(), "libde265/**.pdb"), dir)
-            if package:config("tools") then
-                os.vcp(path.join(package:buildir(), "enc265/*.pdb"), package:installdir("bin"))
-                os.vcp(path.join(package:buildir(), "dec265/*.pdb"), package:installdir("bin"))
-            end
-        end
     end)
 
     on_test(function (package)
