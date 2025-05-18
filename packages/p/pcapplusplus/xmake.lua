@@ -16,6 +16,7 @@ package("pcapplusplus")
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     add_configs("zstd", {description = "Support compile with zstd", default = false, type = "boolean"})
     add_configs("winpcap", {description = "Support compile with winpcap", default = false, type = "boolean"})
+    add_configs("log_level", {description = "Compile time log level", default = 3, type = "number"})
 
     add_links("Pcap++", "Packet++", "Common++")
 
@@ -53,6 +54,7 @@ package("pcapplusplus")
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DLIGHT_PCAPNG_ZSTD=" .. (package:config("zstd") and "ON" or "OFF"))
+        table.insert(configs, "-DPCAPPP_LOG_LEVEL=" .. package:config("log_level"))
         for _, cmakefile in ipairs(os.files("**/CMakeLists.txt")) do
             io.replace(cmakefile, "COMPILE_WARNING_AS_ERROR ON", "COMPILE_WARNING_AS_ERROR OFF")
         end
