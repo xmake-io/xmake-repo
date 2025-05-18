@@ -34,6 +34,7 @@ package("ace")
 
     on_install("linux", "macosx", "bsd", "iphoneos", function(package)
         import("package.tools.make")
+        local envs = make.buildenvs(package)
         if package:is_plat("linux") then
             io.writefile("ace/config.h", [[#include "ace/config-linux.h"]])
             io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_linux_common.GNU]])
@@ -46,6 +47,7 @@ package("ace")
         else
             io.writefile("ace/config.h", [[#include "ace/config-macosx-iOS.h"]])
             io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_macosx_iOS.GNU]])
+            envs.IPHONE_TARGET = "HARDWARE"
         end
         os.cp("ace/**.h", package:installdir("include/ace"), {rootdir = "ace"})
         os.cp("ace/**.inl", package:installdir("include/ace"), {rootdir = "ace"})
@@ -53,7 +55,6 @@ package("ace")
         os.cp("ace/**.tpp", package:installdir("include/ace"), {rootdir = "ace"})
         os.cp("ace/**.ipp", package:installdir("include/ace"), {rootdir = "ace"})
         os.cp("ace/**.hpp", package:installdir("include/ace"), {rootdir = "ace"})
-        local envs = make.buildenvs(package)
         envs.ACE_ROOT = os.curdir()
         local configs = {
             "threads=1",
