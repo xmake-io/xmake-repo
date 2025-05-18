@@ -16,7 +16,7 @@ package("ace")
     on_load(function (package)
         package:add("defines", "ACE_HAS_CPP17")
         if package:is_plat("windows") then
-            package:add("syslinks", "iphlpapi", "advapi32")
+            package:add("syslinks", "iphlpapi", "user32", "advapi32")
             package:add("defines", "WIN32")
         else
             package:add("deps", "autotools")
@@ -48,6 +48,7 @@ package("ace")
             io.writefile("ace/config.h", [[#include "ace/config-macosx-iOS.h"]])
             io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_macosx_iOS.GNU]])
             envs.IPHONE_TARGET = "HARDWARE"
+            io.replace("include/makeinclude/platform_macosx_iOS.GNU", "CCFLAGS += -DACE_HAS_IOS", "CCFLAGS += -DACE_HAS_IOS -std=c++17", {plain = true})
         end
         os.cp("ace/**.h", package:installdir("include/ace"), {rootdir = "ace"})
         os.cp("ace/**.inl", package:installdir("include/ace"), {rootdir = "ace"})
