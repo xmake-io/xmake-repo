@@ -9,12 +9,56 @@ package("ace")
 
     add_versions("8.0.3", "d8fcd1f5fab609ab11ed86abdbd61e6d00d5305830fa6e57c17ce395af5e86dc")
 
-    on_load("windows", function (package)
-        package:add("syslinks", "advapi32")
-        package:add("defines", "WIN32", "ACE_HAS_CPP17")
+    if not is_plat("windows") then
+        add_configs("ssl", {description = "Build with OpenSSL support.", default = true, type = "boolean"})
+    end
+
+    on_load(function (package)
+        package:add("defines", "ACE_HAS_CPP17")
+        if package:is_plat("windows") then
+            package:add("syslinks", "iphlpapi", "advapi32")
+            package:add("defines", "WIN32")
+        else
+            package:add("deps", "autotools")
+            package:add("syslinks", "pthread")
+            if package:config("ssl") then
+                package:add("deps", "openssl")
+            end
+        end
         if not package:config("shared") then
             package:add("defines", "ACE_AS_STATIC_LIBS")
         end
+    end)
+
+    on_install("linux", function(package)
+        import("package.tools.make")
+        io.writefile("ace/config.h", [[#include "ace/config-linux.h"]])
+        io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_linux_common.GNU]])
+        os.cp("ace/**.h", package:installdir("include/ace"), {rootdir = "ace"})
+        os.cp("ace/**.inl", package:installdir("include/ace"), {rootdir = "ace"})
+        os.cp("ace/**.cpp", package:installdir("include/ace"), {rootdir = "ace"})
+        os.cp("ace/**.tpp", package:installdir("include/ace"), {rootdir = "ace"})
+        os.cp("ace/**.ipp", package:installdir("include/ace"), {rootdir = "ace"})
+        os.cp("ace/**.hpp", package:installdir("include/ace"), {rootdir = "ace"})
+        local envs = make.buildenvs(package)
+        envs.ACE_ROOT = os.curdir()
+        configs = { "threads=1" }
+        if package:config("ssl") then
+            table.insert(configs, "ssl=1")
+        end
+        table.insert(configs, "debug=" .. (package:is_debug() and "1" or "0"))
+        if package:config("shared") then
+            table.insert(configs, "shared_libs=1")
+            table.insert(configs, "static_libs=0")
+        else
+            table.insert(configs, "static_libs=1")
+            table.insert(configs, "shared_libs=0")
+        end
+        table.insert(configs, "ACE_ROOT=" .. os.curdir())
+        os.cd("ace")
+        make.build(package, configs, {envs = envs})
+        os.trycp("**.so", package:installdir("lib"))
+        os.trycp("**.a", package:installdir("lib"))
     end)
 
     on_install("windows", function(package)
@@ -77,13 +121,23 @@ package("ace")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-                #define WIN32_LEAN_AND_MEAN
-                #include <windows.h>
-                #include <ace/ACE.h>
-                void test() {
-                    auto c_name = ACE::compiler_name();
-                }
-            ]]
-        }, {configs = {languages = "c++17"}}))
+        if package:is_plat("windows") then
+            assert(package:check_cxxsnippets({test = [[
+                    #define WIN32_LEAN_AND_MEAN
+                    #include <windows.h>
+                    #include <ace/ACE.h>
+                    void test() {
+                        auto c_name = ACE::compiler_name();
+                    }
+                ]]
+            }, {configs = {languages = "c++17"}}))
+        else
+            assert(package:check_cxxsnippets({test = [[
+                    #include <ace/ACE.h>
+                    void test() {
+                        auto c_name = ACE::compiler_name();
+                    }
+                ]]
+            }, {configs = {languages = "c++17"}}))
+        end
     end)
