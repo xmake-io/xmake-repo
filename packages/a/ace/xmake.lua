@@ -20,7 +20,9 @@ package("ace")
             package:add("defines", "WIN32")
         else
             package:add("deps", "autotools")
-            package:add("syslinks", "pthread")
+            if package:is_plat("linux", "bsd") then
+                package:add("syslinks", "pthread")
+            end
             if package:config("ssl") then
                 package:add("deps", "openssl")
             end
@@ -48,6 +50,7 @@ package("ace")
         local envs = make.buildenvs(package)
         envs.ACE_ROOT = os.curdir()
         configs = { "threads=1" }
+        packagedeps = {}
         if package:config("ssl") then
             table.insert(configs, "ssl=1")
         end
@@ -61,7 +64,10 @@ package("ace")
         end
         table.insert(configs, "ACE_ROOT=" .. os.curdir())
         os.cd("ace")
-        make.build(package, configs, {envs = envs})
+        if package:config("ssl") and package:is_plat("macosx") then
+            table.insert(packagedeps, "openssl")
+        end
+        make.build(package, configs, {envs = envs, packagedeps = packagedeps})
         os.trycp("**.dylib", package:installdir("lib"))
         os.trycp("**.so", package:installdir("lib"))
         os.trycp("**.a", package:installdir("lib"))
