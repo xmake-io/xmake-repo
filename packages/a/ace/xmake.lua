@@ -63,7 +63,7 @@ package("ace")
                 local fetchinfo = dep:fetch()
                 if fetchinfo then
                     for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
-                        table.insert(cflags, "-isystem " .. includedir)
+                        table.insert(cflags, "-I" .. includedir)
                     end
                     for _, linkdir in ipairs(fetchinfo.linkdirs) do
                         table.insert(ldflags, "-L" .. linkdir)
