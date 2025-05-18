@@ -50,10 +50,27 @@ package("ace")
         local envs = make.buildenvs(package)
         envs.ACE_ROOT = os.curdir()
         configs = { "threads=1" }
-        packagedeps = {}
+        local cflags = {}
+        local ldflags = {}
         if package:config("ssl") then
             table.insert(configs, "ssl=1")
+            for _, dep in ipairs(package:librarydeps()) do
+                local fetchinfo = dep:fetch()
+                if fetchinfo then
+                    for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
+                        table.insert(cflags, "-isystem " .. includedir)
+                    end
+                    for _, linkdir in ipairs(fetchinfo.linkdirs) do
+                        table.insert(ldflags, "-L" .. linkdir)
+                    end
+                    for _, link in ipairs(fetchinfo.links) do
+                        table.insert(ldflags, "-l" .. link)
+                    end
+                end
+            end
         end
+        table.insert(configs, "EXTRA_CFLAGS=" .. table.concat(cflags, " "))
+        table.insert(configs, "LDFLAGS=" .. table.concat(ldflags, " "))
         table.insert(configs, "debug=" .. (package:is_debug() and "1" or "0"))
         if package:config("shared") then
             table.insert(configs, "shared_libs=1")
@@ -64,10 +81,7 @@ package("ace")
         end
         table.insert(configs, "ACE_ROOT=" .. os.curdir())
         os.cd("ace")
-        if package:config("ssl") and package:is_plat("macosx") then
-            table.insert(packagedeps, "openssl")
-        end
-        make.build(package, configs, {envs = envs, packagedeps = packagedeps})
+        make.build(package, configs, {envs = envs})
         os.trycp("**.dylib", package:installdir("lib"))
         os.trycp("**.so", package:installdir("lib"))
         os.trycp("**.a", package:installdir("lib"))
