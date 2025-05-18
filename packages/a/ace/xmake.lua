@@ -18,13 +18,15 @@ package("ace")
         if package:is_plat("windows") then
             package:add("syslinks", "iphlpapi", "user32", "advapi32")
             package:add("defines", "WIN32")
+        elseif package:is_plat("mingw", "msys") then
+            package:add("syslinks", "ws2_32", "mswsock", "iphlpapi")
         else
             package:add("deps", "autotools")
             if package:is_plat("linux", "bsd") then
                 package:add("syslinks", "pthread")
             end
             if package:config("ssl") then
-                package:add("deps", "openssl")
+                package:add("deps", "openssl3")
             end
         end
         if not package:config("shared") then
@@ -32,7 +34,7 @@ package("ace")
         end
     end)
 
-    on_install("linux", "macosx", "bsd", "iphoneos", function(package)
+    on_install("linux", "macosx", "bsd", "iphoneos", "mingw", "msys", function(package)
         import("package.tools.make")
         local envs = make.buildenvs(package)
         if package:is_plat("linux") then
@@ -44,11 +46,14 @@ package("ace")
         elseif package:is_plat("bsd") then
             io.writefile("ace/config.h", [[#include "ace/config-freebsd.h"]])
             io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_freebsd.GNU]])
-        else
+        elseif package:is_plat("iphoneos") then
             io.writefile("ace/config.h", [[#include "ace/config-macosx-iOS.h"]])
             io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_macosx_iOS.GNU]])
             envs.IPHONE_TARGET = "HARDWARE"
             io.replace("include/makeinclude/platform_macosx_iOS.GNU", "CCFLAGS += -DACE_HAS_IOS", "CCFLAGS += -DACE_HAS_IOS -std=c++17", {plain = true})
+        else
+            io.writefile("ace/config.h", [[#include "ace/config-win32.h"]])
+            io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_mingw32.GNU]])
         end
         os.cp("ace/**.h", package:installdir("include/ace"), {rootdir = "ace"})
         os.cp("ace/**.inl", package:installdir("include/ace"), {rootdir = "ace"})
@@ -65,9 +70,9 @@ package("ace")
         }
         if package:config("ssl") then
             table.insert(configs, "ssl=1")
-            local root = package:dep("openssl"):installdir()
-            local openssl_include = package:dep("openssl"):installdir("include")
-            local openssl_lib = package:dep("openssl"):installdir("lib")
+            local root = package:dep("openssl3"):installdir()
+            local openssl_include = package:dep("openssl3"):installdir("include")
+            local openssl_lib = package:dep("openssl3"):installdir("lib")
             envs.SSL_ROOT = root
             envs.SSL_INCDIR = openssl_include
             envs.SSL_LIBDIR = openssl_lib
