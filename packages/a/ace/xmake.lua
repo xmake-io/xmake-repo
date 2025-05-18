@@ -59,7 +59,7 @@ package("ace")
         local ldflags = {}
         if package:config("ssl") then
             table.insert(configs, "ssl=1")
-            for _, dep in ipairs(package:librarydeps()) do
+            for _, dep in ipairs(package:orderdeps()) do
                 local fetchinfo = dep:fetch()
                 if fetchinfo then
                     for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
