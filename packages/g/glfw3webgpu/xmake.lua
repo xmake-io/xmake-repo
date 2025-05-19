@@ -52,5 +52,9 @@ package("glfw3webgpu")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("glfwGetWGPUSurface", {includes = "glfw3webgpu.h"}))
+        if package:version() and package:version():minor() >= 3 then
+            assert(package:has_cfuncs("glfwCreateWindowWGPUSurface", {includes = "glfw3webgpu.h"}))
+        else
+            assert(package:has_cfuncs("glfwGetWGPUSurface", {includes = "glfw3webgpu.h"}))
+        end
     end)
