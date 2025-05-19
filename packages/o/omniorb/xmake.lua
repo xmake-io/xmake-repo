@@ -22,10 +22,9 @@ package("omniorb")
         local python_dir = python:installdir()
         os.setenv("PYTHONHOME", python_dir)
         os.setenv("PYTHONPATH", path.join(python_dir, "Lib") .. ";" .. path.join(python_dir, "Lib", "site-packages"))
-
+        -- Wrap python3 installation for further use of omniorb
         package:addenv("PYTHONHOME", python_dir)
         package:addenv("PYTHONPATH", path.join(python_dir, "Lib") .. ";" .. path.join(python_dir, "Lib", "site-packages"))
-
         -- Fix windows manifest flag
         io.replace("mk/win32.mk", "/outputresource:", "-outputresource:", {plain = true})
         io.replace("mk/win32.mk", "/manifest", "-manifest", {plain = true})
