@@ -19,7 +19,9 @@ package("ace")
             package:add("syslinks", "iphlpapi", "user32", "advapi32")
             package:add("defines", "WIN32")
         else
-            package:add("deps", "autotools")
+            if not package:is_plat("android") then
+                package:add("deps", "autotools")
+            end
             if package:is_plat("linux", "bsd") then
                 package:add("syslinks", "pthread")
             end
@@ -32,7 +34,7 @@ package("ace")
         end
     end)
 
-    on_install("linux", "macosx", "bsd", "iphoneos", function(package)
+    on_install("linux", "macosx", "bsd", "iphoneos", "android", function(package)
         import("package.tools.make")
         local envs = make.buildenvs(package)
         if package:is_plat("linux") then
@@ -49,6 +51,16 @@ package("ace")
             io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_macosx_iOS.GNU]])
             envs.IPHONE_TARGET = "HARDWARE"
             io.replace("include/makeinclude/platform_macosx_iOS.GNU", "CCFLAGS += -DACE_HAS_IOS", "CCFLAGS += -DACE_HAS_IOS -std=c++17", {plain = true})
+        else
+            import("core.tool.toolchain")
+            io.writefile("ace/config.h", [[#include "ace/config-android.h"]])
+            io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_android.GNU]])
+            local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            local ndk_dir = ndk:config("ndk")
+            envs.android_abi = package:arch()
+            envs.android_ndk = ndk_dir:replace([[\]], [[/]])
+            envs.android_api = ndk_sdkver
         end
         os.cp("ace/**.h", package:installdir("include/ace"), {rootdir = "ace"})
         os.cp("ace/**.inl", package:installdir("include/ace"), {rootdir = "ace"})
@@ -58,19 +70,16 @@ package("ace")
         os.cp("ace/**.hpp", package:installdir("include/ace"), {rootdir = "ace"})
         envs.ACE_ROOT = os.curdir()
         local configs = {
-            "threads=1",
             "debug=" .. (package:is_debug() and "1" or "0"),
             "shared_libs=" .. (package:config("shared") and "1" or "0"),
-            "static_libs=" .. (package:config("shared") and "0" or "1")
+            "static_libs=" .. (package:config("shared") and "0" or "1"),
+            "ssl=" .. (package:config("ssl") and "1" or "0"),
+            "threads=1"
         }
         if package:config("ssl") then
-            table.insert(configs, "ssl=1")
-            local root = package:dep("openssl"):installdir()
-            local openssl_include = package:dep("openssl"):installdir("include")
-            local openssl_lib = package:dep("openssl"):installdir("lib")
-            envs.SSL_ROOT = root
-            envs.SSL_INCDIR = openssl_include
-            envs.SSL_LIBDIR = openssl_lib
+            envs.SSL_ROOT = package:dep("openssl"):installdir()
+            envs.SSL_INCDIR = package:dep("openssl"):installdir("include")
+            envs.SSL_LIBDIR = package:dep("openssl"):installdir("lib")
         end
         os.cd("ace")
         make.build(package, configs, {envs = envs})
