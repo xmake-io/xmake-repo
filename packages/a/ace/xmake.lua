@@ -59,7 +59,7 @@ package("ace")
             local ndk_sdkver = ndk:config("ndk_sdkver")
             local ndk_dir = ndk:config("ndk")
             envs.android_abi = package:arch()
-            envs.android_ndk = ndk_dir:replace([[\]], [[/]])
+            envs.android_ndk = path.unix(ndk_dir)
             envs.android_api = ndk_sdkver
             envs.ARFLAGS = [[rc]]
             io.replace("include/makeinclude/platform_android.GNU", "OCCFLAGS ?= -O3", "OCCFLAGS ?= -O3\nCCFLAGS += -std=c++17", {plain = true})
