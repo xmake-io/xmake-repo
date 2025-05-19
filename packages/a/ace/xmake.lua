@@ -61,6 +61,7 @@ package("ace")
             envs.android_abi = package:arch()
             envs.android_ndk = ndk_dir:replace([[\]], [[/]])
             envs.android_api = ndk_sdkver
+            io.replace("include/makeinclude/platform_android.GNU", "OCCFLAGS ?= -O3", "OCCFLAGS ?= -O3\nCCFLAGS += -std=c++17", {plain = true})
         end
         os.cp("ace/**.h", package:installdir("include/ace"), {rootdir = "ace"})
         os.cp("ace/**.inl", package:installdir("include/ace"), {rootdir = "ace"})
