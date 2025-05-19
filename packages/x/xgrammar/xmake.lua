@@ -11,28 +11,10 @@ package("xgrammar")
     add_deps("dlpack 1.1")
 
     on_install(function (package)
-        io.writefile("xmake.lua", [[
-            add_requires("dlpack 1.1")
-
-            if ]] ..tostring(package:config("XGRAMMAR_BUILD_PYTHON_BINDINGS")).. [[ then
-                add_requires("nanobind v2.5.0")
-            end
-
-            set_languages("c++17")
-            target("xgrammar")
-                set_kind("static")
-                add_includedirs("3rdparty/picojson")
-                add_includedirs("include", {public = true})
-                add_headerfiles("include/(**.h)")
-                add_files("cpp/*.cc")
-                add_files("cpp/support/*.cc")
-                add_packages("dlpack")
-                if ]] ..tostring(package:config("XGRAMMAR_BUILD_PYTHON_BINDINGS")).. [[ then
-                    add_files("cpp/nanobind/*.cc")
-                    add_packages("nanobind")
-                end
-        ]])
-        import("package.tools.xmake").install(package)
+        local configs = {}
+        configs.XGRAMMAR_BUILD_PYTHON_BINDINGS = package:config("XGRAMMAR_BUILD_PYTHON_BINDINGS")
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
