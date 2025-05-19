@@ -15,7 +15,9 @@ package("xgrammar")
         local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
         local vs = msvc:config("vs")
         if vs and tonumber(vs) < 2022 and package:is_arch("arm64") then
-            package:add("configs", "shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+            if package:config("shared") then
+                raise("MSVC 2019 and earlier do not support ARM64 shared library builds.")
+            end
         end
     end)
 
