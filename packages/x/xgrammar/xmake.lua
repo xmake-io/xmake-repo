@@ -10,25 +10,16 @@ package("xgrammar")
     add_configs("XGRAMMAR_BUILD_PYTHON_BINDINGS", {description = "Build Python bindings", default = false, type = "boolean"})
     add_deps("dlpack 1.1")
 
-    on_install(function (package)
-        if package:is_plat("windows") then
-            import("core.tool.toolchain")
-            local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
-            local vs = msvc:config("vs")
-            if tonumber(vs) < 2022 then
-                io.replace("cpp/support/dynamic_bitset.h", [[#include <intrin.h>]], [[
-#if defined(_MSC_VER) && defined(_M_ARM64)
-unsigned int __popcnt(unsigned int x) {
-  unsigned int c = 0;
-  for (; x; ++c) {
-    x &= x - 1;
-  }
-  return c;
-}
-#endif
-]], {plain = true})
-            end
+    on_load("windows", function (package)
+        import("core.tool.toolchain")
+        local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+        local vs = msvc:config("vs")
+        if vs and tonumber(vs) < 2022 and package:is_arch("arm64") then
+            package:add("configs", "shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
         end
+    end)
+
+    on_install(function (package)
         local configs = {}
         configs.XGRAMMAR_BUILD_PYTHON_BINDINGS = package:config("XGRAMMAR_BUILD_PYTHON_BINDINGS")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
