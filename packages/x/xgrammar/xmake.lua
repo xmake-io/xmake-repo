@@ -11,6 +11,25 @@ package("xgrammar")
     add_deps("dlpack 1.1")
 
     on_install(function (package)
+        if package:is_plat("windows") then
+            import("core.tool.toolchain")
+            local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+            local vs = msvc:config("vs")
+            if tonumber(vs) < 2022 then
+                io.replace("cpp/support/dynamic_bitset.h", [[  static int PopCount(uint32_t value) {]], [[
+#if defined(_MSC_VER) && defined(_M_ARM64)
+unsigned int __popcnt(unsigned int x) {
+  unsigned int c = 0;
+  for (; x; ++c) {
+    x &= x - 1;
+  }
+  return c;
+}
+#endif
+  static int PopCount(uint32_t value) {
+]], {plain = true})
+            end
+        end
         local configs = {}
         configs.XGRAMMAR_BUILD_PYTHON_BINDINGS = package:config("XGRAMMAR_BUILD_PYTHON_BINDINGS")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
