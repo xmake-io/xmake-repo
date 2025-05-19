@@ -26,7 +26,6 @@ unsigned int __popcnt(unsigned int x) {
   return c;
 }
 #endif
-#include <intrin.h>
 ]], {plain = true})
             end
         end
