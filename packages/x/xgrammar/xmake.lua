@@ -16,7 +16,7 @@ package("xgrammar")
             local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
             local vs = msvc:config("vs")
             if tonumber(vs) < 2022 then
-                io.replace("cpp/support/dynamic_bitset.h", [[  static int PopCount(uint32_t value) {]], [[
+                io.replace("cpp/support/dynamic_bitset.h", [[#include <intrin.h>]], [[
 #if defined(_MSC_VER) && defined(_M_ARM64)
 unsigned int __popcnt(unsigned int x) {
   unsigned int c = 0;
@@ -26,7 +26,7 @@ unsigned int __popcnt(unsigned int x) {
   return c;
 }
 #endif
-  static int PopCount(uint32_t value) {
+#include <intrin.h>
 ]], {plain = true})
             end
         end
