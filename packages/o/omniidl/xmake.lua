@@ -1,7 +1,7 @@
-package("omniorb")
+package("omniidl")
     set_kind("binary")
     set_homepage("https://omniorb.sourceforge.io/omni41/omniidl.html")
-    set_description("omniORB is a CORBA object request broker for C++ and Python. It is very fast, robust, and standards-compliant.")
+    set_description("omniidl is omniORB IDL compiler.")
     set_license("GPL-2.0")
 
     add_urls("https://sourceforge.net/projects/omniorb/files/omniORB/omniORB-$(version)/omniORB-$(version).tar.bz2")
