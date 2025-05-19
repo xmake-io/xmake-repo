@@ -9,7 +9,7 @@ package("ace")
 
     add_versions("8.0.3", "d8fcd1f5fab609ab11ed86abdbd61e6d00d5305830fa6e57c17ce395af5e86dc")
 
-    if not is_plat("windows") then
+    if not is_plat("windows", "mingw") then
         add_configs("ssl", {description = "Build with OpenSSL support.", default = true, type = "boolean"})
     end
 
@@ -26,7 +26,7 @@ package("ace")
                 package:add("syslinks", "pthread")
             end
         end
-        if not package:is_plat("windows") and package:config("ssl") then
+        if not package:is_plat("windows", "mingw") and package:config("ssl") then
             package:add("deps", "openssl3")
         end
         if not package:config("shared") then
@@ -53,7 +53,7 @@ package("ace")
             io.replace("include/makeinclude/platform_macosx_iOS.GNU", "CCFLAGS += -DACE_HAS_IOS", "CCFLAGS += -DACE_HAS_IOS -std=c++17", {plain = true})
         else
             io.writefile("ace/config.h", [[#include "ace/config-win32.h"]])
-            io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_cygwin32.GNU]])
+            io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_mingw32.GNU]])
         end
         os.cp("ace/**.h", package:installdir("include/ace"), {rootdir = "ace"})
         os.cp("ace/**.inl", package:installdir("include/ace"), {rootdir = "ace"})
