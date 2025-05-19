@@ -1,0 +1,5 @@
+package("omniorb")
+    set_kind("binary")
+    set_homepage("https://www.dre.vanderbilt.edu/~schmidt/TAO.html")
+    set_description("tao_idl is TAO's Interface Description Language (IDL) compiler, based on Sun Microsystems' OMG IDL Compiler Front End (CFE) version 1.3, implements most IDL v3 & some IDL v4 features.")
+    set_license("DOC")
