@@ -140,7 +140,9 @@ package("ace")
         elseif vs == "2019" then vstool = "v142"
         elseif vs == "2022" then vstool = "v143"
         end
-        table.insert(configs, "/p:PlatformToolset=" .. vstool)
+        if vstool then
+            table.insert(configs, "/p:PlatformToolset=" .. vstool)
+        end
         msbuild.build(package, configs)
         os.cd("..")
         os.cp("**.lib", package:installdir("lib"))
