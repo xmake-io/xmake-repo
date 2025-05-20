@@ -18,7 +18,7 @@ package("usrsctp")
     add_deps("cmake")
 
     if is_plat("windows", "mingw") then
-        add_syslinks("ws2_32")
+        add_syslinks("ws2_32", "iphlpapi")
     elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
