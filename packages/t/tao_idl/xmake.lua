@@ -12,6 +12,8 @@ package("tao_idl")
 
     add_deps("ace", {configs = {shared = true}})
 
+    add_links("ACE", "TAO_IDL_FE", "TAO_IDL_BE")
+
     on_load(function (package)
         package:addenv("PATH", "bin")
     end)
@@ -71,7 +73,18 @@ package("tao_idl")
         end
         for _, GNUmakefile in ipairs(os.files("GNUmakefile.*")) do
             io.replace(GNUmakefile, [[-L../../lib]], [[-L]] .. ace_libdir ..  [[ -L../../lib]], {plain = true})
+            io.replace(GNUmakefile, [[LIBPATHS := . "../../lib"]], [[LIBPATHS := . "]] .. ace_libdir ..  [[" "../lib"]], {plain = true})
         end
+
+        -- os.trycp(ace_libdir .."/*", package:installdir("lib"))
+        -- os.trycp(ace_libdir .."/*", package:installdir("bin"))
+        -- wtf
+        -- if package:is_plat("linux", "bsd") then
+        --     envs.LDFLAGS = "-Wl,-rpath,$ORIGIN/../lib"
+        -- elseif package:is_plat("macosx") then
+        --     envs.LDFLAGS = "-Wl,-rpath,@loader_path/../lib"
+        -- end
+
         make.build(package, {"all"}, {envs = envs})
         os.cd("../..")
         os.trycp("apps/gperf/src/ace_gperf", package:installdir("bin"))
@@ -169,6 +182,6 @@ package("tao_idl")
         os.rm(path.join(package:installdir(), "bin", "Reboot_Target.exe"))
     end)
 
---    on_test(function (package)
---        os.vrun("tao_idl -h")
---    end)
+   on_test(function (package)
+       os.vrun("tao_idl -h")
+   end)
