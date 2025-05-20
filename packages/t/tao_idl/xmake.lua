@@ -16,6 +16,48 @@ package("tao_idl")
         package:addenv("PATH", "bin")
     end)
 
+    on_install("linux", "macosx", "bsd", "iphoneos", "android", function(package)
+        import("package.tools.make")
+        local envs = make.buildenvs(package)
+        if package:is_plat("linux") then
+            io.writefile("ace/config.h", [[#include "ace/config-linux.h"]])
+            io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_linux_common.GNU]])
+        end
+        envs.ACE_ROOT = os.curdir()
+        -- os.cd("apps/gperf/src")
+        -- make.build(package, {"all"}, {envs = envs})
+        -- os.cd("../../../TAO/TAO_IDL")
+        os.cd("TAO/TAO_IDL")
+
+        io.replace("c.TAO_IDL_ACE",
+            [[depend: ACE-depend gperf-depend TAO_IDL_FE-depend TAO_IDL_BE-depend TAO_IDL_BE_VIS_A-depend TAO_IDL_BE_VIS_C-depend TAO_IDL_BE_VIS_E-depend TAO_IDL_BE_VIS_I-depend TAO_IDL_BE_VIS_O-depend TAO_IDL_BE_VIS_S-depend TAO_IDL_BE_VIS_U-depend TAO_IDL_BE_VIS_V-depend TAO_IDL_EXE-depend]],
+            [[depend: gperf-depend TAO_IDL_FE-depend TAO_IDL_BE-depend TAO_IDL_BE_VIS_A-depend TAO_IDL_BE_VIS_C-depend TAO_IDL_BE_VIS_E-depend TAO_IDL_BE_VIS_I-depend TAO_IDL_BE_VIS_O-depend TAO_IDL_BE_VIS_S-depend TAO_IDL_BE_VIS_U-depend TAO_IDL_BE_VIS_V-depend TAO_IDL_EXE-depend]],
+            {plain = true})
+        io.replace("GNUmakefile.TAO_IDL_ACE",
+            [[all: ACE gperf TAO_IDL_FE TAO_IDL_BE TAO_IDL_BE_VIS_A TAO_IDL_BE_VIS_C TAO_IDL_BE_VIS_E TAO_IDL_BE_VIS_I TAO_IDL_BE_VIS_O TAO_IDL_BE_VIS_S TAO_IDL_BE_VIS_U TAO_IDL_BE_VIS_V TAO_IDL_EXE]],
+            [[all: gperf TAO_IDL_FE TAO_IDL_BE TAO_IDL_BE_VIS_A TAO_IDL_BE_VIS_C TAO_IDL_BE_VIS_E TAO_IDL_BE_VIS_I TAO_IDL_BE_VIS_O TAO_IDL_BE_VIS_S TAO_IDL_BE_VIS_U TAO_IDL_BE_VIS_V TAO_IDL_EXE]],
+            {plain = true})
+        io.replace("GNUmakefile.TAO_IDL_ACE", [[$(KEEP_GOING)@cd ../../ace && $(MAKE) -f GNUmakefile.ACE $(@)]], [[]], {plain = true})
+
+        local packagedep = package:dep(dep)
+        if packagedep then
+            local fetchinfo = packagedep:fetch()
+            if fetchinfo then
+
+            end
+        end
+
+        for _, file in os.files("GNUmakefile.*")
+            io.replace(file, [[LIBPATHS := . "../../lib"]], [[LIBPATHS := . "../../lib"]], {plain = true})
+        end
+
+        make.build(package, {"all"}, {envs = envs})
+        os.cd("../..")
+        os.trycp("bin", package:installdir("bin"))
+        os.trycp("**.so", package:installdir("bin"))
+        os.trycp("**.a", package:installdir("lib"))
+    end)
+
     on_install("windows", function(package)
         import("package.tools.msbuild")
         local include_paths = {"..", "include", "be_include", "fe"}
