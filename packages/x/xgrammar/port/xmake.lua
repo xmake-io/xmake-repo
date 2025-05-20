@@ -1,10 +1,10 @@
-option("XGRAMMAR_BUILD_PYTHON_BINDINGS", {default = false, description = "Build Python bindings"})
+option("python_bindings", {default = false, description = "Build Python bindings"})
 
 add_requires("dlpack 1.1")
 add_rules("mode.debug", "mode.release")
 
 -- config dependencies
-if has_config("XGRAMMAR_BUILD_PYTHON_BINDINGS") then
+if has_config("python_bindings") then
     add_requires("nanobind v2.5.0")
 end
 
@@ -20,7 +20,7 @@ target("xgrammar")
     set_kind("$(kind)")
     add_files("cpp/*.cc")
     add_files("cpp/support/*.cc")
-    if has_config("XGRAMMAR_BUILD_PYTHON_BINDINGS") then
+    if has_config("python_bindings") then
         add_files("cpp/nanobind/*.cc")
         add_packages("nanobind")
     end
