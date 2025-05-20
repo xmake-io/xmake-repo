@@ -56,12 +56,12 @@ package("tao_idl")
             local fetchinfo = packagedep:fetch()
             if fetchinfo then
                 for _, linkdir in ipairs(fetchinfo.linkdirs) do
-                    ace_libdir = path.unix(linkdir)
+                    ace_libdir = "-L" .. path.unix(linkdir) .. " " .. ace_libdir
                 end
             end
         end
         os.cd("apps/gperf/src")
-        io.replace("GNUmakefile.gperf", "+= -I../../..", "+= -I../../..\nLDFLAGS     += -L" .. ace_libdir, {plain = true})
+        io.replace("GNUmakefile.gperf", [[-L../../../lib]], ace_libdir, {plain = true})
         make.build(package, {"all"}, {envs = envs})
         make.make(package, {"install"}, {envs = envs})
         os.cd("../../../TAO/TAO_IDL")
@@ -75,7 +75,7 @@ package("tao_idl")
             {plain = true})
         io.replace("GNUmakefile.TAO_IDL_ACE", [[$(KEEP_GOING)@cd ../../ace && $(MAKE) -f GNUmakefile.ACE $(@)]], [[]], {plain = true})
         for _, GNUmakefile in ipairs(os.files("GNUmakefile.*")) do
-            io.replace(GNUmakefile, "CPPFLAGS   ", "LDFLAGS     += -L" .. ace_libdir .. "\nCPPFLAGS   ", {plain = true})
+            io.replace(GNUmakefile, [[-L../../lib]], ace_libdir, {plain = true})
         end
         make.build(package, {"all"}, {envs = envs})
         make.make(package, {"install"}, {envs = envs})
