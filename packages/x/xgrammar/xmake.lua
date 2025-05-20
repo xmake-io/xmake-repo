@@ -7,7 +7,7 @@ package("xgrammar")
              "https://github.com/mlc-ai/xgrammar.git")
     add_versions("v0.1.19", "f05f8d05b12b29523a2f299535a42180e665ce80109360a6afafc300d82f1b78")
 
-    add_configs("XGRAMMAR_BUILD_PYTHON_BINDINGS", {description = "Build Python bindings", default = false, type = "boolean"})
+    add_configs("python_bindings", {description = "Build Python bindings", default = false, type = "boolean"})
     add_deps("dlpack 1.1")
 
     on_check("windows", function (package)
@@ -23,7 +23,7 @@ package("xgrammar")
 
     on_install("!bsd", function (package)
         local configs = {}
-        configs.XGRAMMAR_BUILD_PYTHON_BINDINGS = package:config("XGRAMMAR_BUILD_PYTHON_BINDINGS")
+        configs.python_bindings = package:config("python_bindings")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
     end)
