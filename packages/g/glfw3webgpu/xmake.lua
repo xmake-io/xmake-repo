@@ -6,6 +6,7 @@ package("glfw3webgpu")
     add_urls("https://github.com/eliemichel/glfw3webgpu/archive/refs/tags/$(version).tar.gz",
              "https://github.com/eliemichel/glfw3webgpu.git")
 
+    add_versions("v1.3.0-alpha", "608386a158a22636756dd44932f25675a68f190552481f48d45d63573edd5f2b")
     add_versions("v1.2.0", "28387b960aff573728bde2bf0fa876c33608cdadaca8d23f4a46cd31920ab633")
     add_versions("v1.1.0", "307ba86a724adc84a875e8bd2374baad0fabc77797f20f9a1779eef8d9ffe95a")
     add_versions("v1.0.1", "b98c63f1905f0e4cf99229de8b7e5c2693fdf3b8d684b5a43d60f21f67d33e6b")
@@ -51,5 +52,9 @@ package("glfw3webgpu")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("glfwGetWGPUSurface", {includes = "glfw3webgpu.h"}))
+        if package:version() and package:version():minor() >= 3 then
+            assert(package:has_cfuncs("glfwCreateWindowWGPUSurface", {includes = "glfw3webgpu.h"}))
+        else
+            assert(package:has_cfuncs("glfwGetWGPUSurface", {includes = "glfw3webgpu.h"}))
+        end
     end)
