@@ -16,7 +16,7 @@ package("xgrammar")
         local vs = msvc:config("vs")
         if vs and tonumber(vs) < 2022 and package:is_arch("arm64") then
             if package:config("shared") then
-                raise("MSVC 2019 and earlier do not support ARM64 shared library builds.")
+                raise("package(xgrammar): MSVC 2019 and earlier do not support ARM64 shared library builds.")
             end
         end
     end)
