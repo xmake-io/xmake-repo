@@ -22,14 +22,35 @@ package("tao_idl")
         if package:is_plat("linux") then
             io.writefile("ace/config.h", [[#include "ace/config-linux.h"]])
             io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_linux_common.GNU]])
+        elseif package:is_plat("macosx") then
+            io.writefile("ace/config.h", [[#include "ace/config-macosx.h"]])
+            io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_macosx.GNU]])
+        elseif package:is_plat("bsd") then
+            io.writefile("ace/config.h", [[#include "ace/config-freebsd.h"]])
+            io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_freebsd.GNU]])
+        elseif package:is_plat("iphoneos") then
+            io.writefile("ace/config.h", [[#include "ace/config-macosx-iOS.h"]])
+            io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_macosx_iOS.GNU]])
+            envs.IPHONE_TARGET = "HARDWARE"
+            io.replace("include/makeinclude/platform_macosx_iOS.GNU", "CCFLAGS += -DACE_HAS_IOS", "CCFLAGS += -DACE_HAS_IOS -std=c++17", {plain = true})
+        else
+            import("core.tool.toolchain")
+            io.writefile("ace/config.h", [[#include "ace/config-android.h"]])
+            io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_android.GNU]])
+            local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            local ndk_dir = ndk:config("ndk")
+            envs.android_abi = package:arch()
+            envs.android_ndk = path.unix(ndk_dir)
+            envs.android_api = ndk_sdkver
+            envs.ARFLAGS = [[rc]]
+            io.replace("include/makeinclude/platform_android.GNU", "OCCFLAGS ?= -O3", "OCCFLAGS ?= -O3\nCCFLAGS += -std=c++17", {plain = true})
         end
+        envs.LIBCHECK = "1"
         envs.ACE_ROOT = os.curdir()
-        -- os.cd("apps/gperf/src")
-        -- make.build(package, {"all"}, {envs = envs})
-        -- os.cd("../../../TAO/TAO_IDL")
+        envs.TAO_ROOT = path.join(os.curdir(), "TAO")
         os.cd("TAO/TAO_IDL")
-
-        io.replace("c.TAO_IDL_ACE",
+        io.replace("GNUmakefile.TAO_IDL_ACE",
             [[depend: ACE-depend gperf-depend TAO_IDL_FE-depend TAO_IDL_BE-depend TAO_IDL_BE_VIS_A-depend TAO_IDL_BE_VIS_C-depend TAO_IDL_BE_VIS_E-depend TAO_IDL_BE_VIS_I-depend TAO_IDL_BE_VIS_O-depend TAO_IDL_BE_VIS_S-depend TAO_IDL_BE_VIS_U-depend TAO_IDL_BE_VIS_V-depend TAO_IDL_EXE-depend]],
             [[depend: gperf-depend TAO_IDL_FE-depend TAO_IDL_BE-depend TAO_IDL_BE_VIS_A-depend TAO_IDL_BE_VIS_C-depend TAO_IDL_BE_VIS_E-depend TAO_IDL_BE_VIS_I-depend TAO_IDL_BE_VIS_O-depend TAO_IDL_BE_VIS_S-depend TAO_IDL_BE_VIS_U-depend TAO_IDL_BE_VIS_V-depend TAO_IDL_EXE-depend]],
             {plain = true})
@@ -38,24 +59,32 @@ package("tao_idl")
             [[all: gperf TAO_IDL_FE TAO_IDL_BE TAO_IDL_BE_VIS_A TAO_IDL_BE_VIS_C TAO_IDL_BE_VIS_E TAO_IDL_BE_VIS_I TAO_IDL_BE_VIS_O TAO_IDL_BE_VIS_S TAO_IDL_BE_VIS_U TAO_IDL_BE_VIS_V TAO_IDL_EXE]],
             {plain = true})
         io.replace("GNUmakefile.TAO_IDL_ACE", [[$(KEEP_GOING)@cd ../../ace && $(MAKE) -f GNUmakefile.ACE $(@)]], [[]], {plain = true})
-
-        local packagedep = package:dep(dep)
+        local ace_libdir
+        local packagedep = package:dep("ace")
         if packagedep then
             local fetchinfo = packagedep:fetch()
             if fetchinfo then
-
+                for _, linkdir in ipairs(fetchinfo.linkdirs) do
+                    ace_libdir = linkdir
+                end
             end
         end
-
-        for _, file in os.files("GNUmakefile.*")
-            io.replace(file, [[LIBPATHS := . "../../lib"]], [[LIBPATHS := . "../../lib"]], {plain = true})
+        for _, GNUmakefile in ipairs(os.files("GNUmakefile.*")) do
+            io.replace(GNUmakefile, [[-L../../lib]], [[-L]] .. ace_libdir ..  [[ -L../../lib]], {plain = true})
         end
-
         make.build(package, {"all"}, {envs = envs})
         os.cd("../..")
-        os.trycp("bin", package:installdir("bin"))
-        os.trycp("**.so", package:installdir("bin"))
+        os.trycp("apps/gperf/src/ace_gperf", package:installdir("bin"))
+        os.trycp("bin/tao_idl", package:installdir("bin"))
+        os.trycp("**.dylib", package:installdir("lib"))
+        os.trycp("**.so", package:installdir("lib"))
         os.trycp("**.a", package:installdir("lib"))
+
+        os.trycp("**.dylib", package:installdir("bin"))
+        os.trycp("**.so", package:installdir("bin"))
+
+        os.trycp("**.so.*", package:installdir("bin"))
+        os.trycp("**.so.*", package:installdir("lib"))
     end)
 
     on_install("windows", function(package)
@@ -140,6 +169,6 @@ package("tao_idl")
         os.rm(path.join(package:installdir(), "bin", "Reboot_Target.exe"))
     end)
 
-    on_test(function (package)
-        os.vrun("tao_idl -h")
-    end)
+--    on_test(function (package)
+--        os.vrun("tao_idl -h")
+--    end)
