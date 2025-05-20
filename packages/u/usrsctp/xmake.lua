@@ -56,6 +56,7 @@ package("usrsctp")
         end
         if package:is_plat("bsd") then
             io.replace("usrsctplib/netinet/sctp_os_userspace.h", "ip6protosw.h", "ip6_var.h", {plain = true})
+            table.insert(configs, "-DHAVE_NET_ROUTE_H=1")
         end
         import("package.tools.cmake").install(package, configs)
     end)
