@@ -63,8 +63,7 @@ package("tao_idl")
             end
         end
         os.cd("apps/gperf/src")
-        io.replace("GNUmakefile.gperf", [[-L../../../lib]], [[-L]] .. ace_libdir ..  [[ -L../../../lib]], {plain = true})
-        io.replace("GNUmakefile.gperf", [[LIBPATHS := . "../../../lib"]], [[LIBPATHS := . "]] .. ace_libdir ..  [[" "../lib"]], {plain = true})
+        io.replace("GNUmakefile.gperf", [[../../../lib]], ace_libdir, {plain = true})
         make.build(package, {"all"}, {envs = envs})
         make.make(package, {"install"}, {envs = envs})
         os.cd("../../../TAO/TAO_IDL")
@@ -78,8 +77,7 @@ package("tao_idl")
             {plain = true})
         io.replace("GNUmakefile.TAO_IDL_ACE", [[$(KEEP_GOING)@cd ../../ace && $(MAKE) -f GNUmakefile.ACE $(@)]], [[]], {plain = true})
         for _, GNUmakefile in ipairs(os.files("GNUmakefile.*")) do
-            io.replace(GNUmakefile, [[-L../../lib]], [[-L]] .. ace_libdir ..  [[ -L../../lib]], {plain = true})
-            io.replace(GNUmakefile, [[LIBPATHS := . "../../lib"]], [[LIBPATHS := . "]] .. ace_libdir ..  [[" "../lib"]], {plain = true})
+            io.replace(GNUmakefile, [[../../lib]], ace_libdir, {plain = true})
         end
         make.build(package, {"all"}, {envs = envs})
         make.make(package, {"install"}, {envs = envs})
