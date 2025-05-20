@@ -21,7 +21,7 @@ package("xgrammar")
         end
     end)
 
-    on_install(function (package)
+    on_install("!bsd", function (package)
         local configs = {}
         configs.XGRAMMAR_BUILD_PYTHON_BINDINGS = package:config("XGRAMMAR_BUILD_PYTHON_BINDINGS")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
