@@ -33,7 +33,7 @@ package("usrsctp")
         end)
     end
 
-    on_install("windows", "linux", "macosx", "android", "cross", "bsd", "mingw", function (package)
+    on_install("windows", "linux", "macosx", "iphoneos", "android", "cross", "bsd", "mingw", function (package)
         local configs ={"-Dsctp_build_programs=0"}
         if package:is_debug() then
             table.insert(configs, "-DCMAKE_BUILD_TYPE=Debug")
