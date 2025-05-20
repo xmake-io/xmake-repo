@@ -17,8 +17,10 @@ package("usrsctp")
 
     add_deps("cmake")
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("ws2_32")
+    elseif is_plat("linux", "bsd") then
+        add_syslinks("pthread")
     end
 
     on_install("windows", "linux", "macosx", "android@linux,macosx", "cross", "bsd", "mingw", function (package)
@@ -37,6 +39,9 @@ package("usrsctp")
             if not package:extraconf("configs", name, "builtin") then
                 table.insert(configs, "-Dsctp_" .. name .. "=" .. (enabled and "1" or "0"))
             end
+        end
+        if package:is_plat("windows") and package:config("shared") then
+            table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=1")
         end
         import("package.tools.cmake").install(package, configs)
     end)
