@@ -58,7 +58,7 @@ package("tao_idl")
             local fetchinfo = packagedep:fetch()
             if fetchinfo then
                 for _, linkdir in ipairs(fetchinfo.linkdirs) do
-                    ace_libdir = linkdir
+                    ace_libdir = path.unix(linkdir)
                 end
             end
         end
