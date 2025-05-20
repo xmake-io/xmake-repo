@@ -8,7 +8,10 @@ package("usrsctp")
     add_urls("https://github.com/sctplab/usrsctp.git")
 
     add_versions("0.9.5+0", "260107caf318650a57a8caa593550e39bca6943e93f970c80d6c17e59d62cd92")
-    add_patches("0.9.5+0", "https://github.com/sctplab/usrsctp/commit/e984d7f3c1b13d0b0582497b385c93f0e8d89fb3.diff", "59c5e71379ca7e9d9849d6347cd0537ec626e6f4cbcdaa53be8f8ec828bbc419")
+
+    if not is_plat("bsd") then
+        add_patches("0.9.5+0", "https://github.com/sctplab/usrsctp/commit/e984d7f3c1b13d0b0582497b385c93f0e8d89fb3.diff", "59c5e71379ca7e9d9849d6347cd0537ec626e6f4cbcdaa53be8f8ec828bbc419")
+    end
     add_patches("0.9.5+0", "https://github.com/sctplab/usrsctp/commit/b56b4300b9ad1c0eb447b7b76a0a3f40b30716be.diff", "8d6d81d449d571284a45e9ba2beb5a206453c012f182366d89f5e5faea572d13")
     
     add_configs("invariants", {description = "Add runtime checks", default = false, type = "boolean"})
@@ -56,7 +59,6 @@ package("usrsctp")
         end
         if package:is_plat("bsd") then
             io.replace("usrsctplib/netinet/sctp_os_userspace.h", "ip6protosw.h", "ip6_var.h", {plain = true})
-            table.insert(configs, "-DHAVE_NET_ROUTE_H=1")
         end
         import("package.tools.cmake").install(package, configs)
     end)
