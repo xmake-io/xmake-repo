@@ -10,7 +10,7 @@ package("xgrammar")
     add_configs("XGRAMMAR_BUILD_PYTHON_BINDINGS", {description = "Build Python bindings", default = false, type = "boolean"})
     add_deps("dlpack 1.1")
 
-    on_load("windows", function (package)
+    on_check("windows", function (package)
         import("core.tool.toolchain")
         local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
         local vs = msvc:config("vs")
