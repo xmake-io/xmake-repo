@@ -12,8 +12,6 @@ package("tao_idl")
 
     add_deps("ace", {configs = {shared = true}})
 
-    add_links("ACE", "TAO_IDL_FE", "TAO_IDL_BE")
-
     on_load(function (package)
         package:addenv("PATH", "bin")
     end)
@@ -64,6 +62,7 @@ package("tao_idl")
         end
         os.cd("apps/gperf/src")
         io.replace("GNUmakefile.gperf", [[../../../lib]], ace_libdir, {plain = true})
+        io.replace("GNUmakefile.gperf", [[= -L.]], [[= -L]] .. ace_libdir, {plain = true})
         make.build(package, {"all"}, {envs = envs})
         make.make(package, {"install"}, {envs = envs})
         os.cd("../../../TAO/TAO_IDL")
@@ -78,6 +77,7 @@ package("tao_idl")
         io.replace("GNUmakefile.TAO_IDL_ACE", [[$(KEEP_GOING)@cd ../../ace && $(MAKE) -f GNUmakefile.ACE $(@)]], [[]], {plain = true})
         for _, GNUmakefile in ipairs(os.files("GNUmakefile.*")) do
             io.replace(GNUmakefile, [[../../lib]], ace_libdir, {plain = true})
+            io.replace(GNUmakefile, [[= -L.]], [[= -L]] .. ace_libdir, {plain = true})
         end
         make.build(package, {"all"}, {envs = envs})
         make.make(package, {"install"}, {envs = envs})
