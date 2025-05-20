@@ -51,15 +51,18 @@ package("tao_idl")
         envs.TAO_ROOT = path.join(os.curdir(), "TAO")
         envs.INSTALL_PREFIX = package:installdir()
         local ace_libdir
+        local lib_paths = {}
         local packagedep = package:dep("ace")
         if packagedep then
             local fetchinfo = packagedep:fetch()
             if fetchinfo then
                 for _, linkdir in ipairs(fetchinfo.linkdirs) do
-                    ace_libdir = "-L" .. path.unix(linkdir) .. " " .. ace_libdir
+                    table.insert(lib_paths, linkdir)
                 end
             end
         end
+        ace_libdir = table.concat(lib_paths, " -L")
+        ace_libdir = "-L" .. ace_libdir
         os.cd("apps/gperf/src")
         io.replace("GNUmakefile.gperf", [[-L../../../lib]], ace_libdir, {plain = true})
         make.build(package, {"all"}, {envs = envs})
