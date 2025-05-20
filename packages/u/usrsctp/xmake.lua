@@ -5,7 +5,7 @@ package("usrsctp")
     add_urls("https://github.com/sctplab/usrsctp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/sctplab/usrsctp.git")
 
-    add_versions("v0.9.5.0", "260107caf318650a57a8caa593550e39bca6943e93f970c80d6c17e59d62cd92")
+    add_versions("0.9.5.0", "260107caf318650a57a8caa593550e39bca6943e93f970c80d6c17e59d62cd92")
     
     add_configs("invariants", {description = "Add runtime checks", default = false, type = "boolean"})
     add_configs("inet", {description = "Support IPv4", default = true, type = "boolean"})
