@@ -6,6 +6,7 @@ package("libdicom")
     add_urls("https://github.com/ImagingDataCommons/libdicom/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ImagingDataCommons/libdicom.git")
 
+    add_versions("v1.2.0", "c44da64a7baceab02ce44c2a5d08f36f192ac6c284f49122328d8588811a38e6")
     add_versions("v1.1.0", "a0ab640e050f373bc5a3e1ec99bee7d5b488652340855223a73002181b094ae8")
 
     add_deps("meson", "ninja")
