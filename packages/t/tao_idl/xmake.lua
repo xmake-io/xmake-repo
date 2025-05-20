@@ -51,16 +51,7 @@ package("tao_idl")
         envs.LIBCHECK = "1"
         envs.ACE_ROOT = os.curdir()
         envs.TAO_ROOT = path.join(os.curdir(), "TAO")
-        os.cd("TAO/TAO_IDL")
-        io.replace("GNUmakefile.TAO_IDL_ACE",
-            [[depend: ACE-depend gperf-depend TAO_IDL_FE-depend TAO_IDL_BE-depend TAO_IDL_BE_VIS_A-depend TAO_IDL_BE_VIS_C-depend TAO_IDL_BE_VIS_E-depend TAO_IDL_BE_VIS_I-depend TAO_IDL_BE_VIS_O-depend TAO_IDL_BE_VIS_S-depend TAO_IDL_BE_VIS_U-depend TAO_IDL_BE_VIS_V-depend TAO_IDL_EXE-depend]],
-            [[depend: gperf-depend TAO_IDL_FE-depend TAO_IDL_BE-depend TAO_IDL_BE_VIS_A-depend TAO_IDL_BE_VIS_C-depend TAO_IDL_BE_VIS_E-depend TAO_IDL_BE_VIS_I-depend TAO_IDL_BE_VIS_O-depend TAO_IDL_BE_VIS_S-depend TAO_IDL_BE_VIS_U-depend TAO_IDL_BE_VIS_V-depend TAO_IDL_EXE-depend]],
-            {plain = true})
-        io.replace("GNUmakefile.TAO_IDL_ACE",
-            [[all: ACE gperf TAO_IDL_FE TAO_IDL_BE TAO_IDL_BE_VIS_A TAO_IDL_BE_VIS_C TAO_IDL_BE_VIS_E TAO_IDL_BE_VIS_I TAO_IDL_BE_VIS_O TAO_IDL_BE_VIS_S TAO_IDL_BE_VIS_U TAO_IDL_BE_VIS_V TAO_IDL_EXE]],
-            [[all: gperf TAO_IDL_FE TAO_IDL_BE TAO_IDL_BE_VIS_A TAO_IDL_BE_VIS_C TAO_IDL_BE_VIS_E TAO_IDL_BE_VIS_I TAO_IDL_BE_VIS_O TAO_IDL_BE_VIS_S TAO_IDL_BE_VIS_U TAO_IDL_BE_VIS_V TAO_IDL_EXE]],
-            {plain = true})
-        io.replace("GNUmakefile.TAO_IDL_ACE", [[$(KEEP_GOING)@cd ../../ace && $(MAKE) -f GNUmakefile.ACE $(@)]], [[]], {plain = true})
+        envs.INSTALL_PREFIX = package:installdir()
         local ace_libdir
         local packagedep = package:dep("ace")
         if packagedep then
@@ -71,33 +62,28 @@ package("tao_idl")
                 end
             end
         end
+        os.cd("apps/gperf/src")
+        io.replace("GNUmakefile.gperf", [[-L../../../lib]], [[-L]] .. ace_libdir ..  [[ -L../../../lib]], {plain = true})
+        io.replace("GNUmakefile.gperf", [[LIBPATHS := . "../../../lib"]], [[LIBPATHS := . "]] .. ace_libdir ..  [[" "../lib"]], {plain = true})
+        make.build(package, {"all"}, {envs = envs})
+        make.make(package, {"install"}, {envs = envs})
+        os.cd("../../../TAO/TAO_IDL")
+        io.replace("GNUmakefile.TAO_IDL_ACE",
+            [[depend: ACE-depend gperf-depend TAO_IDL_FE-depend TAO_IDL_BE-depend TAO_IDL_BE_VIS_A-depend TAO_IDL_BE_VIS_C-depend TAO_IDL_BE_VIS_E-depend TAO_IDL_BE_VIS_I-depend TAO_IDL_BE_VIS_O-depend TAO_IDL_BE_VIS_S-depend TAO_IDL_BE_VIS_U-depend TAO_IDL_BE_VIS_V-depend TAO_IDL_EXE-depend]],
+            [[depend: gperf-depend TAO_IDL_FE-depend TAO_IDL_BE-depend TAO_IDL_BE_VIS_A-depend TAO_IDL_BE_VIS_C-depend TAO_IDL_BE_VIS_E-depend TAO_IDL_BE_VIS_I-depend TAO_IDL_BE_VIS_O-depend TAO_IDL_BE_VIS_S-depend TAO_IDL_BE_VIS_U-depend TAO_IDL_BE_VIS_V-depend TAO_IDL_EXE-depend]],
+            {plain = true})
+        io.replace("GNUmakefile.TAO_IDL_ACE",
+            [[all: ACE gperf TAO_IDL_FE TAO_IDL_BE TAO_IDL_BE_VIS_A TAO_IDL_BE_VIS_C TAO_IDL_BE_VIS_E TAO_IDL_BE_VIS_I TAO_IDL_BE_VIS_O TAO_IDL_BE_VIS_S TAO_IDL_BE_VIS_U TAO_IDL_BE_VIS_V TAO_IDL_EXE]],
+            [[all: gperf TAO_IDL_FE TAO_IDL_BE TAO_IDL_BE_VIS_A TAO_IDL_BE_VIS_C TAO_IDL_BE_VIS_E TAO_IDL_BE_VIS_I TAO_IDL_BE_VIS_O TAO_IDL_BE_VIS_S TAO_IDL_BE_VIS_U TAO_IDL_BE_VIS_V TAO_IDL_EXE]],
+            {plain = true})
+        io.replace("GNUmakefile.TAO_IDL_ACE", [[$(KEEP_GOING)@cd ../../ace && $(MAKE) -f GNUmakefile.ACE $(@)]], [[]], {plain = true})
         for _, GNUmakefile in ipairs(os.files("GNUmakefile.*")) do
             io.replace(GNUmakefile, [[-L../../lib]], [[-L]] .. ace_libdir ..  [[ -L../../lib]], {plain = true})
             io.replace(GNUmakefile, [[LIBPATHS := . "../../lib"]], [[LIBPATHS := . "]] .. ace_libdir ..  [[" "../lib"]], {plain = true})
         end
-
-        -- os.trycp(ace_libdir .."/*", package:installdir("lib"))
-        -- os.trycp(ace_libdir .."/*", package:installdir("bin"))
-        -- wtf
-        -- if package:is_plat("linux", "bsd") then
-        --     envs.LDFLAGS = "-Wl,-rpath,$ORIGIN/../lib"
-        -- elseif package:is_plat("macosx") then
-        --     envs.LDFLAGS = "-Wl,-rpath,@loader_path/../lib"
-        -- end
-
         make.build(package, {"all"}, {envs = envs})
-        os.cd("../..")
-        os.trycp("apps/gperf/src/ace_gperf", package:installdir("bin"))
-        os.trycp("bin/tao_idl", package:installdir("bin"))
-        os.trycp("**.dylib", package:installdir("lib"))
-        os.trycp("**.so", package:installdir("lib"))
-        os.trycp("**.a", package:installdir("lib"))
-
-        os.trycp("**.dylib", package:installdir("bin"))
-        os.trycp("**.so", package:installdir("bin"))
-
-        os.trycp("**.so.*", package:installdir("bin"))
-        os.trycp("**.so.*", package:installdir("lib"))
+        make.make(package, {"install"}, {envs = envs})
+        os.tryrm(path.join(package:installdir(), "share"))
     end)
 
     on_install("windows", function(package)
