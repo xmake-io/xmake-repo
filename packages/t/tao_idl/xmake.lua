@@ -16,7 +16,7 @@ package("tao_idl")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("linux", "macosx", "bsd", "iphoneos", "android", function(package)
+    on_install("linux", "macosx", "iphoneos", function(package)
         import("package.tools.make")
         local envs = make.buildenvs(package)
         if package:is_plat("linux") then
