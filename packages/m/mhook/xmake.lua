@@ -7,7 +7,7 @@ package("mhook")
 
     add_versions("2022.04.12", "93ce2fcc6f91c9ee696a04fc07798e7cb13a6070")
 
-    on_install("windows", "mingw", "msys", function (package)
+    on_install("windows|!arm*", "mingw|!arm*", "msys", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             target("mhook")
