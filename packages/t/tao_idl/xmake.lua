@@ -25,26 +25,11 @@ package("tao_idl")
         elseif package:is_plat("macosx") then
             io.writefile("ace/config.h", [[#include "ace/config-macosx.h"]])
             io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_macosx.GNU]])
-        elseif package:is_plat("bsd") then
-            io.writefile("ace/config.h", [[#include "ace/config-freebsd.h"]])
-            io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_freebsd.GNU]])
         elseif package:is_plat("iphoneos") then
             io.writefile("ace/config.h", [[#include "ace/config-macosx-iOS.h"]])
             io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_macosx_iOS.GNU]])
             envs.IPHONE_TARGET = "HARDWARE"
             io.replace("include/makeinclude/platform_macosx_iOS.GNU", "CCFLAGS += -DACE_HAS_IOS", "CCFLAGS += -DACE_HAS_IOS -std=c++17", {plain = true})
-        else
-            import("core.tool.toolchain")
-            io.writefile("ace/config.h", [[#include "ace/config-android.h"]])
-            io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_android.GNU]])
-            local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
-            local ndk_sdkver = ndk:config("ndk_sdkver")
-            local ndk_dir = ndk:config("ndk")
-            envs.android_abi = package:arch()
-            envs.android_ndk = path.unix(ndk_dir)
-            envs.android_api = ndk_sdkver
-            envs.ARFLAGS = [[rc]]
-            io.replace("include/makeinclude/platform_android.GNU", "OCCFLAGS ?= -O3", "OCCFLAGS ?= -O3\nCCFLAGS += -std=c++17", {plain = true})
         end
         envs.LIBCHECK = "1"
         envs.ACE_ROOT = os.curdir()
