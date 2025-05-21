@@ -1,6 +1,7 @@
 package("usrsctp")
     set_homepage("https://github.com/sctplab/usrsctp")
     set_description("A portable SCTP userland stack")
+    set_license("BSD-3-Clause")
 
     add_urls("https://github.com/sctplab/usrsctp/archive/refs/tags/$(version).tar.gz", {version = function (version)
         return version:gsub("%+", ".")
@@ -17,10 +18,7 @@ package("usrsctp")
     add_configs("invariants", {description = "Add runtime checks", default = false, type = "boolean"})
     add_configs("inet", {description = "Support IPv4", default = true, type = "boolean"})
     add_configs("inet6", {description = "Support IPv6", default = true, type = "boolean"})
-    add_configs("werror", {description = "Treat warning as error", default = false, type = "boolean"})
-    add_configs("sanitizer_address", {description = "Compile with address sanitizer", default = false, type = "boolean"})
     add_configs("sanitizer_memory", {description = "Compile with memory sanitizer", default = false, type = "boolean"})
-    add_configs("build_fuzzer", {description = "Compile in clang fuzzing mode", default = false, type = "boolean"})
 
     add_deps("cmake")
 
@@ -38,8 +36,8 @@ package("usrsctp")
         end)
     end
 
-    on_install("windows", "linux", "macosx", "iphoneos", "android", "cross", "bsd", "mingw", function (package)
-        local configs ={"-Dsctp_build_programs=0"}
+    on_install("!wasm", function (package)
+        local configs = {"-Dsctp_werror=0", "-Dsctp_build_programs=0"}
         if package:is_debug() then
             table.insert(configs, "-DCMAKE_BUILD_TYPE=Debug")
             table.insert(configs, "-Dsctp_debug=1")
@@ -49,6 +47,7 @@ package("usrsctp")
         end
 
         table.insert(configs, "-Dsctp_build_shared_lib=" .. (package:config("shared") and "1" or "0"))
+        table.insert(configs, "-Dsctp_sanitizer_address=" .. (package:config("asan") and "1" or "0"))
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
                 table.insert(configs, "-Dsctp_" .. name .. "=" .. (enabled and "1" or "0"))
