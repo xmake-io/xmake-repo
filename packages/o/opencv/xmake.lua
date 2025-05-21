@@ -179,7 +179,7 @@ package("opencv")
             table.insert(configs, "-DBUILD_WITH_STATIC_CRT=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
             if package:is_arch("arm64") then
                 -- https://github.com/opencv/opencv/issues/25052
-                table.insert(configs, "-DCPU_BASELINE=NEON")
+                table.insert(configs, "-DCPU_NEON_FP16_SUPPORTED=OFF")
                 -- https://github.com/opencv/opencv/issues/24235
                 table.insert(configs, "-DOPENCV_SKIP_SYSTEM_PROCESSOR_DETECTION=ON")
                 table.insert(configs, "-DAARCH64=ON")
