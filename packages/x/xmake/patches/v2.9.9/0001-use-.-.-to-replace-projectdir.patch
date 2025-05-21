@@ -1,0 +1,152 @@
+From 509d6139d93e64c06086591597aa71c486a37800 Mon Sep 17 00:00:00 2001
+From: "Wu, Zhenyu" <wuzhenyu@ustc.edu>
+Date: Wed, 21 May 2025 21:14:40 +0800
+Subject: [PATCH] use ../../ to replace $(projectdir)
+
+---
+ core/src/cli/xmake.lua   | 24 ++++++++++++------------
+ core/src/cli/xmake.sh    | 30 +++++++++++++++---------------
+ core/src/xmake/xmake.lua |  2 +-
+ core/src/xmake/xmake.sh  |  2 +-
+ xmake.lua                |  1 +
+ 5 files changed, 30 insertions(+), 29 deletions(-)
+ create mode 100644 xmake.lua
+
+diff --git a/core/src/cli/xmake.lua b/core/src/cli/xmake.lua
+index 8a94aa9..99408f8 100644
+--- a/core/src/cli/xmake.lua
++++ b/core/src/cli/xmake.lua
+@@ -17,7 +17,7 @@ target("cli")
+     add_defines("__tb_prefix__=\"xmake\"")
+ 
+     -- add includes directory
+-    add_includedirs("$(projectdir)", "$(projectdir)/src")
++    add_includedirs("../..", "../../src")
+ 
+     -- add common source files
+     add_files("**.c")
+@@ -54,22 +54,22 @@ target("cli")
+ 
+     -- add install files
+     if is_plat("windows") then
+-        add_installfiles("$(projectdir)/../LICENSE.md")
+-        add_installfiles("$(projectdir)/../NOTICE.md")
+-        add_installfiles("$(projectdir)/../xmake/(**.lua)")
+-        add_installfiles("$(projectdir)/../xmake/(scripts/**)")
+-        add_installfiles("$(projectdir)/../xmake/(templates/**)")
+-        add_installfiles("$(projectdir)/../scripts/xrepo.bat")
+-        add_installfiles("$(projectdir)/../scripts/xrepo.ps1")
++        add_installfiles("../../../LICENSE.md")
++        add_installfiles("../../../NOTICE.md")
++        add_installfiles("../../../xmake/(**.lua)")
++        add_installfiles("../../../xmake/(scripts/**)")
++        add_installfiles("../../../xmake/(templates/**)")
++        add_installfiles("../../../scripts/xrepo.bat")
++        add_installfiles("../../../scripts/xrepo.ps1")
+         set_prefixdir("/", {bindir = "/"})
+         after_install(function (target)
+             os.cp(path.join(os.programdir(), "winenv"), target:installdir())
+         end)
+     else
+-        add_installfiles("$(projectdir)/../(xmake/**.lua)", {prefixdir = "share"})
+-        add_installfiles("$(projectdir)/../(xmake/scripts/**)", {prefixdir = "share"})
+-        add_installfiles("$(projectdir)/../(xmake/templates/**)", {prefixdir = "share"})
+-        add_installfiles("$(projectdir)/../scripts/xrepo.sh", {prefixdir = "bin", filename = "xrepo"})
++        add_installfiles("../../../(xmake/**.lua)", {prefixdir = "share"})
++        add_installfiles("../../../(xmake/scripts/**)", {prefixdir = "share"})
++        add_installfiles("../../../(xmake/templates/**)", {prefixdir = "share"})
++        add_installfiles("../../../scripts/xrepo.sh", {prefixdir = "bin", filename = "xrepo"})
+     end
+ 
+     before_installcmd(function (target, batchcmds, opt)
+diff --git a/core/src/cli/xmake.sh b/core/src/cli/xmake.sh
+index e2b3882..e088146 100755
+--- a/core/src/cli/xmake.sh
++++ b/core/src/cli/xmake.sh
+@@ -10,7 +10,7 @@ target "cli"
+     add_defines "__tb_prefix__=\"xmake\""
+ 
+     # add includes directory
+-    add_includedirs "${projectdir}/core" "${projectdir}/core/src"
++    add_includedirs "../../../core" "../../../core/src"
+ 
+     # add the common source files
+     add_files "**.c"
+@@ -23,17 +23,17 @@ target "cli"
+     fi
+ 
+     # add install files
+-    add_installfiles "${projectdir}/(xmake/**.lua)" "share"
+-    add_installfiles "${projectdir}/(xmake/scripts/*)" "share"
+-    add_installfiles "${projectdir}/(xmake/scripts/cmake_importfiles/**)" "share"
+-    add_installfiles "${projectdir}/(xmake/scripts/completions/**)" "share"
+-    add_installfiles "${projectdir}/(xmake/scripts/xpack/**)" "share"
+-    add_installfiles "${projectdir}/(xmake/scripts/xrepo/**)" "share"
+-    add_installfiles "${projectdir}/(xmake/scripts/virtualenvs/**)" "share"
+-    add_installfiles "${projectdir}/(xmake/scripts/conan/**)" "share"
+-    add_installfiles "${projectdir}/(xmake/scripts/module/**)" "share"
+-    add_installfiles "${projectdir}/(xmake/templates/**)" "share"
+-    add_installfiles "${projectdir}/scripts/xrepo.sh" "bin" "xrepo"
++    add_installfiles "../../../(xmake/**.lua)" "share"
++    add_installfiles "../../../(xmake/scripts/*)" "share"
++    add_installfiles "../../../(xmake/scripts/cmake_importfiles/**)" "share"
++    add_installfiles "../../../(xmake/scripts/completions/**)" "share"
++    add_installfiles "../../../(xmake/scripts/xpack/**)" "share"
++    add_installfiles "../../../(xmake/scripts/xrepo/**)" "share"
++    add_installfiles "../../../(xmake/scripts/virtualenvs/**)" "share"
++    add_installfiles "../../../(xmake/scripts/conan/**)" "share"
++    add_installfiles "../../../(xmake/scripts/module/**)" "share"
++    add_installfiles "../../../(xmake/templates/**)" "share"
++    add_installfiles "../../../scripts/xrepo.sh" "bin" "xrepo"
+ 
+     # fix os.exec() call incorrect program from /mingw64/bin. e.g. python, ..
+     #
+@@ -68,9 +68,9 @@ xmake_after_install() {
+     local installdir=${2}
+     if test_eq "${project_generator}" "gmake"; then
+         print "\t@if test -f ${installdir}/bin/xmake.exe; then rm ${installdir}/bin/xmake.exe; fi" >> "${xmake_sh_makefile}"
+-        print "\t@cp ${projectdir}/scripts/msys/xmake.sh ${installdir}/bin/xmake" >> "${xmake_sh_makefile}"
+-        print "\t@cp ${projectdir}/scripts/msys/xmake.cmd ${installdir}/bin/xmake.cmd" >> "${xmake_sh_makefile}"
+-        print "\t@cp ${projectdir}/scripts/msys/xmake.ps1 ${installdir}/bin/xmake.ps1" >> "${xmake_sh_makefile}"
++        print "\t@cp ../../../scripts/msys/xmake.sh ${installdir}/bin/xmake" >> "${xmake_sh_makefile}"
++        print "\t@cp ../../../scripts/msys/xmake.cmd ${installdir}/bin/xmake.cmd" >> "${xmake_sh_makefile}"
++        print "\t@cp ../../../scripts/msys/xmake.ps1 ${installdir}/bin/xmake.ps1" >> "${xmake_sh_makefile}"
+         print "\t@cp ${builddir}/xmake.exe ${installdir}/share/xmake" >> "${xmake_sh_makefile}"
+     fi
+ }
+diff --git a/core/src/xmake/xmake.lua b/core/src/xmake/xmake.lua
+index ac943fb..78748dd 100644
+--- a/core/src/xmake/xmake.lua
++++ b/core/src/xmake/xmake.lua
+@@ -34,7 +34,7 @@ target("xmake")
+     add_includedirs("..", {interface = true})
+     add_includedirs("$(buildir)/$(plat)/$(arch)/$(mode)", {public = true})
+     add_includedirs("../xxhash")
+-    add_includedirs("$(projectdir)/../xmake/scripts/module")
++    add_includedirs("../../../xmake/scripts/module")
+ 
+     -- add header files
+     add_headerfiles("../(xmake/*.h)")
+diff --git a/core/src/xmake/xmake.sh b/core/src/xmake/xmake.sh
+index 6c45b6f..4568612 100755
+--- a/core/src/xmake/xmake.sh
++++ b/core/src/xmake/xmake.sh
+@@ -50,7 +50,7 @@ target "xmake"
+     add_includedirs ".." "{public}"
+     add_includedirs "${builddir}/${plat}/${arch}/${mode}" "{public}"
+     add_includedirs "../xxhash"
+-    add_includedirs "${projectdir}/xmake/scripts/module"
++    add_includedirs "../../../xmake/scripts/module"
+ 
+     # add the common source files
+     add_files "*.c"
+diff --git a/xmake.lua b/xmake.lua
+new file mode 100644
+index 0000000..3dc9093
+--- /dev/null
++++ b/xmake.lua
+@@ -0,0 +1 @@
++includes("core")
+-- 
+2.48.1
+
