@@ -24,7 +24,12 @@ package("jansson")
             table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
             import("package.tools.autoconf").install(package, configs)
         else
-            local configs = {"-DJANSSON_EXAMPLES=OFF", "-DJANSSON_BUILD_DOCS=OFF", "-DJANSSON_WITHOUT_TESTS=ON"}
+            local configs = {
+                "-DJANSSON_EXAMPLES=OFF",
+                "-DJANSSON_BUILD_DOCS=OFF",
+                "-DJANSSON_WITHOUT_TESTS=ON",
+                "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
+            }
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
             table.insert(configs, "-DJANSSON_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
             if package:is_plat("windows") then
