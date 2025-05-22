@@ -16,6 +16,60 @@ package("tao_idl")
         package:addenv("PATH", "bin")
     end)
 
+    on_install("linux", "macosx", "iphoneos", function(package)
+        import("package.tools.make")
+        local envs = make.buildenvs(package)
+        if package:is_plat("linux") then
+            io.writefile("ace/config.h", [[#include "ace/config-linux.h"]])
+            io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_linux_common.GNU]])
+        elseif package:is_plat("macosx") then
+            io.writefile("ace/config.h", [[#include "ace/config-macosx.h"]])
+            io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_macosx.GNU]])
+        elseif package:is_plat("iphoneos") then
+            io.writefile("ace/config.h", [[#include "ace/config-macosx-iOS.h"]])
+            io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_macosx_iOS.GNU]])
+            envs.IPHONE_TARGET = "HARDWARE"
+            io.replace("include/makeinclude/platform_macosx_iOS.GNU", "CCFLAGS += -DACE_HAS_IOS", "CCFLAGS += -DACE_HAS_IOS -std=c++17", {plain = true})
+        end
+        envs.LIBCHECK = "1"
+        envs.ACE_ROOT = os.curdir()
+        envs.TAO_ROOT = path.join(os.curdir(), "TAO")
+        envs.INSTALL_PREFIX = package:installdir()
+        local ace_libdir
+        local lib_paths = {}
+        local packagedep = package:dep("ace")
+        if packagedep then
+            local fetchinfo = packagedep:fetch()
+            if fetchinfo then
+                for _, linkdir in ipairs(fetchinfo.linkdirs) do
+                    table.insert(lib_paths, linkdir)
+                end
+            end
+        end
+        ace_libdir = table.concat(lib_paths, " -L")
+        ace_libdir = "-L" .. ace_libdir
+        os.cd("apps/gperf/src")
+        io.replace("GNUmakefile.gperf", [[-L../../../lib]], ace_libdir, {plain = true})
+        make.build(package, {"all"}, {envs = envs})
+        make.make(package, {"install"}, {envs = envs})
+        os.cd("../../../TAO/TAO_IDL")
+        io.replace("GNUmakefile.TAO_IDL_ACE",
+            [[depend: ACE-depend gperf-depend TAO_IDL_FE-depend TAO_IDL_BE-depend TAO_IDL_BE_VIS_A-depend TAO_IDL_BE_VIS_C-depend TAO_IDL_BE_VIS_E-depend TAO_IDL_BE_VIS_I-depend TAO_IDL_BE_VIS_O-depend TAO_IDL_BE_VIS_S-depend TAO_IDL_BE_VIS_U-depend TAO_IDL_BE_VIS_V-depend TAO_IDL_EXE-depend]],
+            [[depend: gperf-depend TAO_IDL_FE-depend TAO_IDL_BE-depend TAO_IDL_BE_VIS_A-depend TAO_IDL_BE_VIS_C-depend TAO_IDL_BE_VIS_E-depend TAO_IDL_BE_VIS_I-depend TAO_IDL_BE_VIS_O-depend TAO_IDL_BE_VIS_S-depend TAO_IDL_BE_VIS_U-depend TAO_IDL_BE_VIS_V-depend TAO_IDL_EXE-depend]],
+            {plain = true})
+        io.replace("GNUmakefile.TAO_IDL_ACE",
+            [[all: ACE gperf TAO_IDL_FE TAO_IDL_BE TAO_IDL_BE_VIS_A TAO_IDL_BE_VIS_C TAO_IDL_BE_VIS_E TAO_IDL_BE_VIS_I TAO_IDL_BE_VIS_O TAO_IDL_BE_VIS_S TAO_IDL_BE_VIS_U TAO_IDL_BE_VIS_V TAO_IDL_EXE]],
+            [[all: gperf TAO_IDL_FE TAO_IDL_BE TAO_IDL_BE_VIS_A TAO_IDL_BE_VIS_C TAO_IDL_BE_VIS_E TAO_IDL_BE_VIS_I TAO_IDL_BE_VIS_O TAO_IDL_BE_VIS_S TAO_IDL_BE_VIS_U TAO_IDL_BE_VIS_V TAO_IDL_EXE]],
+            {plain = true})
+        io.replace("GNUmakefile.TAO_IDL_ACE", [[$(KEEP_GOING)@cd ../../ace && $(MAKE) -f GNUmakefile.ACE $(@)]], [[]], {plain = true})
+        for _, GNUmakefile in ipairs(os.files("GNUmakefile.*")) do
+            io.replace(GNUmakefile, [[-L../../lib]], ace_libdir, {plain = true})
+        end
+        make.build(package, {"all"}, {envs = envs})
+        make.make(package, {"install"}, {envs = envs})
+        os.tryrm(path.join(package:installdir(), "share"))
+    end)
+
     on_install("windows", function(package)
         import("package.tools.msbuild")
         local include_paths = {"..", "include", "be_include", "fe"}
