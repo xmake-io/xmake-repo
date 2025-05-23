@@ -1,5 +1,6 @@
 package("sqlite3-lemon")
 
+    set_kind("binary")
     set_homepage("https://sqlite.org/")
     set_description("A parser generator")
     set_license("Public Domain")
