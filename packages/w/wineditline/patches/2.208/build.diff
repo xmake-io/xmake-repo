@@ -13,25 +13,20 @@ index a9f03d6..f901273 100644
          CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
          CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO)
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index 9eb9d88..6c26217 100644
+index 9eb9d88..a7f35ab 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
-@@ -1,8 +1,14 @@
+@@ -1,7 +1,9 @@
  include_directories("${PROJECT_SOURCE_DIR}/src")
  include_directories("${PROJECT_BINARY_DIR}")
  include(GenerateExportHeader)
 +if(NOT(BUILD_SHARED_LIBS))
  add_library(edit_static STATIC editline.c fn_complete.c history.c)
 +else()
-+if(WIN32)
  add_library(edit SHARED editline.c fn_complete.c history.c libedit.def)
-+else()
-+add_library(edit SHARED editline.c fn_complete.c history.c)
-+endif()
  set_target_properties(edit PROPERTIES PREFIX "")
  GENERATE_EXPORT_HEADER(edit
-   BASE_NAME edit
-@@ -10,19 +16,23 @@ GENERATE_EXPORT_HEADER(edit
+@@ -10,19 +12,23 @@ GENERATE_EXPORT_HEADER(edit
    EXPORT_FILE_NAME edit_Export.h
    STATIC_DEFINE edit_BUILT_AS_STATIC
  )
