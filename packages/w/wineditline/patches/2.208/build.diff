@@ -1,0 +1,66 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a9f03d6..f901273 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -2,7 +2,8 @@ cmake_minimum_required (VERSION 2.8.12)
+ project (WinEditLine)
+ set (WinEditLine_VERSION_MAJOR 2)
+ set (WinEditLine_VERSION_MINOR 2)
+-if (MSVC AND MSVC_USE_STATIC_RUNTIME)
++option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
++if (0)
+ foreach(flag_var
+         CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
+         CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO)
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 9eb9d88..6c26217 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -1,8 +1,14 @@
+ include_directories("${PROJECT_SOURCE_DIR}/src")
+ include_directories("${PROJECT_BINARY_DIR}")
+ include(GenerateExportHeader)
++if(NOT(BUILD_SHARED_LIBS))
+ add_library(edit_static STATIC editline.c fn_complete.c history.c)
++else()
++if(WIN32)
+ add_library(edit SHARED editline.c fn_complete.c history.c libedit.def)
++else()
++add_library(edit SHARED editline.c fn_complete.c history.c)
++endif()
+ set_target_properties(edit PROPERTIES PREFIX "")
+ GENERATE_EXPORT_HEADER(edit
+   BASE_NAME edit
+@@ -10,19 +16,23 @@ GENERATE_EXPORT_HEADER(edit
+   EXPORT_FILE_NAME edit_Export.h
+   STATIC_DEFINE edit_BUILT_AS_STATIC
+ )
+-add_executable(edit_test libedit_test.c)
+-target_link_libraries(edit_test edit)
+-add_executable(edit_test_dll libedit_test_dll.c)
+-install (TARGETS edit edit_test edit_test_dll
+-  DESTINATION "${CMAKE_SOURCE_DIR}/bin${LIB_SUFFIX}")
++endif()
++if(BUILD_SHARED_LIBS)
++install (TARGETS edit
++  RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
++else()
+ install (TARGETS edit_static
+-  DESTINATION "${CMAKE_SOURCE_DIR}/lib${LIB_SUFFIX}")
++  RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
++endif()
+ install (FILES editline/readline.h
+-  DESTINATION "${CMAKE_SOURCE_DIR}/include/editline")
++  DESTINATION "include/editline")
+ string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
+ if (MSVC AND uppercase_CMAKE_BUILD_TYPE MATCHES "DEBUG")
++  if(NOT(BUILD_SHARED_LIBS))
+   install (FILES ${CMAKE_CURRENT_BINARY_DIR}/Debug/edit_static.pdb
+-    DESTINATION "${CMAKE_SOURCE_DIR}/lib${LIB_SUFFIX}")
++    DESTINATION "lib")
++  else()
+   install (FILES ${CMAKE_CURRENT_BINARY_DIR}/Debug/edit.pdb
+-    DESTINATION "${CMAKE_SOURCE_DIR}/bin${LIB_SUFFIX}")
++    DESTINATION "bin")
++  endif()
+ endif()
