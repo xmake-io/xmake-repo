@@ -1,6 +1,7 @@
 package("wineditline")
     set_homepage("http://mingweditline.sourceforge.net")
     set_description("An EditLine API implementation for the native Windows Console")
+    add_license("BSD-3-Clause")
 
     add_urls("https://github.com/ptosco/wineditline/archive/refs/tags/wineditline-$(version).tar.gz",
              "https://github.com/ptosco/wineditline.git")
