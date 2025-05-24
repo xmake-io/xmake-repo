@@ -9,7 +9,7 @@ package("kokyu")
 
     add_versions("8.0.3", "d8fcd1f5fab609ab11ed86abdbd61e6d00d5305830fa6e57c17ce395af5e86dc")
 
-    add_deps("ace", {configs = {shared = true}})
+    add_deps("ace")
 
     on_load(function (package)
         package:add("defines", "ACE_HAS_CPP17")
