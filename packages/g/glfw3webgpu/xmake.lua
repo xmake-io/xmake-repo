@@ -14,7 +14,7 @@ package("glfw3webgpu")
     add_deps("wgpu-native", "glfw")
 
     if is_plat("macosx", "iphoneos") then
-        add_frameworks("Metal", "Foundation")
+        add_frameworks("Metal", "Foundation", "QuartzCore")
     end
 
     on_install("windows|x64", "windows|x86", "linux|x86_64", "macosx|x86_64", "macosx|arm64", function (package)
@@ -37,7 +37,7 @@ package("glfw3webgpu")
                 add_packages("glfw")
                 
                 if is_plat("iphoneos", "macosx") then
-                    add_frameworks("Metal", "Foundation")
+                    add_frameworks("Metal", "Foundation", "QuartzCore")
                     add_files("glfw3webgpu.m")
                 else
                     add_files("glfw3webgpu.c")
@@ -45,6 +45,15 @@ package("glfw3webgpu")
                 
                 if is_plat("windows") and is_kind("shared") then
                     add_rules("utils.symbols.export_all")
+                end
+
+                if is_plat("macosx", "iphoneos") then
+                    add_defines("_GLFW_COCOA")
+                elseif is_plat("windows") then
+                    add_defines("_GLFW_WIN32")
+                elseif is_plat("linux") then
+                    add_defines("_GLFW_X11")
+                    add_defines("_GLFW_WAYLAND")
                 end
         ]])
 
