@@ -1,5 +1,4 @@
 package("sqlite3-lemon")
-
     set_kind("binary")
     set_homepage("https://sqlite.org/")
     set_description("A parser generator")
@@ -27,10 +26,6 @@ package("sqlite3-lemon")
 
     add_versions("3.49.0+200", "c3101978244669a43bc09f44fa21e47a4e25cdf440f1829e9eff176b9a477862")
 
-    if is_plat("macosx", "linux", "bsd") then
-        add_syslinks("pthread", "dl")
-    end
-
     on_install(function (package) 
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
@@ -39,6 +34,9 @@ package("sqlite3-lemon")
             target("lemon")
                 set_kind("binary")
                 add_files("tool/lemon.c")
+                if is_plat("macosx", "linux", "bsd") then
+                    add_syslinks("pthread", "dl")
+                end
         ]])
         import("package.tools.xmake").install(package)
     end)
