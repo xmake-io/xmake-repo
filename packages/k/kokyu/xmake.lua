@@ -80,9 +80,6 @@ package("kokyu")
         os.cd("Kokyu")
         io.replace("GNUmakefile.Kokyu", [[-L../lib]], ace_libdir, {plain = true})
         io.replace("GNUmakefile", "Kokyu %$%(%@%).-FIFO %$%(%@%)", "Kokyu $(@)", {plain = false})
-        if not package:config("shared") then
-            io.replace("GNUmakefile.Kokyu", "CPPFLAGS += -DACE_AS_STATIC_LIBS", "CPPFLAGS += -DACE_AS_STATIC_LIBS\nLDFLAGS += -static", {plain = true})
-        end
         make.build(package, {"Kokyu"}, {envs = envs})
         os.trycp("**.dylib", package:installdir("lib"))
         os.trycp("**.so", package:installdir("lib"))
