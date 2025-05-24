@@ -63,7 +63,6 @@ package("ace")
             envs.android_api = ndk_sdkver
             envs.ARFLAGS = [[rc]]
             io.replace("include/makeinclude/platform_android.GNU", "OCCFLAGS ?= -O3", "OCCFLAGS ?= -O3\nCCFLAGS += -std=c++17", {plain = true})
-            io.replace("include/makeinclude/platform_android.GNU", "PLATFORM_SSL_LDFLAGS += --exclude-libs libcrypto.a,libssl.a", "PLATFORM_SSL_LDFLAGS += -Xlinker -hidden-lcrypto -Xlinker -hidden-lssl", {plain = true})
         end
         os.cp("ace/**.h", package:installdir("include/ace"), {rootdir = "ace"})
         os.cp("ace/**.inl", package:installdir("include/ace"), {rootdir = "ace"})
