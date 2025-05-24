@@ -27,7 +27,7 @@ package("kokyu")
         end
     end)
 
-    on_install("linux", "macosx", "bsd", "iphoneos", function(package)
+    on_install("linux", "macosx", "iphoneos", function(package)
         import("package.tools.make")
         local envs = make.buildenvs(package)
         if package:is_plat("linux") then
@@ -36,27 +36,11 @@ package("kokyu")
         elseif package:is_plat("macosx") then
             io.writefile("ace/config.h", [[#include "ace/config-macosx.h"]])
             io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_macosx.GNU]])
-        elseif package:is_plat("bsd") then
-            io.writefile("ace/config.h", [[#include "ace/config-freebsd.h"]])
-            io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_freebsd.GNU]])
         elseif package:is_plat("iphoneos") then
             io.writefile("ace/config.h", [[#include "ace/config-macosx-iOS.h"]])
             io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_macosx_iOS.GNU]])
             envs.IPHONE_TARGET = "HARDWARE"
             io.replace("include/makeinclude/platform_macosx_iOS.GNU", "CCFLAGS += -DACE_HAS_IOS", "CCFLAGS += -DACE_HAS_IOS -std=c++17", {plain = true})
-        else
-            import("core.tool.toolchain")
-            io.writefile("ace/config.h", [[#include "ace/config-android.h"]])
-            io.writefile("include/makeinclude/platform_macros.GNU", [[include $(ACE_ROOT)/include/makeinclude/platform_android.GNU]])
-            local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
-            local ndk_sdkver = ndk:config("ndk_sdkver")
-            local ndk_dir = ndk:config("ndk")
-            envs.android_abi = package:arch()
-            envs.android_ndk = path.unix(ndk_dir)
-            envs.android_api = ndk_sdkver
-            envs.ARFLAGS = [[rc]]
-            io.replace("include/makeinclude/platform_android.GNU", "OCCFLAGS ?= -O3", "OCCFLAGS ?= -O3\nCCFLAGS += -std=c++17", {plain = true})
-            io.replace("include/makeinclude/platform_android.GNU", "PLATFORM_SSL_LDFLAGS += --exclude-libs libcrypto.a,libssl.a", "PLATFORM_SSL_LDFLAGS += -Xlinker -hidden-lcrypto -Xlinker -hidden-lssl", {plain = true})
         end
         os.rm("Kokyu/tests")
         os.cp("Kokyu/**.h", package:installdir("include/Kokyu"), {rootdir = "Kokyu"})
