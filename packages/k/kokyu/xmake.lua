@@ -74,16 +74,19 @@ package("kokyu")
         end
         ace_libdir = table.concat(lib_paths, " -L")
         ace_libdir = "-L" .. ace_libdir
-        local configs = {
-            "debug=" .. (package:is_debug() and "1" or "0"),
-            "shared_libs=" .. (package:config("shared") and "1" or "0"),
-            "static_libs=" .. (package:config("shared") and "0" or "1")
-        }
+        envs.debug = (package:is_debug() and "1" or "0")
+        envs.shared_libs = (package:config("shared") and "1" or "0")
+        envs.static_libs = (package:config("shared") and "0" or "1")
         os.cd("Kokyu")
         io.replace("GNUmakefile.Kokyu", [[-L../lib]], ace_libdir, {plain = true})
         io.replace("GNUmakefile", "Kokyu %$%(%@%).-FIFO %$%(%@%)", "Kokyu $(@)", {plain = false})
+        if not package:config("shared") then
+            io.replace("GNUmakefile.Kokyu", "CPPFLAGS += -DACE_AS_STATIC_LIBS", "CPPFLAGS += -DACE_AS_STATIC_LIBS\nLDFLAGS += -static", {plain = true})
+        end
         make.build(package, {"Kokyu"}, {envs = envs})
-        make.make(package, {"install"}, {envs = envs})
+        os.trycp("**.dylib", package:installdir("lib"))
+        os.trycp("**.so", package:installdir("lib"))
+        os.trycp("**.a", package:installdir("lib"))
     end)
 
     on_install("windows", function(package)
@@ -159,7 +162,7 @@ package("kokyu")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
+        local usage_test = [[
             #include <Kokyu/Kokyu.h>
             namespace Kokyu {
             class MyDispatcher : public Dispatcher_Impl 
@@ -198,5 +201,11 @@ package("kokyu")
                 auto result = dispatcher.init(attr);
             }
             ]]
-            }, {configs = {languages = "c++17"}}))
+        if package:is_plat("windows") then
+            usage_test = [[
+                #define WIN32_LEAN_AND_MEAN
+                #include <windows.h>
+            ]] .. usage_test
+        end
+        assert(package:check_cxxsnippets({test = usage_test}, {configs = {languages = "c++17"}}))
     end)
