@@ -9,7 +9,11 @@ package("kokyu")
 
     add_versions("8.0.3", "d8fcd1f5fab609ab11ed86abdbd61e6d00d5305830fa6e57c17ce395af5e86dc")
 
-    add_deps("ace")
+    if is_plat("linux", "bsd") then
+        add_deps("ace", {configs = {shared = true}})
+    else
+        add_deps("ace")
+    end
 
     on_load(function (package)
         package:add("defines", "ACE_HAS_CPP17")
@@ -23,7 +27,7 @@ package("kokyu")
         end
     end)
 
-    on_install("linux", "macosx", "bsd", "iphoneos", "android", function(package)
+    on_install("linux", "macosx", "bsd", "iphoneos", function(package)
         import("package.tools.make")
         local envs = make.buildenvs(package)
         if package:is_plat("linux") then
@@ -168,7 +172,6 @@ package("kokyu")
                     MyDispatcher() = default;
 
                 private:
-                    // Implement pure virtual functions
                     int init_i(const Dispatcher_Attributes& attr) override 
                     {
                         return 0;
@@ -191,7 +194,6 @@ package("kokyu")
                     }
                 };
             } // namespace Kokyu
-
             void test() {
                 Kokyu::MyDispatcher dispatcher;
                 Kokyu::Dispatcher_Attributes attr;
