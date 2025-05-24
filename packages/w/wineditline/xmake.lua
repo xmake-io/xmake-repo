@@ -7,7 +7,7 @@ package("wineditline")
              "https://github.com/ptosco/wineditline.git")
 
     add_versions("2.208", "2df14abed2fadebf6e20bc0853b8b9b01f736ea3a5402420e0192029c6a23d80")
-    add_patches("2.208", "patches/2.208/build.diff", "f77caa6a795f797f735079ca8d25b8bd6b328bf76084384c9c95ffbc5dd37bcf")
+    add_patches("2.208", "patches/2.208/build.diff", "1d1a965c2c07ee930795915a950e3d223b4941229391242d297727e8b5bbbba1")
 
     add_deps("cmake")
 

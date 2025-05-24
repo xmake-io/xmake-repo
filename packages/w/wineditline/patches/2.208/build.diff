@@ -13,7 +13,7 @@ index a9f03d6..f901273 100644
          CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
          CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO)
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index 9eb9d88..a7f35ab 100644
+index 9eb9d88..66a5a8f 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
 @@ -1,7 +1,9 @@
@@ -26,7 +26,7 @@ index 9eb9d88..a7f35ab 100644
  add_library(edit SHARED editline.c fn_complete.c history.c libedit.def)
  set_target_properties(edit PROPERTIES PREFIX "")
  GENERATE_EXPORT_HEADER(edit
-@@ -10,19 +12,23 @@ GENERATE_EXPORT_HEADER(edit
+@@ -10,17 +12,18 @@ GENERATE_EXPORT_HEADER(edit
    EXPORT_FILE_NAME edit_Export.h
    STATIC_DEFINE edit_BUILT_AS_STATIC
  )
@@ -48,14 +48,8 @@ index 9eb9d88..a7f35ab 100644
 -  DESTINATION "${CMAKE_SOURCE_DIR}/include/editline")
 +  DESTINATION "include/editline")
  string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
- if (MSVC AND uppercase_CMAKE_BUILD_TYPE MATCHES "DEBUG")
-+  if(NOT(BUILD_SHARED_LIBS))
+-if (MSVC AND uppercase_CMAKE_BUILD_TYPE MATCHES "DEBUG")
++if (0)
    install (FILES ${CMAKE_CURRENT_BINARY_DIR}/Debug/edit_static.pdb
--    DESTINATION "${CMAKE_SOURCE_DIR}/lib${LIB_SUFFIX}")
-+    DESTINATION "lib")
-+  else()
+     DESTINATION "${CMAKE_SOURCE_DIR}/lib${LIB_SUFFIX}")
    install (FILES ${CMAKE_CURRENT_BINARY_DIR}/Debug/edit.pdb
--    DESTINATION "${CMAKE_SOURCE_DIR}/bin${LIB_SUFFIX}")
-+    DESTINATION "bin")
-+  endif()
- endif()
