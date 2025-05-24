@@ -41,7 +41,6 @@ package("sqlite3-lemon")
                 add_files("tool/lemon.c")
         ]])
         import("package.tools.xmake").install(package)
-        package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)
