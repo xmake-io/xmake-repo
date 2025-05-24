@@ -59,7 +59,7 @@ package("kokyu")
         os.cp("Kokyu/**.cpp", package:installdir("include/Kokyu"), {rootdir = "Kokyu"})
         os.cp("Kokyu/**.inl", package:installdir("include/Kokyu"), {rootdir = "Kokyu"})
         envs.LIBCHECK = "1"
-        envs.ACE_ROOT = os.curdir()
+        envs.ACE_ROOT = path.unix(os.curdir())
         envs.INSTALL_PREFIX = package:installdir()
         local ace_libdir
         local lib_paths = {}
