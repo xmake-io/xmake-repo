@@ -11,7 +11,7 @@ package("cpp-jwt")
 
     add_deps("nlohmann_json", "openssl3")
 
-    on_install("!wasm@macosx and !iphoneos@macosx and !android",function (package)
+    on_install(function (package)
         os.cp("include/jwt", package:installdir("include"))
     end)
 
