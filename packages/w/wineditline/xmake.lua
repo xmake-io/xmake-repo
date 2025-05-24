@@ -12,8 +12,6 @@ package("wineditline")
     add_deps("cmake")
 
     on_install("mingw", "msys", "windows", function (package)
-        io.replace("src/CMakeLists.txt", 'if (MSVC AND uppercase_CMAKE_BUILD_TYPE MATCHES "DEBUG")', "if(0)", {plain = true})
-
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
