@@ -18,6 +18,8 @@ package("dlib")
     add_configs("gif", {description = "Enable gif", default = false, type = "boolean"})
     add_configs("sqlite3", {description = "Enable sqlite3", default = false, type = "boolean"})
     add_configs("blas", {description = "Enable blas", default = false, type = "boolean"})
+    add_configs("lapack", {description = "Enable lapack", default = false, type = "boolean"})
+    add_configs("cuda", {description = "Enable cuda", default = false, type = "boolean"})
     add_configs("mkl", {description = "Enable mkl", default = false, type = "boolean"})
     add_configs("jxl", {description = "Enable jpeg xl", default = false, type = "boolean"})
     add_configs("ffmpeg", {description = "Enable ffmpeg", default = false, type = "boolean"})
@@ -46,6 +48,12 @@ package("dlib")
         end
         if package:config("blas") then
             package:add("deps", "openblas")
+        end
+        if package:config("lapack") then
+            package:add("deps", "lapack")
+        end
+        if package:config("cuda") then
+            package:add("deps", "cuda")
         end
         if package:config("mkl") then
             package:add("deps", "mkl")
@@ -84,6 +92,8 @@ package("dlib")
         table.insert(configs, "-DDLIB_GIF_SUPPORT=" .. (package:config("jpg") and "ON" or "OFF"))
         table.insert(configs, "-DDLIB_LINK_WITH_SQLITE3=" .. (package:config("sqlite3") and "ON" or "OFF"))
         table.insert(configs, "-DDLIB_USE_BLAS=" .. (package:config("blas") and "ON" or "OFF"))
+        table.insert(configs, "-DDLIB_USE_LAPACK=" .. (package:config("lapack") and "ON" or "OFF"))
+        table.insert(configs, "-DDLIB_USE_CUDA=" .. (package:config("cuda") and "ON" or "OFF"))
         table.insert(configs, "-DDLIB_USE_MKL_FFT=" .. (package:config("mkl") and "ON" or "OFF"))
         table.insert(configs, "-DDLIB_JXL_SUPPORT=" .. (package:config("jxl") and "ON" or "OFF"))
         table.insert(configs, "-DDLIB_USE_FFMPEG=" .. (package:config("ffmpeg") and "ON" or "OFF"))
