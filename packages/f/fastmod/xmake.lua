@@ -11,10 +11,14 @@ package("fastmod")
     add_versions("v0.1.0", "b80e759208d6b4318caa14b1851352c69e8c7a1f7895639e3af1d86944d2973b")
 
     add_deps("cmake")
-    on_install("windows|x64", "windows|arm64", "android|arm64*", "macosx", "iphoneos", "linux", "bsd", "wasm", function (package)
+    on_install(function (package)
         import("package.tools.cmake").install(package)
     end)
 
     on_test(function (package)
+        if package:check_sizeof("void*") == "4" then
+            raise("package(fastmod) unsupported 32-bit")
+        end
+
         assert(package:has_cfuncs("fastmod_u32", {includes = "fastmod.h"}))
     end)
