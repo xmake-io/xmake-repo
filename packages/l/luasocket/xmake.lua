@@ -67,14 +67,25 @@ package("luasocket")
         end
         msbuild.build(package, configs)
         os.cp("**.h", package:installdir("include"))
-        os.cp("*/*/socket/core.lib", path.join(package:installdir("lib"), "lua", lua_ver_major_minor, "socket", "core.lib"))
-        os.cp("*/*/mime/core.lib", path.join(package:installdir("lib"), "lua", lua_ver_major_minor, "mime", "core.lib"))
-        if package:config("shared") then
-            os.cp("*/*/socket/core.dll", path.join(package:installdir("lib"), "lua", lua_ver_major_minor, "socket", "core.dll"))
-            os.cp("*/*/mime/core.dll", path.join(package:installdir("lib"), "lua", lua_ver_major_minor, "mime", "core.dll"))
+        if package:is_arch("x64", "arm64") then
+            os.cp("*/*/socket/core.lib", path.join(package:installdir("lib"), "lua", lua_ver_major_minor, "socket", "core.lib"))
+            os.cp("*/*/mime/core.lib", path.join(package:installdir("lib"), "lua", lua_ver_major_minor, "mime", "core.lib"))
+            if package:config("shared") then
+                os.cp("*/*/socket/core.dll", path.join(package:installdir("lib"), "lua", lua_ver_major_minor, "socket", "core.dll"))
+                os.cp("*/*/mime/core.dll", path.join(package:installdir("lib"), "lua", lua_ver_major_minor, "mime", "core.dll"))
+            end
+            os.trycp("*/*/socket/**.pdb", path.join(package:installdir("lib"), "lua", lua_ver_major_minor, "socket", "core.pdb"))
+            os.trycp("*/*/mime/**.pdb", path.join(package:installdir("lib"), "lua", lua_ver_major_minor, "mime", "core.pdb"))
+        else
+            os.cp("*/socket/core.lib", path.join(package:installdir("lib"), "lua", lua_ver_major_minor, "socket", "core.lib"))
+            os.cp("*/mime/core.lib", path.join(package:installdir("lib"), "lua", lua_ver_major_minor, "mime", "core.lib"))
+            if package:config("shared") then
+                os.cp("*/socket/core.dll", path.join(package:installdir("lib"), "lua", lua_ver_major_minor, "socket", "core.dll"))
+                os.cp("*/mime/core.dll", path.join(package:installdir("lib"), "lua", lua_ver_major_minor, "mime", "core.dll"))
+            end
+            os.trycp("*/socket/**.pdb", path.join(package:installdir("lib"), "lua", lua_ver_major_minor, "socket", "core.pdb"))
+            os.trycp("*/mime/**.pdb", path.join(package:installdir("lib"), "lua", lua_ver_major_minor, "mime", "core.pdb"))
         end
-        os.trycp("*/*/socket/core.pdb", path.join(package:installdir("lib"), "lua", lua_ver_major_minor, "socket", "core.pdb"))
-        os.trycp("*/*/mime/core.pdb", path.join(package:installdir("lib"), "lua", lua_ver_major_minor, "mime", "core.pdb"))
         package:add("linkdirs", path.join("lib", "lua", lua_ver_major_minor, "socket"))
         package:add("linkdirs", path.join("lib", "lua", lua_ver_major_minor, "mime"))
     end)
