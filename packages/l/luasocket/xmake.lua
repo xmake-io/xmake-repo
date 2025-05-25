@@ -52,6 +52,7 @@ package("luasocket")
             if package:is_arch("arm64") then
                 io.replace(vcxproj, "|x64", "|ARM64", {plain = true})
                 io.replace(vcxproj, "<Platform>x64", "<Platform>ARM64", {plain = true})
+                io.replace(vcxproj, "<RandomizedBaseAddress>false</RandomizedBaseAddress>", "", {plain = true})
             end
             -- Switch vs_runtime MD / MDd -> MT / MTd
             if package:has_runtime("MT", "MTd") then
@@ -83,8 +84,8 @@ package("luasocket")
                 os.cp("*/socket/core.dll", path.join(package:installdir("lib"), "lua", lua_ver_major_minor, "socket", "core.dll"))
                 os.cp("*/mime/core.dll", path.join(package:installdir("lib"), "lua", lua_ver_major_minor, "mime", "core.dll"))
             end
-            os.trycp("*/socket/**.pdb", path.join(package:installdir("lib"), "lua", lua_ver_major_minor, "socket", "core.pdb"))
-            os.trycp("*/mime/**.pdb", path.join(package:installdir("lib"), "lua", lua_ver_major_minor, "mime", "core.pdb"))
+            os.trycp("*/socket/**.pdb", path.join(package:installdir("lib"), "lua", lua_ver_major_minor, "socket"))
+            os.trycp("*/mime/**.pdb", path.join(package:installdir("lib"), "lua", lua_ver_major_minor, "mime"))
         end
         package:add("linkdirs", path.join("lib", "lua", lua_ver_major_minor, "socket"))
         package:add("linkdirs", path.join("lib", "lua", lua_ver_major_minor, "mime"))
