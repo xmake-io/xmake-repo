@@ -6,7 +6,7 @@ package("ncnn")
     add_urls("https://github.com/Tencent/ncnn.git", {submodules = false})
     add_versions("latest", "master")
 
-    add_configs("vulkan", {description = "Enable Vulkan support", default = true, type = "boolean"})
+    add_configs("vulkan", {description = "Enable Vulkan support", default = false, type = "boolean"})
     add_configs("shared", {description = "Build shared library", default = false, type = "boolean"})
 
     add_deps("cmake")
