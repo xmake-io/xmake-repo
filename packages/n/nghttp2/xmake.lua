@@ -21,8 +21,10 @@ package("nghttp2")
 
     add_deps("cmake")
 
-    on_load("windows", function (package)
-        package:add("defines", "ssize_t=int")
+    on_load("windows", "mingw", function (package)
+        if package:is_plat("windows") then
+            package:add("defines", "ssize_t=int")
+        end
         if not package:config("shared") then
             package:add("defines", "NGHTTP2_STATICLIB")
         end
