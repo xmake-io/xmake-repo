@@ -10,7 +10,7 @@ package("ncnn")
     add_configs("shared", {description = "Build shared library", default = false, type = "boolean"})
 
     add_deps("cmake")
-    add_deps("protobuf-cpp v3.11.2", "glslang")
+    add_deps("protobuf-cpp v3.11.2", "glslang", "libomp")
 
     on_load("windows", function (package)
         if package:config("vulkan") then
