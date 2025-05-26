@@ -10,42 +10,9 @@ package("luasocket")
 
     add_deps("lua")
 
-    if is_plat("linux") then
-        add_syslinks("dl", "m")
-    elseif is_plat("windows") then
+    if is_plat("windows") then
         add_syslinks("ws2_32")
     end
-
-    on_install("linux", function (package)
-        import("package.tools.make")
-        local lua_dep = package:dep("lua")
-        -- Get Lua version
-        local lua_ver = lua_dep:version()
-        local lua_ver_major_minor = lua_ver:major() .. "." .. lua_ver:minor()
-        -- Get Lua includedir
-        local lua_fetchinfo = lua_dep:fetch()
-        local include_paths = {}
-        for _, includedir in ipairs(lua_fetchinfo.includedirs or lua_fetchinfo.sysincludedirs) do
-            table.insert(include_paths, includedir)
-        end
-        local lua_include = table.concat(include_paths, ";")
-        local configs = {
-            "LUAV=" .. lua_ver_major_minor,
-            "PLAT=linux",
-            "LUAINC_linux=" .. lua_include,
-            "LUAPREFIX_linux=",
-            "CDIR_linux=" .. package:installdir(),
-            "LDIR_linux=" .. package:installdir("share")
-        }
-        os.cp("**.h", package:installdir("include"))
-        make.make(package, configs)
-        table.insert(configs, "install-unix")
-        make.make(package, configs)
-        os.mv(path.join(package:installdir("socket"), "**.so"), package:installdir("lib"))
-        os.rmdir(package:installdir("socket"))
-        os.rmdir(package:installdir("mime"))
-        os.rmdir(package:installdir("share"))
-    end)
 
     on_install("windows", function (package)
         import("package.tools.msbuild")
@@ -107,9 +74,16 @@ package("luasocket")
         end
         os.trycp(folders_skip .. "socket/**.pdb", path.join(package:installdir("lib"), "socket"))
         os.trycp(folders_skip .. "mime/**.pdb", path.join(package:installdir("lib"), "mime"))
-        package:add("linkdirs", "lib/socket", "lib/mime")
+        package:add("linkdirs", "lib/socket")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("luaopen_socket_core", {includes = "luasocket.h"}))
+        assert(package:check_csnippets({test = [[
+            #include <lua.h>
+            #include <luasocket.h>
+            void test() {
+                lua_State* L = luaL_newstate();
+                luaopen_socket_core(L);
+            }
+        ]]}))
     end)
