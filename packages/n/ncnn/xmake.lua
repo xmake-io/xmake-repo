@@ -4,7 +4,7 @@ package("ncnn")
     set_license("BSD-3-Clause")
 
     add_urls("https://github.com/Tencent/ncnn.git", {submodules = false})
-    add_versions("latest", "master")
+    add_versions("20250503", "305837fd4a722ebc47c5d72e72d8ec9ae970e932")
 
     add_configs("vulkan", {description = "Enable Vulkan support", default = false, type = "boolean"})
     add_configs("shared", {description = "Build shared library", default = false, type = "boolean"})
