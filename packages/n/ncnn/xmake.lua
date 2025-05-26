@@ -11,14 +11,14 @@ package("ncnn")
 
     add_deps("cmake")
     add_deps("protobuf-cpp v3.11.2", "glslang")
-
+    add_links("ncnn")
     on_load("windows", function (package)
         if package:config("vulkan") then
             package:add("deps", "vulkansdk")
         end
     end)
 
-    on_load("linux|macosx", function (package)
+    on_load("linux", "macosx", function (package)
         package:add("deps", "libomp")
     end)
 
