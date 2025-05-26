@@ -150,34 +150,29 @@ package("kokyu")
         local usage_test = [[
             #include <Kokyu/Kokyu.h>
             namespace Kokyu {
-            class MyDispatcher : public Dispatcher_Impl 
-            {
+            class MyDispatcher : public Dispatcher_Impl {
                 public:
                     MyDispatcher() = default;
 
                 private:
-                    int init_i(const Dispatcher_Attributes& attr) override 
-                    {
+                    int init_i(const Dispatcher_Attributes& attr) override {
                         return 0;
                     }
 
-                    int activate_i() override 
-                    {
+                    int activate_i() override {
                         return 0;
                     }
 
                     int dispatch_i(const Dispatch_Command* cmd, 
-                            const QoSDescriptor& qos) override 
-                    {
+                            const QoSDescriptor& qos) override {
                         return 0;
                     }
 
-                    int shutdown_i() override 
-                    {
+                    int shutdown_i() override {
                         return 0;
                     }
                 };
-            } // namespace Kokyu
+            }
             void test() {
                 Kokyu::MyDispatcher dispatcher;
                 Kokyu::Dispatcher_Attributes attr;
