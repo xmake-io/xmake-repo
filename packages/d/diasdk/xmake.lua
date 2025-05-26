@@ -6,7 +6,7 @@ package("diasdk")
         if opt.system then
             import("detect.sdks.find_dia_sdk")
 
-            local dia_sdk = find_dia_sdk()
+            local dia_sdk = find_dia_sdk({}, {arch = package:arch()})
             if dia_sdk then
                 return {
                     includedirs = dia_sdk.includedirs,
