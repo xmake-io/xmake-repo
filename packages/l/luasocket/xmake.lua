@@ -18,10 +18,6 @@ package("luasocket")
 
     on_install("linux", function (package)
         import("package.tools.make")
-        -- package:add("linkdirs", "socket")
-        -- package:add("links", "core")
-        -- package:add("links", "serial")
-        -- package:add("links", "unix")
         local lua_dep = package:dep("lua")
         -- Get Lua version
         local lua_ver = lua_dep:version()
@@ -34,7 +30,6 @@ package("luasocket")
         end
         local lua_include = table.concat(include_paths, ";")
         local configs = {
-            "INSTALL_EXEC=install -m755",
             "LUAV=" .. lua_ver_major_minor,
             "PLAT=linux",
             "LUAINC_linux=" .. lua_include,
@@ -43,13 +38,13 @@ package("luasocket")
             "LDIR_linux=" .. package:installdir("share")
         }
         os.cp("**.h", package:installdir("include"))
-        make.build(package, configs)
+        make.make(package, configs)
         table.insert(configs, "install-unix")
         make.make(package, configs)
-        -- io.replace(path.join(package:installdir("lib"), "pkgconfig", "luasocket.pc"),
-        --     [[Libs:  ]], [[Libs:  -L${prefix}/socket ]], {plain = true})
-        -- io.replace(path.join(package:installdir("lib"), "pkgconfig", "luasocket.pc"),
-        --     [[-llua]], [[-lcore -lserial -lunix -llua]], {plain = true})
+        os.mv(path.join(package:installdir("socket"), "**.so"), package:installdir("lib"))
+        os.rmdir(package:installdir("socket"))
+        os.rmdir(package:installdir("mime"))
+        os.rmdir(package:installdir("share"))
     end)
 
     on_install("windows", function (package)
@@ -110,11 +105,11 @@ package("luasocket")
             os.cp(folders_skip .. "socket/core.dll", path.join(package:installdir("lib"), "socket", "core.dll"))
             os.cp(folders_skip .. "mime/core.dll", path.join(package:installdir("lib"), "mime", "core.dll"))
         end
-        os.trycp(folders_skip .. "*/socket/**.pdb", path.join(package:installdir("lib"), "socket"))
-        os.trycp(folders_skip .. "*/mime/**.pdb", path.join(package:installdir("lib"), "mime"))
+        os.trycp(folders_skip .. "socket/**.pdb", path.join(package:installdir("lib"), "socket"))
+        os.trycp(folders_skip .. "mime/**.pdb", path.join(package:installdir("lib"), "mime"))
         package:add("linkdirs", "lib/socket", "lib/mime")
     end)
 
     on_test(function (package)
-        -- assert(package:has_cfuncs("luaopen_socket_core", {includes = "luasocket.h"}))
+        assert(package:has_cfuncs("luaopen_socket_core", {includes = "luasocket.h"}))
     end)
