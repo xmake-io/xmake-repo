@@ -13,7 +13,7 @@ package("simple_http")
     add_deps("boost", {configs = {cmake = false}})
     add_deps("nghttp2", "openssl")
 
-    on_install(function (package)
+    on_install("!windows and !mingw", function (package)
         import("package.tools.cmake").install(package)
     end)
 
