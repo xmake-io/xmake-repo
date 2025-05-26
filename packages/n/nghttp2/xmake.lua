@@ -15,20 +15,22 @@ package("nghttp2")
     add_versions("1.58.0", "9ebdfbfbca164ef72bdf5fd2a94a4e6dfb54ec39d2ef249aeb750a91ae361dfb")
     add_versions("1.46.0", "4b6d11c85f2638531d1327fe1ed28c1e386144e8841176c04153ed32a4878208")
 
-    if is_plat("linux") then
+    if is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
 
     add_deps("cmake")
 
-    on_load("windows", function (package)
-        package:add("defines", "ssize_t=int")
+    on_load("windows", "mingw", function (package)
+        if package:is_plat("windows") then
+            package:add("defines", "ssize_t=int")
+        end
         if not package:config("shared") then
             package:add("defines", "NGHTTP2_STATICLIB")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install(function (package)
         io.replace("CMakeLists.txt", "add_subdirectory(doc)", "", {plain = true})
         io.replace("CMakeLists.txt", "add_subdirectory(tests)", "", {plain = true})
         io.replace("CMakeLists.txt", "add_subdirectory(examples)", "", {plain = true})
