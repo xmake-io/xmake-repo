@@ -1,5 +1,4 @@
 package("fastmod")
-
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/lemire/fastmod")
     set_description("A header file for fast 32-bit division remainders on 64-bit hardware.")
@@ -19,6 +18,7 @@ package("fastmod")
     end)
 
     on_install(function (package)
+        io.replace("CMakeLists.txt", "add_subdirectory(tests)", "", {plain = true})
         import("package.tools.cmake").install(package)
     end)
 
