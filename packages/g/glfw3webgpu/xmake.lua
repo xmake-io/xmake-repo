@@ -21,8 +21,23 @@ package("glfw3webgpu")
         if package:is_plat("macosx", "iphoneos") then
             os.mv("glfw3webgpu.c", "glfw3webgpu.m")
         end
+
+        local configs = {}
+        local glfw = package:dep("glfw")
+        if glfw then
+            if glfw:config("x11") then
+                configs.x11 = true
+            end
+            if glfw:config("wayland") then
+                configs.wayland = true
+            end
+        end
+
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
+
+            option("x11", {default = false})
+            option("wayland", {default = false})
 
             add_requires("wgpu-native", "glfw")
 
@@ -47,17 +62,21 @@ package("glfw3webgpu")
                     add_rules("utils.symbols.export_all")
                 end
 
-                if is_plat("macosx", "iphoneos") then
-                    add_defines("_GLFW_COCOA")
-                elseif is_plat("windows") then
-                    add_defines("_GLFW_WIN32")
-                elseif is_plat("linux") then
-                    add_defines("_GLFW_X11")
-                    add_defines("_GLFW_WAYLAND")
+                if is_plat("windows") then
+                    add_defines("GLFW_EXPOSE_NATIVE_WIN32")
+                elseif is_plat("macosx", "iphoneos") then
+                    add_defines("GLFW_EXPOSE_NATIVE_COCOA")
                 end
+
+                if has_config("x11") then
+                    add_defines("GLFW_EXPOSE_NATIVE_X11")
+                elseif has_config("wayland") then
+                    add_defines("GLFW_EXPOSE_NATIVE_WAYLAND")
+                end
+
         ]])
 
-        import("package.tools.xmake").install(package)
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
