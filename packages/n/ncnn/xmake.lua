@@ -8,6 +8,7 @@ package("ncnn")
 
     add_configs("vulkan", {description = "Enable Vulkan support", default = false, type = "boolean"})
     add_configs("shared", {description = "Build shared library", default = false, type = "boolean"})
+    add_configs("simpleocv", {description = "Enable SimpleOpenCV", default = true, type = "boolean"})
 
     add_deps("cmake")
     add_deps("protobuf-cpp v3.11.2", "glslang")
@@ -33,6 +34,7 @@ package("ncnn")
         table.insert(configs, "-DNCNN_BUILD_TESTS=OFF")
         table.insert(configs, "-DNCNN_PYTHON=OFF")
         table.insert(configs, "-DNCNN_SYSTEM_GLSLANG=ON")
+        table.insert(configs, "-DNCNN_SIMPLEOCV=" .. (package:config("simpleocv") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
