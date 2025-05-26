@@ -3,7 +3,7 @@ package("ncnn")
     set_description("High-performance neural network inference framework optimized for the mobile platform")
     set_license("BSD-3-Clause")
 
-    add_urls("https://github.com/Tencent/ncnn.git")
+    add_urls("https://github.com/Tencent/ncnn.git", {submodules = false})
     add_versions("latest", "master")
 
     add_configs("vulkan", {description = "Enable Vulkan support", default = true, type = "boolean"})
