@@ -13,7 +13,13 @@ package("simple_http")
     add_deps("boost", {configs = {cmake = false}})
     add_deps("nghttp2", "openssl")
 
-    on_install("!windows and !mingw", function (package)
+    on_install("linux", "cross", "bsd", "macosx", function (package)
+        if package:is_plat("macosx") then
+            io.replace("include/simple_http.h", "iv.emplace_back(NGHTTP2_", "iv.push_back({NGHTTP2_", {plain = true})
+            io.replace("include/simple_http.h", "cfg.concurrent_streams);", "cfg.concurrent_streams});", {plain = true})
+            io.replace("include/simple_http.h", "cfg.window_size.value());", "cfg.window_size.value()});", {plain = true})
+            io.replace("include/simple_http.h", "cfg.max_frame_size.value());", "cfg.max_frame_size.value()});", {plain = true})
+        end
         import("package.tools.cmake").install(package)
     end)
 
