@@ -10,7 +10,7 @@ package("ncnn")
     add_configs("shared", {description = "Build shared library", default = false, type = "boolean"})
 
     add_deps("cmake")
-    add_deps("protobuf-cpp v3.11.2")
+    add_deps("protobuf-cpp v3.11.2", "glslang")
 
     on_load("windows", function (package)
         if package:config("vulkan") then
@@ -28,6 +28,7 @@ package("ncnn")
         table.insert(configs, "-DNCNN_BUILD_BENCHMARK=OFF")
         table.insert(configs, "-DNCNN_BUILD_TESTS=OFF")
         table.insert(configs, "-DNCNN_PYTHON=OFF")
+        table.insert(configs, "-DNCNN_SYSTEM_GLSLANG=ON")
         import("package.tools.cmake").install(package, configs)
     end)
 
