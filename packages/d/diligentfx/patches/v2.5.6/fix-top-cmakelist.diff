@@ -1,0 +1,157 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index d6a9bb2..7b2690c 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,6 +1,46 @@
+ cmake_minimum_required (VERSION 3.6)
+ 
+ include(BuildUtils.cmake)
++include(DiligentCoreBuildUtils.cmake)
++
++add_library(Diligent-PublicBuildSettings INTERFACE)
++if(PLATFORM_WIN32)
++    set(GL_SUPPORTED       TRUE CACHE INTERNAL "OpenGL is supported on Win32 platform")
++    set(VULKAN_SUPPORTED   TRUE CACHE INTERNAL "Vulkan is supported on Win32 platform")
++    set(WEBGPU_SUPPORTED   TRUE CACHE INTERNAL "WebGPU is supported on Win32 platform")
++    set(ARCHIVER_SUPPORTED TRUE CACHE INTERNAL "Archiver is supported on Win32 platform")
++    target_compile_definitions(Diligent-PublicBuildSettings INTERFACE PLATFORM_WIN32=1)
++elseif(PLATFORM_UNIVERSAL_WINDOWS)
++    set(ARCHIVER_SUPPORTED TRUE CACHE INTERNAL "Archiver is supported on Universal Windows platform")
++    target_compile_definitions(Diligent-PublicBuildSettings INTERFACE PLATFORM_UNIVERSAL_WINDOWS=1)
++elseif(PLATFORM_ANDROID)
++    set(GLES_SUPPORTED     TRUE CACHE INTERNAL "OpenGLES is supported on Android platform")
++    set(VULKAN_SUPPORTED   TRUE CACHE INTERNAL "Vulkan is supported on Android platform")
++    set(ARCHIVER_SUPPORTED TRUE CACHE INTERNAL "Archiver is supported on Android platform")
++    target_compile_definitions(Diligent-PublicBuildSettings INTERFACE PLATFORM_ANDROID=1)
++elseif(PLATFORM_LINUX)
++    set(GL_SUPPORTED       TRUE CACHE INTERNAL "OpenGL is supported on Linux platform")
++    set(VULKAN_SUPPORTED   TRUE CACHE INTERNAL "Vulkan is supported on Linux platform")
++    set(ARCHIVER_SUPPORTED TRUE CACHE INTERNAL "Archiver is supported on Linux platform")
++    target_compile_definitions(Diligent-PublicBuildSettings INTERFACE PLATFORM_LINUX=1)
++elseif(PLATFORM_MACOS)
++    set(GL_SUPPORTED       TRUE CACHE INTERNAL "OpenGL is supported on MacOS platform")
++    set(VULKAN_SUPPORTED   TRUE CACHE INTERNAL "Vulkan is enabled through MoltenVK on MacOS platform")
++    set(ARCHIVER_SUPPORTED TRUE CACHE INTERNAL "Archiver is supported on MacOS platform")
++    target_compile_definitions(Diligent-PublicBuildSettings INTERFACE PLATFORM_MACOS=1 PLATFORM_APPLE=1)
++elseif(PLATFORM_IOS)
++    set(GLES_SUPPORTED TRUE CACHE INTERNAL "OpenGLES is supported on iOS platform")
++    target_compile_definitions(Diligent-PublicBuildSettings INTERFACE PLATFORM_IOS=1 PLATFORM_APPLE=1)
++elseif(PLATFORM_TVOS)
++    target_compile_definitions(Diligent-PublicBuildSettings INTERFACE PLATFORM_TVOS=1 PLATFORM_APPLE=1)
++elseif(PLATFORM_WEB)
++    set(GLES_SUPPORTED     TRUE CACHE INTERNAL "OpenGLES is supported on Web platform")
++    set(WEBGPU_SUPPORTED   TRUE CACHE INTERNAL "WebGPU is supported on Web platform")
++    set(ARCHIVER_SUPPORTED TRUE CACHE INTERNAL "Archiver is supported on Web platform")
++    target_compile_definitions(Diligent-PublicBuildSettings INTERFACE PLATFORM_WEB=1 PLATFORM_EMSCRIPTEN=1)
++else()
++    message(FATAL_ERROR "No PLATFORM_XXX variable defined. Make sure that 'DiligentCore' folder is processed first")
++endif()
+ 
+ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+ 
+@@ -17,10 +57,17 @@ if(PLATFORM_WIN32 OR PLATFORM_UNIVERSAL_WINDOWS OR PLATFORM_LINUX OR PLATFORM_MA
+ else()
+     set(DILIGENT_INSTALL_FX OFF)
+ endif()
++include(FindPkgConfig)
++pkg_check_modules(diligentcore REQUIRED diligentcore)
++pkg_check_modules(diligenttools REQUIRED diligenttools)
++pkg_check_modules(imgui REQUIRED imgui)
++target_link_directories(DiligentFX PUBLIC ${diligentcore_LIBDIR} ${diligenttools_LIBDIR})
+ 
+ target_link_libraries(DiligentFX 
+ PRIVATE
++    Diligent-PublicBuildSettings
+     Diligent-BuildSettings
++    ${imgui_LINK_LIBRARIES}
+ PUBLIC
+     Diligent-GraphicsEngine
+     Diligent-GraphicsTools
+@@ -29,7 +76,8 @@ PUBLIC
+     Diligent-Imgui
+ )
+ 
+-if (TARGET Diligent-HLSL2GLSLConverterLib)
++if (GL_SUPPORTED OR GLES_SUPPORTED OR VULKAN_SUPPORTED)
++    message(STATUS "Building with HLSL2GLSL_CONVERTER_SUPPORTED=1")
+     target_link_libraries(DiligentFX PRIVATE Diligent-HLSL2GLSLConverterLib)
+     target_compile_definitions(DiligentFX PRIVATE HLSL2GLSL_CONVERTER_SUPPORTED=1)
+ endif()
+@@ -39,6 +87,9 @@ set_common_target_properties(DiligentFX)
+ target_include_directories(DiligentFX
+ PUBLIC
+     .
++    ${diligentcore_INCLUDEDIR}
++    ${diligenttools_INCLUDEDIR}
++    ${imgui_INCLUDEDIR}
+ )
+ 
+ add_subdirectory(Utilities)
+@@ -50,7 +101,6 @@ if(DILIGENT_USD_PATH)
+     add_subdirectory(Hydrogent)
+ endif()
+ 
+-add_subdirectory(Tests)
+ 
+ get_target_property(SOURCE DiligentFX SOURCES)
+ 
+@@ -86,35 +136,35 @@ source_group("generated" FILES
+     ${SHADERS_INC_LIST}
+ )
+ 
+-if(DILIGENT_INSTALL_FX)
++if(1)
+     install(TARGETS				 DiligentFX
+-            ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_FX_DIR}/$<CONFIG>"
+-            LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_FX_DIR}/$<CONFIG>"
+-            RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}/${DILIGENT_FX_DIR}/$<CONFIG>"
++            ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++            LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++            RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+     )
+-    install(DIRECTORY    PostProcess/EpipolarLightScattering/interface
+-            DESTINATION  "${CMAKE_INSTALL_INCLUDEDIR}/${DILIGENT_FX_DIR}/PostProcess/EpipolarLightScattering"
++    install(DIRECTORY    "${CMAKE_CURRENT_SOURCE_DIR}/PostProcess/EpipolarLightScattering/interface"
++            DESTINATION  "include/DiligentFX/PostProcess/EpipolarLightScattering"
+     )
+-    install(DIRECTORY    PostProcess/TemporalAntiAliasing/interface
+-            DESTINATION  "${CMAKE_INSTALL_INCLUDEDIR}/${DILIGENT_FX_DIR}/PostProcess/TemporalAntiAliasing"
++    install(DIRECTORY    "${CMAKE_CURRENT_SOURCE_DIR}/PostProcess/TemporalAntiAliasing/interface"
++            DESTINATION  "include/DiligentFX/PostProcess/TemporalAntiAliasing"
+     )
+-    install(DIRECTORY    PostProcess/ScreenSpaceReflection/interface
+-            DESTINATION  "${CMAKE_INSTALL_INCLUDEDIR}/${DILIGENT_FX_DIR}/PostProcess/ScreenSpaceReflection"
++    install(DIRECTORY    "${CMAKE_CURRENT_SOURCE_DIR}/PostProcess/ScreenSpaceReflection/interface"
++            DESTINATION  "include/DiligentFX/PostProcess/ScreenSpaceReflection"
+     )
+-    install(DIRECTORY   PostProcess/ScreenSpaceAmbientOcclusion/interface
+-            DESTINATION  "${CMAKE_INSTALL_INCLUDEDIR}/${DILIGENT_FX_DIR}/PostProcess/ScreenSpaceAmbientOcclusion"
++    install(DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/PostProcess/ScreenSpaceAmbientOcclusion/interface"
++            DESTINATION  "include/DiligentFX/PostProcess/ScreenSpaceAmbientOcclusion"
+     )
+-    install(DIRECTORY   PostProcess/Bloom/interface
+-            DESTINATION  "${CMAKE_INSTALL_INCLUDEDIR}/${DILIGENT_FX_DIR}/PostProcess/Bloom"
++    install(DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/PostProcess/Bloom/interface"
++            DESTINATION  "include/DiligentFX/PostProcess/Bloom"
+     )
+-    install(DIRECTORY    Components/interface
+-            DESTINATION  "${CMAKE_INSTALL_INCLUDEDIR}/${DILIGENT_FX_DIR}/Components"
++    install(DIRECTORY    "${CMAKE_CURRENT_SOURCE_DIR}/Components/interface"
++            DESTINATION  "include/DiligentFX/Components"
+     )
+-    install(DIRECTORY    PBR/interface
+-            DESTINATION  "${CMAKE_INSTALL_INCLUDEDIR}/${DILIGENT_FX_DIR}/PBR"
++    install(DIRECTORY    "${CMAKE_CURRENT_SOURCE_DIR}/PBR/interface"
++            DESTINATION  "include/DiligentFX/PBR"
+     )
+     install(DIRECTORY    Shaders
+-            DESTINATION  "."
++            DESTINATION  "include/DiligentFX"
+             FILES_MATCHING PATTERN "public/*.*"
+             PATTERN "private" EXCLUDE
+     )
+@@ -125,4 +175,3 @@ set_target_properties(DiligentFX PROPERTIES
+ )
+ 
+ # Create a custom target to run source code formatting validation command
+-add_format_validation_target(DiligentFX "${CMAKE_CURRENT_SOURCE_DIR}" DiligentFX)

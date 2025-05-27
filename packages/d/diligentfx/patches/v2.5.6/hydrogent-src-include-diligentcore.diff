@@ -1,0 +1,265 @@
+diff --git a/Hydrogent/src/HnCamera.cpp b/Hydrogent/src/HnCamera.cpp
+index 7a45e7d..2a91440 100644
+--- a/Hydrogent/src/HnCamera.cpp
++++ b/Hydrogent/src/HnCamera.cpp
+@@ -29,7 +29,7 @@
+ #include "HnRenderParam.hpp"
+ 
+ #include "GfTypeConversions.hpp"
+-#include "BasicMath.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
+ 
+ #include "pxr/imaging/hd/sceneDelegate.h"
+ 
+diff --git a/Hydrogent/src/HnLight.cpp b/Hydrogent/src/HnLight.cpp
+index 6df4da2..3205e78 100644
+--- a/Hydrogent/src/HnLight.cpp
++++ b/Hydrogent/src/HnLight.cpp
+@@ -37,7 +37,7 @@
+ #include "pxr/imaging/hd/sceneDelegate.h"
+ 
+ #include "GfTypeConversions.hpp"
+-#include "BasicMath.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Hydrogent/src/HnMaterialNetwork.cpp b/Hydrogent/src/HnMaterialNetwork.cpp
+index 11d516c..87d3dfc 100644
+--- a/Hydrogent/src/HnMaterialNetwork.cpp
++++ b/Hydrogent/src/HnMaterialNetwork.cpp
+@@ -29,7 +29,7 @@
+ 
+ #include "DebugUtilities.hpp"
+ #include "StringTools.hpp"
+-#include "GraphicsAccessories.hpp"
++#include "DiligentCore/Graphics/GraphicsAccessories/interface/GraphicsAccessories.hpp"
+ 
+ #include "pxr/base/gf/vec3f.h"
+ #include "pxr/base/gf/vec4f.h"
+diff --git a/Hydrogent/src/HnMesh.cpp b/Hydrogent/src/HnMesh.cpp
+index a3e63eb..a9ae651 100644
+--- a/Hydrogent/src/HnMesh.cpp
++++ b/Hydrogent/src/HnMesh.cpp
+@@ -35,7 +35,7 @@
+ #include "GfTypeConversions.hpp"
+ 
+ #include "DebugUtilities.hpp"
+-#include "GraphicsTypesX.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/GraphicsTypesX.hpp"
+ #include "GLTFResourceManager.hpp"
+ #include "EngineMemory.h"
+ 
+diff --git a/Hydrogent/src/HnRenderBuffer.cpp b/Hydrogent/src/HnRenderBuffer.cpp
+index 710762b..8d52777 100644
+--- a/Hydrogent/src/HnRenderBuffer.cpp
++++ b/Hydrogent/src/HnRenderBuffer.cpp
+@@ -29,7 +29,7 @@
+ #include "HnRenderDelegate.hpp"
+ 
+ #include "DebugUtilities.hpp"
+-#include "GraphicsAccessories.hpp"
++#include "DiligentCore/Graphics/GraphicsAccessories/interface/GraphicsAccessories.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Hydrogent/src/HnRenderDelegate.cpp b/Hydrogent/src/HnRenderDelegate.cpp
+index 8e2c7e7..4d6df47 100644
+--- a/Hydrogent/src/HnRenderDelegate.cpp
++++ b/Hydrogent/src/HnRenderDelegate.cpp
+@@ -35,10 +35,10 @@
+ #include "HnShadowMapManager.hpp"
+ 
+ #include "DebugUtilities.hpp"
+-#include "GraphicsUtilities.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/GraphicsUtilities.h"
+ #include "HnRenderBuffer.hpp"
+-#include "Align.hpp"
+-#include "PlatformMisc.hpp"
++#include "DiligentCore/Common/interface/Align.hpp"
++#include "DiligentCore/Platforms/interface/PlatformMisc.hpp"
+ #include "GLTFResourceManager.hpp"
+ 
+ #include "pxr/imaging/hd/material.h"
+diff --git a/Hydrogent/src/HnRenderPass.cpp b/Hydrogent/src/HnRenderPass.cpp
+index 212495d..4ce4669 100644
+--- a/Hydrogent/src/HnRenderPass.cpp
++++ b/Hydrogent/src/HnRenderPass.cpp
+@@ -40,8 +40,8 @@
+ 
+ #include "USD_Renderer.hpp"
+ #include "GLTF_PBR_Renderer.hpp"
+-#include "MapHelper.hpp"
+-#include "ScopedDebugGroup.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/MapHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ScopedDebugGroup.hpp"
+ #include "HashUtils.hpp"
+ 
+ namespace Diligent
+diff --git a/Hydrogent/src/HnShaderSourceFactory.cpp b/Hydrogent/src/HnShaderSourceFactory.cpp
+index 0805052..e0c9ff5 100644
+--- a/Hydrogent/src/HnShaderSourceFactory.cpp
++++ b/Hydrogent/src/HnShaderSourceFactory.cpp
+@@ -25,10 +25,10 @@
+  */
+ 
+ #include "HnShaderSourceFactory.hpp"
+-#include "ShaderSourceFactoryUtils.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ShaderSourceFactoryUtils.h"
+ 
+ #include "Utilities/interface/DiligentFXShaderSourceStreamFactory.hpp"
+-#include "ShaderSourceFactoryUtils.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ShaderSourceFactoryUtils.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Hydrogent/src/HnTextureRegistry.cpp b/Hydrogent/src/HnTextureRegistry.cpp
+index dce5859..b553bf6 100644
+--- a/Hydrogent/src/HnTextureRegistry.cpp
++++ b/Hydrogent/src/HnTextureRegistry.cpp
+@@ -30,7 +30,7 @@
+ #include "GLTFResourceManager.hpp"
+ #include "USD_Renderer.hpp"
+ #include "HnTextureIdentifier.hpp"
+-#include "GraphicsAccessories.hpp"
++#include "DiligentCore/Graphics/GraphicsAccessories/interface/GraphicsAccessories.hpp"
+ 
+ #include <mutex>
+ 
+diff --git a/Hydrogent/src/Tasks/HnBeginFrameTask.cpp b/Hydrogent/src/Tasks/HnBeginFrameTask.cpp
+index 3a8fbea..4e8f549 100644
+--- a/Hydrogent/src/Tasks/HnBeginFrameTask.cpp
++++ b/Hydrogent/src/Tasks/HnBeginFrameTask.cpp
+@@ -36,9 +36,9 @@
+ #include "HnShadowMapManager.hpp"
+ 
+ #include "DebugUtilities.hpp"
+-#include "GraphicsAccessories.hpp"
+-#include "MapHelper.hpp"
+-#include "ScopedDebugGroup.hpp"
++#include "DiligentCore/Graphics/GraphicsAccessories/interface/GraphicsAccessories.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/MapHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ScopedDebugGroup.hpp"
+ #include "GLTF_PBR_Renderer.hpp"
+ 
+ namespace Diligent
+diff --git a/Hydrogent/src/Tasks/HnCopySelectionDepthTask.cpp b/Hydrogent/src/Tasks/HnCopySelectionDepthTask.cpp
+index e1cace4..8973a13 100644
+--- a/Hydrogent/src/Tasks/HnCopySelectionDepthTask.cpp
++++ b/Hydrogent/src/Tasks/HnCopySelectionDepthTask.cpp
+@@ -29,7 +29,7 @@
+ #include "HnFrameRenderTargets.hpp"
+ 
+ #include "DebugUtilities.hpp"
+-#include "ScopedDebugGroup.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ScopedDebugGroup.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Hydrogent/src/Tasks/HnPostProcessTask.cpp b/Hydrogent/src/Tasks/HnPostProcessTask.cpp
+index a851801..9fedbbf 100644
+--- a/Hydrogent/src/Tasks/HnPostProcessTask.cpp
++++ b/Hydrogent/src/Tasks/HnPostProcessTask.cpp
+@@ -34,13 +34,13 @@
+ 
+ #include "DebugUtilities.hpp"
+ #include "TextureView.h"
+-#include "RenderStateCache.hpp"
+-#include "ShaderMacroHelper.hpp"
+-#include "CommonlyUsedStates.h"
+-#include "GraphicsUtilities.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ShaderMacroHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/CommonlyUsedStates.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/GraphicsUtilities.h"
+ #include "VectorFieldRenderer.hpp"
+ #include "ToneMapping.hpp"
+-#include "ScopedDebugGroup.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ScopedDebugGroup.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Hydrogent/src/Tasks/HnProcessSelectionTask.cpp b/Hydrogent/src/Tasks/HnProcessSelectionTask.cpp
+index a162a01..7ba2b82 100644
+--- a/Hydrogent/src/Tasks/HnProcessSelectionTask.cpp
++++ b/Hydrogent/src/Tasks/HnProcessSelectionTask.cpp
+@@ -32,10 +32,10 @@
+ #include "HnShaderSourceFactory.hpp"
+ 
+ #include "DebugUtilities.hpp"
+-#include "CommonlyUsedStates.h"
+-#include "GraphicsUtilities.h"
+-#include "MapHelper.hpp"
+-#include "ScopedDebugGroup.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/CommonlyUsedStates.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/GraphicsUtilities.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/MapHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ScopedDebugGroup.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Hydrogent/src/Tasks/HnReadRprimIdTask.cpp b/Hydrogent/src/Tasks/HnReadRprimIdTask.cpp
+index 62fd064..1583b65 100644
+--- a/Hydrogent/src/Tasks/HnReadRprimIdTask.cpp
++++ b/Hydrogent/src/Tasks/HnReadRprimIdTask.cpp
+@@ -30,7 +30,7 @@
+ #include "HnTokens.hpp"
+ 
+ #include "DebugUtilities.hpp"
+-#include "ScopedDebugGroup.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ScopedDebugGroup.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Hydrogent/src/Tasks/HnRenderBoundBoxTask.cpp b/Hydrogent/src/Tasks/HnRenderBoundBoxTask.cpp
+index aedb80c..a4a7b7b 100644
+--- a/Hydrogent/src/Tasks/HnRenderBoundBoxTask.cpp
++++ b/Hydrogent/src/Tasks/HnRenderBoundBoxTask.cpp
+@@ -35,7 +35,7 @@
+ 
+ #include "BoundBoxRenderer.hpp"
+ #include "DebugUtilities.hpp"
+-#include "ScopedDebugGroup.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ScopedDebugGroup.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Hydrogent/src/Tasks/HnRenderEnvMapTask.cpp b/Hydrogent/src/Tasks/HnRenderEnvMapTask.cpp
+index 52b3c2a..f2c2e38 100644
+--- a/Hydrogent/src/Tasks/HnRenderEnvMapTask.cpp
++++ b/Hydrogent/src/Tasks/HnRenderEnvMapTask.cpp
+@@ -34,7 +34,7 @@
+ #include "USD_Renderer.hpp"
+ 
+ #include "DebugUtilities.hpp"
+-#include "ScopedDebugGroup.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ScopedDebugGroup.hpp"
+ 
+ namespace Diligent
+ {
+@@ -42,8 +42,8 @@ namespace Diligent
+ namespace HLSL
+ {
+ 
+-#include "Shaders/Common/public/ShaderDefinitions.fxh"
+-#include "Shaders/PostProcess/ToneMapping/public/ToneMappingStructures.fxh"
++#include "../../../Shaders/Common/public/ShaderDefinitions.fxh"
++#include "../../../Shaders/PostProcess/ToneMapping/public/ToneMappingStructures.fxh"
+ 
+ } // namespace HLSL
+ 
+diff --git a/Hydrogent/src/Tasks/HnRenderShadowsTask.cpp b/Hydrogent/src/Tasks/HnRenderShadowsTask.cpp
+index acd4f44..0acc462 100644
+--- a/Hydrogent/src/Tasks/HnRenderShadowsTask.cpp
++++ b/Hydrogent/src/Tasks/HnRenderShadowsTask.cpp
+@@ -32,8 +32,8 @@
+ #include "HnRenderParam.hpp"
+ #include "HnLight.hpp"
+ #include "HnShadowMapManager.hpp"
+-#include "CommonlyUsedStates.h"
+-#include "GraphicsUtilities.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/CommonlyUsedStates.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/GraphicsUtilities.h"
+ 
+ namespace Diligent
+ {
