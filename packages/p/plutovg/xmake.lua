@@ -6,6 +6,7 @@ package("plutovg")
     add_urls("https://github.com/sammycage/plutovg/archive/refs/tags/$(version).tar.gz",
              "https://github.com/sammycage/plutovg.git")
 
+    add_versions("v1.1.0", "8aa9860519c407890668c29998e8bb88896ef6a2e6d7ce5ac1e57f18d79e1525")
     add_versions("v1.0.0", "d4a8015aee9eefc29b01e6dabfd3d4b371ae12f9d5e9be09798deb77a528a794")
     add_versions("v0.0.13", "f49d62709d6bf1808ddc9b8f71e22a755484f75c7bbb0fb368f7fb2ffc7cf645")
     add_versions("v0.0.12", "b26b01f4540259784955d224a6adf91f4cff5f38fb64f6098984bf91df8fbd8f")
