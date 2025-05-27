@@ -133,6 +133,10 @@ package("protobuf-cpp")
     end)
 
     on_install(function (package)
+        io.replace("src/google/protobuf/port_def.inc", 
+            [[#if ABSL_HAVE_CPP_ATTRIBUTE(clang::musttail) && !defined(__arm__) &&  \]],
+            [[#if ABSL_HAVE_CPP_ATTRIBUTE(clang::musttail) && !defined(__arm__) &&  \
+    !(defined(__GNUC__) && __GNUC__ >= 15 ) &&                      \]], {plain = true})
         if package:is_plat("windows", "mingw") then
             io.replace("src/google/protobuf/port_def.inc", "#define PROTOBUF_DESCRIPTOR_WEAK_MESSAGES_ALLOWED", "", {plain = true})
         end
