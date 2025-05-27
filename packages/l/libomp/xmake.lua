@@ -34,12 +34,12 @@ package("libomp")
         end
     end)
 
-    on_install("macosx", "linux", "cross", function (package)
+    on_install("macosx", "linux", "cross", "android", function (package)
         local version = package:version()
         if version:ge("19.0") then
             local llvm_cmake = package:resourcedir("llvm_cmake")
             local cmake = os.dirs(path.join(llvm_cmake, "*.src"))[1]
-            io.gsub("CMakeLists.txt", "set%(LLVM_COMMON_CMAKE_UTILS .-%)", "set(LLVM_COMMON_CMAKE_UTILS \"" .. cmake .. "\")")
+            io.gsub("CMakeLists.txt", "set%(LLVM_COMMON_CMAKE_UTILS .-%)", "set(LLVM_COMMON_CMAKE_UTILS \"" .. path.unix(cmake) .. "\")")
             io.replace("CMakeLists.txt", "include(OpenMPTesting)", "function(add_openmp_testsuite target comment)\nreturn()\nendfunction()", {plain = true})
             io.replace("CMakeLists.txt", "construct_check_openmp_target()", "", {plain = true})
             io.replace("runtime/test/CMakeLists.txt", "update_test_compiler_features", "#update_test_compiler_features", {plain = true})
