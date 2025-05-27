@@ -149,6 +149,7 @@ package("protobuf-cpp")
         end
 
         local configs = {
+            "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
             "-Dprotobuf_BUILD_TESTS=OFF",
             "-Dprotobuf_LOCAL_DEPENDENCIES_ONLY=ON",
             "-Dprotobuf_BUILD_PROTOC_BINARIES=ON",
