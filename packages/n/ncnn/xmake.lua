@@ -11,7 +11,7 @@ package("ncnn")
     add_configs("simpleocv", {description = "Enable SimpleOpenCV", default = true, type = "boolean"})
 
     add_deps("cmake")
-    add_deps("protobuf-cpp v3.11.2", "glslang")
+    add_deps("protobuf-cpp 3.11.2", "glslang")
     add_links("ncnn")
     on_load("windows", function (package)
         if package:config("vulkan") then
@@ -25,7 +25,7 @@ package("ncnn")
 
     on_install(function (package)
         local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DNCNN_VULKAN=" .. (package:config("vulkan") and "ON" or "OFF"))
         table.insert(configs, "-DNCNN_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DNCNN_BUILD_EXAMPLES=OFF")
@@ -43,6 +43,7 @@ package("ncnn")
             #include <ncnn/net.h>
             void test() {
                 ncnn::Net net;
+                net.load_param("model.param");
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
