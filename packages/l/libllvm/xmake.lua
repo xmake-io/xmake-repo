@@ -3,9 +3,6 @@ package("libllvm")
     set_homepage("https://llvm.org/")
     set_description("The LLVM Compiler Infrastructure.")
 
-    -- The LLVM shared library cannot be built under windows.
-    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = is_plat("windows")})
-
     add_configs("exception", {description = "Enable C++ exception support for LLVM.", default = true, type = "boolean"})
     add_configs("rtti",      {description = "Enable C++ RTTI support for LLVM.", default = true, type = "boolean"})
 
@@ -29,13 +26,18 @@ package("libllvm")
             add_versions("19.1.7", "c6e058c6012f499811caa1ec037cc1b5c2fd2f8c20cc3315cae602cbd6c81a5e")
         end
 
+        -- The LLVM shared library cannot be built under windows.
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+
         add_configs("runtimes",   {description = "Set vs compiler runtime.", default = "MT", readonly = true})
         add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MT", readonly = true})
         add_syslinks("psapi", "shell32", "ole32", "uuid", "advapi32", "ws2_32", "ntdll", "version")
     else
         -- self-built
-        add_urls("https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/llvm-project-$(version).src.tar.xz")
-        add_versions("19.1.7", "82401fea7b79d0078043f7598b835284d6650a75b93e64b6f761ea7b63097501")
+        add_urls("https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/llvm-project-$(version).src.tar.xz", {alias = "tarball"})
+        add_urls("https://github.com/llvm/llvm-project.git", {alias = "git"})
+        add_versions("tarball:19.1.7", "82401fea7b79d0078043f7598b835284d6650a75b93e64b6f761ea7b63097501")
+        add_versions("git:19.1.7", "llvmorg-19.1.7")
 
         add_deps("ninja")
         add_deps("zlib", "zstd", {optional = true})
@@ -55,7 +57,6 @@ package("libllvm")
     add_deps("cmake")
     on_load(function (package)
         local constants = import('constants')
-        package:addenv("PATH", "bin")
         
         -- add deps.
         if not package:is_plat("windows") then -- not prebuilt
@@ -69,6 +70,10 @@ package("libllvm")
             if package:config("libcxx") then
                 package:add("deps", "libc++")
             end
+        end
+
+        if package:is_plat("windows") and package:config("ms_dia") then
+            package:add("deps", "diasdk")
         end
 
         -- add links
@@ -107,10 +112,10 @@ package("libllvm")
             end
         end
 
-        local configs = {
-            -- common cmake
-            "-DCMAKE_BUILD_TYPE=Release",
+        -- build only libclang - to save link time
+        io.replace("clang/CMakeLists.txt", "add_subdirectory(tools)", "add_clang_subdirectory(libclang)", {plain = true})
 
+        local configs = {
             -- llvm
             "-DLLVM_BUILD_UTILS=OFF",
             "-DLLVM_INCLUDE_DOCS=OFF",
@@ -124,10 +129,12 @@ package("libllvm")
             -- disable tools build - to save link time
             "-DLLVM_BUILD_TOOLS=OFF",
             "-DCLANG_BUILD_TOOLS=OFF",
+            "-DCLANG_ENABLE_CLANGD=OFF",
             "-DBOLT_BUILD_TOOLS=OFF",
             "-DFLANG_BUILD_TOOLS=OFF",
             "-DLLD_BUILD_TOOLS=OFF"
         }
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DLLVM_BUILD_LLVM_DYLIB=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DLLVM_ENABLE_EH=" .. (package:config("exception") and "ON" or "OFF"))
         table.insert(configs, "-DLLVM_ENABLE_RTTI=" .. (package:config("rtti") and "ON" or "OFF"))
