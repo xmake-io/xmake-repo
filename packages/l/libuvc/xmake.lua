@@ -21,7 +21,7 @@ package("libuvc")
         end
     end)
 
-    on_install("windows", function (package)
+    on_install("windows|x64", "windows|x86", function (package)
         local configs = {}
         table.insert(configs, "-DBUILD_EXAMPLE=OFF")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
