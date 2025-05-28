@@ -5,6 +5,7 @@ package("itk")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/InsightSoftwareConsortium/ITK/releases/download/v$(version)/InsightToolkit-$(version).tar.gz")
+    add_versions("5.4.3", "dd3f286716ee291221407a67539f2197c184bd80d4a8f53de1fb7d19351c7eca")
     add_versions("5.2.0", "12c9cf543cbdd929330322f0a704ba6925a13d36d01fc721a74d131c0b82796e")
     add_versions("5.2.1", "192d41bcdd258273d88069094f98c61c38693553fd751b54f8cda308439555db")
 
