@@ -11,7 +11,7 @@ package("libuvc")
     add_deps("libusb")
 
     if is_plat("windows") then
-        add_patches("v0.0.7", "patches/v0.0.7/windows.patch", "87eae0b3bbc07038654a5ef7f5f7d0213472436e517f9b65963353738bb0a3dc")
+        add_patches("2024.03.05", "patches/2024.03.05/windows.patch", "87eae0b3bbc07038654a5ef7f5f7d0213472436e517f9b65963353738bb0a3dc")
         add_deps("pkgconf", "pthreads4w")
     end
 
