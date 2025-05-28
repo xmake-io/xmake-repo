@@ -14,15 +14,30 @@ package("glfw3webgpu")
     add_deps("wgpu-native", "glfw")
 
     if is_plat("macosx", "iphoneos") then
-        add_frameworks("Metal", "Foundation")
+        add_frameworks("Metal", "Foundation", "QuartzCore")
     end
 
     on_install("windows|x64", "windows|x86", "linux|x86_64", "macosx|x86_64", "macosx|arm64", function (package)
         if package:is_plat("macosx", "iphoneos") then
             os.mv("glfw3webgpu.c", "glfw3webgpu.m")
         end
+
+        local configs = {}
+        local glfw = package:dep("glfw")
+        if glfw then
+            if glfw:config("x11") then
+                configs.x11 = true
+            end
+            if glfw:config("wayland") then
+                configs.wayland = true
+            end
+        end
+
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
+
+            option("x11", {default = false})
+            option("wayland", {default = false})
 
             add_requires("wgpu-native", "glfw")
 
@@ -37,7 +52,7 @@ package("glfw3webgpu")
                 add_packages("glfw")
                 
                 if is_plat("iphoneos", "macosx") then
-                    add_frameworks("Metal", "Foundation")
+                    add_frameworks("Metal", "Foundation", "QuartzCore")
                     add_files("glfw3webgpu.m")
                 else
                     add_files("glfw3webgpu.c")
@@ -46,9 +61,22 @@ package("glfw3webgpu")
                 if is_plat("windows") and is_kind("shared") then
                     add_rules("utils.symbols.export_all")
                 end
+
+                if is_plat("windows") then
+                    add_defines("GLFW_EXPOSE_NATIVE_WIN32")
+                elseif is_plat("macosx", "iphoneos") then
+                    add_defines("GLFW_EXPOSE_NATIVE_COCOA")
+                end
+
+                if has_config("x11") then
+                    add_defines("GLFW_EXPOSE_NATIVE_X11")
+                elseif has_config("wayland") then
+                    add_defines("GLFW_EXPOSE_NATIVE_WAYLAND")
+                end
+
         ]])
 
-        import("package.tools.xmake").install(package)
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
