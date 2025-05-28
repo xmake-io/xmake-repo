@@ -28,7 +28,7 @@ package("ncnn")
         end
     end)
 
-    on_load("linux", "macosx", "cross", function (package)
+    on_load("linux", "macosx", "cross", "android", function (package)
         package:add("deps", "libomp")
     end)
 
