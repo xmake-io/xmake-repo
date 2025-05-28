@@ -28,18 +28,27 @@ package("libomp")
         add_extsources("apt::libomp-dev")
         add_syslinks("pthread", "dl")
     end
+
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) > 25, "package(libomp): need ndk api level > 25")
+        end)
+    end
+
     on_load(function (package)
         if package:version():ge("19.0") and package:is_built() then
             package:add("deps", "python 3.x", {kind = "binary"})
         end
     end)
 
-    on_install("macosx", "linux", "cross", function (package)
+    on_install("macosx", "linux", "cross", "android", function (package)
         local version = package:version()
         if version:ge("19.0") then
             local llvm_cmake = package:resourcedir("llvm_cmake")
             local cmake = os.dirs(path.join(llvm_cmake, "*.src"))[1]
-            io.gsub("CMakeLists.txt", "set%(LLVM_COMMON_CMAKE_UTILS .-%)", "set(LLVM_COMMON_CMAKE_UTILS \"" .. cmake .. "\")")
+            io.gsub("CMakeLists.txt", "set%(LLVM_COMMON_CMAKE_UTILS .-%)", "set(LLVM_COMMON_CMAKE_UTILS \"" .. path.unix(cmake) .. "\")")
             io.replace("CMakeLists.txt", "include(OpenMPTesting)", "function(add_openmp_testsuite target comment)\nreturn()\nendfunction()", {plain = true})
             io.replace("CMakeLists.txt", "construct_check_openmp_target()", "", {plain = true})
             io.replace("runtime/test/CMakeLists.txt", "update_test_compiler_features", "#update_test_compiler_features", {plain = true})
