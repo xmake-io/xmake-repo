@@ -12,13 +12,18 @@ package("ncnn")
 
     add_deps("cmake")
     add_deps("protobuf-cpp 3.11.2", "glslang")
+
+    if is_plat("android") then
+        add_syslinks("android")
+    end
+
     add_links("ncnn")
 
     if on_check then
         on_check("android", function (package)
             local ndk = package:toolchain("ndk")
             local ndk_sdkver = ndk:config("ndk_sdkver")
-            assert(ndk_sdkver and tonumber(ndk_sdkver) > 25, "package(libomp): need ndk api level > 25")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) > 25, "package(ncnn): need ndk api level > 25")
         end)
     end
 
