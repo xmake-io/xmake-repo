@@ -4,6 +4,7 @@ package("sqlcipher")
     set_description("SQLCipher is a standalone fork of the SQLite database library that adds 256 bit AES encryption of database files and other security features")
 
     set_urls("https://github.com/sqlcipher/sqlcipher/archive/refs/tags/v$(version).tar.gz")
+    add_versions("4.9.0", "91936630ce58a9979de3136bd5292535ee0c0b2d8e901c483335ac4fb2be4185")
     add_versions("4.6.0", "879fb030c36bc5138029af6aa3ae3f36c28c58e920af05ac7ca78a5915b2fa3c")
     add_versions("4.5.3", "5c9d672eba6be4d05a9a8170f70170e537ae735a09c3de444a8ad629b595d5e2")
 
