@@ -8,6 +8,7 @@ package("libuvc")
 
     add_configs("jpeg", {description = "Enable jpeg support.", default = true, type = "boolean"})
 
+    add_deps("cmake")
     add_deps("libusb")
 
     if is_plat("windows") then
