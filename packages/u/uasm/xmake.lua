@@ -15,10 +15,18 @@ package("uasm")
         add_patches("v2.57r", "patches/uint64-fix.diff", "ea6bab7192894fc673b55b9ead67cf1eb0046cd34c425f33781e167097988662")
     end
 
-    on_install("@msys", "@mingw", "@cygwin", function (package)
-        local configs = { "-f", "Makefile-DOS-GCC.mak", "CC=cc.exe -c -IH -std=gnu11 -funsigned-char -fcommon -Wno-implicit-function-declaration -Wno-incompatible-pointer-types"}
+    on_install("@macosx", function (package)
+        os.cp(path.join(package:scriptdir(), "port", "osx64.mak"), "osx64.mak")
+        local configs = { "-f", "osx64.mak", "CC=clang"}
         import("package.tools.make").install(package, configs)
-        os.cp("DJGPPr/hjwasm.exe", path.join(package:installdir("bin"), "uasm.exe"))
+        os.cp("*/uasm", path.join(package:installdir("bin"), "uasm"))
+    end)
+
+    on_install("@msys", "@mingw", "@cygwin", function (package)
+        io.replace("Makefile-DOS-GCC.mak", "gcc.exe", "clang", {plain = true})
+        local configs = { "-f", "Makefile-DOS-GCC.mak", "CC=clang -c -IH -std=gnu11 -funsigned-char -fcommon -Wno-implicit-function-declaration -Wno-incompatible-pointer-types"}
+        import("package.tools.make").install(package, configs)
+        os.cp("*/hjwasm.exe", path.join(package:installdir("bin"), "uasm.exe"))
     end)
 
     on_install("@windows", function (package)
