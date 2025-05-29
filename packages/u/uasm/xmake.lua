@@ -19,7 +19,7 @@ package("uasm")
         os.cp(path.join(package:scriptdir(), "ports", "osx64.mak"), "osx64.mak")
         local configs = { "-f", "osx64.mak", "CC=clang"}
         import("package.tools.make").install(package, configs)
-        os.cp("*/uasm", path.join(package:installdir("bin"), "uasm"))
+        os.cp("*/*/uasm", path.join(package:installdir("bin"), "uasm"))
     end)
 
     on_install("msys", "mingw@macosx,linux,windows,msys", function (package)
