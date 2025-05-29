@@ -23,7 +23,6 @@ package("uasm")
 
     on_install("windows", function (package)
         import("package.tools.msbuild")
-        local configs = {}
         local arch = package:is_arch("x64") and "x64" or "Win32"
         if package:is_arch("arm64") then
             arch = "ARM64"
