@@ -15,19 +15,13 @@ package("uasm")
         add_patches("v2.57r", "patches/uint64-fix.diff", "ea6bab7192894fc673b55b9ead67cf1eb0046cd34c425f33781e167097988662")
     end
 
-    on_install("macosx", function (package)
-        local configs = { "-f", "Makefile-OSX-Clang-64.mak", "CC=clang -c -IH -std=gnu11 -funsigned-char -fcommon -Wno-implicit-function-declaration"}
-        import("package.tools.make").install(package, configs)
-        os.cp("ccUnixR/uasm", path.join(package:installdir("bin"), "uasm"))
-    end)
-
-    on_install("mingw@macosx,linux,windows,msys,cygwin", function (package)
+    on_install("@msys", "@mingw", "@cygwin", function (package)
         local configs = { "-f", "Makefile-DOS-GCC.mak", "CC=cc.exe -c -IH -std=gnu11 -funsigned-char -fcommon -Wno-implicit-function-declaration -Wno-incompatible-pointer-types"}
         import("package.tools.make").install(package, configs)
         os.cp("DJGPPr/hjwasm.exe", path.join(package:installdir("bin"), "uasm.exe"))
     end)
 
-    on_install("windows", function (package)
+    on_install("@windows", function (package)
         import("package.tools.msbuild")
         local arch = package:is_arch("x64") and "x64" or "Win32"
         if package:is_arch("arm64") then
