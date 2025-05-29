@@ -23,8 +23,7 @@ package("uasm")
     end)
 
     on_install("msys", "mingw@macosx,linux,windows,msys", function (package)
-        io.replace("Makefile-DOS-GCC.mak", "gcc.exe", "clang", {plain = true})
-        local configs = { "-f", "Makefile-DOS-GCC.mak", "CC=clang -c -IH -std=gnu11 -funsigned-char -fcommon -Wno-implicit-function-declaration -Wno-incompatible-pointer-types"}
+        local configs = { "-f", "Makefile-DOS-GCC.mak", "CC=cc -c -IH -std=gnu11 -funsigned-char -fcommon -Wno-implicit-function-declaration -Wno-incompatible-pointer-types"}
         import("package.tools.make").install(package, configs)
         os.cp("*/hjwasm.exe", path.join(package:installdir("bin"), "uasm.exe"))
     end)
