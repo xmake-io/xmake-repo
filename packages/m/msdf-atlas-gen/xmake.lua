@@ -15,14 +15,6 @@ package("msdf-atlas-gen")
     add_deps("zlib")
     add_deps("msdfgen", {configs = {extensions = true}})
 
-    on_load(function (package)
-        if package:is_plat("windows") and package:config("shared") then
-            package:add("defines", "MSDF_ATLAS_PUBLIC=__declspec(dllimport)")
-        else
-            package:add("defines", "MSDF_ATLAS_PUBLIC=")
-        end
-    end)
-
     on_install(function (package)
         local configs = {}
         table.insert(configs, "-DMSDF_ATLAS_USE_VCPKG=OFF")
