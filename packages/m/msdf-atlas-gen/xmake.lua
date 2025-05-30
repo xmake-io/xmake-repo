@@ -30,6 +30,9 @@ package("msdf-atlas-gen")
             io.replace("CMakeLists.txt", [[set(MSDF_ATLAS_MSVC_RUNTIME "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")]], "", {plain = true})
             io.replace("CMakeLists.txt", [[set(MSDF_ATLAS_MSVC_RUNTIME "MultiThreaded$<$<CONFIG:Debug>:Debug>")]], "", {plain = true})
         end
+        if package:is_plat("mingw") and package:config("shared") then
+            io.replace("CMakeLists.txt", [[if(BUILD_SHARED_LIBS AND WIN32)]], [[if(0)]], {plain = true})
+        end
         
         import("package.tools.cmake").install(package, configs)
     end)
