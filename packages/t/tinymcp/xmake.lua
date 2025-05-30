@@ -8,8 +8,7 @@ package("tinymcp")
 
     add_deps("jsoncpp")
 
-    on_install(function (package)
-        local configs = {}
+    on_install("!macosx and !iphoneos", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             add_requires("jsoncpp")
