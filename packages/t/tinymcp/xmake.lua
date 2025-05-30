@@ -8,6 +8,10 @@ package("tinymcp")
 
     add_deps("jsoncpp")
 
+    if is_plat("linux", "bsd") then
+        add_syslinks("pthread")
+    end
+
     on_install("!macosx and !iphoneos", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
@@ -19,6 +23,9 @@ package("tinymcp")
                 add_packages("jsoncpp")
                 if is_plat("windows") and is_kind("shared") then
                     add_rules("utils.symbols.export_all", {export_classes = true})
+                end
+                if is_plat("linux", "bsd") then
+                    add_syslinks("pthread")
                 end
         ]])
         import("package.tools.xmake").install(package)
