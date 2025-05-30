@@ -1,0 +1,65 @@
+diff --git a/CodeGenV2_WIP/codegenv2.c b/CodeGenV2_WIP/codegenv2.c
+index e6460a8..19807ae 100644
+--- a/CodeGenV2_WIP/codegenv2.c
++++ b/CodeGenV2_WIP/codegenv2.c
+@@ -34,7 +34,7 @@ struct Instr_Def* InstrHash[16384];
+ static unsigned int hash(const uint_8* data, int size)
+ /******************************************/
+ {
+-	uint_64 fnv_basis = 14695981039346656037;
++	uint_64 fnv_basis = 14695981039346656037ULL;
+ 	uint_64 register fnv_prime = 1099511628211;
+ 	uint_64 h = fnv_basis;
+ 	int cnt = 0;
+diff --git a/codegenv2.c b/codegenv2.c
+index 6bcc08d..9558fe3 100644
+--- a/codegenv2.c
++++ b/codegenv2.c
+@@ -34,7 +34,7 @@ struct Instr_Def* InstrHash[16384];
+ static unsigned int hash(const uint_8* data, int size)
+ /******************************************/
+ {
+-	uint_64 fnv_basis = 14695981039346656037;
++	uint_64 fnv_basis = 14695981039346656037ULL;
+ 	uint_64 register fnv_prime = 1099511628211;
+ 	uint_64 h = fnv_basis;
+ 	int cnt = 0;
+diff --git a/invoke.c b/invoke.c
+index 750bd64..bdc40cb 100644
+--- a/invoke.c
++++ b/invoke.c
+@@ -3192,7 +3192,7 @@ static int ParamIsString(char *pStr, int param, struct dsym* proc) {
+ static unsigned int hashpjw(const char *s)
+ /******************************************/
+ {
+-	uint_64 fnv_basis = 14695981039346656037;
++	uint_64 fnv_basis = 14695981039346656037ULL;
+ 	uint_64 register fnv_prime = 1099511628211;
+ 	uint_64 h;
+ 	for (h = fnv_basis; *s; ++s) {
+diff --git a/reswords.c b/reswords.c
+index 03273f9..e16836d 100644
+--- a/reswords.c
++++ b/reswords.c
+@@ -970,7 +970,7 @@ static bool  b64bit = FALSE; /* resw tables in 64bit mode? */
+ static unsigned get_hash(const char *s, unsigned char size)
+ /***********************************************************/
+ {
+-  uint_64 fnv_basis = 14695981039346656037;
++  uint_64 fnv_basis = 14695981039346656037ULL;
+   uint_64 register fnv_prime = 1099511628211;
+   uint_64 h;
+   for (h = fnv_basis; size; size--) {
+diff --git a/symbols.c b/symbols.c
+index 1b28fa8..e05e1c2 100644
+--- a/symbols.c
++++ b/symbols.c
+@@ -155,7 +155,7 @@ static bool structLookup = FALSE;
+ static unsigned int hashpjw( const char *s )
+ /******************************************/
+ {
+-	uint_64 fnv_basis = 14695981039346656037;
++	uint_64 fnv_basis = 14695981039346656037ULL;
+ 	uint_64 register fnv_prime = 1099511628211;
+ 	uint_64 h;
+ 	for (h = fnv_basis; *s; ++s) {
