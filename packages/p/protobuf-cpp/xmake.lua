@@ -170,6 +170,9 @@ package("protobuf-cpp")
 
         table.insert(configs, "-Dprotobuf_WITH_ZLIB=" .. (package:config("zlib") and "ON" or "OFF"))
         table.insert(configs, "-Dprotobuf_BUILD_LIBUPB=" .. (package:config("upb") and "ON" or "OFF"))
+        if version:ge("31.0) then
+            configs[9] = "-Dprotobuf_BUILD_LIBUPB=ON"
+        end
 
         local opt = {}
         opt.buildir = "build"
