@@ -9,7 +9,6 @@ package("rest_rpc")
     add_versions("2024.7.26", "35761edb55dff9ccdc87000062e84172bbd5b29b")
 
     add_deps("asio", "msgpack-c")
-    add_defines("MSGPACK_NO_BOOST")
 
     if is_plat("mingw") then
         add_syslinks("ws2_32")
