@@ -157,9 +157,9 @@ package("protobuf-cpp")
             "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
             "-Dprotobuf_BUILD_TESTS=OFF",
             "-Dprotobuf_LOCAL_DEPENDENCIES_ONLY=ON",
-            "-Dprotobuf_BUILD_PROTOC_BINARIES=ON",
             "-Dprotobuf_DEBUG_POSTFIX=''",
         }
+        table.insert(configs, "-Dprotobuf_BUILD_PROTOC_BINARIES=" .. ((not package:is_plat("android")) and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-Dprotobuf_DISABLE_RTTI=" .. (package:config("rtti") and "OFF" or "ON"))
@@ -169,9 +169,13 @@ package("protobuf-cpp")
         end
 
         table.insert(configs, "-Dprotobuf_WITH_ZLIB=" .. (package:config("zlib") and "ON" or "OFF"))
-        table.insert(configs, "-Dprotobuf_BUILD_LIBUPB=" .. (package:config("upb") and "ON" or "OFF"))
+        table.insert(configs, "-Dprotobuf_BUILD_LIBUPB=" .. ((package:config("upb") or version:ge("31.0") and not is_plat("android")) and "ON" or "OFF"))
         if version:ge("31.0) then
-            configs[9] = "-Dprotobuf_BUILD_LIBUPB=ON"
+            configs[10] = "-Dprotobuf_BUILD_LIBUPB=ON"
+        end
+        if package_is_plat("android") then
+            configs[4] = "-Dprotobuf_BUILD_PROTOC_BINARIES=OFF"
+            configs[10] = "-Dprotobuf_BUILD_LIBUPB=OFF"
         end
 
         local opt = {}
