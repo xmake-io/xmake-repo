@@ -42,7 +42,7 @@ package("cpu-features")
     end)
 
     on_test(function (package)
-        if not package:is_cross() and (package:is_plat("windows") and package:is_arch("arm64")) then
+        if not package:is_cross() and not (package:is_plat("windows") and package:is_arch("arm64")) then
             os.vrun("list_cpu_features")
         end
         assert(package:check_csnippets({test = [[
