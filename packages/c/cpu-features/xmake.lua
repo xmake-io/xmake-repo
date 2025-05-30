@@ -11,22 +11,30 @@ package("cpu-features")
     add_versions("v0.7.0", "df80d9439abf741c7d2fdcdfd2d26528b136e6c52976be8bd0cd5e45a27262c0")
     add_versions("v0.9.0", "bdb3484de8297c49b59955c3b22dba834401bc2df984ef5cfc17acbe69c5018e")
 
+    add_configs("tools", {description = "Build tools", default = true, type = "boolean"})
+
     if is_plat("macosx") then
         add_extsources("brew::cpu_features")
     end
 
     add_deps("cmake")
 
+    on_load(function (package)
+        if package:config("tools") then
+            package:addenv("PATH", "bin")
+        end
+    end)
+
     on_install("!wasm", function (package)
         if package:is_cross() then
             local arch
-            if package:is_arch("arm.*") then
+            if package:is_arch("arm.*") and package:is_cross() then
                 arch = (package:is_arch64() and "set(PROCESSOR_IS_AARCH64 TRUE)" or "set(PROCESSOR_IS_ARM TRUE)")
                 io.replace("CMakeLists.txt", "set(PROCESSOR_IS_X86 TRUE)", arch, {plain = true})
             end
         end
 
-        local configs = {"-DBUILD_TESTING=OFF", "-DENABLE_INSTALL=ON", "-DBUILD_EXECUTABLE=ON"}
+        local configs = {"-DBUILD_TESTING=OFF", "-DENABLE_INSTALL=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=" .. (package:config("pic") and "ON" or "OFF"))
@@ -37,12 +45,12 @@ package("cpu-features")
         if package:config("shared") and package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
+        table.insert(configs, "-DBUILD_EXECUTABLE=" .. (package:config("tools") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
-        package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)
-        if not package:is_cross() and not (package:is_plat("windows") and package:is_arch("arm64")) then
+        if not package:is_cross() and package:config("tools") then
             os.vrun("list_cpu_features")
         end
         assert(package:check_csnippets({test = [[
