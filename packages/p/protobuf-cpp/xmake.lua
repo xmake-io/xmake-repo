@@ -170,13 +170,6 @@ package("protobuf-cpp")
 
         table.insert(configs, "-Dprotobuf_WITH_ZLIB=" .. (package:config("zlib") and "ON" or "OFF"))
         table.insert(configs, "-Dprotobuf_BUILD_LIBUPB=" .. ((package:config("upb") or version:ge("31.0") and not is_plat("android")) and "ON" or "OFF"))
-        if version:ge("31.0) then
-            configs[10] = "-Dprotobuf_BUILD_LIBUPB=ON"
-        end
-        if package_is_plat("android") then
-            configs[4] = "-Dprotobuf_BUILD_PROTOC_BINARIES=OFF"
-            configs[10] = "-Dprotobuf_BUILD_LIBUPB=OFF"
-        end
 
         local opt = {}
         opt.buildir = "build"
