@@ -11,6 +11,13 @@ package("glosshook")
 
     add_deps("xdl")
 
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk"):config("ndkver")
+            assert(ndk and tonumber(ndk) > 22, "package(glosshook) require ndk version > 22")
+        end)
+    end
+
     on_install("android", function (package)
         if package:config("shared") then
             if package:check_sizeof("void*") == "4" then
