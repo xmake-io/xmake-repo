@@ -1,0 +1,12 @@
+diff --git a/lsp/connection.cpp b/lsp/connection.cpp
+index e7368c3..0515fe1 100644
+--- a/lsp/connection.cpp
++++ b/lsp/connection.cpp
+@@ -5,6 +5,7 @@
+ #include <lsp/connection.h>
+ #include <lsp/json/json.h>
+ #include <lsp/io/stream.h>
++#include <ios>
+ 
+ #ifndef LSP_MESSAGE_DEBUG_LOG
+ 	#ifdef NDEBUG
