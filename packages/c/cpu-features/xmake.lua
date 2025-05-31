@@ -28,7 +28,7 @@ package("cpu-features")
     on_install("!wasm", function (package)
         if package:is_cross() then
             local arch
-            if package:is_arch("arm.*") and package:is_cross() then
+            if package:is_arch("arm.*") then
                 arch = (package:is_arch64() and "set(PROCESSOR_IS_AARCH64 TRUE)" or "set(PROCESSOR_IS_ARM TRUE)")
                 io.replace("CMakeLists.txt", "set(PROCESSOR_IS_X86 TRUE)", arch, {plain = true})
             end
@@ -39,7 +39,7 @@ package("cpu-features")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=" .. (package:config("pic") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_PIC=" .. (package:config("pic") and "ON" or "OFF"))
-        if package:is_plat("cross", "iphoneos") then
+        if package:is_plat("cross", "iphoneos", "windows") then
             table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. package:arch())
         end
         if package:config("shared") and package:is_plat("windows") then
