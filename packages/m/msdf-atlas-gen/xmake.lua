@@ -4,7 +4,7 @@ package("msdf-atlas-gen")
     set_license("MIT")
 
     add_urls("https://github.com/Chlumsky/msdf-atlas-gen/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/Chlumsky/msdf-atlas-gen.git")
+             "https://github.com/Chlumsky/msdf-atlas-gen.git", {submodules = false})
 
     add_versions("v1.3", "5d3d58e8bc92836baf23ce3a80ef79cc4c2d022fb86b7f160b11cc06cd62fe78")
 
