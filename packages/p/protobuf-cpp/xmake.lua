@@ -13,6 +13,7 @@ package("protobuf-cpp")
     end})
 
     -- TODO: Use x.y.z version? https://protobuf.dev/support/version-support
+    add_versions("31.0", "3fea4fad0fd2d89e0e79937bc4b3083d483d7e5bc5fec2b8a4158916cd9478dd")
     add_versions("30.2", "6544e5ceec7f29d00397193360435ca8b3c4e843de3cf5698a99d36b72d65342")
     add_versions("29.3", "e9b9ac1910b1041065839850603caf36e29d3d3d230ddf52bd13778dd31b9046")
     add_versions("29.2", "60c1ab4befe9d0a975c2344b5511bf6b44f91ec3e1426c878f56bf30a0589c43")
@@ -156,9 +157,9 @@ package("protobuf-cpp")
             "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
             "-Dprotobuf_BUILD_TESTS=OFF",
             "-Dprotobuf_LOCAL_DEPENDENCIES_ONLY=ON",
-            "-Dprotobuf_BUILD_PROTOC_BINARIES=ON",
             "-Dprotobuf_DEBUG_POSTFIX=''",
         }
+        table.insert(configs, "-Dprotobuf_BUILD_PROTOC_BINARIES=" .. ((not package:is_plat("android")) and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-Dprotobuf_DISABLE_RTTI=" .. (package:config("rtti") and "OFF" or "ON"))
@@ -168,7 +169,7 @@ package("protobuf-cpp")
         end
 
         table.insert(configs, "-Dprotobuf_WITH_ZLIB=" .. (package:config("zlib") and "ON" or "OFF"))
-        table.insert(configs, "-Dprotobuf_BUILD_LIBUPB=" .. (package:config("upb") and "ON" or "OFF"))
+        table.insert(configs, "-Dprotobuf_BUILD_LIBUPB=" .. ((package:config("upb") or version:ge("31.0") and not is_plat("android")) and "ON" or "OFF"))
 
         local opt = {}
         opt.buildir = "build"
