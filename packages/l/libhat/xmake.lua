@@ -30,7 +30,7 @@ package("libhat")
         assert(ndk and tonumber(ndk) > 22, "package(glosshook) require ndk version > 22")
     end)
 
-    on_install(function (package)
+    on_install("!bsd and !wasm", function (package)
         if os.exists("include/libhat/compressed_pair.hpp") then
             io.replace("include/libhat/compressed_pair.hpp", [[#include "defines.hpp"]], [[#include "defines.hpp"
 #include <cstddef>]], {plain = true})
@@ -67,10 +67,9 @@ package("libhat")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <libhat/scanner.hpp>
+            #include <libhat.hpp>
             void test() {
-                hat::fixed_signature<1> sig{};
-                auto contextA = hat::detail::scan_context::create<hat::detail::scan_mode::Single>(sig, hat::scan_alignment::X1, hat::scan_hint::none);
+                auto pattern = hat::compile_signature<"48 8D 05 ? ? ? ? E8">();
             }
         ]]}, {configs = {languages = "c++20"}}))
     end)
