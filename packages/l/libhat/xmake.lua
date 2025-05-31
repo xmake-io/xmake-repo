@@ -14,6 +14,10 @@ package("libhat")
     add_configs("std_module",   {description = "Compile the module target using the std module", default = false, type = "boolean"})
     add_configs("hint",         {description = "Enables support for the x86_64 scan hint, requires a small (less than 1KB) data table", default = false, type = "boolean"})
 
+    if is_plat("macosx") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true}
+    end
+
     add_deps("cmake")
 
     on_check("windows", function (package)
