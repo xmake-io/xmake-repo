@@ -144,7 +144,7 @@ package("protobuf-cpp")
                     io.replace("upb/hash/common.c", [[#elif defined(_MSC_VER)
 #define UPB_FAST_POPCOUNT32(i) __popcnt(i)]], [[#elif defined(_MSC_VER)
 #if defined(_M_ARM64)
-unsigned int __popcnt(unsigned int x) {
+unsigned int UPB_FAST_POPCOUNT32(unsigned int x) {
   unsigned int c = 0;
   for (; x; ++c) {
     x &= x - 1;
