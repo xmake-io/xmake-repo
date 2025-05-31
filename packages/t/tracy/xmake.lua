@@ -59,6 +59,12 @@ package("tracy")
     end)
 
     on_install(function (package)
+        io.replace("public/client/TracyProfiler.cpp", [[#ifdef TRACY_ENABLE]], [[#ifdef TRACY_ENABLE
+#ifdef __MINGW32__
+#define __try try
+#define __except(filter) catch(...)
+#endif]], {plain = true})
+        io.replace("public/client/TracyProfiler.cpp", [[RelationProcessorDie]], [[static_cast<LOGICAL_PROCESSOR_RELATIONSHIP>(5)]], {plain = true})
         if package:config("cmake") then
             local configs = {}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
