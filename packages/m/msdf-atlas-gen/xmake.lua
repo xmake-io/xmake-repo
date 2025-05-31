@@ -15,7 +15,7 @@ package("msdf-atlas-gen")
     add_deps("zlib")
     add_deps("msdfgen", {configs = {extensions = true}})
 
-    on_load("windows", "mingw", function (package)
+    on_load("windows", function (package)
         if package:config("shared") then
             package:add("defines", "MSDF_ATLAS_PUBLIC=__declspec(dllimport)")
         end
@@ -35,6 +35,9 @@ package("msdf-atlas-gen")
         if package:is_plat("windows") then
             io.replace("CMakeLists.txt", [[set(MSDF_ATLAS_MSVC_RUNTIME "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")]], "", {plain = true})
             io.replace("CMakeLists.txt", [[set(MSDF_ATLAS_MSVC_RUNTIME "MultiThreaded$<$<CONFIG:Debug>:Debug>")]], "", {plain = true})
+        end
+        if package:is_plat("mingw") and package:config("shared") then
+            io.replace("CMakeLists.txt", [[if(BUILD_SHARED_LIBS AND WIN32)]], [[if(0)]], {plain = true})
         end
 
         import("package.tools.cmake").install(package, configs)
