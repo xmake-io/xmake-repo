@@ -21,6 +21,8 @@ package("libhat")
             io.replace("include/libhat/compressed_pair.hpp", [[#include "defines.hpp"]], [[#include "defines.hpp"
 #include <cstddef>]], {plain = true})
         end
+        io.replace("CMakeLists.txt", "/clang:-Werror", "", {plain = true})
+        io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
         local configs = {"-DLIBHAT_TESTING=OFF", "-DLIBHAT_TESTING_ASAN=OFF", "-DLIBHAT_TESTING_SDE=OFF", "-DLIBHAT_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DLIBHAT_SHARED_C_LIB=" .. (package:config("shared") and "ON" or "OFF"))
