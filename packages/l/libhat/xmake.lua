@@ -16,6 +16,20 @@ package("libhat")
 
     add_deps("cmake")
 
+    on_check("windows", function (package)
+        import("core.tool.toolchain")
+        local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+        local vs = msvc:config("vs")
+        if vs and tonumber(vs) < 2022 then
+            raise("package(libhat): MSVC 2019 and earlier are not supported.")
+        end
+    end)
+
+    on_check("android", function (package)
+        local ndk = package:toolchain("ndk"):config("ndkver")
+        assert(ndk and tonumber(ndk) > 22, "package(glosshook) require ndk version > 22")
+    end)
+
     on_install(function (package)
         if os.exists("include/libhat/compressed_pair.hpp") then
             io.replace("include/libhat/compressed_pair.hpp", [[#include "defines.hpp"]], [[#include "defines.hpp"
