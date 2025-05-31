@@ -134,6 +134,30 @@ package("protobuf-cpp")
     end)
 
     on_install(function (package)
+        import("core.tool.toolchain")
+        -- Fix MSVC 2019 arm64 error LNK2019: unresolved external symbol __popcnt referenced in function _upb_log2_table_size
+        if package:version():gt("30.2") then
+            if package:is_plat("windows") then
+                local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+                local vs = msvc:config("vs")
+                if vs and tonumber(vs) < 2022 and package:is_arch("arm64") then
+                    io.replace("upb/hash/common.c", [[#elif defined(_MSC_VER)
+#define UPB_FAST_POPCOUNT32(i) __popcnt(i)]], [[#elif defined(_MSC_VER)
+#if defined(_M_ARM64)
+unsigned int __popcnt(unsigned int x) {
+  unsigned int c = 0;
+  for (; x; ++c) {
+    x &= x - 1;
+  }
+  return c;
+}
+#else
+#define UPB_FAST_POPCOUNT32(i) __popcnt(i)
+#endif]], {plain = true})
+                end
+            end
+        end
+        -- https://github.com/msys2/MINGW-packages/blob/e77de8e92025175ffa0a217c3444249aa6f8f4a9/mingw-w64-protobuf/0004-fix-build-with-gcc-15.patch#L7
         io.replace("src/google/protobuf/port_def.inc", 
             [[#if ABSL_HAVE_CPP_ATTRIBUTE(clang::musttail) && !defined(__arm__) &&  \]],
             [[#if ABSL_HAVE_CPP_ATTRIBUTE(clang::musttail) && !defined(__arm__) &&  \
