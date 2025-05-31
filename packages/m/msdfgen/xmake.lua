@@ -35,6 +35,7 @@ package("msdfgen")
             end
         end
         package:add("links", "msdfgen-core")
+        package:add("includedirs", "include", "include/msdfgen")
     end)
 
     on_install(function (package)
