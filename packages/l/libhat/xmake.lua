@@ -63,13 +63,12 @@ package("libhat")
         import("package.tools.cmake").install(package, configs, opt)
         os.cp("include", package:installdir())
     end)
-    
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <libhat.hpp>
+            #include <libhat/c/libhat.h>
             void test() {
-                auto pattern = hat::compile_signature<"48 8D 05 ? ? ? ? E8">();
+                auto module = libhat_get_module("some_module");
             }
         ]]}, {configs = {languages = "c++20"}}))
     end)
