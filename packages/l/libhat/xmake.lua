@@ -35,6 +35,10 @@ package("libhat")
             io.replace("include/libhat/compressed_pair.hpp", [[#include "defines.hpp"]], [[#include "defines.hpp"
 #include <cstddef>]], {plain = true})
         end
+        if os.exists("include/libhat/strconv.hpp") then
+            io.replace("include/libhat/strconv.hpp", [[#include "result.hpp"]], [[#include "result.hpp"
+#include <cstdint>]], {plain = true})
+        end
         io.replace("CMakeLists.txt", "/clang:-Werror", "", {plain = true})
         io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
         local configs = {"-DLIBHAT_TESTING=OFF", "-DLIBHAT_TESTING_ASAN=OFF", "-DLIBHAT_TESTING_SDE=OFF", "-DLIBHAT_EXAMPLES=OFF"}
@@ -66,9 +70,9 @@ package("libhat")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <libhat/c/libhat.h>
+            #include <libhat/signature.hpp>
             void test() {
-                auto module = libhat_get_module("some_module");
+                auto sig = hat::parse_signature("01 02 03 04 05 06 07 08 09").value();
             }
         ]]}, {configs = {languages = "c++20"}}))
     end)
