@@ -13,7 +13,7 @@ package("tracy")
     add_versions("v0.9", "93a91544e3d88f3bc4c405bad3dbc916ba951cdaadd5fcec1139af6fa56e6bfc")
     add_versions("v0.8.2", "4784eddd89c17a5fa030d408392992b3da3c503c872800e9d3746d985cfcc92a")
 
-    add_configs("cmake",                            {description = "Use cmake buildsystem", default = false, type = "boolean"})
+    add_configs("cmake",                            {description = "Use cmake buildsystem", default = true, type = "boolean"})
 
     add_configs("tracy_enable",                     {type = "boolean", default = true,  description = "Enable profiling"})
     add_configs("on_demand",                        {type = "boolean", default = false, description = "On-demand profiling"})
