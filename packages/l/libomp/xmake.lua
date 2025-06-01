@@ -69,7 +69,7 @@ package("libomp")
             if package:is_arch("x86_64", "x64") then
                 table.insert(configs, "-DLIBOMP_ASMFLAGS=-win64")
             end
-            if package:is_subhost("macosx") then
+            if is_subhost("macosx") then
                 table.insert(configs, "-DCMAKE_ASM_MASM_COMPILER=" .. path.join(package:dep("uasm"):installdir("bin"), "uasm"))
             else
                 table.insert(configs, "-DCMAKE_ASM_MASM_COMPILER=" .. path.join(package:dep("uasm"):installdir("bin"), "uasm.exe"))
