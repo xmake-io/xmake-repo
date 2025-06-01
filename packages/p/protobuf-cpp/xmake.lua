@@ -42,6 +42,7 @@ package("protobuf-cpp")
     add_configs("zlib", {description = "Enable zlib", default = false, type = "boolean"})
     add_configs("lite", {description = "Build lite version", default = true, type = "boolean", readonly = true})
     add_configs("upb", {description = "Build upb", default = false, type = "boolean"})
+    add_configs("bin", {description = "Build libprotoc and protoc compiler", default = not is_plat("android"), type = "boolean"})
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::protobuf")
@@ -182,7 +183,7 @@ unsigned int UPB_FAST_POPCOUNT32(unsigned int x) {
             "-Dprotobuf_LOCAL_DEPENDENCIES_ONLY=ON",
             "-Dprotobuf_DEBUG_POSTFIX=''",
         }
-        table.insert(configs, "-Dprotobuf_BUILD_PROTOC_BINARIES=" .. ((not package:is_plat("android")) and "ON" or "OFF"))
+        table.insert(configs, "-Dprotobuf_BUILD_PROTOC_BINARIES=" .. (package:config("bin") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-Dprotobuf_DISABLE_RTTI=" .. (package:config("rtti") and "OFF" or "ON"))
@@ -192,7 +193,7 @@ unsigned int UPB_FAST_POPCOUNT32(unsigned int x) {
         end
 
         table.insert(configs, "-Dprotobuf_WITH_ZLIB=" .. (package:config("zlib") and "ON" or "OFF"))
-        table.insert(configs, "-Dprotobuf_BUILD_LIBUPB=" .. ((package:config("upb") or version:ge("31.0") and not is_plat("android")) and "ON" or "OFF"))
+        table.insert(configs, "-Dprotobuf_BUILD_LIBUPB=" .. (package:config("upb") and "ON" or "OFF"))
 
         local opt = {}
         opt.buildir = "build"
