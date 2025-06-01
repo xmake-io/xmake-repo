@@ -71,6 +71,8 @@ package("libomp")
             end
             if is_subhost("macosx") then
                 table.insert(configs, "-DCMAKE_ASM_MASM_COMPILER=" .. path.join(package:dep("uasm"):installdir("bin"), "uasm"))
+                io.replace("runtime/cmake/LibompHandleFlags.cmake", [[/safeseh]], [[-safeseh]], {plain = true})
+                io.replace("runtime/cmake/LibompHandleFlags.cmake", [[/coff]], [[-coff]], {plain = true})
             else
                 table.insert(configs, "-DCMAKE_ASM_MASM_COMPILER=" .. path.join(package:dep("uasm"):installdir("bin"), "uasm.exe"))
             end
