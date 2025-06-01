@@ -41,7 +41,7 @@ package("protobuf-cpp")
     add_configs("rtti", {description = "Enable runtime type information", default = true, type = "boolean"})
     add_configs("zlib", {description = "Enable zlib", default = false, type = "boolean"})
     add_configs("lite", {description = "Build lite version", default = true, type = "boolean", readonly = true})
-    add_configs("upb", {description = "Build upb", default = false, type = "boolean"})
+    add_configs("upb", {description = "Build upb", default = not is_plat("android"), type = "boolean"})
     add_configs("bin", {description = "Build libprotoc and protoc compiler", default = not is_plat("android"), type = "boolean"})
 
     if is_plat("mingw") and is_subhost("msys") then
