@@ -8,7 +8,6 @@ package("msdf-atlas-gen")
 
     add_versions("v1.3", "5d3d58e8bc92836baf23ce3a80ef79cc4c2d022fb86b7f160b11cc06cd62fe78")
 
-    add_configs("skia", {description = "Build with the Skia library", default = false, type = "boolean"})
     add_configs("standalone", {description = "Build standalone executable", default = false, type = "boolean"})
 
     add_deps("cmake")
@@ -30,7 +29,6 @@ package("msdf-atlas-gen")
         table.insert(configs, "-DMSDF_ATLAS_NO_ARTERY_FONT=ON")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DMSDF_ATLAS_BUILD_STANDALONE=" .. (package:config("standalone") and "ON" or "OFF"))
-        table.insert(configs, "-DMSDF_ATLAS_USE_SKIA=" .. (package:config("skia") and "ON" or "OFF"))
 
         if package:is_plat("windows") then
             io.replace("CMakeLists.txt", [[set(MSDF_ATLAS_MSVC_RUNTIME "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")]], "", {plain = true})
