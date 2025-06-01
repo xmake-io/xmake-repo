@@ -69,7 +69,11 @@ package("libomp")
             if package:is_arch("x86_64", "x64") then
                 table.insert(configs, "-DLIBOMP_ASMFLAGS=-win64")
             end
-            table.insert(configs, "-DCMAKE_ASM_MASM_COMPILER=" .. path.join(package:dep("uasm"):installdir("bin"), "uasm.exe"))
+            if package:is_subhost("macosx") then
+                table.insert(configs, "-DCMAKE_ASM_MASM_COMPILER=" .. path.join(package:dep("uasm"):installdir("bin"), "uasm"))
+            else
+                table.insert(configs, "-DCMAKE_ASM_MASM_COMPILER=" .. path.join(package:dep("uasm"):installdir("bin"), "uasm.exe"))
+            end
         end
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (shared and "ON" or "OFF"))
         table.insert(configs, "-DLIBOMP_ENABLE_SHARED=" .. (shared and "ON" or "OFF"))
