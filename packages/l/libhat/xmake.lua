@@ -3,10 +3,10 @@ package("libhat")
     set_description("A high-performance, modern, C++20 library designed around game hacking")
     set_license("MIT")
 
-    add_urls("https://github.com/BasedInc/libhat/archive/refs/tags/$(version).tar.gz", {alias = "release"})
-    add_urls("https://github.com/BasedInc/libhat.git", {alias = "github"})
+    add_urls("https://github.com/BasedInc/libhat/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/BasedInc/libhat.git")
 
-    add_versions("release:v0.5.0", "d68a1913bfed2eaa087ea2d8c19ac82c9301839df1bc1beea97b22b532e48adc")
+    add_versions("v0.5.0", "d68a1913bfed2eaa087ea2d8c19ac82c9301839df1bc1beea97b22b532e48adc")
 
     add_configs("sse",          {description = "Enable SSE 4.1 scanning", default = false, type = "boolean"})
     add_configs("avx",          {description = "Enable AVX512 scanning", default = false, type = "boolean"})
@@ -21,8 +21,7 @@ package("libhat")
     add_deps("cmake")
 
     on_check("windows", function (package)
-        import("core.tool.toolchain")
-        local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+        local msvc = package:toolchain("msvc")
         local vs = msvc:config("vs")
         if vs and tonumber(vs) < 2022 then
             raise("package(libhat): MSVC 2019 and earlier are not supported.")
