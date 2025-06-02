@@ -17,8 +17,6 @@ package("ncnn")
         add_syslinks("android")
     end
 
-    add_links("ncnn")
-
     if on_check then
         on_check("android", function (package)
             local ndk = package:toolchain("ndk")
@@ -27,14 +25,17 @@ package("ncnn")
         end)
     end
 
-    on_load("windows", function (package)
-        if package:config("vulkan") then
-            package:add("deps", "vulkansdk")
+    on_load(function (package)
+        if package:is_plat("windows") then
+            if package:config("vulkan") then
+                package:add("deps", "vulkansdk")
+            end
+        else
+            package:add("links" , "ncnn" .. (package:is_debug() and "d" or ""))
+            if package:is_plat("linux", "macosx", "cross", "android") then
+                package:add("deps", "libomp")
+            end
         end
-    end)
-
-    on_load("linux", "macosx", "cross", "android", function (package)
-        package:add("deps", "libomp")
     end)
 
     on_install(function (package)
