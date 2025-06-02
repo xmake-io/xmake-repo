@@ -226,7 +226,9 @@ package("opencv")
                 shflags = {"-Wl,-Bsymbolic"}
             end
         end
-        import("package.tools.cmake").install(package, configs, {buildir = "bd", shflags = shflags, ldflags = ldflags})
+        local envs = {}
+        envs.OPENCV_DUMP_CONFIG = 1
+        import("package.tools.cmake").install(package, configs, {envs = envs, buildir = "bd", shflags = shflags, ldflags = ldflags})
         for _, link in ipairs({"opencv_phase_unwrapping", "opencv_surface_matching", "opencv_saliency",
                                "opencv_wechat_qrcode", "opencv_mcc", "opencv_face",
                                "opencv_img_hash", "opencv_videostab", "opencv_structured_light", "opencv_intensity_transform",
