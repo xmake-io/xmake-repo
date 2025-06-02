@@ -32,7 +32,7 @@ package("ncnn")
             end
         else
             package:add("links" , "ncnn" .. (package:is_debug() and "d" or ""))
-            if package:is_plat("linux", "macosx", "cross", "android") then
+            if package:is_plat("linux", "macosx", "cross", "android", "mingw") then
                 package:add("deps", "libomp")
             end
         end
