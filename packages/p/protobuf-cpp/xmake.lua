@@ -62,7 +62,7 @@ package("protobuf-cpp")
             local msvc = package:toolchain("msvc")
             local vs = msvc:config("vs")
             if vs and tonumber(vs) < 2022 and package:is_arch("arm64") then
-                package:add("patches", "31.0", path.join(os.scriptdir(), "patches", "31.0", "msvc2019-arm64.patch"), "b9aacb581cca9ccc12270ba1ce7eaa66029283d5ff0c0df8f02d2704cb6675a1")
+                package:add("patches", "31.0", path.join(os.scriptdir(), "patches", "31.0", "msvc2019-arm64.patch"), "35f3be9c1537075252ec9d8e97a50a7f6d4b2f400baf055b40a114d7b2a623e7")
             end
         end
         
