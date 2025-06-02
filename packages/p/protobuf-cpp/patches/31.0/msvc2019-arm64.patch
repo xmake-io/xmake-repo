@@ -15,4 +15,7 @@
 +#else
  #define UPB_FAST_POPCOUNT32(i) __popcnt(i)
  #endif
++#endif
  
+ UPB_INLINE int _upb_popcnt32(uint32_t i) {
+ #ifdef UPB_FAST_POPCOUNT32
