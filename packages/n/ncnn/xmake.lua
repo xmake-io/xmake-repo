@@ -31,7 +31,7 @@ package("ncnn")
                 package:add("deps", "vulkansdk")
             end
         else
-            if package:is_plat("mingw", "msys") then
+            if package:is_plat("mingw", "msys") and not is_subhost("macosx") then
                 package:add("ldflags", "-fopenmp")
             end
             package:add("links" , "ncnn" .. (package:is_debug() and "d" or ""))
