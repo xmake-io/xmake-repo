@@ -52,7 +52,7 @@ package("libomp")
         end
     end)
 
-    on_install("macosx", "linux", "cross", "android", "mingw", "msys", function (package)
+    on_install("macosx", "linux", "cross", "android", "mingw", "msys", "bsd", function (package)
         local version = package:version()
         if version:ge("19.0") then
             local llvm_cmake = package:resourcedir("llvm_cmake")
