@@ -30,6 +30,8 @@ package("haclog")
             table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
             import("package.tools.meson").install(package, configs)
         else
+            io.replace("CMakeLists.txt", [[message(FATAL_ERROR "-- building for unsupport platform")]], "", {plain = true})
+
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
             import("package.tools.cmake").install(package, configs)
