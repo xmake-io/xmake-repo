@@ -1,0 +1,10 @@
+--- src/google/protobuf/port_def.2.inc	2025-06-02 14:48:16.547634929 +0800
++++ src/google/protobuf/port_def.inc	2025-06-02 14:51:10.612262509 +0800
+@@ -236,6 +236,7 @@
+ #endif
+ #if ABSL_HAVE_CPP_ATTRIBUTE(clang::musttail) && !defined(__arm__) &&  \
+     !defined(_ARCH_PPC) && !defined(__wasm__) &&                      \
++    !(defined(__GNUC__) && __GNUC__ >= 15) && \
+     !(defined(_MSC_VER) && defined(_M_IX86)) && !defined(__i386__)
+ // Compilation fails on ARM32: b/195943306
+ // Compilation fails on powerpc64le: b/187985113

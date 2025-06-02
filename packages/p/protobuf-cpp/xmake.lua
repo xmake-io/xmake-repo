@@ -37,6 +37,10 @@ package("protobuf-cpp")
     add_patches("3.11.2", path.join(os.scriptdir(), "patches", "3.11.2", "ndk-link-log.diff"), "5564ae57562a2d6262e0837afd9645a6be2d4b52a52b7212fa6452f11f50af4a")
     add_patches("3.17.3", path.join(os.scriptdir(), "patches", "3.17.3", "field_access_listener.patch"), "ac9bdf49611b01e563fe74b2aaf1398214129454c3e18f1198245549eb281e85")
     add_patches("3.19.4", path.join(os.scriptdir(), "patches", "3.19.4", "vs_runtime.patch"), "8e73e585d29f3b9dca3c279df0b11b3ee7651728c07f51381a69e5899b93c367")
+    -- Fix MSVC 2019 arm64 error LNK2019: unresolved external symbol __popcnt referenced in function _upb_log2_table_size
+    add_patches("31.0", path.join(os.scriptdir(), "patches", "31.0", "vs2019-arm64.patch"), "bbebb83c8540a219d21cb43c508252d1cf22c7cfecd2857221122eb59cfcf506")
+    -- https://github.com/msys2/MINGW-packages/blob/e77de8e92025175ffa0a217c3444249aa6f8f4a9/mingw-w64-protobuf/0004-fix-build-with-gcc-15.patch#L7
+    add_patches("31.0", path.join(os.scriptdir(), "patches", "31.0", "gcc15.patch"), "f00dae841275ad384891e90a8c144bc8a3d4cc76155a85662af8919b251ab986")
 
     add_configs("rtti", {description = "Enable runtime type information", default = true, type = "boolean"})
     add_configs("zlib", {description = "Enable zlib", default = false, type = "boolean"})
@@ -135,33 +139,6 @@ package("protobuf-cpp")
     end)
 
     on_install(function (package)
-        -- Fix MSVC 2019 arm64 error LNK2019: unresolved external symbol __popcnt referenced in function _upb_log2_table_size
-        if package:version():gt("30.2") then
-            if package:is_plat("windows") then
-                local msvc = package:toolchain("msvc")
-                local vs = msvc:config("vs")
-                if vs and tonumber(vs) < 2022 and package:is_arch("arm64") then
-                    io.replace("upb/hash/common.c", [[#elif defined(_MSC_VER)
-#define UPB_FAST_POPCOUNT32(i) __popcnt(i)]], [[#elif defined(_MSC_VER)
-#if defined(_M_ARM64)
-unsigned int UPB_FAST_POPCOUNT32(unsigned int x) {
-  unsigned int c = 0;
-  for (; x; ++c) {
-    x &= x - 1;
-  }
-  return c;
-}
-#else
-#define UPB_FAST_POPCOUNT32(i) __popcnt(i)
-#endif]], {plain = true})
-                end
-            end
-        end
-        -- https://github.com/msys2/MINGW-packages/blob/e77de8e92025175ffa0a217c3444249aa6f8f4a9/mingw-w64-protobuf/0004-fix-build-with-gcc-15.patch#L7
-        io.replace("src/google/protobuf/port_def.inc", 
-            [[#if ABSL_HAVE_CPP_ATTRIBUTE(clang::musttail) && !defined(__arm__) &&  \]],
-            [[#if ABSL_HAVE_CPP_ATTRIBUTE(clang::musttail) && !defined(__arm__) &&  \
-    !(defined(__GNUC__) && __GNUC__ >= 15 ) &&                      \]], {plain = true})
         if package:is_plat("windows", "mingw") then
             io.replace("src/google/protobuf/port_def.inc", "#define PROTOBUF_DESCRIPTOR_WEAK_MESSAGES_ALLOWED", "", {plain = true})
         end
