@@ -38,7 +38,7 @@ package("protobuf-cpp")
     add_patches("3.17.3", path.join(os.scriptdir(), "patches", "3.17.3", "field_access_listener.patch"), "ac9bdf49611b01e563fe74b2aaf1398214129454c3e18f1198245549eb281e85")
     add_patches("3.19.4", path.join(os.scriptdir(), "patches", "3.19.4", "vs_runtime.patch"), "8e73e585d29f3b9dca3c279df0b11b3ee7651728c07f51381a69e5899b93c367")
     -- https://github.com/msys2/MINGW-packages/blob/e77de8e92025175ffa0a217c3444249aa6f8f4a9/mingw-w64-protobuf/0004-fix-build-with-gcc-15.patch#L7
-    add_patches("31.0", path.join(os.scriptdir(), "patches", "31.0", "gcc15.patch"), "f00dae841275ad384891e90a8c144bc8a3d4cc76155a85662af8919b251ab986")
+    add_patches("31.0", path.join(os.scriptdir(), "patches", "31.0", "gcc15.patch"), "6475e824fabf7835f77e0410830c80b23e4c7a71fa5d7f4867ee7235942b167f")
 
     add_configs("rtti", {description = "Enable runtime type information", default = true, type = "boolean"})
     add_configs("zlib", {description = "Enable zlib", default = false, type = "boolean"})
@@ -62,7 +62,7 @@ package("protobuf-cpp")
             local msvc = package:toolchain("msvc")
             local vs = msvc:config("vs")
             if vs and tonumber(vs) < 2022 and package:is_arch("arm64") then
-                package:add("patches", "31.0", path.join(os.scriptdir(), "patches", "31.0", "msvc2019-arm64.patch"), "bbebb83c8540a219d21cb43c508252d1cf22c7cfecd2857221122eb59cfcf506")
+                package:add("patches", "31.0", path.join(os.scriptdir(), "patches", "31.0", "msvc2019-arm64.patch"), "b9aacb581cca9ccc12270ba1ce7eaa66029283d5ff0c0df8f02d2704cb6675a1")
             end
         end
         
