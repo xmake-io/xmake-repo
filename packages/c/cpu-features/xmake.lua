@@ -22,6 +22,12 @@ package("cpu-features")
 
     add_deps("cmake")
 
+    on_check("windows|arm64", function (package)
+        if not package:is_cross() then
+            raise("package(cpu-features) unsupported windows arm64 native build")
+        end
+    end)
+
     on_load(function (package)
         if package:config("tools") then
             package:addenv("PATH", "bin")
