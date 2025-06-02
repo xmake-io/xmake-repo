@@ -37,8 +37,6 @@ package("protobuf-cpp")
     add_patches("3.11.2", path.join(os.scriptdir(), "patches", "3.11.2", "ndk-link-log.diff"), "5564ae57562a2d6262e0837afd9645a6be2d4b52a52b7212fa6452f11f50af4a")
     add_patches("3.17.3", path.join(os.scriptdir(), "patches", "3.17.3", "field_access_listener.patch"), "ac9bdf49611b01e563fe74b2aaf1398214129454c3e18f1198245549eb281e85")
     add_patches("3.19.4", path.join(os.scriptdir(), "patches", "3.19.4", "vs_runtime.patch"), "8e73e585d29f3b9dca3c279df0b11b3ee7651728c07f51381a69e5899b93c367")
-    -- Fix MSVC 2019 arm64 error LNK2019: unresolved external symbol __popcnt referenced in function _upb_log2_table_size
-    add_patches("31.0", path.join(os.scriptdir(), "patches", "31.0", "msvc2019-arm64.patch"), "bbebb83c8540a219d21cb43c508252d1cf22c7cfecd2857221122eb59cfcf506")
     -- https://github.com/msys2/MINGW-packages/blob/e77de8e92025175ffa0a217c3444249aa6f8f4a9/mingw-w64-protobuf/0004-fix-build-with-gcc-15.patch#L7
     add_patches("31.0", path.join(os.scriptdir(), "patches", "31.0", "gcc15.patch"), "f00dae841275ad384891e90a8c144bc8a3d4cc76155a85662af8919b251ab986")
 
@@ -59,6 +57,17 @@ package("protobuf-cpp")
     add_deps("cmake")
 
     on_load(function (package)
+        -- Fix MSVC 2019 arm64 error LNK2019: unresolved external symbol __popcnt referenced in function _upb_log2_table_size
+        if package:version():gt("30.2") then
+            if package:is_plat("windows") then
+                local msvc = package:toolchain("msvc")
+                local vs = msvc:config("vs")
+                if vs and tonumber(vs) < 2022 and package:is_arch("arm64") then
+                    package:add("patches", "31.0", path.join(os.scriptdir(), "patches", "31.0", "msvc2019-arm64.patch"), "bbebb83c8540a219d21cb43c508252d1cf22c7cfecd2857221122eb59cfcf506")
+                end
+            end
+        end
+        
         if package:is_plat("android") and is_host("windows") then
             package:add("deps", "ninja")
             package:set("policy", "package.cmake_generator.ninja", true)
