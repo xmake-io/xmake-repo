@@ -31,8 +31,11 @@ package("ncnn")
                 package:add("deps", "vulkansdk")
             end
         else
+            if package:is_plat("mingw", "msys") then
+                package:add("ldflags", "-fopenmp")
+            end
             package:add("links" , "ncnn" .. (package:is_debug() and "d" or ""))
-            if package:is_plat("linux", "macosx", "cross", "android", "mingw") then
+            if package:is_plat("linux", "macosx", "cross", "android", "mingw", "msys") then
                 package:add("deps", "libomp")
             end
         end
