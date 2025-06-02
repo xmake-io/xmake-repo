@@ -8,9 +8,9 @@ package("libhat")
 
     add_versions("v0.5.0", "d68a1913bfed2eaa087ea2d8c19ac82c9301839df1bc1beea97b22b532e48adc")
 
-    add_configs("sse",          {description = "Enable SSE 4.1 scanning", default = false, type = "boolean"})
-    add_configs("avx",          {description = "Enable AVX512 scanning", default = false, type = "boolean"})
-    add_configs("hint",         {description = "Enables support for the x86_64 scan hint, requires a small (less than 1KB) data table", default = false, type = "boolean"})
+    add_configs("sse", {description = "Enable SSE 4.1 scanning", default = false, type = "boolean"})
+    add_configs("avx", {description = "Enable AVX512 scanning", default = false, type = "boolean"})
+    add_configs("hint", {description = "Enables support for the x86_64 scan hint, requires a small (less than 1KB) data table", default = false, type = "boolean"})
 
     if is_plat("macosx") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
