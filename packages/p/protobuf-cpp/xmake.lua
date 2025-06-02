@@ -34,11 +34,11 @@ package("protobuf-cpp")
     add_versions("3.17.3", "fe65f4bfbd6cbb8c23de052f218cbe4ebfeb72c630847e0cca63eb27616c952a")
     add_versions("3.19.4", "a11a262a395f999f9dca83e195cc15b6c23b6d5e74133f8e3250ad0950485da1")
 
-    add_patches("3.11.2", path.join(os.scriptdir(), "patches", "3.11.2", "ndk-link-log.diff"), "5564ae57562a2d6262e0837afd9645a6be2d4b52a52b7212fa6452f11f50af4a")
-    add_patches("3.17.3", path.join(os.scriptdir(), "patches", "3.17.3", "field_access_listener.patch"), "ac9bdf49611b01e563fe74b2aaf1398214129454c3e18f1198245549eb281e85")
-    add_patches("3.19.4", path.join(os.scriptdir(), "patches", "3.19.4", "vs_runtime.patch"), "8e73e585d29f3b9dca3c279df0b11b3ee7651728c07f51381a69e5899b93c367")
+    add_patches("3.11.2", "patches/3.11.2/ndk-link-log.diff", "5564ae57562a2d6262e0837afd9645a6be2d4b52a52b7212fa6452f11f50af4a")
+    add_patches("3.17.3", "patches/3.17.3/field_access_listener.patch", "ac9bdf49611b01e563fe74b2aaf1398214129454c3e18f1198245549eb281e85")
+    add_patches("3.19.4", "patches/3.19.4/vs_runtime.patch", "8e73e585d29f3b9dca3c279df0b11b3ee7651728c07f51381a69e5899b93c367")
     -- https://github.com/msys2/MINGW-packages/blob/e77de8e92025175ffa0a217c3444249aa6f8f4a9/mingw-w64-protobuf/0004-fix-build-with-gcc-15.patch#L7
-    add_patches("31.0", path.join(os.scriptdir(), "patches", "31.0", "gcc15.patch"), "6475e824fabf7835f77e0410830c80b23e4c7a71fa5d7f4867ee7235942b167f")
+    add_patches("31.0", "patches/31.0/gcc15.patch", "6475e824fabf7835f77e0410830c80b23e4c7a71fa5d7f4867ee7235942b167f")
 
     add_configs("rtti", {description = "Enable runtime type information", default = true, type = "boolean"})
     add_configs("zlib", {description = "Enable zlib", default = false, type = "boolean"})
