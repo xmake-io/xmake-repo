@@ -1,6 +1,6 @@
 --- a/upb/hash/common.c	2025-06-02 14:39:32.082862245 +0800
 +++ b/upb/hash/common.c	2025-06-02 14:42:34.036621441 +0800
-@@ -43,6 +43,15 @@
+@@ -43,8 +43,18 @@
  #elif defined(__GNUC__)
  #define UPB_FAST_POPCOUNT32(i) __builtin_popcount(i)
  #elif defined(_MSC_VER)
