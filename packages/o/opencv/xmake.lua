@@ -180,8 +180,13 @@ package("opencv")
             if package:is_arch("arm64") then
                 -- https://github.com/opencv/opencv/issues/25052
                 table.insert(configs, "-DCPU_NEON_FP16_SUPPORTED=OFF")
+                -- Newest Windows ARM worker issue
+                if package:has_runtime("MT", "MTd") then
+                    table.insert(configs, "-DCPU_NEON_DOTPROD_SUPPORTED=OFF")
+                end
                 -- https://github.com/opencv/opencv/issues/24235
                 table.insert(configs, "-DOPENCV_SKIP_SYSTEM_PROCESSOR_DETECTION=ON")
+                -- Enforce ARM64 without check
                 table.insert(configs, "-DAARCH64=ON")
             end
         end
@@ -226,9 +231,7 @@ package("opencv")
                 shflags = {"-Wl,-Bsymbolic"}
             end
         end
-        local envs = {}
-        envs.OPENCV_DUMP_CONFIG = 1
-        import("package.tools.cmake").install(package, configs, {envs = envs, buildir = "bd", shflags = shflags, ldflags = ldflags})
+        import("package.tools.cmake").install(package, configs, {buildir = "bd", shflags = shflags, ldflags = ldflags})
         for _, link in ipairs({"opencv_phase_unwrapping", "opencv_surface_matching", "opencv_saliency",
                                "opencv_wechat_qrcode", "opencv_mcc", "opencv_face",
                                "opencv_img_hash", "opencv_videostab", "opencv_structured_light", "opencv_intensity_transform",
