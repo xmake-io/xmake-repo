@@ -12,6 +12,9 @@ package("cpu-features")
     add_versions("v0.9.0", "bdb3484de8297c49b59955c3b22dba834401bc2df984ef5cfc17acbe69c5018e")
 
     add_configs("tools", {description = "Build tools", default = true, type = "boolean"})
+    if not is_host("windows") and is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     if is_plat("macosx") then
         add_extsources("brew::cpu_features")
@@ -26,7 +29,7 @@ package("cpu-features")
     end)
 
     on_install("!wasm", function (package)
-        if package:is_cross() or (package:is_plat("windows") and package:is_plat("arm.*")) then
+        if package:is_cross() then
             local arch
             if package:is_arch("arm.*") then
                 arch = (package:is_arch64() and "set(PROCESSOR_IS_AARCH64 TRUE)" or "set(PROCESSOR_IS_ARM TRUE)")
