@@ -35,7 +35,7 @@ package("ncnn")
                 package:add("ldflags", "-fopenmp")
             end
             package:add("links" , "ncnn" .. (package:is_debug() and "d" or ""))
-            if package:is_plat("linux", "macosx", "cross", "android", "mingw", "msys") then
+            if package:is_plat("linux", "macosx", "cross", "android", "mingw", "msys", "bsd") then
                 package:add("deps", "libomp")
             end
         end
