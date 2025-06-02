@@ -10,8 +10,6 @@ package("libhat")
 
     add_configs("sse",          {description = "Enable SSE 4.1 scanning", default = false, type = "boolean"})
     add_configs("avx",          {description = "Enable AVX512 scanning", default = false, type = "boolean"})
-    add_configs("module",       {description = "Create target for the module interface", default = false, type = "boolean"})
-    add_configs("std_module",   {description = "Compile the module target using the std module", default = false, type = "boolean"})
     add_configs("hint",         {description = "Enables support for the x86_64 scan hint, requires a small (less than 1KB) data table", default = false, type = "boolean"})
 
     if is_plat("macosx") then
@@ -50,24 +48,11 @@ package("libhat")
         table.insert(configs, "-DLIBHAT_STATIC_C_LIB=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DLIBHAT_DISABLE_SSE=" .. (package:config("sse") and "OFF" or "ON"))
         table.insert(configs, "-DLIBHAT_DISABLE_AVX512=" .. (package:config("avx") and "OFF" or "ON"))
-        table.insert(configs, "-DLIBHAT_MODULE_TARGET=" .. (package:config("module") and "ON" or "OFF"))
-        table.insert(configs, "-DLIBHAT_USE_STD_MODULE=" .. (package:config("std_module") and "ON" or "OFF"))
         table.insert(configs, "-DLIBHAT_HINT_X86_64=" .. (package:config("hint") and "ON" or "OFF"))
         io.replace("CMakeLists.txt", [[install(TARGETS libhat]], [[install(TARGETS libhat_c
         EXPORT libhat_c-targets RUNTIME DESTINATION "bin" ARCHIVE DESTINATION "lib" LIBRARY DESTINATION "lib")
         install(TARGETS libhat]], {plain = true})
-        local CMakeLists_content = io.readfile("CMakeLists.txt")
-        io.writefile("CMakeLists.txt", CMakeLists_content .. [[
-            if(LIBHAT_MODULE_TARGET AND TARGET libhat_module)
-                install(TARGETS libhat_module
-                    EXPORT libhat_module-targets FILE_SET CXX_MODULES DESTINATION include RUNTIME DESTINATION "bin" ARCHIVE DESTINATION "lib" LIBRARY DESTINATION "lib")
-            endif()
-        ]])
-        local opt = {}
-        if package:config("module") and package:has_tool("cxx", "cl") then
-            opt.cxflags = {"/EHsc", "/experimental:module"}
-        end
-        import("package.tools.cmake").install(package, configs, opt)
+        import("package.tools.cmake").install(package, configs)
         os.cp("include", package:installdir())
     end)
 
