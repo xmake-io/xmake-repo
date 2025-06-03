@@ -26,7 +26,15 @@ package("cgal")
 
     add_deps("cmake")
     add_deps("eigen")
-    add_deps("boost", {configs = {math = true}})
+    add_deps("boost", {configs = {
+        accumulators = true, algorithm = true, bimap = true, callable_traits = true, concept_check = true,
+        container = true, core = true, detail = true, filesystem = true, format = true, functional = true,
+        fusion = true, geometry = true, graph = true, heap = true, intrusive = true, iostreams = true,
+        iterator = true, lambda = true, logic = true, math = true, mpl = true, multi_array = true,
+        multi_index = true, multiprecision = true, numeric_conversion = true, optional = true,
+        parameter = true, pool = true, preprocessor = true, property_map = true, property_tree = true,
+        ptr_container = true, random = true, range = true, serialization = true, spirit = true,
+        thread = true, tuple = true, type_traits = true, units = true, utility = true, variant = true}})
     on_check("windows", "mingw", function (package)
         if not package:config("header_only") and (package:version():lt("6.0") or package:config("gmp")) then
             raise("GMP is not supported on windows yet!")
