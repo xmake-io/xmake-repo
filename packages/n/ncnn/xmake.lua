@@ -5,10 +5,10 @@ package("ncnn")
 
     add_urls("https://github.com/Tencent/ncnn/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Tencent/ncnn.git", {submodules = false})
+
     add_versions("20250503", "3afea4cf092ce97d06305b72c6affbcfb3530f536ae8e81a4f22007d82b729e9")
 
     add_configs("vulkan", {description = "Enable Vulkan support", default = false, type = "boolean"})
-    add_configs("shared", {description = "Build shared library", default = false, type = "boolean"})
     add_configs("simpleocv", {description = "Enable SimpleOpenCV", default = true, type = "boolean"})
 
     add_deps("cmake")
@@ -43,16 +43,17 @@ package("ncnn")
     end)
 
     on_install(function (package)
-        local configs = {}
+        local configs = {
+            "-DNCNN_BUILD_EXAMPLES=OFF",
+            "-DNCNN_BUILD_TOOLS=OFF",
+            "-DNCNN_BUILD_BENCHMARK=OFF",
+            "-DNCNN_BUILD_TESTS=OFF",
+            "-DNCNN_PYTHON=OFF",
+            "-DNCNN_SYSTEM_GLSLANG=ON",
+        }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DNCNN_VULKAN=" .. (package:config("vulkan") and "ON" or "OFF"))
         table.insert(configs, "-DNCNN_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DNCNN_BUILD_EXAMPLES=OFF")
-        table.insert(configs, "-DNCNN_BUILD_TOOLS=OFF")
-        table.insert(configs, "-DNCNN_BUILD_BENCHMARK=OFF")
-        table.insert(configs, "-DNCNN_BUILD_TESTS=OFF")
-        table.insert(configs, "-DNCNN_PYTHON=OFF")
-        table.insert(configs, "-DNCNN_SYSTEM_GLSLANG=ON")
+        table.insert(configs, "-DNCNN_VULKAN=" .. (package:config("vulkan") and "ON" or "OFF"))
         table.insert(configs, "-DNCNN_SIMPLEOCV=" .. (package:config("simpleocv") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
