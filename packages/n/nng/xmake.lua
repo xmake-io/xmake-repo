@@ -1,11 +1,13 @@
 package("nng")
-    set_homepage("https://github.com/nanomsg/nng")
+    set_homepage("https://nng.nanomsg.org")
     set_description("NNG, like its predecessors nanomsg (and to some extent ZeroMQ), is a lightweight, broker-less library, offering a simple API to solve common recurring messaging problems.")
     set_license("MIT")
 
     add_urls("https://github.com/nanomsg/nng/archive/refs/tags/$(version).zip",
              "https://github.com/nanomsg/nng.git")
 
+    add_versions("v1.11", "12aaff6f8f183ba0fec378af8620c47cf4be6da975d016ec6cdec2fbac0d3534")
+    add_versions("v1.10.2", "c8947b2398f9c5fc6234805c96f4fd0c51442b14fadd14df25e6bb129848736f")
     add_versions("v1.10.1", "ce209b0830c8dc69980cbd78aa39f4590a28799e7a00fd2b938a82cf740e7d9a")
     add_versions("v1.8.0", "48effcfd1acf31f6afcb1a92ecb4aa87f7993f5c54bf6587b0f4fb2606ce96d3")
     add_versions("v1.7.3", "72b39c63ba6467f6ee70c218c291240ff5b189569c3b84e8e0647f5d4d3888ea")
