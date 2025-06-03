@@ -39,6 +39,7 @@ target("breakpad")
                       "src/client/windows/crash_generation/*.cc",
                       "src/client/windows/handler/*.cc")
             remove_files("src/common/windows/*test*.cc",
+                         "src/processor/disassembler_objdump.cc",
                          "src/common/language.cc",
                          "src/common/path_helper.cc",
                          "src/common/stabs_to_module.cc",
@@ -50,6 +51,7 @@ target("breakpad")
                             "src/(client/windows/crash_generation/*.h)",
                             "src/(client/windows/handler/*.h)")
             remove_headerfiles("src/common/windows/*test*.h",
+                               "src/processor/disassembler_objdump.h",
                                "src/common/language.h",
                                "src/common/path_helper.h",
                                "src/common/stabs_to_module.h",

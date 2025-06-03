@@ -25,7 +25,8 @@ package("cgal")
     end
 
     add_deps("cmake")
-    add_deps("boost", "eigen")
+    add_deps("eigen")
+    add_deps("boost", {configs = {math = true}})
     on_check("windows", "mingw", function (package)
         if not package:config("header_only") and (package:version():lt("6.0") or package:config("gmp")) then
             raise("GMP is not supported on windows yet!")
