@@ -157,7 +157,7 @@ package("libllvm")
         end
 
         for tooldir in string.gmatch(io.readfile("clang/tools/CMakeLists.txt"), "add_clang_subdirectory%((.-)%)") do
-            if tooldir ~= "libclang" and (tooldir ~= "clang-shlib" or package:config("shared")) then
+            if tooldir ~= "libclang" and (tooldir ~= "clang-shlib" or not package:config("shared")) then
                 local tool = tooldir:upper():gsub("-", "_")
                 table.insert(configs, "-DCLANG_TOOL_" .. tool .. "_BUILD=OFF")
             end
