@@ -112,10 +112,9 @@ package("libllvm")
             end
         end
 
-        -- build only libclang - to save link time
-        io.replace("clang/CMakeLists.txt", "add_subdirectory(tools)", "add_clang_subdirectory(libclang)", {plain = true})
-
         local configs = {
+            "-DBUILD_SHARED_LIBS=OFF",
+
             -- llvm
             "-DLLVM_BUILD_UTILS=OFF",
             "-DLLVM_INCLUDE_DOCS=OFF",
@@ -155,6 +154,13 @@ package("libllvm")
             table.insert(configs, "-Dhttplib_ROOT=" .. package:dep("cpp-httplib"):installdir())
         else
             table.insert(configs, "-DLLVM_ENABLE_HTTPLIB=OFF")
+        end
+
+        for tooldir in string.gmatch(io.readfile("clang/tools/CMakeLists.txt"), "add_clang_subdirectory%((.-)%)") do
+            if tooldir ~= "libclang" and (tooldir ~= "clang-shlib" or package:config("shared")) then
+                local tool = tooldir:upper():gsub("-", "_")
+                table.insert(configs, "-DCLANG_TOOL_" .. tool .. "_BUILD=OFF")
+            end
         end
 
         if package:is_plat("android") then
