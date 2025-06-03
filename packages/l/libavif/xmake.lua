@@ -6,6 +6,7 @@ package("libavif")
     add_urls("https://github.com/AOMediaCodec/libavif/archive/refs/tags/$(version).tar.gz",
              "https://github.com/AOMediaCodec/libavif.git")
 
+    add_versions("v1.3.0", "0a545e953cc049bf5bcf4ee467306a2f113a75110edf59e61248873101cd26c1")
     add_versions("v1.2.1", "9c859c7c12ccb0f407511bfe303e6a7247f5f6738f54852662c6df8048daddf4")
     add_versions("v1.1.1", "914662e16245e062ed73f90112fbb4548241300843a7772d8d441bb6859de45b")
     add_versions("v1.1.0", "edb31951005d7a143be1724f24825809599a4832073add50eaf987733defb5c8")
