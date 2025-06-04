@@ -27,7 +27,7 @@ package("openmvs")
         if package:config("python") then package:add("deps", "python") end
     end)
 
-    on_install("windows", function (package)
+    on_install("windows|x64", "windows|x86", function (package)
         io.replace("CMakeLists.txt", "# Project-wide settings", [[
             # Project-wide settings
             find_package(PkgConfig REQUIRED)
