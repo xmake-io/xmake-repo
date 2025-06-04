@@ -110,6 +110,9 @@ package("onnxruntime")
             os.mv("lib/*.dll", package:installdir("bin"))
         end
         os.cp("*", package:installdir())
+        if package:is_plat("macosx") then
+            package:addenv("DYLD_LIBRARY_PATH", path.join(package:installdir(), "lib"))
+        end
     end)
 
     on_test(function (package)
