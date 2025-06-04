@@ -33,6 +33,7 @@ package("openmvs")
             find_package(PkgConfig REQUIRED)
             pkg_check_modules(libzstd REQUIRED IMPORTED_TARGET libzstd)
         ]], {plain = true})
+        io.replace("libs/Common/Types.h", "#include <new>", "#include <new>\n#include <bitset>", {plain = true})
         local configs = {
             "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
             "-DOpenMVS_USE_PYTHON=" .. (package:config("python") and "ON" or "OFF"),
