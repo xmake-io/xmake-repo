@@ -7,6 +7,7 @@ package("date")
     add_urls("https://github.com/HowardHinnant/date/archive/refs/tags/$(version).tar.gz",
              "https://github.com/HowardHinnant/date.git")
     
+    add_versions("v3.0.4", "56e05531ee8994124eeb498d0e6a5e1c3b9d4fccbecdf555fe266631368fb55f")
     add_versions("v3.0.3", "30de45a34a2605cca33a993a9ea54e8f140f23b1caf1acf3c2fd436c42c7d942")
     add_versions("v3.0.1", "7a390f200f0ccd207e8cff6757e04817c1a0aec3e327b006b7eb451c57ee3538")
 

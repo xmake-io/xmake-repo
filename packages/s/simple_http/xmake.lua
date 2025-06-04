@@ -7,7 +7,7 @@ package("simple_http")
     add_urls("https://github.com/fantasy-peak/simple_http/archive/refs/tags/$(version).tar.gz",
              "https://github.com/fantasy-peak/simple_http.git")
 
-    add_versions("v0.1.0", "4e5b92e5f08e515437d30627c57356c69b73e38e68df57d4d9bfd0a9cc91cc2a")
+    add_versions("v0.2.0", "1c2ab7c2be317f95e34bdbe6c753293495b6743828ec4115b5f3c383c8c95adc")
 
     add_deps("cmake")
     add_deps("boost", {configs = {cmake = false}})

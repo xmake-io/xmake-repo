@@ -87,6 +87,9 @@ package("openmp")
         else
             raise("This package(openmp) requires xmake version 2.6.1 or newer.")
         end
+        if package:has_tool("cu", "nvcc") and result.cxxflags then
+            result.cuflags = "-Xcompiler " .. result.cxxflags
+        end
         return (result.cflags or result.cxxflags or result.fcflags) and result
     end)
 
