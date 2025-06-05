@@ -11,9 +11,13 @@ package("taglib")
     add_deps("cmake")
     add_deps("utfcpp", "zlib")
 
-    add_links("tag", "tag_c")
+    add_links("tag_c", "tag")
 
     on_install(function (package)
+        if not package:config("shared") then
+            package:add("defines", "TAGLIB_STATIC")
+        end
+
         local configs = {"-DBUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
