@@ -11,6 +11,10 @@ package("xmlto")
     add_versions("0.0.29", "6000d8e8f0f9040426c4f85d7ad86789bc88d4aeaef585c4d4110adb0b214f21")
 
     add_deps("util-linux")
+    if not is_plat("windows") then
+        add_deps("autoconf", "automake", "libtool")
+        add_deps("libxslt", {kind = "binary"})
+    end
 
     on_install("macosx", "linux", function (package)
         import("package.tools.autoconf")
