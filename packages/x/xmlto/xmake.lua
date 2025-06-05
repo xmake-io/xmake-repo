@@ -14,6 +14,11 @@ package("xmlto")
     if not is_plat("windows") then
         add_deps("autoconf", "automake", "libtool")
         add_deps("libxslt", {kind = "binary"})
+        if is_plat("linux") then
+            add_extsources("apt::docbook-xsl", "pacman::docbook-xsl")
+        elseif is_plat("macosx") then
+            add_extsources("brew::docbook-xsl")
+        end
     end
 
     on_install("macosx", "linux", function (package)
