@@ -14,6 +14,8 @@ package("taglib")
     add_links("tag_c", "tag")
 
     on_install(function (package)
+        io.replace("bindings/c/tag_c.h", [[#define TAGLIB_TAG_C]], [[#define TAGLIB_TAG_C
+#include <stddef.h>]], {plain = true})
         if not package:config("shared") then
             package:add("defines", "TAGLIB_STATIC")
         end
