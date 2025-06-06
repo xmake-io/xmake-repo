@@ -6,6 +6,7 @@ package("upa-url")
     add_urls("https://github.com/upa-url/upa/archive/refs/tags/$(version).tar.gz",
              "https://github.com/upa-url/upa.git", {submodules = false})
 
+    add_versions("v2.1.0", "4a5edae83dc5c9a2aacfdb4720d6bce3ceff5edfb19213615b1e95a44a7793fe")
     add_versions("v2.0.0", "50e0d7c9cad853c794f9b12aded960dbdcf3ba6baa8bc9896da52fe526cc014e")
     add_versions("v1.2.0", "5d8a251ffd708a14f9faf2ea29dae934cb4b29c5473bd2bcf2e3d16eccaeacb7")
     add_versions("v1.0.2", "d08a724c1868530b1c0b89ebeaaf2d654f7e6489c968a3dc2255b1f21ddc94e0")
