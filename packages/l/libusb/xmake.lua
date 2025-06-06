@@ -6,6 +6,7 @@ package("libusb")
     add_urls("https://github.com/libusb/libusb/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libusb/libusb.git")
 
+    add_versions("v1.0.29", "7c2dd39c0b2589236e48c93247c986ae272e27570942b4163cb00a060fcf1b74")
     add_versions("v1.0.28", "378b3709a405065f8f9fb9f35e82d666defde4d342c2a1b181a9ac134d23c6fe")
     add_versions("v1.0.27", "e8f18a7a36ecbb11fb820bd71540350d8f61bcd9db0d2e8c18a6fb80b214a3de")
     add_versions("v1.0.26", "a09bff99c74e03e582aa30759cada218ea8fa03580517e52d463c59c0b25e240")
