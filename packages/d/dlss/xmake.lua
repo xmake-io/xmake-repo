@@ -6,6 +6,7 @@ package("dlss")
     add_urls("https://github.com/NVIDIA/DLSS/archive/refs/tags/$(version).tar.gz",
              "https://github.com/NVIDIA/DLSS.git", {submodules = false})
 
+    add_versions("v310.2.1", "1aa9e6bbb68507a7eed2ec3eaed842ced08d3036018c3d9ee2297fbd6aa460e6")
     add_versions("v310.1.0", "f042769df59a3f4a5f80421e60d848d26d4f8a7c4848da410507fc07e50522f4")
     add_versions("v3.7.20", "904d771551526dd6aa458f0db7b85fe4abb8f49ce0307d377e8da089628bf9ec")
 
