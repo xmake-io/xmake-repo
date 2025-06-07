@@ -8,8 +8,17 @@ package("xmlto")
     add_urls("https://releases.pagure.org/xmlto/xmlto-$(version).tar.bz2",
              "https://pagure.io/xmlto.git")
     add_versions("0.0.28", "1130df3a7957eb9f6f0d29e4aa1c75732a7dfb6d639be013859b5c7ec5421276")
+    add_versions("0.0.29", "6000d8e8f0f9040426c4f85d7ad86789bc88d4aeaef585c4d4110adb0b214f21")
 
     add_deps("util-linux")
+    if not is_plat("windows") then
+        add_deps("autoconf", "automake", "libtool")
+    end
+    if is_plat("linux") then
+        add_extsources("apt::xsltproc", "pacman::libxslt", "apt::docbook-xsl", "pacman::docbook-xsl", "apt::docbook-xml", "pacman::docbook-xml")
+    elseif is_plat("macosx") then
+        add_extsources("brew::docbook-xsl", "brew::xsltproc")
+    end
 
     on_install("macosx", "linux", function (package)
         import("package.tools.autoconf")
