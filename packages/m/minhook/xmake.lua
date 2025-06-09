@@ -1,5 +1,4 @@
 package("minhook")
-
     set_homepage("https://github.com/TsudaKageyu/minhook")
     set_description("The Minimalistic x86/x64 API Hooking Library for Windows.")
     set_license("BSD-2-Clause")
