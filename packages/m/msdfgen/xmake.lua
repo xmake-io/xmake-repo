@@ -6,6 +6,7 @@ package("msdfgen")
     add_urls("https://github.com/Chlumsky/msdfgen/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Chlumsky/msdfgen.git")
 
+    add_versions("v1.12.1", "24541c9fbb459e8c62adeb3eb22cb21fa07a4b5091e2ae1f041d144a4baf08cd")
     add_versions("v1.12", "f058117496097217d12e4ea86adbff8467adaf6f12af793925d243b86b0c4f57")
     add_versions("v1.11", "fad74e33274f591e72511bc0546189e7aec439f2a512ef1b2fde243554d457cb")
     add_versions("v1.10", "2754d1687bfb80968d9c682e0c4c04c8fcf72df1421d076baf44ea0d87aa3662")
