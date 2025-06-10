@@ -6,6 +6,7 @@ package("yyjson")
     add_urls("https://github.com/ibireme/yyjson/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ibireme/yyjson.git")
 
+    add_versions("0.11.1", "610a38a5e59192063f5f581ce0c3c1869971c458ea11b58dfe00d1c8269e255d")
     add_versions("0.10.0", "0d901cb2c45c5586e3f3a4245e58c2252d6b24bf4b402723f6179523d389b165")
     add_versions("0.9.0", "59902bea55585d870fd7681eabe6091fbfd1a8776d1950f859d2dbbd510c74bd")
     add_versions("0.8.0", "b2e39ac4c65f9050820c6779e6f7dd3c0d3fed9c6667f91caec0badbedce00f3")
@@ -16,6 +17,9 @@ package("yyjson")
     add_versions("0.2.0", "43aacdc6bc3876dc1322200c74031b56d8d7838c04e46ca8a8e52e37ea6128da")
 
     add_configs("cmake", {description = "Use cmake build system", default = true, type = "boolean"})
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     on_load(function (package)
         if package:config("cmake") then
