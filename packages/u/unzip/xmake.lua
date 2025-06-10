@@ -14,6 +14,7 @@ package("unzip")
             includes("@builtin/check")
             check_cfuncs("HAVE_LCHMOD", "lchmod", {includes = "sys/stat.h"})
             target("unzip")
+                set_languages("gnu17")
                 set_kind("binary")
                 if not has_config("__HAVE_LCHMOD") then
                     add_defines("NO_LCHMOD")
