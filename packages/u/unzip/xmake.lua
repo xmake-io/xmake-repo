@@ -1,5 +1,4 @@
 package("unzip")
-
     set_kind("binary")
     set_homepage("http://infozip.sourceforge.net/UnZip.html")
     set_description("UnZip is an extraction utility for archives compressed in .zip format.")
