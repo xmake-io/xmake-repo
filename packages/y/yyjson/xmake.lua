@@ -17,6 +17,9 @@ package("yyjson")
     add_versions("0.2.0", "43aacdc6bc3876dc1322200c74031b56d8d7838c04e46ca8a8e52e37ea6128da")
 
     add_configs("cmake", {description = "Use cmake build system", default = true, type = "boolean"})
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     on_load(function (package)
         if package:config("cmake") then
