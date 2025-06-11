@@ -10,6 +10,8 @@ package("qjson")
     add_deps("qt5core", "qt5widgets")
 
     on_install("windows|x86", "windows|x64", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
+        io.replace("CMakeLists.txt", [[set(QT4_BUILD ${QT4_BUILD_DEFAULT})]], [[set(QT4_BUILD 0)]], {plain = true})
+        io.replace("CMakeLists.txt", [[FIND_PACKAGE( Qt5 COMPONENTS Widgets REQUIRED QUIET )]], [[FIND_PACKAGE( Qt5 COMPONENTS Widgets REQUIRED )]], {plain = true})
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
