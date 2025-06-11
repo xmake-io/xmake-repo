@@ -1,5 +1,4 @@
 package("expresscpp")
-
     set_homepage("https://github.com/expresscpp/expresscpp.git")
     set_description("Fast, unopinionated, minimalist web framework for C++ Perfect for building REST APIs.")
     set_license("MIT")
@@ -9,18 +8,20 @@ package("expresscpp")
 
     add_versions("v0.20.0", "55f10531e4ba162ec768cf9c745ccc7b5a0930c7ad9974b268ad40246276baa8")
 
+    add_patches("v0.20.0", "patches/v0.20.0/fix-build.diff", "e5513fd419c36bfdbfcf12f0f6874350d307587d97acb2a51ece41280630ba0c")
+
     add_deps("cmake")
     add_deps("nlohmann_json", "fmt", {configs = {cmake = true}})
-    add_deps("boost", {configs = {system = true}})
+    add_deps("boost", {configs = {asio = true}})
 
-    if is_plat("linux") then
+    if is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
 
-    on_install("linux", "macosx", function (package)
+    on_install(function (package)
         local configs = {}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
     end)
 

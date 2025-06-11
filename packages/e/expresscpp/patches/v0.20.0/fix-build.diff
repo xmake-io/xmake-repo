@@ -1,0 +1,24 @@
+diff --git a/include/expresscpp/url.hpp b/include/expresscpp/url.hpp
+index fcccc9d..ad0e7af 100644
+--- a/include/expresscpp/url.hpp
++++ b/include/expresscpp/url.hpp
+@@ -1,6 +1,7 @@
+ #pragma once
+ 
+ #include <string>
++#include <cstdint>
+ 
+ #include "expresscpp/exports.hpp"
+ 
+diff --git a/src/middleware/serve_static_provider.cpp b/src/middleware/serve_static_provider.cpp
+index 3d8d30e..f328992 100644
+--- a/src/middleware/serve_static_provider.cpp
++++ b/src/middleware/serve_static_provider.cpp
+@@ -1,6 +1,7 @@
+ #include "expresscpp/middleware/serve_static_provider.hpp"
+ 
+ #include <filesystem>
++#include <fstream>
+ 
+ #include "expresscpp/console.hpp"
+ #include "expresscpp/impl/session.hpp"
