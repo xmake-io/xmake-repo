@@ -7,6 +7,7 @@ package("libxml2")
              "https://gitlab.gnome.org/GNOME/libxml2.git",
              "https://github.com/GNOME/libxml2.git")
 
+    add_versions("v2.14.3", "9d5805e78055a4507e30944b99fb554f98142f540a092836b01d68ab344fd703")
     add_versions("v2.13.4", "ba783b43e8b3475cbd2b1ef40474da6a4465105ee9818d76cd3ac7863550afce")
     add_versions("v2.13.2", "5091cf2767c3f7ba08bf59fbe85b01db36ca21abdcb37deea964fcb26a4391fb")
     add_versions("v2.12.9", "3cd02671b20954865f5b3e90f192d8cc4d815b2362c2ff9a0b450b41648dac58")
