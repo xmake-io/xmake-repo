@@ -8,7 +8,7 @@ package("expresscpp")
 
     add_versions("v0.20.0", "55f10531e4ba162ec768cf9c745ccc7b5a0930c7ad9974b268ad40246276baa8")
 
-    add_patches("v0.20.0", "patches/v0.20.0/fix-build.diff", "e5513fd419c36bfdbfcf12f0f6874350d307587d97acb2a51ece41280630ba0c")
+    add_patches("v0.20.0", "patches/v0.20.0/fix-build.diff", "09bc180fd8b52f0323d16f1f96bb3a07e2b2fdbe2a48a7a6731637a940d13157")
 
     add_deps("cmake")
     add_deps("nlohmann_json", "fmt", {configs = {cmake = true}})
@@ -16,8 +16,6 @@ package("expresscpp")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
-    elseif is_plat("windows", "mingw") then
-        add_syslinks("ws2_32", "mswsock")
     end
 
     on_install("!wasm and !windows", function (package)
