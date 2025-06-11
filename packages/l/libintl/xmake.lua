@@ -20,7 +20,7 @@ package("libintl")
             return package:find_package("system::intl", {includes = "libintl.h"})
         end
     end)
-
+    
     on_install("windows", "macosx", "android", "mingw", function (package)
         -- on linux libintl is already a part of libc
         os.cp(path.join(os.scriptdir(), "port", package:version_str(), "xmake.lua"), "xmake.lua")
