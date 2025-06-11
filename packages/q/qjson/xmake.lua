@@ -22,7 +22,7 @@ package("qjson")
         assert(package:check_cxxsnippets({test = [[
             #include <QByteArray>
             #include <QVariant>
-            #include <qjson/parser.h>
+            #include <qjson-qt5/parser.h>
             void test() {
                 QJson::Parser parser;
                 QByteArray data;
