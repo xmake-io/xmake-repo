@@ -9,7 +9,13 @@ package("qjson")
     add_deps("cmake")
     add_deps("qt5core", "qt5widgets")
 
-    on_install("windows|x86", "windows|x64", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
+    on_load(function (package)
+        if not package:config("shared") then
+            package:add("defines", "QJSON_STATIC")
+        end
+    end)
+
+    on_install("windows|x86", "windows|x64", function (package)
         io.replace("CMakeLists.txt", [[set(QT4_BUILD ${QT4_BUILD_DEFAULT})]], [[set(QT4_BUILD 0)]], {plain = true})
         io.replace("CMakeLists.txt", [[FIND_PACKAGE( Qt5 COMPONENTS Widgets REQUIRED QUIET )]], [[FIND_PACKAGE( Qt5 COMPONENTS Widgets REQUIRED )]], {plain = true})
         local configs = {}
