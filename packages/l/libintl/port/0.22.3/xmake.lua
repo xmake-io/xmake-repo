@@ -420,7 +420,7 @@ target("intl")
         io.replace("gettext-runtime/intl/gnulib-lib/tsearch.c", "#include <search.h>", "#include <tsearch.h>", {plain = true})
         os.cp("gettext-runtime/intl/libgnuintl.h", "gettext-runtime/intl/libintl.h")
 
-        if target:is_plat("windows", "mingw") and target:kind() == "shared" then
+        if target:is_plat("mingw") and target:kind() == "shared" then
             io.gsub("gettext-runtime/intl/export.h", "#define LIBINTL_DLL_EXPORTED.-\n", "#define LIBINTL_DLL_EXPORTED __declspec(dllexport)\n")
         end
 
