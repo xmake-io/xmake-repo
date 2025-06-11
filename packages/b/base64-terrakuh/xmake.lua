@@ -1,4 +1,4 @@
-package("base64")
+package("base64-terrakuh")
     set_kind("library", {headeronly = true})
     set_homepage("https://terrakuh.github.io/base64/classbase64.html")
     set_description("Simple, open source, header-only base64 encoder")
