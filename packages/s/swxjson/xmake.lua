@@ -13,6 +13,7 @@ package("swxjson")
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             target("swxjson")
+                set_languages("c++11")
                 set_kind("$(kind)")
                 add_files("src/*.cpp")
                 add_headerfiles("src/(*.h)")
