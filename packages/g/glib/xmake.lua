@@ -26,7 +26,7 @@ package("glib")
     end
 
     if is_plat("windows", "mingw") then
-        add_syslinks("user32", "shell32", "ole32", "ws2_32", "shlwapi", "iphlpapi", "dnsapi")
+        add_syslinks("user32", "shell32", "ole32", "ws2_32", "shlwapi", "iphlpapi", "dnsapi", "uuid")
     elseif is_plat("macosx") then
         add_syslinks("resolv")
         add_frameworks("AppKit", "Foundation", "CoreServices", "CoreFoundation")
