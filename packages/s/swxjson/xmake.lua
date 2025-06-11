@@ -7,7 +7,7 @@ package("swxjson")
              "https://github.com/swxlion/swxJson.git")
 
     add_versions("v1.0.9", "672c9362a13a53628469e2d7bb5cc6c976e1fa52c730ae95945c9509b0263f01")
-    add_patches("v1.0.9", "patches/fix-build.diff", "99eb96c1b51ad2a216289d6011ddc980cb7f55be941e4f531584c12ace712738")
+    add_patches("v1.0.9", "patches/fix.diff", "99eb96c1b51ad2a216289d6011ddc980cb7f55be941e4f531584c12ace712738")
 
     on_install(function (package)
         io.writefile("xmake.lua", [[
