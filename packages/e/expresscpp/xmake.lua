@@ -16,9 +16,11 @@ package("expresscpp")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
+    elseif is_plat("windows", "mingw") then
+        add_syslinks("ws2_32", "mswsock")
     end
 
-    on_install(function (package)
+    on_install("!wasm and !windows", function (package)
         local configs = {}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
