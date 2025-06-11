@@ -11,7 +11,7 @@ package("libintl")
         add_patches("0.22.3", "patches/0.22.3/fix-mingw-build-wgetcwd.diff", "4db86b836cf332151558d5cd4553ed2e8a6dc88676b5d66dda486f55dcd6785c")
     end
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("advapi32")
     end
 

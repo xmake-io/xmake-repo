@@ -419,6 +419,11 @@ target("intl")
         io.gsub("gettext-runtime/intl/gnulib-lib/tsearch.h", "(definition of _GL_WARN_ON_USE.-)\n", "%1\n#include <warn-on-use.h>\n")
         io.replace("gettext-runtime/intl/gnulib-lib/tsearch.c", "#include <search.h>", "#include <tsearch.h>", {plain = true})
         os.cp("gettext-runtime/intl/libgnuintl.h", "gettext-runtime/intl/libintl.h")
+
+        if target:is_plat("windows", "mingw") and target:kind() == "shared" then
+            io.gsub("gettext-runtime/intl/export.h", "#define LIBINTL_DLL_EXPORTED.-\n", "#define LIBINTL_DLL_EXPORTED __declspec(dllexport)\n")
+        end
+
         local lines = io.readfile("gettext-runtime/intl/export.h")
         io.replace("gettext-runtime/intl/libgnuintl.h", "#define _LIBINTL_H 1", "#define _LIBINTL_H 1\n" .. lines, {plain = true})
         io.replace("gettext-runtime/intl/libgnuintl.h", "extern", "extern LIBINTL_DLL_EXPORTED", {plain = true})
