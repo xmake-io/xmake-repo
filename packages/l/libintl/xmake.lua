@@ -1,5 +1,4 @@
 package("libintl")
-
     set_homepage("https://www.gnu.org/software/gettext/")
     set_description("GNU gettext runtime")
 
@@ -18,7 +17,7 @@ package("libintl")
         end
     end)
 
-    on_install("windows", "macosx", "android", function (package)
+    on_install("windows", "macosx", "android", "mingw", function (package)
         -- on linux libintl is already a part of libc
         os.cp(path.join(os.scriptdir(), "port", package:version_str(), "xmake.lua"), "xmake.lua")
         for _, conffile in ipairs({"gettext-runtime/config.h.in", "gettext-runtime/intl/config.h.in"}) do
