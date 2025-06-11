@@ -16,6 +16,8 @@ package("expresscpp")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
+    elseif is_plat("windows", "mingw") then
+        add_syslinks("ws2_32", "mswsock")
     end
 
     on_install("!wasm and !windows", function (package)
