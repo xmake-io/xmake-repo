@@ -5,7 +5,9 @@ package("cpp-mcp")
 
     add_urls("https://github.com/hkr04/cpp-mcp.git")
     add_versions("2025.05.24", "86856a2fcc038e05675f0649e51cd4f9d3692263")
-    add_patches("2025.05.24", "patches/2025.05.24/install.diff", "ab60e1a167dbe73aefb69d4cfc5b98f4e6f6df647cfc62a3eca7b6648f41ccd0")
+    add_patches("2025.05.24", "patches/2025.05.24/install.diff", "81944d0bd25899834876f5f4cf99d10f8f45fb8d31dd7838d6500c08956d5941")
+
+    add_configs("openssl", {description = "Enable openssl", default = false, type = "boolean"})
 
     add_deps("cmake")
     add_deps("pkgconf")
@@ -14,6 +16,12 @@ package("cpp-mcp")
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32")
     end
+
+    on_load(function (package)
+        if package:config("openssl") then
+            package:add("deps", "openssl3")
+        end
+    end)
 
     on_install(function (package)
         os.rm("common")
@@ -24,6 +32,7 @@ package("cpp-mcp")
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DMCP_SSL=" .. (package:config("openssl") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 

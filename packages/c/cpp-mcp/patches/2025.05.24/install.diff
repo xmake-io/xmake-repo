@@ -37,7 +37,7 @@ index d477f93..7b54a2a 100644
  namespace mcp {
  
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index 2a50d21..38f507b 100644
+index 2a50d21..d2c1bb4 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
 @@ -1,6 +1,6 @@
@@ -48,10 +48,14 @@ index 2a50d21..38f507b 100644
      ../include/mcp_client.h
      mcp_message.cpp
      ../include/mcp_message.h
-@@ -22,3 +22,8 @@ target_link_libraries(${TARGET} PUBLIC ${CMAKE_THREAD_LIBS_INIT})
+@@ -22,3 +22,12 @@ target_link_libraries(${TARGET} PUBLIC ${CMAKE_THREAD_LIBS_INIT})
  if(OPENSSL_FOUND)
      target_link_libraries(${TARGET} PUBLIC ${OPENSSL_LIBRARIES})
  endif()
++
++if(MINGW)
++    target_link_libraries(${TARGET} PRIVATE ws2_32)
++endif()
 +
 +install(TARGETS ${TARGET}
 +    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
