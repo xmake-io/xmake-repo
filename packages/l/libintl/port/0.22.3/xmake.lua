@@ -294,7 +294,7 @@ void test() {
   setlocale(LC_ALL, "en_US.UTF-8");
 }
 ]])
-if is_plat("windows") and is_kind("shared") then
+if is_plat("windows", "mingw") and is_kind("shared") then
     set_configvar("WOE32DLL", 1)
 end
 set_configvar("SETLOCALE_NULL_ALL_MTSAFE", is_plat("windows", "linux") and 1 or 0)
@@ -306,7 +306,7 @@ set_configvar("NEED_SETLOCALE_MTSAFE", is_plat("windows", "linux") and 0 or 1)
 set_configvar("GUARD_PREFIX", "GL", {quote = false})
 set_configvar("PRAGMA_SYSTEM_HEADER", "", {quote = false})
 set_configvar("PRAGMA_COLUMNS", "", {quote = false})
-if is_plat("windows") then
+if is_plat("windows", "mingw") then
     set_configvar("INCLUDE_NEXT", "include", {quote = false})
     set_configvar("NEXT_SEARCH_H", "<search.h>", {quote = false})
 else
@@ -361,7 +361,7 @@ target("intl")
     if is_kind("shared") then
         add_defines("BUILDING_LIBINTL", "BUILDING_DLL")
     end
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("advapi32")
     end
     set_configvar("HAVE_ICONV", 0)
@@ -407,7 +407,7 @@ target("intl")
               "gettext-runtime/intl/gnulib-lib/tsearch.c",
               "gettext-runtime/intl/gnulib-lib/glthread/lock.c",
               "gettext-runtime/intl/gnulib-lib/glthread/threadlib.c")
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_files("gettext-runtime/intl/gnulib-lib/windows-mutex.c",
                   "gettext-runtime/intl/gnulib-lib/windows-rwlock.c",
                   "gettext-runtime/intl/gnulib-lib/windows-recmutex.c",
@@ -419,12 +419,17 @@ target("intl")
         io.gsub("gettext-runtime/intl/gnulib-lib/tsearch.h", "(definition of _GL_WARN_ON_USE.-)\n", "%1\n#include <warn-on-use.h>\n")
         io.replace("gettext-runtime/intl/gnulib-lib/tsearch.c", "#include <search.h>", "#include <tsearch.h>", {plain = true})
         os.cp("gettext-runtime/intl/libgnuintl.h", "gettext-runtime/intl/libintl.h")
+
+        if target:is_plat("mingw") and target:kind() == "shared" then
+            io.gsub("gettext-runtime/intl/export.h", "#define LIBINTL_DLL_EXPORTED.-\n", "#define LIBINTL_DLL_EXPORTED __declspec(dllexport)\n")
+        end
+
         local lines = io.readfile("gettext-runtime/intl/export.h")
         io.replace("gettext-runtime/intl/libgnuintl.h", "#define _LIBINTL_H 1", "#define _LIBINTL_H 1\n" .. lines, {plain = true})
         io.replace("gettext-runtime/intl/libgnuintl.h", "extern", "extern LIBINTL_DLL_EXPORTED", {plain = true})
     end)
     after_install(function (target)
-        io.replace("gettext-runtime/intl/libintl.h", "extern", (target:is_plat("windows") and target:kind() == "shared") and "extern __declspec(dllimport)" or "extern", {plain = true})
+        io.replace("gettext-runtime/intl/libintl.h", "extern", (target:is_plat("windows", "mingw") and target:kind() == "shared") and "extern __declspec(dllimport)" or "extern", {plain = true})
         os.cp("gettext-runtime/intl/libintl.h", path.join(target:installdir(), "include", "libintl.h"))
     end)
 target_end()
