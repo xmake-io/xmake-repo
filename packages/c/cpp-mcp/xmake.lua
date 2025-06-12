@@ -17,6 +17,14 @@ package("cpp-mcp")
         add_syslinks("ws2_32")
     end
 
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(cpp-mcp): need ndk api level >= 24 for android")
+        end)
+    end
+
     on_load(function (package)
         if package:config("openssl") then
             package:add("deps", "openssl3")
