@@ -4,6 +4,7 @@ package("pkgconf")
     set_description("A program which helps to configure compiler and linker flags for development frameworks.")
 
     add_urls("https://distfiles.dereferenced.org/pkgconf/pkgconf-$(version).tar.xz",
+             "https://mirror.umd.edu/gentoo/distfiles/2d/pkgconf-$(version).tar.xz",
              "https://distfiles.ariadne.space/pkgconf/pkgconf-$(version).tar.xz", {alias = "tarball"})
     add_urls("https://github.com/pkgconf/pkgconf.git", {alias = "git"})
     add_versions("tarball:1.7.4", "d73f32c248a4591139a6b17777c80d4deab6b414ec2b3d21d0a24be348c476ab")
