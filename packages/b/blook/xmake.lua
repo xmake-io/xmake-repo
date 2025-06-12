@@ -17,3 +17,12 @@ package("blook")
     on_install("windows|!arm*", function (package)
         import("package.tools.xmake").install(package, {}, {target = "blook"})
     end)
+
+    on_test(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            #include <blook/process.h>
+            void test() {
+                auto process = blook::Process::self();
+            }
+        ]]}, {configs = {languages = "c++23"}}))
+    end)
