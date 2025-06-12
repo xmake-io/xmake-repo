@@ -7,6 +7,14 @@ package("step20")
     add_urls("https://github.com/storm-ptr/step20.git")
     add_versions("2023.08.21", "4b163b99f05da6de96fe67879c200d80055adc87")
 
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
+            local ndkver = ndk:config("ndkver")
+            assert(ndkver and tonumber(ndkver) > 22, "package(step20) require ndk version > 22")
+        end)
+    end
+
     on_install(function (package)
         os.cp("*.hpp", package:installdir("include/step20"))
         os.cp("detail/*.hpp", package:installdir("include/step20/detail"))
