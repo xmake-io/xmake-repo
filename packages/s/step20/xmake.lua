@@ -23,4 +23,3 @@ package("step20")
             }
         ]]}, {configs = {languages = "c++20"}}))
     end)
-
