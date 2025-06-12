@@ -13,7 +13,9 @@ package("cpp-mcp")
     add_deps("pkgconf")
     add_deps("base64-terrakuh", "cpp-httplib", "nlohmann_json")
 
-    if is_plat("windows", "mingw") then
+    if is_plat("linux", "bsd") then
+        add_syslinks("pthread")
+    elseif is_plat("windows", "mingw") then
         add_syslinks("ws2_32")
     end
 
