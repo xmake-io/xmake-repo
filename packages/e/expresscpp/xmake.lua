@@ -20,10 +20,15 @@ package("expresscpp")
         add_syslinks("ws2_32", "mswsock")
     end
 
-    on_install("!wasm and !windows", function (package)
+    on_install("!wasm", function (package)
+        io.replace("CMakeLists.txt", [[if(MSVC)]], [[if(MSVC)
+add_definitions(-DBOOST_ALL_NO_LIB)]], {plain = true})
         local configs = {}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        if package:config("shared") and package:is_plat("windows") then
+            table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
