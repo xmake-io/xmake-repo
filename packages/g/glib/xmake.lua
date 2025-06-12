@@ -42,8 +42,10 @@ package("glib")
         add_deps("libintl")
     elseif is_plat("windows", "mingw") then
         add_deps("libintl")
-        if is_plat("windows") then
+        if is_subhost("windows") then
             add_deps("pkgconf")
+        else
+            add_deps("pkg-config")
         end
     end
 
