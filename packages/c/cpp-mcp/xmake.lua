@@ -11,6 +11,10 @@ package("cpp-mcp")
     add_deps("pkgconf")
     add_deps("base64-terrakuh", "cpp-httplib", "nlohmann_json")
 
+    if is_plat("windows", "mingw") then
+        add_syslinks("ws2_32")
+    end
+
     on_install(function (package)
         os.rm("common")
         os.cp("include", package:installdir())
