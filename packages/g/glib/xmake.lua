@@ -40,8 +40,11 @@ package("glib")
     elseif is_plat("macosx") then
         add_deps("libiconv", {system = true})
         add_deps("libintl")
-    elseif is_plat("windows") then
-        add_deps("libintl", "pkgconf")
+    elseif is_plat("windows", "mingw") then
+        add_deps("libintl")
+        if is_plat("windows") then
+            add_deps("pkgconf")
+        end
     end
 
     add_includedirs("include/glib-2.0", "lib/glib-2.0/include")
