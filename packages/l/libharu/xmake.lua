@@ -9,6 +9,7 @@ package("libharu")
             return version:gsub("%.", "_")
         else
             return format("%d_%d_%d", version:major(), version:minor(), version:patch())
+        end
     end})
     add_urls("https://github.com/libharu/libharu.git")
 
