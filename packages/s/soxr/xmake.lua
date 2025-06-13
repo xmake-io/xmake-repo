@@ -4,7 +4,8 @@ package("soxr")
     set_license("LGPL-2.1")
 
     add_urls("https://downloads.sourceforge.net/project/soxr/soxr-$(version)-Source.tar.xz",
-             "https://deac-fra.dl.sourceforge.net/project/soxr/soxr-$(version)-Source.tar.xz")
+             "https://deac-fra.dl.sourceforge.net/project/soxr/soxr-$(version)-Source.tar.xz",
+             "https://deac-riga.dl.sourceforge.net/project/soxr/soxr-$(version)-Source.tar.xz")
     add_versions("0.1.3", "b111c15fdc8c029989330ff559184198c161100a59312f5dc19ddeb9b5a15889")
 
     add_configs("openmp",   {description = "Include OpenMP threading.", default = false, type = "boolean"})
