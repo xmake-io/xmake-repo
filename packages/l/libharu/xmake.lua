@@ -8,7 +8,7 @@ package("libharu")
         if version:lt("2.4.0") then
             return version:gsub("%.", "_")
         else
-            return format("%d_%d_%d", version:major(), version:minor(), version:patch())
+            return version
         end
     end})
     add_urls("https://github.com/libharu/libharu.git")
