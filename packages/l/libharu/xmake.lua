@@ -36,6 +36,7 @@ package("libharu")
         io.replace("src/CMakeLists.txt", "install(FILES ${addlib}", "#", {plain = true})
         if package:is_plat("cross", "wasm") then
             io.replace("cmake/modules/haru.cmake", [[message(FATAL_ERROR "Cannot find required math library")]], [[set(MATH_LIB)]], {plain = true})
+            io.replace("src/CMakeLists.txt", "target_link_libraries (hpdf ${M_LIB})", "", {plain = true})
         end
         local configs = {"-DLIBHPDF_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
