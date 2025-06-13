@@ -11,6 +11,10 @@ package("blobify")
     add_deps("boost_pfr", "magic_enum")
 
     on_install(function (package)
+        io.replace("CMakeLists.txt", "add_subdirectory(examples)", "", {plain = true})
+        io.replace("CMakeLists.txt", [[add_library(blobify-associated-sources STATIC src/blobify.cpp)
+target_link_libraries(blobify-associated-sources blobify)]], "", {plain = true})
+
         io.replace("include/blobify/load.hpp", [[#include <magic_enum.hpp>]], [[#include <magic_enum/magic_enum.hpp>
 #include <algorithm>]], {plain = true})
         io.replace("CMakeLists.txt", [[find_package(magic_enum REQUIRED)]], [[find_package(magic_enum CONFIG REQUIRED)]], {plain = true})
