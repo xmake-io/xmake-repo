@@ -11,6 +11,10 @@ package("soxr")
 
     add_deps("cmake")
 
+    if is_plat("linux", "bsd") then
+        add_syslinks("m")
+    end
+
     on_load(function (package)
         if package:config("openmp") then
             package:add("deps", "openmp")
