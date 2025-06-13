@@ -4,9 +4,9 @@ package("libharu")
     set_description("libHaru is a free, cross platform, open source library for generating PDF files.")
     set_license("zlib")
 
-    add_urls("https://github.com/libharu/libharu/archive/refs/tags/RELEASE_$(version).tar.gz", {version = function (version)
+    add_urls("https://github.com/libharu/libharu/archive/refs/tags/$(version).tar.gz", {version = function (version)
         if version:lt("2.4.0") then
-            return version:gsub("%.", "_")
+            return "RELEASE_" .. version:gsub("%.", "_")
         else
             return version
         end
