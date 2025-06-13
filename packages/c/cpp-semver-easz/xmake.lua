@@ -4,7 +4,7 @@ package("cpp-semver-easz")
     set_description("cpp-semver - Semantic Versioning in C++ header-only C++11")
     set_license("MIT")
 
-    add_urls("https://github.com/easz/cpp-semver.git")
+    add_urls("https://github.com/easz/cpp-semver.git", {submodules = false})
     add_versions("2021.12.10", "7b9141d99044e4d363eb3b0a81cfb1546a33f9dd")
 
     on_install(function (package)
