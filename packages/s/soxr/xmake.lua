@@ -22,12 +22,21 @@ package("soxr")
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "SOXR_DLL")
         end
+        if package:is_plat("mingw", "msys") and not package:config("shared") then
+            package:add("defines", "SOXR_DLL")
+            package:add("defines", "soxr_EXPORTS")
+            if package:config("lsr") then
+                package:add("defines", "soxr_lsr_EXPORTS")
+            end
+        end
     end)
 
     on_install(function (package)
         local configs = {
             "-DBUILD_TESTS=OFF", "-DBUILD_EXAMPLES=OFF"
         }
+        -- support for ndk >= r27 https://github.com/android/ndk/issues/2032
+        table.insert(configs, "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW")
         -- Disable SIMD based resample engines for Apple Silicon and iOS ARMv8 architecture
         if package:is_plat("macosx", "iphoneos") and package:is_arch("arm.*") then
             table.insert(configs, "-DWITH_CR32S=OFF")
