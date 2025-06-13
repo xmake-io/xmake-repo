@@ -17,7 +17,7 @@ package("taocpp-json")
 pkg_check_modules(pegtl REQUIRED pegtl)]], {plain = true})
         io.replace("CMakeLists.txt",
             [[target_link_libraries(taocpp-json INTERFACE taocpp::pegtl)]],
-            [[target_include_directories(taocpp-json ${pegtl_INCLUDE_DIRS})]], {plain = true})
+            [[target_include_directories(taocpp-json PRIVATE ${pegtl_INCLUDE_DIRS})]], {plain = true})
         local configs = {
             "-DTAOCPP_JSON_BUILD_TESTS=OFF",
             "-DTAOCPP_JSON_BUILD_EXAMPLES=OFF",
