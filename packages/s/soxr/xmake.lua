@@ -37,7 +37,11 @@ package("soxr")
             package:add("defines", "SOXR_DLL")
         end
         if package:is_plat("mingw") and not package:config("shared") then
-            package:add("defines", "SOXR_VISIBILITY")
+            package:add("defines", "SOXR_DLL")
+            package:add("defines", "soxr_EXPORTS")
+            if package:config("lsr") then
+                package:add("defines", "soxr_lsr_EXPORTS")
+            end
         end
     end)
 
