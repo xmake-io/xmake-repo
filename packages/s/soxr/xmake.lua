@@ -17,10 +17,11 @@ package("soxr")
     add_versions("snapshot:0.1.3", "b797a5d23078be234e520af1041b5e11b49864696d56f0d0b022a0349d1e8d1b")
     add_versions("sourceforge:0.1.3", "b111c15fdc8c029989330ff559184198c161100a59312f5dc19ddeb9b5a15889")
 
-    add_patches("0.1.3", "patches/0.1.3/mingw-fix.diff", "22d49d4edc02154547e19a543e76d8684f628dee070db0b2cded10ade11efb39")
-
     add_configs("openmp",   {description = "Include OpenMP threading.", default = false, type = "boolean"})
     add_configs("lsr",      {description = "Include a `libsamplerate'-like interface.", default = true, type = "boolean"})
+    if is_plat("mingw") and is_subhost("macosx") then
+        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+    end
 
     add_deps("cmake")
 
