@@ -1,16 +1,14 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index ee48f6c..7eb7dde 100644
+index ee48f6c..408888d 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -216,6 +216,12 @@ if (BUILD_SHARED_LIBS)
+@@ -216,6 +216,10 @@ if (BUILD_SHARED_LIBS)
    if (MSVC)
      add_definitions (-DSOXR_DLL)
    endif ()
 +else ()
 +  if (MINGW)
-+    add_definitions (-DSOXR_DLL)
-+    add_definitions (-Dsoxr_EXPORTS)
-+    add_definitions (-Dsoxr_lsr_EXPORTS)
++    add_definitions (-DSOXR_VISIBILITY)
 +  endif ()
  endif ()
  

@@ -17,7 +17,7 @@ package("soxr")
     add_versions("snapshot:0.1.3", "b797a5d23078be234e520af1041b5e11b49864696d56f0d0b022a0349d1e8d1b")
     add_versions("sourceforge:0.1.3", "b111c15fdc8c029989330ff559184198c161100a59312f5dc19ddeb9b5a15889")
 
-    add_patches("0.1.3", "patches/0.1.3/mingw-fix.diff", "429c6c35e32ab9c95465b5900b621156f639b2d01ec49ab9646100a73c9e0931")
+    add_patches("0.1.3", "patches/0.1.3/mingw-fix.diff", "22d49d4edc02154547e19a543e76d8684f628dee070db0b2cded10ade11efb39")
 
     add_configs("openmp",   {description = "Include OpenMP threading.", default = false, type = "boolean"})
     add_configs("lsr",      {description = "Include a `libsamplerate'-like interface.", default = true, type = "boolean"})
@@ -36,11 +36,7 @@ package("soxr")
             package:add("defines", "SOXR_DLL")
         end
         if package:is_plat("mingw") and not package:config("shared") then
-            package:add("defines", "SOXR_DLL")
-            package:add("defines", "soxr_EXPORTS")
-            if package:config("lsr") then
-                package:add("defines", "soxr_lsr_EXPORTS")
-            end
+            package:add("defines", "SOXR_VISIBILITY")
         end
     end)
 
@@ -63,18 +59,20 @@ package("soxr")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
+        assert(package:check_csnippets({test = [[
             #include <soxr.h>
+            #include <stdio.h>
             void test() {
-                auto ver = soxr_version();
+                printf("soxr version: %s\n", soxr_version());
             }
-        ]]}, {configs = {languages = "c++11"}}))
+        ]]}, {configs = {languages = "c11"}}))
         if package:config("lsr") then
-            assert(package:check_cxxsnippets({test = [[
+            assert(package:check_csnippets({test = [[
                 #include <soxr-lsr.h>
+                #include <stdio.h>
                 void test() {
-                    auto ver = src_get_version();
+                    printf("soxr-lsr version: %s\n", src_get_version());
                 }
-            ]]}, {configs = {languages = "c++11"}}))
+            ]]}, {configs = {languages = "c11"}}))
         end
     end)
