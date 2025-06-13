@@ -24,7 +24,11 @@ package("libharu")
 
     on_load("windows", function (package)
         if package:config("shared") then
-            package:add("defines", "HPDF_DLL")
+            if package:check_sizeof("void*") == "4" then
+                package:add("defines", "HPDF_DLL_CDECL")
+            else
+                package:add("defines", "HPDF_DLL")
+            end
         end
     end)
 
