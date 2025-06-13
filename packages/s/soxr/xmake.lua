@@ -63,20 +63,18 @@ package("soxr")
     end)
 
     on_test(function (package)
-        assert(package:check_csnippets({test = [[
+        assert(package:check_cxxsnippets({test = [[
             #include <soxr.h>
-            #include <stdio.h>
             void test() {
-                printf("soxr version: %s\n", soxr_version());
+                auto ver = soxr_version();
             }
-        ]]}, {configs = {languages = "c11"}}))
+        ]]}, {configs = {languages = "c++11"}}))
         if package:config("lsr") then
-            assert(package:check_csnippets({test = [[
+            assert(package:check_cxxsnippets({test = [[
                 #include <soxr-lsr.h>
-                #include <stdio.h>
                 void test() {
-                    printf("soxr-lsr version: %s\n", src_get_version());
+                    auto ver = src_get_version();
                 }
-            ]]}, {configs = {languages = "c11"}}))
+            ]]}, {configs = {languages = "c++11"}}))
         end
     end)
