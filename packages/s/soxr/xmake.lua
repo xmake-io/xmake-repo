@@ -19,6 +19,9 @@ package("soxr")
 
     add_configs("openmp",   {description = "Include OpenMP threading.", default = false, type = "boolean"})
     add_configs("lsr",      {description = "Include a `libsamplerate'-like interface.", default = true, type = "boolean"})
+    if is_plat("mingw") and is_subhost("macosx") then
+        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+    end
 
     add_deps("cmake")
 
@@ -34,7 +37,11 @@ package("soxr")
             package:add("defines", "SOXR_DLL")
         end
         if package:is_plat("mingw") and not package:config("shared") then
-            package:add("defines", "SOXR_VISIBILITY")
+            package:add("defines", "SOXR_DLL")
+            package:add("defines", "soxr_EXPORTS")
+            if package:config("lsr") then
+                package:add("defines", "soxr_lsr_EXPORTS")
+            end
         end
     end)
 
