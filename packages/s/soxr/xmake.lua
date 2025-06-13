@@ -3,7 +3,8 @@ package("soxr")
     set_description("The SoX Resampler library libsoxr performs fast, high-quality one-dimensional sample rate conversion.")
     set_license("LGPL-2.1")
 
-    add_urls("https://downloads.sourceforge.net/project/soxr/soxr-$(version)-Source.tar.xz")
+    add_urls("https://downloads.sourceforge.net/project/soxr/soxr-$(version)-Source.tar.xz",
+             "https://deac-fra.dl.sourceforge.net/project/soxr/soxr-$(version)-Source.tar.xz")
     add_versions("0.1.3", "b111c15fdc8c029989330ff559184198c161100a59312f5dc19ddeb9b5a15889")
 
     add_configs("openmp",   {description = "Include OpenMP threading.", default = false, type = "boolean"})
@@ -22,7 +23,7 @@ package("soxr")
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "SOXR_DLL")
         end
-        if package:is_plat("mingw", "msys") and not package:config("shared") then
+        if package:is_plat("mingw") and not package:config("shared") then
             package:add("defines", "SOXR_DLL")
             package:add("defines", "soxr_EXPORTS")
             if package:config("lsr") then
