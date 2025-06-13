@@ -10,14 +10,35 @@ package("binn")
 
     on_install(function(package)
         local f = io.readfile("src/binn.h")
-        io.writefile("src/binn.h", [[#include <stddef.h>
-        ]] .. f)
+        if package:is_plat("linux", "cross") then
+            io.writefile("src/binn.h", [[#include <endian.h>
+            #define 	LITTLE_ENDIAN __LITTLE_ENDIAN
+            #define 	BIG_ENDIAN __BIG_ENDIAN
+            #define 	BYTE_ORDER __BYTE_ORDER
+            #define     _POSIX_C_SOURCE 200809L
+            #include <strings.h>
+            #include <string.h>
+            #include <stddef.h>
+            ]] .. f)
+        elseif package:is_plat("wasm") then
+            io.writefile("src/binn.h", [[#define     _POSIX_C_SOURCE 200809L
+            #include <strings.h>
+            #include <string.h>
+            #include <stddef.h>
+            ]] .. f)
+        else
+            io.writefile("src/binn.h", [[#include <stddef.h>
+            ]] .. f)
+        end
         io.writefile("xmake.lua", ([[
             add_rules("mode.debug", "mode.release")
             target("binn")
-                set_version("%s", {soname = true})
+                set_version("%s.%s", {soname = true})
                 set_languages("c11")
                 set_kind("$(kind)")
+                if is_plat("linux", "cross", "wasm") then
+                    add_defines("_POSIX_C_SOURCE=200809L")
+                end
                 if is_plat("windows") then
                     if is_kind("shared") then
                         add_files("src/win32/dllmain.c", "src/win32/binn.def")
@@ -25,7 +46,7 @@ package("binn")
                 end
                 add_files("src/binn.c")
                 add_headerfiles("src/(*.h)")
-        ]]):format(package:version_str()))
+        ]]):format(package:version():major(), package:version():minor()))
         import("package.tools.xmake").install(package)
     end)
 
