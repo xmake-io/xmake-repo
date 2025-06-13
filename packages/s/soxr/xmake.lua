@@ -1,6 +1,6 @@
 package("soxr")
     set_homepage("https://sourceforge.net/projects/soxr")
-    set_description("High quality audio resampling")
+    set_description("The SoX Resampler library libsoxr performs fast, high-quality one-dimensional sample rate conversion.")
     set_license("LGPL-2.1")
 
     add_urls("https://downloads.sourceforge.net/project/soxr/soxr-$(version)-Source.tar.xz")
@@ -19,7 +19,7 @@ package("soxr")
         if package:config("openmp") then
             package:add("deps", "openmp")
         end
-        if package:config("shared") then
+        if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "SOXR_DLL")
         end
     end)
@@ -28,6 +28,11 @@ package("soxr")
         local configs = {
             "-DBUILD_TESTS=OFF", "-DBUILD_EXAMPLES=OFF"
         }
+        -- Disable SIMD based resample engines for Apple Silicon and iOS ARMv8 architecture
+        if package:is_plat("macosx", "iphoneos") and package:is_arch("arm.*") then
+            table.insert(configs, "-DWITH_CR32S=OFF")
+            table.insert(configs, "-DWITH_CR64S=OFF")
+        end
         table.insert(configs, "-DWITH_OPENMP=" .. (package:config("openmp") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_LSR_BINDINGS=" .. (package:config("lsr") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
