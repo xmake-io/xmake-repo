@@ -16,6 +16,14 @@ package("fann")
         add_syslinks("m")
     end
 
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) > 25, "package(fann): need ndk api level > 25")
+        end)
+    end
+
     on_load(function (package)
         if package:is_plat("windows") and not package:config("shared") then
             package:add("defines", "FANN_NO_DLL")
@@ -26,15 +34,7 @@ package("fann")
         if package:is_plat("windows", "macosx") then
             package:add("deps", "openmp")
         elseif package:is_plat("macosx", "linux", "cross", "android", "mingw", "msys", "bsd") then
-            if package:is_plat("android") then
-                local ndk = package:toolchain("ndk")
-                local ndk_sdkver = ndk:config("ndk_sdkver")
-                if ndk_sdkver and tonumber(ndk_sdkver) > 25 then
-                    package:add("deps", "libomp")
-                end
-            else
-                package:add("deps", "libomp")
-            end
+            package:add("deps", "libomp")
         end
     end)
 
