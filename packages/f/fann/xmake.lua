@@ -16,9 +16,9 @@ package("fann")
         if package:is_plat("mingw", "msys") and not is_subhost("macosx") then
             package:add("ldflags", "-fopenmp")
         end
-        if package:is_plat("windows") then
+        if package:is_plat("windows", "macosx") then
             package:add("deps", "openmp")
-        elseif package:is_plat("macosx", "linux", "cross", "android", "mingw", "msys", "bsd") then
+        elseif package:is_plat("linux", "cross", "android", "mingw", "msys", "bsd") then
             package:add("deps", "libomp")
         end
     end)
