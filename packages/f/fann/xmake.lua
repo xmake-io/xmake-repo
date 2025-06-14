@@ -26,7 +26,15 @@ package("fann")
         if package:is_plat("windows", "macosx") then
             package:add("deps", "openmp")
         elseif package:is_plat("macosx", "linux", "cross", "android", "mingw", "msys", "bsd") then
-            package:add("deps", "libomp")
+            if package:is_plat("android") then
+                local ndk = package:toolchain("ndk")
+                local ndk_sdkver = ndk:config("ndk_sdkver")
+                if ndk_sdkver and tonumber(ndk_sdkver) > 25 then
+                    package:add("deps", "libomp")
+                end
+            else
+                package:add("deps", "libomp")
+            end
         end
     end)
 
@@ -34,7 +42,7 @@ package("fann")
         if package:is_plat("windows") and package:check_sizeof("void*") == "4" then
             io.replace("src/include/fann.h", [[#define FANN_API __stdcall]], [[#define FANN_API]], {plain = true})
         end
-        local configs = {}
+        local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         io.replace("CMakeLists.txt", "ADD_SUBDIRECTORY( tests )", "", {plain = true})
