@@ -11,9 +11,19 @@ package("fann")
     add_patches("2024.04.16", "patches/2024.04.16/fix-install.diff", "61da5085b942221f7b35419416bb506efd398ae83ba58b738a57de0bb5df1bdc")
 
     add_deps("cmake")
-    add_deps("libomp")
 
-    on_install("macosx", "linux", "cross", "android", "mingw", "msys", "bsd", function (package)
+    on_load(function (package)
+        if package:is_plat("mingw", "msys") and not is_subhost("macosx") then
+            package:add("ldflags", "-fopenmp")
+        end
+        if package:is_plat("windows") then
+            package:add("deps", "openmp")
+        elseif package:is_plat("macosx","linux", "cross", "android", "mingw", "msys", "bsd") then
+            package:add("deps", "libomp")
+        end
+    end)
+
+    on_install("windows", "macosx", "linux", "cross", "android", "mingw", "msys", "bsd", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
