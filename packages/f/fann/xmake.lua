@@ -40,5 +40,12 @@ package("fann")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("fann_run", {includes = "floatfann.h"}))
+        assert(package:check_cxxsnippets({test = [[
+            #include <floatfann.h>
+            void test() {
+                struct fann *ann;
+                fann_type * input;
+                auto output = fann_run(ann, input);
+            }
+        ]]}, {configs = {languages = "c++11"}}))
     end)
