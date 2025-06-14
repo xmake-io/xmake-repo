@@ -59,7 +59,7 @@ package("protobuf-cpp")
 
     on_load(function (package)
         -- Fix MSVC 2019 arm64 error LNK2019: unresolved external symbol __popcnt referenced in function _upb_log2_table_size
-        if package:version():eq("31.0") and package:is_plat("windows") then
+        if package:version() and package:version():eq("31.0") and package:is_plat("windows") then
             local msvc = package:toolchain("msvc")
             local vs = msvc:config("vs")
             if vs and tonumber(vs) < 2022 and package:is_arch("arm64") then
@@ -181,7 +181,7 @@ package("protobuf-cpp")
         table.insert(configs, "-Dprotobuf_BUILD_LIBUPB=" .. (package:config("upb") and "ON" or "OFF"))
 
         local opt = {}
-        opt.builddir = "build"
+        opt.buildir = "build"
         if version:ge("22.0") then
             opt.packagedeps = "abseil"
             table.insert(configs, "-Dprotobuf_ABSL_PROVIDER=package")
