@@ -20,12 +20,12 @@ package("openjpeg")
     on_load(function (package)
         local ver = package:version():major() .. "." .. package:version():minor()
         package:add("includedirs", "include/openjpeg-" .. ver)
-        if package:is_plat("windows") and not package:config("shared") then
+        if package:is_plat("windows", "mingw") and not package:config("shared") then
             package:add("defines", "OPJ_STATIC")
         end
     end)
 
-    on_install("windows", "mingw", "macosx", "linux", "bsd", "msys", function (package)
+    on_install("windows", "mingw", "macosx", "linux", "bsd", function (package)
         local configs = {"-DBUILD_TESTING=OFF", "-DBUILD_DOC=OFF", "-DBUILD_CODEC=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -35,13 +35,11 @@ package("openjpeg")
 
         -- fix cmake import files
         local ver = package:version():major() .. "." .. package:version():minor()
-        io.cat(package:installdir("lib", "cmake", "openjpeg-" .. ver, "OpenJPEGConfig.cmake"))
         if os.exists(package:installdir("lib", "cmake", "openjpeg-" .. ver, "OpenJPEGConfig.cmake")) then
             io.gsub(package:installdir("lib", "cmake", "openjpeg-" .. ver, "OpenJPEGConfig.cmake"), "set%(INC_DIR .-%)", format("set(INC_DIR ${SELF_DIR}/../../../include/openjpeg-%s)", ver))
         else
             io.gsub(package:installdir("lib", "openjpeg-" .. ver, "OpenJPEGConfig.cmake"), "set%(INC_DIR .-%)", format("set(INC_DIR ${SELF_DIR}/../../include/openjpeg-%s)", ver))
         end
-        io.cat(package:installdir("lib", "cmake", "openjpeg-" .. ver, "OpenJPEGConfig.cmake"))
     end)
 
     on_test(function (package)
