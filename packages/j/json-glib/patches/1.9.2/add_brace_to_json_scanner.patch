@@ -1,4 +1,3 @@
-
 diff --git a/json-glib/json-scanner.c b/json-glib/json-scanner.c
 index 4ada646..119c3fa 100644
 --- a/json-glib/json-scanner.c
