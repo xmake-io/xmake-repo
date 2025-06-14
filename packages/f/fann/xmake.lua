@@ -41,7 +41,7 @@ package("fann")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <fann_train.h>
+            #include <fann.h>
             void test() {
                 struct fann_train_data *train_data;
                 fann_scale_train_data(train_data, -1, 1);
