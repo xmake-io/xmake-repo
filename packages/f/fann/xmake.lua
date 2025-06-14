@@ -41,11 +41,10 @@ package("fann")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <floatfann.h>
+            #include <fann_train.h>
             void test() {
-                struct fann *ann;
-                fann_type * input;
-                auto output = fann_run(ann, input);
+                struct fann_train_data *train_data;
+                fann_scale_train_data(train_data, -1, 1);
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
