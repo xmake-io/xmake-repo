@@ -31,6 +31,9 @@ package("fann")
     end)
 
     on_install("windows", "macosx", "linux", "cross", "android", "mingw", "msys", "bsd", function (package)
+        if package:is_plat("windows") and package:check_sizeof("void*") == "4" then
+            io.replace("src/include/fann.h", [[#define FANN_API __stdcall]], [[#define FANN_API]], {plain = true})
+        end
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
