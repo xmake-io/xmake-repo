@@ -18,7 +18,7 @@ package("fann")
         end
         if package:is_plat("windows") then
             package:add("deps", "openmp")
-        elseif package:is_plat("macosx","linux", "cross", "android", "mingw", "msys", "bsd") then
+        elseif package:is_plat("macosx", "linux", "cross", "android", "mingw", "msys", "bsd") then
             package:add("deps", "libomp")
         end
     end)
