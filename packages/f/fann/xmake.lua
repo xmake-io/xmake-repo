@@ -4,11 +4,16 @@ package("fann")
     set_license("LGPL-2.1")
 
     add_urls("https://github.com/libfann/fann.git")
+
+    add_versions("2024.04.16", "1783cbf6239a597c4d29f694e227e22b8d4f4bf6")
     add_versions("2021.03.14", "a3cd24e528d6a865915a4fed6e8fac164ff8bfdc")
 
-    add_deps("cmake")
+    add_patches("2024.04.16", "patches/2024.04.16/fix-install.diff", "61da5085b942221f7b35419416bb506efd398ae83ba58b738a57de0bb5df1bdc")
 
-    on_install("linux", "macosx", "windows", function (package)
+    add_deps("cmake")
+    add_deps("libomp")
+
+    on_install("macosx", "linux", "cross", "android", "mingw", "msys", "bsd", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
