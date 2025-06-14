@@ -39,7 +39,11 @@ package("fann")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         io.replace("CMakeLists.txt", "ADD_SUBDIRECTORY( tests )", "", {plain = true})
         io.replace("CMakeLists.txt", "ADD_SUBDIRECTORY( lib/googletest )", "", {plain = true})
-        import("package.tools.cmake").install(package, configs)
+        local opt = {}
+        if package:is_plat("macosx") then
+            opt.packagedeps = "libomp"
+        end
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
