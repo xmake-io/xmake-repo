@@ -15,7 +15,7 @@ package("fann")
 
     on_install("macosx", "linux", "cross", "android", "mingw", "msys", "bsd", function (package)
         local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         io.replace("CMakeLists.txt", "ADD_SUBDIRECTORY( tests )", "", {plain = true})
         io.replace("CMakeLists.txt", "ADD_SUBDIRECTORY( lib/googletest )", "", {plain = true})
