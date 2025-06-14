@@ -12,7 +12,14 @@ package("fann")
 
     add_deps("cmake")
 
+    if is_plat("linux", "bsd") then
+        add_syslinks("m")
+    end
+
     on_load(function (package)
+        if package:is_plat("windows") and not package:config("shared") then
+            package:add("defines", "FANN_NO_DLL")
+        end
         if package:is_plat("mingw", "msys") and not is_subhost("macosx") then
             package:add("ldflags", "-fopenmp")
         end
