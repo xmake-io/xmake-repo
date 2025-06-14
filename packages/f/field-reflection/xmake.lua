@@ -8,8 +8,6 @@ package("field-reflection")
              "https://github.com/yosh-matsuda/field-reflection.git")
 
     add_versions("v0.2.1", "42c92b98e441b5d01d02d02b6cdeaca019975f81dfafc2650ea6c207cadac538")
-    add_versions("v0.2.0", "4fa3ac60940054954d873d2845619cfec3492b7c1feaad0f95a3b6f52bbb4124")
-    add_versions("v0.1.0", "1d8feeacc9aba8271a70ad71a1bac31789b4626056785754f7accab2c2522985")
 
     on_install(function (package)
         os.cp("include", package:installdir())
