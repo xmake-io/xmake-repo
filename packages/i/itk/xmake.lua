@@ -11,7 +11,9 @@ package("itk")
 
     add_patches("5.4.3", "https://github.com/InsightSoftwareConsortium/ITK/commit/4f275769e37fa29754166c7eded2d84c0b33991a.diff", "97149086aa4524a5964f25adcc56b8400a3a413765c9fa986f4cdde474e984c4")
 
-    add_deps("cmake", "eigen")
+    add_deps("cmake")
+    add_deps("eigen", "zlib")
+
     if is_plat("windows", "mingw") then
         add_syslinks("shell32", "advapi32")
     elseif is_plat("linux", "bsd") then
@@ -31,7 +33,8 @@ package("itk")
                          "-DBUILD_TESTING=OFF",
                          "-DBUILD_EXAMPLES=OFF",
                          "-DITK_WRAPPING=OFF",
-                         "-DITK_USE_SYSTEM_EIGEN=ON"}
+                         "-DITK_USE_SYSTEM_EIGEN=ON",
+                         "-DITK_USE_SYSTEM_ZLIB=ON"}
         if package:version():lt("5.4.0") then
             table.insert(configs, "-DCMAKE_CXX_STANDARD=14")
         else
