@@ -141,8 +141,6 @@ package("opencv")
             end
             local vs = package:toolchain("msvc"):config("vs")
             assert(tonumber(vs) >= 2022, "opencv requires Visual Studio 2022 and later for arm targets")
-            local vs_sdkver = package:toolchain("msvc"):config("vs_sdkver")
-            assert(vs_sdkver and semver.match(vs_sdkver):eq("10.0.26100") and os.arch() == "arm64", "package(opencv): requires host arch to be arm for vs_sdkver 10.0.26100")
         end)
     end
 
