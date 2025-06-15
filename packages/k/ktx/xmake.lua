@@ -62,7 +62,7 @@ package("ktx")
         end
     end)
 
-    on_install("!iphoneos", function (package)
+    on_install("!iphoneos and !wasm", function (package)
         -- TODO: unbundle basisu & dfdutils
         -- io.replace("CMakeLists.txt", "external/dfdutils%g*.c\n", "")
         -- io.replace("CMakeLists.txt", "external%g*.cpp\n", "")
