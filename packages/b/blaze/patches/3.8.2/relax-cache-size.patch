@@ -1,0 +1,13 @@
+diff --git a/blaze/system/CacheSize.h b/blaze/system/CacheSize.h
+index 1b98ce5..4636114 100644
+--- a/blaze/system/CacheSize.h
++++ b/blaze/system/CacheSize.h
+@@ -74,7 +74,7 @@ constexpr size_t cacheSize = BLAZE_CACHE_SIZE;
+ /*! \cond BLAZE_INTERNAL */
+ namespace {
+ 
+-BLAZE_STATIC_ASSERT( blaze::cacheSize > 100000UL && blaze::cacheSize < 100000000UL );
++BLAZE_STATIC_ASSERT( blaze::cacheSize > 100000UL && blaze::cacheSize < 1000000000UL );
+ 
+ }
+ /*! \endcond */

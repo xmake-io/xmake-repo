@@ -9,7 +9,8 @@ package("blaze")
     add_versions("3.8.1", "a084c6d1acc75e742a1cdcddf93d0cda0d9e3cc4014c246d997a064fa2196d39")
     add_versions("3.8.2", "4c4e1915971efbedab95790e4c5cf017d8448057fa8f8c62c46e1643bf72cbb1")
 
-    add_patches("3.8.0", path.join(os.scriptdir(), "patches", "3.8", "fix-vm-build.patch"), "d6e98c62279ab4b6a93b297e63312b974551e3fcfcd51f613bfebd05e7421cf1")
+    add_patches("3.8.0", "patches/3.8/fix-vm-build.patch", "d6e98c62279ab4b6a93b297e63312b974551e3fcfcd51f613bfebd05e7421cf1")
+    add_patches("3.8.2", "patches/3.8.2/relax-cache-size.patch", "f9f36159320107da3d581c1aaf5d7fa846665ba2fc42a156a5203af62997df45")
 
     add_configs("blas", {description = "Choose BLAS library to use.", default = "openblas", type = "string", values = {"none", "mkl", "openblas"}})
 
