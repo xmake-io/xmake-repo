@@ -13,7 +13,7 @@ package("itk")
     if is_plat("windows", "mingw") then
         add_syslinks("shell32", "advapi32")
     elseif is_plat("linux", "bsd") then
-        add_syslinks("dl", "pthread")
+        add_syslinks("m", "dl", "pthread")
     end
     on_load(function (package)
         local ver = package:version():major() .. "." .. package:version():minor()
