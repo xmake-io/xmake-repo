@@ -46,6 +46,8 @@ package("astc-encoder")
         io.replace("Source/CMakeLists.txt", "-flto=auto", "", {plain = true})
         io.replace("Source/cmake_core.cmake", "-Werror", "", {plain = true})
         io.replace("Source/cmake_core.cmake", "if(${ASTCENC_CLI})\n        # Enable LTO on release builds", "if(0)", {plain = true})
+        io.replace("Source/cmake_core.cmake", "add_library(${ASTCENC_TARGET}-veneer1", "add_library(${ASTCENC_TARGET}-veneer1 STATIC", {plain = true})
+        io.replace("Source/cmake_core.cmake", "add_library(${ASTCENC_TARGET}-veneer2", "add_library(${ASTCENC_TARGET}-veneer2 STATIC", {plain = true})
         if package:is_plat("mingw", "android", "bsd") or package:has_tool("cxx", "clang") then
             io.replace("Source/cmake_core.cmake", "$<${is_clangcl}:-mcpu=native -march=native>", "", {plain = true})
             io.replace("Source/cmake_core.cmake", "$<${is_gnu_fe}:-mcpu=native -march=native>", "", {plain = true})
@@ -95,11 +97,6 @@ package("astc-encoder")
         os.cp("Source/astcenc.h", package:installdir("include"))
         if package:config("cli") then
             package:addenv("PATH", "bin")
-
-            if package:config("shared") then
-                os.vcp(path.join(package:buildir(), "Source/*-veneer*"), package:installdir(is_host("windows") and "bin" or "lib"))
-            end
-
             local exe_prefix = package:is_plat("mingw", "windows") and ".exe" or ""
             -- TODO: rename astcenc-neno?
             os.trymv(path.join(package:installdir("bin"), "astcenc-native" .. exe_prefix), path.join(package:installdir("bin"), "astcenc" .. exe_prefix))
