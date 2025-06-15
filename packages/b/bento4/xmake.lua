@@ -8,15 +8,16 @@ package("bento4")
 
     add_deps("cmake")
 
-    on_install(function (package)
-        if package:is_plat("android") then
+    if on_check then
+        on_check("android", function (package)
             import("core.tool.toolchain")
-
             local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
             local ndk_sdkver = ndk:config("ndk_sdkver")
             assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(bento4): need ndk api level >= 21 for android")
-        end
+        end)
+    end
 
+    on_install(function (package)
         local configs = {"-DBUILD_APPS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
