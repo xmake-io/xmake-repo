@@ -9,6 +9,8 @@ package("itk")
     add_versions("5.2.1", "192d41bcdd258273d88069094f98c61c38693553fd751b54f8cda308439555db")
     add_versions("5.4.3", "dd3f286716ee291221407a67539f2197c184bd80d4a8f53de1fb7d19351c7eca")
 
+    add_patches("5.4.3", "https://github.com/InsightSoftwareConsortium/ITK/commit/4f275769e37fa29754166c7eded2d84c0b33991a.diff", "97149086aa4524a5964f25adcc56b8400a3a413765c9fa986f4cdde474e984c4")
+
     add_deps("cmake", "eigen")
     if is_plat("windows", "mingw") then
         add_syslinks("shell32", "advapi32")
