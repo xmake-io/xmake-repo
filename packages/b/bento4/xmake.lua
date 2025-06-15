@@ -3,6 +3,7 @@ package("bento4")
     set_description("Full-featured MP4 format, MPEG DASH, HLS, CMAF SDK and tools")
 
     add_urls("https://github.com/axiomatic-systems/Bento4.git")
+    add_versions("2024.11.15", "3bdc891602d19789b8e8626e4a3e613a937b4d35")
     add_versions("2023.08.08", "2e2dc016274764b8eb511a3503aa37e7334be6bf")
 
     add_deps("cmake")
