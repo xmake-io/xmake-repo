@@ -40,6 +40,9 @@ package("itk")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
+            table.insert(configs, "-DITK_MSVC_STATIC_RUNTIME_LIBRARY=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+        end
+        if package:is_plat("windows") then
             import("package.tools.cmake").install(package, configs, {buildir = path.join(os.tmpdir(), "itk_build")})
         else
             import("package.tools.cmake").install(package, configs)
