@@ -5,6 +5,7 @@ package("json.h")
 
     add_urls("https://github.com/sheredom/json.h.git")
     add_versions("2022.11.27", "06aa5782d650e7b46c6444c2d0a048c0a1b3a072")
+    add_versions("2024.07.19", "3e1c624e24a0366eecc909854dc9fb0103e5c845")
 
     on_install(function (package)
         os.cp("*.h", package:installdir("include"))
