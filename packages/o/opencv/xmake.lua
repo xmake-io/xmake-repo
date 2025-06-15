@@ -140,7 +140,7 @@ package("opencv")
                 raise("current opencv version does not support windows/arm64!")
             end
             local vs = package:toolchain("msvc"):config("vs")
-            assert(tonumber(vs) >= 2022, "opencv requires Visual Studio 2022 and later for arm targets")
+            assert(tonumber(vs) >= 2022, "package(opencv) requires Visual Studio 2022 and later for arm targets")
         end)
     end
 
