@@ -3,10 +3,10 @@ package("rocket")
     set_homepage("https://github.com/tripleslash/rocket")
     set_description("Fast single header signal/slots library for C++")
 
-    add_urls("https://github.com/tripleslash/rocket/archive/348869fcda83f8b8b521c7654f83fea07ebe7a0a.tar.gz",
-             "https://github.com/tripleslash/rocket.git")
+    add_urls("https://github.com/tripleslash/rocket.git")
 
-    add_versions("2020.06.03", "de03b9c7f9b9478cfaa60683f95a7b0773dc0929d14e510c23f53b3804cc921f")
+    add_versions("2020.06.03", "348869fcda83f8b8b521c7654f83fea07ebe7a0a")
+    -- add_versions("2024.08.21", "ce3a936f21bc8868aec36f221706ca73228297ab")
 
     on_install(function (package)
         io.replace("rocket.hpp", "return thread_id != std::thread::id{}", "return !(thread_id == std::thread::id{})", {plain = true})
