@@ -30,7 +30,7 @@ package("ktx")
         add_deps("pkg-config")
     end
     add_deps("astc-encoder", "zstd")
-
+    -- TODO
     if is_plat("iphoneos") then
         add_includedirs("lib/ktx.framework/Headers")
         add_linkdirs("lib/ktx.framework")
@@ -62,7 +62,7 @@ package("ktx")
         end
     end)
 
-    on_install(function (package)
+    on_install("!iphoneos", function (package)
         -- TODO: unbundle basisu & dfdutils
         -- io.replace("CMakeLists.txt", "external/dfdutils%g*.c\n", "")
         -- io.replace("CMakeLists.txt", "external%g*.cpp\n", "")
