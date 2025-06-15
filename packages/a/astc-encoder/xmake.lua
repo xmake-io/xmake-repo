@@ -6,6 +6,7 @@ package("astc-encoder")
     add_urls("https://github.com/ARM-software/astc-encoder/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ARM-software/astc-encoder.git", {submodules = false})
 
+    add_versions("5.3.0", "6bd248f460b90576f90a5499c0f6b8d785b3af3837bcab82607d9a3b5bba77e2")
     add_versions("5.2.0", "1680d440b765c3809490b6b49664a2ba0798624629615da4ff834401c0f1fe23")
     add_versions("4.8.0", "6c12f4656be21a69cbacd9f2c817283405decb514072dc1dcf51fd9a0b659852")
     add_versions("4.7.0", "a57c81f79055aa7c9f8c82ac5464284e3df9bba682895dee09fa35bd1fdbab93")
@@ -93,10 +94,15 @@ package("astc-encoder")
 
         os.cp("Source/astcenc.h", package:installdir("include"))
         if package:config("cli") then
+            package:addenv("PATH", "bin")
+
+            if package:config("shared") then
+                os.vcp(path.join(package:buildir(), "Source/*-veneer*"), package:installdir(is_host("windows") and "bin" or "lib"))
+            end
+
             local exe_prefix = package:is_plat("mingw", "windows") and ".exe" or ""
             -- TODO: rename astcenc-neno?
             os.trymv(path.join(package:installdir("bin"), "astcenc-native" .. exe_prefix), path.join(package:installdir("bin"), "astcenc" .. exe_prefix))
-            package:addenv("PATH", "bin")
         end
     end)
 
