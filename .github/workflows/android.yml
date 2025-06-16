@@ -28,16 +28,10 @@ jobs:
           actions-cache-folder: ".xmake-cache"
           actions-cache-key: "android"
 
-      - name: Prepare
-        run: |
-          if test ${{ matrix.ndk }} = "r27"; then
-            wget -q https://dl.google.com/android/repository/android-ndk-r27-linux.zip
-            unzip -q -o ./android-ndk-r27-linux.zip
-          else
-            wget -q https://dl.google.com/android/repository/android-ndk-r22-linux-x86_64.zip
-            unzip -q -o ./android-ndk-r22-linux-x86_64.zip
-          fi
-
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D -p android --ndk=`pwd`/android-ndk-${{ matrix.ndk }} --ndk_sdkver=${{ matrix.ndk_sdkver }} -a ${{ matrix.arch }}
+          if ("${{ matrix.ndk }}" -eq "r27") {
+            xrepo env -b "ndk 27.0" xmake l ./scripts/test.lua -D -p android -a ${{ matrix.arch }}
+          } else {
+            xrepo env -b "ndk 22.0" xmake l ./scripts/test.lua -D -p android -a ${{ matrix.arch }}
+          }

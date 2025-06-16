@@ -33,18 +33,10 @@ jobs:
           maximum-size: 32GB
           disk-root: "C:"
 
-      - name: Prepare
-        run: |
-          if ("${{ matrix.ndk }}" -eq "r27") {
-            curl -fsSL "https://dl.google.com/android/repository/android-ndk-r27-windows.zip" -o android-ndk-r27-windows.zip
-            Expand-Archive ./android-ndk-r27-windows.zip -DestinationPath ./ndk
-          } else {
-            curl -fsSL "https://dl.google.com/android/repository/android-ndk-r22-windows-x86_64.zip" -o android-ndk-r22-windows-x86_64.zip
-            Expand-Archive ./android-ndk-r22-windows-x86_64.zip -DestinationPath ./ndk
-          }
-
       - name: Tests
         run: |
-          $Env:XMAKE_MAIN_REPO = "https://github.com/xmake-io/xmake-repo.git"
-          xmake --version
-          xmake l ./scripts/test.lua -D -p android --ndk=C:/a/xmake-repo/xmake-repo/ndk/android-ndk-${{ matrix.ndk }} --ndk_sdkver=${{ matrix.ndk_sdkver }} -a ${{ matrix.arch }}
+          if ("${{ matrix.ndk }}" -eq "r27") {
+            xrepo env -b "ndk 27.0" xmake l ./scripts/test.lua -D -p android -a ${{ matrix.arch }}
+          } else {
+            xrepo env -b "ndk 22.0" xmake l ./scripts/test.lua -D -p android -a ${{ matrix.arch }}
+          }
