@@ -21,6 +21,17 @@ jobs:
       group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-Android-${{ matrix.arch }}-${{ matrix.ndk }}-${{ matrix.ndk_sdkver }}
       cancel-in-progress: true
     steps:
+      - name: Remove local ndk
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: false
+          docker-images: false
+          swap-storage: false
+
       - uses: actions/checkout@v1
       - uses: xmake-io/github-action-setup-xmake@v1
         with:
@@ -29,8 +40,6 @@ jobs:
           actions-cache-key: "android"
 
       - name: Tests
-        env:
-          XMAKE_MAIN_REPO: "https://github.com/xmake-io/xmake-repo.git"
         run: |
           if test ${{ matrix.ndk }} = "r27"; then
             xrepo env -y -b "ndk 27.0" xmake l ./scripts/test.lua -D -p android -a ${{ matrix.arch }} --ndk_sdkver=${{ matrix.ndk_sdkver }} 
