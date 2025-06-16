@@ -50,24 +50,6 @@ package("ndk")
         add_versions("27.0", "2f2ef00b22fe22c1c9c78fda1b38ea7ffa6528e25eac0b70a92f8cb0093143be")
     end
 
-    -- on_fetch(function (package, opt)
-    --     if opt.system then
-    --         import("core.base.semver")
-    --         import("detect.sdks.find_ndk")
-
-    --         local ndk = find_ndk()
-    --         if ndk and ndk.ndkver then
-    --             if not opt.require_version then
-    --                 return true
-    --             end
-
-    --             if semver.satisfies(ndk.ndkver .. ".0", opt.require_version) then
-    --                 return true
-    --             end
-    --         end
-    --     end
-    -- end)
-
     on_install("@windows|x64", "@msys|x86_64", "@linux|x86_64", "@macosx|x86_64", function (package)
         package:setenv("ANDROID_NDK_ROOT", package:installdir())
         package:mark_as_pathenv("ANDROID_NDK_ROOT")
