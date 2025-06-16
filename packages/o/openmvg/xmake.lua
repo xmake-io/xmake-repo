@@ -7,19 +7,32 @@ package("openmvg")
     add_versions("2.1", "01193a245ee3c36458e650b1cf4402caad8983ef")
 
     add_configs("openmp", {description = "Enable OpenMP parallelization", default = true, type = "boolean"})
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library", default = false, type = "boolean", readonly = true})
+    end
 
     add_deps("cmake", "eigen")
+
+    if on_check then
+        on_check("linux", function (package)
+            assert(not package:has_tool("cxx", "clang"), "Linux Clang is not supported.")
+        end)
+    end
 
     on_load("linux", "windows", "macosx", function (package)
         if package:config("openmp") then package:add("deps", "openmp") end
     end)
 
-    on_install("linux", "windows", "macosx", function (package)
+    on_install("linux", "windows|x86", "windows|x64", "macosx", function (package)
+        if is_plat("windows") then
+            io.replace("src/openMVG/matching/metric_hamming.hpp", "#ifdef _MSC_VER",
+                       "#if defined(_MSC_VER) && (defined(_M_X64) || defined(_M_IX86) || defined(_M_ARM64) || defined(_M_ARM64EC))", {plain = true})
+        end
         os.cd("src")
         local configs = {
             "-DOpenMVG_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"),
             "-DOpenMVG_BUILD_COVERAGE=OFF",
-            "-DOpenMVG_BUILD_TESTS=ON",
+            "-DOpenMVG_BUILD_TESTS=OFF",
             "-DOpenMVG_BUILD_DOC=OFF",
             "-DOpenMVG_BUILD_EXAMPLES=OFF",
             "-DOpenMVG_BUILD_OPENGL_EXAMPLES=OFF",
