@@ -1,0 +1,21 @@
+diff --git a/lib/marisa/grimoire/io/mapper.cc b/lib/marisa/grimoire/io/mapper.cc
+index 0889de5..3ba75a5 100644
+--- a/lib/marisa/grimoire/io/mapper.cc
++++ b/lib/marisa/grimoire/io/mapper.cc
+@@ -123,12 +123,16 @@ void Mapper::open_(const char *filename, int flags) {
+   origin_ = ::MapViewOfFile(map_, FILE_MAP_READ, 0, 0, 0);
+   MARISA_THROW_IF(origin_ == nullptr, MARISA_IO_ERROR);
+ 
++  #if (_WIN32_WINNT >= _WIN32_WINNT_WIN8)
+   if (flags & MARISA_MAP_POPULATE) {
+     WIN32_MEMORY_RANGE_ENTRY range_entry;
+     range_entry.VirtualAddress = origin_;
+     range_entry.NumberOfBytes = size_;
+     PrefetchVirtualMemory(GetCurrentProcess(), 1, &range_entry, 0);
+   }
++  #else
++  #pragma message("warning: You are building for pre-Windows 8; prefetch not supported")
++  #endif
+ 
+   ptr_ = static_cast<const char *>(origin_);
+   avail_ = size_;
