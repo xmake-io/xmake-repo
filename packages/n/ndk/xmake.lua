@@ -47,7 +47,7 @@ package("ndk")
         add_versions("21.0", "437278103a3db12632c05b1be5c41bbb8522791a67e415cc54411a65366f499d")
         add_versions("22.0", "14fce4dea7fb3facbc0e3d20270007bffec3ba383aec02e8b0e0dad8d8782892")
         add_versions("26.0", "4b0ea6148a9a2337e62a0c0c7ac59ff1edc38d69b81d9c58251897d23f7fa321")
-        add_versions("27.0", "8c5685457c58a88527367d46d3f14e8c727d962c39f85344cff0c0768a73c3b7")
+        add_versions("27.0", "2f2ef00b22fe22c1c9c78fda1b38ea7ffa6528e25eac0b70a92f8cb0093143be")
     end
 
     -- on_fetch(function (package, opt)
