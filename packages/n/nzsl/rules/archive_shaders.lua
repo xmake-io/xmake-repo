@@ -2,7 +2,13 @@
 rule("archive.shaders")
 	set_extensions(".nzsla")
 	add_deps("@nzsl/find_nzsl")
-	add_deps("@nzsl/compile.shaders", { order = true })
+
+    if add_orders then
+	    add_deps("@nzsl/compile.shaders")
+        add_orders("@nzsl/compile.shaders", "@nzsl/archive.shaders")
+    else
+	    add_deps("@nzsl/compile.shaders", { order = true })
+    end
 
 	before_buildcmd_file(function (target, batchcmds, sourcefile, opt)
 		local nzsla = target:data("nzsla")
