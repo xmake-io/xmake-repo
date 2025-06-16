@@ -9,6 +9,7 @@ package("marisa")
     add_versions("v0.3.0", "a3057d0c2da0a9a57f43eb8e07b73715bc5ff053467ee8349844d01da91b5efb")
 
     add_patches("v0.3.0", "patches/v0.3.0/fix-mingw.diff", "2d0409c91d3dffc68d4219bdf26b7752385ae40bf985b6e7b9a7fc572efa79a0")
+    add_patches("v0.3.0", "patches/v0.3.0/support-debug-install.diff", "a3d02bf6881d233bf8cfadded33edfcde167bee719d47538b869e0e90d8bf7ce")
 
     add_deps("cmake")
 
