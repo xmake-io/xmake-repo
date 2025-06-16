@@ -8,7 +8,6 @@ package("marisa")
     add_versions("v0.2.6", "1063a27c789e75afa2ee6f1716cc6a5486631dcfcb7f4d56d6485d2462e566de")
     add_versions("v0.3.0", "a3057d0c2da0a9a57f43eb8e07b73715bc5ff053467ee8349844d01da91b5efb")
 
-    add_patches("v0.3.0", "patches/v0.3.0/fix-mingw.diff", "2d0409c91d3dffc68d4219bdf26b7752385ae40bf985b6e7b9a7fc572efa79a0")
     add_patches("v0.3.0", "patches/v0.3.0/support-debug-install.diff", "a3d02bf6881d233bf8cfadded33edfcde167bee719d47538b869e0e90d8bf7ce")
 
     add_deps("cmake")
@@ -25,6 +24,9 @@ package("marisa")
         }
         if package:config("shared") and package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
+        end
+        if package:is_plat("mingw") then
+            table.insert(configs, "-DCMAKE_CXX_FLAGS=-D_WIN32_WINNT=0x602")
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
