@@ -41,6 +41,7 @@ jobs:
 
       - name: Tests
         run: |
+          xmake repo --add local-repo .
           if test ${{ matrix.ndk }} = "r27"; then
             xrepo env -y -b "ndk 27.0" xmake l ./scripts/test.lua -D -p android -a ${{ matrix.arch }} --ndk_sdkver=${{ matrix.ndk_sdkver }} 
           else
