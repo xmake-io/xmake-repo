@@ -16,7 +16,12 @@ package("marisa")
         if package:version():lt("v0.3.0") then
             os.cp(path.join(package:scriptdir(), "port", "CMakeLists.txt"), "CMakeLists.txt")
         end
-        local configs = {"-DENABLE_TESTS=OFF", "-DBUILD_TESTING=OFF", "-DENABLE_TOOLS=OFF"}
+        local configs = {
+            "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
+            "-DENABLE_TESTS=OFF",
+            "-DBUILD_TESTING=OFF",
+            "-DENABLE_TOOLS=OFF"
+        }
         if package:config("shared") and package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
