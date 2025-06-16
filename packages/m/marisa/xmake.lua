@@ -14,7 +14,7 @@ package("marisa")
     add_deps("cmake")
 
     on_install(function (package)
-        if package:version():lt("v0.3.0") then
+        if package:version() and package:version():lt("v0.3.0") then
             os.cp(path.join(package:scriptdir(), "port", "CMakeLists.txt"), "CMakeLists.txt")
         end
         local configs = {
@@ -32,5 +32,11 @@ package("marisa")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("marisa::Trie", {configs = {languages = "c++17"}, includes = "marisa.h"}))
+        assert(package:check_cxxsnippets({test = [[
+            #include <marisa.h>
+            void test() {
+                int x = 1, y = 2;
+                marisa::swap(x, y);
+            }
+        ]]}, {configs = {languages = "c++17"}}), "package(glaze) require >= c++17")
     end)
