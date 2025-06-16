@@ -7,6 +7,7 @@ package("bvh")
     add_versions("2023.6.30", "578b1e8035743d0a97fcac802de81622c54f28e3")
     add_versions("2024.7.8", "77a08cac234bae46abbb5e78c73e8f3c158051d0")
     add_versions("2025.02.03", "fbdc59615112d471409515cd2ab826fcc3100fd7")
+    add_patches("2025.02.03", "patches/2025.02.03/fix-narrow.diff", "5df510bb0ac8b23b29e68fb69ad190b3cfae4d441d44a4f2ad5d63e7e0752a22")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"})
     add_configs("c_api",  {description = "Builds the C API library wrapper", default = true, type = "boolean"})
