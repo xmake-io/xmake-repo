@@ -7,6 +7,15 @@ package("etl")
     add_urls("https://github.com/ETLCPP/etl/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ETLCPP/etl.git")
 
+    add_versions("20.41.7", "10a26f084fcd603bc2b2b8df98221c8896036a558f069acaa1fbaecce7974a39")
+    add_versions("20.41.6", "c68a869a26397fe86bba8749132962c2e53104186eb3fc8a26a1713de8a70d1c")
+    add_versions("20.41.5", "2f771d36701ed4d219d51fc1ab5c84e6e7e15ba3ee332cd7de11949b1ac33b89")
+    add_versions("20.41.4", "7e04d8f6527ba26bfddd55def9ad5911ca0259047b1537aa4c2bb2c80bca8a25")
+    add_versions("20.41.3", "f4f620210c4441bc3b7640cad2821fa4c58ade829b7674d62f9f2b1c9718ad11")
+    add_versions("20.41.2", "e977b0d6ea3a31f55de4067a47ca1d60e5c8ddaf841b9b1fca5caf1f4071b206")
+    add_versions("20.41.1", "d5069a3d2c2da76c60556a5db745db526ec0e3cd400c8cfcbf79813aabfa9650")
+    add_versions("20.41.0", "96f0a7992461d6c7060dbaf76aeab85cb7a1ca6f5efc80526bfe61b24819f000")
+    add_versions("20.40.1", "9458a1c26f59883f635610521d7ba95da5d1aecb1ff8804a76f5dd2c52e237aa")
     add_versions("20.40.0", "b47ca70e7394f50dd2d65dddfd088757525488ac2fd934f435705fbf3ffe6d3d")
     add_versions("20.39.4", "ce1222ed12fb39ae7a6160f8c33da61534d6b4c4d0d36be622910bbd545f5ee7")
     add_versions("20.39.3", "1d596bc47d17959ced8b4586e0ae22348c903df6ab00f47ef900d854ef5e30c8")
@@ -31,5 +40,5 @@ package("etl")
             void test() {
                 etl::array<int, 10> data = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
             }
-        ]]}, {configs = {languages = "c++11"}}))
+        ]]}, {configs = {languages = "c++11", defines = "ETL_USE_TYPE_TRAITS_BUILTINS=1"}}))
     end)

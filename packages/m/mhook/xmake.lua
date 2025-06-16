@@ -1,23 +1,25 @@
 package("mhook")
-
     set_homepage("https://github.com/martona/mhook")
     set_description("A Windows API hooking library ")
+    set_license("MIT")
 
-    set_urls("https://github.com/apriorit/mhook/archive/$(version).zip",
-             "https://github.com/apriorit/mhook.git")
+    set_urls("https://github.com/apriorit/mhook.git")
 
-    add_versions("2.5.1", "37e7d65422a770b0a28835b4fe557823278f7118ff4a399d7acf345c8db318e5")
+    add_versions("2022.04.12", "93ce2fcc6f91c9ee696a04fc07798e7cb13a6070")
 
-    add_patches("2.5.1", "https://github.com/apriorit/mhook/commit/5ccb00a9c89280bfff7ce595873a9923415172a7.patch",
-                        "56561718ccf05c8c42fff05e6531cfa525cf93e0c9fa3bd226e74ef19eae1a1f")
-
-    add_deps("cmake")
-
-    on_install("windows", function (package)
-        local configs = {}
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        import("package.tools.cmake").install(package, configs)
+    on_install("windows|!arm*", "mingw|!arm*", "msys", function (package)
+        io.writefile("xmake.lua", [[
+            add_rules("mode.debug", "mode.release")
+            target("mhook")
+                set_kind("$(kind)")
+                add_files("disasm-lib/*.c", "mhook-lib/*.c")
+                add_headerfiles("(mhook-lib/*.h)")
+                add_defines("NO_SANITY_CHECKS", "UNICODE", "_UNICODE", "WIN32_LEAN_AND_MEAN")
+                if is_plat("windows") and is_kind("shared") then
+                    add_rules("utils.symbols.export_all")
+                end
+        ]])
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)

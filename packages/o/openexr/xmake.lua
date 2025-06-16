@@ -6,6 +6,7 @@ package("openexr")
     add_urls("https://github.com/AcademySoftwareFoundation/openexr/archive/refs/tags/$(version).tar.gz",
              "https://github.com/AcademySoftwareFoundation/openexr.git")
 
+    add_versions("v3.3.4", "63abac7c52f280e3e16fc868ac40e06449733bb19179008248ae7e34e4f19824")
     add_versions("v3.3.3", "0ffbd842a7ee2128d44affdea30f42294b4061293cde3aa75b61a53573413d1e")
     add_versions("v3.3.2", "5013e964de7399bff1dd328cbf65d239a989a7be53255092fa10b85a8715744d")
     add_versions("v3.3.1", "58aad2b32c047070a52f1205b309bdae007442e0f983120e4ff57551eb6f10f1")

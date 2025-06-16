@@ -14,7 +14,7 @@ function _find_package_on_windows(package, opt)
 
     local result = {links = {}, linkdirs = {}}
     local suffix = package:config("shared") and "" or "_static"
-    for _, name in ipairs({"libssl" .. suffix, "libcrypto" .. suffix}) do
+    for _, name in ipairs({"libssl" .. suffix, "libcrypto" .. suffix, "libssl", "libcrypto"}) do
         local linkinfo = find_library(name, paths, {suffixes = "lib"})
         if linkinfo then
             table.insert(result.links, linkinfo.link)
@@ -45,6 +45,8 @@ function _find_package_on_windows(package, opt)
     end
     local openssl = find_file("openssl.exe", paths, {suffixes = "bin"})
     if openssl then
+        result.bindirs = path.directory(openssl)
+        package:addenv("PATH", result.bindirs)
         local version = try {function () return os.iorunv(openssl, {"version"}) end}
         if version then
             version = semver.match(version)

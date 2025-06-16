@@ -6,6 +6,7 @@ package("libjpeg-turbo")
     add_urls("https://github.com/libjpeg-turbo/libjpeg-turbo/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libjpeg-turbo/libjpeg-turbo.git")
 
+    add_versions("3.1.1", "304165ae11e64ab752e9cfc07c37bfdc87abd0bfe4bc699e59f34036d9c84f72")
     add_versions("3.1.0", "35fec2e1ddfb05ecf6d93e50bc57c1e54bc81c16d611ddf6eff73fff266d8285")
     add_versions("3.0.4",  "0270f9496ad6d69e743f1e7b9e3e9398f5b4d606b6a47744df4b73df50f62e38")
     add_versions("3.0.3",  "a649205a90e39a548863a3614a9576a3fb4465f8e8e66d54999f127957c25b21")
@@ -53,7 +54,7 @@ package("libjpeg-turbo")
             table.insert(configs, "-DENABLE_SHARED=OFF")
             table.insert(configs, "-DENABLE_STATIC=ON")
         end
-        if package:is_plat("windows") and package:config("vs_runtime"):startswith("MD") then
+        if package:is_plat("windows") and package:has_runtime("MD") then
             table.insert(configs, "-DWITH_CRT_DLL=ON")
         end
         if package:is_plat("mingw") then

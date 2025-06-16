@@ -1,0 +1,24 @@
+From 8f2a7e9160612d5aab8c0d2a5eac38fd2d54826c Mon Sep 17 00:00:00 2001
+From: Redbeanw44602 <redbeana44945@gmail.com>
+Date: Thu, 24 Apr 2025 13:19:57 +0800
+Subject: [PATCH] fix unknown cmake command
+
+---
+ cmake/tuklib_large_file_support.cmake | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/cmake/tuklib_large_file_support.cmake b/cmake/tuklib_large_file_support.cmake
+index 0800faa..d29bd81 100644
+--- a/cmake/tuklib_large_file_support.cmake
++++ b/cmake/tuklib_large_file_support.cmake
+@@ -14,6 +14,7 @@
+ 
+ include("${CMAKE_CURRENT_LIST_DIR}/tuklib_common.cmake")
+ include(CheckCSourceCompiles)
++include(CMakePushCheckState)
+ 
+ function(tuklib_large_file_support TARGET_OR_ALL)
+     # MSVC must be handled specially in the C code.
+-- 
+2.49.0
+

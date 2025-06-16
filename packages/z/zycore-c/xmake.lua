@@ -6,6 +6,7 @@ package("zycore-c")
     add_urls("https://github.com/zyantific/zycore-c/archive/refs/tags/$(version).tar.gz",
              "https://github.com/zyantific/zycore-c.git")
 
+    add_versions("v1.5.2", "943f91eb9ab2a8cc01ab9f8b785e769a273502071e0ee8011cdfcaad93947cec")
     add_versions("v1.5.0", "68e287cb6c95a6dede810d1e4fb2aebf7a09473089570a847e9a2b115ff96ff4")
     add_versions("v1.4.1", "8f610917c4254a69ec7e0c63492e9d0be9d18f4bb8fe91a3ff6ebed917d1f0f8")
     add_versions("v1.4.0", "b5ff45647c59be733e746c3a0d3c8d8a81f9e46f868af88e65b0e581b1171855")

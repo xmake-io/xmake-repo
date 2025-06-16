@@ -5,6 +5,7 @@ package("onnxruntime")
 
     add_configs("gpu", {description = "Enable GPU support on windows|x64 and linux|x86_64", default = false, type = "boolean"})
     add_configs("cuda_version", {description = "Specify which CUDA version to use for GPU support", default = "11", type = "string"})
+    add_configs("shared", {description = "Download shared binaries.", default = true, type = "boolean", readonly = true})
 
     if is_plat("windows") then
         if is_arch("x64") then

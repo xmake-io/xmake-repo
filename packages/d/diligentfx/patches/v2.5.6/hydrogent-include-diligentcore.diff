@@ -1,0 +1,67 @@
+diff --git a/Hydrogent/include/HnDrawItem.hpp b/Hydrogent/include/HnDrawItem.hpp
+index f86083b..ba34486 100644
+--- a/Hydrogent/include/HnDrawItem.hpp
++++ b/Hydrogent/include/HnDrawItem.hpp
+@@ -35,7 +35,7 @@
+ #include "Buffer.h"
+ #include "PipelineState.h"
+ #include "ShaderResourceBinding.h"
+-#include "RefCntAutoPtr.hpp"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Hydrogent/include/HnShaderSourceFactory.hpp b/Hydrogent/include/HnShaderSourceFactory.hpp
+index 9aec7c5..84e0157 100644
+--- a/Hydrogent/include/HnShaderSourceFactory.hpp
++++ b/Hydrogent/include/HnShaderSourceFactory.hpp
+@@ -26,8 +26,8 @@
+ 
+ #pragma once
+ 
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/Shader.h"
+-#include "../../../DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/Shader.h"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Hydrogent/include/HnShadowMapManager.hpp b/Hydrogent/include/HnShadowMapManager.hpp
+index ec349b9..227dda1 100644
+--- a/Hydrogent/include/HnShadowMapManager.hpp
++++ b/Hydrogent/include/HnShadowMapManager.hpp
+@@ -30,7 +30,7 @@
+ 
+ #include "RenderDevice.h"
+ #include "DeviceContext.h"
+-#include "RefCntAutoPtr.hpp"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Hydrogent/include/HnTextureIdentifier.hpp b/Hydrogent/include/HnTextureIdentifier.hpp
+index 8ea53fb..55984c7 100644
+--- a/Hydrogent/include/HnTextureIdentifier.hpp
++++ b/Hydrogent/include/HnTextureIdentifier.hpp
+@@ -30,7 +30,7 @@
+ #include "pxr/base/tf/token.h"
+ #include "pxr/imaging/hd/enums.h"
+ 
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/TextureView.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/TextureView.h"
+ 
+ 
+ namespace Diligent
+diff --git a/Hydrogent/include/HnTextureUtils.hpp b/Hydrogent/include/HnTextureUtils.hpp
+index aeb09d6..aba6dc5 100644
+--- a/Hydrogent/include/HnTextureUtils.hpp
++++ b/Hydrogent/include/HnTextureUtils.hpp
+@@ -27,7 +27,7 @@
+ #pragma once
+ 
+ #include "TextureLoader.h"
+-#include "RefCntAutoPtr.hpp"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+ 
+ namespace Diligent
+ {

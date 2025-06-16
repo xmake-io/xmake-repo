@@ -6,7 +6,7 @@ package("openjdk")
 
     -- https://learn.microsoft.com/en-us/java/openjdk/download
     if is_host("windows") then
-        if os.arch() == "x64" then
+        if is_arch("x64", "x86_64") or os.arch() == "x64" then
             add_urls("https://aka.ms/download-jdk/microsoft-jdk-$(version)-windows-x64.zip")
 
             add_versions("21.0.5", "12e42c2c572a111f38e2a9e044afc50dbdac850349a4d4bb26808ed33119a9cd")
@@ -38,8 +38,10 @@ package("openjdk")
     end
 
     add_configs("shared", {description = "Download shared binaries.", default = true, type = "boolean", readonly = true})
-    add_configs("runtimes", {description = "Set compiler runtimes.", default = "MD", readonly = true})
     add_configs("debug", {description = "Enable debug symbols.", default = false, type = "boolean", readonly = true})
+    if is_plat("windows") then
+        add_configs("runtimes", {description = "Set compiler runtimes.", default = "MD", readonly = true})
+    end
 
     if is_plat("linux") then
         add_extsources("pacman::jdk-openjdk", "apt::default-jdk")

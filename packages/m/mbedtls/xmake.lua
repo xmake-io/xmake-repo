@@ -4,10 +4,14 @@ package("mbedtls")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/Mbed-TLS/mbedtls/releases/download/$(version).tar.bz2", {version = function (version)
-        return string.format("%s/mbedtls-%s", version, tostring(version):sub(2))
+        if version:lt("3.6.1") then
+            return string.format("%s/mbedtls-%s", version, version:sub(2))
+        else
+            return string.format("mbedtls-%s/mbedtls-%s", version:sub(2), version:sub(2))
+        end
     end})
     add_urls("https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/$(version).zip", {version = function (version)
-        return version:ge("v2.23.0") and version or ("mbedtls-" .. tostring(version):sub(2))
+        return version:ge("v2.23.0") and version or ("mbedtls-" .. version:sub(2))
     end})
     add_urls("https://github.com/Mbed-TLS/mbedtls.git")
 
@@ -33,16 +37,20 @@ package("mbedtls")
     end
 
     on_install(function (package)
+        if package:config("shared") and package:is_plat("windows") then
+            io.replace("library/constant_time_impl.h", "extern volatile", "__declspec(dllimport) volatile", {plain = true})
+            io.replace("include/mbedtls/x509_crt.h", "extern const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_suiteb;", "__declspec(dllimport) const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_suiteb;", {plain = true})
+            io.replace("include/mbedtls/x509_crt.h", "extern const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_default;", "__declspec(dllimport) const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_default;", {plain = true})
+            io.replace("library/psa_util_internal.h", "extern const mbedtls_error_pair_t psa_to_ssl_errors[7];", "__declspec(dllimport) const mbedtls_error_pair_t psa_to_ssl_errors[7];", {plain = true})
+        end
+
         local configs = {"-DENABLE_TESTING=OFF", "-DENABLE_PROGRAMS=OFF", "-DMBEDTLS_FATAL_WARNINGS=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         if package:config("shared") then
             table.insert(configs, "-DUSE_SHARED_MBEDTLS_LIBRARY=ON")
             table.insert(configs, "-DUSE_STATIC_MBEDTLS_LIBRARY=OFF")
             if package:is_plat("windows") then
                 table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
-                io.replace("library/constant_time_impl.h", "extern volatile", "__declspec(dllimport) volatile", {plain = true})
-                io.replace("include/mbedtls/x509_crt.h", "extern const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_suiteb;", "__declspec(dllimport) const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_suiteb;", {plain = true})
-                io.replace("include/mbedtls/x509_crt.h", "extern const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_default;", "__declspec(dllimport) const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_default;", {plain = true})
-                io.replace("library/psa_util_internal.h", "extern const mbedtls_error_pair_t psa_to_ssl_errors[7];", "__declspec(dllimport) const mbedtls_error_pair_t psa_to_ssl_errors[7];", {plain = true})
             end
         else
             table.insert(configs, "-DUSE_SHARED_MBEDTLS_LIBRARY=OFF")
@@ -52,11 +60,6 @@ package("mbedtls")
         local cxflags
         if package:is_plat("mingw") and package:is_arch("i386") then
             cxflags = {"-maes", "-msse2", "-mpclmul"}
-        end
-        if package:is_plat("windows") then
-            os.mkdir(path.join(package:buildir(), "library/pdb"))
-            os.mkdir(path.join(package:buildir(), "3rdparty/p256-m/pdb"))
-            os.mkdir(path.join(package:buildir(), "3rdparty/everest/pdb"))
         end
         import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
     end)

@@ -1,0 +1,208 @@
+diff --git a/Hydrogent/interface/GfTypeConversions.hpp b/Hydrogent/interface/GfTypeConversions.hpp
+index bdce614..73050cb 100644
+--- a/Hydrogent/interface/GfTypeConversions.hpp
++++ b/Hydrogent/interface/GfTypeConversions.hpp
+@@ -26,8 +26,8 @@
+ 
+ #pragma once
+ 
+-#include "../../../DiligentCore/Common/interface/BasicMath.hpp"
+-#include "../../../DiligentCore/Common/interface/AdvancedMath.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
++#include "DiligentCore/Common/interface/AdvancedMath.hpp"
+ 
+ #include "pxr/base/gf/vec2f.h"
+ #include "pxr/base/gf/vec3f.h"
+diff --git a/Hydrogent/interface/HnBuffer.hpp b/Hydrogent/interface/HnBuffer.hpp
+index e482aff..894fd49 100644
+--- a/Hydrogent/interface/HnBuffer.hpp
++++ b/Hydrogent/interface/HnBuffer.hpp
+@@ -28,8 +28,8 @@
+ 
+ #include "pxr/imaging/hd/bprim.h"
+ 
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/Buffer.h"
+-#include "../../../DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/Buffer.h"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Hydrogent/interface/HnCamera.hpp b/Hydrogent/interface/HnCamera.hpp
+index b066fe6..ae717d5 100644
+--- a/Hydrogent/interface/HnCamera.hpp
++++ b/Hydrogent/interface/HnCamera.hpp
+@@ -28,7 +28,7 @@
+ 
+ #include "pxr/imaging/hd/camera.h"
+ 
+-#include "../../../../DiligentCore/Common/interface/BasicMath.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Hydrogent/interface/HnFrameRenderTargets.hpp b/Hydrogent/interface/HnFrameRenderTargets.hpp
+index 8541940..c161ea7 100644
+--- a/Hydrogent/interface/HnFrameRenderTargets.hpp
++++ b/Hydrogent/interface/HnFrameRenderTargets.hpp
+@@ -28,7 +28,7 @@
+ 
+ #include <array>
+ 
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/TextureView.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/TextureView.h"
+ 
+ namespace Diligent
+ {
+diff --git a/Hydrogent/interface/HnLight.hpp b/Hydrogent/interface/HnLight.hpp
+index 46d2317..b563e5a 100644
+--- a/Hydrogent/interface/HnLight.hpp
++++ b/Hydrogent/interface/HnLight.hpp
+@@ -28,9 +28,9 @@
+ 
+ #include "pxr/imaging/hd/light.h"
+ 
+-#include "../../../DiligentCore/Common/interface/BasicMath.hpp"
+-#include "../../../DiligentCore/Common/interface/AdvancedMath.hpp"
+-#include "../../../DiligentTools/AssetLoader/interface/GLTFLoader.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
++#include "DiligentCore/Common/interface/AdvancedMath.hpp"
++#include "DiligentTools/AssetLoader/interface/GLTFLoader.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Hydrogent/interface/HnMaterial.hpp b/Hydrogent/interface/HnMaterial.hpp
+index 4cfca7d..ce1dc2f 100644
+--- a/Hydrogent/interface/HnMaterial.hpp
++++ b/Hydrogent/interface/HnMaterial.hpp
+@@ -35,11 +35,11 @@
+ 
+ #include "pxr/imaging/hd/material.h"
+ 
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/ShaderResourceBinding.h"
+-#include "../../../DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+-#include "../../../DiligentCore/Common/interface/BasicMath.hpp"
+-#include "../../../DiligentTools/AssetLoader/interface/GLTFLoader.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/ShaderResourceBinding.h"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
++#include "DiligentTools/AssetLoader/interface/GLTFLoader.hpp"
+ #include "../../../DiligentFX/PBR/interface/PBR_Renderer.hpp"
+ 
+ namespace Diligent
+diff --git a/Hydrogent/interface/HnMesh.hpp b/Hydrogent/interface/HnMesh.hpp
+index acd9d30..4cebca9 100644
+--- a/Hydrogent/interface/HnMesh.hpp
++++ b/Hydrogent/interface/HnMesh.hpp
+@@ -35,12 +35,12 @@
+ #include "pxr/imaging/hd/mesh.h"
+ #include "pxr/base/tf/token.h"
+ 
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/Buffer.h"
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/GraphicsTypesX.hpp"
+-#include "../../../DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+-#include "../../../DiligentCore/Common/interface/BasicMath.hpp"
+-#include "../../../DiligentCore/Common/interface/STDAllocator.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/Buffer.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/GraphicsTypesX.hpp"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
++#include "DiligentCore/Common/interface/STDAllocator.hpp"
+ 
+ #include "entt/entity/entity.hpp"
+ 
+diff --git a/Hydrogent/interface/HnRenderBuffer.hpp b/Hydrogent/interface/HnRenderBuffer.hpp
+index 1b78069..1e31c73 100644
+--- a/Hydrogent/interface/HnRenderBuffer.hpp
++++ b/Hydrogent/interface/HnRenderBuffer.hpp
+@@ -28,8 +28,8 @@
+ 
+ #include "pxr/imaging/hd/renderBuffer.h"
+ 
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/Texture.h"
+-#include "../../../DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/Texture.h"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Hydrogent/interface/HnRenderDelegate.hpp b/Hydrogent/interface/HnRenderDelegate.hpp
+index 637aa78..3a68358 100644
+--- a/Hydrogent/interface/HnRenderDelegate.hpp
++++ b/Hydrogent/interface/HnRenderDelegate.hpp
+@@ -35,9 +35,9 @@
+ 
+ #include "pxr/imaging/hd/renderDelegate.h"
+ 
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
+-#include "../../../DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
+-#include "../../../DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+ #include "../../PBR/interface/USD_Renderer.hpp"
+ 
+ #include "entt/entity/registry.hpp"
+diff --git a/Hydrogent/interface/HnRenderPassState.hpp b/Hydrogent/interface/HnRenderPassState.hpp
+index 8cab519..cc7bacd 100644
+--- a/Hydrogent/interface/HnRenderPassState.hpp
++++ b/Hydrogent/interface/HnRenderPassState.hpp
+@@ -28,13 +28,13 @@
+ 
+ #include <array>
+ 
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/RasterizerState.h"
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/BlendState.h"
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/DepthStencilState.h"
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/PipelineState.h"
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/DeviceContext.h"
+-#include "../../../DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+-#include "../../../DiligentCore/Common/interface/BasicMath.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/RasterizerState.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/BlendState.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/DepthStencilState.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/PipelineState.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/DeviceContext.h"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
+ 
+ #include "HnTypes.hpp"
+ 
+diff --git a/Hydrogent/interface/HnTextureRegistry.hpp b/Hydrogent/interface/HnTextureRegistry.hpp
+index 4bdc5c5..1fbdd29 100644
+--- a/Hydrogent/interface/HnTextureRegistry.hpp
++++ b/Hydrogent/interface/HnTextureRegistry.hpp
+@@ -35,11 +35,11 @@
+ #include "pxr/base/tf/token.h"
+ #include "pxr/imaging/hd/types.h"
+ 
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/DeviceContext.h"
+-#include "../../../DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+-#include "../../../DiligentCore/Common/interface/ObjectsRegistry.hpp"
+-#include "../../../DiligentTools/TextureLoader/interface/TextureLoader.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/DeviceContext.h"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Common/interface/ObjectsRegistry.hpp"
++#include "DiligentTools/TextureLoader/interface/TextureLoader.h"
+ 
+ namespace Diligent
+ {
+diff --git a/Hydrogent/interface/HnTypes.hpp b/Hydrogent/interface/HnTypes.hpp
+index ae923de..04a438e 100644
+--- a/Hydrogent/interface/HnTypes.hpp
++++ b/Hydrogent/interface/HnTypes.hpp
+@@ -26,7 +26,7 @@
+ 
+ #pragma once
+ 
+-#include "../../../Common/interface/BasicMath.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
+ 
+ #include "pxr/usd/usd/stage.h"
+ 

@@ -6,6 +6,7 @@ package("libgit2")
     set_urls("https://github.com/libgit2/libgit2/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libgit2/libgit2.git")
 
+    add_versions("v1.9.1", "14cab3014b2b7ad75970ff4548e83615f74d719afe00aa479b4a889c1e13fc00")
     add_versions("v1.9.0", "75b27d4d6df44bd34e2f70663cfd998f5ec41e680e1e593238bbe517a84c7ed2")
     add_versions("v1.8.4", "49d0fc50ab931816f6bfc1ac68f8d74b760450eebdb5374e803ee36550f26774")
     add_versions("v1.8.2", "184699f0d9773f96eeeb5cb245ba2304400f5b74671f313240410f594c566a28")
