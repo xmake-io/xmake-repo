@@ -30,7 +30,7 @@ package("lunzip")
         if is_subhost("windows") then
             table.insert(configs, "CC=cc")
         end
-        import("package.tools.autoconf").install(package, configs) --, envs
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)
