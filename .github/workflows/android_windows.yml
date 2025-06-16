@@ -36,7 +36,7 @@ jobs:
       - name: Tests
         run: |
           if ("${{ matrix.ndk }}" -eq "r27") {
-            xrepo env -b "ndk 27.0" xmake l ./scripts/test.lua -D -p android -a ${{ matrix.arch }} --ndk_sdkver=${{ matrix.ndk_sdkver }} 
+            xrepo env -y -b "ndk 27.0" xmake l ./scripts/test.lua -D -p android -a ${{ matrix.arch }} --ndk_sdkver=${{ matrix.ndk_sdkver }} 
           } else {
-            xrepo env -b "ndk 22.0" xmake l ./scripts/test.lua -D -p android -a ${{ matrix.arch }} --ndk_sdkver=${{ matrix.ndk_sdkver }} 
+            xrepo env -y -b "ndk 22.0" xmake l ./scripts/test.lua -D -p android -a ${{ matrix.arch }} --ndk_sdkver=${{ matrix.ndk_sdkver }} 
           }
