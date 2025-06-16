@@ -61,7 +61,7 @@ package("ndk")
         end
     end)
 
-    on_install("@windows", "@msys", "@linux", "@macosx", function (package)
+    on_install("@windows|x64", "@msys|x86_64", "@linux|x86_64", "@macosx|x86_64", function (package)
         package:setenv("ANDROID_NDK_ROOT", package:installdir())
         package:mark_as_pathenv("ANDROID_NDK_ROOT")
         os.vcp("*", package:installdir())
