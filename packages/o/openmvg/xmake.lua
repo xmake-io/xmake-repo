@@ -20,13 +20,16 @@ package("openmvg")
     end
 
     on_load("linux", "windows", "macosx", function (package)
-        if package:config("openmp") then package:add("deps", "openmp") end
+        if package:config("openmp") then
+            package:add("deps", "openmp")
+        end
     end)
 
     on_install("linux", "windows|x86", "windows|x64", "macosx", function (package)
-        if is_plat("windows") then
+        if package:is_plat("windows") then
             io.replace("src/openMVG/matching/metric_hamming.hpp", "#ifdef _MSC_VER",
                        "#if defined(_MSC_VER) && (defined(_M_X64) || defined(_M_IX86) || defined(_M_ARM64) || defined(_M_ARM64EC))", {plain = true})
+            package:add("defines", "_USE_MATH_DEFINES")
         end
         os.cd("src")
         local configs = {
@@ -40,4 +43,19 @@ package("openmvg")
             "-DOpenMVG_BUILD_GUI_SOFTWARES=OFF",
         }
         import("package.tools.cmake").install(package, configs)
+    end)
+
+    on_test(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            #include <openMVG/geometry/pose3.hpp>
+            #include <openMVG/numeric/numeric.h>
+            using namespace openMVG;
+            using namespace openMVG::geometry;
+            void test() {
+                Pose3 pose1(RotationAroundX(0.02), Vec3(0,0,-2));
+                Pose3 pose2(RotationAroundX(0.06), Vec3(-1,0,-2));
+                Pose3 combinedPose = pose1 * pose2;
+                const Vec3 pt = combinedPose(Vec3(2.6453,3.32,6.3));
+            }
+        ]]}, {configs = {languages = "c++11"}}))
     end)
