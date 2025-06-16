@@ -14,6 +14,12 @@ package("lunzip")
         add_deps("autotools")
     end
 
+    on_check(function(package)
+        if is_host("windows") and os.arch() == "arm64" then
+            raise("package(lunzip) does not support host Windows arch arm64.")
+        end
+    end)
+
     on_load(function(package)
         if is_subhost("windows") then
             local msystem = "MINGW" .. (package:is_arch64() and "64" or "32")
