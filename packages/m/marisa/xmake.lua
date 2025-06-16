@@ -9,7 +9,7 @@ package("marisa")
     add_versions("v0.3.0", "a3057d0c2da0a9a57f43eb8e07b73715bc5ff053467ee8349844d01da91b5efb")
 
     add_patches("v0.3.0", "patches/v0.3.0/support-debug-install.diff", "a3d02bf6881d233bf8cfadded33edfcde167bee719d47538b869e0e90d8bf7ce")
-    add_patches("v0.3.0", "https://github.com/s-yata/marisa-trie/commit/7c8388ca1e7af8a4d72d81bf396ad987e8bc5e58.diff", "ea3079c4be3c4f0972cc56a1feb9def4a5297718e29d2e06b801d433bd3e615e")
+    add_patches("v0.3.0", "https://github.com/s-yata/marisa-trie/pull/119.diff", "f02211699465b55cd2ab93ef20bafcd69aa573da1fd796cb9366697075074093")
 
     add_deps("cmake")
 
