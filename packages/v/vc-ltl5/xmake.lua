@@ -91,7 +91,11 @@ package("vc-ltl5")
             elseif semver_min_version:ge("6.0.6000") then
                 min_version = "6.0.6000.0"
             else
-                min_version = "5.1.2600.0"
+                if package:is_arch("x86") then
+                    min_version = "5.1.2600.0"
+                elseif package:is_arch("x64") then
+                    min_version = "5.2.3790.0"
+                end
             end
         else
             wprint("Invalid min_version, use default min_version")
