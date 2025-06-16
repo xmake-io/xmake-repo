@@ -52,7 +52,7 @@ package("vc-ltl5")
                 wprint([[package(vc-ltl5 >=5.1) require yy-thunks, you need to use `add_rules("yy-thunks@xp")` for windows xp target]])
             end
 
-            if package:config("runtimes configs"):startswith("MD") then
+            if package:has_runtime("MD") then
                 package:add("cxflags", "/Zc:threadSafeInit-")
             end
 
