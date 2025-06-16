@@ -17,12 +17,20 @@ package("lunzip")
     on_load(function(package)
         if is_subhost("windows") then
             local msystem = "MINGW" .. (package:is_arch64() and "64" or "32")
-            package:add("deps", "msys2", {configs = {msystem = msystem, base_devel = true, gcc = true, make = true}})
+            if package:is_arch64() then
+                package:add("deps", "msys2", {configs = {msystem = msystem, base_devel = true, mingw64_toolchain = true, make = true}})
+            else
+                package:add("deps", "msys2", {configs = {msystem = msystem, base_devel = true, mingw32_toolchain = true, make = true}})
+            end
         end
     end)
 
     on_install(function (package)
-        import("package.tools.autoconf").install(package)
+        local configs = {}
+        if is_subhost("windows") then
+            table.insert(configs, "CC=cc")
+        end
+        import("package.tools.autoconf").install(package, configs) --, envs
     end)
 
     on_test(function (package)
