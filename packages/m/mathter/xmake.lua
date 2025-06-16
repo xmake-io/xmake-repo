@@ -7,6 +7,7 @@ package("mathter")
     add_urls("https://github.com/petiaccja/Mathter/archive/refs/tags/$(version).tar.gz",
              "https://github.com/petiaccja/Mathter.git")
 
+    add_versions("v2.0.1", "7fb6c9c3e16f8dcfd14b6a0f2c333e48211a2e8a1b04e68ddf322f8affee9ef1")
     add_versions("v1.1.2", "9e6d03295d28e8792721fedca5d53955d4057d1550e51491408353b6181e6c6d")
     add_versions("v1.1.1", "510e6aa198cd7b207a44d319e4471021f207cba8c4d2d7e40086f1f042fe13ab")
 
