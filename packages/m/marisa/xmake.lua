@@ -16,7 +16,7 @@ package("marisa")
         if package:version():lt("v0.3.0") then
             os.cp(path.join(package:scriptdir(), "port", "CMakeLists.txt"), "CMakeLists.txt")
         end
-        local configs = {"-DENABLE_TESTS=OFF"}
+        local configs = {"-DENABLE_TESTS=OFF", "-DENABLE_TOOLS=OFF" }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
