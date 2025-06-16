@@ -6,6 +6,7 @@ package("mailio")
     add_urls("https://github.com/karastojko/mailio/archive/refs/tags/$(version).tar.gz",
              "https://github.com/karastojko/mailio.git")
 
+    add_versions("0.25.2", "c4dd8a7c46a36fcd13a238f7308a001a7534fc28979afb907216c240c4494784")
     add_versions("0.24.1", "52d5ced35b6a87677d897010fb2e7c2d2ddbd834d59aab991c65c0c6627af40f")
     add_versions("0.23.0", "9fc3f1f803a85170c2081cbbef2e301473a400683fc1dffefa2d6707598206a5")
 
