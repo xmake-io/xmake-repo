@@ -18,7 +18,7 @@ package("openmvg")
         os.cd("src")
         local configs = {
             "-DOpenMVG_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"),
-            "-DOpenMVG_BUILD_COVERAGE=" .. (package:is_plat("linux") and "ON" or "OFF"),
+            "-DOpenMVG_BUILD_COVERAGE=OFF",
             "-DOpenMVG_BUILD_TESTS=ON",
             "-DOpenMVG_BUILD_DOC=OFF",
             "-DOpenMVG_BUILD_EXAMPLES=OFF",
