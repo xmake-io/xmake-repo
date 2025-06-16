@@ -38,5 +38,5 @@ package("marisa")
                 int x = 1, y = 2;
                 marisa::swap(x, y);
             }
-        ]]}, {configs = {languages = "c++17"}}), "package(glaze) require >= c++17")
+        ]]}, {configs = {languages = "c++17"}}), "package(marisa) require >= c++17")
     end)
