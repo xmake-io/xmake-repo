@@ -24,7 +24,6 @@ package("cimg")
 
     add_versions("git:v3.5.5", "v.3.5.5")
 
-
     if is_plat("windows") then
         add_syslinks("gdi32", "shell32", "user32")
     elseif is_plat("linux") then
