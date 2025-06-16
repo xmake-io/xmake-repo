@@ -54,9 +54,16 @@ package("ndk")
         if opt.system then
             import("core.base.semver")
             import("detect.sdks.find_ndk")
+
             local ndk = find_ndk()
-            if ndk and ndk.ndkver and semver.satisfies(ndk.ndkver .. ".0", opt.require_version) then
-                return true
+            if ndk and ndk.ndkver then
+                if not opt.require_version then
+                    return true
+                end
+
+                if semver.satisfies(ndk.ndkver .. ".0", opt.require_version) then
+                    return true
+                end
             end
         end
     end)
