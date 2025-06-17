@@ -10,7 +10,7 @@ package("phnt")
 
     add_syslinks("ntdll")
 
-    on_install("windows", "mingw", "msys", function (package)
+    on_install("windows", function (package)
         os.cp("*.h", package:installdir("include"))
     end)
 
