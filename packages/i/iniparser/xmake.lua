@@ -3,10 +3,12 @@ package("iniparser")
     set_description("ini file parser")
     set_license("MIT")
 
-    add_urls("https://github.com/ndevilla/iniparser.git")
-    add_versions("2023.09.15", "5142f0feab8ab456cb6af607eba0516ae46e1eb2")
+    add_urls("https://github.com/ndevilla/iniparser/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/ndevilla/iniparser.git")
 
-    on_install("linux", "macosx", "bsd", "mingw", "msys", "android", "iphoneos", "cross", "wasm", function (package)
+    add_versions("v4.2.6", "a0bd370713a744b1fa8ec27bba889ebf9dbd43060ec92e07fbe91fb43e3cb3ac")
+
+    on_install(function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             target("iniparser")
