@@ -8,7 +8,7 @@ package("aarch32_bare-metal_gnu_toolchain")
     }
 
     if is_host("windows") then
-        if is_arch("x64") then
+        if os.arch() == "x64" then
             set_urls(
                 "https://developer.arm.com/-/media/Files/downloads/gnu/$(version)/binrel/arm-gnu-toolchain-$(version)-mingw-w64-x86_64-arm-none-eabi.zip", {version = function (version)
                     return version_map[tostring(version)]
@@ -22,7 +22,7 @@ package("aarch32_bare-metal_gnu_toolchain")
             add_versions("14.2.1", "6facb152ce431ba9a4517e939ea46f057380f8f1e56b62e8712b3f3b87d994e1")
         end
     elseif is_host("linux") then
-        if is_arch("arm64") then
+        if os.arch() == "arm64" then
             set_urls(
                 "https://developer.arm.com/-/media/Files/downloads/gnu/$(version)/binrel/arm-gnu-toolchain-$(version)-aarch64-arm-none-eabi.tar.xz", {version = function (version)
                     return version_map[tostring(version)]
@@ -36,7 +36,7 @@ package("aarch32_bare-metal_gnu_toolchain")
             add_versions("14.2.1", "62a63b981fe391a9cbad7ef51b17e49aeaa3e7b0d029b36ca1e9c3b2a9b78823")
         end
     elseif is_host("macosx") then
-        if is_arch("arm64") then
+        if os.arch() == "arm64" then
             set_urls(
                 "https://developer.arm.com/-/media/Files/downloads/gnu/$(version)/binrel/arm-gnu-toolchain-$(version)-darwin-arm64-arm-none-eabi.tar.xz", {version = function (version)
                     return version_map[tostring(version)]
