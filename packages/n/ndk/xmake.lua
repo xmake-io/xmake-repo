@@ -50,9 +50,14 @@ package("ndk")
         add_versions("27.0", "2f2ef00b22fe22c1c9c78fda1b38ea7ffa6528e25eac0b70a92f8cb0093143be")
     end
 
-    on_install("@windows|x64", "@msys|x86_64", "@linux|x86_64", "@macosx|x86_64", function (package)
-        package:setenv("ANDROID_NDK_ROOT", package:installdir())
+    on_load(function (package)
         package:mark_as_pathenv("ANDROID_NDK_ROOT")
+        package:mark_as_pathenv("ANDROID_NDK_HOME")
+        package:setenv("ANDROID_NDK_ROOT", ".")
+        package:setenv("ANDROID_NDK_HOME", ".")
+    end)
+
+    on_install("@windows|x64", "@msys|x86_64", "@linux|x86_64", "@macosx|x86_64", function (package)
         os.vcp("*", package:installdir())
     end)
 
