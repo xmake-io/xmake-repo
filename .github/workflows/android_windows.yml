@@ -40,6 +40,7 @@ jobs:
       - name: Tests
         env:
           ANDROID_NDK_ROOT: ""
+          ANDROID_NDK_HOME: ""
         run: |
           if ("${{ matrix.ndk }}" -eq "r27") {
             xrepo env -y -b "ndk 27.0"
