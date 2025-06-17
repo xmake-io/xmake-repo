@@ -8,7 +8,7 @@ package("breeze-js")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
-    on_install("windows|!arm", function (package)
+    on_install("windows|!arm", "linux", "macosx", function (package)
         io.replace("xmake.lua", [[set_languages("c89", "c++20")]], [[set_languages("c11", "c++20")]], {plain = true})
         io.replace("xmake.lua", [[set_kind("binary")]], [[set_kind("binary")
 set_enabled(false)]], {plain = true})
