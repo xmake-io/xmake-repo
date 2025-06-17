@@ -12,6 +12,10 @@ package("breeze-js")
         io.replace("xmake.lua", [[set_languages("c89", "c++20")]], [[set_languages("c11", "c++20")]], {plain = true})
         io.replace("xmake.lua", [[set_kind("binary")]], [[set_kind("binary")
 set_enabled(false)]], {plain = true})
+        io.replace("xmake.lua", [[set_kind("static")]], [[set_kind("static")
+if is_plat("macosx") then
+    add_cxxflags("-fexperimental-library")
+end]], {plain = true})
         import("package.tools.xmake").install(package)
     end)
 
