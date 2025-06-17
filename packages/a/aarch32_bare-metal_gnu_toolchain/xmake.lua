@@ -31,7 +31,7 @@ package("aarch32_bare-metal_gnu_toolchain")
             add_versions("14.2.1", "87330bab085dd8749d4ed0ad633674b9dc48b237b61069e3b481abd364d0a684")
         else
             set_urls(
-                "https://developer.arm.com/-/media/Files/downloads/gnu-rm/$(version)/binrel/arm-gnu-toolchain-$(version)-x86_64-arm-none-eabi.tar.xz", {version = function (version)
+                "https://developer.arm.com/-/media/Files/downloads/gnu/$(version)/binrel/arm-gnu-toolchain-$(version)-x86_64-arm-none-eabi.tar.xz", {version = function (version)
                     return version_map[tostring(version)]
                 end})
             add_versions("14.2.1", "62a63b981fe391a9cbad7ef51b17e49aeaa3e7b0d029b36ca1e9c3b2a9b78823")
