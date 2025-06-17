@@ -4,11 +4,11 @@ package("breeze-js")
 
     add_urls("https://github.com/breeze-shell/breeze-js.git")
 
-    add_versions("2025.06.11", "61c847bb5455873b65e9b82fe31a74e0676cc8b7") -- use master temporarily to make fixing issues easier
+    add_versions("2025.06.17", "2554627c83e358decc77e2f91c4f4d396a669d2b")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
-    on_install("windows", function (package)
+    on_install("windows|!arm", function (package)
         io.replace("xmake.lua", [[set_languages("c89", "c++20")]], [[set_languages("c11", "c++20")]], {plain = true})
         io.replace("xmake.lua", [[set_kind("binary")]], [[set_kind("binary")
 set_enabled(false)]], {plain = true})
