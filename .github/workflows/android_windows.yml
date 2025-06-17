@@ -33,19 +33,13 @@ jobs:
           maximum-size: 32GB
           disk-root: "C:"
 
-      - name: Remove local ndk
-        run: |
-          xmake l os.mv C:/Android C:/Android_remove
-
       - name: Tests
         env:
           ANDROID_NDK_ROOT: ""
           ANDROID_NDK_HOME: ""
         run: |
           if ("${{ matrix.ndk }}" -eq "r27") {
-            xrepo env -y -b "ndk 27.0"
             xrepo env -y -b "ndk 27.0" xmake l ./scripts/test.lua -D -p android -a ${{ matrix.arch }} --ndk_sdkver=${{ matrix.ndk_sdkver }} 
           } else {
-            xrepo env -y -b "ndk 22.0"
             xrepo env -y -b "ndk 22.0" xmake l ./scripts/test.lua -D -p android -a ${{ matrix.arch }} --ndk_sdkver=${{ matrix.ndk_sdkver }} 
           }
