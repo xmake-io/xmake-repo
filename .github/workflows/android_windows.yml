@@ -35,7 +35,7 @@ jobs:
 
       - name: Remove local ndk
         run: |
-          xmake l os.rm C:/Android
+          xmake l os.mv C:/Android C:/Android_remove
 
       - name: Tests
         run: |
