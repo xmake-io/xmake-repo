@@ -1,5 +1,4 @@
 package("aarch32_bare-metal_gnu_toolchain")
-
     set_kind("toolchain")
     set_homepage("https://developer.arm.com/Tools%20and%20Software/GNU%20Toolchain")
     set_description("GNU Arm Embedded Toolchain")
@@ -53,7 +52,7 @@ package("aarch32_bare-metal_gnu_toolchain")
     end
 
     on_install("@windows", "@linux", "@macosx", function(package)
-        os.vcp("*", package:installdir())
+        os.vcp("*|manifest.txt", package:installdir())
     end)
 
     on_test(function(package)
