@@ -80,10 +80,14 @@ package("aws-lc")
         table.insert(configs, "-DDISABLE_PERL=" .. (package:config("perl") and "OFF" or "ON"))
         table.insert(configs, "-DBUILD_TOOL=" .. (package:config("tools") and "ON" or "OFF"))
 
+        local opt = {}
         if package:is_plat("mingw") and not package:is_arch64() then
             table.insert(configs, "-DOPENSSL_NO_ASM=ON")
+            if package:version() and package:version():ge("1.52.0") then
+                opt.cxflags = "-D_SSIZE_T_DEFINED"
+            end
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
