@@ -29,20 +29,24 @@ package("gnu-rm")
         end
     elseif is_host("linux") then
         if os.arch() == "arm64" then
-            set_urls("https://developer.arm.com/-/media/Files/downloads/gnu-rm/$(version)-aarch64-linux.tar.bz2",
-                "https://developer.arm.com/-/media/Files/downloads/gnu/$(version)/binrel/arm-gnu-toolchain-$(version)-aarch64-arm-none-eabi.tar.xz", {version = function (version)
-                    return version_map[tostring(version)]
-                end})
+            set_urls("https://developer.arm.com/-/media/Files/downloads/gnu-rm/$(version)-aarch64-linux.tar.bz2", {version = function (version)
+                return version_map[tostring(version)]
+            end})
             add_versions("2020.10", "343d8c812934fe5a904c73583a91edd812b1ac20636eb52de04135bb0f5cf36a")
             add_versions("2021.10", "f605b5f23ca898e9b8b665be208510a54a6e9fdd0fa5bfc9592002f6e7431208")
+            add_urls("https://developer.arm.com/-/media/Files/downloads/gnu/$(version)/binrel/arm-gnu-toolchain-$(version)-aarch64-arm-none-eabi.tar.xz", {version = function (version)
+                return version_map[tostring(version)]
+            end})
             add_versions("2024.12", "87330bab085dd8749d4ed0ad633674b9dc48b237b61069e3b481abd364d0a684")
         else
-            set_urls("https://developer.arm.com/-/media/Files/downloads/gnu-rm/$(version)-x86_64-linux.tar.bz2",
-                "https://developer.arm.com/-/media/Files/downloads/gnu/$(version)/binrel/arm-gnu-toolchain-$(version)-x86_64-arm-none-eabi.tar.xz", {version = function (version)
-                    return version_map[tostring(version)]
-                end})
+            set_urls("https://developer.arm.com/-/media/Files/downloads/gnu-rm/$(version)-x86_64-linux.tar.bz2", {version = function (version)
+                return version_map[tostring(version)]
+            end})
             add_versions("2020.10", "21134caa478bbf5352e239fbc6e2da3038f8d2207e089efc96c3b55f1edcd618")
             add_versions("2021.10", "97dbb4f019ad1650b732faffcc881689cedc14e2b7ee863d390e0a41ef16c9a3")
+            add_urls("https://developer.arm.com/-/media/Files/downloads/gnu/$(version)/binrel/arm-gnu-toolchain-$(version)-x86_64-arm-none-eabi.tar.xz", {version = function (version)
+                return version_map[tostring(version)]
+            end})
             add_versions("2024.12", "62a63b981fe391a9cbad7ef51b17e49aeaa3e7b0d029b36ca1e9c3b2a9b78823")
         end
     elseif is_host("macosx") and os.arch() ~= "arm64" then
