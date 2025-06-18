@@ -10,7 +10,7 @@ package("gnu-rm")
         ["2024.12"] = "14.2.rel1"
     }
 
-        if is_host("windows") then
+    if is_host("windows") then
         if os.arch() == "x64" then
             set_urls("https://developer.arm.com/-/media/Files/downloads/gnu-rm/$(version)-win32.zip", 
                 "https://developer.arm.com/-/media/Files/downloads/gnu/$(version)/binrel/arm-gnu-toolchain-$(version)-mingw-w64-x86_64-arm-none-eabi.zip", {version = function (version)
