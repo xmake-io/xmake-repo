@@ -7,7 +7,7 @@ package("libtcod")
              "https://github.com/libtcod/libtcod.git", {submodules = false})
 
     add_versions("2.1.1", "ee9cc60140f480f72cb2321d5aa50beeaa829b0a4a651e8a37e2ba938ea23caa")
-    add_patches("2.1.1", "patches/2.1.1/debundle.diff", "0dde9cd13d65bba58d042d1a009e2675c079cf65338fd7a9fed2787a7d2cf58f")
+    add_patches("2.1.1", "patches/2.1.1/debundle.diff", "e5d36154716d5d74c816e517df2ee6e343afcefb65e17fd734e280db11eca88b")
 
     add_deps("cmake")
     if is_subhost("windows") then
