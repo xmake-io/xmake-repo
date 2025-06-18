@@ -11,7 +11,7 @@ index 009d392..9ff5ee4 100644
  if(CONAN_FILE)
      conan_basic_setup(TARGETS)
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index a3d309e..4f35bff 100644
+index a3d309e..afd1b41 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
 @@ -62,8 +62,10 @@ endif()
@@ -27,19 +27,16 @@ index a3d309e..4f35bff 100644
  elseif(LIBTCOD_LODEPNG STREQUAL "vendored")
      message("Will be vendored: LodePNG")
      target_sources(${PROJECT_NAME} PRIVATE "vendor/lodepng.c")
-@@ -80,8 +82,10 @@ if(LIBTCOD_UTF8PROC STREQUAL "vendored")
-     target_include_directories(${PROJECT_NAME} PRIVATE "vendor/utf8proc")
+@@ -81,7 +83,7 @@ if(LIBTCOD_UTF8PROC STREQUAL "vendored")
      target_sources(${PROJECT_NAME} PRIVATE "vendor/utf8proc/utf8proc.c")
  elseif (LIBTCOD_UTF8PROC STREQUAL "find_package")
-+    pkg_check_modules(libutf8proc REQUIRED libutf8proc)
-+    target_include_directories(${PROJECT_NAME} PRIVATE ${libutf8proc_INCLUDE_DIRS})
      find_package(utf8proc REQUIRED)
 -    target_link_libraries(${PROJECT_NAME} PRIVATE utf8proc)
 +    target_link_libraries(${PROJECT_NAME} PRIVATE utf8proc::utf8proc)
  elseif (LIBTCOD_UTF8PROC STREQUAL "vcpkg")
      find_package(unofficial-utf8proc CONFIG REQUIRED)
      target_link_libraries(${PROJECT_NAME} PRIVATE utf8proc)
-@@ -96,8 +100,8 @@ if(LIBTCOD_STB STREQUAL "vendored")
+@@ -96,8 +98,8 @@ if(LIBTCOD_STB STREQUAL "vendored")
      message("Will be vendored: stb")
      target_include_directories(${PROJECT_NAME} PRIVATE "vendor/")
  elseif(LIBTCOD_STB STREQUAL "find_package" OR LIBTCOD_STB STREQUAL "vcpkg")
