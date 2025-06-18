@@ -15,8 +15,21 @@ package("libbpf")
 
     add_includedirs("include", "include/uapi")
 
+    if on_check then
+        -- https://github.com/xmake-io/xmake-repo/issues/3182
+        on_check("android", function (package)
+            if package:version() and package:version():gt("0.4") then
+                local ndk = package:toolchain("ndk")
+                local ndk_sdkver = ndk:config("ndk_sdkver")
+                local ndkver = ndk:config("ndkver")
+                assert(ndkver and tonumber(ndkver) < 26, "package(elfutils): need ndk version < 26 for android")
+                assert(ndk_sdkver and tonumber(ndk_sdkver) <= 23, "package(elfutils): need ndk api level <= 23 for android")
+            end
+        end)
+    end
+
     on_load(function (package)
-        if package:version():lt("0.5") then
+        if package:version() and package:version():lt("0.5") then
             package:add("deps", "libelf")
         else
             package:add("deps", "elfutils")
