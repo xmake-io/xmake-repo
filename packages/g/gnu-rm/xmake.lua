@@ -46,22 +46,20 @@ package("gnu-rm")
             add_versions("2021.10", "97dbb4f019ad1650b732faffcc881689cedc14e2b7ee863d390e0a41ef16c9a3")
             add_versions("2024.12", "62a63b981fe391a9cbad7ef51b17e49aeaa3e7b0d029b36ca1e9c3b2a9b78823")
         end
-    elseif is_host("macosx") then
-        if os.arch() == "arm64" then
-            set_urls(
-                "https://developer.arm.com/-/media/Files/downloads/gnu/$(version)/binrel/arm-gnu-toolchain-$(version)-darwin-arm64-arm-none-eabi.tar.xz", {alias = "macosx-arm64", version = function (version)
-                    return version_map[tostring(version)]
-                end})
-            add_versions("macosx-arm64:2024.12", "c7c78ffab9bebfce91d99d3c24da6bf4b81c01e16cf551eb2ff9f25b9e0a3818")
-        else
-            set_urls("https://developer.arm.com/-/media/Files/downloads/gnu-rm/$(version)-mac.tar.bz2",
-                "https://developer.arm.com/-/media/Files/downloads/gnu/$(version)/binrel/arm-gnu-toolchain-$(version)-darwin-x86_64-arm-none-eabi.tar.xz", {version = function (version)
-                    return version_map[tostring(version)]
-                end})
-            add_versions("2020.10", "bed12de3565d4eb02e7b58be945376eaca79a8ae3ebb785ec7344e7e2db0bdc0")
-            add_versions("2021.10", "fb613dacb25149f140f73fe9ff6c380bb43328e6bf813473986e9127e2bc283b")
-            add_versions("2024.12", "2d9e717dd4f7751d18936ae1365d25916534105ebcb7583039eff1092b824505")
-        end
+    elseif is_host("macosx") and os.arch() != "arm64" then
+        set_urls("https://developer.arm.com/-/media/Files/downloads/gnu-rm/$(version)-mac.tar.bz2",
+            "https://developer.arm.com/-/media/Files/downloads/gnu/$(version)/binrel/arm-gnu-toolchain-$(version)-darwin-x86_64-arm-none-eabi.tar.xz", {version = function (version)
+                return version_map[tostring(version)]
+            end})
+        add_versions("2020.10", "bed12de3565d4eb02e7b58be945376eaca79a8ae3ebb785ec7344e7e2db0bdc0")
+        add_versions("2021.10", "fb613dacb25149f140f73fe9ff6c380bb43328e6bf813473986e9127e2bc283b")
+        add_versions("2024.12", "2d9e717dd4f7751d18936ae1365d25916534105ebcb7583039eff1092b824505")
+    else
+        set_urls(
+            "https://developer.arm.com/-/media/Files/downloads/gnu/$(version)/binrel/arm-gnu-toolchain-$(version)-darwin-arm64-arm-none-eabi.tar.xz", {version = function (version)
+                return version_map[tostring(version)]
+            end})
+        add_versions("2024.12", "c7c78ffab9bebfce91d99d3c24da6bf4b81c01e16cf551eb2ff9f25b9e0a3818")
     end
 
     on_install("@windows", "@linux", "@macosx", function(package)
