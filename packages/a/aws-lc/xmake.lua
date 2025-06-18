@@ -5,6 +5,7 @@ package("aws-lc")
     add_urls("https://github.com/aws/aws-lc/archive/refs/tags/$(version).tar.gz",
              "https://github.com/aws/aws-lc.git")
 
+    add_versions("v1.53.0", "b7c3a456df40c0d19621848e8c7b70c1fa333f9e8f5aa72755890fb50c9963de")
     add_versions("v1.51.2", "7df65427f92a4c3cd3db6923e1d395014e41b1fcc38671806c1e342cb6fa02f6")
     add_versions("v1.49.1", "2fa2e31efab7220b2e0aac581fc6d4f2a6e0e16a26b9e6037f5f137d5e57b4df")
     add_versions("v1.48.5", "b3e572d09e7ef28d0b03866e610379d3a56a5940fabe6e59785ce0f874b9e959")
@@ -79,10 +80,14 @@ package("aws-lc")
         table.insert(configs, "-DDISABLE_PERL=" .. (package:config("perl") and "OFF" or "ON"))
         table.insert(configs, "-DBUILD_TOOL=" .. (package:config("tools") and "ON" or "OFF"))
 
+        local opt = {}
         if package:is_plat("mingw") and not package:is_arch64() then
             table.insert(configs, "-DOPENSSL_NO_ASM=ON")
+            if package:version() and package:version():ge("1.52.0") then
+                opt.cxflags = "-D_SSIZE_T_DEFINED"
+            end
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)

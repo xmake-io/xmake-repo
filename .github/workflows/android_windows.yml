@@ -7,19 +7,29 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
     strategy:
       fail-fast: false
       matrix:
+        os: [windows-latest]
         arch: [armeabi-v7a, arm64-v8a]
         ndk: ["r22", "r27"]
         ndk_sdkver: ["30"]
+
+    runs-on: ${{ matrix.os }}
 
     concurrency:
       group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-Android-Windows-${{ matrix.arch }}-${{ matrix.ndk }}-${{ matrix.ndk_sdkver }}
       cancel-in-progress: true
     steps:
+      - name: Cache ndk
+        id: cache-ndk
+        uses: actions/cache@v4
+        with:
+          path: C:/Users/runneradmin/AppData/Local/.xmake/packages/n/ndk
+          key: ${{ matrix.os }}-ndk
+
       - uses: actions/checkout@v1
+
       - uses: xmake-io/github-action-setup-xmake@v1
         with:
           xmake-version: branch@master

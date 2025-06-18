@@ -21,7 +21,15 @@ jobs:
       group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-Android-${{ matrix.arch }}-${{ matrix.ndk }}-${{ matrix.ndk_sdkver }}
       cancel-in-progress: true
     steps:
+      - name: Cache ndk
+        id: cache-ndk
+        uses: actions/cache@v4
+        with:
+          path: ~/.xmake/packages/n/ndk
+          key: ${{ matrix.os }}-ndk
+
       - uses: actions/checkout@v1
+
       - uses: xmake-io/github-action-setup-xmake@v1
         with:
           xmake-version: branch@master
