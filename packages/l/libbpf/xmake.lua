@@ -37,7 +37,7 @@ package("libbpf")
                 if is_plat("android") then
                     add_defines("__user=", "__force=", "__poll_t=uint32_t")
                 end
-        ]], package:version():lt("0.5") and "libelf" or "elfutils", 
+        ]], package:version():lt("0.5") and "libelf" or "elfutils",
             package:version():lt("0.5") and "libelf" or "elfutils"))
         import("package.tools.xmake").install(package)
     end)
