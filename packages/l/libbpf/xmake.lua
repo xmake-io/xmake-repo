@@ -48,7 +48,7 @@ package("libbpf")
                 add_headerfiles("src/(*.h)", {prefixdir = "bpf"})
                 add_headerfiles("include/(uapi/**.h)")
                 if is_plat("android") then
-                    add_defines("__user=", "__force=", "__poll_t=uint32_t")
+                    add_defines("__user=", "__force=", "__poll_t=uint32_t", "_GNU_SOURCE=1")
                 end
         ]], package:version():lt("0.5") and "libelf" or "elfutils",
             package:version():lt("0.5") and "libelf" or "elfutils"))
