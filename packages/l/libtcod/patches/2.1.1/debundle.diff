@@ -11,7 +11,7 @@ index 009d392..9ff5ee4 100644
  if(CONAN_FILE)
      conan_basic_setup(TARGETS)
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index a3d309e..57b7558 100644
+index a3d309e..3c367df 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
 @@ -62,8 +62,10 @@ endif()
@@ -35,7 +35,7 @@ index a3d309e..57b7558 100644
 -    target_link_libraries(${PROJECT_NAME} PRIVATE utf8proc)
 +    pkg_check_modules(libutf8proc REQUIRED libutf8proc)
 +    target_link_directories(${PROJECT_NAME} PRIVATE ${libutf8proc_LIBRARY_DIRS})
-+    target_link_libraries(${PROJECT_NAME} PRIVATE ${utf8proc_LIBRARIES})
++    target_link_libraries(${PROJECT_NAME} PRIVATE ${libutf8proc_LIBRARIES})
 +    target_include_directories(${PROJECT_NAME} PRIVATE ${libutf8proc_INCLUDE_DIRS})
  elseif (LIBTCOD_UTF8PROC STREQUAL "vcpkg")
      find_package(unofficial-utf8proc CONFIG REQUIRED)
