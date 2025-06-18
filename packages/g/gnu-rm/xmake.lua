@@ -11,23 +11,13 @@ package("gnu-rm")
     }
 
     if is_host("windows") then
-        if os.arch() == "x64" then
-            set_urls("https://developer.arm.com/-/media/Files/downloads/gnu-rm/$(version)-win32.zip", 
-                "https://developer.arm.com/-/media/Files/downloads/gnu/$(version)/binrel/arm-gnu-toolchain-$(version)-mingw-w64-x86_64-arm-none-eabi.zip", {version = function (version)
-                    return version_map[tostring(version)]
-                end})
-            add_versions("2020.10", "90057b8737b888c53ca5aee332f1f73c401d6d3873124d2c2906df4347ebef9e")
-            add_versions("2021.10", "d287439b3090843f3f4e29c7c41f81d958a5323aecefcf705c203bfd8ae3f2e7")
-            add_versions("2024.12", "f074615953f76036e9a51b87f6577fdb4ed8e77d3322a6f68214e92e7859888f")
-        else
-            set_urls("https://developer.arm.com/-/media/Files/downloads/gnu-rm/$(version)-win32.zip", 
-                "https://developer.arm.com/-/media/Files/downloads/gnu/$(version)/binrel/arm-gnu-toolchain-$(version)-mingw-w64-i686-arm-none-eabi.zip", {version = function (version)
-                    return version_map[tostring(version)]
-                end})
-            add_versions("2020.10", "90057b8737b888c53ca5aee332f1f73c401d6d3873124d2c2906df4347ebef9e")
-            add_versions("2021.10", "d287439b3090843f3f4e29c7c41f81d958a5323aecefcf705c203bfd8ae3f2e7")
-            add_versions("2024.12", "6facb152ce431ba9a4517e939ea46f057380f8f1e56b62e8712b3f3b87d994e1")
-        end
+        set_urls("https://developer.arm.com/-/media/Files/downloads/gnu-rm/$(version)-win32.zip", 
+            "https://developer.arm.com/-/media/Files/downloads/gnu/$(version)/binrel/arm-gnu-toolchain-$(version)-mingw-w64-i686-arm-none-eabi.zip", {version = function (version)
+                return version_map[tostring(version)]
+            end})
+        add_versions("2020.10", "90057b8737b888c53ca5aee332f1f73c401d6d3873124d2c2906df4347ebef9e")
+        add_versions("2021.10", "d287439b3090843f3f4e29c7c41f81d958a5323aecefcf705c203bfd8ae3f2e7")
+        add_versions("2024.12", "6facb152ce431ba9a4517e939ea46f057380f8f1e56b62e8712b3f3b87d994e1")
     elseif is_host("linux") then
         if os.arch() == "arm64" then
             set_urls("https://developer.arm.com/-/media/Files/downloads/gnu-rm/$(version)-aarch64-linux.tar.bz2",
