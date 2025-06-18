@@ -53,7 +53,7 @@ package("gnu-rm")
         add_versions("2020.10", "bed12de3565d4eb02e7b58be945376eaca79a8ae3ebb785ec7344e7e2db0bdc0")
         add_versions("2021.10", "fb613dacb25149f140f73fe9ff6c380bb43328e6bf813473986e9127e2bc283b")
         add_versions("2024.12", "2d9e717dd4f7751d18936ae1365d25916534105ebcb7583039eff1092b824505")
-    else
+    elseif is_host("macosx")
         set_urls(
             "https://developer.arm.com/-/media/Files/downloads/gnu/$(version)/binrel/arm-gnu-toolchain-$(version)-darwin-arm64-arm-none-eabi.tar.xz", {version = function (version)
                 return version_map[tostring(version)]
