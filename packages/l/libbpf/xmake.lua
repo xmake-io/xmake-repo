@@ -22,8 +22,8 @@ package("libbpf")
                 local ndk = package:toolchain("ndk")
                 local ndk_sdkver = ndk:config("ndk_sdkver")
                 local ndkver = ndk:config("ndkver")
-                assert(ndkver and tonumber(ndkver) < 26, "package(elfutils): need ndk version < 26 for android")
-                assert(ndk_sdkver and tonumber(ndk_sdkver) <= 23, "package(elfutils): need ndk api level <= 23 for android")
+                assert(ndkver and tonumber(ndkver) < 26, "package(libbpf): need ndk version < 26 for android")
+                assert(ndk_sdkver and tonumber(ndk_sdkver) <= 23, "package(libbpf): need ndk api level <= 23 for android")
             end
         end)
     end
