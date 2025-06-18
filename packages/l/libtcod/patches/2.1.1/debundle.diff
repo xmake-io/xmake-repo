@@ -47,3 +47,16 @@ index a3d309e..afd1b41 100644
  else()
      message(FATAL_ERROR "Unknown option for LIBTCOD_STB: '${LIBTCOD_STB}'")
  endif()
+diff --git a/src/libtcod/sys_sdl_img_png.c b/src/libtcod/sys_sdl_img_png.c
+index a45cc67..a578e07 100644
+--- a/src/libtcod/sys_sdl_img_png.c
++++ b/src/libtcod/sys_sdl_img_png.c
+@@ -32,7 +32,7 @@
+ #include "sys.h"
+ #ifndef NO_SDL
+ #ifndef TCOD_NO_PNG
+-#if !defined(__HAIKU__) && !defined(__ANDROID__)
++#if !defined(__HAIKU__)
+ #include <stdio.h>
+ #include <stdlib.h>
+ #endif
