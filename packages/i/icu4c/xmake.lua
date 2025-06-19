@@ -71,6 +71,11 @@ package("icu4c")
     on_install("windows", function (package)
         import("package.tools.msbuild")
 
+        if not package:is_cross() and package:is_arch("arm64") then
+            -- Build file always find pkgdata from bin64
+            io.replace("source/extra/uconv/makedata.mak", "bin64", "binARM64", {plain = true})
+        end
+
         if package:has_runtime("MT", "MTd") then
             local files = {
                 "source/common/common.vcxproj",
@@ -124,13 +129,7 @@ package("icu4c")
         if not package:config("tools") then
             table.insert(configs, "/target:common,i18n,uconv,io,stubdata")
         end
-
-        local envs = msbuild.buildenvs(package)
-        if not package:is_cross() and package:is_arch("arm64") then
-            -- icu msbuild build file always find pkgdata from bin64
-            envs.PATH = path.join(os.curdir(), "bin" .. suffix) .. path.envsep() .. envs.PATH
-        end
-        msbuild.build(package, configs, {upgrade = projectfiles, envs = envs})
+        msbuild.build(package, configs, {upgrade = projectfiles})
 
         os.vcp("include", package:installdir())
         os.vcp("bin" .. suffix .. "/*", package:installdir("bin"))
