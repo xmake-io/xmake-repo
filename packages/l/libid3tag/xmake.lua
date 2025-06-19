@@ -21,7 +21,7 @@ package("libid3tag")
         assert(package:check_csnippets({test = [[
             #include <id3tag.h>
             void test() {
-                struct id3_file *fp_mp3 = id3_file_open("#{test_fixtures("song.mp3")}", ID3_FILE_MODE_READONLY);
+                struct id3_file *fp_mp3 = id3_file_open("song.mp3", ID3_FILE_MODE_READONLY);
                 struct id3_tag *tag_mp3 = id3_file_tag(fp_mp3);
                 struct id3_frame *frame = id3_tag_findframe(tag_mp3, ID3_FRAME_TITLE, 0);
                 id3_file_close(fp_mp3);
