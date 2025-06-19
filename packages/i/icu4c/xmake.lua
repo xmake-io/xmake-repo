@@ -121,8 +121,10 @@ package("icu4c")
             "/p:_IsNativeEnvironment=true",
         }
 
-        if not package:config("tools") then
-            table.insert(configs, "/target:common,i18n,uconv,io,stubdata")
+        if not package:is_cross() and package:is_arch("arm64") then
+            if not package:config("tools") then
+                table.insert(configs, "/target:common,i18n,uconv,io,stubdata")
+            end
         end
         msbuild.build(package, configs, {upgrade = projectfiles})
 
