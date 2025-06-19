@@ -4,7 +4,7 @@ package("libhv")
     set_license("BSD-3-Clause")
 
     add_urls("https://github.com/ithewei/libhv.git")
-    add_urls("https://github.com/ithewei/libhv/archive/archive/refs/$(version).zip", {excludes = {"*/html/*"}})
+    add_urls("https://github.com/ithewei/libhv/archive/refs/$(version).zip", {excludes = {"*/html/*"}})
 
     add_versions("v1.0.0", "39adb77cc7addaba82b69fa9a433041c8288f3d9c773fa360162e3391dcf6a7b")
     add_versions("v1.1.0", "a753c268976d9c4f85dcc10be2377bebc36d4cb822ac30345cf13f2a7285dbe3")
@@ -46,6 +46,7 @@ package("libhv")
     end
 
     add_deps("cmake")
+    add_deps("nlohmann_json", {configs = {cmake = true}})
 
     on_load(function (package)
         if package:config("openssl") then
@@ -68,6 +69,20 @@ package("libhv")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
+
+        os.rm("cpputil/json.hpp")
+        io.replace("cmake/vars.cmake", "cpputil/json.hpp", "", {plain = true})
+        io.replace("CMakeLists.txt", [[target_link_libraries(hv ${LIBS})]],
+            [[find_package(nlohmann_json CONFIG REQUIRED)
+target_link_libraries(hv ${LIBS} nlohmann_json::nlohmann_json)]], {plain = true})
+        io.replace("CMakeLists.txt", [[target_link_libraries(hv_static ${LIBS})]],
+            [[find_package(nlohmann_json CONFIG REQUIRED)
+target_link_libraries(hv_static ${LIBS} nlohmann_json::nlohmann_json)]], {plain = true})
+        for _, suffix in ipairs({"**.h", "**.cpp"}) do
+            for _, file in ipairs(os.files(suffix)) do
+                io.replace(file, [[#include "json.hpp"]], [[#include <nlohmann/json.hpp>]], {plain = true})
+            end
+        end
 
         for _, name in ipairs({"with_protocol",
                                "with_http",

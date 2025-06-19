@@ -1,5 +1,5 @@
 package("ta-lib")
-    set_homepage("https://github.com/p-ranav/tabulate")
+    set_homepage("https://ta-lib.org/")
     set_description("Technical Analysis Library for financial market trading applications")
     set_license("BSD-3-Clause")
 

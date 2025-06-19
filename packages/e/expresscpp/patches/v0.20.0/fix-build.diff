@@ -1,0 +1,40 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 6e2240a..037f3c4 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -216,6 +216,11 @@ target_link_libraries(${PROJECT_NAME}
+                       PUBLIC nlohmann_json::nlohmann_json
+                              $<TARGET_NAME_IF_EXISTS:Boost::system>
+                       PRIVATE fmt::fmt)
++if(MINGW)
++  target_link_libraries(
++    ${PROJECT_NAME}
++    PRIVATE ws2_32 mswsock)
++endif()
+ target_compile_options(
+   ${PROJECT_NAME}
+   PRIVATE $<$<OR:$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-Wall>
+diff --git a/include/expresscpp/url.hpp b/include/expresscpp/url.hpp
+index fcccc9d..ad0e7af 100644
+--- a/include/expresscpp/url.hpp
++++ b/include/expresscpp/url.hpp
+@@ -1,6 +1,7 @@
+ #pragma once
+ 
+ #include <string>
++#include <cstdint>
+ 
+ #include "expresscpp/exports.hpp"
+ 
+diff --git a/src/middleware/serve_static_provider.cpp b/src/middleware/serve_static_provider.cpp
+index 3d8d30e..f328992 100644
+--- a/src/middleware/serve_static_provider.cpp
++++ b/src/middleware/serve_static_provider.cpp
+@@ -1,6 +1,7 @@
+ #include "expresscpp/middleware/serve_static_provider.hpp"
+ 
+ #include <filesystem>
++#include <fstream>
+ 
+ #include "expresscpp/console.hpp"
+ #include "expresscpp/impl/session.hpp"

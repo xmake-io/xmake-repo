@@ -13,6 +13,8 @@ package("protobuf-cpp")
     end})
 
     -- TODO: Use x.y.z version? https://protobuf.dev/support/version-support
+    add_versions("31.1", "554e847e46c705bfc44fb2d0ae5bf78f34395fcbfd86ba747338b570eef26771")
+    add_versions("31.0", "3fea4fad0fd2d89e0e79937bc4b3083d483d7e5bc5fec2b8a4158916cd9478dd")
     add_versions("30.2", "6544e5ceec7f29d00397193360435ca8b3c4e843de3cf5698a99d36b72d65342")
     add_versions("29.3", "e9b9ac1910b1041065839850603caf36e29d3d3d230ddf52bd13778dd31b9046")
     add_versions("29.2", "60c1ab4befe9d0a975c2344b5511bf6b44f91ec3e1426c878f56bf30a0589c43")
@@ -33,14 +35,17 @@ package("protobuf-cpp")
     add_versions("3.17.3", "fe65f4bfbd6cbb8c23de052f218cbe4ebfeb72c630847e0cca63eb27616c952a")
     add_versions("3.19.4", "a11a262a395f999f9dca83e195cc15b6c23b6d5e74133f8e3250ad0950485da1")
 
-    add_patches("3.11.2", path.join(os.scriptdir(), "patches", "3.11.2", "ndk-link-log.diff"), "5564ae57562a2d6262e0837afd9645a6be2d4b52a52b7212fa6452f11f50af4a")
-    add_patches("3.17.3", path.join(os.scriptdir(), "patches", "3.17.3", "field_access_listener.patch"), "ac9bdf49611b01e563fe74b2aaf1398214129454c3e18f1198245549eb281e85")
-    add_patches("3.19.4", path.join(os.scriptdir(), "patches", "3.19.4", "vs_runtime.patch"), "8e73e585d29f3b9dca3c279df0b11b3ee7651728c07f51381a69e5899b93c367")
+    add_patches("3.11.2", "patches/3.11.2/ndk-link-log.diff", "5564ae57562a2d6262e0837afd9645a6be2d4b52a52b7212fa6452f11f50af4a")
+    add_patches("3.17.3", "patches/3.17.3/field_access_listener.patch", "ac9bdf49611b01e563fe74b2aaf1398214129454c3e18f1198245549eb281e85")
+    add_patches("3.19.4", "patches/3.19.4/vs_runtime.patch", "8e73e585d29f3b9dca3c279df0b11b3ee7651728c07f51381a69e5899b93c367")
+    -- https://github.com/msys2/MINGW-packages/blob/e77de8e92025175ffa0a217c3444249aa6f8f4a9/mingw-w64-protobuf/0004-fix-build-with-gcc-15.patch#L7
+    add_patches(">=31.0", "patches/31.0/gcc15.patch", "6475e824fabf7835f77e0410830c80b23e4c7a71fa5d7f4867ee7235942b167f")
 
     add_configs("rtti", {description = "Enable runtime type information", default = true, type = "boolean"})
     add_configs("zlib", {description = "Enable zlib", default = false, type = "boolean"})
     add_configs("lite", {description = "Build lite version", default = true, type = "boolean", readonly = true})
-    add_configs("upb", {description = "Build upb", default = false, type = "boolean"})
+    add_configs("upb", {description = "Build upb", default = not is_plat("android"), type = "boolean"})
+    add_configs("tools", {description = "Build libprotoc and protoc compiler", default = not is_plat("android"), type = "boolean"})
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::protobuf")
@@ -53,6 +58,15 @@ package("protobuf-cpp")
     add_deps("cmake")
 
     on_load(function (package)
+        -- Fix MSVC 2019 arm64 error LNK2019: unresolved external symbol __popcnt referenced in function _upb_log2_table_size
+        if package:version() and package:version():eq("31.0") and package:is_plat("windows") then
+            local msvc = package:toolchain("msvc")
+            local vs = msvc:config("vs")
+            if vs and tonumber(vs) < 2022 and package:is_arch("arm64") then
+                package:add("patches", "31.0", path.join(os.scriptdir(), "patches", "31.0", "msvc2019-arm64.patch"), "3b3fa6e7936df5f10da1bb0303060736a40d55e55055f7bc3b376d7a697c093d")
+            end
+        end
+        
         if package:is_plat("android") and is_host("windows") then
             package:add("deps", "ninja")
             package:set("policy", "package.cmake_generator.ninja", true)
@@ -133,10 +147,6 @@ package("protobuf-cpp")
     end)
 
     on_install(function (package)
-        io.replace("src/google/protobuf/port_def.inc", 
-            [[#if ABSL_HAVE_CPP_ATTRIBUTE(clang::musttail) && !defined(__arm__) &&  \]],
-            [[#if ABSL_HAVE_CPP_ATTRIBUTE(clang::musttail) && !defined(__arm__) &&  \
-    !(defined(__GNUC__) && __GNUC__ >= 15 ) &&                      \]], {plain = true})
         if package:is_plat("windows", "mingw") then
             io.replace("src/google/protobuf/port_def.inc", "#define PROTOBUF_DESCRIPTOR_WEAK_MESSAGES_ALLOWED", "", {plain = true})
         end
@@ -156,9 +166,9 @@ package("protobuf-cpp")
             "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
             "-Dprotobuf_BUILD_TESTS=OFF",
             "-Dprotobuf_LOCAL_DEPENDENCIES_ONLY=ON",
-            "-Dprotobuf_BUILD_PROTOC_BINARIES=ON",
             "-Dprotobuf_DEBUG_POSTFIX=''",
         }
+        table.insert(configs, "-Dprotobuf_BUILD_PROTOC_BINARIES=" .. (package:config("tools") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-Dprotobuf_DISABLE_RTTI=" .. (package:config("rtti") and "OFF" or "ON"))

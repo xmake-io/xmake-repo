@@ -6,6 +6,7 @@ package("s2n-tls")
     add_urls("https://github.com/aws/s2n-tls/archive/refs/tags/$(version).tar.gz",
              "https://github.com/aws/s2n-tls.git")
 
+    add_versions("v1.5.21", "203d69d6f557f6ab303438ad186fca13fd2c60581b2cca6348a9fbee10d79995")
     add_versions("v1.5.17", "3ab786720ac23b35bcf6f4354659652e2ec8eb20b1a3989e7be93c3e7985ea5e")
     add_versions("v1.5.15", "103f9361c736fea7278038891b0566ff975c40ac59cef5ac5b9225a476c8abc6")
     add_versions("v1.5.14", "3f65f1eca85a8ac279de204455a3e4940bc6ad4a1df53387d86136bcecde0c08")

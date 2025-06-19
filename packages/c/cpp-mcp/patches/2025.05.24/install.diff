@@ -1,0 +1,63 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 6e26b16..e99830d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -40,13 +40,18 @@ if(MCP_SSL)
+ endif()
+ 
+ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/common)
++include(FindPkgConfig)
++pkg_check_modules(nlohmann_json REQUIRED nlohmann_json)
++pkg_check_modules(base64_terrakuh REQUIRED base64-terrakuh)
++pkg_check_modules(cpp_httplib REQUIRED cpp-httplib)
++include_directories(${nlohmann_json_INCLUDE_DIRS})
++include_directories(${base64_terrakuh_INCLUDE_DIRS})
++include_directories(${cpp_httplib_INCLUDE_DIRS})
+ 
+ # Add MCP library
+ add_subdirectory(src)
+ 
+ # Add examples
+-add_subdirectory(examples)
+ 
+ # Add test directory
+ option(MCP_BUILD_TESTS "Build the tests" OFF)
+diff --git a/include/mcp_message.h b/include/mcp_message.h
+index d477f93..7b54a2a 100644
+--- a/include/mcp_message.h
++++ b/include/mcp_message.h
+@@ -17,7 +17,7 @@
+ #include <stdexcept>
+ 
+ // Include the JSON library for parsing and generating JSON
+-#include "json.hpp"
++#include <nlohmann/json.hpp>
+ 
+ namespace mcp {
+ 
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 2a50d21..d2c1bb4 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -1,6 +1,6 @@
+ set(TARGET mcp)
+ 
+-add_library(${TARGET} STATIC
++add_library(${TARGET}
+     ../include/mcp_client.h
+     mcp_message.cpp
+     ../include/mcp_message.h
+@@ -22,3 +22,12 @@ target_link_libraries(${TARGET} PUBLIC ${CMAKE_THREAD_LIBS_INIT})
+ if(OPENSSL_FOUND)
+     target_link_libraries(${TARGET} PUBLIC ${OPENSSL_LIBRARIES})
+ endif()
++
++if(MINGW)
++    target_link_libraries(${TARGET} PRIVATE ws2_32)
++endif()
++
++install(TARGETS ${TARGET}
++    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")

@@ -71,6 +71,11 @@ package("icu4c")
     on_install("windows", function (package)
         import("package.tools.msbuild")
 
+        if not package:is_cross() and package:is_arch("arm64") then
+            -- Build file always find pkgdata from bin64
+            io.replace("source/extra/uconv/makedata.mak", "bin64", "binARM64", {plain = true})
+        end
+
         if package:has_runtime("MT", "MTd") then
             local files = {
                 "source/common/common.vcxproj",

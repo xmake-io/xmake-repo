@@ -6,6 +6,7 @@ package("libxslt")
     add_urls("https://gitlab.gnome.org/GNOME/libxslt/-/archive/$(version)/libxslt-$(version).tar.bz2",
              "https://gitlab.gnome.org/GNOME/libxslt.git")
 
+    add_versions("v1.1.43", "4e574ba219df34495f2ee63ae27bf904afa477c40d9a2969a330cf87f48053b6")
     add_versions("v1.1.42", "1df3134451708a0098850f9b9e8d86734af7a08f5bea5890f7a3e02b9ccd59d9")
 
     add_configs("crypto", {description = "Add crypto support to exslt", default = false, type = "boolean"})

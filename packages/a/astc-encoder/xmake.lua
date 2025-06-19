@@ -6,6 +6,7 @@ package("astc-encoder")
     add_urls("https://github.com/ARM-software/astc-encoder/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ARM-software/astc-encoder.git", {submodules = false})
 
+    add_versions("5.3.0", "6bd248f460b90576f90a5499c0f6b8d785b3af3837bcab82607d9a3b5bba77e2")
     add_versions("5.2.0", "1680d440b765c3809490b6b49664a2ba0798624629615da4ff834401c0f1fe23")
     add_versions("4.8.0", "6c12f4656be21a69cbacd9f2c817283405decb514072dc1dcf51fd9a0b659852")
     add_versions("4.7.0", "a57c81f79055aa7c9f8c82ac5464284e3df9bba682895dee09fa35bd1fdbab93")
@@ -41,9 +42,12 @@ package("astc-encoder")
     end)
     -- arm_neon_sve_bridge.h: No such file or directory
     on_install("!linux or linux|!arm64", function (package)
-        io.replace("Source/cmake_core.cmake", "-Werror", "", {plain = true})
         io.replace("Source/CMakeLists.txt", "-flto", "", {plain = true})
         io.replace("Source/CMakeLists.txt", "-flto=auto", "", {plain = true})
+        io.replace("Source/cmake_core.cmake", "-Werror", "", {plain = true})
+        io.replace("Source/cmake_core.cmake", "if(${ASTCENC_CLI})\n        # Enable LTO on release builds", "if(0)", {plain = true})
+        io.replace("Source/cmake_core.cmake", "add_library(${ASTCENC_TARGET}-veneer1", "add_library(${ASTCENC_TARGET}-veneer1 STATIC", {plain = true})
+        io.replace("Source/cmake_core.cmake", "add_library(${ASTCENC_TARGET}-veneer2", "add_library(${ASTCENC_TARGET}-veneer2 STATIC", {plain = true})
         if package:is_plat("mingw", "android", "bsd") or package:has_tool("cxx", "clang") then
             io.replace("Source/cmake_core.cmake", "$<${is_clangcl}:-mcpu=native -march=native>", "", {plain = true})
             io.replace("Source/cmake_core.cmake", "$<${is_gnu_fe}:-mcpu=native -march=native>", "", {plain = true})
@@ -92,10 +96,10 @@ package("astc-encoder")
 
         os.cp("Source/astcenc.h", package:installdir("include"))
         if package:config("cli") then
+            package:addenv("PATH", "bin")
             local exe_prefix = package:is_plat("mingw", "windows") and ".exe" or ""
             -- TODO: rename astcenc-neno?
             os.trymv(path.join(package:installdir("bin"), "astcenc-native" .. exe_prefix), path.join(package:installdir("bin"), "astcenc" .. exe_prefix))
-            package:addenv("PATH", "bin")
         end
     end)
 

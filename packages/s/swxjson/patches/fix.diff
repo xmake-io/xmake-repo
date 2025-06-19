@@ -1,0 +1,31 @@
+diff --git a/src/swxJson.h b/src/swxJson.h
+index 0a32c22..c4cbe64 100644
+--- a/src/swxJson.h
++++ b/src/swxJson.h
+@@ -17,6 +17,11 @@
+ #include <queue>
+ #include "swxJsonUtils.h"
+ 
++#ifdef _MSC_VER
++#define strcasecmp _stricmp
++#define strncasecmp _strnicmp
++#endif
++
+ namespace swxJson {
+ /*******************************************************************
+   Exception
+diff --git a/src/swxJsonUtils.h b/src/swxJsonUtils.h
+index bc32a38..23cfbec 100644
+--- a/src/swxJsonUtils.h
++++ b/src/swxJsonUtils.h
+@@ -2,7 +2,9 @@
+ #define SWX_JSON_UTILS_H
+ 
+ #include <exception>
+-#include <strings.h>
++#include <cstdint>
++#include <memory.h>
++#define bzero(b,len) (memset((b), '\0', (len)), (void) 0)
+ 
+ namespace swxJson {
+ 

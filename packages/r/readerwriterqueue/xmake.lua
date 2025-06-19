@@ -8,6 +8,7 @@ package("readerwriterqueue")
     set_urls("https://github.com/cameron314/readerwriterqueue/archive/refs/tags/$(version).tar.gz",
              "https://github.com/cameron314/readerwriterqueue.git")
 
+    add_versions("v1.0.7", "532224ed052bcd5f4c6be0ed9bb2b8c88dfe7e26e3eb4dd9335303b059df6691")
     add_versions("v1.0.6", "fc68f55bbd49a8b646462695e1777fb8f2c0b4f342d5e6574135211312ba56c1")
 
     on_install(function (package)
