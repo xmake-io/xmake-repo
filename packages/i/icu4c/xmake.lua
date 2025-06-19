@@ -121,7 +121,7 @@ package("icu4c")
             "/p:_IsNativeEnvironment=true",
         }
 
-        if not package:is_cross() and package:is_arch("arm64") then
+        if not package:is_cross() and not package:is_arch("arm64") then
             if not package:config("tools") then
                 table.insert(configs, "/target:common,i18n,uconv,io,stubdata")
             end
