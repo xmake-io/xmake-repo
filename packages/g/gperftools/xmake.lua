@@ -1,5 +1,4 @@
 package("gperftools")
-
     set_homepage("https://github.com/gperftools/gperftools")
     set_description("gperftools is a collection of a high-performance multi-threaded malloc() implementation, plus some pretty nifty performance analysis tools.")
     set_license("BSD-3-Clause")
@@ -79,14 +78,14 @@ package("gperftools")
         if package:version():le("2.15") then
             import("package.tools.cmake").install(package, configs)
         else 
-            import("package.tools.cmake").build(package, configs, {buildir = "build"})
+            import("package.tools.cmake").build(package, configs, {buildir = "xmakebuild"})
 
-            os.trycp("build/gperftools", package:installdir("include"))
-            os.trycp("build/**.a", package:installdir("lib"))
-            os.trycp("build/**.dylib", package:installdir("lib"))
-            os.trycp("build/**.so", package:installdir("lib"))
-            os.trycp("build/**.lib", package:installdir("lib"))
-            os.trycp("build/**.dll", package:installdir("bin"))
+            os.trycp("xmakebuild/gperftools", package:installdir("include"))
+            os.trycp("xmakebuild/**.a", package:installdir("lib"))
+            os.trycp("xmakebuild/**.dylib", package:installdir("lib"))
+            os.trycp("xmakebuild/**.so", package:installdir("lib"))
+            os.trycp("xmakebuild/**.lib", package:installdir("lib"))
+            os.trycp("xmakebuild/**.dll", package:installdir("bin"))
         end
     end)
 
