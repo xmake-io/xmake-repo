@@ -574,6 +574,10 @@ package("opencascade")
             {plain = true}
         )
 
+        io.replace(
+            "src/Image/Image_AlienPixMap.cxx",
+            "#pragma comment(lib, \"FreeImage.lib\")", "", {plain = true})
+
         -- remove pragma links on source files on version 7.6
         if package:version():lt("7.6.0") then
             io.replace(
