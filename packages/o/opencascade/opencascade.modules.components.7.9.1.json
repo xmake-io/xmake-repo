@@ -1,1 +1,1065 @@
-{"FoundationClasses":{"TKMath":{"links":["TKernel"],"deps":["CSF_TBB"]},"TKernel":{"syslinks":["CSF_ThreadLibs","CSF_advapi32","CSF_gdi32","CSF_user32","CSF_dl","CSF_wsock32","CSF_psapi","CSF_androidlog"],"deps":["CSF_TBB","CSF_MMGR"]}},"DataExchange":{"TKDECascade":{"links":["TKBin","TKBinL","TKBinTObj","TKBinXCAF","TKBRep","TKStd","TKXml","TKXmlL","TKXmlTObj","TKXmlXCAF","TKDE","TKernel","TKMath","TKLCAF","TKXCAF","TKStdL","TKCDF"]},"TKDEVRML":{"links":["TKBRep","TKDE","TKTopAlgo","TKMath","TKGeomBase","TKernel","TKPrim","TKG2d","TKG3d","TKMesh","TKHLR","TKRWMesh","TKService","TKGeomAlgo","TKV3d","TKLCAF","TKXCAF","TKXSBase"]},"TKRWMesh":{"links":["TKernel","TKMath","TKMesh","TKXCAF","TKLCAF","TKV3d","TKBRep","TKG3d","TKDE","TKService"],"deps":["CSF_RapidJSON","CSF_Draco"]},"TKBinXCAF":{"links":["TKBRep","TKXCAF","TKMath","TKService","TKernel","TKBinL","TKG2d","TKCAF","TKCDF","TKG3d","TKLCAF","TKBin"]},"TKDESTEP":{"links":["TKDE","TKBRep","TKernel","TKMath","TKXSBase","TKTopAlgo","TKG2d","TKCAF","TKCDF","TKLCAF","TKG3d","TKXCAF","TKShHealing","TKernel","TKBRep","TKMath","TKG2d","TKShHealing","TKTopAlgo","TKG3d","TKGeomBase","TKGeomAlgo","TKXSBase"]},"TKXSBase":{"links":["TKBRep","TKernel","TKMath","TKG2d","TKG3d","TKTopAlgo","TKGeomBase","TKShHealing"]},"TKXCAF":{"links":["TKBRep","TKernel","TKMath","TKService","TKG2d","TKTopAlgo","TKV3d","TKCDF","TKLCAF","TKG3d","TKCAF","TKVCAF"]},"TKDEPLY":{"links":["TKernel","TKMath","TKMesh","TKXCAF","TKLCAF","TKV3d","TKBRep","TKG3d","TKDE","TKService","TKRWMesh"],"deps":["CSF_RapidJSON"]},"TKDEIGES":{"links":["TKBRep","TKDE","TKernel","TKMath","TKTopAlgo","TKShHealing","TKXSBase","TKGeomBase","TKGeomAlgo","TKBool","TKPrim","TKCDF","TKLCAF","TKG2d","TKG3d","TKXCAF"]},"TKDESTL":{"links":["TKDE","TKernel","TKMath","TKBRep","TKG2d","TKG3d","TKTopAlgo","TKLCAF","TKXCAF"]},"TKDEGLTF":{"links":["TKernel","TKMath","TKMesh","TKXCAF","TKLCAF","TKV3d","TKBRep","TKG3d","TKDE","TKService","TKRWMesh"],"deps":["CSF_RapidJSON","CSF_Draco"]},"TKDEOBJ":{"links":["TKernel","TKMath","TKMesh","TKXCAF","TKLCAF","TKV3d","TKBRep","TKG3d","TKDE","TKService","TKRWMesh"],"deps":["CSF_RapidJSON"]},"TKDE":{"links":["TKernel","TKMath","TKBRep"]},"TKXmlXCAF":{"links":["TKXmlL","TKBRep","TKCDF","TKMath","TKernel","TKService","TKG2d","TKGeomBase","TKCAF","TKG3d","TKLCAF","TKXCAF","TKXml"]}},"Draw":{"TKXSDRAWOBJ":{"links":["TKBRep","TKV3d","TKMath","TKernel","TKService","TKXSBase","TKMeshVS","TKG3d","TKViewerTest","TKG2d","TKTopAlgo","TKGeomBase","TKGeomAlgo","TKMesh","TKDraw","TKLCAF","TKDCAF","TKXCAF","TKRWMesh","TKDEOBJ","TKXSDRAW"]},"TKDCAF":{"links":["TKGeomBase","TKBRep","TKGeomAlgo","TKernel","TKMath","TKG2d","TKG3d","TKDraw","TKCDF","TKV3d","TKService","TKLCAF","TKFillet","TKTopAlgo","TKPrim","TKBool","TKBO","TKCAF","TKVCAF","TKViewerTest","TKStd","TKStdL","TKBin","TKBinL","TKXml","TKXmlL"]},"TKXSDRAW":{"links":["TKBRep","TKV3d","TKMath","TKernel","TKService","TKXSBase","TKMeshVS","TKG3d","TKViewerTest","TKG2d","TKTopAlgo","TKGeomBase","TKGeomAlgo","TKMesh","TKDraw","TKLCAF","TKDCAF","TKXCAF"]},"TKD3DHostTest":{"links":["TKernel","TKMath","TKDraw","TKD3DHost","TKService"]},"TKXSDRAWPLY":{"links":["TKBRep","TKV3d","TKMath","TKernel","TKService","TKXSBase","TKMeshVS","TKG3d","TKViewerTest","TKG2d","TKTopAlgo","TKGeomBase","TKGeomAlgo","TKMesh","TKDraw","TKLCAF","TKDCAF","TKXCAF","TKRWMesh","TKDEPLY","TKXSDRAW"]},"TKOpenGlTest":{"links":["TKernel","TKMath","TKDraw","TKOpenGl","TKService","TKV3d","TKViewerTest"],"deps":["CSF_OpenGlLibs"]},"TKTopTest":{"links":["TKBRep","TKGeomAlgo","TKTopAlgo","TKernel","TKMath","TKBO","TKG2d","TKG3d","TKDraw","TKHLR","TKGeomBase","TKMesh","TKService","TKV3d","TKFillet","TKPrim","TKBool","TKOffset","TKFeat","TKShHealing"]},"DRAWEXE":{"links":["TKDraw","TKMesh","TKShHealing","TKTopAlgo","TKHLR","TKGeomAlgo","TKGeomBase","TKG2d","TKBRep","TKMath","TKG3d","TKernel","TKService"]},"TKXSDRAWGLTF":{"links":["TKBRep","TKV3d","TKMath","TKernel","TKService","TKXSBase","TKMeshVS","TKG3d","TKViewerTest","TKG2d","TKTopAlgo","TKGeomBase","TKGeomAlgo","TKMesh","TKDraw","TKLCAF","TKDCAF","TKXCAF","TKRWMesh","TKDEGLTF","TKXSDRAW"]},"TKViewerTest":{"links":["TKGeomBase","TKFillet","TKBRep","TKTopAlgo","TKHLR","TKernel","TKMath","TKService","TKShHealing","TKBool","TKPrim","TKGeomAlgo","TKG2d","TKTopTest","TKG3d","TKOffset","TKMesh","TKV3d","TKDraw"],"syslinks":["CSF_user32","CSF_gdi32"],"frameworks":["CSF_objc","CSF_Appkit","CSF_IOKit"],"deps":["CSF_TclLibs","CSF_XwLibs","CSF_FREETYPE"]},"TKXDEDRAW":{"links":["TKDE","TKCDF","TKBRep","TKXCAF","TKernel","TKV3d","TKMath","TKService","TKXSBase","TKG2d","TKCAF","TKVCAF","TKDraw","TKTopAlgo","TKLCAF","TKG3d","TKRWMesh","TKDEOBJ","TKDEGLTF","TKDEPLY","TKDESTL","TKMesh","TKXSDRAW","TKDECascade","TKDEIGES","TKDESTEP","TKDCAF","TKViewerTest","TKBinXCAF","TKXmlXCAF","TKDEVRML"]},"TKOpenGlesTest":{"links":["TKernel","TKMath","TKDraw","TKOpenGles","TKService","TKV3d","TKViewerTest"],"deps":["CSF_OpenGlesLibs"]},"TKDraw":{"links":["TKernel","TKG2d","TKGeomBase","TKG3d","TKMath","TKBRep","TKGeomAlgo","TKShHealing","TKMesh","TKService","TKHLR","TKTopAlgo"],"syslinks":["CSF_gdi32","CSF_advapi32","CSF_user32","CSF_shell32","CSF_ThreadLibs"],"frameworks":["CSF_objc","CSF_Appkit","CSF_IOKit"],"deps":["CSF_TclLibs","CSF_TclTkLibs","CSF_XwLibs","CSF_TBB"]},"TKXSDRAWDE":{"links":["TKBRep","TKV3d","TKMath","TKernel","TKService","TKXSBase","TKMeshVS","TKG3d","TKViewerTest","TKG2d","TKTopAlgo","TKGeomBase","TKGeomAlgo","TKMesh","TKDraw","TKLCAF","TKDCAF","TKXCAF","TKRWMesh","TKXSBase","TKDECascade","TKDE","TKXSDRAW"]},"TKXSDRAWSTL":{"links":["TKBRep","TKV3d","TKMath","TKernel","TKService","TKXSBase","TKMeshVS","TKG3d","TKViewerTest","TKG2d","TKTopAlgo","TKGeomBase","TKGeomAlgo","TKMesh","TKDraw","TKLCAF","TKDCAF","TKXCAF","TKRWMesh","TKDESTL","TKXSDRAW"]},"TKXSDRAWSTEP":{"links":["TKBRep","TKV3d","TKMath","TKernel","TKService","TKXSBase","TKMeshVS","TKG3d","TKViewerTest","TKG2d","TKTopAlgo","TKGeomBase","TKGeomAlgo","TKMesh","TKDraw","TKLCAF","TKDCAF","TKXCAF","TKRWMesh","TKXSBase","TKDESTEP","TKXSDRAW"]},"TKXSDRAWVRML":{"links":["TKBRep","TKV3d","TKMath","TKernel","TKService","TKXSBase","TKMeshVS","TKG3d","TKViewerTest","TKG2d","TKTopAlgo","TKGeomBase","TKGeomAlgo","TKMesh","TKDraw","TKLCAF","TKDCAF","TKXCAF","TKRWMesh","TKDEVRML","TKXSDRAW"]},"TKXSDRAWIGES":{"links":["TKBRep","TKV3d","TKMath","TKernel","TKService","TKXSBase","TKMeshVS","TKG3d","TKViewerTest","TKG2d","TKTopAlgo","TKGeomBase","TKGeomAlgo","TKMesh","TKDraw","TKLCAF","TKDCAF","TKXCAF","TKXSBase","TKDEIGES","TKXSDRAW"]},"TKQADraw":{"links":["TKBRep","TKMath","TKernel","TKService","TKG2d","TKDraw","TKV3d","TKGeomBase","TKG3d","TKViewerTest","TKCDF","TKDCAF","TKLCAF","TKFillet","TKTopAlgo","TKHLR","TKBool","TKGeomAlgo","TKPrim","TKBO","TKShHealing","TKOffset","TKFeat","TKCAF","TKVCAF","TKDEIGES","TKXSBase","TKMesh","TKXCAF","TKBinXCAF","TKDESTEP","TKXSDRAW","TKDESTL","TKXml","TKTObj","TKXmlL","TKBin","TKBinL","TKStd","TKStdL","TKExpress"],"syslinks":["CSF_gdi32","CSF_advapi32","CSF_user32"],"deps":["CSF_TBB"]},"TKTObjDRAW":{"links":["TKernel","TKCDF","TKLCAF","TKTObj","TKMath","TKDraw","TKDCAF","TKBinTObj","TKXmlTObj"]},"TKIVtkDraw":{"syslinks":["CSF_user32"],"links":["TKernel","TKBRep","TKDraw","TKG2d","TKG3d","TKGeomAlgo","TKGeomBase","TKMath","TKMesh","TKService","TKTopAlgo","TKV3d","TKOpenGl","TKIVtk"],"deps":["CSF_VTK","CSF_TclLibs","CSF_XwLibs"]}},"ModelingAlgorithms":{"TKBO":{"links":["TKBRep","TKTopAlgo","TKMath","TKernel","TKG2d","TKG3d","TKGeomAlgo","TKGeomBase","TKPrim","TKShHealing"],"deps":["CSF_TBB"]},"TKShHealing":{"links":["TKBRep","TKernel","TKMath","TKG2d","TKTopAlgo","TKG3d","TKGeomBase","TKGeomAlgo"],"syslinks":["CSF_wsock32"]},"TKFeat":{"links":["TKBRep","TKTopAlgo","TKGeomAlgo","TKMath","TKernel","TKGeomBase","TKPrim","TKG2d","TKBO","TKG3d","TKBool","TKShHealing"]},"TKFillet":{"links":["TKBRep","TKernel","TKMath","TKGeomBase","TKGeomAlgo","TKG2d","TKTopAlgo","TKG3d","TKBool","TKShHealing","TKBO"]},"TKBool":{"links":["TKBRep","TKTopAlgo","TKMath","TKernel","TKPrim","TKG2d","TKG3d","TKShHealing","TKGeomBase","TKGeomAlgo","TKBO"]},"TKGeomAlgo":{"links":["TKernel","TKMath","TKG3d","TKG2d","TKGeomBase","TKBRep"]},"TKXMesh":{"links":["TKBRep","TKMath","TKernel","TKG2d","TKG3d","TKMesh"]},"TKTopAlgo":{"links":["TKMath","TKernel","TKG2d","TKG3d","TKGeomBase","TKBRep","TKGeomAlgo"],"deps":["CSF_TBB"]},"TKMesh":{"links":["TKernel","TKMath","TKBRep","TKTopAlgo","TKShHealing","TKGeomBase","TKG3d","TKG2d"]},"TKOffset":{"links":["TKFillet","TKBRep","TKTopAlgo","TKMath","TKernel","TKGeomBase","TKG2d","TKG3d","TKGeomAlgo","TKShHealing","TKBO","TKPrim","TKBool"]},"TKHLR":{"links":["TKBRep","TKernel","TKMath","TKGeomBase","TKG2d","TKG3d","TKGeomAlgo","TKTopAlgo"]},"TKPrim":{"links":["TKBRep","TKernel","TKMath","TKG2d","TKGeomBase","TKG3d","TKTopAlgo"]}},"ModelingData":{"TKG3d":{"links":["TKMath","TKernel","TKG2d"]},"TKBRep":{"links":["TKMath","TKernel","TKG2d","TKG3d","TKGeomBase"]},"TKGeomBase":{"links":["TKernel","TKMath","TKG2d","TKG3d"],"deps":["CSF_TBB"]},"TKG2d":{"links":["TKernel","TKMath"]}},"ApplicationFramework":{"TKXml":{"links":["TKCDF","TKernel","TKMath","TKBRep","TKG2d","TKGeomBase","TKG3d","TKLCAF","TKCAF","TKXmlL"]},"TKBin":{"links":["TKBRep","TKMath","TKernel","TKG2d","TKG3d","TKCAF","TKCDF","TKLCAF","TKBinL"]},"TKStdL":{"links":["TKernel","TKCDF","TKLCAF"]},"TKLCAF":{"links":["TKCDF","TKernel"]},"TKXmlL":{"links":["TKCDF","TKernel","TKMath","TKLCAF"]},"TKVCAF":{"links":["TKernel","TKGeomBase","TKBRep","TKTopAlgo","TKMath","TKService","TKG2d","TKG3d","TKCDF","TKLCAF","TKBO","TKCAF","TKV3d"]},"TKCDF":{"links":["TKernel"]},"TKBinL":{"links":["TKCDF","TKernel","TKLCAF"]},"TKCAF":{"links":["TKernel","TKGeomBase","TKBRep","TKTopAlgo","TKMath","TKG2d","TKG3d","TKCDF","TKLCAF","TKBO"]},"TKXmlTObj":{"links":["TKCDF","TKernel","TKTObj","TKMath","TKLCAF","TKXmlL"]},"TKBinTObj":{"links":["TKCDF","TKernel","TKTObj","TKMath","TKLCAF","TKBinL"]},"TKTObj":{"links":["TKCDF","TKernel","TKMath","TKLCAF"]},"TKStd":{"links":["TKernel","TKCDF","TKCAF","TKLCAF","TKBRep","TKMath","TKG2d","TKG3d","TKStdL"]}},"DETools":{"TKExpress":{"links":["TKernel"]},"ExpToCasExe":{"links":["TKernel","TKExpress"],"syslinks":["CSF_wsock32"]}},"Visualization":{"TKService":{"links":["TKernel","TKMath"],"syslinks":["CSF_user32","CSF_advapi32","CSF_advapi32","CSF_user32","CSF_dpsLibs","CSF_XmuLibs","CSF_winmm"],"frameworks":["CSF_objc","CSF_Appkit","CSF_IOKit"],"deps":["CSF_OpenVR","CSF_XwLibs","CSF_fontconfig","CSF_FreeImagePlus","CSF_FREETYPE","CSF_FFmpeg"]},"TKD3DHost":{"links":["TKernel","TKService","TKMath","TKV3d","TKOpenGl"],"syslinks":["CSF_user32","CSF_gdi32","CSF_d3d9"],"deps":["CSF_XwLibs","CSF_OpenGlLibs"]},"TKOpenGles":{"links":["TKernel","TKService","TKMath"],"syslinks":["CSF_user32","CSF_gdi32"],"frameworks":["CSF_Appkit","CSF_IOKit","CSF_objc"],"deps":["CSF_TBB","CSF_FREETYPE","CSF_OpenGlesLibs","CSF_XwLibs"]},"TKV3d":{"links":["TKBRep","TKMath","TKernel","TKService","TKShHealing","TKTopAlgo","TKG2d","TKG3d","TKGeomBase","TKMesh","TKGeomAlgo","TKHLR"],"syslinks":["CSF_user32","CSF_gdi32"],"deps":["CSF_FREETYPE","CSF_TBB"]},"TKMeshVS":{"links":["TKV3d","TKMath","TKService","TKernel","TKG3d","TKG2d"]},"TKIVtk":{"links":["TKernel","TKBRep","TKG2d","TKG3d","TKGeomAlgo","TKGeomBase","TKMath","TKMesh","TKService","TKTopAlgo","TKV3d"],"deps":["CSF_VTK"]},"TKOpenGl":{"links":["TKernel","TKService","TKMath"],"syslinks":["CSF_user32","CSF_gdi32"],"frameworks":["CSF_Appkit","CSF_IOKit","CSF_objc"],"deps":["CSF_TBB","CSF_OpenGlLibs","CSF_XwLibs"]}}}
+{
+  "DETools": {
+    "ExpToCasExe": {
+      "links": ["TKernel", "TKExpress"],
+      "syslinks": ["CSF_wsock32"]
+    },
+    "TKExpress": { "links": ["TKernel"] }
+  },
+  "FoundationClasses": {
+    "TKernel": {
+      "deps": ["CSF_TBB", "CSF_MMGR"],
+      "syslinks": [
+        "CSF_ThreadLibs",
+        "CSF_advapi32",
+        "CSF_gdi32",
+        "CSF_user32",
+        "CSF_dl",
+        "CSF_wsock32",
+        "CSF_psapi",
+        "CSF_androidlog"
+      ]
+    },
+    "TKMath": { "links": ["TKernel"], "deps": ["CSF_TBB"] }
+  },
+  "Draw": {
+    "TKViewerTest": {
+      "links": [
+        "TKGeomBase",
+        "TKFillet",
+        "TKBRep",
+        "TKTopAlgo",
+        "TKHLR",
+        "TKernel",
+        "TKMath",
+        "TKService",
+        "TKShHealing",
+        "TKBool",
+        "TKPrim",
+        "TKGeomAlgo",
+        "TKG2d",
+        "TKTopTest",
+        "TKG3d",
+        "TKOffset",
+        "TKMesh",
+        "TKV3d",
+        "TKDraw"
+      ],
+      "frameworks": ["CSF_objc", "CSF_Appkit", "CSF_IOKit"],
+      "syslinks": ["CSF_user32", "CSF_gdi32"],
+      "deps": ["CSF_TclLibs", "CSF_XwLibs", "CSF_FREETYPE"]
+    },
+    "TKXSDRAWGLTF": {
+      "links": [
+        "TKBRep",
+        "TKV3d",
+        "TKMath",
+        "TKernel",
+        "TKService",
+        "TKXSBase",
+        "TKMeshVS",
+        "TKG3d",
+        "TKViewerTest",
+        "TKG2d",
+        "TKTopAlgo",
+        "TKGeomBase",
+        "TKGeomAlgo",
+        "TKMesh",
+        "TKDraw",
+        "TKLCAF",
+        "TKDCAF",
+        "TKXCAF",
+        "TKRWMesh",
+        "TKDEGLTF",
+        "TKXSDRAW"
+      ]
+    },
+    "TKXDEDRAW": {
+      "links": [
+        "TKDE",
+        "TKCDF",
+        "TKBRep",
+        "TKXCAF",
+        "TKernel",
+        "TKV3d",
+        "TKMath",
+        "TKService",
+        "TKXSBase",
+        "TKG2d",
+        "TKCAF",
+        "TKVCAF",
+        "TKDraw",
+        "TKTopAlgo",
+        "TKLCAF",
+        "TKG3d",
+        "TKRWMesh",
+        "TKDEOBJ",
+        "TKDEGLTF",
+        "TKDEPLY",
+        "TKDESTL",
+        "TKMesh",
+        "TKXSDRAW",
+        "TKDECascade",
+        "TKDEIGES",
+        "TKDESTEP",
+        "TKDCAF",
+        "TKViewerTest",
+        "TKBinXCAF",
+        "TKXmlXCAF",
+        "TKDEVRML"
+      ]
+    },
+    "TKQADraw": {
+      "links": [
+        "TKBRep",
+        "TKMath",
+        "TKernel",
+        "TKService",
+        "TKG2d",
+        "TKDraw",
+        "TKV3d",
+        "TKGeomBase",
+        "TKG3d",
+        "TKViewerTest",
+        "TKCDF",
+        "TKDCAF",
+        "TKLCAF",
+        "TKFillet",
+        "TKTopAlgo",
+        "TKHLR",
+        "TKBool",
+        "TKGeomAlgo",
+        "TKPrim",
+        "TKBO",
+        "TKShHealing",
+        "TKOffset",
+        "TKFeat",
+        "TKCAF",
+        "TKVCAF",
+        "TKDEIGES",
+        "TKXSBase",
+        "TKMesh",
+        "TKXCAF",
+        "TKBinXCAF",
+        "TKDESTEP",
+        "TKXSDRAW",
+        "TKDESTL",
+        "TKXml",
+        "TKTObj",
+        "TKXmlL",
+        "TKBin",
+        "TKBinL",
+        "TKStd",
+        "TKStdL",
+        "TKExpress"
+      ],
+      "deps": ["CSF_TBB"],
+      "syslinks": ["CSF_gdi32", "CSF_advapi32", "CSF_user32"]
+    },
+    "TKD3DHostTest": {
+      "links": ["TKernel", "TKMath", "TKDraw", "TKD3DHost", "TKService"]
+    },
+    "TKOpenGlTest": {
+      "links": [
+        "TKernel",
+        "TKMath",
+        "TKDraw",
+        "TKOpenGl",
+        "TKService",
+        "TKV3d",
+        "TKViewerTest"
+      ],
+      "deps": ["CSF_OpenGlLibs"]
+    },
+    "TKXSDRAWSTL": {
+      "links": [
+        "TKBRep",
+        "TKV3d",
+        "TKMath",
+        "TKernel",
+        "TKService",
+        "TKXSBase",
+        "TKMeshVS",
+        "TKG3d",
+        "TKViewerTest",
+        "TKG2d",
+        "TKTopAlgo",
+        "TKGeomBase",
+        "TKGeomAlgo",
+        "TKMesh",
+        "TKDraw",
+        "TKLCAF",
+        "TKDCAF",
+        "TKXCAF",
+        "TKRWMesh",
+        "TKDESTL",
+        "TKXSDRAW"
+      ]
+    },
+    "TKXSDRAWPLY": {
+      "links": [
+        "TKBRep",
+        "TKV3d",
+        "TKMath",
+        "TKernel",
+        "TKService",
+        "TKXSBase",
+        "TKMeshVS",
+        "TKG3d",
+        "TKViewerTest",
+        "TKG2d",
+        "TKTopAlgo",
+        "TKGeomBase",
+        "TKGeomAlgo",
+        "TKMesh",
+        "TKDraw",
+        "TKLCAF",
+        "TKDCAF",
+        "TKXCAF",
+        "TKRWMesh",
+        "TKDEPLY",
+        "TKXSDRAW"
+      ]
+    },
+    "TKXSDRAWIGES": {
+      "links": [
+        "TKBRep",
+        "TKV3d",
+        "TKMath",
+        "TKernel",
+        "TKService",
+        "TKXSBase",
+        "TKMeshVS",
+        "TKG3d",
+        "TKViewerTest",
+        "TKG2d",
+        "TKTopAlgo",
+        "TKGeomBase",
+        "TKGeomAlgo",
+        "TKMesh",
+        "TKDraw",
+        "TKLCAF",
+        "TKDCAF",
+        "TKXCAF",
+        "TKXSBase",
+        "TKDEIGES",
+        "TKXSDRAW"
+      ]
+    },
+    "TKDraw": {
+      "links": [
+        "TKernel",
+        "TKG2d",
+        "TKGeomBase",
+        "TKG3d",
+        "TKMath",
+        "TKBRep",
+        "TKGeomAlgo",
+        "TKShHealing",
+        "TKMesh",
+        "TKService",
+        "TKHLR",
+        "TKTopAlgo"
+      ],
+      "frameworks": ["CSF_objc", "CSF_Appkit", "CSF_IOKit"],
+      "syslinks": [
+        "CSF_gdi32",
+        "CSF_advapi32",
+        "CSF_user32",
+        "CSF_shell32",
+        "CSF_ThreadLibs"
+      ],
+      "deps": ["CSF_TclLibs", "CSF_TclTkLibs", "CSF_XwLibs", "CSF_TBB"]
+    },
+    "TKXSDRAW": {
+      "links": [
+        "TKBRep",
+        "TKV3d",
+        "TKMath",
+        "TKernel",
+        "TKService",
+        "TKXSBase",
+        "TKMeshVS",
+        "TKG3d",
+        "TKViewerTest",
+        "TKG2d",
+        "TKTopAlgo",
+        "TKGeomBase",
+        "TKGeomAlgo",
+        "TKMesh",
+        "TKDraw",
+        "TKLCAF",
+        "TKDCAF",
+        "TKXCAF"
+      ]
+    },
+    "TKXSDRAWSTEP": {
+      "links": [
+        "TKBRep",
+        "TKV3d",
+        "TKMath",
+        "TKernel",
+        "TKService",
+        "TKXSBase",
+        "TKMeshVS",
+        "TKG3d",
+        "TKViewerTest",
+        "TKG2d",
+        "TKTopAlgo",
+        "TKGeomBase",
+        "TKGeomAlgo",
+        "TKMesh",
+        "TKDraw",
+        "TKLCAF",
+        "TKDCAF",
+        "TKXCAF",
+        "TKRWMesh",
+        "TKXSBase",
+        "TKDESTEP",
+        "TKXSDRAW"
+      ]
+    },
+    "TKIVtkDraw": {
+      "links": [
+        "TKernel",
+        "TKBRep",
+        "TKDraw",
+        "TKG2d",
+        "TKG3d",
+        "TKGeomAlgo",
+        "TKGeomBase",
+        "TKMath",
+        "TKMesh",
+        "TKService",
+        "TKTopAlgo",
+        "TKV3d",
+        "TKOpenGl",
+        "TKIVtk"
+      ],
+      "deps": ["CSF_VTK", "CSF_TclLibs", "CSF_XwLibs"],
+      "syslinks": ["CSF_user32"]
+    },
+    "TKXSDRAWVRML": {
+      "links": [
+        "TKBRep",
+        "TKV3d",
+        "TKMath",
+        "TKernel",
+        "TKService",
+        "TKXSBase",
+        "TKMeshVS",
+        "TKG3d",
+        "TKViewerTest",
+        "TKG2d",
+        "TKTopAlgo",
+        "TKGeomBase",
+        "TKGeomAlgo",
+        "TKMesh",
+        "TKDraw",
+        "TKLCAF",
+        "TKDCAF",
+        "TKXCAF",
+        "TKRWMesh",
+        "TKDEVRML",
+        "TKXSDRAW"
+      ]
+    },
+    "DRAWEXE": {
+      "links": [
+        "TKDraw",
+        "TKMesh",
+        "TKShHealing",
+        "TKTopAlgo",
+        "TKHLR",
+        "TKGeomAlgo",
+        "TKGeomBase",
+        "TKG2d",
+        "TKBRep",
+        "TKMath",
+        "TKG3d",
+        "TKernel",
+        "TKService"
+      ]
+    },
+    "TKXSDRAWOBJ": {
+      "links": [
+        "TKBRep",
+        "TKV3d",
+        "TKMath",
+        "TKernel",
+        "TKService",
+        "TKXSBase",
+        "TKMeshVS",
+        "TKG3d",
+        "TKViewerTest",
+        "TKG2d",
+        "TKTopAlgo",
+        "TKGeomBase",
+        "TKGeomAlgo",
+        "TKMesh",
+        "TKDraw",
+        "TKLCAF",
+        "TKDCAF",
+        "TKXCAF",
+        "TKRWMesh",
+        "TKDEOBJ",
+        "TKXSDRAW"
+      ]
+    },
+    "TKOpenGlesTest": {
+      "links": [
+        "TKernel",
+        "TKMath",
+        "TKDraw",
+        "TKOpenGles",
+        "TKService",
+        "TKV3d",
+        "TKViewerTest"
+      ],
+      "deps": ["CSF_OpenGlesLibs"]
+    },
+    "TKTObjDRAW": {
+      "links": [
+        "TKernel",
+        "TKCDF",
+        "TKLCAF",
+        "TKTObj",
+        "TKMath",
+        "TKDraw",
+        "TKDCAF",
+        "TKBinTObj",
+        "TKXmlTObj"
+      ]
+    },
+    "TKTopTest": {
+      "links": [
+        "TKBRep",
+        "TKGeomAlgo",
+        "TKTopAlgo",
+        "TKernel",
+        "TKMath",
+        "TKBO",
+        "TKG2d",
+        "TKG3d",
+        "TKDraw",
+        "TKHLR",
+        "TKGeomBase",
+        "TKMesh",
+        "TKService",
+        "TKV3d",
+        "TKFillet",
+        "TKPrim",
+        "TKBool",
+        "TKOffset",
+        "TKFeat",
+        "TKShHealing"
+      ]
+    },
+    "TKXSDRAWDE": {
+      "links": [
+        "TKBRep",
+        "TKV3d",
+        "TKMath",
+        "TKernel",
+        "TKService",
+        "TKXSBase",
+        "TKMeshVS",
+        "TKG3d",
+        "TKViewerTest",
+        "TKG2d",
+        "TKTopAlgo",
+        "TKGeomBase",
+        "TKGeomAlgo",
+        "TKMesh",
+        "TKDraw",
+        "TKLCAF",
+        "TKDCAF",
+        "TKXCAF",
+        "TKRWMesh",
+        "TKXSBase",
+        "TKDECascade",
+        "TKDE",
+        "TKXSDRAW"
+      ]
+    },
+    "TKDCAF": {
+      "links": [
+        "TKGeomBase",
+        "TKBRep",
+        "TKGeomAlgo",
+        "TKernel",
+        "TKMath",
+        "TKG2d",
+        "TKG3d",
+        "TKDraw",
+        "TKCDF",
+        "TKV3d",
+        "TKService",
+        "TKLCAF",
+        "TKFillet",
+        "TKTopAlgo",
+        "TKPrim",
+        "TKBool",
+        "TKBO",
+        "TKCAF",
+        "TKVCAF",
+        "TKViewerTest",
+        "TKStd",
+        "TKStdL",
+        "TKBin",
+        "TKBinL",
+        "TKXml",
+        "TKXmlL"
+      ]
+    }
+  },
+  "DataExchange": {
+    "TKXmlXCAF": {
+      "links": [
+        "TKXmlL",
+        "TKBRep",
+        "TKCDF",
+        "TKMath",
+        "TKernel",
+        "TKService",
+        "TKG2d",
+        "TKGeomBase",
+        "TKCAF",
+        "TKG3d",
+        "TKLCAF",
+        "TKXCAF",
+        "TKXml"
+      ]
+    },
+    "TKRWMesh": {
+      "links": [
+        "TKernel",
+        "TKMath",
+        "TKMesh",
+        "TKXCAF",
+        "TKLCAF",
+        "TKV3d",
+        "TKBRep",
+        "TKG3d",
+        "TKDE",
+        "TKService"
+      ],
+      "deps": ["CSF_RapidJSON", "CSF_Draco"]
+    },
+    "TKDESTL": {
+      "links": [
+        "TKDE",
+        "TKernel",
+        "TKMath",
+        "TKBRep",
+        "TKG2d",
+        "TKG3d",
+        "TKTopAlgo",
+        "TKLCAF",
+        "TKXCAF"
+      ]
+    },
+    "TKDEPLY": {
+      "links": [
+        "TKernel",
+        "TKMath",
+        "TKMesh",
+        "TKXCAF",
+        "TKLCAF",
+        "TKV3d",
+        "TKBRep",
+        "TKG3d",
+        "TKDE",
+        "TKService",
+        "TKRWMesh"
+      ],
+      "deps": ["CSF_RapidJSON"]
+    },
+    "TKDEVRML": {
+      "links": [
+        "TKBRep",
+        "TKDE",
+        "TKTopAlgo",
+        "TKMath",
+        "TKGeomBase",
+        "TKernel",
+        "TKPrim",
+        "TKG2d",
+        "TKG3d",
+        "TKMesh",
+        "TKHLR",
+        "TKRWMesh",
+        "TKService",
+        "TKGeomAlgo",
+        "TKV3d",
+        "TKLCAF",
+        "TKXCAF",
+        "TKXSBase"
+      ]
+    },
+    "TKDEIGES": {
+      "links": [
+        "TKBRep",
+        "TKDE",
+        "TKernel",
+        "TKMath",
+        "TKTopAlgo",
+        "TKShHealing",
+        "TKXSBase",
+        "TKGeomBase",
+        "TKGeomAlgo",
+        "TKBool",
+        "TKPrim",
+        "TKCDF",
+        "TKLCAF",
+        "TKG2d",
+        "TKG3d",
+        "TKXCAF"
+      ]
+    },
+    "TKBinXCAF": {
+      "links": [
+        "TKBRep",
+        "TKXCAF",
+        "TKMath",
+        "TKService",
+        "TKernel",
+        "TKBinL",
+        "TKG2d",
+        "TKCAF",
+        "TKCDF",
+        "TKG3d",
+        "TKLCAF",
+        "TKBin"
+      ]
+    },
+    "TKDE": { "links": ["TKernel", "TKMath", "TKBRep"] },
+    "TKDEOBJ": {
+      "links": [
+        "TKernel",
+        "TKMath",
+        "TKMesh",
+        "TKXCAF",
+        "TKLCAF",
+        "TKV3d",
+        "TKBRep",
+        "TKG3d",
+        "TKDE",
+        "TKService",
+        "TKRWMesh"
+      ],
+      "deps": ["CSF_RapidJSON"]
+    },
+    "TKXSBase": {
+      "links": [
+        "TKBRep",
+        "TKernel",
+        "TKMath",
+        "TKG2d",
+        "TKG3d",
+        "TKTopAlgo",
+        "TKGeomBase",
+        "TKShHealing"
+      ]
+    },
+    "TKDECascade": {
+      "links": [
+        "TKBin",
+        "TKBinL",
+        "TKBinTObj",
+        "TKBinXCAF",
+        "TKBRep",
+        "TKStd",
+        "TKXml",
+        "TKXmlL",
+        "TKXmlTObj",
+        "TKXmlXCAF",
+        "TKDE",
+        "TKernel",
+        "TKMath",
+        "TKLCAF",
+        "TKXCAF",
+        "TKStdL",
+        "TKCDF"
+      ]
+    },
+    "TKXCAF": {
+      "links": [
+        "TKBRep",
+        "TKernel",
+        "TKMath",
+        "TKService",
+        "TKG2d",
+        "TKTopAlgo",
+        "TKV3d",
+        "TKCDF",
+        "TKLCAF",
+        "TKG3d",
+        "TKCAF",
+        "TKVCAF"
+      ]
+    },
+    "TKDESTEP": {
+      "links": [
+        "TKDE",
+        "TKBRep",
+        "TKernel",
+        "TKMath",
+        "TKXSBase",
+        "TKTopAlgo",
+        "TKG2d",
+        "TKCAF",
+        "TKCDF",
+        "TKLCAF",
+        "TKG3d",
+        "TKXCAF",
+        "TKShHealing",
+        "TKernel",
+        "TKBRep",
+        "TKMath",
+        "TKG2d",
+        "TKShHealing",
+        "TKTopAlgo",
+        "TKG3d",
+        "TKGeomBase",
+        "TKGeomAlgo",
+        "TKXSBase"
+      ]
+    },
+    "TKDEGLTF": {
+      "links": [
+        "TKernel",
+        "TKMath",
+        "TKMesh",
+        "TKXCAF",
+        "TKLCAF",
+        "TKV3d",
+        "TKBRep",
+        "TKG3d",
+        "TKDE",
+        "TKService",
+        "TKRWMesh"
+      ],
+      "deps": ["CSF_RapidJSON", "CSF_Draco"]
+    }
+  },
+  "ApplicationFramework": {
+    "TKVCAF": {
+      "links": [
+        "TKernel",
+        "TKGeomBase",
+        "TKBRep",
+        "TKTopAlgo",
+        "TKMath",
+        "TKService",
+        "TKG2d",
+        "TKG3d",
+        "TKCDF",
+        "TKLCAF",
+        "TKBO",
+        "TKCAF",
+        "TKV3d"
+      ]
+    },
+    "TKTObj": { "links": ["TKCDF", "TKernel", "TKMath", "TKLCAF"] },
+    "TKStd": {
+      "links": [
+        "TKernel",
+        "TKCDF",
+        "TKCAF",
+        "TKLCAF",
+        "TKBRep",
+        "TKMath",
+        "TKG2d",
+        "TKG3d",
+        "TKStdL"
+      ]
+    },
+    "TKXmlTObj": {
+      "links": ["TKCDF", "TKernel", "TKTObj", "TKMath", "TKLCAF", "TKXmlL"]
+    },
+    "TKCAF": {
+      "links": [
+        "TKernel",
+        "TKGeomBase",
+        "TKBRep",
+        "TKTopAlgo",
+        "TKMath",
+        "TKG2d",
+        "TKG3d",
+        "TKCDF",
+        "TKLCAF",
+        "TKBO"
+      ]
+    },
+    "TKLCAF": { "links": ["TKCDF", "TKernel"] },
+    "TKCDF": { "links": ["TKernel"] },
+    "TKXmlL": { "links": ["TKCDF", "TKernel", "TKMath", "TKLCAF"] },
+    "TKXml": {
+      "links": [
+        "TKCDF",
+        "TKernel",
+        "TKMath",
+        "TKBRep",
+        "TKG2d",
+        "TKGeomBase",
+        "TKG3d",
+        "TKLCAF",
+        "TKCAF",
+        "TKXmlL"
+      ]
+    },
+    "TKBinTObj": {
+      "links": ["TKCDF", "TKernel", "TKTObj", "TKMath", "TKLCAF", "TKBinL"]
+    },
+    "TKBinL": { "links": ["TKCDF", "TKernel", "TKLCAF"] },
+    "TKStdL": { "links": ["TKernel", "TKCDF", "TKLCAF"] },
+    "TKBin": {
+      "links": [
+        "TKBRep",
+        "TKMath",
+        "TKernel",
+        "TKG2d",
+        "TKG3d",
+        "TKCAF",
+        "TKCDF",
+        "TKLCAF",
+        "TKBinL"
+      ]
+    }
+  },
+  "Visualization": {
+    "TKIVtk": {
+      "links": [
+        "TKernel",
+        "TKBRep",
+        "TKG2d",
+        "TKG3d",
+        "TKGeomAlgo",
+        "TKGeomBase",
+        "TKMath",
+        "TKMesh",
+        "TKService",
+        "TKTopAlgo",
+        "TKV3d"
+      ],
+      "deps": ["CSF_VTK"]
+    },
+    "TKService": {
+      "links": ["TKernel", "TKMath"],
+      "frameworks": ["CSF_objc", "CSF_Appkit", "CSF_IOKit"],
+      "deps": [
+        "CSF_OpenVR",
+        "CSF_XwLibs",
+        "CSF_fontconfig",
+        "CSF_FreeImagePlus",
+        "CSF_FREETYPE",
+        "CSF_FFmpeg"
+      ],
+      "syslinks": [
+        "CSF_user32",
+        "CSF_advapi32",
+        "CSF_advapi32",
+        "CSF_user32",
+        "CSF_dpsLibs",
+        "CSF_XmuLibs",
+        "CSF_winmm"
+      ]
+    },
+    "TKD3DHost": {
+      "links": ["TKernel", "TKService", "TKMath", "TKV3d", "TKOpenGl"],
+      "syslinks": ["CSF_user32", "CSF_gdi32", "CSF_d3d9"],
+      "deps": ["CSF_XwLibs", "CSF_OpenGlLibs"]
+    },
+    "TKOpenGles": {
+      "links": ["TKernel", "TKService", "TKMath"],
+      "frameworks": ["CSF_Appkit", "CSF_IOKit", "CSF_objc"],
+      "syslinks": ["CSF_user32", "CSF_gdi32"],
+      "deps": ["CSF_TBB", "CSF_FREETYPE", "CSF_OpenGlesLibs", "CSF_XwLibs"]
+    },
+    "TKMeshVS": {
+      "links": ["TKV3d", "TKMath", "TKService", "TKernel", "TKG3d", "TKG2d"]
+    },
+    "TKV3d": {
+      "links": [
+        "TKBRep",
+        "TKMath",
+        "TKernel",
+        "TKService",
+        "TKShHealing",
+        "TKTopAlgo",
+        "TKG2d",
+        "TKG3d",
+        "TKGeomBase",
+        "TKMesh",
+        "TKGeomAlgo",
+        "TKHLR"
+      ],
+      "deps": ["CSF_FREETYPE", "CSF_TBB"],
+      "syslinks": ["CSF_user32", "CSF_gdi32"]
+    },
+    "TKOpenGl": {
+      "links": ["TKernel", "TKService", "TKMath"],
+      "frameworks": ["CSF_Appkit", "CSF_IOKit", "CSF_objc"],
+      "syslinks": ["CSF_user32", "CSF_gdi32"],
+      "deps": ["CSF_TBB", "CSF_OpenGlLibs", "CSF_XwLibs"]
+    }
+  },
+  "ModelingData": {
+    "TKG3d": { "links": ["TKMath", "TKernel", "TKG2d"] },
+    "TKBRep": {
+      "links": ["TKMath", "TKernel", "TKG2d", "TKG3d", "TKGeomBase"]
+    },
+    "TKG2d": { "links": ["TKernel", "TKMath"] },
+    "TKGeomBase": {
+      "links": ["TKernel", "TKMath", "TKG2d", "TKG3d"],
+      "deps": ["CSF_TBB"]
+    }
+  },
+  "ModelingAlgorithms": {
+    "TKBO": {
+      "links": [
+        "TKBRep",
+        "TKTopAlgo",
+        "TKMath",
+        "TKernel",
+        "TKG2d",
+        "TKG3d",
+        "TKGeomAlgo",
+        "TKGeomBase",
+        "TKPrim",
+        "TKShHealing"
+      ],
+      "deps": ["CSF_TBB"]
+    },
+    "TKFillet": {
+      "links": [
+        "TKBRep",
+        "TKernel",
+        "TKMath",
+        "TKGeomBase",
+        "TKGeomAlgo",
+        "TKG2d",
+        "TKTopAlgo",
+        "TKG3d",
+        "TKBool",
+        "TKShHealing",
+        "TKBO"
+      ]
+    },
+    "TKXMesh": {
+      "links": ["TKBRep", "TKMath", "TKernel", "TKG2d", "TKG3d", "TKMesh"]
+    },
+    "TKOffset": {
+      "links": [
+        "TKFillet",
+        "TKBRep",
+        "TKTopAlgo",
+        "TKMath",
+        "TKernel",
+        "TKGeomBase",
+        "TKG2d",
+        "TKG3d",
+        "TKGeomAlgo",
+        "TKShHealing",
+        "TKBO",
+        "TKPrim",
+        "TKBool"
+      ]
+    },
+    "TKTopAlgo": {
+      "links": [
+        "TKMath",
+        "TKernel",
+        "TKG2d",
+        "TKG3d",
+        "TKGeomBase",
+        "TKBRep",
+        "TKGeomAlgo"
+      ],
+      "deps": ["CSF_TBB"]
+    },
+    "TKGeomAlgo": {
+      "links": ["TKernel", "TKMath", "TKG3d", "TKG2d", "TKGeomBase", "TKBRep"]
+    },
+    "TKShHealing": {
+      "links": [
+        "TKBRep",
+        "TKernel",
+        "TKMath",
+        "TKG2d",
+        "TKTopAlgo",
+        "TKG3d",
+        "TKGeomBase",
+        "TKGeomAlgo"
+      ],
+      "syslinks": ["CSF_wsock32"]
+    },
+    "TKMesh": {
+      "links": [
+        "TKernel",
+        "TKMath",
+        "TKBRep",
+        "TKTopAlgo",
+        "TKShHealing",
+        "TKGeomBase",
+        "TKG3d",
+        "TKG2d"
+      ]
+    },
+    "TKHLR": {
+      "links": [
+        "TKBRep",
+        "TKernel",
+        "TKMath",
+        "TKGeomBase",
+        "TKG2d",
+        "TKG3d",
+        "TKGeomAlgo",
+        "TKTopAlgo"
+      ]
+    },
+    "TKFeat": {
+      "links": [
+        "TKBRep",
+        "TKTopAlgo",
+        "TKGeomAlgo",
+        "TKMath",
+        "TKernel",
+        "TKGeomBase",
+        "TKPrim",
+        "TKG2d",
+        "TKBO",
+        "TKG3d",
+        "TKBool",
+        "TKShHealing"
+      ]
+    },
+    "TKPrim": {
+      "links": [
+        "TKBRep",
+        "TKernel",
+        "TKMath",
+        "TKG2d",
+        "TKGeomBase",
+        "TKG3d",
+        "TKTopAlgo"
+      ]
+    },
+    "TKBool": {
+      "links": [
+        "TKBRep",
+        "TKTopAlgo",
+        "TKMath",
+        "TKernel",
+        "TKPrim",
+        "TKG2d",
+        "TKG3d",
+        "TKShHealing",
+        "TKGeomBase",
+        "TKGeomAlgo",
+        "TKBO"
+      ]
+    }
+  }
+}

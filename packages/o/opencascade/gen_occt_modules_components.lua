@@ -37,6 +37,7 @@ function classify_dependency(dep)
         CSF_Appkit = "frameworks",
         CSF_IOKit = "frameworks",
         CSF_objc = "frameworks"
+        -- TODO CSF_OpenGLES
     }
 
     if dep:startswith("TK") then
@@ -103,7 +104,7 @@ end
 -- also add a function that exports link orders as occt components maybe 
 
 function main(tag)
-    assert(tag, "Please pass an exact GitHub release tag like V7_7_0 or V8_0_0_rc1")
+    assert(tag, "Please pass an exact and official GitHub release tag like V7_7_0 or V8_0_0_rc1")
 
     local version = parse_version(tag)
     if version:gt("7.9.1") then

@@ -9,131 +9,133 @@ package("opencascade")
     add_versions("7.9.1", "de442298cd8860f5580b01007f67f0ecd0b8900cfa4da467fa3c823c2d1a45df")
 
     add_deps("cmake")
-
-    add_configs("draco",                    {description = "Build with Draco support (v7.6.0+).",             default = true, type = "boolean"})
-    add_configs("d3d9",                     {description = "Build with D3D9 support (v7.6.0+).",              default = false, type = "boolean"})
-    add_configs("extended_debug_messages",  {description = "Enable extended debug messages in Debug builds.", default = false, type = "boolean"})
-    add_configs("ffmpeg",                   {description = "Build with FFMPEG support.",                      default = false, type = "boolean"})
-    add_configs("freeimage",                {description = "Build with FreeImage support.",                   default = true, type = "boolean"})
-    add_configs("freetype",                 {description = "Build with FreeType support.",                    default = true, type = "boolean"})
-    add_configs("gles2",                    {description = "Build with OpenGL ES support (v7.6.0+).",         default = false, type = "boolean"})
-    add_configs("opengl",                   {description = "Build with OpenGL support (v7.6.0+).",            default = true, type = "boolean"})    
-    add_configs("openvr",                   {description = "Build with OpenVR support (v7.6.0+).",            default = true, type = "boolean"})
-    add_configs("rapidjson",                {description = "Build with RapidJSON support.",                   default = true, type = "boolean"})
-    add_configs("tbb",                      {description = "Build with TBB support.",                         default = true, type = "boolean"})
-    add_configs("tk",                       {description = "Build with TK support for DRAW (v7.6.0+).",       default = false, type = "boolean"})
-    add_configs("vtk",                      {description = "Build with VTK support.",                         default = false, type = "boolean"})
-    add_configs("cxx_standard",             {description = "Select c++ standard to build.",                   default = "11", type = "string", values = {"11", "14", "17", "20", "23"}})
-
+    
     -- Core OCCT modules
-    add_configs("foundation_classes",     {description = "Build Foundation Classes module.",         default = true,  type = "boolean"})
+    add_configs("foundation_classes",     {description = "Build Foundation Classes module.",         default = true,  type = "boolean", readonly = true})
     add_configs("modeling_data",          {description = "Build Modeling Data module.",              default = true,  type = "boolean"})
     add_configs("modeling_algorithms",    {description = "Build Modeling Algorithms module.",        default = true,  type = "boolean"})
     add_configs("visualization",          {description = "Build Visualization module.",              default = true,  type = "boolean"})
     add_configs("application_framework",  {description = "Build Application Framework module.",      default = true,  type = "boolean"})
     add_configs("data_exchange",          {description = "Build Data Exchange module.",              default = true,  type = "boolean"})
-    add_configs("de_tools",               {description = "Build Data Exchange Tools module.",        default = false,  type = "boolean"})
-
-    -- Optional / test-related. currently not supported.
+    add_configs("de_tools",               {description = "Build Data Exchange Tools module.",        default = true,  type = "boolean"})
+    -- currently not supported.
     add_configs("draw",                   {description = "Build DRAW Test Harness and related modules.", default = false, type = "boolean"})
     
+    add_configs("draco",                    {description = "Build with Draco support.",                       default = false, type = "boolean"})
+    add_configs("d3d9",                     {description = "Build with D3D9 support.",                        default = false, type = "boolean"})
+    add_configs("extended_debug_messages",  {description = "Enable extended debug messages in Debug builds.", default = false, type = "boolean"})
+    add_configs("ffmpeg",                   {description = "Build with FFMPEG support.",                      default = false, type = "boolean"})
+    add_configs("freeimage",                {description = "Build with FreeImage support.",                   default = false, type = "boolean"})
+    add_configs("freetype",                 {description = "Build with FreeType support.",                    default = false, type = "boolean"})
+    add_configs("gles2",                    {description = "Build with OpenGL ES support.",                   default = false, type = "boolean"})
+    add_configs("opengl",                   {description = "Build with OpenGL support.",                      default = false, type = "boolean"})    
+    add_configs("openvr",                   {description = "Build with OpenVR support.",                      default = false, type = "boolean"})
+    add_configs("rapidjson",                {description = "Build with RapidJSON support.",                   default = false, type = "boolean"})
+    add_configs("tbb",                      {description = "Build with TBB support.",                         default = false, type = "boolean"})
+    add_configs("tk",                       {description = "Build with TK support for DRAW.",                 default = false, type = "boolean"})
+    add_configs("vtk",                      {description = "Build with VTK support.",                         default = false, type = "boolean"})
+    add_configs("cxx_standard",             {description = "Select c++ standard to build.",                   default = "11", type = "string", values = {"11", "14", "17", "20", "23"}})
+
+    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"})
 
     on_load(function (package)
 
-        local function handle_occt_module_config(modules)
-            -- enables all previous entries in 'modules' if 'current' is enabled
-           for i = #modules, 1, -1 do                   -- from last to first module
-                local current = modules[i]
-                if package:config(current) then          -- if this module is enabled
-                    for j = 1, i - 1 do                   -- ensure all modules before this are enabled
-                        local dep = modules[j]
-                        if not package:config(dep) then
-                            package:config_set(dep, true)
-                            cprint("${yellow}warning: '${current}' requires '${dep}'. Auto-enabled '${dep}'.${clear}")
-                        end
-                    end
-                    break   -- stop, because we've enabled all needed dependencies
+        local function config_override_all(configs, value, reason)
+            assert(type(configs) == "table", "Expected a table for config keys")
+
+            local overridden = {}
+
+            for _, name in ipairs(configs) do
+                if package:config(name) ~= value then
+                    package:config_set(name, value)
+                    table.insert(overridden, name)
                 end
             end
 
+            if #overridden > 0 and reason then
+                cprint("${yellow}warning: configs [%s] were overridden to %s. Reason: %s",
+                    table.concat(overridden, ", "), tostring(value), reason)
+            end
         end
-
-        package:config_set("foundation_classes", true) -- always built.
-        package:config_set("draw", false) -- currently not supported.
-
-        if package:version():lt("7.7.2") or package:version():gt("7.9.1") then
-            package:config_set("de_tools", false)
-        end
-
-        handle_occt_module_config({
-            "foundation_classes",
-            "modeling_data",
-            "modeling_algorithms",
-            "visualization",
-            "application_framework",
-            "data_exchange",
-            "draw"
-        })
-
-        -- currently not supported disabling
-        package:config_set("gles2", false) -- currently not supported/tested
-        package:config_set("d3d9", false) -- currently not supported/tested
-
-        -- version specific disables
-        local function config_set_all(configs, value)
-            assert(type(configs) == "table", "Expected a table for config keys")
-
-            for _, name in ipairs(configs) do
-                package:config_set(name, value)
+        local function enable_dependent_config(_config, config_depends)
+            if package:config(_config) then
+                if not package:config(config_depends) then
+                    cprint("${yellow}warning: '%s' depends on '%s', which was disabled. Enabling it automatically.", 
+                    _config, config_depends)
+                    package:config_set(config_depends, true)
+                end
             end
         end
 
-        if package:version():lt("7.6.0") then
-            config_set_all({
-                "ffmpeg", 
-                "freeimage", 
-                "opengl", 
-                "openvr", 
-                "freetype", 
-                "vtk", 
-                "gles2", 
-                "d3d9" 
-            }, false)
+        -- unsupported/disabled configs 
+        config_override_all({
+            "draw",     -- currently not supported. TODO
+            "gles2",    -- currently not supported/tested
+            "ffmpeg"    -- build failures
+        }, false, "Disabled due to current lack of support or known build failures.")
 
-            package:config_set("freetype", true) -- freetype only optional from 7.6.0 on (?)
+        -- Fallthrough BEGIN
+        enable_dependent_config("draw", "data_exchange")
+        enable_dependent_config("data_exchange", "application_framework")
+        enable_dependent_config("application_framework", "visualization")
+        enable_dependent_config("visualization", "modeling_algorithms")
+        enable_dependent_config("modeling_algorithms", "modeling_data")
+        -- Fallthrough END
+       
+        if package:version():lt("7.7.2") or package:version():gt("7.9.1") then
+            config_override_all({"de_tools"}, false, 
+            "de_tools module is not relevant to this version of opencascade.")
         end
 
         if not package:config("visualization") then
-            config_set_all({
-                "ffmpeg",
-                "freeimage",
+            -- seems like compatible with upcoming version 8.0.0 [TODO]
+            config_override_all({
                 "opengl",
+                "gles2",
                 "openvr",
                 "freetype",
-                "vtk",
-                "gles2",
-                "d3d9"
-            }, false)
+                "freeimage",
+                "ffmpeg",
+                "d3d9",
+                "vtk"
+            }, false, "Given configs only relevant to opencascade visualization module, which is is disabled.")
+        else
+            config_override_all({
+                "opengl"
+             --   ,"gles2" TODO
+            }, true, "Given configs are required to build opencascade visualization module, which is is enabled.")
+
+            if package:version():lt("7.6.0") then
+                config_override_all({
+                    "freeimage"
+                }, true, "freeimage is required opencascade visualization module in this version.")
+            end
+
+            if not package:is_targetos("windows", "mingw") then
+                config_override_all({
+                    "d3d9"
+                }, false, "Direct3D9 support is a windows-only configuration.")
+            end
         end
 
         if not package:config("data_exchange") then
-            config_set_all({
+            config_override_all({
                 "draco",
                 "rapidjson"
-            }, false)     
+            }, false,"Given configs only relevant to opencascade data exchange module, which is is disabled.")
         end
 
         if not package:config("draw") then
-            config_set_all({
+            config_override_all({
                 "tk",
                 "tcl"
-            }, false)         
+            }, false, "Given configs only relevant to opencascade draw module, which is is disabled and currently not supported.")         
         end
 
         if not package:is_debug() then
-            package:config_set("extended_debug_messages", false)
+            config_override_all({"extended_debug_messages"}, false, "Supported only on debug mode.")
         end
-
+ 
 
         local occt_cmake_to_xmake_deps = {
         ["CSF_FREETYPE"]      = package:config("freetype")   and { deps = {"freetype"} } or nil,
@@ -142,6 +144,7 @@ package("opencascade")
         ["CSF_XwLibs"]        = package:is_plat("linux")     and { deps = {"libx11"} } or nil, -- ? not sure
         -- optional deps
         ["CSF_OpenGlLibs"]    = package:config("opengl")     and { deps = {"opengl"} } or nil,
+        -- missing opengles. TODO
         ["CSF_TclTkLibs"]     = package:config("tk")         and { deps = {"tk"} } or nil,
         ["CSF_FFmpeg"]        = package:config("ffmpeg")     and { deps = {"ffmpeg"} } or nil,
         ["CSF_FreeImagePlus"] = package:config("freeimage")  and { deps = {"freeimage"} } or nil,
@@ -150,7 +153,7 @@ package("opencascade")
         ["CSF_Draco"]         = package:config("draco")      and { deps = {"draco"} } or nil,
         ["CSF_TBB"]           = package:config("tbb")        and { deps = {"tbb"} } or nil,
         ["CSF_VTK"]           = package:config("vtk")        and { deps = {"vtk"} } or nil,
-        ["CSF_MMGR"]          = nil, -- no externals
+        ["CSF_MMGR"]          = nil, -- TODO for memory manager support in tkernel
 
         -- system libs
         ["CSF_androidlog"]    = package:is_plat("android")   and { syslinks = {"log"} } or nil,
@@ -165,7 +168,7 @@ package("opencascade")
         ["CSF_user32"]        = package:is_plat("windows")   and { syslinks = {"user32"} } or nil,
         ["CSF_winmm"]         = package:is_plat("windows")   and { syslinks = {"winmm"} } or nil,
         ["CSF_wsock32"]       = package:is_plat("windows")   and { syslinks = {"wsock32"} } or nil,
-        ["CSF_d3d9"]          = nil,
+        ["CSF_d3d9"]          = package:config("d3d9")       and { syslinks = {"d3d9"} } or nil,
 
         -- macOS / iOS frameworks
         ["CSF_Appkit"]        = package:is_plat("iphoneos") and { frameworks = {"UIKit"} }
@@ -249,7 +252,7 @@ package("opencascade")
             ExpToCasExe = false
         }
 
-
+        -- TODO clean up below..
         -- first, only add components : programmatic add_components
         for occt_module, condition in pairs(conditional_modules) do
             if condition then
@@ -336,41 +339,22 @@ package("opencascade")
 
     end)
 
-    on_install(function (package)
-
-        local raw_pdb_path = path.join(package:builddir(), "pdb")
-        local pdb_dir = raw_pdb_path:gsub("\\", "/")  -- Force slash normalization
-
-        -- Replace shared library .pdb path
-        io.replace(
-            "adm/cmake/occt_toolkit.cmake",
-            "install (FILES  ${CMAKE_BINARY_DIR}/${OS_WITH_BIT}/${COMPILER}/bin\\${OCCT_INSTALL_BIN_LETTER}",
-            "install (FILES  ${CMAKE_SOURCE_DIR}/" .. pdb_dir,
-            {plain = true}
-        )
-
-        -- Replace static library .pdb path
-        io.replace(
-            "adm/cmake/occt_toolkit.cmake",
-            "install (FILES  ${CMAKE_BINARY_DIR}/${OS_WITH_BIT}/${COMPILER}/lib\\${OCCT_INSTALL_BIN_LETTER}",
-            "install (FILES  ${CMAKE_SOURCE_DIR}/" .. pdb_dir,
-            {plain = true}
-        )
-
+    on_install("windows", "macosx", "linux", function (package)
 
         local configs = {}
 
         if package:version():lt("7.9.0") then
             table.insert(configs, "-DCMAKE_POLICY_VERSION_MINIMUM=3.5") -- CMake 4 support
         end
-        
-        table.insert(configs, "-DCMAKE_POLICY_DEFAULT_CMP0042=NEW") -- Relocatable shared libs on Macos
-
-        table.insert(configs, "-DBUILD_LIBRARY_TYPE=" .. (package:config("shared") and "Shared" or "Static"))
 
         if package:version():ge("7.8.0") then
             table.insert(configs, "-DBUILD_CPP_STANDARD=C++" .. package:config("cxx_standard"))
         end
+
+        table.insert(configs, "-DCMAKE_POLICY_DEFAULT_CMP0042=NEW") 
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))        
+
+        table.insert(configs, "-DBUILD_LIBRARY_TYPE=" .. (package:config("shared") and "Shared" or "Static"))
 
         if package:is_debug() then
             table.insert(configs, "-DBUILD_WITH_DEBUG=" .. (package:config("extended_debug_messages") and "ON" or "OFF"))
@@ -385,7 +369,6 @@ package("opencascade")
             table.insert(configs, "-DUSE_GLX=OFF")
         end
 
-        
         table.insert(configs, "-DINSTALL_SAMPLES=OFF")
         table.insert(configs, "-DINSTALL_TEST_CASES=OFF")
 
@@ -401,14 +384,14 @@ package("opencascade")
         table.insert(configs, "-DBUILD_RESOURCES=OFF")
         table.insert(configs, "-DBUILD_USE_PCH=OFF")
         table.insert(configs, "-DBUILD_USE_VCPKG=OFF")
+        table.insert(configs, "-DBUILD_YACCLEX=OFF")
         table.insert(configs, "-DBUILD_Inspector=OFF")
         table.insert(configs, "-DBUILD_ENABLE_FPE_SIGNAL_HANDLER=OFF")
         table.insert(configs, "-DBUILD_DOC_Overview=OFF")
         table.insert(configs, "-DBUILD_SAMPLES_QT=OFF")
         table.insert(configs, "-DBUILD_RELEASE_DISABLE_EXCEPTIONS=ON")
 
-
-         -- enable/disable occt modules
+        -- enable/disable occt modules
         table.insert(configs, "-DBUILD_MODULE_FoundationClasses=" .. (package:config("foundation_classes") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_MODULE_ModelingData=" .. (package:config("modeling_data") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_MODULE_ModelingAlgorithms=" .. (package:config("modeling_algorithms") and "ON" or "OFF"))
@@ -423,21 +406,17 @@ package("opencascade")
         table.insert(configs, "-DBUILD_MODULE_Draw=" .. (package:config("draw") and "ON" or "OFF"))
         
         table.insert(configs, "-DUSE_TBB=" .. (package:config("tbb") and "ON" or "OFF"))
-        
-
         table.insert(configs, "-DUSE_FREEIMAGE=" .. (package:config("freeimage") and "ON" or "OFF"))    
         table.insert(configs, "-DUSE_FFMPEG=" .. (package:config("ffmpeg") and "ON" or "OFF"))          
         table.insert(configs, "-DUSE_VTK=" .. (package:config("vtk") and "ON" or "OFF"))          
+        table.insert(configs, "-DUSE_OPENGL=" .. (package:config("opengl") and "ON" or "OFF"))
+        table.insert(configs, "-DUSE_OPENVR=" .. (package:config("openvr") and "ON" or "OFF"))
+        table.insert(configs, "-DUSE_GLES2=" .. (package:config("gles2") and "ON" or "OFF"))            
+        table.insert(configs, "-DUSE_DRACO=" .. (package:config("draco") and "ON" or "OFF"))
+        table.insert(configs, "-DUSE_TK=" .. (package:config("tk") and "ON" or "OFF"))
 
         if package:version():ge("7.6.0") then
             table.insert(configs, "-DUSE_FREETYPE=" .. (package:config("freetype") and "ON" or "OFF"))
-            table.insert(configs, "-DUSE_OPENGL=" .. (package:config("opengl") and "ON" or "OFF"))
-            table.insert(configs, "-DUSE_OPENVR=" .. (package:config("openvr") and "ON" or "OFF"))
-            table.insert(configs, "-DUSE_GLES2=" .. (package:config("gles2") and "ON" or "OFF"))            
-            table.insert(configs, "-DUSE_DRACO=" .. (package:config("draco") and "ON" or "OFF"))
-            table.insert(configs, "-DUSE_TK=" .. (package:config("tk") and "ON" or "OFF"))              
-
-
         end
 
         local cmakelists = "CMakeLists.txt"
@@ -446,6 +425,7 @@ package("opencascade")
         -- patches and dir injections
         local inc_dirs = {}
         local link_dirs = {}
+        local definitions = {}
 
         if package:config("tbb") then             
 
@@ -460,8 +440,6 @@ package("opencascade")
                 "set (CSF_TBB \"".. tbb_libs .. "\")",
                 {plain = true}
             )
-
-            print("------set (CSF_TBB \"".. tbb_libs .. "\")")
 
         end
 
@@ -479,9 +457,6 @@ package("opencascade")
                 {plain = true}
             )
 
-            print("------set (CSF_FREETYPE \"" .. freetype_libs .. "\")")
-
-
         end
 
         if package:config("freeimage") then
@@ -497,9 +472,6 @@ package("opencascade")
                 "set (CSF_FreeImagePlus \"".. freeimage_libs .. "\")",
                 {plain = true}
             )
-
-            print("------set (CSF_FreeImagePlus \"".. freeimage_libs .. "\")")
-
         end
 
         if package:config("ffmpeg") then
@@ -526,10 +498,10 @@ package("opencascade")
             local openvr_inc_dir = path.join(dep_openvr:installdir("include"), "openvr"):gsub("\\", "/")
             table.insert(configs, "-D3RDPARTY_OPENVR_INCLUDE_DIR=" .. openvr_inc_dir)
 
-            -- Handle openvr links, defaulting for Windows 64-bit if undefined
+            -- Handle openvr links. get links fails here as well..
             local openvr_libs = dep_openvr:get("links")
             if not openvr_libs then
-                if package:is_targetos("windows") and package:is_targetarch("x64", "x86_64", "amd64") then
+                if package:is_targetos("windows", "mingw") and package:is_targetarch("x64", "x86_64", "amd64") then
                     openvr_libs = {"openvr_api64"}
                 else
                     openvr_libs = {"openvr_api"}
@@ -542,14 +514,18 @@ package("opencascade")
                 "set (CSF_OpenVR \"" .. table.concat(openvr_libs, " ") .. "\")",
                 {plain = true}
             )
-
-            print("------set (CSF_OpenVR \"" .. table.concat(openvr_libs, " ") .. "\")")
         end
 
         if package:config("rapidjson") then
             local dep_rapidjson = package:dep("rapidjson")
             table.insert(configs, "-D3RDPARTY_RAPIDJSON_DIR=" .. dep_rapidjson:installdir():gsub("\\", "/"))            
         end
+
+        if package:config("vtk") then
+            local dep_vtk = package:dep("vtk")
+            table.insert(configs, "-D3RDPARTY_VTK_DIR=" .. dep_vtk:installdir():gsub("\\", "/"))            
+        end
+
 
         if package:config("draco") then
 
@@ -567,28 +543,93 @@ package("opencascade")
 
         end
 
+        -- remove defs/flags that would be injected from xmake.
+        local occt_defs_cmake = "adm/cmake/occt_defs_flags.cmake"
+        io.replace(occt_defs_cmake, "-fPIC", "", {plain = true})
+        io.replace(occt_defs_cmake, "-stdlib=libc++", "", {plain = true})
+        io.replace(
+            occt_csf_cmake_file,
+            "set (CSF_ThreadLibs \"pthread rt stdc++\")",
+            "set (CSF_ThreadLibs \"pthread rt\")",
+            {plain = true}
+        )
+        if package:version():lt("7.9.0") then
+            io.replace(occt_defs_cmake, "-std=c++0x", "", {plain = true})
+            io.replace(occt_defs_cmake, "-std=gnu++0x", "", {plain = true})
+        end
+
+        -- remove install dir postfix [TODO: check for previos versions compability]
+        io.replace(
+            "adm/cmake/occt_macros.cmake",
+            'set (OCCT_INSTALL_BIN_LETTER \\"d\\")',
+            'set (OCCT_INSTALL_BIN_LETTER \\"\\")',
+            {plain = true}
+        )
+
+        -- fix patch for disabling pdb installs.
+        io.replace(
+            "adm/cmake/occt_toolkit.cmake",
+            "install (FILES  ${CMAKE_BINARY_DIR}/${OS_WITH_BIT}/${COMPILER}/bin\\${OCCT_INSTALL_BIN_LETTER}/${PROJECT_NAME}.pdb",
+            "set(no_op_install_fix",
+            {plain = true}
+        )
+
+        io.replace(
+            "adm/cmake/occt_toolkit.cmake",
+            "install (FILES  ${CMAKE_BINARY_DIR}/${OS_WITH_BIT}/${COMPILER}/lib\\${OCCT_INSTALL_BIN_LETTER}/${PROJECT_NAME}.pdb",
+            "set(no_op_install_fix",
+            {plain = true}
+        )
+
+        -- remove pragma links on source files on version 7.6
+        if package:version():lt("7.6.0") then
+            io.replace(
+                "src/Font/Font_FontMgr.cxx",
+                "#pragma comment (lib, \"freetype.lib\")", "", {plain = true})
+            
+            io.replace(
+                "src/Draw/Draw.cxx",
+                [[#pragma comment (lib, "tcl" STRINGIZE2(TCL_MAJOR_VERSION) STRINGIZE2(TCL_MINOR_VERSION) ".lib")
+#pragma comment (lib, "tk"  STRINGIZE2(TCL_MAJOR_VERSION) STRINGIZE2(TCL_MINOR_VERSION) ".lib")]], 
+                "", {plain = true})
+        end
 
         import("package.tools.cmake").install(package, configs)
-
 
     end)
 
     on_test(function (package)
       
-        assert(package:check_cxxsnippets({test = [[
-           // #include <BRepBuilderAPI_MakeEdge.hxx>
-           // #include <TopoDS_Edge.hxx>
-           // #include <GC_MakeCircle.hxx>
-           // #include <gce_MakeCirc.hxx>
-           // #include <gp_Circ.hxx>
-           //
-           // #include <iostream>
+        if package:config("foundation_classes") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <Standard_Type.hxx>     // foundation tkernel
+                #include <gp_Pnt.hxx>             // foundation tmath
 
-            int main() {
-           //     gp_Pnt pc(0, 0, 0);
-           //     gp_Circ cir = gce_MakeCirc(pc, gp::DZ(), 5);
-           //     auto geometry = GC_MakeCircle(cir).Value();
-           //     TopoDS_Edge edge = BRepBuilderAPI_MakeEdge(geometry);
-            }
-        ]]}, {configs = {languages = "c++17"}}))
+                int main() {
+                    Standard_Integer a = 42;
+                    gp_Pnt p(1.0, 2.0, 3.0);
+                    return (a == 42 && p.X() == 1.0) ? 0 : 1;
+                }
+            ]]}, {configs = {languages = "c++17"}}))
+        elseif package:config("modeling_algorithms") then
+            assert(package:check_cxxsnippets({test = [[
+             #include <BRepBuilderAPI_MakeEdge.hxx>
+             #include <TopoDS_Edge.hxx>
+             #include <GC_MakeCircle.hxx>
+             #include <gce_MakeCirc.hxx>
+             #include <gp_Circ.hxx>
+            
+             #include <iostream>
+
+                int main() {
+                 gp_Pnt pc(0, 0, 0);
+                 gp_Circ cir = gce_MakeCirc(pc, gp::DZ(), 5);
+                 auto geometry = GC_MakeCircle(cir).Value();
+                 TopoDS_Edge edge = BRepBuilderAPI_MakeEdge(geometry);
+                }
+            ]]}, {configs = {languages = "c++17"}}))
+        else
+            print("TODO add more tests to cover all components...")
+
+        end
     end)
