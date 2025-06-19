@@ -4,7 +4,7 @@ package("breeze-js")
 
     add_urls("https://github.com/breeze-shell/breeze-js.git")
 
-    add_versions("2025.06.17", "2554627c83e358decc77e2f91c4f4d396a669d2b")
+    add_versions("2025.06.17", "606d74375cdb957ad0b0aa031840e18084eb8e8d")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
