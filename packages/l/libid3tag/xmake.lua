@@ -8,6 +8,7 @@ package("libid3tag")
 
     add_versions("0.16.3", "0561009778513a95d91dac33cee8418d6622f710450a7cb56a74636d53b588cb")
 
+    add_deps("cmake")
     add_deps("zlib")
 
     on_install(function (package)
