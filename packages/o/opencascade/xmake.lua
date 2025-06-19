@@ -430,7 +430,7 @@ package("opencascade")
         if package:config("tbb") then             
 
             local dep_tbb = package:dep("tbb")
-            table.insert(configs, "-D3RDPARTY_TBB_DIR=" .. dep_tbb:installdir():gsub("\\", "/"))
+            table.insert(configs, "-D3RDPARTY_TBB_DIR=" .. path.unix(dep_tbb:installdir()))
 
             local tbb_libs = table.concat(dep_tbb:get("links") or {"tbb", "tbbmalloc", "tbbmalloc_proxy"}, " ")
 
@@ -446,7 +446,7 @@ package("opencascade")
         if package:config("freetype") then
             -- patches
             local dep_freetype = package:dep("freetype")
-            table.insert(configs, "-D3RDPARTY_FREETYPE_DIR=" .. dep_freetype:installdir():gsub("\\", "/"))
+            table.insert(configs, "-D3RDPARTY_FREETYPE_DIR=" .. path.unix(dep_freetype:installdir()))
 
             local freetype_libs = table.concat(dep_freetype:get("links") or {"freetype"}, " ")
 
@@ -462,7 +462,7 @@ package("opencascade")
         if package:config("freeimage") then
 
             local dep_freeimage = package:dep("freeimage")
-            table.insert(configs, "-D3RDPARTY_FREEIMAGE_DIR=" .. dep_freeimage:installdir():gsub("\\", "/"))
+            table.insert(configs, "-D3RDPARTY_FREEIMAGE_DIR=" .. path.unix(dep_freeimage:installdir()))
 
             -- freeimage get links somehow fails
             local freeimage_libs = table.concat(dep_freeimage:get("links") or {"freeimage"}, " ")
@@ -477,7 +477,7 @@ package("opencascade")
         if package:config("ffmpeg") then
 
             local dep_ffmpeg = package:dep("ffmpeg")
-            table.insert(configs, "-D3RDPARTY_FFMPEG_DIR=" .. dep_ffmpeg:installdir():gsub("\\", "/"))
+            table.insert(configs, "-D3RDPARTY_FFMPEG_DIR=" .. path.unix(dep_ffmpeg:installdir()))
 
             local ffmpeg_libs = dep_ffmpeg:get("links")
 
@@ -492,10 +492,10 @@ package("opencascade")
         if package:config("openvr") then
 
             local dep_openvr = package:dep("openvr")
-            table.insert(configs, "-D3RDPARTY_OPENVR_DIR=" .. dep_openvr:installdir():gsub("\\", "/"))
+            table.insert(configs, "-D3RDPARTY_OPENVR_DIR=" .. path.unix(dep_openvr:installdir()))
 
             -- occt expects openvr.h as #include <openvr.h>
-            local openvr_inc_dir = path.join(dep_openvr:installdir("include"), "openvr"):gsub("\\", "/")
+            local openvr_inc_dir = path.join(path.unix(dep_openvr:installdir("include")), "openvr")
             table.insert(configs, "-D3RDPARTY_OPENVR_INCLUDE_DIR=" .. openvr_inc_dir)
 
             -- Handle openvr links. get links fails here as well..
@@ -518,19 +518,19 @@ package("opencascade")
 
         if package:config("rapidjson") then
             local dep_rapidjson = package:dep("rapidjson")
-            table.insert(configs, "-D3RDPARTY_RAPIDJSON_DIR=" .. dep_rapidjson:installdir():gsub("\\", "/"))            
+            table.insert(configs, "-D3RDPARTY_RAPIDJSON_DIR=" .. path.unix(dep_rapidjson:installdir()))
         end
 
         if package:config("vtk") then
             local dep_vtk = package:dep("vtk")
-            table.insert(configs, "-D3RDPARTY_VTK_DIR=" .. dep_vtk:installdir():gsub("\\", "/"))            
+            table.insert(configs, "-D3RDPARTY_VTK_DIR=" .. path.unix(dep_vtk:installdir()))
         end
 
 
         if package:config("draco") then
 
             local dep_draco = package:dep("draco")
-            table.insert(configs, "-D3RDPARTY_DRACO_DIR=" .. dep_draco:installdir():gsub("\\", "/"))
+            table.insert(configs, "-D3RDPARTY_DRACO_DIR=" .. path.unix(dep_draco:installdir()))
 
             -- draco get links fails as well
             local draco_libs = table.concat(dep_draco:get("links") or {"draco"}, " ")
