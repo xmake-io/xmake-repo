@@ -7,7 +7,7 @@ package("nodejs")
     includes(path.join(os.scriptdir(), "nodejs-versions.lua"))
     add_nodejs_versions()
 
-    on_install("windows","linux","osx", function(package)
+    on_install("windows", "linux", "macosx", function(package)
         local extracted_files = os.files("*")
         if #extracted_files == 1 and os.isdir(extracted_files[1]) then
             os.cp(path.join(extracted_files[1], "*"), package:installdir())
