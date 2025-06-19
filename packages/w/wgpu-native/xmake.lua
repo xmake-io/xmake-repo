@@ -81,7 +81,7 @@ package("wgpu-native")
     on_load("macosx", function (package)
         if not package:config("shared") then
             package:add("syslinks", "objc")
-            package:add("frameworks", "Metal", "QuartzCore")
+            package:add("frameworks", "Metal", "QuartzCore", "Foundation")
         end
     end)
 
