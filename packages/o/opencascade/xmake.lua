@@ -12,12 +12,12 @@ package("opencascade")
     
     -- Core OCCT modules
     add_configs("foundation_classes",     {description = "Build Foundation Classes module.",         default = true,  type = "boolean", readonly = true})
-    add_configs("modeling_data",          {description = "Build Modeling Data module.",              default = false,  type = "boolean"})
-    add_configs("modeling_algorithms",    {description = "Build Modeling Algorithms module.",        default = false,  type = "boolean"})
-    add_configs("visualization",          {description = "Build Visualization module.",              default = false,  type = "boolean"})
-    add_configs("application_framework",  {description = "Build Application Framework module.",      default = false,  type = "boolean"})
-    add_configs("data_exchange",          {description = "Build Data Exchange module.",              default = false,  type = "boolean"})
-    add_configs("de_tools",               {description = "Build Data Exchange Tools module.",        default = false,  type = "boolean"})
+    add_configs("modeling_data",          {description = "Build Modeling Data module.",              default = true,  type = "boolean"})
+    add_configs("modeling_algorithms",    {description = "Build Modeling Algorithms module.",        default = true,  type = "boolean"})
+    add_configs("visualization",          {description = "Build Visualization module.",              default = true,  type = "boolean"})
+    add_configs("application_framework",  {description = "Build Application Framework module.",      default = true,  type = "boolean"})
+    add_configs("data_exchange",          {description = "Build Data Exchange module.",              default = true,  type = "boolean"})
+    add_configs("de_tools",               {description = "Build Data Exchange Tools module.",        default = true,  type = "boolean"})
     -- currently not supported.
     add_configs("draw",                   {description = "Build DRAW Test Harness and related modules.", default = false, type = "boolean", readonly = true})
     
@@ -340,10 +340,6 @@ package("opencascade")
     on_install("windows", "macosx", "linux", function (package)
 
         local configs = {}
-
-        if package:version():lt("7.9.0") then
-            table.insert(configs, "-DCMAKE_POLICY_VERSION_MINIMUM=3.5") -- CMake 4 support
-        end
 
         if package:version():ge("7.8.0") then
             table.insert(configs, "-DBUILD_CPP_STANDARD=C++" .. package:config("cxx_standard"))
