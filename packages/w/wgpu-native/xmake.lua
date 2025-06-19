@@ -38,7 +38,7 @@ package("wgpu-native")
     elseif is_plat("linux") and is_arch("arm64") then
         add_urls("https://github.com/gfx-rs/wgpu-native/releases/download/$(version).zip", {version = function(version)
             local arch = version:ge("v24.0.0+1") and "aarch64" or "x86_64"
-            return version:gsub("%+", ".") .. "/wgpu-windows-" .. arch .. "-release"
+            return version:gsub("%+", ".") .. "/wgpu-linux-" .. arch .. "-release"
         end})
         add_versions("v25.0.2+1", "ab048ddfcd0274d09c62db793b7dde39f1e8dc8a1135ecfbe2fe102f5cfa9943")
         add_versions("v24.0.0+1", "430007015d6d6560bebf676236a315ccd46a740e628e6b4d777c349edcfdd329")
