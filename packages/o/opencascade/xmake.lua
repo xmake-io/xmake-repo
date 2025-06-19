@@ -19,7 +19,7 @@ package("opencascade")
     add_configs("data_exchange",          {description = "Build Data Exchange module.",              default = true,  type = "boolean"})
     add_configs("de_tools",               {description = "Build Data Exchange Tools module.",        default = true,  type = "boolean"})
     -- currently not supported.
-    add_configs("draw",                   {description = "Build DRAW Test Harness and related modules.", default = false, type = "boolean"})
+    add_configs("draw",                   {description = "Build DRAW Test Harness and related modules.", default = false, type = "boolean", readonly = true})
     
     add_configs("draco",                    {description = "Build with Draco support.",                       default = false, type = "boolean"})
     add_configs("d3d9",                     {description = "Build with D3D9 support.",                        default = false, type = "boolean"})
@@ -35,8 +35,6 @@ package("opencascade")
     add_configs("tk",                       {description = "Build with TK support for DRAW.",                 default = false, type = "boolean"})
     add_configs("vtk",                      {description = "Build with VTK support.",                         default = false, type = "boolean"})
     add_configs("cxx_standard",             {description = "Select c++ standard to build.",                   default = "11", type = "string", values = {"11", "14", "17", "20", "23"}})
-
-    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"})
 
     on_load(function (package)
 
@@ -352,8 +350,7 @@ package("opencascade")
         end
 
         table.insert(configs, "-DCMAKE_POLICY_DEFAULT_CMP0042=NEW") 
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))        
-
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))      
         table.insert(configs, "-DBUILD_LIBRARY_TYPE=" .. (package:config("shared") and "Shared" or "Static"))
 
         if package:is_debug() then
