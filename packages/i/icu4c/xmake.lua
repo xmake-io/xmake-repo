@@ -121,12 +121,16 @@ package("icu4c")
             "/p:_IsNativeEnvironment=true",
         }
 
-        if not package:is_cross() and not package:is_arch("arm64") then
-            if not package:config("tools") then
-                table.insert(configs, "/target:common,i18n,uconv,io,stubdata")
-            end
+·        if not package:config("tools") then
+            table.insert(configs, "/target:common,i18n,uconv,io,stubdata")
         end
-        msbuild.build(package, configs, {upgrade = projectfiles})
+
+        local envs = msbuild.buildenvs(package)
+        if not package:is_cross() and package:is_arch("arm64") then
+            -- icu msbuild build file always find pkgdata from bin64
+            envs.PATH = path.join(os.curdir(), "bin" .. suffix) .. path.envsep() .. envs.PATH
+        end
+        msbuild.build(package, configs, {upgrade = projectfiles, envs = envs})
 
         os.vcp("include", package:installdir())
         os.vcp("bin" .. suffix .. "/*", package:installdir("bin"))
