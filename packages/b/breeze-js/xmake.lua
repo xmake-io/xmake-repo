@@ -4,7 +4,12 @@ package("breeze-js")
 
     add_urls("https://github.com/breeze-shell/breeze-js.git")
 
-    add_versions("2025.06.17", "606d74375cdb957ad0b0aa031840e18084eb8e8d")
+    add_versions("latest", "master")
+    add_deps("yalantinglibs", {
+        configs = {
+            ssl = true
+        }
+    })
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
@@ -21,9 +26,11 @@ end]], {plain = true})
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <quickjs.h>
+            #include <breeze-js/quickjs.h>
+            #include <breeze-js/script.h>
             void test() {
-                auto runtime = JS_NewRuntime();
+                auto ctx = std::make_shared<breeze::script_context>();
+                ctx->reset_runtime();
             }
-        ]]}, {configs = {languages = "c++20"}}))
+        ]]}, {configs = {languages = "c++23"}}))
     end)
