@@ -9,11 +9,20 @@ package("mallocvis")
 
     if is_plat("windows", "mingw") then
         add_syslinks("dbghelp")
-    elseif is_plat("linux", "bsd") then
+    elseif is_plat("linux") then
         add_syslinks("pthread")
+    elseif is_plat("bsd") then
+        add_syslinks("pthread", "execinfo")
     end
 
-    on_install("!wasm and !macosx and !iphoneos", function (package)
+    on_load(function (package)
+        package:add("defines", "HAS_THREADS=1")
+        if package:is_plat("bsd") then
+            package:add("defines", "MAY_OVERRIDE_MALLOC=0")
+        end
+    end)
+
+    on_install("!android and !wasm and !macosx and !iphoneos", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)
     end)
