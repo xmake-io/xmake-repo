@@ -15,10 +15,6 @@ package("mallocvis")
         add_syslinks("pthread", "execinfo")
     end
 
-    on_load(function (package)
-        package:add("defines", "HAS_THREADS=1")
-    end)
-
     on_install("!android and !wasm and !macosx and !iphoneos", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)
