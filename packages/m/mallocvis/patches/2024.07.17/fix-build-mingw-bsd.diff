@@ -1,5 +1,5 @@
 diff --git a/malloc_hook.cpp b/malloc_hook.cpp
-index 14fae64..39e1a37 100644
+index 14fae64..7b58d69 100644
 --- a/malloc_hook.cpp
 +++ b/malloc_hook.cpp
 @@ -13,6 +13,10 @@
@@ -63,7 +63,7 @@ index 14fae64..39e1a37 100644
  # ifndef MAY_OVERRIDE_MALLOC
  #  define MAY_OVERRIDE_MALLOC 1
  # endif
-@@ -295,6 +323,118 @@ static void *msvc_reallocarray(void *ptr, size_t nmemb, size_t size) noexcept {
+@@ -295,6 +323,117 @@ static void *msvc_reallocarray(void *ptr, size_t nmemb, size_t size) noexcept {
  #endif
  
  #if MAY_OVERRIDE_MALLOC
@@ -177,12 +177,11 @@ index 14fae64..39e1a37 100644
 +    return ret;
 +}
 +# endif
-+#endif
 +#else
  MALLOCVIS_EXPORT extern "C" void *malloc(size_t size) CSTDLIB_NOEXCEPT {
      EnableGuard ena;
      void *ptr = REAL_LIBC(malloc)(size);
-@@ -405,6 +545,7 @@ MALLOCVIS_EXPORT extern "C" int posix_memalign(void **memptr, size_t align,
+@@ -405,6 +544,7 @@ MALLOCVIS_EXPORT extern "C" int posix_memalign(void **memptr, size_t align,
  }
  # endif
  #endif
