@@ -1,18 +1,19 @@
 diff --git a/malloc_hook.cpp b/malloc_hook.cpp
-index 14fae64..90e613c 100644
+index 14fae64..4eaecd6 100644
 --- a/malloc_hook.cpp
 +++ b/malloc_hook.cpp
-@@ -13,6 +13,9 @@
+@@ -13,6 +13,10 @@
  #if __unix__
  # include <sys/mman.h>
  # include <unistd.h>
 +#if defined(__FreeBSD__)
 +# include <pthread_np.h>
++# include <malloc_np.h>
 +#endif
  # define MALLOCVIS_EXPORT
  #elif _WIN32
  # include <windows.h>
-@@ -36,7 +39,9 @@
+@@ -36,7 +40,9 @@
  namespace {
  
  uint32_t get_thread_id() {
@@ -23,12 +24,30 @@ index 14fae64..90e613c 100644
      return gettid();
  #elif _WIN32
      return GetCurrentThreadId();
-@@ -213,7 +218,7 @@ struct EnableGuard {
+@@ -213,7 +219,17 @@ struct EnableGuard {
  
  } // namespace
  
 -#if __GNUC__
 +#if __GNUC__ && !_WIN32
++#if defined(__FreeBSD__)
++extern "C" void* __malloc(size_t size) noexcept;
++extern "C" void __free(void* ptr) noexcept;
++extern "C" void* __calloc(size_t nmemb, size_t size) noexcept;
++extern "C" void* __realloc(void *ptr, size_t size) noexcept;
++extern "C" void *__reallocarray(void *ptr, size_t nmemb,
++                                     size_t size) noexcept;
++extern "C" void *__valloc(size_t size) noexcept;
++extern "C" void *__memalign(size_t align, size_t size) noexcept;
++#else
  extern "C" void *__libc_malloc(size_t size) noexcept;
  extern "C" void __libc_free(void *ptr) noexcept;
  extern "C" void *__libc_calloc(size_t nmemb, size_t size) noexcept;
+@@ -222,6 +238,7 @@ extern "C" void *__libc_reallocarray(void *ptr, size_t nmemb,
+                                      size_t size) noexcept;
+ extern "C" void *__libc_valloc(size_t size) noexcept;
+ extern "C" void *__libc_memalign(size_t align, size_t size) noexcept;
++#endif
+ # define REAL_LIBC(name) __libc_##name
+ # ifndef MAY_OVERRIDE_MALLOC
+ #  define MAY_OVERRIDE_MALLOC 1
