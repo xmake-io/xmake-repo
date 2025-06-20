@@ -52,6 +52,10 @@ package("gperftools")
             package:add("deps", "libunwind")
         end
 
+        if not package:config("shared") then
+            package:add("defines", "PERFTOOLS_DLL_DECL=")
+        end
+
         if package:config("tcmalloc") then
             local libsuffix = package:config("minimal") and "_minimal" or ""
             libsuffix = package:is_debug() and libsuffix .. "_debug" or libsuffix
@@ -61,6 +65,7 @@ package("gperftools")
         if package:config("profiler") then
             package:add("links", "profiler")
         end
+        package:add("links", "stacktrace", "common")
     end)
 
     on_install("windows|!arm64", "macosx", "linux", "mingw", function (package)
