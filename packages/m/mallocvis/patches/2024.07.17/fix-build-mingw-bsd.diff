@@ -1,0 +1,34 @@
+diff --git a/malloc_hook.cpp b/malloc_hook.cpp
+index 14fae64..90e613c 100644
+--- a/malloc_hook.cpp
++++ b/malloc_hook.cpp
+@@ -13,6 +13,9 @@
+ #if __unix__
+ # include <sys/mman.h>
+ # include <unistd.h>
++#if defined(__FreeBSD__)
++# include <pthread_np.h>
++#endif
+ # define MALLOCVIS_EXPORT
+ #elif _WIN32
+ # include <windows.h>
+@@ -36,7 +39,9 @@
+ namespace {
+ 
+ uint32_t get_thread_id() {
+-#if __unix__
++#if defined(__FreeBSD__)
++    return pthread_getthreadid_np();
++#elif __unix__
+     return gettid();
+ #elif _WIN32
+     return GetCurrentThreadId();
+@@ -213,7 +218,7 @@ struct EnableGuard {
+ 
+ } // namespace
+ 
+-#if __GNUC__
++#if __GNUC__ && !_WIN32
+ extern "C" void *__libc_malloc(size_t size) noexcept;
+ extern "C" void __libc_free(void *ptr) noexcept;
+ extern "C" void *__libc_calloc(size_t nmemb, size_t size) noexcept;

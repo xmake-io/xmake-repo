@@ -3,7 +3,9 @@ package("mallocvis")
     set_description("allocation visualization in svg graph")
 
     add_urls("https://github.com/archibate/mallocvis.git")
+    
     add_versions("2024.07.17", "371e8dc21fec00adf2b45d7c7bb1b7cce8ac75ff")
+    add_patches("2024.07.17", "patches/2024.07.17/fix-build-mingw-bsd.diff", "84276afcc85c3b4256b8a2e124300579c7ecd1587a6ae3680cdfc36d94fa7d66")
 
     if is_plat("windows", "mingw") then
         add_syslinks("dbghelp")
@@ -11,17 +13,7 @@ package("mallocvis")
         add_syslinks("pthread")
     end
 
-    on_install("!macosx and !iphoneos", function (package)
-        io.replace("malloc_hook.cpp", "#if __GNUC__", "#if __GNUC__ && !_WIN32", {plain = true})
-        io.replace("malloc_hook.cpp", [[# include <sys/mman.h>]], [[# include <sys/mman.h>
-# if defined(__FreeBSD__)
-#  include <pthread_np.h>
-# endif]], {plain = true})
-        io.replace("malloc_hook.cpp", [[#if __unix__]], [[
-#if defined(__FreeBSD__)
-    return pthread_getthreadid_np();
-#elif __unix__]], {plain = true})
-
+    on_install("!wasm and !macosx and !iphoneos", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)
     end)
