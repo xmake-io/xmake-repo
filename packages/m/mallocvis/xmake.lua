@@ -15,8 +15,13 @@ package("mallocvis")
         io.replace("malloc_hook.cpp", "#if __GNUC__", "#if __GNUC__ && !_WIN32", {plain = true})
         io.replace("malloc_hook.cpp", [[# include <sys/mman.h>]], [[# include <sys/mman.h>
 # if defined(__FreeBSD__)
-#  include <sys/types.h>
+#  include <pthread_np.h>
 # endif]], {plain = true})
+        io.replace("malloc_hook.cpp", [[#if __unix__]], [[
+#if defined(__FreeBSD__)
+    return pthread_getthreadid_np();
+#elif __unix__]], {plain = true})
+
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)
     end)
