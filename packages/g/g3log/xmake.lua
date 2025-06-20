@@ -6,6 +6,7 @@ package("g3log")
     add_urls("https://github.com/KjellKod/g3log/archive/refs/tags/$(version).tar.gz",
              "https://github.com/KjellKod/g3log.git")
 
+    add_versions("2.6", "afd3d3d8de29825de408e1227be72f3bef8a01c2c0180c46271b4da9bb4fa509")
     add_versions("2.4", "a240673f6dda17a8d4d5768b6741534e6863e6c4d786c3678e4fe687eb115902")
     add_versions("2.3", "a27dc3ff0d962cc6e0b4e60890b4904e664b0df16393d27e14c878d7de09b505")
 
