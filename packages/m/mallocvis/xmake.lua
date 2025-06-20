@@ -5,7 +5,7 @@ package("mallocvis")
     add_urls("https://github.com/archibate/mallocvis.git")
     
     add_versions("2024.07.17", "371e8dc21fec00adf2b45d7c7bb1b7cce8ac75ff")
-    add_patches("2024.07.17", "patches/2024.07.17/fix-build-mingw-bsd.diff", "4bab1555046df8bf2e8fef47f8fbbea4c540652e398d7c6944821b4be9644db7")
+    add_patches("2024.07.17", "patches/2024.07.17/fix-build-mingw-bsd.diff", "a62d9a7bd6e30afc7cd1659a251487b781440656533cbc004db9c6b201e2bbb0")
 
     if is_plat("windows", "mingw") then
         add_syslinks("dbghelp")
