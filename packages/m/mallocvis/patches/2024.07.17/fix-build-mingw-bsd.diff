@@ -1,5 +1,5 @@
 diff --git a/malloc_hook.cpp b/malloc_hook.cpp
-index 14fae64..4eaecd6 100644
+index 14fae64..ecedafa 100644
 --- a/malloc_hook.cpp
 +++ b/malloc_hook.cpp
 @@ -13,6 +13,10 @@
@@ -31,10 +31,10 @@ index 14fae64..4eaecd6 100644
 -#if __GNUC__
 +#if __GNUC__ && !_WIN32
 +#if defined(__FreeBSD__)
-+extern "C" void* __malloc(size_t size) noexcept;
-+extern "C" void __free(void* ptr) noexcept;
-+extern "C" void* __calloc(size_t nmemb, size_t size) noexcept;
-+extern "C" void* __realloc(void *ptr, size_t size) noexcept;
++extern "C" void* __malloc(size_t size);
++extern "C" void __free(void* ptr);
++extern "C" void* __calloc(size_t nmemb, size_t size);
++extern "C" void* __realloc(void *ptr, size_t size);
 +extern "C" void *__reallocarray(void *ptr, size_t nmemb,
 +                                     size_t size) noexcept;
 +extern "C" void *__valloc(size_t size) noexcept;
@@ -43,11 +43,16 @@ index 14fae64..4eaecd6 100644
  extern "C" void *__libc_malloc(size_t size) noexcept;
  extern "C" void __libc_free(void *ptr) noexcept;
  extern "C" void *__libc_calloc(size_t nmemb, size_t size) noexcept;
-@@ -222,6 +238,7 @@ extern "C" void *__libc_reallocarray(void *ptr, size_t nmemb,
+@@ -222,7 +238,12 @@ extern "C" void *__libc_reallocarray(void *ptr, size_t nmemb,
                                       size_t size) noexcept;
  extern "C" void *__libc_valloc(size_t size) noexcept;
  extern "C" void *__libc_memalign(size_t align, size_t size) noexcept;
 +#endif
++#if defined(__FreeBSD__)
++# define REAL_LIBC(name) __##name
++#else
  # define REAL_LIBC(name) __libc_##name
++#endif
  # ifndef MAY_OVERRIDE_MALLOC
  #  define MAY_OVERRIDE_MALLOC 1
+ # endif
