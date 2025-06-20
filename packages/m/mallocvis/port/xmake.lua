@@ -14,6 +14,3 @@ target("mallocvis")
         add_rules("utils.symbols.export_all")
     end
     add_defines("HAS_THREADS=1")
-    if is_plat("bsd") then
-        add_defines("MAY_OVERRIDE_MALLOC=0")
-    end

@@ -17,9 +17,6 @@ package("mallocvis")
 
     on_load(function (package)
         package:add("defines", "HAS_THREADS=1")
-        if package:is_plat("bsd") then
-            package:add("defines", "MAY_OVERRIDE_MALLOC=0")
-        end
     end)
 
     on_install("!android and !wasm and !macosx and !iphoneos", function (package)
