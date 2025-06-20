@@ -1,5 +1,5 @@
 diff --git a/malloc_hook.cpp b/malloc_hook.cpp
-index 14fae64..e4f85fb 100644
+index 14fae64..729396b 100644
 --- a/malloc_hook.cpp
 +++ b/malloc_hook.cpp
 @@ -13,6 +13,10 @@
@@ -56,7 +56,7 @@ index 14fae64..e4f85fb 100644
  extern "C" void *__libc_memalign(size_t align, size_t size) noexcept;
 +#endif
 +#if defined(__FreeBSD__)
-+# define REAL_LIBC(name) __##name
++# define REAL_LIBC(name) ##name
 +#else
  # define REAL_LIBC(name) __libc_##name
 +#endif
