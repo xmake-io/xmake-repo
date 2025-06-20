@@ -1,5 +1,5 @@
 diff --git a/malloc_hook.cpp b/malloc_hook.cpp
-index 14fae64..ecedafa 100644
+index 14fae64..cf1561c 100644
 --- a/malloc_hook.cpp
 +++ b/malloc_hook.cpp
 @@ -13,6 +13,10 @@
@@ -24,7 +24,7 @@ index 14fae64..ecedafa 100644
      return gettid();
  #elif _WIN32
      return GetCurrentThreadId();
-@@ -213,7 +219,17 @@ struct EnableGuard {
+@@ -213,7 +219,24 @@ struct EnableGuard {
  
  } // namespace
  
@@ -38,12 +38,19 @@ index 14fae64..ecedafa 100644
 +extern "C" void *__reallocarray(void *ptr, size_t nmemb,
 +                                     size_t size) noexcept;
 +extern "C" void *__valloc(size_t size) noexcept;
-+extern "C" void *__memalign(size_t align, size_t size) noexcept;
++extern "C" void* __memalign(size_t alignment, size_t size) noexcept {
++  void *ret;
++  if (__posix_memalign(&ret, alignment, size) != 0) {
++    return nullptr;
++  } else {
++    return ret;
++  }
++}
 +#else
  extern "C" void *__libc_malloc(size_t size) noexcept;
  extern "C" void __libc_free(void *ptr) noexcept;
  extern "C" void *__libc_calloc(size_t nmemb, size_t size) noexcept;
-@@ -222,7 +238,12 @@ extern "C" void *__libc_reallocarray(void *ptr, size_t nmemb,
+@@ -222,7 +245,12 @@ extern "C" void *__libc_reallocarray(void *ptr, size_t nmemb,
                                       size_t size) noexcept;
  extern "C" void *__libc_valloc(size_t size) noexcept;
  extern "C" void *__libc_memalign(size_t align, size_t size) noexcept;
