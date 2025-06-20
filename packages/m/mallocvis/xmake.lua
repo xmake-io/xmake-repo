@@ -11,7 +11,8 @@ package("mallocvis")
         add_syslinks("pthread")
     end
 
-    on_install(function (package)
+    on_install("!macosx and !iphoneos", function (package)
+        io.replace("malloc_hook.cpp", "#if __GNUC__", "#if __GNUC__ && !_WIN32", {plain = true})
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)
     end)
