@@ -37,10 +37,10 @@ package("opencascade")
     add_configs("cxx_standard",             {description = "Select c++ standard to build.",                   default = "11", type = "string", values = {"11", "14", "17", "20", "23"}})
 
     on_load(function (package)
+        import("core.base.json")
 
         local function config_override_all(configs, value, reason)
             assert(type(configs) == "table", "Expected a table for config keys")
-
             local overridden = {}
 
             for _, name in ipairs(configs) do
@@ -55,6 +55,7 @@ package("opencascade")
                     table.concat(overridden, ", "), tostring(value), reason)
             end
         end
+    
         local function enable_dependent_config(_config, config_depends)
             if package:config(_config) then
                 if not package:config(config_depends) then
@@ -64,22 +65,19 @@ package("opencascade")
                 end
             end
         end
-
         -- unsupported/disabled configs 
         config_override_all({
             "draw",     -- currently not supported. TODO
             "gles2",    -- currently not supported/tested
             "ffmpeg"    -- build failures
         }, false, "Disabled due to current lack of support or known build failures.")
-
         -- Fallthrough BEGIN
         enable_dependent_config("draw", "data_exchange")
         enable_dependent_config("data_exchange", "application_framework")
         enable_dependent_config("application_framework", "visualization")
         enable_dependent_config("visualization", "modeling_algorithms")
         enable_dependent_config("modeling_algorithms", "modeling_data")
-        -- Fallthrough END
-       
+        -- Fallthrough END       
         if package:version():lt("7.7.2") or package:version():gt("7.9.1") then
             config_override_all({"de_tools"}, false, 
             "de_tools module is not relevant to this version of opencascade.")
@@ -133,7 +131,6 @@ package("opencascade")
         if not package:is_debug() then
             config_override_all({"extended_debug_messages"}, false, "Supported only on debug mode.")
         end
- 
 
         local occt_cmake_to_xmake_deps = {
         ["CSF_FREETYPE"]      = package:config("freetype")   and { deps = {"freetype"} } or nil,
@@ -151,8 +148,7 @@ package("opencascade")
         ["CSF_Draco"]         = package:config("draco")      and { deps = {"draco"} } or nil,
         ["CSF_TBB"]           = package:config("tbb")        and { deps = {"tbb"} } or nil,
         ["CSF_VTK"]           = package:config("vtk")        and { deps = {"vtk"} } or nil,
-        ["CSF_MMGR"]          = nil, -- TODO for memory manager support in tkernel
-
+        ["CSF_MMGR"]          = nil,
         -- system libs
         ["CSF_androidlog"]    = package:is_plat("android")   and { syslinks = {"log"} } or nil,
         ["CSF_ThreadLibs"]    = package:is_plat("linux")     and { syslinks = {"pthread", "rt"} } or nil,
@@ -167,7 +163,6 @@ package("opencascade")
         ["CSF_winmm"]         = package:is_plat("windows")   and { syslinks = {"winmm"} } or nil,
         ["CSF_wsock32"]       = package:is_plat("windows")   and { syslinks = {"wsock32"} } or nil,
         ["CSF_d3d9"]          = package:config("d3d9")       and { syslinks = {"d3d9"} } or nil,
-
         -- macOS / iOS frameworks
         ["CSF_Appkit"]        = package:is_plat("iphoneos") and { frameworks = {"UIKit"} }
                             or (package:is_plat("macosx") and { frameworks = {"AppKit"} } or nil),
@@ -175,32 +170,23 @@ package("opencascade")
         ["CSF_objc"]          = package:is_plat("macosx", "iphoneos")   and { syslinks = {"objc"} } or nil,
         }
 
-        for cmake_dep, xmake_dep in pairs(occt_cmake_to_xmake_deps) do
-            if xmake_dep then
-
-                if xmake_dep.syslinks then
-                    for _, syslib in ipairs(xmake_dep.syslinks) do
-                        package:add("syslinks", syslib)
+        local function add_mapped_deps(dep_kind)
+            for cmake_dep, xmake_dep in pairs(occt_cmake_to_xmake_deps) do
+                if xmake_dep then
+                    local deps = xmake_dep[dep_kind]
+                    if deps then
+                        for _, syslib in ipairs(deps) do
+                            package:add(dep_kind, syslib)
+                        end
                     end
                 end
-
-                if xmake_dep.frameworks then
-                    for _, fw in ipairs(xmake_dep.frameworks) do
-                        package:add("frameworks", fw)
-                    end
-                end
-
-                if xmake_dep.deps then
-                    for _, dep in ipairs(xmake_dep.deps) do
-                        package:add("deps", dep)
-                    end
-                end
-
-            end
+            end        
         end
-
-        import("core.base.json")
-
+        -- Fallthrough BEGIN
+        add_mapped_deps("syslinks")
+        add_mapped_deps("frameworks")
+        add_mapped_deps("deps")
+        -- Fallthrough END
         local occt_component_map = {}
         local json_file_name = "opencascade.modules.components." .. package:version() .. ".json"
         local json_file_path = path.join(os.scriptdir(), json_file_name)
@@ -211,7 +197,6 @@ package("opencascade")
         else
             raise("Missing OpenCascade component map: %s\nEnsure the file exists for version %s.", json_file_name, version)
         end
-
         -- based on version 7.9.1. if any version adds new module, please add.
         -- do not remove modules even if the version removes one.
         -- DETools module introduced with v7.7 and removed in upcoming v8
@@ -225,7 +210,6 @@ package("opencascade")
             DETools = "de-tools",
             Draw = "draw"
         }
-
         local conditional_modules = {
             FoundationClasses = package:config("foundation_classes"),
             ModelingData = package:config("modeling_data"),
@@ -236,7 +220,6 @@ package("opencascade")
             DETools = package:config("de_tools"),
             Draw = package:config("draw")
         }
-
         local conditional_toolkits = { 
             TKD3DHost = package:config("d3d9") and package:config("visualization"),
             TKD3DHostTest = package:config("d3d9") and package:config("draw"),
@@ -249,8 +232,6 @@ package("opencascade")
             -- executables that are excluded from components (is there any way to use them as components properly?)
             ExpToCasExe = false
         }
-
-        -- TODO clean up below..
         -- first, only add components : programmatic add_components
         for occt_module, condition in pairs(conditional_modules) do
             if condition then
@@ -267,27 +248,19 @@ package("opencascade")
                 end
             end
         end
-
         -- second, handle component deps, links.. : programmatic on_component
         for occt_module, condition in pairs(conditional_modules) do
             if condition then
                 local module_info = occt_component_map[occt_module]
-                if module_info then
-                    
+                if module_info then                    
                     local module_comp_name = occt_module_to_component_name[occt_module]
                     local module_component = package:component(module_comp_name)
-
-                    for toolkit, toolkit_info in pairs(module_info) do      
-
-                        
-                        if conditional_toolkits[toolkit] ~= false then
-                            
-                            local toolkit_component = package:component(toolkit:lower())
-                            
+                    for toolkit, toolkit_info in pairs(module_info) do                        
+                        if conditional_toolkits[toolkit] ~= false then                            
+                            local toolkit_component = package:component(toolkit:lower())                           
                             -- should we remove this from components?
                             if toolkit_info.syslinks then
                                 for _, cmake_syslib in ipairs(toolkit_info.syslinks) do
-
                                     local dep_info  = occt_cmake_to_xmake_deps[cmake_syslib]
                                     if dep_info and dep_info.syslinks then
                                         for _, syslib in ipairs(dep_info.syslinks) do
@@ -296,12 +269,10 @@ package("opencascade")
                                         end
                                     end
                                 end
-                            end
-                            
+                            end                            
                             -- should we remove this from components?
                             if toolkit_info.frameworks then
                                 for _, cmake_syslib in ipairs(toolkit_info.frameworks) do
-
                                     local dep_info  = occt_cmake_to_xmake_deps[cmake_syslib]
                                     if dep_info and dep_info.frameworks then
                                         for _, framework in ipairs(dep_info.frameworks) do
@@ -316,13 +287,11 @@ package("opencascade")
                             -- skipping here as syslinks and  deps are still globally
                             -- available maybe it is best to remove above syslinks
                             -- per component and rely on package scope.
-
                             if toolkit_info.links then
                                 for _, internal in ipairs(toolkit_info.links) do
                                     toolkit_component:add("links", internal)
                                 end
-                            end
-                            
+                            end                            
                             -- add toolkit itself as links
                             toolkit_component:add("links", toolkit)
                             -- add links to the module component as well
@@ -332,22 +301,18 @@ package("opencascade")
                 end
             end
         end
-
         -- TODO add linkorders
-
     end)
 
     on_install("windows", "macosx", "linux", function (package)
-
         local configs = {}
+        table.insert(configs, "-DCMAKE_POLICY_DEFAULT_CMP0042=NEW") 
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))      
+        table.insert(configs, "-DBUILD_LIBRARY_TYPE=" .. (package:config("shared") and "Shared" or "Static"))
 
         if package:version():ge("7.8.0") then
             table.insert(configs, "-DBUILD_CPP_STANDARD=C++" .. package:config("cxx_standard"))
         end
-
-        table.insert(configs, "-DCMAKE_POLICY_DEFAULT_CMP0042=NEW") 
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))      
-        table.insert(configs, "-DBUILD_LIBRARY_TYPE=" .. (package:config("shared") and "Shared" or "Static"))
 
         if package:is_debug() then
             table.insert(configs, "-DBUILD_WITH_DEBUG=" .. (package:config("extended_debug_messages") and "ON" or "OFF"))
@@ -364,7 +329,6 @@ package("opencascade")
 
         table.insert(configs, "-DINSTALL_SAMPLES=OFF")
         table.insert(configs, "-DINSTALL_TEST_CASES=OFF")
-
         table.insert(configs, "-DINSTALL_DIR_LAYOUT=Unix")
         table.insert(configs, "-DINSTALL_DIR_BIN=bin")
         table.insert(configs, "-DINSTALL_DIR_LIB=lib")
@@ -373,7 +337,6 @@ package("opencascade")
         table.insert(configs, "-DINSTALL_DIR_DATA=res/data")
         table.insert(configs, "-DINSTALL_DIR_SAMPLES=res/samples")
         table.insert(configs, "-DINSTALL_DIR_DOC=res/doc")
-
         table.insert(configs, "-DBUILD_RESOURCES=OFF")
         table.insert(configs, "-DBUILD_USE_PCH=OFF")
         table.insert(configs, "-DBUILD_USE_VCPKG=OFF")
@@ -383,7 +346,6 @@ package("opencascade")
         table.insert(configs, "-DBUILD_DOC_Overview=OFF")
         table.insert(configs, "-DBUILD_SAMPLES_QT=OFF")
         table.insert(configs, "-DBUILD_RELEASE_DISABLE_EXCEPTIONS=ON")
-
         -- enable/disable occt modules
         table.insert(configs, "-DBUILD_MODULE_FoundationClasses=" .. (package:config("foundation_classes") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_MODULE_ModelingData=" .. (package:config("modeling_data") and "ON" or "OFF"))
@@ -391,12 +353,12 @@ package("opencascade")
         table.insert(configs, "-DBUILD_MODULE_Visualization=" .. (package:config("visualization") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_MODULE_ApplicationFramework=" .. (package:config("application_framework") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_MODULE_DataExchange=" .. (package:config("data_exchange") and "ON" or "OFF"))
-        
+        -- currently not supported
+        table.insert(configs, "-DBUILD_MODULE_Draw=" .. (package:config("draw") and "ON" or "OFF"))
+
         if package:version():ge("7.7.2") or package:version():le("7.9.1") then
             table.insert(configs, "-DBUILD_MODULE_DETools=" .. (package:config("de_tools") and "ON" or "OFF"))
         end
-        -- currently not supported
-        table.insert(configs, "-DBUILD_MODULE_Draw=" .. (package:config("draw") and "ON" or "OFF"))
         
         table.insert(configs, "-DUSE_TBB=" .. (package:config("tbb") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_FREEIMAGE=" .. (package:config("freeimage") and "ON" or "OFF"))    
@@ -415,48 +377,33 @@ package("opencascade")
         local cmakelists = "CMakeLists.txt"
         local occt_csf_cmake_file = "adm/cmake/occt_csf.cmake"
 
-        -- patches and dir injections
-        local inc_dirs = {}
-        local link_dirs = {}
-        local definitions = {}
-
-        if package:config("tbb") then             
-
+        if package:config("tbb") then
             local dep_tbb = package:dep("tbb")
             table.insert(configs, "-D3RDPARTY_TBB_DIR=" .. path.unix(dep_tbb:installdir()))
-
             local tbb_libs = table.concat(dep_tbb:get("links") or {"tbb", "tbbmalloc", "tbbmalloc_proxy"}, " ")
-
             io.replace(
                 occt_csf_cmake_file,
                 "set (CSF_TBB \"tbb tbbmalloc\")",
                 "set (CSF_TBB \"".. tbb_libs .. "\")",
                 {plain = true}
             )
-
         end
 
         if package:config("freetype") then
-            -- patches
             local dep_freetype = package:dep("freetype")
             table.insert(configs, "-D3RDPARTY_FREETYPE_DIR=" .. path.unix(dep_freetype:installdir()))
-
             local freetype_libs = table.concat(dep_freetype:get("links") or {"freetype"}, " ")
-
             io.replace(
                 occt_csf_cmake_file,
                 "set (CSF_FREETYPE \"freetype\")",
                 "set (CSF_FREETYPE \"".. freetype_libs .. "\")",
                 {plain = true}
             )
-
         end
 
         if package:config("freeimage") then
-
             local dep_freeimage = package:dep("freeimage")
             table.insert(configs, "-D3RDPARTY_FREEIMAGE_DIR=" .. path.unix(dep_freeimage:installdir()))
-
             -- freeimage get links somehow fails
             local freeimage_libs = table.concat(dep_freeimage:get("links") or {"freeimage"}, " ")
             io.replace(
@@ -468,12 +415,9 @@ package("opencascade")
         end
 
         if package:config("ffmpeg") then
-
             local dep_ffmpeg = package:dep("ffmpeg")
             table.insert(configs, "-D3RDPARTY_FFMPEG_DIR=" .. path.unix(dep_ffmpeg:installdir()))
-
             local ffmpeg_libs = dep_ffmpeg:get("links")
-
             io.replace(
                 occt_csf_cmake_file,
                 "set (CSF_FFmpeg \"avcodec avformat swscale avutil\")",
@@ -483,14 +427,11 @@ package("opencascade")
         end
 
         if package:config("openvr") then
-
             local dep_openvr = package:dep("openvr")
             table.insert(configs, "-D3RDPARTY_OPENVR_DIR=" .. path.unix(dep_openvr:installdir()))
-
             -- occt expects openvr.h as #include <openvr.h>
             local openvr_inc_dir = path.join(path.unix(dep_openvr:installdir("include")), "openvr")
             table.insert(configs, "-D3RDPARTY_OPENVR_INCLUDE_DIR=" .. openvr_inc_dir)
-
             -- Handle openvr links. get links fails here as well..
             local openvr_libs = dep_openvr:get("links")
             if not openvr_libs then
@@ -504,9 +445,7 @@ package("opencascade")
             io.replace(
                 occt_csf_cmake_file,
                 "set (CSF_OpenVR \"openvr_api\")",
-                "set (CSF_OpenVR \"" .. table.concat(openvr_libs, " ") .. "\")",
-                {plain = true}
-            )
+                "set (CSF_OpenVR \"" .. table.concat(openvr_libs, " ") .. "\")", {plain = true})
         end
 
         if package:config("rapidjson") then
@@ -519,12 +458,9 @@ package("opencascade")
             table.insert(configs, "-D3RDPARTY_VTK_DIR=" .. path.unix(dep_vtk:installdir()))
         end
 
-
         if package:config("draco") then
-
             local dep_draco = package:dep("draco")
             table.insert(configs, "-D3RDPARTY_DRACO_DIR=" .. path.unix(dep_draco:installdir()))
-
             -- draco get links fails as well
             local draco_libs = table.concat(dep_draco:get("links") or {"draco"}, " ")
             io.replace(
@@ -533,9 +469,7 @@ package("opencascade")
                 "set (CSF_Draco \"" .. draco_libs .. "\")",
                 {plain = true}
             )
-
         end
-
         -- remove defs/flags that would be injected from xmake.
         local occt_defs_cmake = "adm/cmake/occt_defs_flags.cmake"
         io.replace(occt_defs_cmake, "-fPIC", "", {plain = true})
@@ -544,46 +478,34 @@ package("opencascade")
             occt_csf_cmake_file,
             "set (CSF_ThreadLibs \"pthread rt stdc++\")",
             "set (CSF_ThreadLibs \"pthread rt\")",
-            {plain = true}
-        )
+            {plain = true})
+
         if package:version():lt("7.9.0") then
             io.replace(occt_defs_cmake, "-std=c++0x", "", {plain = true})
             io.replace(occt_defs_cmake, "-std=gnu++0x", "", {plain = true})
         end
-
         -- remove install dir postfix [TODO: check for previos versions compability]
         io.replace(
             "adm/cmake/occt_macros.cmake",
             'set (OCCT_INSTALL_BIN_LETTER \\"d\\")',
-            'set (OCCT_INSTALL_BIN_LETTER \\"\\")',
-            {plain = true}
-        )
-
+            'set (OCCT_INSTALL_BIN_LETTER \\"\\")', {plain = true})
         -- fix patch for disabling pdb installs.
         io.replace(
             "adm/cmake/occt_toolkit.cmake",
             "install (FILES  ${CMAKE_BINARY_DIR}/${OS_WITH_BIT}/${COMPILER}/bin\\${OCCT_INSTALL_BIN_LETTER}/${PROJECT_NAME}.pdb",
-            "set(no_op_install_fix",
-            {plain = true}
-        )
-
+            "set(no_op_install_fix", {plain = true})
         io.replace(
             "adm/cmake/occt_toolkit.cmake",
             "install (FILES  ${CMAKE_BINARY_DIR}/${OS_WITH_BIT}/${COMPILER}/lib\\${OCCT_INSTALL_BIN_LETTER}/${PROJECT_NAME}.pdb",
-            "set(no_op_install_fix",
-            {plain = true}
-        )
-
+            "set(no_op_install_fix", {plain = true})
         io.replace(
             "src/Image/Image_AlienPixMap.cxx",
             "#pragma comment(lib, \"FreeImage.lib\")", "", {plain = true})
-
         -- remove pragma links on source files on version 7.6
         if package:version():lt("7.6.0") then
             io.replace(
                 "src/Font/Font_FontMgr.cxx",
-                "#pragma comment (lib, \"freetype.lib\")", "", {plain = true})
-            
+                "#pragma comment (lib, \"freetype.lib\")", "", {plain = true})            
             io.replace(
                 "src/Draw/Draw.cxx",
                 [[#pragma comment (lib, "tcl" STRINGIZE2(TCL_MAJOR_VERSION) STRINGIZE2(TCL_MINOR_VERSION) ".lib")
@@ -592,11 +514,9 @@ package("opencascade")
         end
 
         import("package.tools.cmake").install(package, configs)
-
     end)
 
-    on_test(function (package)
-      
+    on_test(function (package)      
         if package:config("foundation_classes") then
             assert(package:check_cxxsnippets({test = [[
                 #include <Standard_Type.hxx>     // foundation tkernel
@@ -627,6 +547,5 @@ package("opencascade")
             ]]}, {configs = {languages = "c++17"}}))
         else
             print("TODO add more tests to cover all components...")
-
         end
     end)
