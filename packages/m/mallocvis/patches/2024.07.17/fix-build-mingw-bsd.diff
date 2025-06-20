@@ -1,5 +1,5 @@
 diff --git a/malloc_hook.cpp b/malloc_hook.cpp
-index 14fae64..cf1561c 100644
+index 14fae64..39e1a37 100644
 --- a/malloc_hook.cpp
 +++ b/malloc_hook.cpp
 @@ -13,6 +13,10 @@
@@ -63,3 +63,130 @@ index 14fae64..cf1561c 100644
  # ifndef MAY_OVERRIDE_MALLOC
  #  define MAY_OVERRIDE_MALLOC 1
  # endif
+@@ -295,6 +323,118 @@ static void *msvc_reallocarray(void *ptr, size_t nmemb, size_t size) noexcept {
+ #endif
+ 
+ #if MAY_OVERRIDE_MALLOC
++#if defined(__FreeBSD__)
++MALLOCVIS_EXPORT extern "C" void *malloc(size_t size) {
++    EnableGuard ena;
++    void *ptr = REAL_LIBC(malloc)(size);
++    if (ena) {
++        ena.on(AllocOp::Malloc, ptr, size, kNone, RETURN_ADDRESS);
++    }
++    return ptr;
++}
++
++MALLOCVIS_EXPORT extern "C" void free(void *ptr) {
++    EnableGuard ena;
++    if (ena) {
++        ena.on(AllocOp::Free, ptr, kNone, kNone, RETURN_ADDRESS);
++    }
++    REAL_LIBC(free)(ptr);
++}
++
++MALLOCVIS_EXPORT extern "C" void *calloc(size_t nmemb,
++                                         size_t size) {
++    EnableGuard ena;
++    void *ptr = REAL_LIBC(calloc)(nmemb, size);
++    if (ena) {
++        ena.on(AllocOp::Malloc, ptr, nmemb * size, kNone, RETURN_ADDRESS);
++    }
++    return ptr;
++}
++
++MALLOCVIS_EXPORT extern "C" void *realloc(void *ptr,
++                                          size_t size) {
++    EnableGuard ena;
++    void *new_ptr = REAL_LIBC(realloc)(ptr, size);
++    if (ena) {
++        ena.on(AllocOp::Malloc, new_ptr, size, kNone, RETURN_ADDRESS);
++        if (new_ptr) {
++            ena.on(AllocOp::Free, ptr, kNone, kNone, RETURN_ADDRESS);
++        }
++    }
++    return new_ptr;
++}
++
++MALLOCVIS_EXPORT extern "C" void *reallocarray(void *ptr, size_t nmemb,
++                                               size_t size) {
++    EnableGuard ena;
++    void *new_ptr = REAL_LIBC(reallocarray)(ptr, nmemb, size);
++    if (ena) {
++        ena.on(AllocOp::Malloc, new_ptr, nmemb * size, kNone, RETURN_ADDRESS);
++        if (new_ptr) {
++            ena.on(AllocOp::Free, ptr, kNone, kNone, RETURN_ADDRESS);
++        }
++    }
++    return new_ptr;
++}
++
++# if MAY_SUPPORT_MEMALIGN
++MALLOCVIS_EXPORT extern "C" void *valloc(size_t size) {
++    EnableGuard ena;
++    void *ptr = REAL_LIBC(valloc)(size);
++    if (ena) {
++#  if __unix__
++        size_t pagesize = sysconf(_SC_PAGESIZE);
++#  elif _WIN32
++        SYSTEM_INFO info;
++        info.dwPageSize = kNone;
++        GetSystemInfo(&info);
++        size_t pagesize = info.dwPageSize;
++#  else
++        size_t pagesize = 0;
++#  endif
++        ena.on(AllocOp::Malloc, ptr, size, pagesize, RETURN_ADDRESS);
++    }
++    return ptr;
++}
++
++MALLOCVIS_EXPORT extern "C" void *memalign(size_t align,
++                                           size_t size) {
++    EnableGuard ena;
++    void *ptr = REAL_LIBC(memalign)(align, size);
++    if (ena) {
++        ena.on(AllocOp::Malloc, ptr, size, align, RETURN_ADDRESS);
++    }
++    return ptr;
++}
++
++MALLOCVIS_EXPORT extern "C" void *aligned_alloc(size_t align,
++                                                size_t size) {
++    EnableGuard ena;
++    void *ptr = REAL_LIBC(memalign)(align, size);
++    if (ena) {
++        ena.on(AllocOp::Malloc, ptr, size, align, RETURN_ADDRESS);
++    }
++    return ptr;
++}
++
++MALLOCVIS_EXPORT extern "C" int posix_memalign(void **memptr, size_t align,
++                                               size_t size) {
++    EnableGuard ena;
++    void *ptr = REAL_LIBC(memalign)(align, size);
++    if (ena) {
++        ena.on(AllocOp::Malloc, *memptr, size, align, RETURN_ADDRESS);
++    }
++    int ret = 0;
++    if (!ptr) {
++        ret = errno;
++    } else {
++        *memptr = ptr;
++    }
++    return ret;
++}
++# endif
++#endif
++#else
+ MALLOCVIS_EXPORT extern "C" void *malloc(size_t size) CSTDLIB_NOEXCEPT {
+     EnableGuard ena;
+     void *ptr = REAL_LIBC(malloc)(size);
+@@ -405,6 +545,7 @@ MALLOCVIS_EXPORT extern "C" int posix_memalign(void **memptr, size_t align,
+ }
+ # endif
+ #endif
++#endif
+ 
+ MALLOCVIS_EXPORT void operator delete(void *ptr) noexcept {
+     EnableGuard ena;
