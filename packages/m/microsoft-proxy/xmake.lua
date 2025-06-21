@@ -6,7 +6,8 @@ package("microsoft-proxy")
 
     add_urls("https://github.com/microsoft/proxy/archive/refs/tags/$(version).tar.gz",
              "https://github.com/microsoft/proxy.git")
-
+    
+    add_versions("3.4.0", "ca13bdc2b67a246a22ccda43690345daeb25bc3bb5c2c3ed1f6e4e466e9361aa")
     add_versions("3.3.0", "9a5e89e70082cbdd937e80f5113f4ceb47bf6361cf7b88cb52782906a1b655cc")
     add_versions("3.2.1", "83df61c6ef762df14b4f803a1dde76c6e96261ac7f821976478354c0cc2417a8")
     add_versions("3.2.0", "a828432a43a1e05c65176e58b48a6d6270669862adb437a069693f346275b5f0")
@@ -39,9 +40,20 @@ package("microsoft-proxy")
     end
 
     on_install(function (package)
-        os.cp("proxy.h", package:installdir("include"))
+
+        if package:version():le("3.3.0") then
+            os.cp("proxy.h", package:installdir("include"))
+        else
+            -- version > 3.3.0, copy the entire 'repo/include' folder into 'include'
+            -- for downstream cmake compability.
+            os.cp("include/*", package:installdir("include"))
+        end
     end)
 
     on_test(function (package)
-        assert(package:has_cxxincludes("proxy.h", {configs = {languages = "c++20"}}))
+        if package:version():le("3.3.0") then
+            assert(package:has_cxxincludes("proxy.h", {configs = {languages = "c++20"}}))
+        else
+            assert(package:has_cxxincludes("proxy/proxy.h", {configs = {languages = "c++20"}}))
+        end
     end)
