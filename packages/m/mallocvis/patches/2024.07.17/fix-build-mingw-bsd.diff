@@ -1,0 +1,70 @@
+diff --git a/malloc_hook.cpp b/malloc_hook.cpp
+index 14fae64..7de77d1 100644
+--- a/malloc_hook.cpp
++++ b/malloc_hook.cpp
+@@ -13,6 +13,10 @@
+ #if __unix__
+ # include <sys/mman.h>
+ # include <unistd.h>
++#if defined(__FreeBSD__)
++# include <pthread_np.h>
++# include <malloc_np.h>
++#endif
+ # define MALLOCVIS_EXPORT
+ #elif _WIN32
+ # include <windows.h>
+@@ -36,7 +40,9 @@
+ namespace {
+ 
+ uint32_t get_thread_id() {
+-#if __unix__
++#if defined(__FreeBSD__)
++    return pthread_getthreadid_np();
++#elif __unix__
+     return gettid();
+ #elif _WIN32
+     return GetCurrentThreadId();
+@@ -213,7 +219,17 @@ struct EnableGuard {
+ 
+ } // namespace
+ 
+-#if __GNUC__
++#if __GNUC__ && !_WIN32
++#if defined(__FreeBSD__)
++extern "C" void* malloc(size_t size);
++extern "C" void free(void* ptr);
++extern "C" void* calloc(size_t nmemb, size_t size);
++extern "C" void* realloc(void *ptr, size_t size);
++extern "C" void * reallocarray(void *ptr, size_t nmemb,
++                                     size_t size);
++extern "C" void * valloc(size_t size);
++extern "C" void* memalign(size_t alignment, size_t size);
++#else
+ extern "C" void *__libc_malloc(size_t size) noexcept;
+ extern "C" void __libc_free(void *ptr) noexcept;
+ extern "C" void *__libc_calloc(size_t nmemb, size_t size) noexcept;
+@@ -222,7 +238,12 @@ extern "C" void *__libc_reallocarray(void *ptr, size_t nmemb,
+                                      size_t size) noexcept;
+ extern "C" void *__libc_valloc(size_t size) noexcept;
+ extern "C" void *__libc_memalign(size_t align, size_t size) noexcept;
++#endif
++#if defined(__FreeBSD__)
++# define REAL_LIBC(name) name
++#else
+ # define REAL_LIBC(name) __libc_##name
++#endif
+ # ifndef MAY_OVERRIDE_MALLOC
+ #  define MAY_OVERRIDE_MALLOC 1
+ # endif
+@@ -246,7 +267,11 @@ extern "C" void *__libc_memalign(size_t align, size_t size) noexcept;
+ #  define RETURN_ADDRESS ((void *)0)
+ #  pragma message("Cannot find __builtin_return_address")
+ # endif
++#if defined(__FreeBSD__)
++# define CSTDLIB_NOEXCEPT
++#else
+ # define CSTDLIB_NOEXCEPT noexcept
++#endif
+ #elif _MSC_VER
+ static void *msvc_malloc(size_t size) noexcept {
+     return HeapAlloc(GetProcessHeap(), 0, size);
