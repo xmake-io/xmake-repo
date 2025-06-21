@@ -1,6 +1,6 @@
 package("hwinfo")
     set_homepage("https://github.com/lfreist/hwinfo")
-    set_description("Cross-platform C++ hardware/OS information library")
+    set_description("Cross platform C++ library for hardware information (CPU, RAM, GPU, ...)")
     set_license("MIT")
 
     add_urls("https://github.com/lfreist/hwinfo.git")
@@ -17,6 +17,8 @@ package("hwinfo")
     else
         add_syslinks("pthread", "dl")
     end
+
+    add_deps("cmake")
 
     on_install(function (package)
         local configs = {
