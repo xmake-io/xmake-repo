@@ -33,6 +33,7 @@ package("hwinfo")
             "-DHWINFO_SHARED=" .. (package:config("shared") and "ON" or "OFF"),
             "-DHWINFO_STATIC=" .. (package:config("shared") and "OFF" or "ON"),
             "-DHWINFO_GPU_OPENCL=" .. (package:config("gpu_opencl") and "ON" or "OFF"),
+            "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
             "-DBUILD_EXAMPLES=OFF",
             "-DBUILD_TESTING=OFF"
         }
