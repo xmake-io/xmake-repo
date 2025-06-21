@@ -20,6 +20,14 @@ package("hwinfo")
 
     add_deps("cmake")
 
+    on_check(function (package)
+        assert(not (package:is_plat("mingw")), "hwinfo not support mingw")
+        assert(not (package:is_plat("wasm")), "hwinfo not support wasm")
+        assert(not (package:is_plat("android")), "hwinfo not support android")
+        assert(not (package:is_plat("iphoneos")), "hwinfo not support iphoneos")
+        assert(not (package:is_plat("bsd")), "hwinfo not support bsd")
+    end)
+
     on_install(function (package)
         local configs = {
             "-DHWINFO_SHARED=" .. (package:config("shared") and "ON" or "OFF"),
