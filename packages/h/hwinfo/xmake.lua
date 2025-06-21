@@ -12,10 +12,8 @@ package("hwinfo")
     end
     add_configs("gpu_opencl", {description = "Enable OpenCL support", default = false, type = "boolean"})
 
-    if is_plat("windows") then
-        add_syslinks("setupapi", "powrprof", "cfgmgr32", "dxgi")
-    else
-        add_syslinks("pthread", "dl")
+    if is_plat("linux", "cross") then
+            add_syslinks("pthread", "dl")
     end
 
     add_deps("cmake")
@@ -23,19 +21,18 @@ package("hwinfo")
     on_check(function (package)
         assert(not (package:is_plat("mingw")), "hwinfo not support mingw")
         assert(not (package:is_plat("wasm")), "hwinfo not support wasm")
-        assert(not (package:is_plat("android")), "hwinfo not support android")
-        assert(not (package:is_plat("iphoneos")), "hwinfo not support iphoneos")
-        assert(not (package:is_plat("bsd")), "hwinfo not support bsd")
+
     end)
 
-    on_install(function (package)
-        local configs = {
-            "-DHWINFO_SHARED=" .. (package:config("shared") and "ON" or "OFF"),
-            "-DHWINFO_STATIC=" .. (package:config("shared") and "OFF" or "ON"),
-            "-DHWINFO_GPU_OPENCL=" .. (package:config("gpu_opencl") and "ON" or "OFF"),
-            "-DBUILD_EXAMPLES=OFF",
-            "-DBUILD_TESTING=OFF"
-        }
+    on_install("windows", "linux", "macosx", function (package)
+        local configs = {"-DBUILD_TESTING=OFF"}
+        
+        table.insert(configs, "-DHWINFO_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DHWINFO_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
+        table.insert(configs, "-DHWINFO_GPU_OPENCL=" .. (package:config("gpu_opencl") and "ON" or "OFF"))
+        table.insert(configs, "-DBUILD_EXAMPLES=OFF")
+        table.insert(configs, "-DBUILD_TESTING=OFF")
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         local comps = {"OS","MAINBOARD","CPU","DISK","RAM","GPU","BATTERY","NETWORK"}
         for _, c in ipairs(comps) do
             table.insert(configs, "-DHWINFO_"..c.."=" .. (package:config(c:lower()) and "ON" or "OFF"))
@@ -47,7 +44,7 @@ package("hwinfo")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("hwinfo::CPU", {
+        assert(package:check_cxxsnippets("hwinfo::CPU", {
             includes = {"hwinfo/hwinfo.h"},
             configs  = {languages = "c++20"}
         }))
