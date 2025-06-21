@@ -48,7 +48,7 @@ package("cuda")
         package:setenv("CUDA_PATH", ".")
     end)
 
-    on_install("@windows|x64", "@linux|x86_64", function(package)
+    on_install("windows|x64", function(package)
         import("lib.detect.find_tool")
         import("lib.detect.find_directory")
 
