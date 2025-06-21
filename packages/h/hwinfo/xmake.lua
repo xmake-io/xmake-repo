@@ -44,9 +44,17 @@ package("hwinfo")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets("hwinfo::CPU", {
-            includes = {"hwinfo/hwinfo.h"},
-            configs  = {languages = "c++20"}
+        assert(package:check_cxxsnippets({test = [[
+                #include <iostream>
+                
+                int main(){
+                    const auto cpus = hwinfo::getAllCPUs();
+                    for(const auto& cpu : cpus){
+                        std::cout << cpu.vendor();
+                    }
+                    return 0;
+                }
+            ]]}, {configs = {languages = "cxx20"}, includes = "hwinfo/hwinfo.h",
         }))
     end)
 
