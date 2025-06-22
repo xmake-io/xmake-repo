@@ -8,6 +8,8 @@ package("keystone")
 
     add_versions("0.9.2", "c9b3a343ed3e05ee168d29daf89820aff9effb2c74c6803c2d9e21d55b5b7c24")
 
+    add_patches("0.9.2", "patches/0.9.2/fix-gcc15.diff", "6b2140fdb0e446d746feb44e71d6f6cf1afcc733282de364be37f527ab7d039f")
+
     add_deps("cmake", "python 3.x", {kind = "binary"})
 
     if is_plat("windows", "mingw") then
