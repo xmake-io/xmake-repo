@@ -12,6 +12,12 @@ package("keystone")
 
     add_deps("cmake", "python 3.x", {kind = "binary"})
 
+    if is_subhost("windows") then
+        add_deps("pkgconf")
+    else
+        add_deps("pkg-config")
+    end
+
     if is_plat("windows", "mingw") then
         add_syslinks("shell32", "ole32", "uuid")
     end
