@@ -48,7 +48,7 @@ package("astc-encoder")
         io.replace("Source/cmake_core.cmake", "if(${ASTCENC_CLI})\n        # Enable LTO on release builds", "if(0)", {plain = true})
         io.replace("Source/cmake_core.cmake", "add_library(${ASTCENC_TARGET}-veneer1", "add_library(${ASTCENC_TARGET}-veneer1 STATIC", {plain = true})
         io.replace("Source/cmake_core.cmake", "add_library(${ASTCENC_TARGET}-veneer2", "add_library(${ASTCENC_TARGET}-veneer2 STATIC", {plain = true})
-        if package:is_plat("mingw", "android", "bsd") or package:has_tool("cxx", "clang") then
+        if package:is_plat("mingw", "android", "bsd") or package:has_tool("cxx", "clang", "clang_cl") then
             io.replace("Source/cmake_core.cmake", "$<${is_clangcl}:-mcpu=native -march=native>", "", {plain = true})
             io.replace("Source/cmake_core.cmake", "$<${is_gnu_fe}:-mcpu=native -march=native>", "", {plain = true})
         end
