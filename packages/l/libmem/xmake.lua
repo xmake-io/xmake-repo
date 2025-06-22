@@ -10,7 +10,7 @@ package("libmem")
     add_versions("5.0.3", "75a190d1195c641c7d5d2c37ac79d8d1b5f18e43268d023454765a566d6f0d88")
     add_versions("5.0.2", "99adea3e86bd3b83985dce9076adda16968646ebd9d9316c9f57e6854aeeab9c")
 
-    add_patches("5.0.5", "patches/5.0.5/fix-mingw.diff", "6cc818cc5443bd45f1f168a1b8d20ca50538e75929c119569fd36d13f5f9fa63")
+    add_patches("5.0.5", "patches/5.0.5/fix-mingw.diff", "7239f459204975ce2efcf63529dcb09273028c4dc166d7cbacb5f5f0e70f93a9")
 
     add_deps("capstone", "keystone")
 

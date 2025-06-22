@@ -17,7 +17,9 @@ package("keystone")
     end
 
     on_load(function (package)
-        if package:is_cross() or package:is_plat("mingw") or (package:is_plat("windows") and package:config("shared")) then
+        if package:is_cross() or package:is_plat("mingw") or 
+            (package:is_plat("windows") and package:config("shared")) or
+            (package:is_plat("windows") and package:has_tool("cc", "clang", "clang_cl")) then
             package:data_set("build_libs_only", true)
         end
         if not package:data("build_libs_only") then
