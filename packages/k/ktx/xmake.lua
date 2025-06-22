@@ -63,19 +63,25 @@ package("ktx")
     end)
 
     on_install("!iphoneos and !wasm", function (package)
+        if package:has_runtime("MD", "MT") then
+            io.replace("CMakeLists.txt", "_DEBUG", "", {plain = true})
+        end
+
         -- TODO: unbundle basisu & dfdutils
         -- io.replace("CMakeLists.txt", "external/dfdutils%g*.c\n", "")
         -- io.replace("CMakeLists.txt", "external%g*.cpp\n", "")
         io.writefile("external/basisu/zstd/zstd.c", "")
         io.replace("CMakeLists.txt", "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/external/basisu/zstd>", "", {plain = true})
         io.replace("CMakeLists.txt", "$ $<INSTALL_INTERFACE:external/basisu/zstd>", "", {plain = true})
+
         local file = io.open("CMakeLists.txt", "a")
-        file:write([[
-            find_package(zstd REQUIRED CONFIG)
+        file:write(format([[
+            %s
             target_link_libraries(ktx PUBLIC zstd::libzstd)
             target_link_libraries(ktx_read PUBLIC zstd::libzstd)
-        ]])
+        ]], package:dep("zstd"):is_system() and "find_package(zstd)" or "find_package(zstd REQUIRED CONFIG)"))
         file:close()
+
         if package:config("tools") then
             io.replace("CMakeLists.txt", "add_subdirectory(external/fmt)", "find_package(fmt CONFIG REQUIRED)", {plain = true})
             io.replace("CMakeLists.txt", "add_subdirectory(external/cxxopts)", "find_package(cxxopts CONFIG REQUIRED)", {plain = true})
