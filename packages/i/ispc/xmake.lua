@@ -12,13 +12,13 @@ package("ispc")
         add_versions("1.26.0", "cffe9904d32260994fa264f8fca60eac7be9f8995c122bacf456a1c66ac72987")
         add_versions("1.27.0", "3cb34c0713e587ef33f0c52578df9e02154a577d053f2ba3326819e2bfc24728")
     elseif is_host("macosx") then
-        if is_arch("x86_64") then
+        if os.arch() == "x86_64" then
             add_urls("https://github.com/ispc/ispc/releases/download/v$(version)/ispc-v$(version)-macOS.x86_64.tar.gz")
 
             add_versions("1.25.3", "6f35c5aec01a607c98d5661ef0f9e4d13665011247b17dfbc2f6a326120cb2aa")
             add_versions("1.26.0", "6c171c7aa85f5237a8c72091754a76c8b9d95119ec4c8cfe444c7c9a264eec5f")
             add_versions("1.27.0", "bcb43ef21a25c3b6e89e71cf7024211c4f53c300ad840d051d9b19920248c94c")
-        elseif is_arch("arm64") then
+        elseif os.arch() == "arm64" then
             add_urls("https://github.com/ispc/ispc/releases/download/v$(version)/ispc-v$(version)-macOS.arm64.tar.gz")
 
             add_versions("1.25.3", "a2bc150402bb9523261063d45a0f0deae50900c62238ae031cf9b9530393a4ac")
@@ -32,7 +32,7 @@ package("ispc")
             add_versions("1.27.0", "3803b91a787f5520e7296ad96d7905ce75396dfd1f0f870e1adb039795797b2d")
         end
     elseif is_host("linux") then
-        if is_arch("arm64") then
+        if os.arch() == "arm64" then
             add_urls("https://github.com/ispc/ispc/releases/download/v$(version)/ispc-v$(version)-linux.aarch64.tar.gz")
 
             add_versions("1.25.3", "990c509244f32189c7b6e4ea49793706a62445e727b41f10b0883d98fc66f696")
