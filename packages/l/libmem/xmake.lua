@@ -10,6 +10,8 @@ package("libmem")
     add_versions("5.0.3", "75a190d1195c641c7d5d2c37ac79d8d1b5f18e43268d023454765a566d6f0d88")
     add_versions("5.0.2", "99adea3e86bd3b83985dce9076adda16968646ebd9d9316c9f57e6854aeeab9c")
 
+    add_patches("5.0.5", "patches/5.0.5/fix-mingw.diff", "8f0ab37c35c4968fce10c321cfdd40685418eaac7f066d3337c6229e9c55cee7")
+
     add_deps("capstone", "keystone")
 
     if is_plat("windows", "mingw") then
@@ -29,7 +31,7 @@ package("libmem")
         end
     end)
 
-    on_install("windows", "linux", "bsd", "mingw", function (package)
+    on_install("windows", "linux|!arm64", "bsd", "mingw", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)
     end)
