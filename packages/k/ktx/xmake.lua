@@ -75,11 +75,12 @@ package("ktx")
         io.replace("CMakeLists.txt", "$ $<INSTALL_INTERFACE:external/basisu/zstd>", "", {plain = true})
 
         local file = io.open("CMakeLists.txt", "a")
-        file:write(format([[
-            %s
-            target_link_libraries(ktx PUBLIC zstd::libzstd)
-            target_link_libraries(ktx_read PUBLIC zstd::libzstd)
-        ]], package:dep("zstd"):is_system() and "find_package(zstd)" or "find_package(zstd REQUIRED CONFIG)"))
+        file:write([[
+            include(FindPkgConfig)
+            pkg_search_module("libzstd" REQUIRED IMPORTED_TARGET "libzstd")
+            target_link_libraries(ktx PUBLIC PkgConfig::libzstd)
+            target_link_libraries(ktx_read PUBLIC PkgConfig::libzstd)
+        ]])
         file:close()
 
         if package:config("tools") then
