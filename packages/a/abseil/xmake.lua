@@ -49,6 +49,24 @@ package("abseil")
         end
         io.replace("CMakeLists.txt", [[set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")]], "", {plain = true})
         io.replace("CMakeLists.txt", [[set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")]], "", {plain = true})
+        if package:version() and package:is_plat("macosx") then
+            local file_path = path.join("absl", "time", "internal", "cctz", "src", "time_zone_format.cc")
+            if  package:version():ge("20240116.1") and package:version():le("20250512.0") then
+                io.replace(
+                    file_path,
+                    "#if !defined(_XOPEN_SOURCE) && !defined(__FreeBSD__) && !defined(__OpenBSD__)", 
+                    "#if !defined(_XOPEN_SOURCE) && !defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__APPLE__)",
+                    {plain = true}
+                )
+            elseif package:version():eq("20230802.1") then
+                io.replace(
+                    file_path,
+                    "#if !defined(_XOPEN_SOURCE) && !defined(__OpenBSD__)", 
+                    "#if !defined(_XOPEN_SOURCE) && !defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__APPLE__)",
+                    {plain = true}
+                )
+            end
+        end
 
         local configs = {
             "-DCMAKE_CXX_STANDARD=" .. package:config("cxx_standard"),
