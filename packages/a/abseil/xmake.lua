@@ -6,6 +6,7 @@ package("abseil")
     add_urls("https://github.com/abseil/abseil-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/abseil/abseil-cpp.git")
 
+    add_versions("20250512.1", "9b7a064305e9fd94d124ffa6cc358592eb42b5da588fb4e07d09254aa40086db")
     add_versions("20250512.0", "7262daa7c1711406248c10f41026d685e88223bc92817d16fb93c19adb57f669")
     add_versions("20250127.1", "b396401fd29e2e679cace77867481d388c807671dc2acc602a0259eeb79b7811")
     add_versions("20200225.1", "0db0d26f43ba6806a8a3338da3e646bb581f0ca5359b3a201d8fb8e4752fd5f8")
