@@ -9,9 +9,9 @@ package("sentencepiece")
     add_versions("v0.2.0", "9970f0a0afee1648890293321665e5b2efa04eaec9f1671fcf8048f456f5bb86")
     add_deps("cmake", "abseil", "protobuf-cpp", "gperftools")
  
-    add_patches("v0.2.0", path.join(os.scriptdir(), "patches", "v0.2.0", "absl-cmake-fix.patch"), "877a4b3bd5c5c79a1f140e253cf3196319d595287e74d2039ba83f73a917211a")
+    add_patches("v0.2.0", "patches/v0.2.0/absl-cmake-fix.patch", "8fcbe6f4b49972e624b1d61627d36c16e13946b168dd001b138e511febbc7ca4")
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows|!arm*", "linux", "macosx", function (package)
         -- replace abseil third_party include path by <absl/...>
         for _, file in ipairs(os.files("src/**.cc")) do
             io.replace(file, [["third_party/absl/(.-)"]], [[<absl/%1>]])
