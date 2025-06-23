@@ -8,14 +8,24 @@ package("keystone")
 
     add_versions("0.9.2", "c9b3a343ed3e05ee168d29daf89820aff9effb2c74c6803c2d9e21d55b5b7c24")
 
+    add_patches("0.9.2", "patches/0.9.2/fix-gcc15.diff", "6b2140fdb0e446d746feb44e71d6f6cf1afcc733282de364be37f527ab7d039f")
+
     add_deps("cmake", "python 3.x", {kind = "binary"})
+
+    if is_subhost("windows") then
+        add_deps("pkgconf")
+    else
+        add_deps("pkg-config")
+    end
 
     if is_plat("windows", "mingw") then
         add_syslinks("shell32", "ole32", "uuid")
     end
 
     on_load(function (package)
-        if package:is_cross() or package:is_plat("mingw") or (package:is_plat("windows") and package:config("shared")) then
+        if package:is_cross() or package:is_plat("mingw") or 
+            (package:is_plat("windows") and package:config("shared")) or
+            (package:is_plat("windows") and package:has_tool("cc", "clang", "clang_cl")) then
             package:data_set("build_libs_only", true)
         end
         if not package:data("build_libs_only") then
