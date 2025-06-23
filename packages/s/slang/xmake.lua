@@ -21,7 +21,7 @@ package("slang")
     add_configs("slang_glslang", { description = "Enable glslang dependency and slang-glslang wrapper target", default = false, type = "boolean" })
     add_configs("slang_llvm_flavor", { description = "How to get or build slang-llvm (available options: FETCH_BINARY, USE_SYSTEM_LLVM, DISABLE)", default = "DISABLE", type = "string" })
 
-    add_deps("cmake")
+    add_deps("cmake". "miniz")
 
     on_install("windows|x64", "macosx", "linux|x86_64", function (package)
         io.replace("cmake/SlangTarget.cmake", [[set_property(TARGET ${target} PROPERTY SUFFIX ".dylib")]], "", {plain = true})
