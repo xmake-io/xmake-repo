@@ -1,38 +1,30 @@
 package("sentencepiece")
-
     set_homepage("https://github.com/google/sentencepiece")
     set_description("Unsupervised text tokenizer for Neural Network-based text generation. .")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/google/sentencepiece/archive/$(version).tar.gz",
+    add_urls("https://github.com/google/sentencepiece/archive/refs/tags/$(version).tar.gz",
              "https://github.com/google/sentencepiece.git")
 
-    add_versions("v0.1.97", "41c3a07f315e3ac87605460c8bb8d739955bc8e7f478caec4017ef9b7d78669b")
-
-    add_deps("cmake", "gperftools")
-
-    add_configs("external_abseil",  {description = "Use external abseil.", default = false, type = "boolean"})
-    add_configs("builtin_protobuf", {description = "Use built-in protobuf.", default = true, type = "boolean"})
-    if is_plat("windows") then
-        add_configs("shared",     {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-        add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MT", readonly = true})
-    end
-
-    on_load("windows", "linux", "macosx",function (package)
-        if package:config("external_abseil") then
-            package:add("deps", "abseil")
-        end
-        if not package:config("builtin_protobuf") then
-            package:add("deps", "protobuf-cpp")
-        end
-    end)
+    add_versions("v0.2.0", "9970f0a0afee1648890293321665e5b2efa04eaec9f1671fcf8048f456f5bb86")
+    add_deps("cmake", "abseil", "protobuf-cpp", "gperftools")
+ 
+    add_patches("v0.2.0", path.join(os.scriptdir(), "patches", "v0.2.0", "absl-cmake-fix.patch"), "877a4b3bd5c5c79a1f140e253cf3196319d595287e74d2039ba83f73a917211a")
 
     on_install("windows", "linux", "macosx", function (package)
+        -- replace abseil third_party include path by <absl/...>
+        for _, file in ipairs(os.files("src/**.cc")) do
+            io.replace(file, [["third_party/absl/(.-)"]], [[<absl/%1>]])
+        end
+        for _, file in ipairs(os.files("src/**.h")) do
+            io.replace(file, [["third_party/absl/(.-)"]], [[<absl/%1>]])
+        end
+
         local configs = {}
         table.insert(configs, "-DSPM_ENABLE_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DSPM_USE_EXTERNAL_ABSL=" .. (package:config("external_abseil") and "ON" or "OFF"))
-        table.insert(configs, "-DSPM_USE_BUILTIN_PROTOBUF=" .. (package:config("builtin_protobuf") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        table.insert(configs, "-DSPM_ABSL_PROVIDER=package")
+        table.insert(configs, "-DSPM_PROTOBUF_PROVIDER=package")
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"abseil", "protobuf-cpp"}})
     end)
 
     on_test(function (package)
