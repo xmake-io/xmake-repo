@@ -27,6 +27,7 @@ package("liblemon")
             "-DLEMON_ENABLE_COIN=OFF",
             "-DLEMON_ENABLE_SOPLEX=OFF"
         }
+        table.insert(configs, "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW")
         if package:config("shared") and package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
