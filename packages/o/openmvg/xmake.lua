@@ -43,6 +43,11 @@ package("openmvg")
             "-DOpenMVG_BUILD_GUI_SOFTWARES=OFF",
         }
         import("package.tools.cmake").install(package, configs)
+
+        local libs = { "openMVG_exif", "openMVG_features", "openMVG_geometry", "openMVG_image", "openMVG_kvld", "openMVG_lInftyComputerVision", "openMVG_linearProgramming", "openMVG_matching", "openMVG_matching_image_collection", "openMVG_multiview", "openMVG_numeric", "openMVG_robust_estimation", "openMVG_sfm", "openMVG_system" }
+        for _, lib in ipairs(libs) do
+            package:add("links", lib)
+        end
     end)
 
     on_test(function (package)
