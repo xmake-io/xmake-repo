@@ -44,7 +44,7 @@ package("openmvg")
         }
         import("package.tools.cmake").install(package, configs)
 
-        local libs = { "openMVG_exif", "openMVG_features", "openMVG_geometry", "openMVG_image", "openMVG_kvld", "openMVG_lInftyComputerVision", "openMVG_linearProgramming", "openMVG_matching", "openMVG_matching_image_collection", "openMVG_multiview", "openMVG_numeric", "openMVG_robust_estimation", "openMVG_sfm", "openMVG_system" }
+        local libs = { "lib_CoinUtils", "lib_Osi", "lib_OsiClpSolver", "lib_clp", "openMVG_ceres", "openMVG_easyexif", "openMVG_exif", "openMVG_fast", "openMVG_features", "openMVG_geometry", "openMVG_image", "openMVG_jpeg", "openMVG_kvld", "openMVG_lInftyComputerVision", "openMVG_linearProgramming", "openMVG_matching", "openMVG_matching_image_collection", "openMVG_multiview", "openMVG_numeric", "openMVG_png", "openMVG_robust_estimation", "openMVG_sfm", "openMVG_stlplus", "openMVG_system", "openMVG_tiff", "openMVG_zlib", "vlsift" }
         for _, lib in ipairs(libs) do
             package:add("links", lib)
         end
