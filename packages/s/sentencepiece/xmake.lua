@@ -20,6 +20,8 @@ package("sentencepiece")
             io.replace(file, [["third_party/absl/(.-)"]], [[<absl/%1>]])
         end
 
+        io.replace("src/sentencepiece_processor.h", "#include <cstring>", "#include <cstring>\n#include <cstdint>", {plain = true})
+
         local configs = {}
         table.insert(configs, "-DSPM_ENABLE_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSPM_ABSL_PROVIDER=package")
