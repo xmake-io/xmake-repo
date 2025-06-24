@@ -6,6 +6,7 @@ package("liblemon")
     add_urls("http://lemon.cs.elte.hu/pub/sources/lemon-$(version).tar.gz")
     add_versions("1.3.1", "71b7c725f4c0b4a8ccb92eb87b208701586cf7a96156ebd821ca3ed855bad3c8")
     add_patches("1.3.1", "patches/1.3.1/cmake-add-runtime-install-destination.patch", "44f0bafd4b4ba088cd060beac8b9cdc512de0370a981965056aa916b0c1c5b62")
+    add_patches("1.3.1", "patches/1.3.1/cpp17-compat-remove-register-keyword.patch", "4ede83b8d978c6625910f2c7cdfe5cccf9c94941666f1402408738c53b311ab0")
 
     add_deps("cmake")
 
