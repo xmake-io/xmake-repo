@@ -284,7 +284,7 @@ package("opencv")
                     package:add("links", path.basename(f))
                 end
             end
-            package:addenv("PATH", "bin") -- fix path for 4.9.0/vs2022
+            package:addenv("PATH", "bin") -- Fix path for 4.9.0/vs2022
             package:addenv("PATH", path.join(arch, vc_ver, "bin"))
         elseif package:is_plat("mingw") then
             local arch = package:is_arch("x86_64") and "x64" or "x86"
