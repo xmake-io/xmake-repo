@@ -6,6 +6,7 @@ package("fcpw")
     add_urls("https://github.com/rohan-sawhney/fcpw.git")
     add_versions("v1.0.5", "9a0c41ae44fbcbf32a1740adec7a2a79eded249f")
     add_versions("v1.1.2", "b61f006f35396968dfae982f7fba0a67b1f4b4a2")
+    add_versions("v1.2.0", "724f2dbef090b1bfe73b9c4f1ff6be8479ec880e")
 
     add_configs("enoki", {description = "Build enoki backend", default = false, type = "boolean"})
     add_configs("gpu", {description = "Enable GPU support", default = false, type = "boolean"})
