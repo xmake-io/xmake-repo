@@ -27,6 +27,7 @@ package("openmvg")
 
     on_install("linux", "windows|x86", "windows|x64", "macosx", function (package)
         io.replace("src/CMakeLists.txt", ";flann::flann_cpp", "", {plain = true})
+        os.rm("src/cmakeFindModules/FindFLANN.cmake")
         if package:is_plat("windows") then
             io.replace("src/openMVG/matching/metric_hamming.hpp", "#ifdef _MSC_VER",
                        "#if defined(_MSC_VER) && (defined(_M_X64) || defined(_M_IX86) || defined(_M_ARM64) || defined(_M_ARM64EC))", {plain = true})
