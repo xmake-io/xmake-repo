@@ -11,7 +11,7 @@ package("openmvg")
         add_configs("shared", {description = "Build shared library", default = false, type = "boolean", readonly = true})
     end
 
-    add_deps("cmake", "eigen", "glfw", "ceres-solver", "libpng", "libjpeg", "libtiff")
+    add_deps("cmake", "eigen", "glfw", "libpng", "libjpeg", "libtiff")
 
     if on_check then
         on_check("linux", function (package)
