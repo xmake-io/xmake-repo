@@ -11,7 +11,7 @@ package("openmvg")
         add_configs("shared", {description = "Build shared library", default = false, type = "boolean", readonly = true})
     end
 
-    add_deps("cmake", "eigen")
+    add_deps("cmake", "eigen", "glfw", "ceres-solver", "libpng", "libjpeg", "libtiff", "flann")
 
     if on_check then
         on_check("linux", function (package)
@@ -26,6 +26,7 @@ package("openmvg")
     end)
 
     on_install("linux", "windows|x86", "windows|x64", "macosx", function (package)
+        io.replace("src/CMakeLists.txt", ";flann::flann_cpp", "", {plain = true})
         if package:is_plat("windows") then
             io.replace("src/openMVG/matching/metric_hamming.hpp", "#ifdef _MSC_VER",
                        "#if defined(_MSC_VER) && (defined(_M_X64) || defined(_M_IX86) || defined(_M_ARM64) || defined(_M_ARM64EC))", {plain = true})
@@ -34,6 +35,7 @@ package("openmvg")
         os.cd("src")
         local configs = {
             "-DOpenMVG_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"),
+            "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
             "-DOpenMVG_BUILD_COVERAGE=OFF",
             "-DOpenMVG_BUILD_TESTS=OFF",
             "-DOpenMVG_BUILD_DOC=OFF",
@@ -41,10 +43,11 @@ package("openmvg")
             "-DOpenMVG_BUILD_OPENGL_EXAMPLES=OFF",
             "-DOpenMVG_BUILD_SOFTWARES=OFF",
             "-DOpenMVG_BUILD_GUI_SOFTWARES=OFF",
+            "-DFLANN_INCLUDE_DIR_HINTS=1",
         }
         import("package.tools.cmake").install(package, configs)
 
-        local libs = { "lib_CoinUtils", "lib_Osi", "lib_OsiClpSolver", "lib_clp", "openMVG_ceres", "openMVG_easyexif", "openMVG_exif", "openMVG_fast", "openMVG_features", "openMVG_geometry", "openMVG_image", "openMVG_jpeg", "openMVG_kvld", "openMVG_lInftyComputerVision", "openMVG_linearProgramming", "openMVG_matching", "openMVG_matching_image_collection", "openMVG_multiview", "openMVG_numeric", "openMVG_png", "openMVG_robust_estimation", "openMVG_sfm", "openMVG_stlplus", "openMVG_system", "openMVG_tiff", "openMVG_zlib", "vlsift" }
+        local libs = { "lib_CoinUtils", "lib_Osi", "lib_OsiClpSolver", "lib_clp", "openMVG_easyexif", "openMVG_exif", "openMVG_fast", "openMVG_features", "openMVG_geometry", "openMVG_image", "openMVG_kvld", "openMVG_lInftyComputerVision", "openMVG_linearProgramming", "openMVG_matching", "openMVG_matching_image_collection", "openMVG_multiview", "openMVG_numeric", "openMVG_robust_estimation", "openMVG_sfm", "openMVG_stlplus", "openMVG_system", "vlsift" }
         for _, lib in ipairs(libs) do
             package:add("links", lib)
         end
