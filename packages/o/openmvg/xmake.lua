@@ -11,7 +11,7 @@ package("openmvg")
         add_configs("shared", {description = "Build shared library", default = false, type = "boolean", readonly = true})
     end
 
-    add_deps("cmake", "eigen", "glfw", "ceres-solver", "libpng", "libjpeg", "libtiff", "flann")
+    add_deps("cmake", "eigen", "glfw", "ceres-solver", "libpng", "libjpeg", "libtiff")
 
     if on_check then
         on_check("linux", function (package)
@@ -26,8 +26,6 @@ package("openmvg")
     end)
 
     on_install("linux", "windows|x86", "windows|x64", "macosx", function (package)
-        io.replace("src/CMakeLists.txt", ";flann::flann_cpp", "", {plain = true})
-        os.rm("src/cmakeFindModules/FindFLANN.cmake")
         if package:is_plat("windows") then
             io.replace("src/openMVG/matching/metric_hamming.hpp", "#ifdef _MSC_VER",
                        "#if defined(_MSC_VER) && (defined(_M_X64) || defined(_M_IX86) || defined(_M_ARM64) || defined(_M_ARM64EC))", {plain = true})
@@ -44,7 +42,6 @@ package("openmvg")
             "-DOpenMVG_BUILD_OPENGL_EXAMPLES=OFF",
             "-DOpenMVG_BUILD_SOFTWARES=OFF",
             "-DOpenMVG_BUILD_GUI_SOFTWARES=OFF",
-            "-DFLANN_INCLUDE_DIR_HINTS=1",
         }
         import("package.tools.cmake").install(package, configs)
 
