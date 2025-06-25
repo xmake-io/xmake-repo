@@ -51,7 +51,7 @@ package("abseil")
         io.replace("CMakeLists.txt", [[set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")]], "", {plain = true})
         if package:version() and package:is_plat("macosx") then
             local file_path = path.join("absl", "time", "internal", "cctz", "src", "time_zone_format.cc")
-            if  package:version():ge("20240116.1") and package:version():le("20250512.0") then
+            if  package:version():ge("20240116.1") and package:version():le("20250512.1") then
                 io.replace(
                     file_path,
                     "#if !defined(_XOPEN_SOURCE) && !defined(__FreeBSD__) && !defined(__OpenBSD__)", 
