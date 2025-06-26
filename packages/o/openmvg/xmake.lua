@@ -11,7 +11,13 @@ package("openmvg")
         add_configs("shared", {description = "Build shared library", default = false, type = "boolean", readonly = true})
     end
 
-    add_deps("cmake", "eigen", "glfw", "libpng", "libjpeg", "libtiff")
+    add_deps("cmake")
+    if is_subhost("windows") then
+        add_deps("pkgconf")
+    else
+        add_deps("pkg-config")
+    end
+    add_deps("eigen", "libpng", "libjpeg", "libtiff", "flann", "lemon")
 
     if on_check then
         on_check("linux", function (package)
@@ -19,22 +25,38 @@ package("openmvg")
         end)
     end
 
-    on_load("linux", "windows", "macosx", function (package)
+    on_load(function (package)
         if package:config("openmp") then
             package:add("deps", "openmp")
         end
+
+        local libs = {"lib_CoinUtils", "lib_Osi", "lib_OsiClpSolver", "lib_clp", "openMVG_ceres", "openMVG_easyexif", "openMVG_exif", "openMVG_fast", "openMVG_features", "openMVG_geometry", "openMVG_image", "openMVG_kvld", "openMVG_lInftyComputerVision", "openMVG_linearProgramming", "openMVG_matching", "openMVG_matching_image_collection", "openMVG_multiview", "openMVG_numeric", "openMVG_robust_estimation", "openMVG_sfm", "openMVG_stlplus", "openMVG_system", "vlsift"}
+        for _, lib in ipairs(libs) do
+            package:add("links", lib)
+        end
     end)
 
-    on_install("linux", "windows|x86", "windows|x64", "macosx", function (package)
+    on_install("windows|!arm*", "linux", "macosx", function (package)
+        local flann = package:dep("flann")
+        local lemon = package:dep("lemon")
+        if not flann:is_system() then
+            io.replace("src/CMakeLists.txt", "find_package(Flann QUIET)", "include(FindPkgConfig)\npkg_search_module(flann REQUIRED IMPORTED_TARGET flann)", {plain = true})
+            io.replace("src/openMVG/matching/CMakeLists.txt", "$<BUILD_INTERFACE:${FLANN_INCLUDE_DIRS}>", "", {plain = true})
+            io.replace("src/openMVG/matching/CMakeLists.txt", "${FLANN_LIBRARIES}", "PkgConfig::flann", {plain = true})
+        end
+        if not lemon:is_system() then
+            io.replace("src/CMakeLists.txt", "find_package(Lemon QUIET)", "include(FindPkgConfig)\npkg_search_module(lemon REQUIRED IMPORTED_TARGET lemon)", {plain = true})
+            io.replace("src/openMVG/graph/CMakeLists.txt", "${LEMON_LIBRARY}", "PkgConfig::lemon", {plain = true})
+        end
         if package:is_plat("windows") then
             io.replace("src/openMVG/matching/metric_hamming.hpp", "#ifdef _MSC_VER",
                        "#if defined(_MSC_VER) && (defined(_M_X64) || defined(_M_IX86) || defined(_M_ARM64) || defined(_M_ARM64EC))", {plain = true})
             package:add("defines", "_USE_MATH_DEFINES")
         end
-        os.cd("src")
+
         local configs = {
-            "-DOpenMVG_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"),
             "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
+            "-DOpenMVG_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"),
             "-DOpenMVG_BUILD_COVERAGE=OFF",
             "-DOpenMVG_BUILD_TESTS=OFF",
             "-DOpenMVG_BUILD_DOC=OFF",
@@ -42,13 +64,14 @@ package("openmvg")
             "-DOpenMVG_BUILD_OPENGL_EXAMPLES=OFF",
             "-DOpenMVG_BUILD_SOFTWARES=OFF",
             "-DOpenMVG_BUILD_GUI_SOFTWARES=OFF",
+            "-DFLANN_INCLUDE_DIR_HINTS=1",
+            "-DLEMON_INCLUDE_DIR_HINTS=1",
         }
+
+        os.cd("src")
         import("package.tools.cmake").install(package, configs)
 
-        local libs = { "lib_CoinUtils", "lib_Osi", "lib_OsiClpSolver", "lib_clp", "openMVG_ceres", "openMVG_easyexif", "openMVG_exif", "openMVG_fast", "openMVG_features", "openMVG_geometry", "openMVG_image", "openMVG_kvld", "openMVG_lInftyComputerVision", "openMVG_linearProgramming", "openMVG_matching", "openMVG_matching_image_collection", "openMVG_multiview", "openMVG_numeric", "openMVG_robust_estimation", "openMVG_sfm", "openMVG_stlplus", "openMVG_system", "vlsift" }
-        for _, lib in ipairs(libs) do
-            package:add("links", lib)
-        end
+        os.rm(package:installdir("lib/pkgconfig/*.pc"))
     end)
 
     on_test(function (package)
