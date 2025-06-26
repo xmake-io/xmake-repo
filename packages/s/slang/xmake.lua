@@ -16,7 +16,7 @@ package("slang")
     add_configs("full_ir_validation", { description = "Enable full IR validation (SLOW!)", default = false, type = "boolean" })
     add_configs("gfx", { description = "Enable gfx targets", default = false, type = "boolean" })
     add_configs("slangd", { description = "Enable language server target", default = false, type = "boolean" })
-    add_configs("slangc", { description = "Enable standalone compiler target", default = false, type = "boolean" })
+    add_configs("slangc", { description = "Enable standalone compiler target", default = true, type = "boolean" })
     add_configs("slangrt", { description = "Enable runtime target", default = false, type = "boolean" })
     add_configs("slang_glslang", { description = "Enable glslang dependency and slang-glslang wrapper target", default = false, type = "boolean" })
     add_configs("slang_llvm_flavor", { description = "How to get or build slang-llvm (available options: FETCH_BINARY, USE_SYSTEM_LLVM, DISABLE)", default = "DISABLE", type = "string" })
@@ -42,11 +42,6 @@ package("slang")
         table.insert(configs, "-DSLANG_ENABLE_SLANGRT=" .. (package:config("slangrt") and "ON" or "OFF"))
         table.insert(configs, "-DSLANG_ENABLE_SLANG_GLSLANG=" .. (package:config("slang_glslang") and "ON" or "OFF"))
         table.insert(configs, "-DSLANG_SLANG_LLVM_FLAVOR=" .. package:config("slang_llvm_flavor"))
-        
-        if package:is_plat("windows") then
-            table.insert(configs, "-DSLANG_EMBED_CORE_MODULE_SOURCE=ON")
-            table.insert(configs, "-DSLANG_EMBED_CORE_MODULE=OFF")
-        end
 
         import("package.tools.cmake").install(package, configs)
         package:addenv("PATH", "bin")
