@@ -40,6 +40,7 @@ package("openmvg")
         local flann = package:dep("flann")
         local lemon = package:dep("lemon")
         if not flann:is_system() then
+            io.replace("src/CMakeLists.txt", "find_package(Flann QUIET CONFIG)", "include(FindPkgConfig)\npkg_search_module(flann REQUIRED IMPORTED_TARGET flann)", {plain = true})
             io.replace("src/CMakeLists.txt", "find_package(Flann QUIET)", "include(FindPkgConfig)\npkg_search_module(flann REQUIRED IMPORTED_TARGET flann)", {plain = true})
             io.replace("src/openMVG/matching/CMakeLists.txt", "$<BUILD_INTERFACE:${FLANN_INCLUDE_DIRS}>", "", {plain = true})
             io.replace("src/openMVG/matching/CMakeLists.txt", "${FLANN_LIBRARIES}", "PkgConfig::flann", {plain = true})
