@@ -22,10 +22,7 @@ package("slang")
     add_configs("slang_llvm_flavor", { description = "How to get or build slang-llvm (available options: FETCH_BINARY, USE_SYSTEM_LLVM, DISABLE)", default = "DISABLE", type = "string" })
 
     add_deps("cmake")
-
-    on_load("!windows", function (package)
-        package:add("deps", "miniz")
-    end)
+    add_deps("miniz", {configs = {shared = true}})
 
     on_install("windows|x64", "macosx", "linux|x86_64", function (package)
         io.replace("cmake/SlangTarget.cmake", [[set_property(TARGET ${target} PROPERTY SUFFIX ".dylib")]], "", {plain = true})
@@ -42,6 +39,13 @@ package("slang")
         table.insert(configs, "-DSLANG_ENABLE_SLANGRT=" .. (package:config("slangrt") and "ON" or "OFF"))
         table.insert(configs, "-DSLANG_ENABLE_SLANG_GLSLANG=" .. (package:config("slang_glslang") and "ON" or "OFF"))
         table.insert(configs, "-DSLANG_SLANG_LLVM_FLAVOR=" .. package:config("slang_llvm_flavor"))
+
+        if package:is_plat("windows") then
+            local miniz = package:dep("miniz")
+            local miniz_dll = path.join(miniz:installdir("bin"), "miniz.dll")
+            local destination = path.join(package:cachedir(), "source/slang", package:builddir(), "generators", (package:is_debug() and "Debug" or "Release"), "bin/miniz.dll")
+            os.cp(miniz_dll, destination)
+        end
 
         import("package.tools.cmake").install(package, configs)
         package:addenv("PATH", "bin")
