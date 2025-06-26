@@ -11,8 +11,6 @@ package("slang")
     add_versions("v2024.1.17", "62b7219e715bd4c0f984bcd98c9767fb6422c78f")
 
     add_configs("shared", { description = "Build shared library", default = true, type = "boolean", readonly = true })
-    add_configs("embed_core_module_source", { description = "Embed core module source in the binary", default = true, type = "boolean" })
-    add_configs("embed_core_module", { description = "Build slang with an embedded version of the core module", default = false, type = "boolean" })
     add_configs("embed_stdlib_source", { description = "Embed stdlib source in the binary", default = true, type = "boolean" })
     add_configs("embed_stdlib", { description = "Build slang with an embedded version of the stdlib", default = false, type = "boolean" })
     add_configs("full_ir_validation", { description = "Enable full IR validation (SLOW!)", default = false, type = "boolean" })
@@ -34,8 +32,6 @@ package("slang")
         local configs = {"-DSLANG_ENABLE_TESTS=OFF", "-DSLANG_ENABLE_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DSLANG_LIB_TYPE=" .. (package:config("shared") and "SHARED" or "STATIC"))
-        table.insert(configs, "-DSLANG_EMBED_CORE_MODULE_SOURCE=" .. (package:config("embed_core_module_source") and "ON" or "OFF"))
-        table.insert(configs, "-DSLANG_EMBED_CORE_MODULE=" .. (package:config("embed_core_module") and "ON" or "OFF"))
         table.insert(configs, "-DSLANG_EMBED_STDLIB_SOURCE=" .. (package:config("embed_stdlib_source") and "ON" or "OFF"))
         table.insert(configs, "-DSLANG_EMBED_STDLIB=" .. (package:config("embed_stdlib") and "ON" or "OFF"))
         table.insert(configs, "-DSLANG_ENABLE_FULL_IR_VALIDATION=" .. (package:config("full_ir_validation") and "ON" or "OFF"))
@@ -46,6 +42,11 @@ package("slang")
         table.insert(configs, "-DSLANG_ENABLE_SLANGRT=" .. (package:config("slangrt") and "ON" or "OFF"))
         table.insert(configs, "-DSLANG_ENABLE_SLANG_GLSLANG=" .. (package:config("slang_glslang") and "ON" or "OFF"))
         table.insert(configs, "-DSLANG_SLANG_LLVM_FLAVOR=" .. package:config("slang_llvm_flavor"))
+        
+        if package:is_plat("windows") then
+            table.insert(configs, "-DSLANG_EMBED_CORE_MODULE_SOURCE=ON")
+            table.insert(configs, "-DSLANG_EMBED_CORE_MODULE=OFF")
+        end
 
         import("package.tools.cmake").install(package, configs)
         package:addenv("PATH", "bin")
