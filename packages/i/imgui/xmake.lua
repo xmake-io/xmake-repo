@@ -86,7 +86,7 @@ package("imgui")
     add_versions("git:v1.85-docking",   "dc8c3618e8f8e2dada23daa1aa237626af341fd8")
     add_versions("git:v1.83-docking",   "80b5fb51edba2fd3dea76ec3e88153e2492243d1")
 
-    -- Fix conflicting use of IMGUI_API in v1.92.0 (https://github.com/ocornut/imgui/pull/8729)
+    -- Fix conflicting IMGUI_API definitions in v1.92.0 only (https://github.com/ocornut/imgui/pull/8729)
     add_patches("v1.92.0", "patches/v1.92.0/fix_imgui_api.patch", "e8ca0502056acf356f83703e7190dda87fde43ed245f65f0fb55b85cd164ed83")
     add_patches("v1.92.0-docking", "patches/v1.92.0/fix_imgui_api.patch", "e8ca0502056acf356f83703e7190dda87fde43ed245f65f0fb55b85cd164ed83")
 
