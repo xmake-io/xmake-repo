@@ -4,7 +4,7 @@ package("standardlib")
     set_description("A complete standardlib for c for once")
     set_license("Public Domain")
 
-    add_urls("https://github.com/gregoryc/standardlib.git")
+    add_urls("https://github.com/gregoryc/standardlib.git", {includes = {"foundationallib.h"}})
     add_versions("2024.03.25", "d27a1293ccfe7ef04a961806754c5d1272614b72")
 
     if is_plat("linux", "bsd") then
