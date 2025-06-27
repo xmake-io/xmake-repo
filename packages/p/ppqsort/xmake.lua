@@ -13,5 +13,9 @@ package("ppqsort")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxincludes("ppqsort.h", {configs = {languages = "c++20"}}))
+        if package:has_cxxflags("-std=c++20") then
+            assert(package:has_cxxincludes("ppqsort.h", {configs = {languages = "c++20"}}))
+        else
+            wprint("C++20 not supported by the current toolchain, skipping test.")
+        end
     end)
