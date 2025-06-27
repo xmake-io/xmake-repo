@@ -5,15 +5,24 @@ package("standardlib")
 
     add_urls("https://github.com/gregoryc/standardlib.git")
     add_versions("2024.03.25", "d27a1293ccfe7ef04a961806754c5d1272614b72")
-    add_versions("2023.12.5", "4fb308a5716927e5622a0488d7aa104660c96841")
+
+    if is_plat("linux", "bsd") then
+        add_syslinks("pthread")
+    end
+
+    -- on_load(function (package)
+        -- if not package:is_plat("linux", "bsd") then
+        --     package:add("defines", "FOUNDATIONAL_LIB_THREAD_FUNCTIONS_ENABLED=0")
+        -- end
+    -- end)
 
     on_install(function (package)
-        os.cp("standardlib.h", package:installdir("include"))
+        os.cp("foundationallib.h", package:installdir("include"))
     end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include "standardlib.h"
+            #include <foundationallib.h>
             #include <stdio.h>
             void test() {
                 const char *text = "This is a sample text";
