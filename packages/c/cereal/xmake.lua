@@ -4,7 +4,7 @@ package("cereal")
     set_description("cereal is a header-only C++11 serialization library.")
     set_license("BSD-3-Clause")
 
-    add_urls("https://github.com/USCiLab/cereal/archive/$(version).tar.gz",
+    add_urls("https://github.com/USCiLab/cereal/archive/refs/tags/$(version).tar.gz",
              "https://github.com/USCiLab/cereal.git")
 
     add_versions("v1.3.2", "16a7ad9b31ba5880dac55d62b5d6f243c3ebc8d46a3514149e56b5e7ea81f85f")
