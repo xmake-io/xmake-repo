@@ -12,7 +12,7 @@ package("standardlib")
     end
 
     on_load(function (package)
-        if not package:has_cxxincludes("threads.h", {configs = {languages = "c11"}}) then
+        if not package:has_cincludes("threads.h", {configs = {languages = "c11"}}) then
             package:add("defines", "FOUNDATIONAL_LIB_THREAD_FUNCTIONS_ENABLED=0")
         end
     end)
