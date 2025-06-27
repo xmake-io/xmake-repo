@@ -2,6 +2,7 @@ package("standardlib")
     set_kind("library", {headeronly = true})    
     set_homepage("https://github.com/gregoryc/standardlib")
     set_description("A complete standardlib for c for once")
+    set_license("Public Domain")
 
     add_urls("https://github.com/gregoryc/standardlib.git")
     add_versions("2024.03.25", "d27a1293ccfe7ef04a961806754c5d1272614b72")
@@ -10,11 +11,11 @@ package("standardlib")
         add_syslinks("pthread")
     end
 
-    -- on_load(function (package)
-        -- if not package:is_plat("linux", "bsd") then
-        --     package:add("defines", "FOUNDATIONAL_LIB_THREAD_FUNCTIONS_ENABLED=0")
-        -- end
-    -- end)
+    on_load(function (package)
+        if not package:is_plat("linux", "bsd", "cross") then
+            package:add("defines", "FOUNDATIONAL_LIB_THREAD_FUNCTIONS_ENABLED=0")
+        end
+    end)
 
     on_install(function (package)
         os.cp("foundationallib.h", package:installdir("include"))
