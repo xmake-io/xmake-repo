@@ -8,9 +8,6 @@ package("coin-or-coinutils")
 
     add_versions("2.11.12", "eef1785d78639b228ae2de26b334129fe6a7d399c4ac6f8fc5bb9054ba00de64")
 
-    if not is_subhost("windows") then
-        add_deps("autotools")
-    end
     add_deps("bzip2", "zlib")
 
     if is_plat("macosx", "iphoneos") then
@@ -21,7 +18,7 @@ package("coin-or-coinutils")
 
     on_load(function (package)
         if package:is_plat("windows") and package:config("shared") then
-            package:add("defines", "CLPMSDLL", "COINLIBAPI=__declspec(dllexport)", "COINLINKAGE=__stdcall", "COINLINKAGE_CB=__cdecl")
+            package:add("defines", "COINLIBAPI=__declspec(dllexport)", "COINLINKAGE=__stdcall", "COINLINKAGE_CB=__cdecl")
         end
     end)
 

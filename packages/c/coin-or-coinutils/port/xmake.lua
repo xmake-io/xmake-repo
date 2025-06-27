@@ -46,9 +46,9 @@ target("CoinUtils")
     add_configfiles("CoinUtils/src/(config.h.in)", {filename = "config.h"})
     add_configfiles("CoinUtils/src/(config_coinutils.h.in)", {filename = "config_coinutils.h"})
     if is_plat("windows") and is_kind("shared") then
+        add_rules("utils.symbols.export_all", {export_classes = true})
         add_defines("CLPMSDLL", "COINLIBAPI=__declspec(dllexport)", "COINLINKAGE=__stdcall", "COINLINKAGE_CB=__cdecl")
     end
-    add_defines("COINUTILS_BUILD")
     add_packages("bzip2", "zlib")
     if is_plat("macosx", "iphoneos") then
         add_frameworks("Accelerate")
