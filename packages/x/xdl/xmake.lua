@@ -6,6 +6,7 @@ package("xdl")
     add_urls("https://github.com/hexhacking/xDL/archive/refs/tags/$(version).tar.gz",
              "https://github.com/hexhacking/xDL.git")
 
+    add_versions("v2.3.0", "d4f3c1a6a2efcd0944b12dbf2e597b706bd686c25b1c7cc1271333cc15e1d461")
     add_versions("v2.2.0", "fb28fe2805b3101ae85119bd1d5f78c9c519030ed8c7e2df0921532a673aae17")
 
     on_install("android", function (package)
