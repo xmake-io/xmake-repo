@@ -19,6 +19,7 @@ package("workflow")
         add_versions("v0.11.2", "cc2d18ab2b292e2f0163ef67ef6976912e2a21c271396da0e2151ca8cd22abd3")
         add_versions("v0.11.3", "af7adcdd8151f8e72247599a43c28aa849d61ed39e58058cfa80649d011575bc")
         add_versions("v0.11.4", "844fd03db120141fa61600b26a4ef35716dc0e75d1e8c8018078eb385cf746a4")
+        add_versions("v0.11.9", "3592c56fd06f08274510c222786ba259e8cce78573d89d22f1e4356bf33fbf77")
     end
 
     add_deps("openssl")
@@ -38,13 +39,6 @@ package("workflow")
             configs.kind = "shared"
         end
         import("package.tools.xmake").install(package, configs)
-    end)
-
-    on_install("windows", function (package)
-        local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
