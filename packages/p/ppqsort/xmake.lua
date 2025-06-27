@@ -13,7 +13,11 @@ package("ppqsort")
     end)
 
     on_test(function (package)
-        if package:has_cxxflags("-std=c++20") then
+        local has_cxx20 = package:has_cxxflags("-std=c++20")
+        local has_syncstream = package:has_cxxincludes("syncstream", {configs = {languages = "c++20"}})
+        local has_ranges = package:has_cxxincludes("ranges", {configs = {languages = "c++20"}})
+
+        if has_cxx20 and has_syncstream and has_ranges then
             assert(package:has_cxxincludes("ppqsort.h", {configs = {languages = "c++20"}}))
         else
             wprint("C++20 not supported by the current toolchain, skipping test.")
