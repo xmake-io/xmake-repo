@@ -8,19 +8,24 @@ package("coin-or-coinutils")
 
     add_versions("2.11.12", "eef1785d78639b228ae2de26b334129fe6a7d399c4ac6f8fc5bb9054ba00de64")
 
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::coin-or-coinutils")
+    elseif is_plat("linux") then
+        add_extsources("apt::coinor-libcoinutils-dev", "pacman::coin-or-coinutils")
+    elseif is_plat("macosx") then
+        add_extsources("brew::coinutils")
+    end
+
     add_deps("bzip2", "zlib")
+    if is_plat("linux", "macosx", "bsd") then
+        add_deps("readline")
+    end
 
     if is_plat("macosx", "iphoneos") then
         add_frameworks("Accelerate")
     elseif is_plat("linux", "bsd") then
         add_syslinks("m")
     end
-
-    on_load(function (package)
-        if package:is_plat("windows") and package:config("shared") then
-            package:add("defines", "COINLIBAPI=__declspec(dllexport)", "COINLINKAGE=__stdcall", "COINLINKAGE_CB=__cdecl")
-        end
-    end)
 
     on_install(function (package)
         io.replace("CoinUtils/src/CoinFinite.cpp", [[#include "CoinUtilsConfig.h"]], [[#include "CoinUtilsConfig.h"
