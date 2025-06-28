@@ -8,6 +8,10 @@ package("swisseph")
 
     add_versions("v2.10.03", "8c166796767a560691581575b6eb4b4383d849e542b16647dca2e0b127fb70b0")
 
+    if is_plat("linux", "bsd") then
+        add_syslinks("m", "dl")
+    end
+
     on_load("windows", function (package)
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "USE_DLL")
@@ -22,6 +26,7 @@ package("swisseph")
                 io.replace("swejpl.c", "fseeko", "fseek", {plain = true})
             end
         end
+
         io.writefile("xmake.lua", [[
         add_rules("mode.debug", "mode.release")
         target("swisseph")
