@@ -11,11 +11,13 @@ package("pixman")
     add_versions("git_release:0.42.0", "45c6462f6d6441923d4c17d06fa50ce066f0ceff0fc84af8d342df63c1079151")
     add_versions("git_release:0.42.2", "4191a5084bae000a61e3513b06027b6f8f559d17d61769ed9de27dfb0cec8699")
     add_versions("git_release:0.43.4", "2af0acd451e22ae9d86d3c8aa45fcc19e4cc33e86bec311e5328cc2171ff1720")
+    add_versions("git_release:0.46.2", "b40c00a15cf514bab2ea89301037def830d590a8e649950059c45a9c1b819bd0")
 
     add_versions("home:0.42.0", "07f74c8d95e4a43eb2b08578b37f40b7937e6c5b48597b3a0bb2c13a53f46c13")
     add_versions("home:0.42.2", "ea1480efada2fd948bc75366f7c349e1c96d3297d09a3fe62626e38e234a625e")
     add_versions("home:0.43.2", "ea79297e5418fb528d0466e8b5b91d1be88857fa3706f49777b2925a72ae9924")
     add_versions("home:0.43.4", "a0624db90180c7ddb79fc7a9151093dc37c646d8c38d3f232f767cf64b85a226")
+    add_versions("home:0.46.2", "3e0de5ba6e356916946a3d958192f15505dcab85134771bfeab4ce4e29bbd733")
 
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
