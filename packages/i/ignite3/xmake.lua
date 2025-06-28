@@ -6,48 +6,72 @@ package("ignite3")
     add_urls("https://archive.apache.org/dist/ignite/$(version)/apache-ignite-$(version)-cpp.zip")
     add_versions("3.0.0", "4ef0b6b103fb1d652c486e5783105ca9c81b3ad677248b922d56064e7429ce2f")
 
-    add_configs("client", {description = "Build Ignite C++ client", default = true,  type = "boolean"})
-    add_configs("odbc",   {description = "Build ODBC driver",      default = false, type = "boolean"})
-    add_configs("tests",  {description = "Build unit tests",       default = false, type = "boolean"})
+    add_configs("client", {description = "Build Ignite C++ client", default = false,  type = "boolean"})
+    add_configs("odbc",   {description = "Build ODBC driver",       default = false, type = "boolean"})
 
     add_deps("cmake")
     add_deps("msgpack-c", "mbedtls")
 
     on_load(function (package)
-        if package:config("tests") then
-            package:add("deps", "gtest", {configs = {main = true}})
+        if package:config("client") or package:config("odbc") then
+            package:add("deps", "openssl")
+            if package:is_plat("windows") then
+                package:add("syslinks", "wsock32", "ws2_32", "iphlpapi", "crypt32")
+            elseif package:is_plat("linux", "bsd") then
+                package:add("syslinks", "dl")
+            end
         end
     end)
 
     on_install(function (package)
-        local cmake   = import("package.tools.cmake")
+        io.replace("CMakeLists.txt", "if (CLANG_FORMAT_BIN)", "if(0)", {plain = true})
+        -- remove pic hardcode
+        io.replace("ignite/network/CMakeLists.txt", "set_target_properties(${TARGET} PROPERTIES POSITION_INDEPENDENT_CODE 1)", "", {plain = true})
+        io.replace("cmake/dependencies.cmake", "set(CMAKE_POSITION_INDEPENDENT_CODE ON)", "", {plain = true})
+        -- fix find package
+        io.replace("cmake/dependencies.cmake", "find_package(msgpack REQUIRED)", "find_package(msgpack-c CONFIG REQUIRED)", {plain = true})
+        io.replace("cmake/dependencies.cmake", [[message( FATAL_ERROR "With USE_LOCAL_DEPS specified you have to set MBEDTLS_SOURCE_DIR to path to the MbedTLS source code")]], "find_package(MbedTLS CONFIG REQUIRED)\nreturn()", {plain = true})
+        -- fix install headers
+        io.replace("ignite/common/CMakeLists.txt", "uuid.h", "uuid.h\n    detail/mpi.h", {plain = true})
+        io.replace("ignite/common/detail/bytes.h", "detail/config.h", "config.h", {plain = true})
 
-        local configs = {"-DCMAKE_POSITION_INDEPENDENT_CODE=ON"}
-        table.insert(configs,"-DINSTALL_IGNITE_FILES=OFF")
-        table.insert(configs,"-DWARNINGS_AS_ERRORS=OFF")
-        table.insert(configs,"-DUSE_LOCAL_DEPS=ON")
+        local configs = {
+            "-DENABLE_TESTS=OFF",
+            -- "-DINSTALL_IGNITE_FILES=OFF",
+            "-DWARNINGS_AS_ERRORS=OFF",
+            "-DUSE_LOCAL_DEPS=ON",
+        }
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DENABLE_ADDRESS_SANITIZER=" .. (package:config("asan") and "ON" or "OFF"))
+
         table.insert(configs,"-DENABLE_CLIENT=" .. (package:config("client") and "ON" or "OFF"))
         table.insert(configs,"-DENABLE_ODBC="   .. (package:config("odbc")   and "ON" or "OFF"))
-        table.insert(configs,"-DENABLE_TESTS="  .. (package:config("tests")  and "ON" or "OFF"))
-        
 
-        cmake.install(package, configs, {
-            external  = {
-                msgpack_DIR = package:dep("msgpack-c"):installdir(),
-                mbedtls_DIR = package:dep("mbedtls"):installdir()
-            }
-        })
+        local opt = {}
+        opt.cxflags = "-DMBEDTLS_ALLOW_PRIVATE_ACCESS"
+        import("package.tools.cmake").install(package, configs, opt)
+
+        if package:is_plat("windows") and not package:config("shared") then
+            io.replace(package:installdir("include/ignite/common/detail/config.h"), "# define IGNITE_API IGNITE_IMPORT", "# define IGNITE_API", {plain = true})
+        end
     end)
 
     on_test(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            #include <ignite/tuple/binary_tuple_builder.h>
+            void test() {
+                ignite::binary_tuple_builder builder{0};
+                builder.start();
+            }
+        ]]}, {configs = {languages = "c++17"}}))
         if package:config("client") then
             assert(package:check_cxxsnippets({test = [[
                 #include <ignite/client/ignite_client.h>
-                int main() {
+                void test() {
                     ignite::IgniteClientConfiguration cfg;
                     ignite::IgniteClient::Start(cfg, std::chrono::seconds(1),
                                                 [](ignite::IgniteClient&){});
-                    return 0;
                 }
             ]]}, {configs = {languages = "c++17"}}))
         end
