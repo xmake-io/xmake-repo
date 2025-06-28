@@ -8,18 +8,15 @@ package("ppqsort")
 
     add_versions("v1.0.5", "39a973a680eb0af3bd0bdd5f4e9fa81d484915f3141e3a4568930647a328ba12")
 
+    on_check(function (package)
+        assert(package:has_cxxincludes("syncstream", {configs = {languages = "c++20"}}), "package(ppqsort): need <syncstream> header.")
+        assert(package:has_cxxincludes("ranges", {configs = {languages = "c++20"}}), "package(ppqsort): need <ranges> header.")
+    end)
+
     on_install(function (package)
         os.cp("include", package:installdir())
     end)
 
     on_test(function (package)
-        local has_cxx20 = package:has_cxxflags("-std=c++20")
-        local has_syncstream = package:has_cxxincludes("syncstream", {configs = {languages = "c++20"}})
-        local has_ranges = package:has_cxxincludes("ranges", {configs = {languages = "c++20"}})
-
-        if has_cxx20 and has_syncstream and has_ranges then
-            assert(package:has_cxxincludes("ppqsort.h", {configs = {languages = "c++20"}}))
-        else
-            wprint("C++20 not supported by the current toolchain, skipping test.")
-        end
+        assert(package:has_cxxincludes("ppqsort.h", {configs = {languages = "c++20"}}))
     end)
