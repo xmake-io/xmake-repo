@@ -30,5 +30,5 @@ package("standardlib")
                 const char *suffix = "text";
                 printf("Does the string end with \"%s\"? %s\n", suffix, ends_with(text, suffix) ? "Yes" : "No");
             }
-        ]]}, {configs = {languages = "c99"}}))
+        ]]}, {configs = {languages = "c17"}}))
     end)
