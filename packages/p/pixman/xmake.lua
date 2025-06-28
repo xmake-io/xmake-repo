@@ -35,7 +35,7 @@ package("pixman")
         end)
     end
 
-    on_install("!android and !cross and (!windows or windows|!arm64)", function (package)
+    on_install(function (package)
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "PIXMAN_API=__declspec(dllimport)")
         end
@@ -46,6 +46,17 @@ package("pixman")
             "-Dgtk=disabled",
         }
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
+        if package:is_plat("android") then
+            local ndk = package:toolchain("ndk"):config("ndk")
+            if ndk then
+                local cpu_features = path.join(ndk, "sources", "android", "cpufeatures")
+                if os.isdir(cpu_features) then
+                    table.insert(configs, "-Dcpu-features-path=" .. path.unix(cpu_features))
+                end
+            end
+        elseif package:is_plat("windows") and package:is_arch("arm.*") then
+            table.join2(configs, {"-Darm-simd=disabled", "-Dneon=disabled", "-Da64-neon=disabled", "-Dmmx=disabled"})
+        end
         io.replace("meson.build", "subdir('test')", "", {plain = true})
         io.replace("meson.build", "subdir('demos')", "", {plain = true})
         import("package.tools.meson").install(package, configs)
