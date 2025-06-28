@@ -86,6 +86,7 @@ function _add_libs_configs(package, configs)
     table.insert(configs, "-DBOOST_ENABLE_MPI=" .. (package:config("mpi") and "ON" or "OFF"))
     if package:config("locale") then
         table.insert(configs, "-DCMAKE_CXX_STANDARD=17")
+        table.insert(configs, "-DBOOST_LOCALE_ENABLE_ICU=" .. (package:config("icu") and "ON" or "OFF"))
     end
 
     _add_iostreams_configs(package, configs)
