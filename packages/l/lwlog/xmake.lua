@@ -13,11 +13,15 @@ package("lwlog")
         add_syslinks("pthread")
     end
 
-    add_includedirs("include/src")
-
     add_deps("cmake")
 
     on_install(function (package)
+        if package:version() and package:version():ge("1.4.0") then
+            package:add("includedirs", "include", "include/lwlog")
+        else
+            package:add("includedirs", "include/src")
+        end
+
         io.replace("CMakeLists.txt", "STATIC", "", {plain = true})
         io.replace("CMakeLists.txt",
             "target_link_libraries(lwlog_lib PRIVATE Threads::Threads)",
@@ -33,11 +37,21 @@ package("lwlog")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            #include <lwlog.h>
-            void test() {
-                lwlog::init_default_logger();
-                lwlog::info("Info message");
-            }
-        ]]}, {configs = {languages = "c++17"}}))
+        if package:version() and package:version():ge("1.4.0") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <lwlog.h>
+                void test() {
+                    auto console = std::make_shared<lwlog::console_logger>("CONSOLE");
+                    console->info("First info message");
+                }
+            ]]}, {configs = {languages = "c++17"}}))
+        else
+            assert(package:check_cxxsnippets({test = [[
+                #include <lwlog.h>
+                void test() {
+                    lwlog::init_default_logger();
+                    lwlog::info("Info message");
+                }
+            ]]}, {configs = {languages = "c++17"}}))
+        end
     end)
