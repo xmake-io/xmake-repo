@@ -17,7 +17,7 @@ package("openmvg")
     else
         add_deps("pkg-config")
     end
-    add_deps("eigen", "libpng", "libjpeg", "libtiff", "flann", "lemon")
+    add_deps("eigen", "libpng", "libjpeg", "libtiff", "flann", "lemon", "cereal")
 
     if on_check then
         on_check("linux", function (package)
@@ -72,6 +72,7 @@ package("openmvg")
         os.cd("src")
         import("package.tools.cmake").install(package, configs)
 
+        os.rm(package:installdir("include/openMVG_dependencies/cereal"))
         os.rm(package:installdir("lib/pkgconfig/*.pc"))
     end)
 
