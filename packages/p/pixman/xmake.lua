@@ -6,7 +6,6 @@ package("pixman")
     add_urls("https://cairographics.org/releases/pixman-$(version).tar.gz", {alias = "home"})
     add_urls("https://www.x.org/archive/individual/lib/pixman-$(version).tar.gz", {alias = "home"})
     add_urls("https://gitlab.freedesktop.org/pixman/pixman/-/archive/pixman-$(version)/pixman-pixman-$(version).tar.gz", {alias = "git_release"})
-    add_urls("https://github.com/freedesktop/pixman/archive/refs/tags/pixman-$(version).tar.gz", {alias = "git_release"})
     add_urls("https://gitlab.freedesktop.org/pixman/pixman.git")
 
     add_versions("git_release:0.42.0", "45c6462f6d6441923d4c17d06fa50ce066f0ceff0fc84af8d342df63c1079151")
