@@ -5,13 +5,13 @@ package("pixman")
 
     add_urls("https://cairographics.org/releases/pixman-$(version).tar.gz", {alias = "home"})
     add_urls("https://www.x.org/archive/individual/lib/pixman-$(version).tar.gz", {alias = "home"})
-    add_urls("https://gitlab.freedesktop.org/pixman/pixman/-/archive/pixman-$(version)/pixman-pixman-$(version).tar.gz", {alias = "git_release"})
+    add_urls("https://gitlab.freedesktop.org/pixman/pixman/-/archive/pixman-$(version)/pixman-pixman-$(version).tar.gz", {alias = "gitlab"})
     add_urls("https://gitlab.freedesktop.org/pixman/pixman.git")
 
-    add_versions("git_release:0.42.0", "45c6462f6d6441923d4c17d06fa50ce066f0ceff0fc84af8d342df63c1079151")
-    add_versions("git_release:0.42.2", "4191a5084bae000a61e3513b06027b6f8f559d17d61769ed9de27dfb0cec8699")
-    add_versions("git_release:0.43.4", "2af0acd451e22ae9d86d3c8aa45fcc19e4cc33e86bec311e5328cc2171ff1720")
-    add_versions("git_release:0.46.2", "b40c00a15cf514bab2ea89301037def830d590a8e649950059c45a9c1b819bd0")
+    add_versions("gitlab:0.42.0", "45c6462f6d6441923d4c17d06fa50ce066f0ceff0fc84af8d342df63c1079151")
+    add_versions("gitlab:0.42.2", "4191a5084bae000a61e3513b06027b6f8f559d17d61769ed9de27dfb0cec8699")
+    add_versions("gitlab:0.43.4", "2af0acd451e22ae9d86d3c8aa45fcc19e4cc33e86bec311e5328cc2171ff1720")
+    add_versions("gitlab:0.46.2", "b40c00a15cf514bab2ea89301037def830d590a8e649950059c45a9c1b819bd0")
 
     add_versions("home:0.42.0", "07f74c8d95e4a43eb2b08578b37f40b7937e6c5b48597b3a0bb2c13a53f46c13")
     add_versions("home:0.42.2", "ea1480efada2fd948bc75366f7c349e1c96d3297d09a3fe62626e38e234a625e")
