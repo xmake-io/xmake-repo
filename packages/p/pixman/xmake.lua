@@ -6,7 +6,7 @@ package("pixman")
     add_urls("https://cairographics.org/releases/pixman-$(version).tar.gz", {alias = "home"})
     add_urls("https://www.x.org/archive/individual/lib/pixman-$(version).tar.gz", {alias = "home"})
     add_urls("https://gitlab.freedesktop.org/pixman/pixman/-/archive/pixman-$(version)/pixman-pixman-$(version).tar.gz", {alias = "gitlab"})
-    add_urls("https://gitlab.freedesktop.org/pixman/pixman.git")
+    add_urls("https://gitlab.freedesktop.org/pixman/pixman.git", {alias = "git"})
 
     add_versions("gitlab:0.42.0", "45c6462f6d6441923d4c17d06fa50ce066f0ceff0fc84af8d342df63c1079151")
     add_versions("gitlab:0.42.2", "4191a5084bae000a61e3513b06027b6f8f559d17d61769ed9de27dfb0cec8699")
@@ -18,6 +18,8 @@ package("pixman")
     add_versions("home:0.43.2", "ea79297e5418fb528d0466e8b5b91d1be88857fa3706f49777b2925a72ae9924")
     add_versions("home:0.43.4", "a0624db90180c7ddb79fc7a9151093dc37c646d8c38d3f232f767cf64b85a226")
     add_versions("home:0.46.2", "3e0de5ba6e356916946a3d958192f15505dcab85134771bfeab4ce4e29bbd733")
+
+    add_versions("git:0.46.2", "pixman-0.46.2")
 
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
