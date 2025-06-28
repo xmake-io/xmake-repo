@@ -37,7 +37,7 @@ package("ignite3")
 
         local configs = {
             "-DENABLE_TESTS=OFF",
-            -- "-DINSTALL_IGNITE_FILES=OFF",
+            "-DCMAKE_INSTALL_INCLUDEDIR=" .. path.unix(package:installdir("include")),
             "-DWARNINGS_AS_ERRORS=OFF",
             "-DUSE_LOCAL_DEPS=ON",
         }
