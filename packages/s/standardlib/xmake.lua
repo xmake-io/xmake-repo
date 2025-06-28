@@ -7,14 +7,12 @@ package("standardlib")
     add_urls("https://github.com/gregoryc/standardlib.git")
     add_versions("2024.03.25", "d27a1293ccfe7ef04a961806754c5d1272614b72")
 
-    if is_plat("linux", "bsd") then
-        add_syslinks("pthread")
-    end
-
     on_load(function (package)
         if not package:has_cincludes("threads.h", {configs = {languages = "c11"}}) then
             package:add("defines", "FOUNDATIONAL_LIB_THREAD_FUNCTIONS_ENABLED=0")
         end
+
+        package:add("defines", "_POSIX_C_SOURCE=200809L")
     end)
 
     on_install("linux", "bsd", "cross", "mingw", function (package)
@@ -30,5 +28,5 @@ package("standardlib")
                 const char *suffix = "text";
                 printf("Does the string end with \"%s\"? %s\n", suffix, ends_with(text, suffix) ? "Yes" : "No");
             }
-        ]]}, {configs = {languages = "c20"}}))
+        ]]}, {configs = {languages = "c11"}}))
     end)
