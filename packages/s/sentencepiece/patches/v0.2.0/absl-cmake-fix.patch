@@ -29,12 +29,12 @@ index 2f70fd6..3416259 100644
  if (MSVC)
    add_definitions("/D_USE_INTERNAL_STRING_VIEW")
 diff --git a/third_party/CMakeLists.txt b/third_party/CMakeLists.txt
-index d00ecba..5f34616 100644
+index d00ecba..2722386 100644
 --- a/third_party/CMakeLists.txt
 +++ b/third_party/CMakeLists.txt
 @@ -1,4 +1,4 @@
 -include_directories(absl/strings darts_clone esaxx protobuf-lite)
-+include_directories(darts_clone esaxx)
++include_directories(darts_clone esaxx protobuf-lite)
  
  
  
