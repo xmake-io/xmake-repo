@@ -11,11 +11,10 @@ package("standardlib")
         if not package:has_cincludes("threads.h", {configs = {languages = "c11"}}) then
             package:add("defines", "FOUNDATIONAL_LIB_THREAD_FUNCTIONS_ENABLED=0")
         end
-
         package:add("defines", "_DEFAULT_SOURCE", "_POSIX_C_SOURCE=200809L")
     end)
 
-    on_install("linux", "bsd", "cross", "mingw", function (package)
+    on_install("linux", "cross", "mingw", function (package)
         os.cp("foundationallib.h", package:installdir("include"))
     end)
 
