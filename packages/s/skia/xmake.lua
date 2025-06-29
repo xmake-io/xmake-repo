@@ -46,7 +46,7 @@ package("skia")
         end)
     end
 
-    on_install("macosx", "linux", "windows", function (package)
+    on_install("macosx", "linux|!arm64", "windows|!arm64", function (package)
         local args = {is_official_build = false,
                       is_component_build = false,
                       is_debug = package:debug(),
