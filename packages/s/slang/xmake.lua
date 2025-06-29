@@ -41,7 +41,7 @@ package("slang")
         table.insert(configs, "-DSLANG_SLANG_LLVM_FLAVOR=" .. package:config("slang_llvm_flavor"))
 
         io.replace("CMakeLists.txt", [[find_package(Threads REQUIRED)]], [[find_package(Threads REQUIRED)
-find_package(miniz)
+find_package(miniz CONFIG REQUIRED)
 add_library(miniz ALIAS miniz::miniz)
 get_target_property(MINIZ_INCLUDE_DIRS miniz::miniz INTERFACE_INCLUDE_DIRECTORIES)
 include_directories(MINIZ_INCLUDE_DIRS)]], {plain = true})
