@@ -40,6 +40,7 @@ package("bass24")
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
     if is_plat("iphoneos") then
+        add_includedirs("lib/bass.framework/Headers")
         add_linkdirs("lib/bass.framework")
         add_frameworkdirs("lib/bass.framework")
         add_frameworks("bass")
@@ -94,12 +95,12 @@ package("bass24")
     end)
 
     on_install("iphoneos", function (package)
-        os.cp("bass.h", package:installdir("include"))
         if package:is_arch("arm.*") then
             os.cp("bass.xcframework/ios-arm64_armv7_armv7s/bass.framework", package:installdir("lib"))
         else
             os.cp("bass.xcframework/ios-arm64_i386_x86_64-simulator/bass.framework", package:installdir("lib"))
         end
+        os.cp("bass.h", package:installdir("lib/bass.framework/Headers"))
     end)
 
     on_test(function (package)
