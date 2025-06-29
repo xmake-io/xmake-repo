@@ -81,7 +81,7 @@ package("skia")
             args.cc            = package:build_getenv("cc")
             args.cxx           = package:build_getenv("cxx")
         else
-            args.extra_cflags  = {(package:config("vs_runtime"):startswith("MT") and "/MT" or "/MD")}
+            args.extra_cflags  = {(package:config("vs_runtime"):startswith("MT") and "/MT" or "/" .. package:config("vs_runtime"))}
         end
         if package:is_plat("macosx") then
             args.extra_ldflags = {"-lstdc++"}
