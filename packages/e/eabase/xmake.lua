@@ -4,7 +4,7 @@ package("eabase")
     set_description("EABase is a small set of header files that define platform-independent data types and platform feature macros.")
     set_license("BSD-3-Clause")
 
-    add_urls("https://github.com/electronicarts/EABase/archive/refs/tags/$(version).tar.gz"
+    add_urls("https://github.com/electronicarts/EABase/archive/refs/tags/$(version).tar.gz",
              "https://github.com/electronicarts/EABase.git")
 
     add_versions("2.09.05", "f85b98c96f1976aa013c8d6016c5e37a409633ac3fce843cd4ec0b89c67e6b7a")
