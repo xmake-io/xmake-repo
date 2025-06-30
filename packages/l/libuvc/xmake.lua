@@ -17,12 +17,14 @@ package("libuvc")
     add_configs("jpeg", {description = "Enable jpeg support.", default = true, type = "boolean"})
     add_configs("winsock2", {description = "Use winsock2.h or winsock.h in windows.", default = true, type = "boolean"})
 
-    add_deps("cmake")
+    add_deps("cmake", "pkgconf")
     add_deps("libusb")
 
     if is_plat("windows") then
         add_patches("2024.03.05", "patches/2024.03.05/windows.patch", "1a3356ad2a37ac68bd29ea61457de85210740643843f57e030b20fd70efc9597")
-        add_deps("pkgconf", "pthreads4w")
+        add_deps("pthreads4w")
+    else
+        add_patches("2024.03.05", "patches/2024.03.05/linux.patch", "6a17c1eb271a6db1a2fd17aa2003159f60b85f02a3443ee5b600472f94786bda")
     end
 
     on_load(function (package)
