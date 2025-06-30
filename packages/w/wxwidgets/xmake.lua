@@ -139,11 +139,17 @@ package("wxwidgets")
     end)
 
     on_install("macosx", "linux", function (package)
-        -- Notify the user about issues caused by the CMake version.
-        if package:dep("cmake") and package:dep("cmake"):version() then
-            local cmake_ver = package:dep("cmake"):version()
-            if cmake_ver:gt("3.28.0") then
-                wprint("\ncmake may not find Cmath detail in https://github.com/prusa3d/PrusaSlicer/issues/12169\n")
+        import("core.base.semver")
+        local cmake = package:dep("cmake")
+        if cmake then
+            local cmake_fetch = cmake:fetch()
+            -- Notify the user about issues caused by the CMake version.
+            if cmake_fetch and cmake_fetch.version ~= nil then
+                local cmake_version = semver.new(cmake_fetch.version)
+                if cmake_version:major() > 3 or 
+                    (cmake_version:major() == 3 and cmake_version:minor() > 28) then
+                    print("CMake may not find CMath detail in https://github.com/prusa3d/PrusaSlicer/issues/12169")
+                end
             end
         end
 
