@@ -129,7 +129,7 @@ package("opencv")
         end
 
         if package:config("tesseract") then
-            package:add("deps", "tesseract 4.1.3") -- Opencv need tesseract from the v4 series
+            package:add("deps", "tesseract 4.1.3") -- OpenCV need tesseract from the v4 series
         end
     end)
 
