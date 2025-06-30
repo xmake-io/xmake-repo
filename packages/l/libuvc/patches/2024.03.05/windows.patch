@@ -75,7 +75,7 @@ index d387150..6ed6d50 100644
  #include <stdint.h>
 -#include <sys/time.h>
 +#include <time.h>
-+#include <winsock.h>
++#include <winsock2.h>
  #include <libuvc/libuvc_config.h>
  
  struct libusb_context;

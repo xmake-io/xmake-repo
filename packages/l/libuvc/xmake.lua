@@ -6,13 +6,22 @@ package("libuvc")
     add_urls("https://github.com/libuvc/libuvc.git")
     add_versions("2024.03.05", "047920bcdfb1dac42424c90de5cc77dfc9fba04d")
 
+    if is_plat("macosx") then
+        add_extsources("brew::libuvc")
+    elseif is_plat("linux") then
+        add_extsources("apt::libuvc-dev", "pacman::libuvc")
+    elseif is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::libuvc")
+    end
+
     add_configs("jpeg", {description = "Enable jpeg support.", default = true, type = "boolean"})
+    add_configs("winsock2", {description = "Use winsock2.h or winsock.h in windows.", default = true, type = "boolean"})
 
     add_deps("cmake")
     add_deps("libusb")
 
     if is_plat("windows") then
-        add_patches("2024.03.05", "patches/2024.03.05/windows.patch", "87eae0b3bbc07038654a5ef7f5f7d0213472436e517f9b65963353738bb0a3dc")
+        add_patches("2024.03.05", "patches/2024.03.05/windows.patch", "1a3356ad2a37ac68bd29ea61457de85210740643843f57e030b20fd70efc9597")
         add_deps("pkgconf", "pthreads4w")
     end
 
@@ -22,7 +31,10 @@ package("libuvc")
         end
     end)
 
-    on_install("windows|x64", "windows|x86", function (package)
+    on_install("windows|x64", "windows|x86", "linux", "macosx", function (package)
+        if package:is_plat("windows") and not package:config("winsock2") then
+            io.replace("include/libuvc/libuvc.h", "winsock2.h", "winsock.h", {plain = true})
+        end
         local configs = {}
         table.insert(configs, "-DBUILD_EXAMPLE=OFF")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
