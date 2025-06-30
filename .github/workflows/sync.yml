@@ -11,7 +11,7 @@ jobs:
         os: [ubuntu-latest]
 
     runs-on: ${{ matrix.os }}
-    if: ${{ github.repository }} == "xmake-io/xmake-repo"
+    if: ${{ github.repository == 'xmake-io/xmake-repo' }} # only runs on root repository
 
     steps:
       - uses: actions/checkout@v1
