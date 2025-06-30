@@ -6,12 +6,12 @@ on:
 
 jobs:
   build:
+    if: github.repository == 'xmake-io/xmake-repo' # only runs on root repository
     strategy:
       matrix:
         os: [ubuntu-latest]
 
     runs-on: ${{ matrix.os }}
-    if: ${{ github.repository }} == "xmake-io/xmake-repo"
 
     steps:
       - uses: actions/checkout@v1
