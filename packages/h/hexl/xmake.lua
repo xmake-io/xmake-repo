@@ -6,6 +6,7 @@ package("hexl")
     add_urls("https://github.com/intel/hexl/archive/refs/tags/$(version).tar.gz",
              "https://github.com/intel/hexl.git")
 
+    add_versions("v1.2.6", "5035cedff6984060c10e2ce7587dab83483787ea2010e1b60d18d19bb3538f3b")
     add_versions("v1.2.5", "3692e6e6183dbc49253e51e86c3e52e7affcac925f57db0949dbb4d34b558a9a")
 
     add_configs("experimental", {description = "Enable experimental features", default = false, type = "boolean"})
