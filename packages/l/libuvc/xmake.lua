@@ -27,6 +27,10 @@ package("libuvc")
         add_patches("2024.03.05", "patches/2024.03.05/linux.patch", "6a17c1eb271a6db1a2fd17aa2003159f60b85f02a3443ee5b600472f94786bda")
     end
 
+    if is_plat("macosx") then
+        add_frameworks("CoreFoundation", "IOKit", "Security")
+    end
+
     on_load(function (package)
         if package:config("jpeg") then
             package:add("deps", "libjpeg")
