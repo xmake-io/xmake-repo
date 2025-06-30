@@ -50,7 +50,7 @@ package("openmp")
                     end
                 elseif package:has_tool(toolkind, "gcc", "gxx", "gfortran") then
                     result[flagname] = "-fopenmp"
-                elseif package:has_tool(toolkind, "icc", "icpc", "ifort") then
+                elseif package:has_tool(toolkind, "icc", "icpc", "ifort", "icx", "icpx", "ifx") then
                     result[flagname] = "-qopenmp"
                 elseif package:has_tool(toolkind, "icl") then
                     result[flagname] = "-Qopenmp"
@@ -66,7 +66,7 @@ package("openmp")
                     elseif package:has_tool(toolkind, "gcc", "gxx") then
                         result.ldflags = "-fopenmp"
                         result.shflags = "-fopenmp"
-                    elseif package:has_tool(toolkind, "icc", "icpc") then
+                    elseif package:has_tool(toolkind, "icc", "icpc", "icx", "icpx") then
                         result.ldflags = "-qopenmp"
                         result.shflags = "-qopenmp"
                     elseif package:has_tool(toolkind, "icl") then

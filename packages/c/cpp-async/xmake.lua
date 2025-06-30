@@ -5,8 +5,9 @@ package("cpp-async")
     set_license("MIT")
 
     add_urls("https://github.com/microsoft/cpp-async/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/microsoft/cpp-async.git")
+             "https://github.com/microsoft/cpp-async.git", {submodules = false})
 
+    add_versions("v1.2.0", "1f681a45fe73b8fa8b1aabcf980d2a2158d165224fe96893344fe3a5124b1baf")
     add_versions("v1.1.0", "168681dfd999b7546d623f20d18072ce280502cf0bf3a829c2aec58741062a23")
 
     on_check(function (package)

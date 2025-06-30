@@ -7,6 +7,11 @@ package("glaze")
     add_urls("https://github.com/stephenberry/glaze/archive/refs/tags/$(version).tar.gz",
              "https://github.com/stephenberry/glaze.git")
 
+    add_versions("v5.5.2", "92382568999829a531db5a3800a36d8699674d640d3862fcb7e79ee2879d95ec")
+    add_versions("v5.5.1", "a30fedaffca7a0afdfa8e7b6f570fbbdc5fed6b0c8146c7922c0e11252d12404")
+    add_versions("v5.5.0", "378ba049e37b4c318fe0bdb2c6803369576707e40bad777959ed706dc361fc6b")
+    add_versions("v5.4.1", "a5d578e58fa0e0930eb02bf99ebcb0cb732ce04ce427ec608d773c6f5258e545")
+    add_versions("v5.4.0", "b6f7f62dba80b863df16a9370f676bc32f72a2d2ee401952aa9305b202136476")
     add_versions("v5.3.1", "4c7a31abfc37a021a5120e9bc7d9de8116c10ce1470e09f4306c6e5a1a6fb555")
     add_versions("v5.3.0", "5a130dc52d789cd82d52e172d7c2b1fdcc893f3354462ae6b8825f38746f04dd")
     add_versions("v5.2.1", "ae3f7f0c7bd3a800466a030856a3532e0bb4fd9ef757a1123690900d6f8fec2e")

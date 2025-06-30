@@ -6,6 +6,7 @@ on:
 
 jobs:
   build:
+    if: github.repository == 'xmake-io/xmake-repo' # only runs on root repository
     strategy:
       matrix:
         os: [ubuntu-latest]
@@ -43,7 +44,6 @@ jobs:
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
       - name: Update
-        if: ${{ github.repository }} == "xmake-io/xmake-repo"
         run: |
           export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
           xmake l -vD ./scripts/sync.lua

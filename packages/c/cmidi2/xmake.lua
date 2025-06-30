@@ -5,6 +5,7 @@ package("cmidi2")
     set_license("MIT")
 
     add_urls("https://github.com/atsushieno/cmidi2.git")
+    add_versions("2025.06.25", "b48235949239250b7769f82a35893e9dc33f340e")
     add_versions("2023.08.07", "8c7e2c218bb522bba6eabc6f55a6676e4a77138c")
 
     on_install(function (package)
