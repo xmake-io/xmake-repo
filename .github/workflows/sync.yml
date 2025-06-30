@@ -11,6 +11,7 @@ jobs:
         os: [ubuntu-latest]
 
     runs-on: ${{ matrix.os }}
+    if: ${{ github.repository }} == "xmake-io/xmake-repo"
 
     steps:
       - uses: actions/checkout@v1
@@ -43,7 +44,6 @@ jobs:
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
       - name: Update
-        if: ${{ github.repository }} == "xmake-io/xmake-repo"
         run: |
           export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
           xmake l -vD ./scripts/sync.lua
