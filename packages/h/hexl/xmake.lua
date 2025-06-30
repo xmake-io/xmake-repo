@@ -30,7 +30,7 @@ package("hexl")
         if package:is_debug() then
             package:add("deps", "easyloggingpp")
             package:add("deps", (is_subhost("windows") and "pkgconf") or "pkg-config")
-            package:add("patches", "1.2.5", "patches/1.2.5/cmake-find-easyloggingpp.patch", "7b239bebc13cd9548334b4dfcc84f1a11895c37e08b414d87e5ce81c944fb239")
+            package:add("patches", ">=1.2.5", "patches/1.2.5/cmake-find-easyloggingpp.patch", "7b239bebc13cd9548334b4dfcc84f1a11895c37e08b414d87e5ce81c944fb239")
         end
     end)
 
@@ -56,11 +56,6 @@ package("hexl")
         end
         table.insert(configs, "-DHEXL_EXPERIMENTAL=" .. (package:config("experimental") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
-
-        if package:is_plat("windows") and package:is_debug() then
-            local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.vcp(path.join(package:buildir(), "**.pdb"), dir)
-        end
     end)
 
     on_test(function (package)
