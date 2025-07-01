@@ -1,20 +1,24 @@
 package("opencolorio")
-
     set_homepage("https://opencolorio.org/")
     set_description("A complete color management solution geared towards motion picture production with an emphasis on visual effects and computer animation.")
     set_license("BSD-3-Clause")
 
     add_urls("https://github.com/AcademySoftwareFoundation/OpenColorIO/archive/refs/tags/$(version).tar.gz",
              "https://github.com/AcademySoftwareFoundation/OpenColorIO.git")
+
+    add_versions("v2.4.2", "2d8f2c47c40476d6e8cea9d878f6601d04f6d5642b47018eaafa9e9f833f3690")
     add_versions("v2.1.0", "81fc7853a490031632a69c73716bc6ac271b395e2ba0e2587af9995c2b0efb5f")
     add_versions("v2.1.1", "16ebc3e0f21f72dbe90fe60437eb864f4d4de9c255ef8e212f837824fc9b8d9c")
 
-    add_deps("cmake", "expat", "yaml-cpp", "imath", "pystring")
     if is_plat("windows") then
         add_syslinks("user32", "gdi32")
     elseif is_plat("macosx") then
         add_frameworks("CoreFoundation", "CoreGraphics", "ColorSync", "IOKit")
     end
+
+    add_deps("cmake")
+    add_deps("minizip-ng", "expat", "yaml-cpp", "imath", "pystring")
+
     on_load("windows", function (package)
         if not package:config("shared") then
             package:add("defines", "OpenColorIO_SKIP_IMPORTS")
@@ -25,7 +29,13 @@ package("opencolorio")
         local configs = {"-DOCIO_BUILD_APPS=OFF", "-DOCIO_BUILD_OPENFX=OFF", "-DOCIO_BUILD_PYTHON=OFF", "-DOCIO_BUILD_DOCS=OFF", "-DOCIO_BUILD_TESTS=OFF", "-DOCIO_BUILD_GPU_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+
+        local opt = {}
+        -- Fix missing syslinks
+        if is_plat("windows", "mingw") then
+            opt.packagedeps = "minizip-ng"
+        end
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
