@@ -6,9 +6,11 @@ package("libcoro")
     add_urls("https://github.com/jbaldwin/libcoro/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jbaldwin/libcoro.git", {submodules = false})
 
+    add_versions("v0.14.0", "baf4b1535dee94bf47d3901b7e4842cedead5828ce7583e9a30ff8c5a8e0eb6e")
     add_versions("v0.13.0", "aea5e4f4c04ef01269cc4e40ce9e693f71e324574ea0a933d908783ef385f9f5")
     add_versions("v0.12.1", "2cb6f45fc73dad6008cc930d92939785684835e03b12df422b98fcab9e393add")
 
+    add_patches("v0.14.0", path.join(os.scriptdir(), "patches", "v0.14.0.patch"), "bd5892560831ec322409ed9af82466ae523d967c1c80ca77c66bc9b64a4b54c7")
     add_patches("v0.13.0", path.join(os.scriptdir(), "patches", "v0.13.0.patch"), "bd5892560831ec322409ed9af82466ae523d967c1c80ca77c66bc9b64a4b54c7")
 
     if is_plat("windows", "wasm") then
