@@ -24,7 +24,7 @@ package("libcoro")
         add_configs("tls", {description = "Include TLS encryption features", default = false, type = "boolean"})
     end
 
-    add_deps("cmake >=3.15")
+    add_deps("cmake")
 
     on_check(function (package)
         import("core.base.semver")
@@ -43,10 +43,10 @@ package("libcoro")
         import("package.tools.cmake").build(package)
         if os.exists("gnu_version.txt") then
             local gnu_version = semver.new(io.readfile("gnu_version.txt"))
-            assert(gnu_version:eq("10.2.0") or gnu_version:gt("10.2.0"), "package(libcoro) require gnu compiler 10.2.0 version or newer.")
+            assert(gnu_version:eq("10.2.0") or gnu_version:gt("10.2.0"), "package(libcoro): requires gnu compiler 10.2.0 version or newer.")
         elseif os.exists("clang_version.txt") then
             local clang_version = semver.new(io.readfile("clang_version.txt"))
-            assert(clang_version:eq("16.0.0") or clang_version:gt("16.0.0"), "package(libcoro) require clang compiler version 16.0.0 or newer")
+            assert(clang_version:eq("16.0.0") or clang_version:gt("16.0.0"), "package(libcoro): requires clang compiler version 16.0.0 or newer.")
         end
     end)
 
@@ -72,7 +72,7 @@ package("libcoro")
         end
     end)
 
-    on_install(function (package)
+    on_install("!android", function (package)
         local configs = {
             "-DLIBCORO_EXTERNAL_DEPENDENCIES=ON",
             "-DLIBCORO_BUILD_TESTS=OFF",
