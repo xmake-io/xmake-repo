@@ -27,17 +27,17 @@ package("libcoro")
         assert(package:check_cxxsnippets({test = [[
             #if defined(__clang__)
             #  if __clang_major__ < 16
-            #      error "Clang version too low, need at least 16.0.0"
+            #      error "package(libcoro): Clang version too low, need at least 16.0.0"
             #  endif
             #endif
-        ]]}, {configs = {languages = "c++20"}}), "Clang version too low, need at least 16.0.0")
+        ]]}, {configs = {languages = "c++20"}}), "package(libcoro): Clang version too low, need at least 16.0.0")
         assert(package:check_cxxsnippets({test = [[
             #if defined(__GNUC__)
             #  if (__GNUC__ < 10) || (__GNUC__ == 10 && (__GNUC_MINOR__ < 2))
-            #      error "GCC version too low, need at least 10.2.0"
+            #      error "package(libcoro): GCC version too low, need at least 10.2.0"
             #  endif
             #endif
-        ]]}, {configs = {languages = "c++20"}}), "GCC version too low, need at least 10.2.0")
+        ]]}, {configs = {languages = "c++20"}}), "package(libcoro): GCC version too low, need at least 10.2.0")
     end)
 
     on_load(function (package)
