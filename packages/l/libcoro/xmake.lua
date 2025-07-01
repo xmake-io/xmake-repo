@@ -26,6 +26,30 @@ package("libcoro")
 
     add_deps("cmake >=3.15")
 
+    on_check(function (package)
+        import("core.base.semver")
+        os.mkdir("temp")
+        os.cd("temp")
+        io.writefile("CMakeLists.txt", [[
+            cmake_minimum_required(VERSION 3.10)
+            project(CompilerVersion LANGUAGES CXX)
+            if(${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
+                file(WRITE "${CMAKE_SOURCE_DIR}/gnu_version.txt" "${CMAKE_CXX_COMPILER_VERSION}")
+            endif()
+            if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
+                file(WRITE "${CMAKE_SOURCE_DIR}/clang_version.txt" "${CMAKE_CXX_COMPILER_VERSION}")
+            endif()
+        ]])
+        import("package.tools.cmake").build(package)
+        if os.exists("gnu_version.txt") then
+            local gnu_version = semver.new(io.readfile("gnu_version.txt"))
+            assert(gnu_version:eq("10.2.0") or gnu_version:gt("10.2.0"), "package(libcoro) require gnu compiler 10.2.0 version or newer.")
+        elseif os.exists("clang_version.txt") then
+            local clang_version = semver.new(io.readfile("clang_version.txt"))
+            assert(clang_version:eq("16.0.0") or clang_version:gt("16.0.0"), "package(libcoro) require clang compiler version 16.0.0 or newer")
+        end
+    end)
+
     on_load(function (package)
         if package:config("networking") then
             package:add("deps", "c-ares")
@@ -45,7 +69,6 @@ package("libcoro")
             package:add("cxxflags", "-fexceptions")
         elseif toolname == "clangxx" then
             package:add("cxxflags", "-fexceptions")
-            package:add("cxxflags", "-fexperimental-library")
         end
     end)
 
