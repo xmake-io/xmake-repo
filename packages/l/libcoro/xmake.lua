@@ -12,9 +12,9 @@ package("libcoro")
     add_versions("v0.13.0", "aea5e4f4c04ef01269cc4e40ce9e693f71e324574ea0a933d908783ef385f9f5")
     add_versions("v0.12.1", "2cb6f45fc73dad6008cc930d92939785684835e03b12df422b98fcab9e393add")
 
-    add_patches("v0.14.1", path.join(os.scriptdir(), "patches", "v0.14.1.patch"), "bd5892560831ec322409ed9af82466ae523d967c1c80ca77c66bc9b64a4b54c7")
-    add_patches("v0.14.0", path.join(os.scriptdir(), "patches", "v0.14.0.patch"), "bd5892560831ec322409ed9af82466ae523d967c1c80ca77c66bc9b64a4b54c7")
-    add_patches("v0.13.0", path.join(os.scriptdir(), "patches", "v0.13.0.patch"), "bd5892560831ec322409ed9af82466ae523d967c1c80ca77c66bc9b64a4b54c7")
+    add_patches("v0.14.1", "patches/v0.14.1.patch", "bd5892560831ec322409ed9af82466ae523d967c1c80ca77c66bc9b64a4b54c7")
+    add_patches("v0.14.0", "patches/v0.14.0.patch", "bd5892560831ec322409ed9af82466ae523d967c1c80ca77c66bc9b64a4b54c7")
+    add_patches("v0.13.0", "patches/v0.13.0.patch", "bd5892560831ec322409ed9af82466ae523d967c1c80ca77c66bc9b64a4b54c7")
 
     if not is_plat("windows", "wasm") then
         add_configs("networking", {description = "Include networking features", default = false, type = "boolean"})
@@ -47,7 +47,6 @@ package("libcoro")
         if package:config("tls") then
             package:add("deps", "openssl")
         end
-
         if not package:config("shared") then
             package:add("defines", "CORO_STATIC_DEFINE")
         end
@@ -70,7 +69,6 @@ package("libcoro")
         table.insert(configs, "-DLIBCORO_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DLIBCORO_FEATURE_NETWORKING=" .. (package:config("networking") and "ON" or "OFF"))
         table.insert(configs, "-DLIBCORO_FEATURE_TLS=" .. (package:config("tls") and "ON" or "OFF"))
-
         local opt = {}
         if package:is_plat("mingw") and package:config("shared") then
             opt.shflags = "-Wl,--export-all-symbols"
