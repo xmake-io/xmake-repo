@@ -27,6 +27,8 @@ package("coin-or-coinutils")
         add_syslinks("m")
     end
 
+    add_includedirs("include", "include/coin")
+
     on_install(function (package)
         io.replace("CoinUtils/src/CoinFinite.cpp", [[#include "CoinUtilsConfig.h"]], [[#include "CoinUtilsConfig.h"
 #include <cfloat>]], {plain = true})
