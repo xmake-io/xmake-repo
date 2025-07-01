@@ -30,6 +30,8 @@ package("minizip-ng")
     if is_plat("macosx") then
         add_frameworks("CoreFoundation", "Security")
         add_syslinks("iconv")
+    elseif is_plat("iphoneos") then
+        add_syslinks("iconv")
     elseif is_plat("windows", "mingw") then
         add_syslinks("crypt32", "advapi32")
     end
@@ -52,6 +54,10 @@ package("minizip-ng")
     end)
 
     on_install(function (package)
+        -- fix find zlib/zlib-ng
+        io.replace("CMakeLists.txt", "if(ZLIB-NG_FOUND AND NOT MZ_FORCE_FETCH_LIBS)", [[if(MZ_ZLIB_FLAVOR STREQUAL "zlib-ng" AND ZLIB-NG_FOUND)]], {plain = true})
+        io.replace("CMakeLists.txt", "if(ZLIB_FOUND AND NOT MZ_FORCE_FETCH_LIBS)", [[if(MZ_ZLIB_FLAVOR STREQUAL "zlib" AND ZLIB_FOUND)]], {plain = true})
+
         local configs = {"-DMZ_LIBCOMP=OFF", "-DMZ_FETCH_LIBS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
