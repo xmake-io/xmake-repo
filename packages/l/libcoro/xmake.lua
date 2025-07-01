@@ -16,10 +16,7 @@ package("libcoro")
     add_patches("v0.14.0", path.join(os.scriptdir(), "patches", "v0.14.0.patch"), "bd5892560831ec322409ed9af82466ae523d967c1c80ca77c66bc9b64a4b54c7")
     add_patches("v0.13.0", path.join(os.scriptdir(), "patches", "v0.13.0.patch"), "bd5892560831ec322409ed9af82466ae523d967c1c80ca77c66bc9b64a4b54c7")
 
-    if is_plat("windows", "wasm") then
-        add_configs("networking", {description = "Include networking features", default = false, type = "boolean", readonly = true})
-        add_configs("tls", {description = "Include TLS encryption features", default = false, type = "boolean", readonly = true})
-    else
+    if not is_plat("windows", "wasm") then
         add_configs("networking", {description = "Include networking features", default = false, type = "boolean"})
         add_configs("tls", {description = "Include TLS encryption features", default = false, type = "boolean"})
     end
@@ -27,29 +24,20 @@ package("libcoro")
     add_deps("cmake")
 
     on_check(function (package)
-        import("core.base.semver")
-        os.mkdir("temp")
-        os.cd("temp")
-        io.writefile("CMakeLists.txt", [[
-            cmake_minimum_required(VERSION 3.10)
-            project(CompilerVersion LANGUAGES CXX)
-            if(${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
-                file(WRITE "${CMAKE_SOURCE_DIR}/gnu_version.txt" "${CMAKE_CXX_COMPILER_VERSION}")
-            endif()
-            if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
-                file(WRITE "${CMAKE_SOURCE_DIR}/clang_version.txt" "${CMAKE_CXX_COMPILER_VERSION}")
-            endif()
-        ]])
-        import("package.tools.cmake").build(package)
-        if os.exists("gnu_version.txt") then
-            local gnu_version = semver.new(io.readfile("gnu_version.txt"))
-            assert(gnu_version:eq("10.2.0") or gnu_version:gt("10.2.0"), "package(libcoro): requires gnu compiler 10.2.0 version or newer.")
-        elseif os.exists("clang_version.txt") then
-            local clang_version = semver.new(io.readfile("clang_version.txt"))
-            assert(clang_version:eq("16.0.0") or clang_version:gt("16.0.0"), "package(libcoro): requires clang compiler version 16.0.0 or newer.")
-        end
-        os.cd("..")
-        os.rm("temp")
+        assert(package:check_cxxsnippets({test = [[
+            #if defined(__clang__)
+            #  if __clang_major__ < 16
+            #      error "Clang version too low, need at least 16.0.0"
+            #  endif
+            #endif
+        ]]}, {configs = {languages = "c++20"}}), "Clang version too low, need at least 16.0.0")
+        assert(package:check_cxxsnippets({test = [[
+            #if defined(__GNUC__)
+            #  if (__GNUC__ < 10) || (__GNUC__ == 10 && (__GNUC_MINOR__ < 2))
+            #      error "GCC version too low, need at least 10.2.0"
+            #  endif
+            #endif
+        ]]}, {configs = {languages = "c++20"}}), "GCC version too low, need at least 10.2.0")
     end)
 
     on_load(function (package)
