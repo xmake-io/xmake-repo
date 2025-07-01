@@ -6,6 +6,7 @@ package("libcoro")
     add_urls("https://github.com/jbaldwin/libcoro/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jbaldwin/libcoro.git", {submodules = false})
 
+    add_versions("v0.15.0", "9538281c742ca59c028052ad150d0e7ff688b8a724532dea95e74966b90d70c2")
     add_versions("v0.14.1", "0a18058fe17826237a868e3d266960e839db8c7aeeb2beba9b596c84124afe0e")
     add_versions("v0.14.0", "baf4b1535dee94bf47d3901b7e4842cedead5828ce7583e9a30ff8c5a8e0eb6e")
     add_versions("v0.13.0", "aea5e4f4c04ef01269cc4e40ce9e693f71e324574ea0a933d908783ef385f9f5")
