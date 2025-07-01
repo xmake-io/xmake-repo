@@ -16,7 +16,7 @@ package("libcoro")
         add_configs("tls", {description = "Include TLS encryption features", default = false, type = "boolean"})
     end
 
-    add_deps("cmake")
+    add_deps("cmake >=3.15")
 
     on_load(function (package)
         if package:config("networking") then
@@ -28,6 +28,15 @@ package("libcoro")
 
         if not package:config("shared") then
             package:add("defines", "CORO_STATIC_DEFINE")
+        end
+
+        _, toolname, _ = package:tool("cxx")
+        if toolname == "gxx" then
+            package:add("cxxflags", "-fcoroutines")
+            package:add("cxxflags", "-fconcepts")
+            package:add("cxxflags", "-fexceptions")
+        elseif toolname == "clangxx" then
+            package:add("cxxflags", "-fexceptions")
         end
     end)
 
