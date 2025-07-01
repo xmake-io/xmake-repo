@@ -61,18 +61,16 @@ package("libcoro")
         if not package:config("shared") then
             package:add("defines", "CORO_STATIC_DEFINE")
         end
-
-        _, toolname, _ = package:tool("cxx")
-        if toolname == "gxx" then
-            package:add("cxxflags", "-fcoroutines")
-            package:add("cxxflags", "-fconcepts")
-            package:add("cxxflags", "-fexceptions")
-        elseif toolname == "clangxx" then
-            package:add("cxxflags", "-fexceptions")
-        end
     end)
 
     on_install("!android", function (package)
+        if package:has_tool("cxx", "gcc", "gxx") then
+            package:add("cxxflags", "-fcoroutines")
+            package:add("cxxflags", "-fconcepts")
+            package:add("cxxflags", "-fexceptions")
+        elseif package:has_tool("cxx", "clang", "clangxx") then
+            package:add("cxxflags", "-fexceptions")
+        end
         local configs = {
             "-DLIBCORO_EXTERNAL_DEPENDENCIES=ON",
             "-DLIBCORO_BUILD_TESTS=OFF",
@@ -88,11 +86,6 @@ package("libcoro")
             opt.shflags = "-Wl,--export-all-symbols"
         end
         import("package.tools.cmake").install(package, configs, opt)
-
-        if package:is_plat("windows") and package:is_debug() then
-            local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.vcp(path.join(package:buildir(), "libcoro.pdb"), dir)
-        end
     end)
 
     on_test(function (package)
