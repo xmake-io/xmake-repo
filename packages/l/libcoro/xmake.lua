@@ -25,13 +25,6 @@ package("libcoro")
 
     on_check(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #if __has_include(<version>)
-            #  ifndef __cpp_lib_jthread
-            #      error "package(libcoro): Feature-test macro for jthread missing in <version>"
-            #  endif
-            #endif
-        ]]}, {configs = {languages = "c++20"}}), "package(libcoro): Feature-test macro for jthread missing in <version>")
-        assert(package:check_cxxsnippets({test = [[
             #if defined(__clang__)
             #  if __clang_major__ < 16
             #      error "package(libcoro): Clang version too low, need at least 16.0.0"
@@ -45,6 +38,14 @@ package("libcoro")
             #  endif
             #endif
         ]]}, {configs = {languages = "c++20"}}), "package(libcoro): GCC version too low, need at least 10.2.0")
+        assert(package:check_cxxsnippets({test = [[
+            #if __has_include(<version>)
+            #include <version>
+            #  ifndef __cpp_lib_jthread
+            #      error "package(libcoro): Feature-test macro for jthread missing in <version>"
+            #  endif
+            #endif
+        ]]}, {configs = {languages = "c++20"}}), "package(libcoro): Feature-test macro for jthread missing in <version>")
     end)
 
     on_load(function (package)
