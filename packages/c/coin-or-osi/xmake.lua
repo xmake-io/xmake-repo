@@ -86,28 +86,6 @@ package("coin-or-osi")
                 if is_plat("windows") and is_kind("shared") then
                     add_rules("utils.symbols.export_all", {export_classes = true})
                 end
-
-            target("OsiSpx")
-                set_kind("$(kind)")
-                add_files("OsiSpx/*.cpp")
-                add_headerfiles("OsiSpx/*.hpp", {prefixdir = "coin"})
-                add_deps("Osi")
-                add_includedirs("Osi")
-                add_packages("coin-or-coinutils")
-                if is_plat("windows") and is_kind("shared") then
-                    add_rules("utils.symbols.export_all", {export_classes = true})
-                end
-
-            target("OsiXpr")
-                set_kind("$(kind)")
-                add_files("OsiXpr/*.cpp")
-                add_headerfiles("OsiXpr/*.hpp", {prefixdir = "coin"})
-                add_deps("Osi")
-                add_includedirs("Osi")
-                add_packages("coin-or-coinutils")
-                if is_plat("windows") and is_kind("shared") then
-                    add_rules("utils.symbols.export_all", {export_classes = true})
-                end
         ]])
         import("package.tools.xmake").install(package)
     end)
