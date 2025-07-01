@@ -6,6 +6,7 @@ package("freerdp")
     add_urls("https://github.com/FreeRDP/FreeRDP/releases/download/$(version)/freerdp-$(version).tar.gz",
              "https://github.com/FreeRDP/FreeRDP.git")
 
+    add_versions("3.16.0", "385af54245560493698730b688b5e6e5d56d5c7ecf2fa7c1d7cedfde8a4ba456")
     add_versions("3.15.0", "e8cd58decef4c970faea2fbea675970eea60e440ebe8033c54889acb83787371")
 
     add_configs("client", {description = "Build client", default = false, type = "boolean"})
