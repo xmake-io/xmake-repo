@@ -48,6 +48,8 @@ package("libcoro")
             local clang_version = semver.new(io.readfile("clang_version.txt"))
             assert(clang_version:eq("16.0.0") or clang_version:gt("16.0.0"), "package(libcoro): requires clang compiler version 16.0.0 or newer.")
         end
+        os.cd("..")
+        os.rm("temp")
     end)
 
     on_load(function (package)
