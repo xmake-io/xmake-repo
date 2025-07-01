@@ -8,10 +8,13 @@ package("libunistring")
              "https://ftp.gnu.org/gnu/libunistring/libunistring-$(version).tar.gz")
     add_versions("0.9.10", "a82e5b333339a88ea4608e4635479a1cfb2e01aafb925e1290b65710d43f610b")
     add_versions("1.1", "a2252beeec830ac444b9f68d6b38ad883db19919db35b52222cf827c385bdb6a")
+    add_versions("1.3", "8ea8ccf86c09dd801c8cac19878e804e54f707cf69884371130d20bde68386b7")
 
-    add_deps("libiconv")
+    on_load(function (package)
+        package:add("deps", "libiconv", { configs = {shared = package:config("shared")} })
+    end)
 
-    on_install("linux", "macosx", function (package)
+    on_install("@!windows and !wasm", function (package)
         local configs = {"--disable-dependency-tracking"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))

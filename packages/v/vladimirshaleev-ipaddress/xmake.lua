@@ -7,6 +7,7 @@ package("vladimirshaleev-ipaddress")
     add_urls("https://github.com/VladimirShaleev/ipaddress/archive/refs/tags/$(version).tar.gz",
              "https://github.com/VladimirShaleev/ipaddress.git")
 
+    add_versions("v1.2.0", "c3a52e5297d8f0b152c13b04ea2aead0bb9bc2a963188d740d87c78e770daba1")
     add_versions("v1.1.0", "e5084d83ebd712210882eb6dac14ed1b9b71584dede523b35c6181e0a06375f1")
 
     add_configs("exceptions", {description = "Support handling cpp exception", default = true, type = "boolean"})

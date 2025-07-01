@@ -6,6 +6,7 @@ package("thrift")
     add_urls("https://github.com/apache/thrift/archive/refs/tags/$(version).tar.gz",
              "https://github.com/apache/thrift.git")
 
+    add_versions("v0.22.0", "c4649c5879dd56c88f1e7a1c03e0fbfcc3b2a2872fb81616bffba5aa8a225a37")
     add_versions("v0.21.0", "31e46de96a7b36b8b8a457cecd2ee8266f81a83f8e238a9d324d8c6f42a717bc")
     add_versions("v0.20.0", "cd7b829d3d9d87f9f7d708e004eef7629789591ee1d416f4741913bc33e5c27d")
     add_versions("v0.19.0", "6428911db505702c51f7d993155a4a4c8afee83fdd021b52f2eccd8d34780629")
@@ -19,12 +20,8 @@ package("thrift")
 
     add_configs("compiler", {description = "Build compiler", default = false, type = "boolean"})
 
-    add_deps("cmake", "boost")
-    if is_plat("windows") then
-        add_deps("winflexbison")
-    else
-        add_deps("flex", "bison")
-    end
+    add_deps("cmake", "flex", "bison", {kind = "binary"})
+    add_deps("boost", {configs = {locale = true, icu = true}})
 
     local configdeps = {"glib", "libevent", "openssl", "zlib", "qt5"}
     for _, dep in pairs(configdeps) do
@@ -72,7 +69,6 @@ package("thrift")
         table.insert(configs, "-DBUILD_COMPILER=" .. (package:config("compiler") and "ON" or "OFF"))
         if package:is_plat("windows") then
             table.insert(configs, "-DWITH_MT=" .. (package:has_runtime("MT") and "ON" or "OFF"))
-            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
         end
         import("package.tools.cmake").install(package, configs)
     end)

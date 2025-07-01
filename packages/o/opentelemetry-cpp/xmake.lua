@@ -5,6 +5,7 @@ package("opentelemetry-cpp")
 
     add_urls("https://github.com/open-telemetry/opentelemetry-cpp.git")
     add_versions("v1.16.1", "baecbb95bd63df53e0af16e87bc683967962c5f8")
+    add_versions("v1.19.0", "ced79860f8c8a091a2eabfee6d47783f828a9b59")
 
     add_configs("otlp_grpc", {description = "Whether to include the OTLP gRPC exporter in the SDK.", default = false, type = "boolean"})
     add_configs("otlp_http", {description = "Whether to include the OTLP http exporter in the SDK.", default = false, type = "boolean"})

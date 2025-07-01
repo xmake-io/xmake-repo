@@ -5,6 +5,7 @@ package("kiwisolver")
 
     add_urls("https://github.com/nucleic/kiwi/archive/refs/tags/$(version).tar.gz",
              "https://github.com/nucleic/kiwi.git")
+    add_versions("1.4.8", "e8848589c1548a292e99eadc712f14d8924e77f390b7de0a4a5359ee8e4a480f")
     add_versions("1.4.7", "5411b0e25bb1cd18f86b2fa4b17e6e66246b73be047377c6304a2e67aa492c71")
     add_versions("1.4.6", "ec022dbab778a3d133513ca8ff86f3fbecadc0ffdcea2f1006e51f87406076f4")
     add_versions("1.4.5", "2f3df2625993276a67a3ad312959f9c8333e23dfda0b7e5464b4927d34be6faa")

@@ -15,9 +15,14 @@ end
 target("plist")
     set_kind("$(kind)")
     add_files("libcnary/*.c|cnary.c", "src/*.c")
-    add_includedirs("src", "include", "libcnary/include")
+    add_includedirs("src", "include", "libcnary/include", {public = true})
     add_headerfiles("include/(plist/*.h)")
 
     if is_kind("static") then
-        add_defines("LIBPLIST_STATIC")
+        add_defines("LIBPLIST_STATIC", {public = true})
     end
+
+target("plist++")
+    set_kind("$(kind)")
+    add_files("src/*.cpp")
+    add_deps("plist")

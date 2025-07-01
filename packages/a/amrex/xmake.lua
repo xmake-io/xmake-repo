@@ -5,9 +5,15 @@ package("amrex")
     add_urls("https://github.com/AMReX-Codes/amrex/releases/download/$(version)/amrex-$(version).tar.gz",
              "https://github.com/AMReX-Codes/amrex.git")
 
+    add_versions("25.06", "2f69c708ddeaba6d4be3a12ab6951f171952f6f7948e628c5148d667c4197838")
+    add_versions("25.05", "d80ae0b4ccb26696fcd3c04d96838592fd0043be25fceebd82cd165f809b1a5d")
+    add_versions("25.04", "71c3f01a9cfbf3aff7f0a5dd66c2ac99a606334f1910052194c2520df3f7b7be")
+    add_versions("25.03", "7a2dc60d01619afdcbce0ff624a3c1a5a605e28dd8721c0fbec638076228cab0")
+    add_versions("25.02", "2680a5a9afba04e211cd48d27799c5a25abbb36c6c3d2b6c13cd4757c7176b23")
+    add_versions("24.12", "ca4b41ac73fabb9cf3600b530c9823eb3625f337d9b7b9699c1089e81c67fc67")
     add_versions("24.09", "a1435d16532d04a1facce9a9ae35d68a57f7cd21a5f22a6590bde3c265ea1449")
 
-    add_patches("24.09", "patches/24.09/remove-symlink.patch", "d71adb07252e488ee003f6f04fea756864d6af2232b43208c9e138e062eb6e4d")
+    add_patches(">=24.09", "patches/24.09/remove-symlink.patch", "d71adb07252e488ee003f6f04fea756864d6af2232b43208c9e138e062eb6e4d")
 
     add_configs("openmp", {description = "Enable OpenMP", default = false, type = "boolean"})
     add_configs("mpi", {description = "Enable MPI", default = false, type = "boolean", readonly = true})
@@ -49,7 +55,7 @@ package("amrex")
         end
     end)
 
-    on_install("windows", "macosx", "linux", "bsd", "mingw", function (package)
+    on_install("windows", "macosx", "linux", "bsd", "mingw", "msys", function (package)
         local configs = {"-DAMReX_ENABLE_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -65,10 +71,6 @@ package("amrex")
                 local enabled = (package:config(name) and "ON" or "OFF")
                 table.insert(configs, format("-DAMReX_%s=%s", real, enabled))
             end
-        end
-
-        if package:is_plat("windows") then
-            os.mkdir(path.join(package:buildir(), "Src/pdb"))
         end
         import("package.tools.cmake").install(package, configs)
     end)

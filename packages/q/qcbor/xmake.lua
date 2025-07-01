@@ -6,6 +6,7 @@ package("qcbor")
     add_urls("https://github.com/laurencelundblade/QCBOR/archive/refs/tags/$(version).tar.gz",
              "https://github.com/laurencelundblade/QCBOR.git")
 
+    add_versions("v1.5.1", "779b5137fc6c8b6f2322f429bf3a0b2865ed36ddd4c1b6c0d2bcd5802b8915c5")
     add_versions("v1.4.1", "c7ef031b60b23bf8ede47c66c9713982bba2608668b144280a65665bfcc94470")
 
     add_configs("float_hw_use", {description = "Eliminate dependency on FP hardware and FP instructions", default = false, type = "boolean"})

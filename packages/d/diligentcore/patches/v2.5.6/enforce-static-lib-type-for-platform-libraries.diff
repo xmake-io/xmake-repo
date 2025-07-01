@@ -1,0 +1,52 @@
+diff --git a/Platforms/Apple/CMakeLists.txt b/Platforms/Apple/CMakeLists.txt
+index d43c57e..d59c96a 100644
+--- a/Platforms/Apple/CMakeLists.txt
++++ b/Platforms/Apple/CMakeLists.txt
+@@ -30,7 +30,7 @@ if(PLATFORM_MACOS)
+ 	list(APPEND SOURCE src/MacOSNativeWindow.mm)
+ endif()
+ 
+-add_library(Diligent-ApplePlatform ${SOURCE} ${INTERFACE} ${PLATFORM_INTERFACE_HEADERS})
++add_library(Diligent-ApplePlatform STATIC ${SOURCE} ${INTERFACE} ${PLATFORM_INTERFACE_HEADERS})
+ set_common_target_properties(Diligent-ApplePlatform)
+ 
+ target_include_directories(Diligent-ApplePlatform
+diff --git a/Platforms/Linux/CMakeLists.txt b/Platforms/Linux/CMakeLists.txt
+index 347d798..edbe801 100644
+--- a/Platforms/Linux/CMakeLists.txt
++++ b/Platforms/Linux/CMakeLists.txt
+@@ -16,7 +16,7 @@ set(SOURCE
+     src/LinuxPlatformMisc.cpp
+ )
+ 
+-add_library(Diligent-LinuxPlatform ${SOURCE} ${INTERFACE} ${PLATFORM_INTERFACE_HEADERS})
++add_library(Diligent-LinuxPlatform STATIC ${SOURCE} ${INTERFACE} ${PLATFORM_INTERFACE_HEADERS})
+ set_common_target_properties(Diligent-LinuxPlatform)
+ 
+ target_include_directories(Diligent-LinuxPlatform
+diff --git a/Platforms/UWP/CMakeLists.txt b/Platforms/UWP/CMakeLists.txt
+index f610f71..9987733 100644
+--- a/Platforms/UWP/CMakeLists.txt
++++ b/Platforms/UWP/CMakeLists.txt
+@@ -14,7 +14,7 @@ set(SOURCE
+     src/UWPFileSystem.cpp
+ )
+ 
+-add_library(Diligent-UniversalWindowsPlatform ${SOURCE} ${INTERFACE} ${PLATFORM_INTERFACE_HEADERS})
++add_library(Diligent-UniversalWindowsPlatform STATIC ${SOURCE} ${INTERFACE} ${PLATFORM_INTERFACE_HEADERS})
+ set_common_target_properties(Diligent-UniversalWindowsPlatform)
+ 
+ target_include_directories(Diligent-UniversalWindowsPlatform
+diff --git a/Platforms/Win32/CMakeLists.txt b/Platforms/Win32/CMakeLists.txt
+index 5ef3acb..d55f41f 100644
+--- a/Platforms/Win32/CMakeLists.txt
++++ b/Platforms/Win32/CMakeLists.txt
+@@ -16,7 +16,7 @@ set(SOURCE
+     src/Win32PlatformMisc.cpp
+ )
+ 
+-add_library(Diligent-Win32Platform ${SOURCE} ${INTERFACE} ${PLATFORM_INTERFACE_HEADERS})
++add_library(Diligent-Win32Platform STATIC ${SOURCE} ${INTERFACE} ${PLATFORM_INTERFACE_HEADERS})
+ set_common_target_properties(Diligent-Win32Platform)
+ 
+ target_include_directories(Diligent-Win32Platform

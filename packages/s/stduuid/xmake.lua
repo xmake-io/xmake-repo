@@ -11,8 +11,11 @@ package("stduuid")
 
     add_configs("system", {description = "Enable operating system uuid generator", default = false, type = "boolean"})
     add_configs("time", {description = "Enable experimental time-based uuid generator", default = false, type = "boolean"})
+    add_configs("span", {description = "Using span from std instead of gsl", default = false, type = "boolean"})
 
     add_deps("cmake")
+
+    add_includedirs("include", "include/stduuid")
 
     on_load(function (package)
         if package:config("system") then
@@ -26,20 +29,34 @@ package("stduuid")
         if package:config("time") then
             package:add("defines", "UUID_TIME_GENERATOR")
         end
+        if not package:config("span") then
+            package:add("deps", "microsoft-gsl")
+        end
     end)
 
     on_install(function (package)
+        io.replace("CMakeLists.txt", "install(FILES include/uuid.h DESTINATION include)", "install(FILES include/uuid.h DESTINATION include/stduuid)", {plain = true})
+
         local configs = {"-DUUID_BUILD_TESTS=OFF", "-DUUID_ENABLE_INSTALL=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DUUID_USING_CXX20_SPAN=" .. (package:config("span") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
+
+        -- Remove bundle deps
+        os.tryrm(package:installdir("include/gsl"))
     end)
 
     on_test(function (package)
+        local languages
+        if package:config("span") then
+            languages = "c++20"
+        else
+            languages = "c++17"
+        end
         assert(package:check_cxxsnippets({test = [[
             using namespace uuids;
             void test() {
                 uuid empty;
             }
-        ]]}, {configs = {languages = "c++17"}, includes = "uuid.h"}))
+        ]]}, {configs = {languages = languages}, includes = "uuid.h"}))
     end)

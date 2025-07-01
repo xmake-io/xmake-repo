@@ -6,6 +6,7 @@ package("sqlite-vec")
     add_urls("https://github.com/asg017/sqlite-vec/releases/download/v$(version)/sqlite-vec-$(version)-amalgamation.tar.gz",
              "https://github.com/asg017/sqlite-vec.git")
 
+    add_versions("0.1.6", "99b6ec36e9d259d91bd6cb2c053c3a7660f8791eaa66126c882a6a4557e57d6a")
     add_versions("0.1.3", "cd4da66333caa62dc63dcac99baeed1b38aa327e1d29f12a4a76df34860de442")
 
     add_deps("sqlite3")

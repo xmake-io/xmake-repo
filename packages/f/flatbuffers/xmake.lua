@@ -11,22 +11,30 @@ package("flatbuffers")
     add_versions("v23.1.21", "48597d6a6f8ca67a02ae8d8494b3bfc9136eb93da60a538d5bfc024f7c564f97")
     add_versions("v23.5.26", "57bd580c0772fd1a726c34ab8bf05325293bc5f9c165060a898afa1feeeb95e1")
     add_versions("v24.3.25", "e706f5eb6ca8f78e237bf3f7eccffa1c5ec9a96d3c1c938f08dc09aab1884528")
+    add_versions("v24.12.23", "c5cd6a605ff20350c7faa19d8eeb599df6117ea4aabd16ac58a7eb5ba82df4e7")
+    add_versions("v25.2.10", "75ffbce7d32f8218b5faec86ae2f6397c7ca810605dc710dfa9c146b9df9e3e9")
 
     add_deps("cmake")
 
     on_install(function(package)
-        io.replace("CMakeLists.txt",
-            "RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}",
-            "RUNTIME DESTINATION bin", {plain = true})
-
         if not package:is_cross() then
             package:addenv("PATH", "bin")
         end
 
+        io.replace("CMakeLists.txt", "/MT", "", {plain = true})
+        io.replace("CMakeLists.txt",
+            "RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}",
+            "RUNTIME DESTINATION bin", {plain = true})
+
         local configs = {"-DFLATBUFFERS_BUILD_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DFLATBUFFERS_BUILD_SHAREDLIB=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DFLATBUFFERS_BUILD_FLATLIB=" .. (package:config("shared") and "OFF" or "ON"))
+        if package:is_binary() then
+            table.insert(configs, "-DFLATBUFFERS_BUILD_SHAREDLIB=OFF")
+            table.insert(configs, "-DFLATBUFFERS_BUILD_FLATLIB=OFF")
+        else
+            table.insert(configs, "-DFLATBUFFERS_BUILD_SHAREDLIB=" .. (package:config("shared") and "ON" or "OFF"))
+            table.insert(configs, "-DFLATBUFFERS_BUILD_FLATLIB=" .. (package:config("shared") and "OFF" or "ON"))
+        end
         if package:config("shared") and package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
@@ -35,10 +43,8 @@ package("flatbuffers")
         table.insert(configs, "-DFLATBUFFERS_BUILD_FLATHASH=" .. (package:is_cross() and "OFF" or "ON"))
         import("package.tools.cmake").install(package, configs)
 
-        if package:is_plat("windows") and package:is_debug() then
-            local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.trycp(path.join(package:buildir(), "flatc.pdb"), package:installdir("bin"))
-            os.trycp(path.join(package:buildir(), "flatbuffers.pdb"), dir)
+        if package:is_binary() then
+            os.tryrm(package:installdir("include"))
         end
     end)
 
@@ -46,11 +52,13 @@ package("flatbuffers")
         if not package:is_cross() then
             os.vrun("flatc --version")
         end
-        assert(package:check_cxxsnippets({test = [[
-            void test() {
-                flatbuffers::FlatBufferBuilder builder;
-                builder.CreateString("MyMonster");
-                flatbuffers::DetachedBuffer dtbuilder = builder.Release();
-            }
-        ]]}, {configs = {languages = "c++14"}, includes = "flatbuffers/flatbuffers.h"}))
+        if package:is_library() then
+            assert(package:check_cxxsnippets({test = [[
+                void test() {
+                    flatbuffers::FlatBufferBuilder builder;
+                    builder.CreateString("MyMonster");
+                    flatbuffers::DetachedBuffer dtbuilder = builder.Release();
+                }
+            ]]}, {configs = {languages = "c++14"}, includes = "flatbuffers/flatbuffers.h"}))
+        end
     end)

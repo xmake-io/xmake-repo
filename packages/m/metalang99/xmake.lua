@@ -9,6 +9,7 @@ package("metalang99")
 
     add_versions("1.13.2", "912c6d91b872d34d2b6580d25afc38faccacf6c57462ab1c862010ff4afbf790")
     add_versions("1.13.3", "91fe8d4edcc2e7f91c5b567a2b90f2e30c2373f1ebbabcf209ea0d74f63bc1e9")
+    add_versions("1.13.5", "f3d1607d76b4b081d3295661c4c2b8d5fde4d5018b1aa409c84fb3a6660ffb90")
 
     on_install(function(package)
         os.cp("include", package:installdir())

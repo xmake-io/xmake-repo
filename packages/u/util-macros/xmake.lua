@@ -13,7 +13,7 @@ package("util-macros")
 
     add_deps("pkg-config")
 
-    on_install("macosx", "linux", "bsd", function (package)
+    on_install("macosx", "linux", "bsd", "cross", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
                          "--localstatedir=" .. package:installdir("var")}
         import("package.tools.autoconf").install(package, configs)

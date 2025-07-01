@@ -6,6 +6,7 @@ package("cppitertools")
 
     add_urls("https://github.com/ryanhaining/cppitertools.git")
 
+    add_versions("2024.10.19", "5a7f4aa357ed9b0ad59823e3d2acd57217d5beaf")
     add_versions("2023.07.04", "492c15aab96f4ca3938a6b734d6a08cb7feea75a")
 
     add_configs("boost", {description = "For zip_longest", default = false, type = "boolean"})
@@ -17,8 +18,12 @@ package("cppitertools")
     end)
 
     on_install(function (package)
-        os.cp("*.hpp", package:installdir("include/cppitertools"))
-        os.cp("internal", package:installdir("include/cppitertools"))
+        if package:version():gt("2023.07.04") then
+            os.cp("cppitertools", package:installdir("include"))
+        else
+            os.cp("*.hpp", package:installdir("include/cppitertools"))
+            os.cp("internal", package:installdir("include/cppitertools"))
+        end
     end)
 
     on_test(function (package)

@@ -1,0 +1,25 @@
+From 256a68112ef5df7b0862efd145e4f5c101457e7b Mon Sep 17 00:00:00 2001
+From: Redbeanw44602 <redbeana44945@gmail.com>
+Date: Sun, 30 Mar 2025 22:29:57 +0800
+Subject: [PATCH] try fix function visibility.
+
+---
+ include/funchook.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/funchook.h b/include/funchook.h
+index 0df118b..dfda840 100644
+--- a/include/funchook.h
++++ b/include/funchook.h
+@@ -41,7 +41,7 @@ extern "C" {
+ #ifdef FUNCHOOK_EXPORTS
+ #if defined(_WIN32)
+ #define FUNCHOOK_EXPORT __declspec(dllexport)
+-#elif defined(__GNUC__)
++#else
+ #define FUNCHOOK_EXPORT __attribute__((visibility("default")))
+ #endif
+ #endif /* FUNCHOOK_EXPORTS */
+-- 
+2.49.0
+

@@ -6,6 +6,7 @@ package("wyhash")
 
     add_urls("https://github.com/wangyi-fudan/wyhash.git")
     add_versions("2023.04.10", "77e50f267fbc7b8e2d09f2d455219adb70ad4749")
+    add_versions("2024.06.07", "46cebe9dc4e51f94d0dca287733bc5a94f76a10d")
 
     on_install(function (package)
         os.cp("old_versions", package:installdir("include"))

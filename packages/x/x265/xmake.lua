@@ -3,8 +3,8 @@ package("x265")
     set_description("A free software library and application for encoding video streams into the H.265/MPEG-H HEVC compression format.")
     set_license("GPL-2.0")
 
-    add_urls("https://github.com/videolan/x265.git",
-             "https://bitbucket.org/multicoreware/x265_git")
+    add_urls("https://bitbucket.org/multicoreware/x265_git.git",
+             "https://github.com/videolan/x265.git")
 
     add_urls("https://github.com/videolan/x265/archive/refs/tags/$(version).tar.gz", {alias = "github"})
     add_urls("https://bitbucket.org/multicoreware/x265_git/downloads/x265_$(version).tar.gz", {alias = "bitbucket"})
@@ -20,6 +20,7 @@ package("x265")
     add_configs("svt_hevc", {description = "Enable SVT HEVC Encoder", default = false, type = "boolean"})
     add_configs("high_bit_depth", {description = "Store pixel samples as 16bit values (Main10/Main12)", default = false, type = "boolean"})
     add_configs("main12", {description = "Support Main12 instead of Main10", default = false, type = "boolean"})
+    add_configs("vmaf", {description = "Enable vmaf", default = false, type = "boolean"})
     if is_plat("linux") then
         add_configs("numa", {description = "Enable libnuma", default = false, type = "boolean"})
     elseif is_plat("wasm") then
@@ -45,7 +46,16 @@ package("x265")
         end)
     end
 
-    on_install("!cross", function (package)
+    on_load(function (package)
+        if package:config("numa") then
+            package:add("deps", "numactl")
+        end
+        if package:config("vmaf") then
+            package:add("deps", "vmaf")
+        end
+    end)
+
+    on_install(function (package)
         os.cd("source")
         -- Let xmake cp pdb
         io.replace("CMakeLists.txt", "if((WIN32 AND ENABLE_CLI) OR (WIN32 AND ENABLE_SHARED))", "if(0)", {plain = true})
@@ -68,13 +78,9 @@ package("x265")
         table.insert(configs, "-DMAIN12=" .. (package:config("main12") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_CLI=" .. (package:config("tools") and "ON" or "OFF"))
         table.insert(configs, "-DNATIVE_BUILD=" .. (package:is_cross() and "OFF" or "ON"))
+        table.insert(configs, "-DENABLE_LIBNUMA=" .. (package:config("numa") and "ON" or "OFF"))
+        table.insert(configs, "-DENABLE_VMAF=" .. (package:config("vmaf") and "ON" or "OFF"))
 
-        if package:config("numa") then
-            table.insert(configs, "-DENABLE_LIBNUMA=ON")
-            package:add("syslinks", "numa")
-        else
-            table.insert(configs, "-DENABLE_LIBNUMA=OFF")
-        end
         if package:version() then
             table.insert(configs, "-DX265_LATEST_TAG=" .. package:version():rawstr())
         end
@@ -92,10 +98,6 @@ package("x265")
             end
         end
 
-        if package:is_plat("windows") then
-            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
-        end
-
         local opt = {}
         if package:gitref() or package:version():ge("4.0") then
             if package:is_plat("wasm") then
@@ -111,14 +113,6 @@ package("x265")
             end
             -- Error links, switch to xmake pc file
             os.rm(package:installdir("lib/pkgconfig/x265.pc"))
-
-            if package:is_debug() then
-                local dir = package:installdir(package:config("shared") and "bin" or "lib")
-                os.trycp(path.join(package:buildir(), "libx265.pdb"), dir)
-                if package:config("tools") then
-                    os.trycp(path.join(package:buildir(), "x265.pdb"), package:installdir("bin"))
-                end
-            end
         else
             if package:config("shared") then
                 os.tryrm(package:installdir("lib/libx265.a"))

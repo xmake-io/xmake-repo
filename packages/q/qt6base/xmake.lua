@@ -2,6 +2,7 @@ package("qt6base")
     set_kind("phony")
     set_base("qtbase")
 
+    -- Sync with qt6lib and qt-tools
     add_versions("6.3.0", "dummy")
     add_versions("6.3.1", "dummy")
     add_versions("6.3.2", "dummy")
@@ -22,6 +23,14 @@ package("qt6base")
     add_versions("6.7.2", "dummy")
     add_versions("6.8.0", "dummy")
 
-    on_install("windows|x64", "linux|x86_64", "macosx|x86_64", "mingw|x86_64", function (package)
+    on_install("windows|x64,linux|x86_64,macosx,mingw|x86_64@windows,linux,macosx", function (package)
+        package:base():script("install")(package)
+    end)
+
+    on_install("android|arm64-v8a,armeabi-v7a,armeabi,x86_64,x86@windows,linux,macosx", function (package)
+        package:base():script("install")(package)
+    end)
+
+    on_install("iphoneos,wasm@windows,linux,macosx", function (package)
         package:base():script("install")(package)
     end)

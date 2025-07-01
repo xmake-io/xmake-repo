@@ -18,7 +18,7 @@ package("scnlib")
     add_configs("rtti", {description = "Enable rtti", default = true, type = "boolean"})
     add_configs("regex", {description = "Regex backend to use", type = "string", values = {"std", "boost", "re2"}})
 
-    add_deps("fast_float")
+    add_deps("fast_float <7.0.0")
 
     on_check("windows", function (package)
         import("core.tool.toolchain")

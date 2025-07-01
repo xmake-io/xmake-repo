@@ -11,6 +11,8 @@ package("yaml-cpp")
     add_versions("0.7.0", "43e6a9fcb146ad871515f0d0873947e5d497a1c9c60c58cb102a97b47208b7c3")
     add_versions("0.8.0", "fbe74bbdcee21d656715688706da3c8becfd946d92cd44705cc6098bb23b3a16")
 
+    add_patches("0.8.0", path.join(os.scriptdir(), "patches", "missing-gcc15-header.diff"), "77187131279f2ef470f473b3d4cf88a3e9075d1650f0abe8a791b260292dd86e")
+
     add_deps("cmake")
 
     on_load("windows", "mingw", function (package)

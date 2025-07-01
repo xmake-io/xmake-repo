@@ -1,0 +1,41 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index ef7bbda..a8ef219 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.12)
+ project(lsp)
+ 
+ option(LSP_USE_SANITIZERS "Use address and undefined behavior sanitizers" ON)
++option(BUILD_SHARED_LIBS "Build shared library" OFF)
+ 
+ set(CMAKE_CXX_STANDARD 20)
+ 
+@@ -91,6 +92,28 @@ add_custom_command(
+ 	COMMENT "Generating lsp types from meta model..."
+ )
+ 
++if(BUILD_SHARED_LIBS)
++if(WIN32)
++set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
++endif()
++add_library(lsp SHARED)
++else()
+ add_library(lsp STATIC)
++endif()
+ target_include_directories(lsp PUBLIC . ${LSP_GENERATED_FILES_DIR})
+ target_sources(lsp PRIVATE ${LSP_HEADERS} ${LSP_SOURCES} ${LSP_GENERATED_HEADERS} ${LSP_GENERATED_SOURCES})
++install(TARGETS lsp
++	ARCHIVE DESTINATION lib
++	LIBRARY DESTINATION lib
++	RUNTIME DESTINATION bin
++)
++
++install(DIRECTORY ${LSP_SRC_DIR}/
++    DESTINATION include/lsp
++    FILES_MATCHING PATTERN "*.h" PATTERN "*.inl"
++)
++
++install(DIRECTORY ${LSP_GENERATED_FILES_DIR}/lsp/
++    DESTINATION include/lsp
++    FILES_MATCHING PATTERN "*.h" PATTERN "*.inl"
++)

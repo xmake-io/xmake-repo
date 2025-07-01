@@ -4,8 +4,10 @@ package("libxft")
     set_description("X.Org: X FreeType library")
     set_license("MIT")
 
-    set_urls("https://www.x.org/archive/individual/lib/libXft-$(version).tar.bz2")
-    add_versions("2.3.3", "225c68e616dd29dbb27809e45e9eadf18e4d74c50be43020ef20015274529216")
+    set_urls("https://www.x.org/archive/individual/lib/libXft-$(version).tar.gz")
+    add_versions("2.3.3", "3c3cf88b1a96e49a3d87d67d9452d34b6e25e96ae83959b8d0a980935014d701")
+    add_versions("2.3.7", "75b4378644f5df3a15f684f8f0b5ff1324d37aacd5a381f3b830a2fbe985f660")
+    add_versions("2.3.8", "32e48fe2d844422e64809e4e99b9d8aed26c1b541a5acf837c5037b8d9f278a8")
 
     if is_plat("linux") then
         add_extsources("apt::libxft-dev")

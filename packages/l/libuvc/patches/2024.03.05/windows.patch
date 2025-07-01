@@ -1,0 +1,94 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index fbaffc9..4e0c343 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -39,11 +39,13 @@ set(SOURCES
+   src/misc.c
+ )
+ 
+-find_package(LibUSB)
++find_package(PkgConfig REQUIRED)
++pkg_check_modules(libusb REQUIRED IMPORTED_TARGET libusb)
++pkg_check_modules(pthreads4w REQUIRED IMPORTED_TARGET pthreads4w)
+ 
+ # JpegPkg name to differ from shipped with CMake
+-find_package(JpegPkg QUIET)
+-if(JPEG_FOUND)
++pkg_check_modules(libjpeg REQUIRED IMPORTED_TARGET libjpeg)
++if(libjpeg_FOUND)
+   message(STATUS "Building libuvc with JPEG support.")
+   set(LIBUVC_HAS_JPEG TRUE)
+   list(APPEND SOURCES src/frame-mjpeg.c)
+@@ -70,6 +72,7 @@ else()
+ endif()
+ 
+ if(BUILD_UVC_SHARED)
++  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+   add_library(uvc SHARED ${SOURCES})
+   set_target_properties(uvc PROPERTIES
+     VERSION ${libuvc_VERSION}
+@@ -116,11 +119,12 @@ foreach(target_name IN LISTS UVC_TARGETS)
+   )
+   target_link_libraries(${target_name}
+     # libusb-1.0 used internally so we link to it privately.
+-    PRIVATE LibUSB::LibUSB ${threads}
++    PRIVATE PkgConfig::libusb
++    PRIVATE PkgConfig::pthreads4w
+   )
+-  if(JPEG_FOUND)
++  if(libjpeg_FOUND)
+     target_link_libraries(${target_name}
+-      PRIVATE JPEG::JPEG
++      PRIVATE PkgConfig::libjpeg
+     )
+   endif()
+   set_target_properties(${target_name} PROPERTIES
+@@ -191,12 +195,6 @@ install(EXPORT libuvcTargets
+   DESTINATION ${CMAKE_INSTALL_CMAKEDIR}
+ )
+ 
+-install(FILES 
+-    cmake/FindLibUSB.cmake
+-    cmake/FindJpegPkg.cmake
+-  DESTINATION ${CMAKE_INSTALL_CMAKEDIR}
+-)
+-
+ include(CMakePackageConfigHelpers)
+ write_basic_package_version_file(libuvcConfigVersion.cmake
+   COMPATIBILITY AnyNewerVersion
+@@ -207,7 +205,7 @@ install(FILES
+   DESTINATION ${CMAKE_INSTALL_CMAKEDIR}
+ )
+ 
+-if(JPEG_FOUND)
++if(libjpeg_FOUND)
+   # If we have used JPEG library we need to 
+   # add linker flag for it in config file for pkgconfig
+   set(PKGCONFIG_JPEG_LDFLAG "-ljpeg")
+diff --git a/include/libuvc/libuvc.h b/include/libuvc/libuvc.h
+index d387150..6ed6d50 100644
+--- a/include/libuvc/libuvc.h
++++ b/include/libuvc/libuvc.h
+@@ -7,7 +7,8 @@ extern "C" {
+ 
+ #include <stdio.h> // FILE
+ #include <stdint.h>
+-#include <sys/time.h>
++#include <time.h>
++#include <winsock.h>
+ #include <libuvc/libuvc_config.h>
+ 
+ struct libusb_context;
+diff --git a/src/stream.c b/src/stream.c
+index 89dac69..d5ae5e4 100644
+--- a/src/stream.c
++++ b/src/stream.c
+@@ -659,7 +659,7 @@ void _uvc_swap_buffers(uvc_stream_handle_t *strmh) {
+ 
+   pthread_mutex_lock(&strmh->cb_mutex);
+ 
+-  (void)clock_gettime(CLOCK_MONOTONIC, &strmh->capture_time_finished);
++  timespec_get(&strmh->capture_time_finished, TIME_UTC);
+ 
+   /* swap the buffers */
+   tmp_buf = strmh->holdbuf;

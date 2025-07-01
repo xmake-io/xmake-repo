@@ -1,0 +1,42 @@
+From 5f6b9244ceecbb1e1b9c08bda5c9292f23f4ea57 Mon Sep 17 00:00:00 2001
+From: Viktor Szakats <commit@vsz.me>
+Date: Fri, 26 Jul 2024 00:10:21 +0200
+Subject: [PATCH] macos: fix Apple SDK bug workaround for non-macOS targets
+
+Turns out that MAC != OSX, despite what these names otherwise mean and
+what's suggested by source code comments. "MAC" in fact means Darwin
+(aka Apple), not macOS. "OSX" means macOS.
+
+GitHub bumped the macos-14 runner default to Xcode 15.4, hitting the
+llvm@15 incompatibility bug by default. Meaning the previous workaround
+for the SDK bug is necessary.
+
+This patch extend the workaround to not apply to mobile OS variants.
+
+Follow-up to ff784af461175584c73e7e2b65af00b1a5a6f67f #14159
+Reported-by: Sergey
+Confirmed-by: Marcel Raad
+Fixes #14269
+Closes #14275
+---
+ lib/curl_setup.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/lib/curl_setup.h b/lib/curl_setup.h
+index 1e5371ef8..c8dba5e2b 100644
+--- a/lib/curl_setup.h
++++ b/lib/curl_setup.h
+@@ -71,7 +71,9 @@
+    the necessary dynamic detection features, so the SDK falls back to
+    a codepath that sets both the old and new macro to 1. */
+ #if defined(TARGET_OS_MAC) && TARGET_OS_MAC && \
+-  defined(TARGET_OS_OSX) && !TARGET_OS_OSX
++  defined(TARGET_OS_OSX) && !TARGET_OS_OSX && \
++  (!defined(TARGET_OS_IPHONE) || !TARGET_OS_IPHONE) && \
++  (!defined(TARGET_OS_SIMULATOR) || !TARGET_OS_SIMULATOR)
+ #undef TARGET_OS_OSX
+ #define TARGET_OS_OSX TARGET_OS_MAC
+ #endif
+-- 
+2.47.1
+

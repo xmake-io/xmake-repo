@@ -7,6 +7,7 @@ package("winreg")
     add_urls("https://github.com/GiovanniDicanio/WinReg/archive/refs/tags/$(version).tar.gz",
              "https://github.com/GiovanniDicanio/WinReg.git")
 
+    add_versions("v6.3.2", "644adca91229d714efaeebf0c010cc795f888f6a1015bb7d42c2f0a45fe52f8b")
     add_versions("v6.3.1", "b92842cc37d3fe1a4d103929480045a40c39ba2efc15d7656f62e189d10d0bc4")
     add_versions("v6.3.0", "5a8b47c19ce705172cb1107451acbbb9fa7d8aa1e8f5356a2e682c16cf5532e9")
     add_versions("v6.2.0", "9dc1b287fb8c765a35791bf0deea0da81e52a969827bc2d8777f54f26ade588d")

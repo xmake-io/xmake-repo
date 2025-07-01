@@ -86,6 +86,7 @@ function _add_libs_configs(package, configs)
     table.insert(configs, "-DBOOST_ENABLE_MPI=" .. (package:config("mpi") and "ON" or "OFF"))
     if package:config("locale") then
         table.insert(configs, "-DCMAKE_CXX_STANDARD=17")
+        table.insert(configs, "-DBOOST_LOCALE_ENABLE_ICU=" .. (package:config("icu") and "ON" or "OFF"))
     end
 
     _add_iostreams_configs(package, configs)
@@ -114,9 +115,6 @@ function main(package)
     local configs = {"-DBOOST_INSTALL_LAYOUT=system"}
     table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
     table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-    if package:is_plat("windows") then
-        table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
-    end
 
     _add_libs_configs(package, configs)
 

@@ -5,6 +5,7 @@ package("libxt")
 
     add_urls("https://www.x.org/archive/individual/lib/libXt-$(version).tar.gz")
     add_versions("1.2.1", "6da1bfa9dd0ed87430a5ce95b129485086394df308998ebe34d98e378e3dfb33")
+    add_versions("1.3.1", "cf2212189869adb94ffd58c7d9a545a369b83d2274930bfbe148da354030b355")
 
     if is_plat("linux") then
         add_extsources("apt::libxt-dev", "pacman::libxt")

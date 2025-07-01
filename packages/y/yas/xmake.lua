@@ -4,6 +4,7 @@ package("yas")
     set_description("Yet Another Serialization")
 
     add_urls("https://github.com/niXman/yas.git")
+    add_versions("2025.02.19", "1b37941f2196f4f59a37d34f1cd6dd3c6d2a2436")
     add_versions("2023.09.13", "7c5ced1d940ddc6826cf537468e65ea1f592bfe4")
 
     on_install(function (package)

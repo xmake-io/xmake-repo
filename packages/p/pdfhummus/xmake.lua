@@ -6,6 +6,7 @@ package("pdfhummus")
     add_urls("https://github.com/galkahana/PDF-Writer/archive/refs/tags/$(version).tar.gz",
              "https://github.com/galkahana/PDF-Writer/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/galkahana/PDF-Writer.git")
+    add_versions("v4.6.8", "129706e0336e00deb6b2e80c4e92e1b30e3504ae9f8d5e5225b512fbd17a991a")
     add_versions("v4.6.7", "735c65d4685c5156f0876635f3bc1565700d0f648fbb1f384e46d186796c8bae")
     add_versions("v4.6.6", "8343820313e553052df68c75fe2bf35353da2719106e81eb2a8b026ff96c7d7c")
     add_versions("v4.6.4", "93b5f1dc88fd67fdebde409e927e828dfbae02efa44936e89728622411c6a047")

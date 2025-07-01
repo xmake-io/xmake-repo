@@ -31,9 +31,6 @@ package("microsoft-seal")
     on_load(function (package)
         if package:config("zstd") then
             package:add("deps", "zstd")
-            package:add("deps", (is_subhost("windows") and "pkgconf") or "pkg-config")
-            package:add("patches", "4.1.2", "patches/4.1.2/find-zstd.patch", "d7261a78d6cc873b3563610429dbfa7eb8c67fa410825eb1b180a06f02dd5f1e")
-            package:add("patches", "4.1.2", "patches/4.1.2/cmake-config-zstd.patch", "a2291f35ee40ef52c021e709dcab2a5414381c0eafeb36efce15ecb4b423114a")
         end
         if package:config("zlib") then
             package:add("deps", "zlib")
@@ -86,11 +83,6 @@ package("microsoft-seal")
             table.insert(configs, "-DSEAL_USE_ALIGNED_ALLOC=OFF")
         end
         import("package.tools.cmake").install(package, configs)
-
-        if package:is_plat("windows") and package:is_debug() then
-            local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.vcp(path.join(package:buildir(), "**.pdb"), dir)
-        end
     end)
 
     on_test(function (package)
