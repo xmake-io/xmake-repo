@@ -76,17 +76,6 @@ package("coin-or-osi")
                     add_rules("utils.symbols.export_all", {export_classes = true})
                 end
 
-            target("OsiCpx")
-                set_kind("$(kind)")
-                add_files("OsiCpx/*.cpp")
-                add_headerfiles("OsiCpx/*.hpp", {prefixdir = "coin"})
-                add_deps("Osi")
-                add_includedirs("Osi")
-                add_packages("coin-or-coinutils")
-                if is_plat("windows") and is_kind("shared") then
-                    add_rules("utils.symbols.export_all", {export_classes = true})
-                end
-
             target("OsiGlpk")
                 set_kind("$(kind)")
                 add_files("OsiGlpk/*.cpp")
