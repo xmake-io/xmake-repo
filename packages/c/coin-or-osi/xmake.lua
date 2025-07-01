@@ -11,6 +11,10 @@ package("coin-or-osi")
 
     add_includedirs("include", "include/coin")
 
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     on_install(function (package)
         os.cd("Osi/src")
         io.gsub("Osi/config.h.in", "# *undef (.-)\n", "${define %1}\n")
