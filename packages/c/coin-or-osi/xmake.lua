@@ -7,7 +7,7 @@ package("coin-or-osi")
 
     add_versions("0.108.11", "1063b6a057e80222e2ede3ef0c73c0c54697e0fee1d913e2bef530310c13a670")
 
-    add_deps("coin-or-coinutils", "glpk")
+    add_deps("coin-or-coinutils")
 
     add_includedirs("include", "include/coin")
 
@@ -51,7 +51,7 @@ package("coin-or-osi")
             set_configvar("OSI_VERSION_RELEASE", 11)
 
             add_rules("mode.debug", "mode.release")
-            add_requires("coin-or-coinutils", "glpk")
+            add_requires("coin-or-coinutils")
             set_languages("c++11")
 
             target("Osi")
@@ -72,17 +72,6 @@ package("coin-or-osi")
                 add_deps("Osi")
                 add_includedirs("Osi")
                 add_packages("coin-or-coinutils")
-                if is_plat("windows") and is_kind("shared") then
-                    add_rules("utils.symbols.export_all", {export_classes = true})
-                end
-
-            target("OsiGlpk")
-                set_kind("$(kind)")
-                add_files("OsiGlpk/*.cpp")
-                add_headerfiles("OsiGlpk/*.hpp", {prefixdir = "coin"})
-                add_deps("Osi")
-                add_includedirs("Osi")
-                add_packages("coin-or-coinutils", "glpk")
                 if is_plat("windows") and is_kind("shared") then
                     add_rules("utils.symbols.export_all", {export_classes = true})
                 end
