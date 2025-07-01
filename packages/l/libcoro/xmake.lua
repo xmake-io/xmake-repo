@@ -45,6 +45,7 @@ package("libcoro")
             package:add("cxxflags", "-fexceptions")
         elseif toolname == "clangxx" then
             package:add("cxxflags", "-fexceptions")
+            package:add("cxxflags", "-fexperimental-library")
         end
     end)
 
