@@ -37,7 +37,7 @@ package("libuvc")
         end
     end)
 
-    on_install("windows|x64", "windows|x86", "linux", "macosx", function (package)
+    on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", function (package)
         if package:is_plat("windows") and not package:config("winsock2") then
             io.replace("include/libuvc/libuvc.h", "winsock2.h", "winsock.h", {plain = true})
         end
