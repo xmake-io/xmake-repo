@@ -57,6 +57,7 @@ package("libusb")
         if package:config("shared") and package:is_plat("macosx") then
             opt.shflags = {"-framework", "CoreFoundation", "-framework", "IOKit", "-framework", "Security"}
         end
+        io.replace("CMakeLists.txt", [[elseif(CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")]], [[elseif(CMAKE_SYSTEM_NAME MATCHES "OpenBSD|FreeBSD")]], {plain = true})
         import("package.tools.cmake").install(package, configs, opt)
     end)
 
