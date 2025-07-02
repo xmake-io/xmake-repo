@@ -54,9 +54,8 @@ package("minizip-ng")
     end)
 
     on_install(function (package)
-        -- fix find zlib/zlib-ng
-        io.replace("CMakeLists.txt", "if(ZLIB-NG_FOUND AND NOT MZ_FORCE_FETCH_LIBS)", [[if(MZ_ZLIB_FLAVOR STREQUAL "zlib-ng" AND ZLIB-NG_FOUND)]], {plain = true})
-        io.replace("CMakeLists.txt", "if(ZLIB_FOUND AND NOT MZ_FORCE_FETCH_LIBS)", [[if(MZ_ZLIB_FLAVOR STREQUAL "zlib" AND ZLIB_FOUND)]], {plain = true})
+        -- TODO: add new config for zlib-ng?
+        io.replace("CMakeLists.txt", "find_package(ZLIBNG QUIET)", "", {plain = true})
 
         local configs = {"-DMZ_LIBCOMP=OFF", "-DMZ_FETCH_LIBS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
@@ -67,8 +66,6 @@ package("minizip-ng")
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
 
-        -- TODO: add new config for zlib-ng?
-        table.insert(configs, "-DMZ_ZLIB_FLAVOR=zlib")
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
                 table.insert(configs, "-DMZ_" .. name:upper() .. "=" .. (enabled and "ON" or "OFF"))
