@@ -19,7 +19,13 @@ package("opencolorio")
     add_deps("cmake")
     add_deps("minizip-ng", "expat", "yaml-cpp", "imath", "pystring")
 
-    on_load("windows", "mingw", function (package)
+    on_check("windows|arm64", function (package)
+        if not package:is_cross() then
+            raise("package(opencolorio) unsupported windows arm64 native build")
+        end
+    end)
+
+    on_load("windows", function (package)
         if not package:config("shared") then
             package:add("defines", "OpenColorIO_SKIP_IMPORTS")
         end
@@ -29,9 +35,7 @@ package("opencolorio")
         local configs = {"-DOCIO_BUILD_APPS=OFF", "-DOCIO_BUILD_OPENFX=OFF", "-DOCIO_BUILD_PYTHON=OFF", "-DOCIO_BUILD_DOCS=OFF", "-DOCIO_BUILD_TESTS=OFF", "-DOCIO_BUILD_GPU_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-
-        local opt = {packagedeps = "minizip-ng"}
-        import("package.tools.cmake").install(package, configs, opt)
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
