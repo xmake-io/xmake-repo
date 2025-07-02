@@ -38,7 +38,7 @@ package("libusb")
         add_ldflags("--bind", "-s ASYNCIFY=1")
     end
 
-    on_install("!iphoneos", function (package)
+    on_install("!iphoneos and !bsd", function (package)
         local dir = package:resourcefile("libusb-cmake")
         os.cp(path.join(dir, "CMakeLists.txt"), os.curdir())
         os.cp(path.join(dir, "config.h.in"), os.curdir())
@@ -57,7 +57,6 @@ package("libusb")
         if package:config("shared") and package:is_plat("macosx") then
             opt.shflags = {"-framework", "CoreFoundation", "-framework", "IOKit", "-framework", "Security"}
         end
-        io.replace("CMakeLists.txt", [[elseif(CMAKE_SYSTEM_NAME STREQUAL "NetBSD")]], [[elseif(CMAKE_SYSTEM_NAME MATCHES "NetBSD|FreeBSD")]], {plain = true})
         import("package.tools.cmake").install(package, configs, opt)
     end)
 
