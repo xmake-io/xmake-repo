@@ -6,6 +6,7 @@ package("minizip-ng")
     add_urls("https://github.com/zlib-ng/minizip-ng/archive/refs/tags/$(version).tar.gz",
              "https://github.com/zlib-ng/minizip-ng.git")
 
+    add_versions("4.0.10", "c362e35ee973fa7be58cc5e38a4a6c23cc8f7e652555daf4f115a9eb2d3a6be7")
     add_versions("4.0.8", "c3e9ceab2bec26cb72eba1cf46d0e2c7cad5d2fe3adf5df77e17d6bbfea4ec8f")
     add_versions("4.0.7", "a87f1f734f97095fe1ef0018217c149d53d0f78438bcb77af38adc21dff2dfbc")
     add_versions("4.0.6", "e96ed3866706a67dbed05bf035e26ef6b60f408e1381bf0fe9af17fe2c0abebc")
@@ -29,6 +30,8 @@ package("minizip-ng")
     if is_plat("macosx") then
         add_frameworks("CoreFoundation", "Security")
         add_syslinks("iconv")
+    elseif is_plat("iphoneos") then
+        add_syslinks("iconv")
     elseif is_plat("windows", "mingw") then
         add_syslinks("crypt32", "advapi32")
     end
@@ -51,6 +54,9 @@ package("minizip-ng")
     end)
 
     on_install(function (package)
+        -- TODO: add new config for zlib-ng?
+        io.replace("CMakeLists.txt", "find_package(ZLIBNG QUIET)", "", {plain = true})
+
         local configs = {"-DMZ_LIBCOMP=OFF", "-DMZ_FETCH_LIBS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
