@@ -16,8 +16,13 @@ package("opensubdiv")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    add_configs("glfw",   {description = "Enable components depending on GLFW.", default = true, type = "boolean"})
-    add_configs("ptex",   {description = "Enable components depending on Ptex.", default = true, type = "boolean"})
+    if is_plat("windows", "linux", "macosx") then
+        add_configs("glfw",   {description = "Enable components depending on GLFW.", default = true, type = "boolean"})
+        add_configs("ptex",   {description = "Enable components depending on Ptex.", default = true, type = "boolean"})
+    else
+        add_configs("glfw",   {description = "Enable components depending on GLFW.", default = false, type = "boolean"})
+        add_configs("ptex",   {description = "Enable components depending on Ptex.", default = false, type = "boolean"})
+    end
     add_configs("tbb",    {description = "Enable components depending on TBB.", default = false, type = "boolean"})
     add_configs("openmp", {description = "Enable OpenMP backend.", default = false, type = "boolean"})
     add_configs("opencl", {description = "Enable OpenCL backend.", default = false, type = "boolean"})
