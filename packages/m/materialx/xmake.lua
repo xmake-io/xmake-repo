@@ -6,9 +6,9 @@ package("materialx")
     set_urls("https://github.com/AcademySoftwareFoundation/MaterialX/archive/refs/tags/$(version).tar.gz",
              "https://github.com/AcademySoftwareFoundation/MaterialX.git", {submodules = false})
 
-    add_versions("1.39.3", "a72ac8470dea1148c0258d63b5b34605cbac580e4a3f2c624c5bdf4df7204363")
-    add_versions("1.39.0", "cc470da839cdc0e31e4b46ee46ff434d858c38c803b1d4a1012ed12546ace541")
-    add_versions("1.38.10", "706f44100188bc283a135ad24b348e55b405ac9e70cb64b7457c381383cc2887")
+    add_versions("v1.39.3", "a72ac8470dea1148c0258d63b5b34605cbac580e4a3f2c624c5bdf4df7204363")
+    add_versions("v1.39.0", "cc470da839cdc0e31e4b46ee46ff434d858c38c803b1d4a1012ed12546ace541")
+    add_versions("v1.38.10", "706f44100188bc283a135ad24b348e55b405ac9e70cb64b7457c381383cc2887")
 
     add_configs("openimageio", {description = "Build OpenImageIO support for MaterialXRender.", default = false, type = "boolean"})
     add_configs("opencolorio", {description = "Build OpenColorIO support for shader generators.", default = false, type = "boolean"})
