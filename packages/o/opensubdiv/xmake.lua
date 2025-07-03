@@ -12,7 +12,7 @@ package("opensubdiv")
 
     add_versions("git:3.6.0", "v3_6_0")
 
-    if is_plat("windows") then
+    if is_plat("windows", "wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
@@ -46,7 +46,7 @@ package("opensubdiv")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "wasm", function (package)
         local configs = {"-DNO_EXAMPLES=ON", "-DNO_TUTORIALS=ON", "-DNO_REGRESSION=ON", "-DNO_DOC=ON", "-DNO_CLEW=ON", "-DNO_TESTS=ON", "-DNO_GLTESTS=ON"}
         if package:config("glfw") then
             io.replace("cmake/FindGLFW.cmake", "NOT X11_xf86vmode_FOUND", "FALSE", {plain = true})
