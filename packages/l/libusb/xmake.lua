@@ -38,7 +38,7 @@ package("libusb")
         add_ldflags("--bind", "-s ASYNCIFY=1")
     end
 
-    on_install("!iphoneos", function (package)
+    on_install("!iphoneos and !bsd", function (package)
         local dir = package:resourcefile("libusb-cmake")
         os.cp(path.join(dir, "CMakeLists.txt"), os.curdir())
         os.cp(path.join(dir, "config.h.in"), os.curdir())
@@ -50,11 +50,14 @@ package("libusb")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
-        local packagedeps = {}
+        local opt = {}
         if package:is_plat("linux", "cross") then
-            table.insert(packagedeps, "eudev")
+            opt.packagedeps = {"eudev"}
         end
-        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
+        if package:config("shared") and package:is_plat("macosx") then
+            opt.shflags = {"-framework", "CoreFoundation", "-framework", "IOKit", "-framework", "Security"}
+        end
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
