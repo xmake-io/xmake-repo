@@ -6,6 +6,7 @@ package("newtondynamics4")
     add_urls("https://github.com/MADEAPPS/newton-dynamics/archive/refs/tags/$(version).tar.gz",
              "https://github.com/MADEAPPS/newton-dynamics.git")
 
+    add_versions("v4.02", "13050bc4eac34303ad3ff3bca104cc0ebfacc8551c98d02d4f8505cf9ecd9532")
     add_versions("v4.01", "c92b64f33488c4774debc110418cbc713fd8e07f37b15e4917b92a7a8d5e785a")
     add_patches("v4.01", path.join(os.scriptdir(), "patches", "v4.01", "cmake.patch"), "a189d6282640b6d46c5f9d0926930bbc2d7bb4f242383fae3521b6b211f569e7")
 
