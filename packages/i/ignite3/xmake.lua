@@ -16,7 +16,7 @@ package("ignite3")
     on_load(function (package)
         if package:config("client") or package:config("odbc") then
             package:add("deps", "openssl")
-            if package:is_plat("windows") then
+            if package:is_plat("windows", "mingw") then
                 package:add("syslinks", "wsock32", "ws2_32", "iphlpapi", "crypt32")
             elseif package:is_plat("linux", "bsd") then
                 package:add("syslinks", "dl")
