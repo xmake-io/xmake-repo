@@ -23,7 +23,7 @@ package("ignite3")
         end
     end)
 
-    on_install(function (package)
+    on_install("!iphoneos and !cross", function (package)
         io.replace("CMakeLists.txt", "if (CLANG_FORMAT_BIN)", "if(0)", {plain = true})
         -- remove pic hardcode
         io.replace("ignite/network/CMakeLists.txt", "set_target_properties(${TARGET} PROPERTIES POSITION_INDEPENDENT_CODE 1)", "", {plain = true})
