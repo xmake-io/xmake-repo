@@ -3,7 +3,8 @@ package("ignite3")
     set_description("Apache Ignite 3 C++ client library")
     set_license("Apache-2.0")
 
-    add_urls("https://archive.apache.org/dist/ignite/$(version)/apache-ignite-$(version)-cpp.zip")
+    add_urls("https://archive.apache.org/dist/ignite/$(version)/apache-ignite-$(version)-cpp.zip",
+             "https://mirror.fi.ossplanet.net/apache-dist/ignite/$(version)/apache-ignite-$(version)-cpp.zip")
     add_versions("3.0.0", "4ef0b6b103fb1d652c486e5783105ca9c81b3ad677248b922d56064e7429ce2f")
 
     add_configs("client", {description = "Build Ignite C++ client", default = false,  type = "boolean"})
