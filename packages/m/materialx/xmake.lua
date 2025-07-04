@@ -19,6 +19,9 @@ package("materialx")
     end
 
     add_deps("cmake")
+    if is_plat("linux") then
+        add_deps("libxt")
+    end
 
     on_load(function (package)
         if package:config("openimageio") then
@@ -33,7 +36,7 @@ package("materialx")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", function (package)
         io.replace("CMakeLists.txt", "set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)", "", {plain = true})
 
         local configs = {
