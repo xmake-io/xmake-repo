@@ -38,8 +38,10 @@ package("ignite3")
         -- Install ignite-common target
         io.replace("ignite/common/CMakeLists.txt", [[ignite_install_headers(FILES ${PUBLIC_HEADERS} DESTINATION ${IGNITE_INCLUDEDIR}/common)]], [[ignite_install_headers(FILES ${PUBLIC_HEADERS} DESTINATION ${IGNITE_INCLUDEDIR}/common)
 install(TARGETS ${PROJECT_NAME} ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}" LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}" RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")]], {plain = true})
-
-
+        -- Enforce search for MBEDTLS
+        io.replace("ignite/common/CMakeLists.txt", [[target_link_libraries(${TARGET} PUBLIC MbedTLS::mbedtls)]], [[
+find_package(MbedTLS CONFIG REQUIRED)
+target_link_libraries(${TARGET} PUBLIC MbedTLS::mbedtls)]], {plain = true})
         local configs = {
             "-DENABLE_TESTS=OFF",
             "-DCMAKE_INSTALL_INCLUDEDIR=" .. path.unix(package:installdir("include")),
@@ -49,14 +51,11 @@ install(TARGETS ${PROJECT_NAME} ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}" LI
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_ADDRESS_SANITIZER=" .. (package:config("asan") and "ON" or "OFF"))
-
         table.insert(configs,"-DENABLE_CLIENT=" .. (package:config("client") and "ON" or "OFF"))
         table.insert(configs,"-DENABLE_ODBC="   .. (package:config("odbc")   and "ON" or "OFF"))
-
         local opt = {}
         opt.cxflags = "-DMBEDTLS_ALLOW_PRIVATE_ACCESS"
         import("package.tools.cmake").install(package, configs, opt)
-
         if package:is_plat("windows") and not package:config("shared") then
             io.replace(package:installdir("include/ignite/common/detail/config.h"), "# define IGNITE_API IGNITE_IMPORT", "# define IGNITE_API", {plain = true})
         end
