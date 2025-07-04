@@ -34,6 +34,10 @@ package("ignite3")
         -- fix install headers
         io.replace("ignite/common/CMakeLists.txt", "uuid.h", "uuid.h\n    detail/mpi.h", {plain = true})
         io.replace("ignite/common/detail/bytes.h", "detail/config.h", "config.h", {plain = true})
+        -- Install ignite-common target
+        io.replace("ignite/common/CMakeLists.txt", [[ignite_install_headers(FILES ${PUBLIC_HEADERS} DESTINATION ${IGNITE_INCLUDEDIR}/common)]], [[ignite_install_headers(FILES ${PUBLIC_HEADERS} DESTINATION ${IGNITE_INCLUDEDIR}/common)
+install(TARGETS ${PROJECT_NAME} ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}" LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}" RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")]], {plain = true})
+
 
         local configs = {
             "-DENABLE_TESTS=OFF",
