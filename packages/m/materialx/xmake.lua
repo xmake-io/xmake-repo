@@ -6,10 +6,15 @@ package("materialx")
     set_urls("https://github.com/AcademySoftwareFoundation/MaterialX/archive/refs/tags/$(version).tar.gz",
              "https://github.com/AcademySoftwareFoundation/MaterialX.git", {submodules = false})
 
-    add_versions("v1.39.3", "a72ac8470dea1148c0258d63b5b34605cbac580e4a3f2c624c5bdf4df7204363")
+    add_versions("v1.39.3", "1f299d14c1243a4834e2363921d98465cc002b37e7f5cddb6f8747ab58fbf6d1")
     add_versions("v1.39.0", "cc470da839cdc0e31e4b46ee46ff434d858c38c803b1d4a1012ed12546ace541")
     add_versions("v1.38.10", "706f44100188bc283a135ad24b348e55b405ac9e70cb64b7457c381383cc2887")
 
+    add_configs("glsl", {description = "Build the GLSL shader generator back-end.", default = false, type = "boolean"})
+    add_configs("osl", {description = "Build the OSL shader generator back-end.", default = false, type = "boolean"})
+    add_configs("mdl", {description = "Build the MDL shader generator back-end.", default = false, type = "boolean"})
+    add_configs("msl", {description = "Build the MSL shader generator back-end.", default = false, type = "boolean"})
+    add_configs("render", {description = "Build the MaterialX Render modules.", default = false, type = "boolean"})
     add_configs("openimageio", {description = "Build OpenImageIO support for MaterialXRender.", default = false, type = "boolean"})
     add_configs("opencolorio", {description = "Build OpenColorIO support for shader generators.", default = false, type = "boolean"})
     add_configs("monolithic", {description = "Build single shared library", default = false, type = "boolean"})
@@ -19,9 +24,6 @@ package("materialx")
     end
 
     add_deps("cmake")
-    if is_plat("linux") then
-        add_deps("libxt")
-    end
 
     on_load(function (package)
         if package:config("openimageio") then
@@ -36,10 +38,10 @@ package("materialx")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "mingw", "msys", function (package)
+    on_install(function (package)
         if package:version() and package:version():lt("1.39.4") then
-            io.replace("source/MaterialXCore/Library.h", [[#include <algorithm>]], [[#include <algorithm>
-#include <cstdint>]], {plain = true})
+            -- fix gcc15
+            io.replace("source/MaterialXCore/Library.h", "#include <algorithm>", "#include <algorithm>\n#include <cstdint>", {plain = true})
         end
         io.replace("CMakeLists.txt", "set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)", "", {plain = true})
 
@@ -53,6 +55,11 @@ package("materialx")
         table.insert(configs, "-DMATERIALX_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DMATERIALX_BUILD_MONOLITHIC=" .. (package:config("monolithic") and "ON" or "OFF"))
 
+        table.insert(configs, "-DMATERIALX_BUILD_GEN_GLSL=" .. (package:config("glsl") and "ON" or "OFF"))
+        table.insert(configs, "-DMATERIALX_BUILD_GEN_OSL=" .. (package:config("osl") and "ON" or "OFF"))
+        table.insert(configs, "-DMATERIALX_BUILD_GEN_MDL=" .. (package:config("mdl") and "ON" or "OFF"))
+        table.insert(configs, "-DMATERIALX_BUILD_GEN_MSL=" .. (package:config("msl") and "ON" or "OFF"))
+        table.insert(configs, "-DMATERIALX_BUILD_RENDER=" .. (package:config("render") and "ON" or "OFF"))
         table.insert(configs, "-DMATERIALX_BUILD_OIIO=" .. (package:config("openimageio") and "ON" or "OFF"))
         table.insert(configs, "-DMATERIALX_BUILD_OCIO=" .. (package:config("opencolorio") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
