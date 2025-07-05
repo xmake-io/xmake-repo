@@ -32,6 +32,11 @@ package("opencolorio")
     end)
 
     on_install("!mingw and !iphoneos", function (package)
+        if package:version() and package:version():lt("2.4.0") then
+            os.rm("share/cmake/modules/Findyaml-cpp.cmake")
+            io.replace("src/OpenColorIO/CMakeLists.txt", "yaml-cpp", "yaml-cpp::yaml-cpp", {plain = true})
+        end
+
         local configs = {"-DOCIO_BUILD_APPS=OFF", "-DOCIO_BUILD_OPENFX=OFF", "-DOCIO_BUILD_PYTHON=OFF", "-DOCIO_BUILD_DOCS=OFF", "-DOCIO_BUILD_TESTS=OFF", "-DOCIO_BUILD_GPU_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
