@@ -15,6 +15,7 @@ package("materialx")
     add_configs("mdl", {description = "Build the MDL shader generator back-end.", default = false, type = "boolean"})
     add_configs("msl", {description = "Build the MSL shader generator back-end.", default = false, type = "boolean"})
     add_configs("render", {description = "Build the MaterialX Render modules.", default = false, type = "boolean"})
+    add_configs("render_platforms", {description = "Build platform-specific render modules for each shader generator.", default = true, type = "boolean"})
     add_configs("openimageio", {description = "Build OpenImageIO support for MaterialXRender.", default = false, type = "boolean"})
     add_configs("opencolorio", {description = "Build OpenColorIO support for shader generators.", default = false, type = "boolean"})
     add_configs("monolithic", {description = "Build single shared library", default = false, type = "boolean"})
@@ -26,6 +27,15 @@ package("materialx")
     add_deps("cmake")
 
     on_load(function (package)
+        if package:config("render") and package:config("render_platforms") then
+            if package:is_plat("linux") then
+                package:add("deps", "libx11", "libxt")
+            elseif package:is_plat("macosx") then
+                package:add("deps", "opengl", {optional = true})
+                package:add("frameworks", "Cocoa")
+            end
+        end
+        
         if package:config("openimageio") then
             package:add("deps", "openimageio")
         end
@@ -39,11 +49,11 @@ package("materialx")
     end)
 
     on_install(function (package)
+        io.replace("CMakeLists.txt", "set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)", "", {plain = true})
         if package:version() and package:version():lt("1.39.4") then
             -- fix gcc15
             io.replace("source/MaterialXCore/Library.h", "#include <algorithm>", "#include <algorithm>\n#include <cstdint>", {plain = true})
         end
-        io.replace("CMakeLists.txt", "set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)", "", {plain = true})
 
         local configs = {
             "-DMATERIALX_BUILD_TESTS=OFF",
@@ -60,6 +70,7 @@ package("materialx")
         table.insert(configs, "-DMATERIALX_BUILD_GEN_MDL=" .. (package:config("mdl") and "ON" or "OFF"))
         table.insert(configs, "-DMATERIALX_BUILD_GEN_MSL=" .. (package:config("msl") and "ON" or "OFF"))
         table.insert(configs, "-DMATERIALX_BUILD_RENDER=" .. (package:config("render") and "ON" or "OFF"))
+        table.insert(configs, "-DMATERIALX_BUILD_RENDER_PLATFORMS=" .. (package:config("render_platforms") and "ON" or "OFF"))
         table.insert(configs, "-DMATERIALX_BUILD_OIIO=" .. (package:config("openimageio") and "ON" or "OFF"))
         table.insert(configs, "-DMATERIALX_BUILD_OCIO=" .. (package:config("opencolorio") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
