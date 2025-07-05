@@ -36,7 +36,7 @@ package("materialx")
         end
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows", "linux", "macosx", "mingw", "msys", function (package)
         if package:version() and package:version():lt("1.39.4") then
             io.replace("source/MaterialXCore/Library.h", [[#include <algorithm>]], [[#include <algorithm>
 #include <cstdint>]], {plain = true})
