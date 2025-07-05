@@ -139,13 +139,18 @@ package("wxwidgets")
     end)
 
     on_install("macosx", "linux", function (package)
-        -- Notify the user about issues caused by the CMake version.
+        import("core.base.semver")
         local cmake = package:dep("cmake")
-        local cmake_fetch = cmake:fetch()
-        local major, minor, patch = cmake_fetch.version:match("^(%d+)%.(%d+)%.(%d+)$")
-        local cmake_version = tonumber(major.. minor.. patch)
-        if cmake_version > 3280 then
-            wprint("\ncmake may not find Cmath detail in https://github.com/prusa3d/PrusaSlicer/issues/12169\n")
+        if cmake then
+            local cmake_fetch = cmake:fetch()
+            -- Notify the user about issues caused by the CMake version.
+            if cmake_fetch and cmake_fetch.version ~= nil then
+                local cmake_version = semver.new(cmake_fetch.version)
+                if cmake_version:major() > 3 or 
+                    (cmake_version:major() == 3 and cmake_version:minor() > 28) then
+                    print("CMake may not find CMath detail in https://github.com/prusa3d/PrusaSlicer/issues/12169")
+                end
+            end
         end
 
         io.replace("build/cmake/modules/FindGTK3.cmake", "FIND_PACKAGE_HANDLE_STANDARD_ARGS(GTK3 DEFAULT_MSG GTK3_INCLUDE_DIRS GTK3_LIBRARIES VERSION_OK)", 
