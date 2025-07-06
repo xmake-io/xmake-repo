@@ -35,7 +35,7 @@ package("opencolorio")
         end
     end)
 
-    on_install("!iphoneos", function (package)
+    on_install("!mingw and !iphoneos", function (package)
         local minizip_ng = package:dep("minizip-ng")
         local version = package:version()
         if version then
