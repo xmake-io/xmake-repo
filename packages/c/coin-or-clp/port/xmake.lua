@@ -1,6 +1,11 @@
 includes("@builtin/check")
 configvar_check_cincludes("COINUTILS_HAS_CSTDINT", "cstdint")
 configvar_check_cincludes("COINUTILS_HAS_STDINT_H", "stdint.h")
+configvar_check_cincludes("HAVE_ARM_NEON_H", "arm_neon.h")
+configvar_check_cincludes("HAVE_FMAINTRIN_H", "fmaintrin.h")
+configvar_check_cincludes("HAVE_IMMINTRIN_H", "immintrin.h")
+configvar_check_cincludes("HAVE_INTRIN_H", "intrin.h")
+configvar_check_cincludes("HAVE_STDIO_H", "stdio.h")
 configvar_check_cincludes("HAVE_CFLOAT", "cfloat")
 configvar_check_cincludes("HAVE_CIEEEFP", "cieeefp")
 configvar_check_cincludes("HAVE_CINTTYPES", "cinttypes")
@@ -61,7 +66,7 @@ target("clp")
      "Clp/src/ClpCholeskyMumps.hpp",
      "Clp/src/ClpCholeskyUfl.hpp",
      "Clp/src/ClpCholeskyWssmp.hpp",
-     "Clp/src/ClpCholeskyWssmpKKT.hpp ",
+     "Clp/src/ClpCholeskyWssmpKKT.hpp",
      "Clp/src/*Abc*.hpp",
      "Clp/src/*Abc*.h",
      "Clp/src/*Cbc*.hpp"
