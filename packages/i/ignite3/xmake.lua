@@ -24,6 +24,11 @@ package("ignite3")
         end
     end)
 
+    on_check(function (package)
+        assert(not (package:is_plat("msys")),"This package cannot build on Msys")
+        assert(not (package:is_plat("linux") and package:is_arch("arm64")),"This package cannot build on Linux Arm64")
+    end)
+
     on_install("windows", "macosx", "linux", "mingw", function (package)
         io.replace("CMakeLists.txt", "if (CLANG_FORMAT_BIN)", "if(0)", {plain = true})
         -- remove pic hardcode
