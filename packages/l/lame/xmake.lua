@@ -24,10 +24,37 @@ package("lame")
         import("package.tools.autoconf").install(package, configs)
     end)
 
-    on_install("windows|x86", function (package)
+    on_install("windows", function (package)
+        -- slight adjustments according to https://github.com/conan-io/conan-center-index/blob/b39954231875c1350964a658c408c8a840a9eb20/recipes/libmp3lame/all/conanfile.py
+        -- Honor vc runtime
+        io.replace("Makefile.MSVC", "CC_OPTS = $(CC_OPTS) /MT", "", {plain = true})
+        -- Do not hardcode LTO
+        io.replace("Makefile.MSVC", " /GL", "", {plain = true})
+        io.replace("Makefile.MSVC", " /LTCG", "", {plain = true})
+        io.replace("Makefile.MSVC", "ADDL_OBJ = bufferoverflowU.lib", "", {plain = true})
+
+        -- lame install guide says to `copy configMS.h config.h`
+        -- then to `nmake -f Makefile.MSVC  comp=msvc  asm=no`
         os.cp("configMS.h", "config.h")
+        -- this was here before, who knows if it's needed
         io.gsub("Makefile.MSVC", "nasmw", "nasm")
-        import("package.tools.nmake").build(package, {"-f", "Makefile.MSVC"})
+
+        -- more stuff from conan-io
+        local configs = {"-f", "Makefile.MSVC", "comp=msvc"}
+        if package:is_arch("x86") then
+            table.insert(configs, "asm=yes")
+        elseif package:is_arch("x64") then
+            io.replace("Makefile.MSVC", "MACHINE = /machine:I386", "MACHINE =/machine:X64", {plain = true})
+            table.insert(configs, "MSVCVER=Win64")
+            table.insert(configs, "asm=yes")
+        elseif package:is_arch("arm64") then
+            io.replace("Makefile.MSVC", "MACHINE = /machine:I386", "MACHINE =/machine:ARM64", {plain = true})
+            table.insert(configs, "MSVCVER=Win64")
+        else
+            table.insert(configs, "asm=yes")
+        end
+        import("package.tools.nmake").build(package, configs)
+
         os.cp("output/*.lib", package:installdir("lib"))
         os.cp("output/*.exe", package:installdir("bin"))
         os.cp("include/*.h", package:installdir("include/lame"))

@@ -7,6 +7,7 @@ package("kangaru")
     add_urls("https://github.com/gracicot/kangaru/archive/refs/tags/$(version).tar.gz",
              "https://github.com/gracicot/kangaru.git")
 
+    add_versions("v4.3.2", "ed2dec53087fe4c5fbfc7f7ffcb0e963b3e0a7f27699338c4bc5a116193113b8")
     add_versions("v4.3.1", "3896ea2a13cc1c220b4d83bf598e27e77004170b4a212af8f14264f8a6fb0e45")
 
     add_deps("cmake")

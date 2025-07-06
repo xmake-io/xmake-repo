@@ -1,0 +1,58 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index fbaffc9..56fc32d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -39,11 +39,12 @@ set(SOURCES
+   src/misc.c
+ )
+ 
+-find_package(LibUSB)
++find_package(PkgConfig REQUIRED)
++pkg_check_modules(libusb REQUIRED IMPORTED_TARGET libusb)
+ 
+ # JpegPkg name to differ from shipped with CMake
+-find_package(JpegPkg QUIET)
+-if(JPEG_FOUND)
++pkg_check_modules(libjpeg REQUIRED IMPORTED_TARGET libjpeg)
++if(libjpeg_FOUND)
+   message(STATUS "Building libuvc with JPEG support.")
+   set(LIBUVC_HAS_JPEG TRUE)
+   list(APPEND SOURCES src/frame-mjpeg.c)
+@@ -116,11 +117,12 @@ foreach(target_name IN LISTS UVC_TARGETS)
+   )
+   target_link_libraries(${target_name}
+     # libusb-1.0 used internally so we link to it privately.
+-    PRIVATE LibUSB::LibUSB ${threads}
++    PRIVATE ${threads}
++    PRIVATE PkgConfig::libusb
+   )
+-  if(JPEG_FOUND)
++  if(libjpeg_FOUND)
+     target_link_libraries(${target_name}
+-      PRIVATE JPEG::JPEG
++      PRIVATE PkgConfig::libjpeg
+     )
+   endif()
+   set_target_properties(${target_name} PROPERTIES
+@@ -191,12 +193,6 @@ install(EXPORT libuvcTargets
+   DESTINATION ${CMAKE_INSTALL_CMAKEDIR}
+ )
+ 
+-install(FILES 
+-    cmake/FindLibUSB.cmake
+-    cmake/FindJpegPkg.cmake
+-  DESTINATION ${CMAKE_INSTALL_CMAKEDIR}
+-)
+-
+ include(CMakePackageConfigHelpers)
+ write_basic_package_version_file(libuvcConfigVersion.cmake
+   COMPATIBILITY AnyNewerVersion
+@@ -207,7 +203,7 @@ install(FILES
+   DESTINATION ${CMAKE_INSTALL_CMAKEDIR}
+ )
+ 
+-if(JPEG_FOUND)
++if(libjpeg_FOUND)
+   # If we have used JPEG library we need to 
+   # add linker flag for it in config file for pkgconfig
+   set(PKGCONFIG_JPEG_LDFLAG "-ljpeg")

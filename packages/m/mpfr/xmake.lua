@@ -16,8 +16,14 @@ package("mpfr")
         add_extsources("brew::mpfr")
     end
 
-    add_deps("gmp")
-    on_install("macosx", "linux", function (package)
+    on_load(function (package)
+        package:add("deps", "gmp", { configs = {shared = package:config("shared")} })
+    end)
+
+    on_install("@!windows and !wasm", function (package)
+        if is_host("windows") then
+            io.replace("configure", "LIBTOOL='$(SHELL) $(top_builddir)/libtool'", "LIBTOOL='\"$(SHELL)\" $(top_builddir)/libtool'", {plain = true})
+        end
         local configs = {"--disable-dependency-tracking"}
         table.insert(configs, "--with-gmp=" .. package:dep("gmp"):installdir())
         if package:config("shared") then
@@ -30,7 +36,12 @@ package("mpfr")
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
-        import("package.tools.autoconf").install(package, configs)
+        import("package.tools.autoconf")
+        local envs = autoconf.buildenvs(package)
+        if envs.ARFLAGS and envs.ARFLAGS:match("^%s*$") then
+            envs.ARFLAGS = nil
+        end
+        autoconf.install(package, configs, {envs = envs})
     end)
 
     on_test(function (package)

@@ -3,8 +3,9 @@ package("libxv")
     set_homepage("https://www.x.org/")
     set_description("X.Org: X Video (Xv) extension")
 
-    set_urls("https://www.x.org/archive/individual/lib/libXv-$(version).tar.bz2")
-    add_versions("1.0.11", "d26c13eac99ac4504c532e8e76a1c8e4bd526471eb8a0a4ff2a88db60cb0b088")
+    set_urls("https://www.x.org/archive/individual/lib/libXv-$(version).tar.gz")
+    add_versions("1.0.11", "c4112532889b210e21cf05f46f0f2f8354ff7e1b58061e12d7a76c95c0d47bb1")
+    add_versions("1.0.13", "9a0c31392b8968a4f29a0ad9c51e7ce225bcec3c4cbab9f2a241f921776b2991")
 
     if is_plat("linux") then
         add_extsources("apt::libxv-dev", "pacman::libxv")

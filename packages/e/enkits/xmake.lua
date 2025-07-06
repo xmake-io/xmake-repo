@@ -12,7 +12,7 @@ package("enkits")
     add_deps("cmake")
     add_linkdirs("lib/enkiTS")
     add_links("enkiTS")
-    if is_plat("linux") then
+    if is_plat("linux", "bsd") then
         add_syslinks("pthread", "rt")
     end
 
@@ -22,13 +22,13 @@ package("enkits")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install(function (package)
         if package:is_plat("linux") then
             io.replace("src/TaskScheduler.h", "#include <functional>", "#include <functional>\n#include <initializer_list>\n", {plain = true})
         end
 
         local configs = {"-DENKITS_BUILD_EXAMPLES=OFF", "-DENKITS_INSTALL=ON"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DENKITS_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)

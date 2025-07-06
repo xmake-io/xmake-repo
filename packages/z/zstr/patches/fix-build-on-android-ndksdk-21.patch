@@ -1,0 +1,25 @@
+From 67086fc4aed5cd3b9b67edb1e9e123523507c684 Mon Sep 17 00:00:00 2001
+From: Redbeanw44602 <redbeana44945@gmail.com>
+Date: Sun, 30 Mar 2025 18:46:46 +0800
+Subject: [PATCH] fix build on android ndksdk-21
+
+---
+ src/strict_fstream.hpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/strict_fstream.hpp b/src/strict_fstream.hpp
+index 7d03ea6..56146fd 100644
+--- a/src/strict_fstream.hpp
++++ b/src/strict_fstream.hpp
+@@ -64,7 +64,7 @@ static std::string strerror()
+     } else {
+         return "Unknown error (" + std::to_string(err_num) + ")";
+     }
+-#elif ((_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__APPLE__) || defined(__FreeBSD__)) && ! _GNU_SOURCE) || defined(__MUSL__)
++#elif ((_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || defined(__APPLE__) || defined(__FreeBSD__)) && ! _GNU_SOURCE) || defined(__MUSL__) || defined(__ANDROID_API__)
+ // XSI-compliant strerror_r()
+     const int err_num = errno; // See above
+     if (strerror_r(err_num, buff.data(), buff.size()) == 0) {
+-- 
+2.49.0
+

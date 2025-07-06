@@ -21,7 +21,8 @@ package("cartographer")
     add_deps("cmake")
     add_deps("zlib")
     add_deps("ceres-solver 2.1.0", {configs = {suitesparse = true}})
-    add_deps("abseil", "cairo", "eigen", "lua", "protobuf-cpp")
+    add_deps("protobuf-cpp 3.19.4")
+    add_deps("abseil", "cairo", "eigen", "lua")
 
     on_install("windows|x64", "windows|x86", "macosx|x86_64", "linux", function (package)
         for _, headerfile in ipairs(os.files("cartographer/**.h")) do

@@ -1,0 +1,64 @@
+diff --git a/meson.build b/meson.build
+index 5cf334b..ad9f5cd 100644
+--- a/meson.build
++++ b/meson.build
+@@ -291,6 +291,8 @@ install_headers(meson.current_build_dir() / 'version.h', subdir: 'mcfgthread')
+ #===========================================================
+ # Rules for 'lib/libmcfgthread'
+ #===========================================================
++if get_option('default_library') == 'shared'
++
+ mcfgthread_version_o = import('windows').compile_resources(
+       'mcfgthread/version.rc',
+       args: [ '-I.', '-c65001' ],
+@@ -320,22 +322,25 @@ lib_mcfgthread_dll = shared_library('mcfgthread',
+       version: '.'.join([ ver.get('abi_major'), ver.get('abi_minor'), '0' ]),
+       install: true)
+ 
+-lib_mcfgthread_a = static_library('mcfgthread',
+-      c_pch: 'mcfgthread/xprecompiled.h',
+-      c_args: [ '-ffreestanding', '-fasynchronous-unwind-tables' ],
+-      sources: [ mcfgthread_src_min, mcfgthread_src_ex, ],
+-      dependencies: [ dep_kernel32, dep_ntdll ],
+-      install: true)
+-
+ import('pkgconfig').generate(lib_mcfgthread_dll,
+       name: 'mcfgthread',
+       url: 'https://github.com/lhmouse/mcfgthread',
+       description: 'Cornerstone library for C++11 threading on mingw-w64',
+       libraries: '-lntdll')
+ 
++elif get_option('default_library') == 'static'
++
++lib_mcfgthread_a = static_library('mcfgthread',
++      c_pch: 'mcfgthread/xprecompiled.h',
++      c_args: [ '-ffreestanding', '-fasynchronous-unwind-tables' ],
++      sources: [ mcfgthread_src_min, mcfgthread_src_ex, ],
++      dependencies: [ dep_kernel32, dep_ntdll ],
++      install: true)
++endif
+ #===========================================================
+ # Rules for tests
+ #===========================================================
++if get_option('build-test')
+ foreach src: test_src
+   test_c_args = []
+   test_cpp_args = []
+@@ -377,3 +382,4 @@ foreach src: test_src
+ 
+   test('..' / src, test_exe)
+ endforeach
++endif
+\ No newline at end of file
+diff --git a/meson.options b/meson.options
+index d0342f8..b45d572 100644
+--- a/meson.options
++++ b/meson.options
+@@ -15,3 +15,7 @@
+ option('enable-debug-checks',
+        type: 'boolean', value: false,
+        description: 'enable run-time assertions')
++
++option('build-test',
++       type: 'boolean', value: false,
++       description: 'Build unit test')

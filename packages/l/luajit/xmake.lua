@@ -1,14 +1,12 @@
 package("luajit")
-
     set_homepage("http://luajit.org")
     set_description("A Just-In-Time Compiler (JIT) for the Lua programming language.")
+    set_license("MIT")
 
-    set_urls("http://luajit.org/download/LuaJIT-$(version).tar.gz",
-             "https://github.com/LuaJIT/LuaJIT.git",
-             "http://luajit.org/git/luajit-2.0.git",
+    set_urls("https://github.com/LuaJIT/LuaJIT.git",
              "http://repo.or.cz/luajit-2.0.git")
 
-    add_versions("2.1.0-beta3", "1ad2e34b111c802f9d0cdf019e986909123237a28c746b21295b63c9e785d9c3")
+    add_versions("v2.1.0-beta3", "8271c643c21d1b2f344e339f559f2de6f3663191")
 
     add_configs("nojit", { description = "Disable JIT.", default = false, type = "boolean"})
     add_configs("fpu",   { description = "Enable FPU.", default = true, type = "boolean"})
@@ -17,6 +15,14 @@ package("luajit")
     add_includedirs("include/luajit")
     if not is_plat("windows") then
         add_syslinks("dl")
+    end
+
+    if on_check then
+        on_check(function (package)
+            if package:is_arch("arm.*") then
+                raise("package(luajit/arm64) unsupported arch")
+            end
+        end)
     end
 
     on_load(function (package)
@@ -28,9 +34,6 @@ package("luajit")
 
     on_install("windows", "linux", "macosx", "bsd", "android", "iphoneos", function (package)
         local configs = {}
-        if package:config("shared") then
-            configs.kind = "shared"
-        end
         configs.fpu     = package:config("fpu")
         configs.nojit   = package:config("nojit")
         configs.gc64    = package:config("gc64")

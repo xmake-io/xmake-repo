@@ -1,5 +1,4 @@
 package("unzip")
-
     set_kind("binary")
     set_homepage("http://infozip.sourceforge.net/UnZip.html")
     set_description("UnZip is an extraction utility for archives compressed in .zip format.")
@@ -12,9 +11,10 @@ package("unzip")
         io.replace("win32/nt.c", "#include \"../unzip.h\"", "#include \"../unzip.h\"\n#ifdef CR\n#undef CR\n#endif", {plain = true})
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
-            includes("check_cfuncs.lua")
+            includes("@builtin/check")
             check_cfuncs("HAVE_LCHMOD", "lchmod", {includes = "sys/stat.h"})
             target("unzip")
+                set_languages("gnu17")
                 set_kind("binary")
                 if not has_config("__HAVE_LCHMOD") then
                     add_defines("NO_LCHMOD")

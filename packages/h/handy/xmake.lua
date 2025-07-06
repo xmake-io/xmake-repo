@@ -1,6 +1,7 @@
 package("handy")
     set_homepage("https://github.com/yedf2/handy")
     set_description("A simple C++11 network server framework")
+    set_license("BSD-2-Clause")
 
     add_urls("https://github.com/yedf2/handy/archive/refs/tags/$(version).tar.gz",
              "https://github.com/yedf2/handy.git")

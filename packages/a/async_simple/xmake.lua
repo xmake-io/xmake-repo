@@ -16,7 +16,15 @@ package("async_simple")
 
     add_deps("cmake")
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_load("!linux and !macosx", function (package)
+        package:set("kind", "library", {headeronly = true})
+    end)
+
+    on_install(function (package)
+        if package:is_plat("linux") and package:is_arch("arm.*") then
+            io.replace("CMakeLists.txt", [[list(APPEND CXX_FLAGS "-m]], [[#list(APPEND CXX_FLAGS "-m]], {plain = true})
+        end
+
         if package:version():le("1.3") then
             io.replace("async_simple/CMakeLists.txt",
             [[file(GLOB coro_header "coro/*.h")]],
@@ -40,7 +48,6 @@ package("async_simple")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <async_simple/coro/Lazy.h>
             async_simple::coro::Lazy<void> func() {
                 co_return;
             }

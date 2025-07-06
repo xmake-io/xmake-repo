@@ -5,7 +5,7 @@ package("plf_colony")
     set_license("zlib")
 
     add_urls("https://github.com/mattreecebentley/plf_colony.git")
-    add_versions("2023.08.25", "394c787ecf5a541b66d08b90f22cebc954f0599c")
+    add_versions("v7.41", "abb0aa6525a3dae56aacf50899517f47e7036016")
 
     on_install(function (package)
         os.cp("plf_colony.h", package:installdir("include"))

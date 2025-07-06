@@ -1,0 +1,62 @@
+diff --git a/lib_acl_cpp/CMakeLists.txt b/lib_acl_cpp/CMakeLists.txt
+index 08aabee..b55c6dc 100644
+--- a/lib_acl_cpp/CMakeLists.txt
++++ b/lib_acl_cpp/CMakeLists.txt
+@@ -263,7 +263,7 @@ set(LIBRARY_OUTPUT_PATH ${lib_output_path})
+ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${lib_output_path})
+ 
+ add_library(acl_cpp_static STATIC ${lib_src})
+-target_link_libraries(acl_cpp_static ZLIB::ZLIB)
++target_link_libraries(acl_cpp_static ZLIB::ZLIB Iconv::Iconv)
+ 
+ if (${WIN_OS})
+ 	set_target_properties(acl_cpp_static PROPERTIES
+@@ -309,7 +309,7 @@ if (ACL_BUILD_SHARED MATCHES "YES")
+ 		target_compile_options(acl_cpp_static PRIVATE
+ 				-fvisibility=hidden -fvisibility-inlines-hidden)
+ 	elseif (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+-		set(sys_ldflags "-shared -liconv -lpthread -ldl")
++		set(sys_ldflags "-shared -lpthread -ldl")
+ 		target_compile_options(acl_cpp_static PRIVATE
+ 			-fvisibility=hidden -fvisibility-inlines-hidden)
+ 		set(CMAKE_MACOSX_RPATH 1)
+@@ -337,7 +337,7 @@ if (ACL_BUILD_SHARED MATCHES "YES")
+ 		set(lc_flags "-Wl,-rpath,${CMAKE_INSTALL_PREFIX}/lib -L${lib_output_path}")
+ 		set(CMAKE_SHARED_LINKER_FLAGS "${lc_flags} ${sys_ldflags}")
+ 		set_target_properties(acl_cpp_shared PROPERTIES OUTPUT_NAME "acl_cpp")
+-		target_link_libraries(acl_cpp_shared protocol acl ZLIB::ZLIB)
++		target_link_libraries(acl_cpp_shared protocol acl ZLIB::ZLIB Iconv::Iconv)
+ 	endif()
+ 
+ 	if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS|Android|FreeBSD")
+diff --git a/lib_fiber/cpp/CMakeLists.txt b/lib_fiber/cpp/CMakeLists.txt
+index 6b93850..2aa6804 100644
+--- a/lib_fiber/cpp/CMakeLists.txt
++++ b/lib_fiber/cpp/CMakeLists.txt
+@@ -139,7 +139,7 @@ set(LIBRARY_OUTPUT_PATH ${lib_output_path})
+ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${lib_output_path})
+ 
+ add_library(fiber_cpp_static STATIC ${lib_src})
+-target_link_libraries(fiber_cpp_static ZLIB::ZLIB)
++target_link_libraries(fiber_cpp_static ZLIB::ZLIB Iconv::Iconv)
+ 
+ if (${WIN_OS})
+ 	set_target_properties(fiber_cpp_static PROPERTIES
+@@ -181,7 +181,7 @@ if (ACL_BUILD_SHARED MATCHES "YES")
+ 		target_compile_options(fiber_cpp_static PRIVATE
+ 			-fvisibility=hidden -fvisibility-inlines-hidden)
+ 	elseif (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+-		set(sys_ldflags "-shared -liconv -lpthread -ldl")
++		set(sys_ldflags "-shared -lpthread -ldl")
+ 		target_compile_options(fiber_cpp_static PRIVATE
+ 			-fvisibility=hidden -fvisibility-inlines-hidden)
+ 		set(CMAKE_MACOSX_RPATH 1)
+@@ -210,7 +210,7 @@ if (ACL_BUILD_SHARED MATCHES "YES")
+ 		set_target_properties(fiber_cpp_shared PROPERTIES OUTPUT_NAME "fiber_cpp")
+ 		set(lc_ldflags "-Wl,-rpath,${CMAKE_INSTALL_PREFIX}/lib -L${lib_output_path}")
+ 		set(CMAKE_SHARED_LINKER_FLAGS "${lc_ldflags} ${sys_ldflags}")
+-		target_link_libraries(fiber_cpp_shared acl_cpp protocol acl fiber ZLIB::ZLIB)
++		target_link_libraries(fiber_cpp_shared acl_cpp protocol acl fiber ZLIB::ZLIB Iconv::Iconv)
+ 	endif()
+ 
+ 	if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS|Android|FreeBSD")

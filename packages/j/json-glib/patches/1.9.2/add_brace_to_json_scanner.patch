@@ -1,0 +1,22 @@
+diff --git a/json-glib/json-scanner.c b/json-glib/json-scanner.c
+index 4ada646..119c3fa 100644
+--- a/json-glib/json-scanner.c
++++ b/json-glib/json-scanner.c
+@@ -888,7 +888,7 @@ json_scanner_get_token_ll (JsonScanner    *scanner,
+ 			  gstring = g_string_append_c (gstring, '\f');
+ 			  break;
+ 
+-                        case 'u':
++                        case 'u':{
+                           guint fchar = json_scanner_peek_next_char (scanner);
+                           if (is_hex_digit (fchar))
+                             {
+@@ -994,7 +994,7 @@ json_scanner_get_token_ll (JsonScanner    *scanner,
+                               gstring = NULL;
+                             }
+                           break;
+-			  
++                        }
+ 			default:
+                           token = JSON_TOKEN_ERROR;
+                           value.v_error = JSON_ERROR_TYPE_UNESCAPED_CTRL;

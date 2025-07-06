@@ -2,6 +2,7 @@ package("kcp")
 
     set_homepage("https://github.com/skywind3000/kcp")
     set_description("A Fast and Reliable ARQ Protocol.")
+    set_license("MIT")
 
     add_urls("https://github.com/skywind3000/kcp/archive/$(version).tar.gz",
              "https://github.com/skywind3000/kcp.git")

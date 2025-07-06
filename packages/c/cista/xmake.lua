@@ -7,6 +7,7 @@ package("cista")
     add_urls("https://github.com/felixguendling/cista/archive/refs/tags/$(version).tar.gz",
              "https://github.com/felixguendling/cista.git")
 
+    add_versions("v0.15", "f807d3282f68a74eed94d6e829763244ae22993169ab6ece7fd7c22bd2f08330")
     add_versions("v0.14", "9844a55fd3fd35a15614de01ff54e97ad0216d7b3d3952f14bfd6ebd7d6ff58f")
 
     add_deps("cmake")

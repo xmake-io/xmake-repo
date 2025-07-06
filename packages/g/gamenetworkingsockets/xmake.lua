@@ -24,14 +24,17 @@ package("gamenetworkingsockets")
     on_load("windows", "linux", function(package)
         if not package:config("shared") then
             package:add("defines", "STEAMNETWORKINGSOCKETS_STATIC_LINK")
-            package:add("deps", "openssl", "protobuf-cpp")
+            package:add("deps", "protobuf-cpp")
+            if not package:is_plat("windows") then
+                package:add("deps", "openssl")
+            end
             if package:config("webrtc") then
                 package:add("deps", "abseil")
             end
         end
     end)
 
-    on_install("windows", "linux", function (package)
+    on_install("windows|x86", "windows|x64", "linux", function (package)
         -- We need copy source codes to the working directory with short path on windows
         --
         -- Because the target name and source file path of this project are too long,

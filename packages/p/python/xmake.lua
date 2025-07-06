@@ -1,7 +1,7 @@
 package("python")
-
     set_homepage("https://www.python.org/")
     set_description("The python programming language.")
+    set_license("PSF")
 
     if is_host("windows") then
         if is_arch("x86", "i386") or os.arch() == "x86" then
@@ -17,7 +17,11 @@ package("python")
             add_versions("3.10.11", "7fac6ed9a58623f31610024d2c4d6abb33fac0cf741ec1a5285d056b5933012e")
             add_versions("3.11.3", "992648876ecca6cfbe122dc2d9c358c9029d9fdb83ee6edd6e54926bf0360da6")
             add_versions("3.11.8", "f5e399d12b00a4f73dc3078b7b4fe900e1de6821aa3e31d1c27c6ef4e33e95d9")
-        else
+            add_versions("3.12.3", "49bbcd200cda1f56452feeaf0954045e85b27a93b929034cc03ab198c4d9662e")
+            add_versions("3.12.8", "b4ec65bf24417c4098c8d1f30a30fec12680aedd7094de3caf35e5e2d55d9c46")
+            add_versions("3.13.1", "f89b297ca94ced2fbdad7919518ebf05005f39637f8ec5b01e42f2c71d53a673")
+            add_versions("3.13.2", "67ccaa5e8fb05e8e15a46f9262368fcfef190b1cfab3e2511acada7d68cf6464")
+        elseif is_arch("x64", "x86_64") or os.arch() == "x64" then
             add_urls("https://github.com/xmake-mirror/python-windows/releases/download/$(version)/python-$(version).win64.zip")
             add_versions("2.7.18", "6680835ed5b818e2c041c7033bea47ace17f6f3b73b0d6efb6ded8598a266754")
             add_versions("3.7.9", "d0d879c934b463d46161f933db53a676790d72f24e92143f629ee5629ae286bc")
@@ -30,7 +34,15 @@ package("python")
             add_versions("3.10.11", "96663f508643c1efec639733118d4a8382c5c895b82ad1362caead17b643260e")
             add_versions("3.11.3", "708c4e666989b3b00057eaea553a42b23f692c4496337a91d17aced931280dc4")
             add_versions("3.11.8", "2be5fdc87a96659b75f2acd9f4c4a7709fcfccb7a81cd0bd11e9c0e08380e55c")
+            add_versions("3.12.3", "00a80ccce8738de45ebe73c6084b1ea92ad131ec79cbe5c033a925c761cb5fdc")
+            add_versions("3.12.8", "7f8cf0a21a076d2646b26c5248ae47f1dbc870bc059670915e042f6eb1850ecb")
+            add_versions("3.13.1", "104d1de9eb6ff7c345c3415a57880dc0b2c51695515f2a87097512e6d77e977d")
+            add_versions("3.13.2", "baee66e4d1b16a220bf61d64a210676f6d6fef69c65959ffd9828264c7fe8ef5")
+        elseif is_arch("arm64.*", "aarch64") or os.arch() == "arm64" then
+            add_urls("https://github.com/xmake-mirror/python-windows/releases/download/$(version)/python-$(version).winarm64.zip")
+            add_versions("3.13.2", "f121c4a9a1118d297814155c93e75ef376f3d0bbccbd5cf38598d6e833b0e858")
         end
+        set_policy("package.precompiled", false)
     else
         add_urls("https://www.python.org/ftp/python/$(version)/Python-$(version).tgz")
         add_versions("2.7.18", "da3080e3b488f648a3d7a4560ddee895284c3380b11d6de75edb986526b9a814")
@@ -44,6 +56,12 @@ package("python")
         add_versions("3.10.11", "f3db31b668efa983508bd67b5712898aa4247899a346f2eb745734699ccd3859")
         add_versions("3.11.3", "1a79f3df32265d9e6625f1a0b31c28eb1594df911403d11f3320ee1da1b3e048")
         add_versions("3.11.8", "d3019a613b9e8761d260d9ebe3bd4df63976de30464e5c0189566e1ae3f61889")
+        add_versions("3.11.9", "e7de3240a8bc2b1e1ba5c81bf943f06861ff494b69fda990ce2722a504c6153d")
+        add_versions("3.12.3", "a6b9459f45a6ebbbc1af44f5762623fa355a0c87208ed417628b379d762dddb0")
+        add_versions("3.12.8", "5978435c479a376648cb02854df3b892ace9ed7d32b1fead652712bee9d03a45")
+        add_versions("3.13.0", "12445c7b3db3126c41190bfdc1c8239c39c719404e844babbd015a1bc3fafcd4")
+        add_versions("3.13.1", "1513925a9f255ef0793dbf2f78bb4533c9f184bdd0ad19763fd7f47a400a7c55")
+        add_versions("3.13.2", "b8d79530e3b7c96a5cb2d40d431ddb512af4a563e863728d8713039aa50203f9")
     end
 
     add_configs("headeronly", {description = "Use header only version.", default = false, type = "boolean"})
@@ -76,9 +94,9 @@ package("python")
         if version:ge("3.10") then
             -- starting with Python 3.10, Python requires OpenSSL 1.1.1 or newer
             -- see https://peps.python.org/pep-0644/
-            package:add("deps", "openssl >=1.1.1-a", "ca-certificates", {host = true})
+            package:add("deps", "openssl >=1.1.1-a", "ca-certificates", {host = true, private = package:config("headeronly")})
         else
-            package:add("deps", "openssl", "ca-certificates", {host = true})
+            package:add("deps", "openssl", "ca-certificates", {host = true, private = package:config("headeronly")})
         end
 
         -- set includedirs
@@ -102,7 +120,7 @@ package("python")
 
     on_fetch("fetch")
 
-    on_install("@windows|x86", "@windows|x64", "@msys", "@cygwin", function (package)
+    on_install("@windows|x86", "@windows|x64", "@windows|arm64*", "@msys", "@cygwin", function (package)
         if package:version():ge("3.0") then
             os.cp("python.exe", path.join(package:installdir("bin"), "python3.exe"))
         else
@@ -120,6 +138,7 @@ package("python")
     end)
 
     on_install("@macosx", "@bsd", "@linux", function (package)
+        local version = package:version()
 
         -- init configs
         local configs = {"--enable-ipv6", "--with-ensurepip", "--enable-optimizations"}
@@ -129,24 +148,30 @@ package("python")
         table.insert(configs, "--datarootdir=" .. package:installdir("share"))
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
 
-        -- add openssl libs path for detecting
-        local openssl_dir
+        -- add openssl libs path
         local openssl = package:dep("openssl"):fetch()
         if openssl then
+            local openssl_dir
             for _, linkdir in ipairs(openssl.linkdirs) do
                 if path.filename(linkdir) == "lib" then
                     openssl_dir = path.directory(linkdir)
-                    if openssl_dir then
-                        break
+                else
+                    -- try to find if linkdir is root (brew has linkdir as root and includedirs inside)
+                    for _, includedir in ipairs(openssl.sysincludedirs or openssl.includedirs) do
+                        if includedir:startswith(linkdir) then
+                            openssl_dir = linkdir
+                            break
+                        end
                     end
                 end
-            end
-        end
-        if openssl_dir then
-            if package:version():ge("3.0") then
-                table.insert(configs, "--with-openssl=" .. openssl_dir)
-            else
-                io.gsub("setup.py", "/usr/local/ssl", openssl_dir)
+                if openssl_dir then
+                    if version:ge("3.0") then
+                        table.insert(configs, "--with-openssl=" .. openssl_dir)
+                    else
+                        io.gsub("setup.py", "/usr/local/ssl", openssl_dir)
+                    end
+                    break
+                end
             end
         end
 
@@ -195,7 +220,7 @@ package("python")
         end
 
         -- add pic
-        if package:is_plat("linux") and package:config("pic") ~= false then
+        if package:is_plat("linux", "bsd") and package:config("pic") ~= false then
             table.insert(cppflags, "-fPIC")
         end
 
@@ -221,20 +246,29 @@ package("python")
             table.insert(configs, "LDFLAGS=" .. table.concat(ldflags, " "))
         end
 
+        local pyver = ("python%d.%d"):format(version:major(), version:minor())
+        -- https://github.com/python/cpython/issues/109796
+        if version:ge("3.12.0") then
+            os.mkdir(package:installdir("lib", pyver))
+        end
+
+        -- fix ssl module detect, e.g. gcc conftest.c -ldl   -lcrypto >&5
+        if package:is_plat("linux") then
+            io.replace("./configure", "-lssl -lcrypto", "-lssl -lcrypto -ldl", {plain = true})
+        end
+
         -- unset these so that installing pip and setuptools puts them where we want
         -- and not into some other Python the user has installed.
         import("package.tools.autoconf").configure(package, configs, {envs = {PYTHONHOME = "", PYTHONPATH = ""}})
         os.vrunv("make", {"-j4", "PYTHONAPPSDIR=" .. package:installdir()})
         os.vrunv("make", {"install", "-j4", "PYTHONAPPSDIR=" .. package:installdir()})
-        if package:version():ge("3.0") then
+        if version:ge("3.0") then
             os.cp(path.join(package:installdir("bin"), "python3"), path.join(package:installdir("bin"), "python"))
             os.cp(path.join(package:installdir("bin"), "python3-config"), path.join(package:installdir("bin"), "python-config"))
         end
 
         -- install wheel
         local python = path.join(package:installdir("bin"), "python")
-        local version = package:version()
-        local pyver = ("python%d.%d"):format(version:major(), version:minor())
         local envs = {
             PATH = package:installdir("bin"),
             PYTHONPATH = package:installdir("lib", pyver, "site-packages"),

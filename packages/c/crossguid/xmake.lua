@@ -19,6 +19,7 @@ package("crossguid")
     add_deps("cmake")
 
     on_install("windows", "linux", "macosx", "iphoneos", "android", "mingw", function (package)
+        io.replace(path.translate("include/crossguid/guid.hpp"), "#include <functional>", "#include <cstdint>\n#include<functional>", { plain = true })
         local configs = {"-DCROSSGUID_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs, {buildir = "build"})

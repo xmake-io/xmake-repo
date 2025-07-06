@@ -1,0 +1,21 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 851b3cc9..cc2bc97f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -3221,13 +3221,16 @@ if(WIN32)
+         # For compatibility, build the shared library without the "lib" prefix on
+         # MinGW as well.
+         #
++        if(BUILD_SHARED_LIBS)
+         set_target_properties(${LIBRARY_NAME} PROPERTIES
+             PREFIX ""
+             OUTPUT_NAME "${LIBRARY_NAME}"
+         )
++        else()
+         set_target_properties(${LIBRARY_NAME}_static PROPERTIES
+             OUTPUT_NAME "${LIBRARY_NAME}"
+         )
++        endif()
+     endif()
+ else(WIN32) # UN*X
+     if(BUILD_SHARED_LIBS)

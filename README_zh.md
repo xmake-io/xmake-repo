@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://xmake.io">
-    <img width="160" heigth="160" src="https://tboox.org/static/img/xmake/logo256c.png">
+    <img width="160" height="160" src="https://xmake.io/assets/img/logo.png">
   </a>
 
   <h1>xmake-repo</h1>
@@ -129,5 +129,5 @@ packages/l/libpng/xmake.lua generated!
 $ xmake l scripts/test.lua --shallow -vD zlib
 $ xmake l scripts/test.lua --shallow -vD -p iphoneos zlib
 $ xmake l scripts/test.lua --shallow -vD -k shared -m debug zlib
-$ xmake l scripts/test.lua --shallow -vD --vs_runtime=MD zlib
+$ xmake l scripts/test.lua --shallow -vD --runtimes=MD zlib
 ```

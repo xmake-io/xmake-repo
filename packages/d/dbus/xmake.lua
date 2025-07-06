@@ -2,7 +2,7 @@ package("dbus")
 
     set_homepage("https://www.freedesktop.org/wiki/Software/dbus/")
     set_description("D-Bus is a message bus system, a simple way for applications to talk to one another.")
-    set_license("MIT")
+    set_license("GPL-2.0-or-later")
 
     add_urls("https://gitlab.freedesktop.org/dbus/dbus/-/archive/dbus-$(version)/dbus-dbus-$(version).tar.gz")
     add_versions("1.14.2", "9ec5aad6310f79149aa04e8c6bd9e5e2cdca47cf3acec2d23ee9fe06ac7e7a62")

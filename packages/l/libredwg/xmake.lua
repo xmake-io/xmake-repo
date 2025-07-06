@@ -1,6 +1,7 @@
 package("libredwg")
     set_homepage("https://github.com/LibreDWG/libredwg")
     set_description("A library to allow reading data from a DWG file.")
+    set_license("GPL-3.0")
 
     add_urls("https://github.com/LibreDWG/libredwg.git")
     add_versions("0.13.3", "97c7225596c17430b82fd0161e7eff6beb5b1034")

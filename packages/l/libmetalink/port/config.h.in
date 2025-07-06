@@ -1,0 +1,4 @@
+${define HAVE_INTTYPES_H}
+${define HAVE_MALLOC_H}
+${define HAVE_ALLOCA_H}
+${define HAVE_TIME64_H}

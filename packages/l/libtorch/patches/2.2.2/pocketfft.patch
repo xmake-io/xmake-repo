@@ -1,0 +1,12 @@
+diff --git a/third_party/pocketfft/pocketfft_hdronly.h b/third_party/pocketfft/pocketfft_hdronly.h
+--- a/third_party/pocketfft/pocketfft_hdronly.h
++++ b/third_party/pocketfft/pocketfft_hdronly.h
+@@ -149,7 +149,7 @@ template<> struct VLEN<double> { static constexpr size_t val=2; };
+ #endif
+ #endif
+ 
+-#if __cplusplus >= 201703L
++#if defined(__linux__) && __cplusplus >= 201703L
+ inline void *aligned_alloc(size_t align, size_t size)
+   {
+   // aligned_alloc() requires that the requested size is a multiple of "align"

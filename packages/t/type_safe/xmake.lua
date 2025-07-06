@@ -6,6 +6,7 @@ package("type_safe")
 
     add_urls("https://github.com/foonathan/type_safe/archive/refs/tags/$(version).tar.gz",
              "https://github.com/foonathan/type_safe.git")
+    add_versions("v0.2.4", "a631d03c18c65726b3d1b7d41ac5806e9121367afe10dd2f408a2d75e144b734")
     add_versions("v0.2.2", "34d97123fb9bca04a333565c4a2498425d602ec0c759de4be1b8cfae77d05823")
 
     add_deps("cmake", "debug_assert")

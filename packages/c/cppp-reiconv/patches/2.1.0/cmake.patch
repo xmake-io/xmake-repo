@@ -1,0 +1,49 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 6d3c761..0689164 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -48,7 +48,7 @@ if(MSVC)
+ endif()
+ 
+ # Generate header file for build
+-if(WIN32)
++if(WIN32 AND BUILD_SHARED_LIBS)
+     set(DLL_VARIABLE "__declspec(dllexport)")
+ elseif(HAVE_VISIBILITY)
+     set(DLL_VARIABLE "__attribute__((__visibility__(\"default\")))")
+@@ -59,7 +59,7 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/include/cppp/reiconv.hpp.in" "${outp
+ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/windows/libcppp-reiconv.rc.in" "${CMAKE_BINARY_DIR}/windows/libcppp-reiconv.rc")
+ 
+ # Generate header file for install
+-if(WIN32)
++if(WIN32 AND BUILD_SHARED_LIBS)
+     set(DLL_VARIABLE "__declspec(dllimport)")
+ else()
+     set(DLL_VARIABLE "")
+@@ -83,7 +83,7 @@ cppp_build_library(${PROJECT_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/lib/iconv.cpp" T
+ 
+ # Include test suite.
+ include("tests/tests.cmake")
+-
++if (NOT BUILD_SHARED_LIBS)
+ # Install
+ # Static
+ # PERMISSIONS 0644
+@@ -94,7 +94,7 @@ install(TARGETS libcppp-reiconv.static
+         ARCHIVE DESTINATION "${install_staticdir}"
+         RUNTIME DESTINATION "${install_bindir}"
+         INCLUDES DESTINATION "${install_includedir}" )
+-
++else()
+ # Shared
+ # PERMISSIONS 0755
+ install(TARGETS libcppp-reiconv.shared
+@@ -105,7 +105,7 @@ install(TARGETS libcppp-reiconv.shared
+         ARCHIVE DESTINATION "${install_staticdir}"
+         RUNTIME DESTINATION "${install_bindir}"
+         INCLUDES DESTINATION "${install_includedir}" )
+-
++endif()
+ # Includes
+ # install includes
+ # PERMISSIONS 0644

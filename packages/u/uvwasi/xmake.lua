@@ -6,6 +6,7 @@ package("uvwasi")
     add_urls("https://github.com/nodejs/uvwasi/archive/refs/tags/$(version).tar.gz",
              "https://github.com/nodejs/uvwasi.git")
 
+    add_versions("v0.0.21", "5cf32f166c493f41c0de7f3fd578d0be1b692c81c54f0c68889e62240fe9ab60")
     add_versions("v0.0.20", "417e5ecc40005d9c8008bad2b6a2034e109b2a0a1ebd108b231cb419cfbb980a")
     add_versions("v0.0.12", "f310a628d2657b9ed523a19284f58e4a407466f2e17efb2250d2e58524d02c53")
 

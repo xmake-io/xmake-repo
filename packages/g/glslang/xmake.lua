@@ -4,6 +4,8 @@ package("glslang")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/KhronosGroup/glslang.git")
+
+    -- when adding a new sdk version, please ensure vulkan-headers, vulkan-hpp, vulkan-loader, vulkan-tools, vulkan-validationlayers, vulkan-utility-libraries, spirv-headers, spirv-reflect, spirv-tools, glslang and volk packages are updated simultaneously
     add_versions("1.2.154+1", "bacaef3237c515e40d1a24722be48c0a0b30f75f")
     add_versions("1.2.162+0", "c594de23cdd790d64ad5f9c8b059baae0ee2941d")
     add_versions("1.2.189+1", "2fb89a0072ae7316af1c856f22663fde4928128a")
@@ -16,12 +18,17 @@ package("glslang")
     add_versions("1.3.261+1", "76b52ebf77833908dc4c0dd6c70a9c357ac720bd")
     add_versions("1.3.268+0", "36d08c0d940cf307a23928299ef52c7970d8cee6")
     add_versions("1.3.275+0", "a91631b260cba3f22858d6c6827511e636c2458a")
+    add_versions("1.3.280+0", "ee2f5d09eaf8f4e8d0d598bd2172fce290d4ca60")
+    add_versions("1.3.283+0", "e8dd0b6903b34f1879520b444634c75ea2deedf5")
+    add_versions("1.3.290+0", "fa9c3deb49e035a8abcabe366f26aac010f6cbfb")
+    add_versions("1.4.309+0", "7200bc12a8979d13b22cd52de80ffb7d41939615")
 
     add_patches("1.3.246+1", "https://github.com/KhronosGroup/glslang/commit/1e4955adbcd9b3f5eaf2129e918ca057baed6520.patch", "47893def550f1684304ef7c49da38f0a8fe35c190a3452d3bf58370b3ee7165d")
 
     add_configs("binaryonly", {description = "Only use binary program.", default = false, type = "boolean"})
     add_configs("exceptions", {description = "Build with exception support.", default = false, type = "boolean"})
     add_configs("rtti",       {description = "Build with RTTI support.", default = false, type = "boolean"})
+    add_configs("default_resource_limits",       {description = "Build with default resource limits.", default = false, type = "boolean"})
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
@@ -31,6 +38,8 @@ package("glslang")
     if is_plat("linux") then
         add_syslinks("pthread")
     end
+
+    add_defines("ENABLE_HLSL")
 
     on_load(function (package)
         if package:config("binaryonly") then
@@ -78,12 +87,27 @@ package("glslang")
         if not package:config("binaryonly") then
             package:add("links", "glslang", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "OSDependent", "HLSL", "SPIRV", "SPVRemapper")
         end
+        if package:config("default_resource_limits") then
+            package:add("links", "glslang", "glslang-default-resource-limits")
+        end
+
+        os.cp("glslang/MachineIndependent/**.h", package:installdir("include", "glslang", "MachineIndependent"))
+        os.cp("glslang/Include/**.h", package:installdir("include", "glslang", "Include"))
+
+        -- https://github.com/KhronosGroup/glslang/releases/tag/12.3.0
+        local bindir = package:installdir("bin")
+        local glslangValidator = path.join(bindir, "glslangValidator" .. (is_host("windows") and ".exe" or ""))
+        if not os.isfile(glslangValidator) then
+            local glslang = path.join(bindir, "glslang" .. (is_host("windows") and ".exe" or ""))
+            os.trycp(glslang, glslangValidator)
+        end
     end)
 
     on_test(function (package)
         if not package:is_cross() then
             os.vrun("glslangValidator --version")
         end
+
         if not package:config("binaryonly") then
             assert(package:has_cxxfuncs("ShInitialize", {configs = {languages = "c++11"}, includes = "glslang/Public/ShaderLang.h"}))
         end

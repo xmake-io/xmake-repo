@@ -4,8 +4,9 @@ package("libxtst")
     set_description("X.Org: Client API for the XTEST & RECORD extensions")
     set_license("MIT")
 
-    set_urls("https://www.x.org/archive/individual/lib/libXtst-$(version).tar.bz2")
-    add_versions("1.2.3", "4655498a1b8e844e3d6f21f3b2c4e2b571effb5fd83199d428a6ba7ea4bf5204")
+    set_urls("https://www.x.org/archive/individual/lib/libXtst-$(version).tar.gz")
+    add_versions("1.2.3", "a0c83acce02d4923018c744662cb28eb0dbbc33b4adc027726879ccf68fbc2c2")
+    add_versions("1.2.5", "244ba6e1c5ffa44f1ba251affdfa984d55d99c94bb925a342657e5e7aaf6d39c")
 
     if is_plat("linux") then
         add_extsources("apt::libxtst-dev", "pacman::libxtst")

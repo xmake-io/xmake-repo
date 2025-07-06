@@ -6,6 +6,7 @@ package("xlsxio")
     add_urls("https://github.com/brechtsanders/xlsxio/archive/refs/tags/$(version).tar.gz",
              "https://github.com/brechtsanders/xlsxio.git")
 
+    add_versions("0.2.35", "03a4d1b1613953d46c8fc2ea048cd32007fbddcd376ab6d4156f72da2815adfa")
     add_versions("0.2.34", "726e3bc3cf571ac20e5c39b1f192f3793d24ebfdeaadcd210de74aa1ec100bb6")
 
     add_configs("libzip", {description = "Use libzip instead of Minizip", default = false, type = "boolean"})

@@ -15,6 +15,20 @@ index 9544da8..82d027e 100644
  #endif
  
  /// @defgroup basicTypes Basic Types
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 34882d1..56589fb 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -31,6 +31,9 @@ if(BUILD_SHARED)
+ 	  # need to explicitly link to the math library because the CMake/Android toolchains may not do it automatically
+ 	  target_link_libraries(chipmunk m)
+   endif(ANDROID OR UNIX)
++  if(ANDROID)
++	  target_link_libraries(chipmunk log)
++  endif(ANDROID)
+   install(TARGETS chipmunk RUNTIME DESTINATION ${BIN_INSTALL_DIR}
+                            LIBRARY DESTINATION ${LIB_INSTALL_DIR}
+                            ARCHIVE DESTINATION ${LIB_INSTALL_DIR})
 diff --git a/src/cpHastySpace.c b/src/cpHastySpace.c
 index 8dca425..fa3074d 100644
 --- a/src/cpHastySpace.c

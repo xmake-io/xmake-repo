@@ -14,18 +14,18 @@ package("pdcurses")
 
     on_load(function (package)
         if package:config("port") == "sdl2" then
-            package:add("deps", "libsdl")
+            package:add("deps", "libsdl2")
         else
             package:add("syslinks", "user32", "advapi32")
         end
     end)
-    
+
     on_install("linux", "macosx", "mingw", "windows", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             option("port", {description = "Set the target port."})
             if is_config("port", "sdl2") then
-                add_requires("libsdl")
+                add_requires("libsdl2")
             end
             target("pdcurses")
                 set_kind("$(kind)")
@@ -35,10 +35,10 @@ package("pdcurses")
                 if is_config("port", "wincon") then
                     add_defines("PDC_WIDE", "PDC_FORCE_UTF8")
                 end
-                add_packages("libsdl")
+                add_packages("libsdl2")
         ]])
         local configs = {}
-        if package:config("shared") then 
+        if package:config("shared") then
             configs.kind = "shared"
         end
         configs.port = package:config("port")
