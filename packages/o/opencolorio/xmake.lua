@@ -40,11 +40,11 @@ package("opencolorio")
         local minizip_ng = package:dep("minizip-ng")
         local version = package:version()
         if version then
-            if version:lt("2.2.0") then
+            if version:lt("2.3.0") then
                 -- Fix GCC 15
                 io.replace("src/OpenColorIO/FileRules.cpp", "#include <cctype>", "#include <cctype>\n#include <cstring>", {plain = true})
             end
-            if version:lt("2.4.0") then
+            if version:lt("2.3.0") then
                 os.rm("share/cmake/modules/Findyaml-cpp.cmake")
                 io.replace("src/OpenColorIO/CMakeLists.txt", "yaml-cpp", "yaml-cpp::yaml-cpp", {plain = true})
             end
