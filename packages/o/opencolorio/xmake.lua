@@ -17,7 +17,7 @@ package("opencolorio")
     end
 
     add_deps("cmake")
-    add_deps("minizip-ng", "expat", "yaml-cpp", "imath", "pystring")
+    add_deps("expat", "yaml-cpp", "imath", "pystring")
 
     on_check("windows|arm64", function (package)
         if not package:is_cross() then
@@ -25,27 +25,43 @@ package("opencolorio")
         end
     end)
 
-    on_load("windows", function (package)
-        if not package:config("shared") then
+    on_load(function (package)
+        if package:version() and package:version():ge("2.2.0") then
+            package:add("deps", "minizip-ng")
+        end
+
+        if not package:config("shared") and package:is_plat("windows") then
             package:add("defines", "OpenColorIO_SKIP_IMPORTS")
         end
     end)
 
-    on_install("!mingw and !iphoneos", function (package)
-        if package:version() and package:version():lt("2.2.0") then
-            -- Fix GCC 15
-            io.replace("src/OpenColorIO/FileRules.cpp", "#include <cctype>", "#include <cctype>\n#include <cstring>", {plain = true})
+    on_install("!iphoneos", function (package)
+        local minizip_ng = package:dep("minizip-ng")
+        local version = package:version()
+        if version then
+            if version:lt("2.2.0") then
+                -- Fix GCC 15
+                io.replace("src/OpenColorIO/FileRules.cpp", "#include <cctype>", "#include <cctype>\n#include <cstring>", {plain = true})
+            end
+            if version:lt("2.4.0") then
+                os.rm("share/cmake/modules/Findyaml-cpp.cmake")
+                io.replace("src/OpenColorIO/CMakeLists.txt", "yaml-cpp", "yaml-cpp::yaml-cpp", {plain = true})
+            end
         end
-        if package:version() and package:version():lt("2.4.0") then
-            os.rm("share/cmake/modules/Findyaml-cpp.cmake")
-            io.replace("src/OpenColorIO/CMakeLists.txt", "yaml-cpp", "yaml-cpp::yaml-cpp", {plain = true})
+        if minizip_ng and package:is_plat("macosx") then
+            -- Break shared build
+            -- https://github.com/AcademySoftwareFoundation/OpenColorIO/pull/1729
+            io.replace("src/OpenColorIO/CMakeLists.txt", "elseif(APPLE)", "elseif(0)", {plain = true})
         end
 
         local configs = {"-DOCIO_BUILD_APPS=OFF", "-DOCIO_BUILD_OPENFX=OFF", "-DOCIO_BUILD_PYTHON=OFF", "-DOCIO_BUILD_DOCS=OFF", "-DOCIO_BUILD_TESTS=OFF", "-DOCIO_BUILD_GPU_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
-        local opt = {packagedeps = "minizip-ng"}
+        local opt = {}
+        if minizip_ng then
+            opt.packagedeps = "minizip-ng"
+        end
         import("package.tools.cmake").install(package, configs, opt)
     end)
 
