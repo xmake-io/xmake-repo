@@ -3,7 +3,7 @@ package("libheif")
     set_description("libheif is an HEIF and AVIF file format decoder and encoder.")
     set_license("LGPL-3.0")
 
-    add_urls("https://github.com/strukturag/libheif/releases/download/v$(version)/libheif-$(version).tar.gz"
+    add_urls("https://github.com/strukturag/libheif/releases/download/v$(version)/libheif-$(version).tar.gz",
              "https://github.com/strukturag/libheif.git")
 
     add_versions("1.19.8", "6c4a5b08e6eae66d199977468859dea3b5e059081db8928f7c7c16e53836c906")
@@ -18,7 +18,7 @@ package("libheif")
     end
 
     add_deps("cmake")
-    add_deps("libtiff", "libjpeg", "libpng")
+    add_deps("libjpeg", "libpng")
 
     on_load(function (package)
         if not package:config("shared") and package:is_plat("windows") then
