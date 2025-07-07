@@ -25,7 +25,7 @@ package("ignite3")
     end)
 
     on_check(function (package)
-        assert(not (package:is_plat("msys")),"This package cannot build on Msys")
+        assert(not (package:is_subhost("msys")),"This package cannot build on Msys")
         assert(not (package:is_plat("linux") and package:is_arch("arm64")),"This package cannot build on Linux Arm64")
     end)
 
