@@ -33,11 +33,9 @@ set_configvar("COIN_UINT64_T", "unsigned long long", {quote = false})
 add_rules("mode.debug", "mode.release")
 
 add_requires("bzip2", "zlib")
-add_defines("COIN_HAS_ZLIB", "COIN_HAS_BZLIB")
 if is_plat("linux", "macosx", "bsd") then
     add_requires("readline")
     add_packages("readline")
-    add_defines("COIN_HAS_READLINE")
 end
 
 set_languages("c++11")

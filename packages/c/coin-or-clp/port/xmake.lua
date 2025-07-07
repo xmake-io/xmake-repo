@@ -37,28 +37,17 @@ set_configvar("CLP_VERSION_RELEASE", 10)
 add_rules("mode.debug", "mode.release")
 
 add_requires("coin-or-coinutils", "coin-or-osi")
-add_defines("COIN_HAS_COINUTILS", "COIN_HAS_CLP", "COIN_HAS_OSI")
 if is_plat("linux") then
     add_requires("lapack")
     add_packages("lapack")
     add_defines("LAPACK_TEST")
-end
-if is_plat("linux", "macosx", "bsd") then
-    add_requires("readline")
-    add_packages("readline")
-    add_defines("COIN_HAS_READLINE")
-end
-if is_kind("static") then
-    add_requires("glpk")
-    add_packages("glpk")
-    add_defines("COIN_HAS_GLPK")
 end
 
 set_languages("c++11")
 
 target("clp")
     set_kind("$(kind)")
-    add_defines("HAVE_CONFIG_H", "CLP_BUILD")
+    add_defines("HAVE_CONFIG_H", "CLP_BUILD", "COIN_HAS_CLP")
     add_files("Clp/src/*.cpp", "Clp/src/OsiClp/*.cpp")
     remove_files(
      "Clp/src/ClpCholeskyMumps.cpp",
