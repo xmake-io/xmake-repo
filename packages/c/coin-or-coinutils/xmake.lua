@@ -35,6 +35,10 @@ package("coin-or-coinutils")
         io.gsub("CoinUtils/src/config.h.in", "# *undef (.-)\n", "${define %1}\n")
         io.gsub("CoinUtils/src/config_coinutils.h.in", "# *undef (.-)\n", "${define %1}\n")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+
+        if not package:is_debug() then
+            package:add("defines", "NDEBUG")
+        end
         import("package.tools.xmake").install(package)
     end)
 

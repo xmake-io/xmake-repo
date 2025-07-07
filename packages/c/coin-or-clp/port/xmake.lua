@@ -48,7 +48,7 @@ if is_plat("linux", "macosx", "bsd") then
     add_packages("readline")
     add_defines("COIN_HAS_READLINE")
 end
-if not (is_plat("windows") and is_kind("shared")) then
+if is_kind("static") then
     add_requires("glpk")
     add_packages("glpk")
     add_defines("COIN_HAS_GLPK")
