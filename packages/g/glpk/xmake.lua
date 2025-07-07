@@ -43,6 +43,7 @@ package("glpk")
     end)
 
     on_install(function (package)
+        io.replace("src/minisat/minisat.h", "typedef int bool;", "#if __STDC_VERSION__ < 202311L\ntypedef int bool;\n#endif", {plain = true})
         if package:is_plat("windows") and package:config("shared") then
             local def = "glpk.def"
             local version = package:version()

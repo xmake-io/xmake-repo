@@ -36,8 +36,8 @@ set_configvar("CLP_VERSION_RELEASE", 10)
 
 add_rules("mode.debug", "mode.release")
 
-add_requires("coin-or-coinutils", "coin-or-osi", "glpk")
-add_defines("COIN_HAS_COINUTILS", "COIN_HAS_GLPK", "COIN_HAS_OSI")
+add_requires("coin-or-coinutils", "coin-or-osi")
+add_defines("COIN_HAS_COINUTILS", "COIN_HAS_CLP", "COIN_HAS_OSI")
 if is_plat("linux") then
     add_requires("lapack")
     add_defines("LAPACK_TEST")
@@ -82,4 +82,8 @@ target("clp")
     add_packages("coin-or-coinutils", "coin-or-osi", "glpk")
     if is_plat("linux") then
         add_packages("lapack")
+    end
+    if not (is_plat("windows") and is_kind("shared")) then
+        add_requires("glpk")
+        add_defines("COIN_HAS_GLPK")
     end
