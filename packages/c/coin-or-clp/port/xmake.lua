@@ -36,8 +36,12 @@ set_configvar("CLP_VERSION_RELEASE", 10)
 
 add_rules("mode.debug", "mode.release")
 
-add_requires("coin-or-coinutils", "coin-or-osi", "glpk", "lapack")
-add_defines("COIN_HAS_COINUTILS", "COIN_HAS_GLPK", "COIN_HAS_OSI", "LAPACK_TEST")
+add_requires("coin-or-coinutils", "coin-or-osi", "glpk")
+add_defines("COIN_HAS_COINUTILS", "COIN_HAS_GLPK", "COIN_HAS_OSI")
+if is_plat("linux") then
+    add_requires("lapack")
+    add_defines("LAPACK_TEST")
+end
 if is_plat("linux", "macosx", "bsd") then
     add_requires("readline")
     add_packages("readline")
@@ -56,20 +60,18 @@ target("clp")
      "Clp/src/ClpCholeskyWssmp.cpp",
      "Clp/src/ClpCholeskyWssmpKKT.cpp",
      "Clp/src/ClpMain.cpp",
-     "Clp/src/*Abc*.cpp",
-     "Clp/src/*Cbc*.cpp"
+     "Clp/src/*Abc*.cpp"
     )
     add_includedirs("Clp/src")
-    add_headerfiles("Clp/src/*.hpp", "Clp/src/*.h", {prefixdir = "coin"})
-    add_headerfiles("Clp/src/OsiClp/*.hpp", {prefixdir = "coin"})
+    add_headerfiles("Clp/src/*.hpp", "Clp/src/*.h")
+    add_headerfiles("Clp/src/OsiClp/*.hpp")
     remove_headerfiles(
      "Clp/src/ClpCholeskyMumps.hpp",
      "Clp/src/ClpCholeskyUfl.hpp",
      "Clp/src/ClpCholeskyWssmp.hpp",
      "Clp/src/ClpCholeskyWssmpKKT.hpp",
      "Clp/src/*Abc*.hpp",
-     "Clp/src/*Abc*.h",
-     "Clp/src/*Cbc*.hpp"
+     "Clp/src/*Abc*.h"
     )
     set_configdir("Clp/src")
     add_configfiles("Clp/src/(config.h.in)")
@@ -77,4 +79,7 @@ target("clp")
     if is_plat("windows") and is_kind("shared") then
         add_rules("utils.symbols.export_all", {export_classes = true})
     end
-    add_packages("coin-or-coinutils", "coin-or-osi", "glpk", "lapack")
+    add_packages("coin-or-coinutils", "coin-or-osi", "glpk")
+    if is_plat("linux") then
+        add_packages("lapack")
+    end

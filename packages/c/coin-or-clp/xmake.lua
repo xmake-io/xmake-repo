@@ -16,15 +16,21 @@ package("coin-or-clp")
         add_extsources("brew::clp")
     end
 
-    add_deps("coin-or-coinutils", "coin-or-osi", "glpk", "lapack")
+    add_deps("coin-or-coinutils", "coin-or-osi", "glpk")
     if is_plat("linux", "macosx", "bsd") then
         add_deps("readline")
+    end
+    if is_plat("linux") then
+        add_deps("lapack")
     end
 
     add_includedirs("include", "include/coin")
 
     on_install(function (package)
         io.replace("Clp/src/ClpSolve.cpp", "#define UFL_BARRIER", "", {plain = true})
+        io.replace("Clp/src/CbcOrClpParam.cpp", [[#include "CoinTime.hpp"]],
+                                                [[#include "CoinTime.hpp"
+                                                  #include "CoinFinite.hpp"]], {plain = true})
         io.gsub("Clp/src/config.h.in", "# *undef (.-)\n", "${define %1}\n")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)
