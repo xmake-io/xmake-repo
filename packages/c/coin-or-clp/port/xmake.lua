@@ -40,12 +40,18 @@ add_requires("coin-or-coinutils", "coin-or-osi")
 add_defines("COIN_HAS_COINUTILS", "COIN_HAS_CLP", "COIN_HAS_OSI")
 if is_plat("linux") then
     add_requires("lapack")
+    add_packages("lapack")
     add_defines("LAPACK_TEST")
 end
 if is_plat("linux", "macosx", "bsd") then
     add_requires("readline")
     add_packages("readline")
     add_defines("COIN_HAS_READLINE")
+end
+if not (is_plat("windows") and is_kind("shared")) then
+    add_requires("glpk")
+    add_packages("glpk")
+    add_defines("COIN_HAS_GLPK")
 end
 
 set_languages("c++11")
@@ -80,10 +86,3 @@ target("clp")
         add_rules("utils.symbols.export_all", {export_classes = true})
     end
     add_packages("coin-or-coinutils", "coin-or-osi", "glpk")
-    if is_plat("linux") then
-        add_packages("lapack")
-    end
-    if not (is_plat("windows") and is_kind("shared")) then
-        add_requires("glpk")
-        add_defines("COIN_HAS_GLPK")
-    end
