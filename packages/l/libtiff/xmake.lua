@@ -45,7 +45,7 @@ package("libtiff")
         end
     end)
 
-    on_install(function (package)
+    on_install("!cross", function (package)
         io.replace("CMakeLists.txt", "add_subdirectory(man)", "", {plain = true})
         io.replace("CMakeLists.txt", "add_subdirectory(html)", "", {plain = true})
         io.replace("CMakeLists.txt", "add_subdirectory(test)", "", {plain = true})
