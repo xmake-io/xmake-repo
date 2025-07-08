@@ -10,6 +10,10 @@ package("hwdata")
     add_versions("v0.397", "09eee39e73a63ab27af651ab6afdd13d6e5c3485872f2cd406b35e4d80ffdb0b")
 
     on_install("linux", "bsd", function (package)
+        if package:is_plat("bsd") then
+            io.replace("Makefile", "install -m 644 $$foo $(DESTDIR)$(datadir)/$(NAME)", "install -m 644 $$foo $(DESTDIR)$(datadir)/$(NAME)/$$foo", {plain = true})
+            io.replace("Makefile", "install -m 644 hwdata.pc $(DESTDIR)$(datadir)/pkgconfig/", "install -m 644 hwdata.pc $(DESTDIR)$(datadir)/pkgconfig/hwdata.pc", {plain = true})
+        end
         import("package.tools.autoconf").install(package)
     end)
 
