@@ -9,6 +9,7 @@ package("libdisplay-info")
     add_versions("0.2.0", "5a2f002a16f42dd3540c8846f80a90b8f4bdcd067a94b9d2087bc2feae974176")
 
     add_deps("meson", "ninja")
+    add_deps("hwdata", {private = true})
 
     on_install("linux", function (package)
         local configs = {}
