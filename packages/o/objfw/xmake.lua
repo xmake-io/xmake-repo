@@ -1,6 +1,7 @@
 package("objfw")
     set_homepage("https://objfw.nil.im")
     set_description("Portable framework for the Objective-C language.")
+    set_license("LGPL-3.0")
 
     add_urls("https://objfw.nil.im/downloads/objfw-$(version).tar.gz")
     add_versions("1.0.0",   "a6aa3bf590c6a7ae21cf13dbaa94a72926e67af5c7d5aef4a2b172543d1f26a3")
