@@ -19,10 +19,18 @@ package("urdfdom")
     add_includedirs("include", "include/urdfdom")
 
     on_load(function (package)
-        if package:version() and package:version():ge("4.0.0") then
-            package:add("deps", "tinyxml2")
-        else
-            package:add("deps", "tinyxml")
+        local version = package:version()
+        if version then
+            if version:ge("4.0.0") then
+                package:add("deps", "tinyxml2")
+            else
+                package:add("deps", "tinyxml")
+            end
+            if version:gt("1.0.4") then
+                package:add("deps", "urdfdom-headers")
+            else
+                package:add("deps", "urdfdom-headers 1.0.5")
+            end
         end
         if not package:config("shared") then
             package:add("defines", "URDFDOM_STATIC")
