@@ -9,7 +9,7 @@ package("hwdata")
 
     add_versions("v0.397", "09eee39e73a63ab27af651ab6afdd13d6e5c3485872f2cd406b35e4d80ffdb0b")
 
-    on_install("@!windows", function (package)
+    on_install("@!windows,macosx", function (package)
         import("package.tools.autoconf").install(package)
     end)
 
