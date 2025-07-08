@@ -30,6 +30,8 @@ package("urdfdom")
     end)
 
     on_install(function (package)
+        io.replace("CMakeLists.txt", "find_package(urdfdom_headers 1.0.3 REQUIRED)", "find_package(urdfdom_headers REQUIRED)", {plain = true})
+
         local configs = {"-DBUILD_TESTING=OFF", "-DAPPEND_PROJECT_NAME_TO_INCLUDEDIR=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
