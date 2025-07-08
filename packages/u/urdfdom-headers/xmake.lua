@@ -17,7 +17,10 @@ package("urdfdom-headers")
     add_deps("cmake")
 
     on_install(function (package)
-        import("package.tools.cmake").install(package, {"-DAPPEND_PROJECT_NAME_TO_INCLUDEDIR=OFF"})
+        import("package.tools.cmake").install(package, {
+            "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
+            "-DAPPEND_PROJECT_NAME_TO_INCLUDEDIR=OFF",
+        })
     end)
 
     on_test(function (package)
