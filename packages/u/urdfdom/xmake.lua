@@ -37,10 +37,11 @@ package("urdfdom")
         end
     end)
 
-    on_install(function (package)
+    on_install("!iphoneos", function (package)
+        io.replace("urdf_parser/include/urdf_parser/urdf_parser.h", "#include <string>", "#include <cstdint>\n#include <string>", {plain = true})
         io.replace("CMakeLists.txt", "find_package(urdfdom_headers 1.0.3 REQUIRED)", "find_package(urdfdom_headers REQUIRED)", {plain = true})
 
-        local configs = {"-DBUILD_TESTING=OFF", "-DAPPEND_PROJECT_NAME_TO_INCLUDEDIR=OFF"}
+        local configs = {"-DBUILD_TESTING=OFF", "-DAPPEND_PROJECT_NAME_TO_INCLUDEDIR=OFF", "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
