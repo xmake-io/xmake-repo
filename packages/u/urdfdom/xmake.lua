@@ -13,7 +13,7 @@ package("urdfdom")
 
     add_patches("1.0.4", path.join(os.scriptdir(), "patches", "1.0.4", "build.patch"), "1f51148afccef7b9bf079ef4137c12d578fb7a76f7aed6e282ca2ceaf4a188ba")
 
-    if is_plat("windows", "mingw") then
+    if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
     end
 
@@ -23,12 +23,10 @@ package("urdfdom")
     add_includedirs("include", "include/urdfdom")
 
     on_check("android|armeabi-v7a", function (package)
-        if package:version() and package:version():eq("1.0.4") then
-            local ndk = package:toolchain("ndk")
-            local ndk_sdkver = ndk:config("ndk_sdkver")
-            if tonumber(ndk_sdkver) < 24 then
-                raise("package(urdfdom 1.0.4) unsupported")
-            end
+        local ndk = package:toolchain("ndk")
+        local ndk_sdkver = ndk:config("ndk_sdkver")
+        if tonumber(ndk_sdkver) < 24 then
+            raise("package(urdfdom) unsupported this platform")
         end
     end)
 
@@ -51,7 +49,7 @@ package("urdfdom")
         end
     end)
 
-    on_install("!iphoneos", function (package)
+    on_install("!mingw and !iphoneos", function (package)
         io.replace("urdf_parser/CMakeLists.txt", "SHARED", "", {plain = true})
         io.replace("urdf_parser/include/urdf_parser/urdf_parser.h", "#include <string>", "#include <cstdint>\n#include <string>", {plain = true})
         io.replace("CMakeLists.txt", "find_package(urdfdom_headers 1.0 REQUIRED)", "find_package(urdfdom_headers REQUIRED)", {plain = true})
