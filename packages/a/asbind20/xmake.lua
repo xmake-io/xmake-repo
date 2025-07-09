@@ -15,14 +15,21 @@ package("asbind20")
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     add_configs("ext", {description = "Build the extensions.", default = true, type = "boolean"})
 
-    on_load(function (package)
-        -- The core library is header-only --
-        if not package:config("ext") then
-            package:set("library", {headeronly = true})
+    on_check("android", function (package)
+        if package:version() and package:version():ge("3.0.0") then
+            local ndk = package:toolchain("ndk"):config("ndkver")
+            assert(ndk and tonumber(ndk) > 22, "package(ada >=3.0.0) require ndk version > 22")
         end
     end)
 
-    on_install(function (package)
+    on_load(function (package)
+        -- The core library is header-only --
+        if not package:config("ext") then
+            package:set("kind", "library", {headeronly = true})
+        end
+    end)
+
+    on_install("windows", "linux", "android", "msys", "mingw", function (package)
         local configs = {}
         table.insert(configs, "-Dasbind_build_ext=" .. (package:config("ext") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
@@ -39,12 +46,11 @@ package("asbind20")
                     asbind20::ext::configure_engine_for_ext_string(engine);
                 }
             ]]}, {configs = {languages = "c++20"}}))
-        else
-            assert(package:check_cxxsnippets({test = [[
-                #include <asbind20/asbind.hpp>
-                void test() {
-                    auto engine = asbind20::make_script_engine();
-                }
-            ]]}, {configs = {languages = "c++20"}}))
         end
+        assert(package:check_cxxsnippets({test = [[
+            #include <asbind20/asbind.hpp>
+            void test() {
+                auto engine = asbind20::make_script_engine();
+            }
+        ]]}, {configs = {languages = "c++20"}}))
     end)
