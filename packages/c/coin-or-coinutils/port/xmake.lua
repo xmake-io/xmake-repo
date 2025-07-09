@@ -24,31 +24,30 @@ configvar_check_cincludes("HAVE_SYS_STAT_H", "sys/stat.h")
 configvar_check_cincludes("HAVE_SYS_TYPES_H", "sys/types.h")
 configvar_check_cincludes("HAVE_UNISTD_H", "unistd.h")
 configvar_check_cincludes("HAVE_WINDOWS_H", "windows.h")
-check_sizeof("SIZEOF_DOUBLE", "double")
-check_sizeof("SIZEOF_INT", "int")
-check_sizeof("SIZEOF_INT_P", "int *")
-check_sizeof("SIZEOF_LONG", "long")
-check_sizeof("SIZEOF_LONG_LONG", "long long")
 configvar_check_cincludes("STDC_HEADERS", {"stdlib.h", "string.h"})
+
+set_configvar("COIN_INT64_T", "long long", {quote = false})
+set_configvar("COIN_INTPTR_T", "intptr_t", {quote = false})
+set_configvar("COIN_UINT64_T", "unsigned long long", {quote = false})
 
 add_rules("mode.debug", "mode.release")
 
 add_requires("bzip2", "zlib")
-add_defines("COIN_HAS_ZLIB", "COIN_HAS_BZLIB")
 if is_plat("linux", "macosx", "bsd") then
     add_requires("readline")
     add_packages("readline")
-    add_defines("COIN_HAS_READLINE")
 end
 
 set_languages("c++11")
 
 target("CoinUtils")
     set_kind("$(kind)")
+    add_defines("HAVE_CONFIG_H", "COINUTILS_BUILD")
     add_files("CoinUtils/src/*.cpp")
     add_headerfiles("CoinUtils/src/*.hpp", "CoinUtils/src/*.h", {prefixdir = "coin"})
-    add_configfiles("CoinUtils/src/(config.h.in)", {filename = "config.h"})
-    add_configfiles("CoinUtils/src/(config_coinutils.h.in)", {filename = "config_coinutils.h"})
+    set_configdir("CoinUtils/src")
+    add_configfiles("CoinUtils/src/(config.h.in)")
+    add_configfiles("CoinUtils/src/(config_coinutils.h.in)")
     if is_plat("windows") and is_kind("shared") then
         add_rules("utils.symbols.export_all", {export_classes = true})
     end
