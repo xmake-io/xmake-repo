@@ -18,6 +18,20 @@ package("urdfdom")
 
     add_includedirs("include", "include/urdfdom")
 
+    on_check("mingw", "android", function (package)
+        if package:version() and package:version():eq("1.0.4") then
+            raise("package(urdfdom 1.0.4) unsupported")
+        end
+        if package:is_plat("android") and package:is_arch("armeabi-v7a") then
+            import("core.tool.toolchain")
+            local ndk = package:toolchain("ndk")
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            if tonumber(ndk_sdkver) < 24 then
+                raise("package(urdfdom 1.0.4) unsupported")
+            end
+        end
+    end)
+
     on_load(function (package)
         local version = package:version()
         if version then
@@ -38,8 +52,11 @@ package("urdfdom")
     end)
 
     on_install("!iphoneos", function (package)
-        io.replace("urdf_parser/include/urdf_parser/urdf_parser.h", "#include <string>", "#include <cstdint>\n#include <string>", {plain = true})
-        io.replace("CMakeLists.txt", "find_package(urdfdom_headers 1.0.3 REQUIRED)", "find_package(urdfdom_headers REQUIRED)", {plain = true})
+        io.replace("urdf_parser/CMakeLists.txt", "SHARED", "", {plain = true})
+        if package:version() and package:version():eq("1.0.4") then
+            io.replace("urdf_parser/include/urdf_parser/urdf_parser.h", "#include <string>", "#include <cstdint>\n#include <string>", {plain = true})
+            io.replace("CMakeLists.txt", "find_package(urdfdom_headers 1.0.3 REQUIRED)", "find_package(urdfdom_headers REQUIRED)", {plain = true})
+        end
 
         local configs = {"-DBUILD_TESTING=OFF", "-DAPPEND_PROJECT_NAME_TO_INCLUDEDIR=OFF", "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
