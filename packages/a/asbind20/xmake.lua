@@ -22,7 +22,18 @@ package("asbind20")
     end)
 
     on_check("android", function (package)
-        assert(package:has_cxxfuncs("std::convertible_to(int)", {configs = {languages = "c++20"}, includes = "concepts"}), "package(asbind20): need std::convertible_to from <concepts> header.")
+        assert(package:check_cxxsnippets({test = [[
+            #include <iostream>
+            #include <concepts>
+            template <typename T>
+            concept raw_data_view = requires {
+                              T.data()->std::is_pointer_v;
+                              T.size()->std::convertible_to(std::size_t);
+            };
+            void test() {
+                std::cout << "test";
+            }
+        ]]}, {configs = {languages = "c++20"}}), "package(asbind20): need std::convertible_to from <concepts> header.")
         if package:version() and package:version():ge("3.0.0") then
             local ndk = package:toolchain("ndk"):config("ndkver")
             assert(ndk and tonumber(ndk) > 22, "package(ada >=3.0.0) require ndk version > 22")
