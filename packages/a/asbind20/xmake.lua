@@ -25,7 +25,9 @@ package("asbind20")
         assert(package:check_cxxsnippets({test = [[
             #include <iostream>
             #include <type_traits>
+            #include <cstddef>
             #include <concepts>
+            using namespace std;
             #define MINICRC_REQUIRES(Concept, T) typename T, Concept<T> = false
             namespace minicrc {
             template <typename T>
