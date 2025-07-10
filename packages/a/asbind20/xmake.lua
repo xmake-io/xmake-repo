@@ -27,9 +27,11 @@ package("asbind20")
             #include <concepts>
             template <typename T>
             concept raw_data_view = requires {
-                              T.data()->std::is_pointer_v;
-                              T.size()->std::convertible_to(std::size_t);
+                T.data()->std::is_pointer_v;
+                T.size()->std::convertible_to(std::size_t);
             };
+            using std::unsigned_integral;
+            }
             void test() {
                 std::cout << "test";
             }
