@@ -15,6 +15,12 @@ package("asbind20")
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     add_configs("ext", {description = "Build the extensions.", default = true, type = "boolean"})
 
+    on_check("mingw", function (package)
+        if is_host("macosx") and package:is_arch("i386") and package:version():eq("2.37.0") then
+            assert(false, "package(asbind): Unsupported on mingw|i386")
+        end
+    end)
+
     on_check("android", function (package)
         if package:version() and package:version():ge("3.0.0") then
             local ndk = package:toolchain("ndk"):config("ndkver")
