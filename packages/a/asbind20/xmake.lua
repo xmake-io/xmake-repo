@@ -24,13 +24,13 @@ package("asbind20")
     on_check("android", function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <iostream>
+            #include <type_traits>
             #include <concepts>
             #define MINICRC_REQUIRES(Concept, T) typename T, Concept<T> = false
             namespace minicrc {
             template <typename T>
             using byte_sized =
                 typename std::enable_if<sizeof(T) == sizeof(byte), bool>::type;
-            
             template <typename T>
             using raw_data_view = typename std::enable_if<
                 std::is_pointer<
@@ -39,7 +39,6 @@ package("asbind20")
                         decltype(static_cast<remove_cvref_t<T>*>(nullptr)->size()),
                         std::size_t>::value,
                 bool>::type;
-            
             template <typename T>
             using unsigned_integral = typename std::enable_if<
                 !std::is_signed<T>::value && std::is_integral<T>::value, bool>::type;
