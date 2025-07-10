@@ -33,7 +33,7 @@ package("angelscript")
     end)
 
     on_install("windows|x86", "windows|x64", "linux", "android", "msys", "mingw", function (package)
-        local configs = {vers = package:version_str()}
+        local configs = {}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DAS_NO_EXCEPTIONS=" .. (package:config("exceptions") and "OFF" or "ON"))
@@ -49,7 +49,7 @@ package("angelscript")
     end)
 
     on_install("windows|arm64", function (package)
-        local configs = {}
+        local configs = {vers = package:version_str()}
         configs.exceptions = package:config("exceptions")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
