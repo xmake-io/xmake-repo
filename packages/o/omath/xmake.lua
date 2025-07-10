@@ -20,8 +20,11 @@ package("omath")
     end)
 
     on_install("!macosx and !iphoneos and !android", function (package)
+        if package:is_plat("cross") then
+            io.replace("CMakeLists.txt", [[find_package(imgui CONFIG REQUIRED)]], [[find_package(imgui 1.0.0 CONFIG REQUIRED)]], {plain = true})
+        end
         if package:is_plat("wasm") then
-            io.replace("CMakeLists.txt", [[target_compile_options(${PROJECT_NAME} PRIVATE -mavx2 -mfma)]], [[target_compile_options(${PROJECT_NAME} PRIVATE -msimd128 -mavx2 -mfma)]], {plain = true})
+            io.replace("CMakeLists.txt", [[target_compile_options(${PROJECT_NAME} PRIVATE -mavx2 -mfma)]], [[target_compile_options(${PROJECT_NAME} PRIVATE -msimd128 -mavx2)]], {plain = true})
         end
         local configs = {"-DOMATH_THREAT_WARNING_AS_ERROR=OFF", "-DOMATH_BUILD_TESTS=OFF"}
         table.insert(configs, "-DOMATH_USE_AVX2=" .. (package:config("avx2") and "ON" or "OFF"))
