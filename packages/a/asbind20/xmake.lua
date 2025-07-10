@@ -30,6 +30,10 @@ package("asbind20")
     end)
 
     on_install("windows", "linux", "android", "msys", "mingw", function (package)
+        if package:is_plat("windows") and package:is_arch("arm64") then
+            -- Exported target namespace starts with capital letter, but XMake auto-generated CMakeConfig defines it as angelscript::angelscript
+            io.replace("CMakeLists.txt", "Angelscript::angelscript", "angelscript::angelscript", {plain = true})
+        end
         local configs = {}
         table.insert(configs, "-Dasbind_build_ext=" .. (package:config("ext") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
