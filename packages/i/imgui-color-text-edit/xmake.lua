@@ -9,6 +9,9 @@ package("imgui-color-text-edit")
     add_deps("imgui <1.91")
 
     on_install("macosx", "linux", "windows", "mingw", "android", "iphoneos", function (package)
+        -- Fix GCC15
+        io.replace("TextEditor.h", [[#include "imgui.h"]], [[#include "imgui.h"
+#include <cstdint>]], {plain = true})
         local imgui = package:dep("imgui")
         local configs = imgui:requireinfo().configs
         if configs then
