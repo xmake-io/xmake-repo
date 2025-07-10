@@ -29,11 +29,14 @@ package("imguizmo")
             add_requires("imgui %s", {configs = %s})
 
             target("imguizmo")
-                set_kind("static")
+                set_kind("$(kind)")
                 add_defines("IMGUI_DEFINE_MATH_OPERATORS")
                 add_files("*.cpp")
                 add_headerfiles("*.h")
                 add_packages("imgui")
+                if is_plat("windows") and is_kind("shared") then
+                    add_rules("utils.symbols.export_all", {export_classes = true})
+                end
         ]]):format(imgui:version_str(), configs)
         io.writefile("xmake.lua", xmake_lua)
         import("package.tools.xmake").install(package)
