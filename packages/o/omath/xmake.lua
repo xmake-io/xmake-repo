@@ -19,7 +19,10 @@ package("omath")
         end
     end)
 
-    on_install(function (package)
+    on_install("!macosx and !iphoneos and !android", function (package)
+        if package:is_plat("wasm") then
+            io.replace("CMakeLists.txt", [[target_compile_options(${PROJECT_NAME} PRIVATE -mavx2 -mfma)]], [[target_compile_options(${PROJECT_NAME} PRIVATE -msimd128 -mavx2 -mfma)]], {plain = true})
+        end
         local configs = {"-DOMATH_THREAT_WARNING_AS_ERROR=OFF", "-DOMATH_BUILD_TESTS=OFF"}
         table.insert(configs, "-DOMATH_USE_AVX2=" .. (package:config("avx2") and "ON" or "OFF"))
         table.insert(configs, "-DOMATH_IMGUI_INTEGRATION=" .. (package:config("imgui") and "ON" or "OFF"))
