@@ -21,23 +21,28 @@ jobs:
       group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-Android-${{ matrix.arch }}-${{ matrix.ndk }}-${{ matrix.ndk_sdkver }}
       cancel-in-progress: true
     steps:
+      - name: Cache ndk
+        id: cache-ndk
+        uses: actions/cache@v4
+        with:
+          path: ~/.xmake/packages/n/ndk
+          key: ${{ matrix.os }}-ndk
+
       - uses: actions/checkout@v1
+
       - uses: xmake-io/github-action-setup-xmake@v1
         with:
           xmake-version: branch@master
           actions-cache-folder: ".xmake-cache"
           actions-cache-key: "android"
 
-      - name: Prepare
+      - name: Tests
+        env:
+          ANDROID_NDK_ROOT: ""
+          ANDROID_NDK_HOME: ""
         run: |
           if test ${{ matrix.ndk }} = "r27"; then
-            wget -q https://dl.google.com/android/repository/android-ndk-r27-linux.zip
-            unzip -q -o ./android-ndk-r27-linux.zip
+            xrepo env -y -b "ndk 27.0" xmake l ./scripts/test.lua -D -p android -a ${{ matrix.arch }} --ndk_sdkver=${{ matrix.ndk_sdkver }} 
           else
-            wget -q https://dl.google.com/android/repository/android-ndk-r22-linux-x86_64.zip
-            unzip -q -o ./android-ndk-r22-linux-x86_64.zip
+            xrepo env -y -b "ndk 22.0" xmake l ./scripts/test.lua -D -p android -a ${{ matrix.arch }} --ndk_sdkver=${{ matrix.ndk_sdkver }} 
           fi
-
-      - name: Tests
-        run: |
-          xmake l ./scripts/test.lua -D -p android --ndk=`pwd`/android-ndk-${{ matrix.ndk }} --ndk_sdkver=${{ matrix.ndk_sdkver }} -a ${{ matrix.arch }}

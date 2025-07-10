@@ -4,6 +4,7 @@ package("nghttp2")
     set_license("MIT")
 
     add_urls("https://github.com/nghttp2/nghttp2/releases/download/v$(version)/nghttp2-$(version).tar.gz")
+    add_versions("1.66.0", "e178687730c207f3a659730096df192b52d3752786c068b8e5ee7aeb8edae05a")
     add_versions("1.65.0", "8ca4f2a77ba7aac20aca3e3517a2c96cfcf7c6b064ab7d4a0809e7e4e9eb9914")
     add_versions("1.64.0", "20e73f3cf9db3f05988996ac8b3a99ed529f4565ca91a49eb0550498e10621e8")
     add_versions("1.63.0", "9318a2cc00238f5dd6546212109fb833f977661321a2087f03034e25444d3dbb")

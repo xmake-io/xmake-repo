@@ -5,6 +5,10 @@ package("imguitextselect")
 
     add_urls("https://github.com/AidanSun05/ImGuiTextSelect/archive/v$(version).tar.gz",
              "https://github.com/AidanSun05/ImGuiTextSelect.git")
+
+    add_versions("1.2.0", "63af906b955c8160b350aff426f7f89e6a250a7b784933338d1fc9504ac3a9ac")
+    add_versions("1.1.6", "41ebb4323697bd2e1bedd3bb52a5abd222e941b9e145896d25741143b31ecec7")
+    add_versions("1.1.5", "43636bc5a52c0ed92414d34976a839fcb69f76246e9c729c9d9e0da2c53d57b2")
     add_versions("1.1.4", "a8bb58662dd35937ee098652ebb2a29d63ed9c2383d60c54fd00a2a9168fe5e3")
     add_versions("1.1.3", "cd8b4720ca71dc4ab87ca9b860ce507c34feaef1846456b89fd8827c0d259f70")
     add_versions("1.1.2", "2e15853e97710f02be9fdb64fd2f2ad495e88f844ce5e8a14d63b86d9f2e7b6c")

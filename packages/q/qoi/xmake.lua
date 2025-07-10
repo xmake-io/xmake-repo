@@ -1,5 +1,4 @@
 package("qoi")
-
     set_kind("library", {headeronly = true})
     set_homepage("https://qoiformat.org/")
     set_description("The Quite OK Image Format for fast, lossless image compression")
@@ -9,6 +8,7 @@ package("qoi")
     add_versions("2021.12.22", "44fe081388c60e7618f49486865b992e08ce4de4")
     add_versions("2022.11.17", "660839cb2c51d6b5f62221f8ef98662fd40e42d2")
     add_versions("2024.03.18", "bf7b41c2ff3f24a2031193b62aa76d35e8842b5a")
+    add_versions("2025.06.18", "60b58381d875d0435f25e482e11c3a538022fe62")
 
     on_install(function (package)
         os.cp("qoi.h", package:installdir("include"))

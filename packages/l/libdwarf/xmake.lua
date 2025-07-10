@@ -31,14 +31,17 @@ package("libdwarf")
         end
 
         local version = package:version()
-        if package:gitref() or version:ge("0.9.2") then
-            -- https://github.com/davea42/libdwarf-code/pull/226
-            io.replace("CMakeLists.txt", "find_package(zstd)", "find_package(zstd CONFIG REQUIRED)", {plain = true})
-            io.replace("src/lib/libdwarf/CMakeLists.txt", [[install(FILES "${PROJECT_SOURCE_DIR}/cmake/Findzstd.cmake" DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/libdwarf")]], "", {plain = true})
-        else
-            io.replace("CMakeLists.txt", "find_package(ZSTD)", "find_package(zstd CONFIG REQUIRED)", {plain = true})
-            io.replace("src/lib/libdwarf/CMakeLists.txt", [[install(FILES "${PROJECT_SOURCE_DIR}/cmake/FindZSTD.cmake" DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/libdwarf")]], "", {plain = true})
+        if not package:dep("zstd"):is_system() then
+            if package:gitref() or version:ge("0.9.2") then
+                -- https://github.com/davea42/libdwarf-code/pull/226
+                io.replace("CMakeLists.txt", "find_package(zstd)", "find_package(zstd CONFIG REQUIRED)", {plain = true})
+                io.replace("src/lib/libdwarf/CMakeLists.txt", [[install(FILES "${PROJECT_SOURCE_DIR}/cmake/Findzstd.cmake" DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/libdwarf")]], "", {plain = true})
+            else
+                io.replace("CMakeLists.txt", "find_package(ZSTD)", "find_package(zstd CONFIG REQUIRED)", {plain = true})
+                io.replace("src/lib/libdwarf/CMakeLists.txt", [[install(FILES "${PROJECT_SOURCE_DIR}/cmake/FindZSTD.cmake" DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/libdwarf")]], "", {plain = true})
+            end
         end
+
         io.replace("CMakeLists.txt", [[set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")]], "", {plain = true})
         if not package:config("tools") then
             io.replace("CMakeLists.txt", "add_subdirectory(src/bin/dwarfdump)", "", {plain = true})

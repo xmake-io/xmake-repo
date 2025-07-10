@@ -3,7 +3,8 @@ package("re2")
     set_description("RE2 is a fast, safe, thread-friendly alternative to backtracking regular expression engines like those used in PCRE, Perl, and Python. It is a C++ library.")
     set_license("BSD-3-Clause")
 
-    add_urls("https://github.com/google/re2/archive/$(version).tar.gz", {version = function (version) return version:gsub("%.", "-") end})
+    add_urls("https://github.com/google/re2.git", {alias = "git"})
+    add_urls("https://github.com/google/re2/archive/refs/tags/$(version).tar.gz", {version = function (version) return version:gsub("%.", "-") end})
 
     add_versions("2020.11.01", "8903cc66c9d34c72e2bc91722288ebc7e3ec37787ecfef44d204b2d6281954d7")
     add_versions("2021.06.01", "26155e050b10b5969e986dab35654247a3b1b295e0532880b5a9c13c0a700ceb")
@@ -15,6 +16,9 @@ package("re2")
     add_versions("2024.04.01", "3f6690c3393a613c3a0b566309cf04dc381d61470079b653afc47c67fb898198")
     add_versions("2024.06.01", "7326c74cddaa90b12090fcfc915fe7b4655723893c960ee3c2c66e85c5504b6c")
     add_versions("2024.07.02", "eb2df807c781601c14a260a507a5bb4509be1ee626024cb45acbd57cb9d4032b")
+    add_versions("2025.06.26", "6090fc23a189e1a04a0e751b4f285922a794a39b6ecc6670b6141af74c82fe08")
+
+    add_versions("git:2025.06.26", "2025-06-26")
 
     add_deps("cmake", "abseil")
 
@@ -24,7 +28,7 @@ package("re2")
 
     on_load(function (package)
         local version = package:version()
-        if version:ge("2024.06.01") and package:is_plat("mingw") then
+        if version and version:ge("2024.06.01") and package:is_plat("mingw") then
             package:add("syslinks", "Dbghelp")
         end
     end)
