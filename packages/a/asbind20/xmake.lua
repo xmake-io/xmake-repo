@@ -16,7 +16,7 @@ package("asbind20")
     add_configs("ext", {description = "Build the extensions.", default = true, type = "boolean"})
 
     on_check("mingw", function (package)
-        if is_host("macosx") and package:is_arch("i386") and package:version():eq("2.37.0") then
+        if is_host("macosx") and package:is_arch("i386") then
             assert(false, "package(asbind): Unsupported on mingw|i386")
         end
     end)
