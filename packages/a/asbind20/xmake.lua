@@ -22,6 +22,7 @@ package("asbind20")
     end)
 
     on_check("android", function (package)
+        assert(package:has_cxxfuncs("std::convertible_to(int)", {configs = {languages = "c++20"}, includes = "concepts"}), "package(asbind20): need std::convertible_to from <concepts> header.")
         if package:version() and package:version():ge("3.0.0") then
             local ndk = package:toolchain("ndk"):config("ndkver")
             assert(ndk and tonumber(ndk) > 22, "package(ada >=3.0.0) require ndk version > 22")
