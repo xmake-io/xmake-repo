@@ -19,9 +19,9 @@ end
 
 includes("@builtin/check")
 
-configvar_check_cincludes("HAVE_EXECINFO_H", "execinfo.h")
-configvar_check_cincludes("HAVE_STDBOOL_H", "stdbool.h")
-configvar_check_cfuncs("HAVE_GETLINE", "getline")
+check_cincludes("HAVE_EXECINFO_H", "execinfo.h")
+check_cincludes("HAVE_STDBOOL_H", "stdbool.h")
+check_cfuncs("HAVE_GETLINE", "getline")
 
 target("gklib")
     set_kind("$(kind)")
