@@ -15,20 +15,19 @@ package("asbind20")
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     add_configs("ext", {description = "Build the extensions.", default = true, type = "boolean"})
 
-    on_check("mingw", function (package)
-        if is_host("macosx") and package:is_arch("i386") then
-            assert(false, "package(asbind): Unsupported on mingw|i386")
+    on_check(function (package)
+        if package:is_plat("mingw") then
+            if is_host("macosx") and package:is_arch("i386") then
+                assert(false, "package(asbind): Unsupported on mingw|i386")
+            end
         end
-    end)
-
-    on_check("android", function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <concepts>
-            #include <algorithm>
-            #include <string>
             void test(std::signed_integral auto x) {
-                std::string s;
-                std::ranges::reverse(s);
+                static_assert(std::integral<int>);
+                static_assert(std::floating_point<double>);
+                static_assert(std::same_as<int, signed>);
+                static_assert(std::convertible_to<int, long>);
             }
         ]]}, {configs = {languages = "c++20"}}), "package(asbind20): need std::convertible_to from <concepts> header.")
     end)
