@@ -124,6 +124,9 @@ package("imgui")
     end
 
     on_load(function (package)
+        if package:is_plat("cross") then
+            package:add("defines", "CMAKE_SIZEOF_VOID_P=" .. package:check_sizeof("void*"))
+        end
         -- begin: backwards compatibility
         if package:config("sdl2") or package:config("sdlrenderer") then
             package:config_set("sdl2_renderer", true)
