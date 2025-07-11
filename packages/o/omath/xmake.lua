@@ -4,7 +4,7 @@ package("omath")
     set_license("zlib")
 
     add_urls("https://github.com/orange-cpp/omath/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/orange-cpp/omath.git")
+             "https://github.com/orange-cpp/omath.git", {submodules = false})
 
     add_versions("v3.0.3", "f72ec671eb99d83bf6d63ec5eee7436110a9f340b416eefac51464665bbda06c")
 
@@ -21,7 +21,7 @@ package("omath")
 
     on_install("!macosx and !iphoneos and !android", function (package)
         if package:is_plat("cross") then
-            io.replace("CMakeLists.txt", [[find_package(imgui CONFIG REQUIRED)]], [[find_package(imgui 1.0.0 CONFIG REQUIRED)]], {plain = true})
+            io.replace("CMakeLists.txt", [[find_package(imgui CONFIG REQUIRED)]], [[find_package(imgui REQUIRED)]], {plain = true})
         end
         if package:is_plat("wasm") then
             io.replace("CMakeLists.txt", [[target_compile_options(${PROJECT_NAME} PRIVATE -mavx2 -mfma)]], [[target_compile_options(${PROJECT_NAME} PRIVATE -msimd128 -mavx2)]], {plain = true})
