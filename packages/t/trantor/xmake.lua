@@ -1,8 +1,8 @@
 package("trantor")
-
     set_homepage("https://github.com/an-tao/trantor/")
     set_description("a non-blocking I/O tcp network lib based on c++14/17")
     set_license("BSD-3-Clause")
+
     add_urls("https://github.com/an-tao/trantor/archive/refs/tags/$(version).tar.gz",
              "https://github.com/an-tao/trantor.git")
 
@@ -24,20 +24,23 @@ package("trantor")
 	add_versions("v1.5.14", "80775d65fd49dfb0eb85d70cd9c0f0cff38a7f46c90db918862c46e03ae63810")
 	
     add_patches("v1.5.8", path.join(os.scriptdir(), "patches", "1.5.8", "skip_doc.patch" ), "4124f3cc1e486ad75bc5ec2fa454ea5319d68287d0b1d8cfa3b5ab865f8ca5fd")
+    if is_plat("windows", "mingw") then
+	    add_patches("v1.5.8", path.join(os.scriptdir(), "patches", "1.5.8", "fix-win-off_t.patch" ),"f0d7fbfc98085ed8b5f6c7504be29b18ddcd6fe4e14e3551396a643fc4574dc0")
+    end
 
     add_configs("spdlog", {description = "Allow using the spdlog logging library", default = false, type = "boolean"})
 
     add_deps("cmake")
-    add_deps("openssl", "c-ares", {optional = true})
+    add_deps("openssl", "c-ares")
+
     if is_plat("windows", "mingw") then
-	    add_patches("v1.5.8", path.join(os.scriptdir(), "patches", "1.5.8", "fix-win-off_t.patch" ),"f0d7fbfc98085ed8b5f6c7504be29b18ddcd6fe4e14e3551396a643fc4574dc0")
         add_syslinks("ws2_32")
     elseif is_plat("linux") then
         add_syslinks("pthread")
     end
 
     on_load(function (package)
-        if package:version():le("v1.5.15") then
+        if package:version() and package:version():le("v1.5.15") then
             package:config_set("spdlog", false)
         end
         if package:config("spdlog") then
@@ -45,17 +48,18 @@ package("trantor")
         end
     end)
 
-    on_install("windows", "macosx", "linux", "mingw@windows", function (package)
+    on_install(function (package)
         io.replace("CMakeLists.txt", "\"${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules/Findc-ares.cmake\"", "", {plain = true})
         io.replace("CMakeLists.txt", "find_package(c-ares)", "find_package(c-ares CONFIG)", {plain = true})
         io.replace("CMakeLists.txt", "c-ares_lib", "c-ares::cares", {plain = true})
+
         local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        if package:config("pic") ~= false then
-            table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
-        end
-        if package:config("spdlog") then
-            table.insert(configs, "-DUSE_SPDLOG=ON")
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DUSE_SPDLOG=" .. (package:config("spdlog") and "ON" or "OFF"))
+        local openssl = package:dep("openssl")
+        if not openssl:is_system() then
+            table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
         end
         import("package.tools.cmake").install(package, configs)
     end)
