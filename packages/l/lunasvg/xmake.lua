@@ -21,8 +21,7 @@ package("lunasvg")
     add_includedirs("include", "include/lunasvg")
 
     on_load(function (package)
-        local version = package:version()
-        if package:gitref() or version:ge("2.4.1") then
+        if package:version() and package:version():ge("2.4.1") then
             if not package:config("shared") then
                 package:add("defines", "LUNASVG_BUILD_STATIC")
             end
@@ -35,16 +34,12 @@ package("lunasvg")
 
     on_install(function (package)
         io.replace("CMakeLists.txt", "FetchContent_MakeAvailable(plutovg)", "find_package(plutovg)", {plain = true})
+        io.replace("CMakeLists.txt", "add_subdirectory(plutovg)", "", {plain = true})
 
-        local configs = {"-DLUNASVG_BUILD_EXAMPLES=OFF"}
+        local configs = {"-DLUNASVG_BUILD_EXAMPLES=OFF", "-DUSE_SYSTEM_PLUTOVG=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
-
-        if package:is_plat("windows") and package:is_debug() then
-            local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.trycp(path.join(package:buildir(), "lunasvg.pdb"), dir)
-        end
     end)
 
     on_test(function (package)
