@@ -45,6 +45,9 @@ target("gklib")
     elseif is_plat("bsd") then
         add_syslinks("m")
     end
+    if is_plat("linux", "bsd", "macosx") then
+        add_cflags("-fvisibility=default")
+    end
 
     on_config(function (target)
         if not target:check_csnippets({test = "extern __thread int x;"}) then
