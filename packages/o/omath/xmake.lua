@@ -24,7 +24,7 @@ package("omath")
         end
     end)
 
-    on_install("!macosx and !iphoneos and !android", function (package)
+    on_install("!macosx and !iphoneos and !android and !bsd", function (package)
         if package:is_plat("wasm") then
             io.replace("CMakeLists.txt", [[target_compile_options(${PROJECT_NAME} PRIVATE -mavx2 -mfma)]], [[target_compile_options(${PROJECT_NAME} PRIVATE -msimd128 -mavx2)]], {plain = true})
         end
