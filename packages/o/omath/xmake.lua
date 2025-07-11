@@ -12,11 +12,6 @@ package("omath")
     add_configs("imgui", {description = "Define method to convert omath types to imgui types", default = true, type = "boolean"})
 
     add_deps("cmake")
-    if is_plat("windows") then
-        add_deps("pkgconf")
-    else
-        add_deps("pkg-config")
-    end
 
     on_load(function (package)
         if package:config("imgui") then
