@@ -31,10 +31,6 @@ package("asbind20")
                 std::ranges::reverse(s);
             }
         ]]}, {configs = {languages = "c++20"}}), "package(asbind20): need std::convertible_to from <concepts> header.")
-        if package:version() and package:version():ge("3.0.0") then
-            local ndk = package:toolchain("ndk"):config("ndkver")
-            assert(ndk and tonumber(ndk) > 22, "package(ada >=3.0.0) require ndk version > 22")
-        end
     end)
 
     on_load(function (package)
