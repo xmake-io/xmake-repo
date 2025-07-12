@@ -80,7 +80,7 @@ package("drogon")
                 package:add("deps", dep)
             end
         end
-        if package:version():le("v1.9.2") then
+        if package:version() and package:version():le("v1.9.2") then
             package:config_set("spdlog", false)
         end
         if package:config("spdlog") then
@@ -91,11 +91,7 @@ package("drogon")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
-        if package:is_plat("macosx") and package:is_arch("x86_64") then
-            wprint([[package(drogon) unsupported cmake4 on macos/x86, please use `add_requireconfs("**.cmake", {override = true, version = "<4.0.0"})`]])
-        end
-
+    on_install(function (package)
         io.replace("cmake/templates/config.h.in", "\"@COMPILATION_FLAGS@@DROGON_CXX_STANDARD@\"", "R\"(@COMPILATION_FLAGS@@DROGON_CXX_STANDARD@)\"", {plain = true})
         io.replace("cmake_modules/FindMySQL.cmake", "PATH_SUFFIXES mysql", "PATH_SUFFIXES mysql mariadb", {plain = true})
 
@@ -114,7 +110,7 @@ package("drogon")
                 if name == "sqlite3" then
                     table.insert(configs, "-DBUILD_SQLITE=" .. (enabled and "ON" or "OFF"))
                 elseif name == "yaml" then
-                    if package:version():ge("1.8.4") then
+                    if package:version() and package:version():ge("1.8.4") then
                         table.insert(configs, "-DBUILD_YAML_CONFIG=" .. (enabled and "ON" or "OFF"))
                     end
                 elseif name == "cpp20" then
@@ -122,13 +118,6 @@ package("drogon")
                 else
                     table.insert(configs, "-DBUILD_" .. name:upper() .. "="  .. (enabled and "ON" or "OFF"))
                 end
-            end
-        end
-
-        if package:config("ssl") then
-            local openssl = package:dep("openssl" .. (package:version():ge("0.15.0") and "3" or ""))
-            if not openssl:is_system() then
-                table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
             end
         end
         import("package.tools.cmake").install(package, configs)
