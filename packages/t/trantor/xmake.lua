@@ -72,7 +72,7 @@ package("trantor")
         local openssl = package:dep("openssl")
         if not openssl:is_system() then
             table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
-            if package:is_plat("macosx") then
+            if not package:is_cross() and is_subhost("macosx", "msys") then
                 opt.cxflags = "-I" .. openssl:installdir("include")
             end
         end
