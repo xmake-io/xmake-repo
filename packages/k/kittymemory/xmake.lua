@@ -10,10 +10,10 @@ package("kittymemory")
     add_configs("logd", {description = "Define kITTYMEMORY_DEBUG in cpp flags for KITTY_LOGD debug outputs", default = false, type = "boolean"})
 
     on_load(function (package)
-        if not package:config("keystone") then
-            package:add("defines", "kNO_KEYSTONE")
-        else
+        if package:config("keystone") then
             package:add("deps", "keystone")
+        else
+            package:add("defines", "kNO_KEYSTONE")
         end
         if package:config("logd") then
             package:add("defines", "kITTYMEMORY_DEBUG")
@@ -38,16 +38,20 @@ package("kittymemory")
             end
 
             target("KittyMemory")
-                set_languages("c++11")
+                set_languages("c++17")
                 set_kind("$(kind)")
                 add_files("KittyMemory/*.cpp")
                 add_includedirs("KittyMemory")
                 add_headerfiles("(KittyMemory/*.hpp)")
-                add_syslinks("log")
-                if not has_config("keystone") then
-                    add_defines("kNO_KEYSTONE")
-                else
+                if is_plat("android") then
+                    add_syslinks("log")
+                elseif is_plat("iphoneos") then
+                    add_frameworks("Foundation")
+                end
+                if has_config("keystone") then
                     add_packages("keystone")
+                else
+                    add_defines("kNO_KEYSTONE")
                 end
                 if has_config("logd") then
                     add_defines("kITTYMEMORY_DEBUG")
