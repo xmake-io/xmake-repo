@@ -54,7 +54,7 @@ package("drogon")
 
     add_deps("cmake")
     add_deps("jsoncpp", "brotli", "zlib")
-    if not is_plat("windows") then
+    if not is_plat("windows", "mingw", "msys") then
         add_deps("libuuid")
     end
 
@@ -62,8 +62,16 @@ package("drogon")
         -- enable mtt for drogon
         set_policy("package.msbuild.multi_tool_task", true)
         add_syslinks("ws2_32", "rpcrt4", "crypt32", "advapi32", "iphlpapi")
-    elseif is_plat("linux") then
+    elseif is_plat("mingw") then
+        add_syslinks("ws2_32", "rpcrt4", "crypt32", "advapi32", "iphlpapi")
+    elseif is_plat("linux", "bsd") then
         add_syslinks("pthread", "dl")
+    end
+
+    if on_check then
+        on_check("wasm", function (target)
+            raise("package(drogon) dep(openssl) unsupported platform")
+        end)
     end
 
     on_load(function(package)
@@ -91,7 +99,7 @@ package("drogon")
         end
     end)
 
-    on_install(function (package)
+    on_install("!android", function (package)
         io.replace("cmake/templates/config.h.in", "\"@COMPILATION_FLAGS@@DROGON_CXX_STANDARD@\"", "R\"(@COMPILATION_FLAGS@@DROGON_CXX_STANDARD@)\"", {plain = true})
         io.replace("cmake_modules/FindMySQL.cmake", "PATH_SUFFIXES mysql", "PATH_SUFFIXES mysql mariadb", {plain = true})
 
