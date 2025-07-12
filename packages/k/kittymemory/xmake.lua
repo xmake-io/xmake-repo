@@ -61,5 +61,5 @@ package("kittymemory")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxfuncs([[KittyMemory::memRead(0, 0, 10)]], {includes = "KittyMemory/KittyMemory.hpp"}))
+        assert(package:has_cxxfuncs([[KittyMemory::memRead(0, 0, 10)]], {includes = "KittyMemory/KittyMemory.hpp", configs = {languages = "c++17"}}))
     end)
