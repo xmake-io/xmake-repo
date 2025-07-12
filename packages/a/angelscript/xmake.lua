@@ -49,7 +49,7 @@ package("angelscript")
     end)
 
     on_install("windows|arm64", function (package)
-        local configs = {}
+        local configs = {vers = package:version_str()}
         configs.exceptions = package:config("exceptions")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
