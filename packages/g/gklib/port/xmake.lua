@@ -19,7 +19,6 @@ end
 
 includes("@builtin/check")
 
-check_cincludes("HAVE_EXECINFO_H", "execinfo.h")
 check_cincludes("HAVE_STDBOOL_H", "stdbool.h")
 check_cfuncs("HAVE_GETLINE", "getline")
 
