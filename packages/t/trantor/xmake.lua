@@ -34,9 +34,15 @@ package("trantor")
     add_deps("openssl", "c-ares")
 
     if is_plat("windows", "mingw") then
-        add_syslinks("ws2_32")
-    elseif is_plat("linux") then
+        add_syslinks("ws2_32", "rpcrt4")
+    elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
+    end
+
+    if on_check then
+        on_check("wasm", function (target)
+            raise("package(trantor) dep(openssl) unsupported platform")
+        end)
     end
 
     on_load(function (package)
@@ -45,6 +51,10 @@ package("trantor")
         end
         if package:config("spdlog") then
             package:add("deps", "spdlog", {configs = {header_only = false, fmt_external_ho = true}})
+        end
+
+        if not package:config("shared") then
+            package:add("defines", "TRANTOR_STATIC_DEFINE")
         end
     end)
 
@@ -57,11 +67,16 @@ package("trantor")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_SPDLOG=" .. (package:config("spdlog") and "ON" or "OFF"))
+
+        local opt = {}
         local openssl = package:dep("openssl")
         if not openssl:is_system() then
             table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
+            if package:is_plat("macosx") then
+                opt.cxflags = "-I" .. openssl:installdir("include")
+            end
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
