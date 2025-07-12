@@ -74,4 +74,4 @@ target("clp")
     if is_plat("windows") and is_kind("shared") then
         add_rules("utils.symbols.export_all", {export_classes = true})
     end
-    add_packages("coin-or-coinutils", "coin-or-osi", "glpk")
+    add_packages("coin-or-coinutils", "coin-or-osi")
