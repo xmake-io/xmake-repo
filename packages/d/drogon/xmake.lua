@@ -103,6 +103,13 @@ package("drogon")
         io.replace("cmake/templates/config.h.in", "\"@COMPILATION_FLAGS@@DROGON_CXX_STANDARD@\"", "R\"(@COMPILATION_FLAGS@@DROGON_CXX_STANDARD@)\"", {plain = true})
         io.replace("cmake_modules/FindMySQL.cmake", "PATH_SUFFIXES mysql", "PATH_SUFFIXES mysql mariadb", {plain = true})
 
+        local trantor = package:dep("trantor")
+        if (not trantor:is_system() and not trantor:config("shared")) or package:config("openssl") then
+            if package:is_plat("windows", "mingw") then
+                io.replace("CMakeLists.txt", "Trantor::Trantor", "Trantor::Trantor ws2_32 user32 crypt32 advapi32", {plain = true})
+            end
+        end
+
         local configs = {
             "-DBUILD_EXAMPLES=OFF",
             "-DUSE_SUBMODULE=OFF",
