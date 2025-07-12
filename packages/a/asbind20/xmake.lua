@@ -18,7 +18,7 @@ package("asbind20")
     on_check(function (package)
         if package:is_plat("mingw") then
             if is_host("macosx") and package:is_arch("i386") then
-                assert(false, "package(asbind): Unsupported on mingw|i386")
+                assert(false, "package(asbind20): Unsupported on mingw|i386")
             end
         end
         assert(package:check_cxxsnippets({test = [[
