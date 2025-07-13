@@ -199,18 +199,9 @@ package("imgui")
             user_config      = package:config("user_config"),
             wchar32          = package:config("wchar32")
         }
-        configs.vers = package:version_str()
 
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
-        if package:is_plat("cross") and package:check_sizeof("void*") == "4" then
-            io.replace(path.join(
-                package:installdir("lib"), "cmake", "imgui", "imguiConfigVersion.cmake"),
-                [["8"]], [["4"]], {plain = true})
-            io.replace(path.join(
-                package:installdir("lib"), "cmake", "imgui", "imguiConfigVersion.cmake"),
-                [["8 * 8"]], [["8 * 4"]], {plain = true})
-        end
     end)
 
     on_test(function (package)

@@ -12,6 +12,11 @@ package("omath")
     add_configs("imgui", {description = "Define method to convert omath types to imgui types", default = true, type = "boolean"})
 
     add_deps("cmake")
+    -- if is_plat("windows") then
+    add_deps("pkgconf")
+    -- else
+        -- add_deps("pkg-config")
+    -- end
 
     on_load(function (package)
         if package:config("imgui") then
@@ -20,6 +25,20 @@ package("omath")
     end)
 
     on_install("!macosx and !iphoneos and !android and !bsd", function (package)
+        if package:config("imgui") then
+            local imgui = package:dep("imgui")
+            if imgui and not imgui:is_system() then
+                local imgui_fetch = imgui:fetch()
+                if imgui_fetch then
+                    for _, inc in ipairs(imgui_fetch.includedirs or imgui_fetch.sysincludedirs) do
+                        os.mkdir(inc)
+                    end
+                end
+            end
+        end
+        io.replace("CMakeLists.txt", [[find_package(imgui CONFIG REQUIRED)]], [[include(FindPkgConfig)
+pkg_search_module("imgui" REQUIRED IMPORTED_TARGET "imgui")]], {plain = true})
+        io.replace("CMakeLists.txt", [[imgui::imgui]], [[PkgConfig::imgui]], {plain = true})
         if package:is_plat("wasm") then
             io.replace("CMakeLists.txt", [[target_compile_options(${PROJECT_NAME} PRIVATE -mavx2 -mfma)]], [[target_compile_options(${PROJECT_NAME} PRIVATE -msimd128 -mavx2)]], {plain = true})
         end

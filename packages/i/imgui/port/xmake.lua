@@ -2,8 +2,6 @@ add_rules("mode.debug", "mode.release")
 add_rules("utils.install.cmake_importfiles")
 set_languages("cxx14")
 
-option("vers", {description = "Set the version"})
-
 option("dx9",              {showmenu = true,  default = false})
 option("dx10",             {showmenu = true,  default = false})
 option("dx11",             {showmenu = true,  default = false})
@@ -55,7 +53,6 @@ if has_config("freetype") then
 end
 
 target("imgui")
-    set_version("$(vers)")
     set_kind("$(kind)")
     add_files("*.cpp", "misc/cpp/*.cpp")
     add_headerfiles("*.h", "(misc/cpp/*.h)")
