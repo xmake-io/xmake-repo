@@ -15,6 +15,7 @@ package("zeus_expected")
     add_versions("v1.0.0", "a0d81798b777f9bfcc1e1e4f3046632067bd8c6071dbfcbec5012a31a5aebc68")
 
     add_patches("v1.0.0", path.join(os.scriptdir(), "patches", "v1.0.0", "fix_typename.patch"), "710d71f8c765a2937df25a2c52abec24f5f4ef5f43281f6aa01853d0498e2a47")
+    add_patches("v1.3.0", "patches/v1.3.0/fix_member_access_in_unexpected.patch", "6a79a62cc5c535203c6efca68eb2b4a0caf54a53bd95eadd29415d23da68f88c")
 
     on_install(function (package)
         os.cp("include", package:installdir())
