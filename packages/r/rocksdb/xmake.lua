@@ -6,6 +6,8 @@ package("rocksdb")
     add_urls("https://github.com/facebook/rocksdb/archive/refs/tags/$(version).tar.gz",
              "https://github.com/facebook/rocksdb.git")
 
+    add_versions("v10.2.1", "d1ddfd3551e649f7e2d180d5a6a006d90cfde56dcfe1e548c58d95b7f1c87049")
+    add_versions("v10.1.3", "df44cbca43d2002726ebbdd5caeae1701dcdf0500d4c2065d6fca261b4706a37")
     add_versions("v10.0.1", "3fdc9ca996971c4c039959866382c4a3a6c8ade4abf888f3b2ff77153e07bf28")
     add_versions("v9.11.2", "0466a3c220464410687c45930f3fa944052229c894274fddb7d821397f2b8fba")
     add_versions("v9.10.0", "fdccab16133c9d927a183c2648bcea8d956fb41eb1df2aacaa73eb0b95e43724")
@@ -83,9 +85,9 @@ package("rocksdb")
                 table.insert(configs, "-DWITH_MD_LIBRARY=" .. (vs_runtime:startswith("MD") and "ON" or "OFF"))
             end
         end
-        local cxflags
+        local cxflags = {"-include", "cstdint"}
         if package:is_plat("mingw") then
-            cxflags = "-DMINGW_HAS_SECURE_API"
+            table.insert(cxflags, "-DMINGW_HAS_SECURE_API")
         end
         import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
     end)
