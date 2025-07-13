@@ -7,6 +7,7 @@ package("xtensor")
     add_urls("https://github.com/xtensor-stack/xtensor/archive/refs/tags/$(version).tar.gz",
              "https://github.com/xtensor-stack/xtensor.git")
 
+    add_versions("0.27.0", "9ca1743048492edfcc841bbe01f58520ff9c595ec587c0e7dc2fc39deeef3e04")
     add_versions("0.25.0", "32d5d9fd23998c57e746c375a544edf544b74f0a18ad6bc3c38cbba968d5e6c7")
     add_versions("0.24.7", "0fbbd524dde2199b731b6af99b16063780de6cf1d0d6cb1f3f4d4ceb318f3106")
     add_versions("0.24.3", "3acde856b9fb8cf4e2a7b66726da541275d40ab9b002e618ad985ab97f08ca4f")
