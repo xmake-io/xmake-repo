@@ -135,6 +135,11 @@ package("drogon")
                 end
             end
         end
+
+        local openssl = package:dep("openssl")
+        if not openssl:is_system() then
+            table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
