@@ -27,6 +27,8 @@ package("ceres-solver")
     end)
 
     on_install("windows|x64", "windows|x86", "linux", "macosx", function (package)
+        io.replace("cmake/FindSuiteSparse.cmake", "set (CMAKE_REQUIRED_LIBRARIES SuiteSparse::CHOLMOD METIS::METIS)",
+                   "set (CMAKE_REQUIRED_LIBRARIES SuiteSparse::Config SuiteSparse::CHOLMOD SuiteSparse::COLAMD SuiteSparse::CCOLAMD SuiteSparse::AMD SuiteSparse::CAMD METIS::METIS -lm -lgomp)", {plain = true})
         local configs = {
             "-DBUILD_TESTING=OFF",
             "-DBUILD_DOCUMENTATION=OFF",
