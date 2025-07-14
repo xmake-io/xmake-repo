@@ -14,7 +14,12 @@ package("superlu")
     add_configs("blas", {description = "Choose BLAS library to use.", default = "openblas", type = "string", values = {"mkl", "openblas"}})
 
     on_load("windows|!arm64", "linux", "macosx", function (package)
-        package:add("deps", package:config("blas"))
+        local blas_lib = package:config("blas")
+        if blas_lib == "openblas" and is_plat("macosx") then
+                package:add("deps", "openblas", {configs = {fortran = true}})
+        else
+            package:add("deps", blas_lib)
+        end
     end)
 
     on_install("windows|!arm64", "linux", "macosx", function (package)
