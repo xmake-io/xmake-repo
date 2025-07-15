@@ -24,13 +24,13 @@ package("xtensor")
     on_load(function (package)
         local version = package:version()
         if version and version:ge("0.26.0") then
-            package:add("deps", "xtl >=0.8.0")
+            package:add("deps", "xtl ^0.8.0")
         else
             package:add("deps", "xtl ^0.7.0")
         end
         if package:config("simd") then
             if version and version:ge("0.26.0") then
-                package:add("deps", "xsimd >=13.2.0")
+                package:add("deps", "xsimd ^13.2.0")
             else
                 package:add("deps", "xsimd ^11.0.0")
             end
@@ -52,11 +52,19 @@ package("xtensor")
     end)
 
     on_test(function (package)
+        local includes, languages
+        if package:version() and package:version():ge("0.26.0") then
+            languages = "c++17"
+            includes = {"xtensor/containers/xarray.hpp", "xtensor/views/xview.hpp"}
+        else
+            languages = "c++14"
+            includes = {"xtensor/xarray.hpp", "xtensor/xview.hpp"}
+        end
         assert(package:check_cxxsnippets({test = [[
             void test() {
                 xt::xarray<double> arr1{{1.0,2.0,3.0},{2.0,5.0,7.0},{2.0,5.0,7.0}};
                 xt::xarray<double> arr2{5.0,6.0,7.0};
                 xt::xarray<double> res = xt::view(arr1, 1) + arr2;
             }
-        ]]}, {configs = {languages = "c++14"}, includes = {"xtensor/xarray.hpp", "xtensor/xview.hpp"}}))
+        ]]}, {configs = {languages = languages}, includes = includes}))
     end)
