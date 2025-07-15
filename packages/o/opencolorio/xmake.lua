@@ -40,8 +40,11 @@ package("opencolorio")
         local minizip_ng = package:dep("minizip-ng")
         local version = package:version()
         if version then
+            -- Fix GCC 15
             if version:ge("2.3.0") then
-                -- Fix GCC 15
+                io.replace("include/OpenColorIO/OpenColorIO.h", "#include <string>", "#include <string>\n#include <cstdint>", {plain = true})
+            end
+            if version:lt("2.4.0") then
                 io.replace("src/OpenColorIO/FileRules.cpp", "#include <cctype>", "#include <cctype>\n#include <cstring>", {plain = true})
             end
             if version:lt("2.3.0") then
