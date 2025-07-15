@@ -16,22 +16,38 @@ package("xtensor")
     add_versions("0.23.10", "2e770a6d636962eedc868fef4930b919e26efe783cd5d8732c11e14cf72d871c")
 
     add_configs("simd", {description = "Enable SIMD acceleration ", default = true, type = "boolean"})
+    add_configs("tbb", {description = "Enable parallelization using intel TBB", default = false, type = "boolean"})
+    add_configs("openmp", {description = "Enable parallelization using OpenMP", default = false, type = "boolean"})
 
     add_deps("cmake")
 
-    on_load(function (package) 
-        if package:version() and package:version():ge("0.26.0") then
+    on_load(function (package)
+        local version = package:version()
+        if version and version:ge("0.26.0") then
             package:add("deps", "xtl >=0.8.0")
         else
             package:add("deps", "xtl ^0.7.0")
         end
         if package:config("simd") then
-            package:add("deps", "xsimd ^11.0.0")
+            if version and version:ge("0.26.0") then
+                package:add("deps", "xsimd >=13.2.0")
+            else
+                package:add("deps", "xsimd ^11.0.0")
+            end
+        end
+        if package:config("tbb") then
+            package:add("deps", "tbb")
+        end
+        if package:config("openmp") then
+            package:add("deps", "openmp")
         end
     end)
 
     on_install("windows", "macosx", "linux", "mingw@windows", function (package)
-        local configs = {"-DXTENSOR_USE_XSIMD=" .. (package:config("simd") and "ON" or "OFF")}
+        local configs = {}
+        table.insert(configs, "-DXTENSOR_USE_XSIMD=" .. (package:config("simd") and "ON" or "OFF"))
+        table.insert(configs, "-DXTENSOR_USE_TBB=" .. (package:config("tbb") and "ON" or "OFF"))
+        table.insert(configs, "-DXTENSOR_USE_OPENMP=" .. (package:config("openmp") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, {packagedeps = "xsimd"})
     end)
 
