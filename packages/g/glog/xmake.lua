@@ -49,7 +49,9 @@ package("glog")
 
         -- fix cmake try run
         if package:is_plat("mingw") then
-            table.insert(configs, "-DHAVE_SYMBOLIZE_EXITCODE=ON")
+            table.insert(configs, "-DHAVE_SYMBOLIZE_EXITCODE=0")
+        elseif package:is_plat("windows") and package:is_arch("arm64") then
+            table.insert(configs, "-DHAVE_SYMBOLIZE_EXITCODE=1")
         end
 
         import("package.tools.cmake").install(package, configs)

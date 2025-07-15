@@ -23,6 +23,8 @@ package("gflags")
     end)
 
     on_install(function (package)
+        io.replace("CMakeLists.txt", "cmake_minimum_required (VERSION 3.5 FATAL_ERROR)",
+                   "cmake_minimum_required (VERSION 3.5 FATAL_ERROR)\nif(POLICY CMP0057)\ncmake_policy(SET CMP0057 NEW)\nendif()", {plain = true})
         local configs = {
             "-DBUILD_TESTING=OFF",
             "-DGFLAGS_REGISTER_BUILD_DIR=OFF",

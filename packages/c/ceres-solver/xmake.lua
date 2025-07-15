@@ -14,7 +14,7 @@ package("ceres-solver")
     add_configs("suitesparse", {description = "Enable SuiteSparse.", default = true, type = "boolean"})
     add_configs("cuda", {description = "Enable CUDA support.", default = false, type = "boolean"})
 
-    add_deps("cmake", "eigen", "glog", "gflags")
+    add_deps("cmake", "eigen", "glog", "gflags", "pkgconf")
 
     on_load(function (package)
         if package:config("suitesparse") then
@@ -36,6 +36,9 @@ package("ceres-solver")
                      set(SuiteSparse_Partition_FOUND TRUE)
                      set(SuiteSparse_VERSION ${SUITESPARSE_CONFIG_VERSION})]], {plain = true})
         io.replace("CMakeLists.txt", "SuiteSparse_NO_CMAKE OR NOT SuiteSparse_DIR", "0", {plain = true})
+        io.replace("internal/ceres/CMakeLists.txt", "list(APPEND CERES_LIBRARY_PRIVATE_DEPENDENCIES Threads::Threads)",
+                   "include(FindPkgConfig)\npkg_search_module(gklib REQUIRED IMPORTED_TARGET gklib)\nlist(APPEND CERES_LIBRARY_PRIVATE_DEPENDENCIES Threads::Threads PkgConfig::gklib)", {plain = true})
+        
         local configs = {
             "-DBUILD_TESTING=OFF",
             "-DBUILD_DOCUMENTATION=OFF",
