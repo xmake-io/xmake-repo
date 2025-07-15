@@ -13,7 +13,7 @@ package("xproperty")
     add_deps("nlohmann_json")
 
     on_install(function (package)
-        import("package.tools.cmake").install(package)
+        import("package.tools.cmake").install(package, {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"})
     end)
 
     on_test(function (package)
