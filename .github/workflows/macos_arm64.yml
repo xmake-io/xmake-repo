@@ -31,8 +31,6 @@ jobs:
           wget https://curl.haxx.se/ca/cacert.pem -O /tmp/cacert.pem
           export CURL_CA_BUNDLE=/tmp/cacert.pem
           sudo ln -s /opt/homebrew/bin/gfortran-14 /opt/homebrew/bin/gfortran
-          sudo mkdir /opt/homebrew/gfortran
-          sudo ln -s /opt/homebrew/Cellar/gcc@14/14.3.0/lib/gcc/14 /opt/homebrew/gfortran/lib
           export PATH="$PATH:/opt/homebrew/Cellar/gcc@14/14.3.0/libexec/gcc/aarch64-apple-darwin23/14/"
           export LIBRARY_PATH="$LIBRARY_PATH:/opt/homebrew/Cellar/gcc@14/14.3.0/lib/gcc/14/"
           export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/homebrew/Cellar/gcc@14/14.3.0/lib/gcc/14/"
