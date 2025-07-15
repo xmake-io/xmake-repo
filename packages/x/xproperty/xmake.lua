@@ -4,12 +4,15 @@ package("xproperty")
     set_description("Traitlets-like C++ properties and implementation of the observer pattern")
     set_license("BSD-3-Clause")
 
-    add_urls("https://github.com/jupyter-xeus/xproperty.git")
-    add_versions("2021.04.13", "4e5cc851733ad5f57dd75c33d3beb75aba2569aa")
+    add_urls("https://github.com/jupyter-xeus/xproperty/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/jupyter-xeus/xproperty.git")
 
-    add_deps("cmake", "xtl")
+    add_versions("0.12.0", "27cbc8e441dcc515a1ebbf11bad5ef240748d32f5e1adf84deed87a1dc57a440")
 
-    on_install("windows", "linux", "macosx", function (package)
+    add_deps("cmake")
+    add_deps("xtl")
+
+    on_install(function (package)
         import("package.tools.cmake").install(package)
     end)
 
@@ -25,5 +28,5 @@ package("xproperty")
                 Foo foo;
                 XOBSERVE(foo, bar, [](Foo& f){});
             }
-        ]]}, {configs = {languages = "c++14"}}))
+        ]]}, {configs = {languages = "c++17"}}))
     end)
