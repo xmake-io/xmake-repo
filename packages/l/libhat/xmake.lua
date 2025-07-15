@@ -6,6 +6,7 @@ package("libhat")
     add_urls("https://github.com/BasedInc/libhat/archive/refs/tags/$(version).tar.gz",
              "https://github.com/BasedInc/libhat.git")
 
+    add_versions("v0.6.0", "9e25b898277d0bc248e1860ef11acd2dcd860d7fcdadb04d038588c60a850a4f")
     add_versions("v0.5.0", "d68a1913bfed2eaa087ea2d8c19ac82c9301839df1bc1beea97b22b532e48adc")
 
     add_configs("sse", {description = "Enable SSE 4.1 scanning", default = false, type = "boolean"})
