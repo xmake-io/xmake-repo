@@ -7,7 +7,7 @@ package("libbacktrace")
 
     add_deps("autotools")
 
-    on_install("!windows", function (package)
+    on_install("linux", "macosx", "bsd", "mingw", "msys", "cross", "iphoneos", "wasm", "android@linux,macosx", function (package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         if package:is_debug() then
