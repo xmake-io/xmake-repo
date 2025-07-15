@@ -27,6 +27,15 @@ package("ceres-solver")
     end)
 
     on_install("windows|x64", "windows|x86", "linux", "macosx", function (package)
+        io.replace("CMakeLists.txt", "find_package(SuiteSparse 4.5.6 COMPONENTS CHOLMOD SPQR\n    OPTIONAL_COMPONENTS Partition)",
+                   [[find_package(CHOLMOD REQUIRED)
+                     find_package(SPQR REQUIRED)
+                     add_library (SuiteSparse::Partition IMPORTED INTERFACE)
+                     set_property (TARGET SuiteSparse::Partition APPEND PROPERTY INTERFACE_LINK_LIBRARIES SuiteSparse::CHOLMOD)
+                     set(SuiteSparse_FOUND TRUE)
+                     set(SuiteSparse_Partition_FOUND TRUE)
+                     set(SuiteSparse_VERSION ${SUITESPARSE_CONFIG_VERSION})]], {plain = true})
+        io.replace("CMakeLists.txt", "SuiteSparse_NO_CMAKE OR NOT SuiteSparse_DIR", "0", {plain = true})
         local configs = {
             "-DBUILD_TESTING=OFF",
             "-DBUILD_DOCUMENTATION=OFF",
@@ -38,7 +47,7 @@ package("ceres-solver")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DMSVC_USE_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DMSVC_USE_STATIC_CRT=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
         end
         table.insert(configs, "-DSUITESPARSE=" .. (package:config("suitesparse") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_CUDA=" .. (package:config("cuda") and "ON" or "OFF"))
