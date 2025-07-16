@@ -41,44 +41,45 @@ void test() { uint64_t *v;
 __atomic_store_n(&v, 0, __ATOMIC_ACQUIRE); }]])
 
 option("HAVE_GETIPINFO")
-    set_showmenu(false)
     add_cincludes("unwind.h")
     add_cfuncs("_Unwind_GetIPInfo")
     set_configvar("HAVE_GETIPINFO", 1)
+    set_showmenu(false)
 option_end()
 
 if is_plat("wasm") then
     set_configvar("HAVE_DL_ITERATE_PHDR", 0)
 else
     option("HAVE_DL_ITERATE_PHDR")
-        set_showmenu(false)
         add_cincludes("link.h")
         add_cfuncs("dl_iterate_phdr")
+        add_defines("_GNU_SOURCE")
         set_configvar("HAVE_DL_ITERATE_PHDR", 1)
+        set_showmenu(false)
     option_end()
 end
 option("HAVE_MACH_O_DYLD_H")
-    set_showmenu(false)
     add_cincludes("mach-o/dyld.h")
     set_configvar("HAVE_MACH_O_DYLD_H", 1)
+    set_showmenu(false)
 option_end()
 
 option("HAVE_WINDOWS_H")
-    set_showmenu(false)
     add_cincludes("windows.h")
     set_configvar("HAVE_WINDOWS_H", 1)
+    set_showmenu(false)
 option_end()
 
 option("HAVE_LOADQUERY")
-    set_showmenu(false)
     add_cincludes("sys/ldr.h")
     set_configvar("HAVE_LOADQUERY", 1)
+    set_showmenu(false)
 option_end()
 
 option("HAVE_SYS_MMAN_H")
-    set_showmenu(false)
     add_cincludes("sys/mman.h")
     set_configvar("HAVE_SYS_MMAN_H", 1)
+    set_showmenu(false)
 option_end()
 
 configvar_check_cfuncs("HAVE_GETEXECNAME", "getexecname", {includes = "stdlib.h"})
