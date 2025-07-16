@@ -2,6 +2,8 @@ option("arch64", {default = "64", type = "string", values = {"64", "32"}})
 
 includes("@builtin/check")
 
+set_configvar("_GNU_SOURCE", 1)
+
 configvar_check_cfuncs("BACKTRACE_SUPPORTED", "backtrace", {includes = "execinfo.h"})
 if is_plat("linux", "android", "bsd") then
     set_configvar("BACKTRACE_USES_MALLOC", 0)
