@@ -34,7 +34,7 @@ package("libbacktrace")
         end
         local configs = {arch64 = package:is_arch64() and "64" or "32"}
         io.gsub("config.h.in", "# *undef (.-)\n", "${define %1}\n")
-        io.gsub("backtrace-supported.h.in", "# *undef (.-)\n", "${define %1}\n")
+        io.gsub("backtrace-supported.h.in", "# *define (.-)\n", "${define %1}\n")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
     end)
