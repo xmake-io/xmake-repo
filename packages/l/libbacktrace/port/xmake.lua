@@ -3,11 +3,6 @@ option("arch64", {default = "64", type = "string", values = {"64", "32"}})
 includes("@builtin/check")
 
 configvar_check_cfuncs("BACKTRACE_SUPPORTED", "backtrace", {includes = "execinfo.h"})
-if is_plat("linux", "android", "bsd") then
-    set_configvar("BACKTRACE_USES_MALLOC", 0)
-else
-    set_configvar("BACKTRACE_USES_MALLOC", 1)
-end
 configvar_check_cfuncs("BACKTRACE_SUPPORTS_THREADS", "backtrace_create_state", {includes = "execinfo.h"})
 configvar_check_cfuncs("BACKTRACE_SUPPORTS_DATA", "backtrace_syminfo", {includes = "execinfo.h"})
 
@@ -82,6 +77,12 @@ option("HAVE_SYS_MMAN_H")
     set_configvar("HAVE_SYS_MMAN_H", 1)
     set_showmenu(false)
 option_end()
+
+if has_config("HAVE_SYS_MMAN_H") then
+    set_configvar("BACKTRACE_USES_MALLOC", 0)
+else
+    set_configvar("BACKTRACE_USES_MALLOC", 1)
+end
 
 configvar_check_cfuncs("HAVE_GETEXECNAME", "getexecname", {includes = "stdlib.h"})
 configvar_check_cfuncs("HAVE_KERN_PROC", "KERN_PROC", {includes = "sys/sysctl.h"})
