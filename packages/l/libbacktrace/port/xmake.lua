@@ -110,7 +110,7 @@ if is_plat("windows") then
     add_requires("unistd_h")
 end
 
-set_languages("c++11")
+set_languages("c11")
 add_rules("utils.install.cmake_importfiles")
 add_rules("mode.debug", "mode.release")
 
