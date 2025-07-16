@@ -47,13 +47,16 @@ option("HAVE_GETIPINFO")
     set_configvar("HAVE_GETIPINFO", 1)
 option_end()
 
-option("HAVE_DL_ITERATE_PHDR")
-    set_showmenu(false)
-    add_cincludes("link.h")
-    add_cfuncs("dl_iterate_phdr")
-    set_configvar("HAVE_DL_ITERATE_PHDR", 1)
-option_end()
-
+if is_plat("wasm") then
+    set_configvar("HAVE_DL_ITERATE_PHDR", 0)
+else
+    option("HAVE_DL_ITERATE_PHDR")
+        set_showmenu(false)
+        add_cincludes("link.h")
+        add_cfuncs("dl_iterate_phdr")
+        set_configvar("HAVE_DL_ITERATE_PHDR", 1)
+    option_end()
+end
 option("HAVE_MACH_O_DYLD_H")
     set_showmenu(false)
     add_cincludes("mach-o/dyld.h")
@@ -111,7 +114,10 @@ add_rules("mode.debug", "mode.release")
 
 target("libbacktrace")
     set_kind("$(kind)")
-    add_options("HAVE_GETIPINFO", "HAVE_DL_ITERATE_PHDR", "HAVE_MACH_O_DYLD_H", "HAVE_WINDOWS_H", "HAVE_LOADQUERY", "HAVE_SYS_MMAN_H")
+    add_options("HAVE_GETIPINFO", "HAVE_MACH_O_DYLD_H", "HAVE_WINDOWS_H", "HAVE_LOADQUERY", "HAVE_SYS_MMAN_H")
+    if not is_plat("wasm") then
+        add_options("HAVE_DL_ITERATE_PHDR")
+    end
     add_includedirs(".")
     add_headerfiles("backtrace.h")
     set_configdir(".")

@@ -13,7 +13,7 @@ package("libbacktrace")
         add_deps("unistd_h")
     end
 
-    on_install("!wasm", function (package)
+    on_install(function (package)
         if package:is_plat("windows") then
             local internal_h_content = io.readfile("internal.h")
             io.writefile("internal.h", internal_h_content .. [[
