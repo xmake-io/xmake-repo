@@ -120,6 +120,8 @@ target("libbacktrace")
     add_options("HAVE_GETIPINFO", "HAVE_MACH_O_DYLD_H", "HAVE_WINDOWS_H", "HAVE_LOADQUERY", "HAVE_SYS_MMAN_H")
     if not is_plat("wasm") then
         add_options("HAVE_DL_ITERATE_PHDR")
+    else
+        add_defines("_POSIX_C_SOURCE=200809L", "_DEFAULT_SOURCE")
     end
     add_includedirs(".")
     add_headerfiles("backtrace.h")
