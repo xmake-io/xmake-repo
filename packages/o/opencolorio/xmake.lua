@@ -7,6 +7,7 @@ package("opencolorio")
              "https://github.com/AcademySoftwareFoundation/OpenColorIO.git")
 
     add_versions("v2.4.2", "2d8f2c47c40476d6e8cea9d878f6601d04f6d5642b47018eaafa9e9f833f3690")
+    add_versions("v2.3.2", "6bbf4e7fa4ea2f743a238cb22aff44890425771a2f57f62cece1574e46ceec2f")
     add_versions("v2.1.1", "16ebc3e0f21f72dbe90fe60437eb864f4d4de9c255ef8e212f837824fc9b8d9c")
     add_versions("v2.1.0", "81fc7853a490031632a69c73716bc6ac271b395e2ba0e2587af9995c2b0efb5f")
 
@@ -39,11 +40,14 @@ package("opencolorio")
         local minizip_ng = package:dep("minizip-ng")
         local version = package:version()
         if version then
-            if version:lt("2.2.0") then
-                -- Fix GCC 15
-                io.replace("src/OpenColorIO/FileRules.cpp", "#include <cctype>", "#include <cctype>\n#include <cstring>", {plain = true})
+            -- Fix GCC 15
+            if version:ge("2.3.0") then
+                io.replace("include/OpenColorIO/OpenColorIO.h", "#include <string>", "#include <string>\n#include <cstdint>", {plain = true})
             end
             if version:lt("2.4.0") then
+                io.replace("src/OpenColorIO/FileRules.cpp", "#include <cctype>", "#include <cctype>\n#include <cstring>", {plain = true})
+            end
+            if version:lt("2.3.0") then
                 os.rm("share/cmake/modules/Findyaml-cpp.cmake")
                 io.replace("src/OpenColorIO/CMakeLists.txt", "yaml-cpp", "yaml-cpp::yaml-cpp", {plain = true})
             end
