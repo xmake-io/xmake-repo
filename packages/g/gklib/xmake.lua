@@ -19,8 +19,7 @@ package("gklib")
     end
 
     on_install("!iphoneos", function (package)
-        import("lib.detect.has_cincludes")
-        if has_cincludes("execinfo.h")  then
+        if package:has_cincludes("execinfo.h") then
             package:add("defines",  "HAVE_EXECINFO_H")
         end
 

@@ -7,7 +7,7 @@ package("gflags")
     add_urls("https://github.com/gflags/gflags/archive/refs/tags/$(version).tar.gz",
              "https://github.com/gflags/gflags.git")
     add_versions("v2.2.2", "34af2f15cf7367513b352bdcd2493ab14ce43692d2dcd9dfc499492966c64dcf")
-    add_patches("v2.2.2", path.join(os.scriptdir(), "patches", "v2.2.2", "fix-cmake.patch"), "a2b9f99fe1421723aacd66e1a268efcb23c3dbf357776d4942c0bb25fc89d15c")
+    add_patches("v2.2.2", path.join(os.scriptdir(), "patches", "v2.2.2", "fix-cmake.patch"), "03c256993c42bf8d1f8dfd100d552fda9e0cf000e02f4aee2fd6b33a3563be56")
 
     add_configs("mt", {description = "Build the multi-threaded gflags library.", default = true, type = "boolean"})
     add_deps("cmake")
@@ -23,8 +23,6 @@ package("gflags")
     end)
 
     on_install(function (package)
-        io.replace("CMakeLists.txt", "cmake_minimum_required (VERSION 3.0.2 FATAL_ERROR)",
-                   "cmake_minimum_required (VERSION 3.0.2 FATAL_ERROR)\nif(POLICY CMP0057)\ncmake_policy(SET CMP0057 NEW)\nendif()", {plain = true})
         local configs = {
             "-DBUILD_TESTING=OFF",
             "-DGFLAGS_REGISTER_BUILD_DIR=OFF",

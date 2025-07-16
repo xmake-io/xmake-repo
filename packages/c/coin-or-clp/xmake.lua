@@ -24,7 +24,7 @@ package("coin-or-clp")
         end
     end)
 
-    add_includedirs("include")
+    add_includedirs("include", "include/coin")
 
     on_install(function (package)
         io.replace("Clp/src/ClpSolve.cpp", "#define UFL_BARRIER", "", {plain = true})

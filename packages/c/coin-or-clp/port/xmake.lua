@@ -58,8 +58,8 @@ target("clp")
      "Clp/src/*Abc*.cpp"
     )
     add_includedirs("Clp/src")
-    add_headerfiles("Clp/src/*.hpp", "Clp/src/*.h")
-    add_headerfiles("Clp/src/OsiClp/*.hpp")
+    add_headerfiles("Clp/src/*.hpp", "Clp/src/*.h", {prefixdir = "coin"})
+    add_headerfiles("Clp/src/OsiClp/*.hpp", {prefixdir = "coin"})
     remove_headerfiles(
      "Clp/src/ClpCholeskyMumps.hpp",
      "Clp/src/ClpCholeskyUfl.hpp",
