@@ -7,7 +7,7 @@ package("gflags")
     add_urls("https://github.com/gflags/gflags/archive/refs/tags/$(version).tar.gz",
              "https://github.com/gflags/gflags.git")
     add_versions("v2.2.2", "34af2f15cf7367513b352bdcd2493ab14ce43692d2dcd9dfc499492966c64dcf")
-    add_patches("v2.2.2", path.join(os.scriptdir(), "patches", "v2.2.2", "fix-cmake.patch"), "03c256993c42bf8d1f8dfd100d552fda9e0cf000e02f4aee2fd6b33a3563be56")
+    add_patches("v2.2.2", "patches/v2.2.2/fix-cmake.patch", "03c256993c42bf8d1f8dfd100d552fda9e0cf000e02f4aee2fd6b33a3563be56")
 
     add_configs("mt", {description = "Build the multi-threaded gflags library.", default = true, type = "boolean"})
     add_deps("cmake")
