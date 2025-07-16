@@ -38,7 +38,7 @@ configvar_check_csnippets("HAVE_ATOMIC_FUNCTIONS", [[#include <stdio.h>
 #include <stdatomic.h>
 #include <stdint.h>
 void test() { uint64_t *v;
-__atomic_store_n(&v, 0, __ATOMIC_RELEASE); }]], {default = 0})
+__atomic_store_n(&v, 0, __ATOMIC_ACQUIRE); }]], {default = 0})
 
 option("HAVE_GETIPINFO")
     set_showmenu(false)
