@@ -1,19 +1,21 @@
 package("libbacktrace")
     set_homepage("https://github.com/ianlancetaylor/libbacktrace")
     set_description("A C library that may be linked into a C/C++ program to produce symbolic backtraces")
+    set_license("BSD-3-Clause")
 
     add_urls("https://github.com/ianlancetaylor/libbacktrace.git")
     add_versions("2025.04.10", "793921876c981ce49759114d7bb89bb89b2d3a2d")
 
-    add_deps("autotools")
+    add_configs("arch64", {default = "64", type = "string", values = {"64", "32"}})
 
-    on_install("linux", "macosx", "bsd", "mingw", "msys", "cross", "iphoneos", "wasm", "android@linux,macosx", function (package)
-        local configs = {}
-        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
-        if package:is_debug() then
-            table.insert(configs, "--enable-debug")
-        end
-        import("package.tools.autoconf").install(package, configs)
+    add_deps("xz", "zlib", "zstd")
+
+    on_install(function (package)
+        local configs = {arch64 = package:is_arch64() and "64" or "32"}
+        io.gsub("config.h.in", "# *undef (.-)\n", "${define %1}\n")
+        io.gsub("backtrace-supported.h.in", "# *undef (.-)\n", "${define %1}\n")
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
