@@ -13,6 +13,12 @@ package("libbacktrace")
         add_deps("unistd_h")
     end
 
+    on_check("cross", function (package)
+        if not package:is_arch64() then
+            assert(false, "package(libbacktrace): Unsupported on non-arch64 cross.")
+        end
+    end)
+
     on_install(function (package)
         if package:is_plat("windows") then
             local internal_h_content = io.readfile("internal.h")
