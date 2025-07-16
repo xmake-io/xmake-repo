@@ -7,6 +7,7 @@ package("xtensor")
     add_urls("https://github.com/xtensor-stack/xtensor/archive/refs/tags/$(version).tar.gz",
              "https://github.com/xtensor-stack/xtensor.git")
 
+    add_versions("0.27.0", "9ca1743048492edfcc841bbe01f58520ff9c595ec587c0e7dc2fc39deeef3e04")
     add_versions("0.26.0", "f5f42267d850f781d71097b50567a480a82cd6875a5ec3e6238555e0ef987dc6")
     add_versions("0.25.0", "32d5d9fd23998c57e746c375a544edf544b74f0a18ad6bc3c38cbba968d5e6c7")
     add_versions("0.24.7", "0fbbd524dde2199b731b6af99b16063780de6cf1d0d6cb1f3f4d4ceb318f3106")
@@ -52,9 +53,14 @@ package("xtensor")
     end)
 
     on_test(function (package)
+        local version = package:version()
         local includes, languages
-        if package:version() and package:version():ge("0.26.0") then
-            languages = "c++17"
+        if version then
+            if version:ge("0.27.0") then
+                languages = "c++20"
+            else
+                languages = "c++17"
+            end
             includes = {"xtensor/containers/xarray.hpp", "xtensor/views/xview.hpp"}
         else
             languages = "c++14"
