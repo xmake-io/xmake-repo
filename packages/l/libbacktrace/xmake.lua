@@ -9,6 +9,9 @@ package("libbacktrace")
     add_configs("arch64", {default = "64", type = "string", values = {"64", "32"}})
 
     add_deps("xz", "zlib", "zstd")
+    if is_plat("windows", "mingw") then
+        add_deps("unistd_h")
+    end
 
     on_install(function (package)
         local configs = {arch64 = package:is_arch64() and "64" or "32"}

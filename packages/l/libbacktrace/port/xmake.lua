@@ -65,6 +65,10 @@ set_configvar("HAVE_ZSTD", 1)
 
 add_requires("xz", "zlib", "zstd")
 
+if is_plat("windows", "mingw") then
+    add_requires("unistd_h")
+end
+
 set_languages("c++11")
 add_rules("utils.install.cmake_importfiles")
 add_rules("mode.debug", "mode.release")
@@ -78,6 +82,9 @@ target("libbacktrace")
     add_configfiles("(backtrace-supported.h.in)", {filename = "backtrace-supported.h"})
     add_files("atomic.c", "dwarf.c", "fileline.c", "posix.c", "print.c", "sort.c", "state.c")
     add_packages("xz", "zlib", "zstd")
+    if is_plat("windows", "mingw") then
+        add_packages("unistd_h")
+    end
 
     if is_plat("linux", "bsd") then
         add_syslinks("dl", "m", "pthread", "rt")
