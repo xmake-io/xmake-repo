@@ -1,4 +1,5 @@
 option("arch64", {default = "64", type = "string", values = {"64", "32"}})
+set_version("1.0.0")
 
 includes("@builtin/check")
 
