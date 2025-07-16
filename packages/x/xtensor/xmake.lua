@@ -53,9 +53,14 @@ package("xtensor")
     end)
 
     on_test(function (package)
+        local version = package:version()
         local includes, languages
-        if package:version() and package:version():ge("0.26.0") then
-            languages = "c++17"
+        if version then
+            if version:ge("0.27.0") then
+                languages = "c++20"
+            else
+                languages = "c++17"
+            end
             includes = {"xtensor/containers/xarray.hpp", "xtensor/views/xview.hpp"}
         else
             languages = "c++14"
