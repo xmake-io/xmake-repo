@@ -148,20 +148,16 @@ target("libbacktrace")
     
     if has_config("HAVE_DL_ITERATE_PHDR") then
         add_files("elf.c")
-        set_configvar("HAVE_ELF", 1)
     elseif has_config("HAVE_MACH_O_DYLD_H") then
         add_files("macho.c")
-        set_configvar("HAVE_MACH_O", 1)
     elseif has_config("HAVE_WINDOWS_H") then
         add_files("pecoff.c")
-        set_configvar("HAVE_PECOFF", 1)
     elseif has_config("HAVE_LOADQUERY") then
         add_files("xcoff.c")
-        set_configvar("HAVE_XCOFF", 1)
     else
         add_files("unknown.c")
     end
-    
+
     if has_config("HAVE_SYS_MMAN_H") then
         add_files("mmapio.c", "mmap.c")
     else
