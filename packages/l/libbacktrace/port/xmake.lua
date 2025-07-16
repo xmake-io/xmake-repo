@@ -38,7 +38,7 @@ configvar_check_csnippets("HAVE_ATOMIC_FUNCTIONS", [[#include <stdio.h>
 #include <stdatomic.h>
 #include <stdint.h>
 void test() { uint64_t *v;
-__atomic_store_n(&v, 0, __ATOMIC_ACQUIRE); }]], {default = 0})
+__atomic_store_n(&v, 0, __ATOMIC_ACQUIRE); }]])
 
 option("HAVE_GETIPINFO")
     set_showmenu(false)
@@ -83,7 +83,7 @@ configvar_check_cfuncs("HAVE_KERN_PROC", "KERN_PROC", {includes = "sys/sysctl.h"
 configvar_check_cfuncs("HAVE_KERN_PROC_ARGS", "KERN_PROC_ARGS", {includes = "sys/sysctl.h"})
 configvar_check_csnippets("HAVE_SYNC_FUNCTIONS", [[#include <stdio.h>
 #include <pthread.h>
-void test() { __sync_synchronize(); }]], {default = 0})
+void test() { __sync_synchronize(); }]])
 
 if has_config("arch64") then
     if get_config("arch64") == "64" then
