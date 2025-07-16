@@ -27,6 +27,8 @@ package("oboe")
             io.writefile("xmake.lua", [[
                 add_rules("mode.release", "mode.debug")
                 add_rules("utils.install.cmake_importfiles")
+                option("version", {description = "Set the version"})
+                set_version("$(version)", {soname = true})
                 target("oboe")
                     set_kind("$(kind)")
                     set_languages("c++17")
@@ -43,7 +45,7 @@ package("oboe")
                     add_syslinks("log", "OpenSLES")
                     add_ldflags("-Wl,-z,max-page-size=16384")
             ]])
-            import("package.tools.xmake").install(package)
+            import("package.tools.xmake").install(package, {version = package:version()})
         end
     end)
 
