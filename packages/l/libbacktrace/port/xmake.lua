@@ -34,7 +34,11 @@ configvar_check_cfuncs("HAVE_READLINK", "readlink", {includes = "unistd.h"})
 configvar_check_cfuncs("HAVE_DECL_GETPAGESIZE", "getpagesize", {includes = "unistd.h"})
 configvar_check_cfuncs("HAVE_DECL_STRNLEN", "strnlen", {includes = "string.h"})
 configvar_check_cfuncs("HAVE_DECL__PGMPTR", "_pgmptr", {includes = {"stdlib.h", "stdio.h"}})
-configvar_check_cfuncs("HAVE_ATOMIC_FUNCTIONS", "__atomic_store_n", {includes = {"stdio.h", "stdatomic.h"}})
+configvar_check_csnippets("HAVE_ATOMIC_FUNCTIONS", [[#include <stdio.h>
+#include <stdatomic.h>
+#include <stdint.h>
+void test() { uint64_t *v;
+__atomic_store_n(&v, 0, __ATOMIC_RELEASE); }]], {default = 0})
 
 option("HAVE_GETIPINFO")
     set_showmenu(false)
