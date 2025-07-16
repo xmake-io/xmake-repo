@@ -9,11 +9,23 @@ package("libbacktrace")
     add_configs("arch64", {default = "64", type = "string", values = {"64", "32"}})
 
     add_deps("xz", "zlib", "zstd")
-    if is_plat("windows", "mingw") then
+    if is_plat("windows") then
         add_deps("unistd_h")
     end
 
     on_install(function (package)
+        if package:is_plat("windows") then
+            local internal_h_content = io.readfile("internal.h")
+            io.writefile("internal.h", internal_h_content .. [[
+    #if !defined(_SSIZE_T_) && !defined(_SSIZE_T_DEFINED)
+    # ifndef ssize_t
+    typedef intptr_t ssize_t;
+    # endif
+    # define SSIZE_MAX INTPTR_MAX
+    # define _SSIZE_T_
+    # define _SSIZE_T_DEFINED
+    #endif]])
+        end
         local configs = {arch64 = package:is_arch64() and "64" or "32"}
         io.gsub("config.h.in", "# *undef (.-)\n", "${define %1}\n")
         io.gsub("backtrace-supported.h.in", "# *undef (.-)\n", "${define %1}\n")

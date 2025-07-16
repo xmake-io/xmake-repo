@@ -65,7 +65,7 @@ set_configvar("HAVE_ZSTD", 1)
 
 add_requires("xz", "zlib", "zstd")
 
-if is_plat("windows", "mingw") then
+if is_plat("windows") then
     add_requires("unistd_h")
 end
 
@@ -82,7 +82,7 @@ target("libbacktrace")
     add_configfiles("(backtrace-supported.h.in)", {filename = "backtrace-supported.h"})
     add_files("atomic.c", "dwarf.c", "fileline.c", "posix.c", "print.c", "sort.c", "state.c")
     add_packages("xz", "zlib", "zstd")
-    if is_plat("windows", "mingw") then
+    if is_plat("windows") then
         add_packages("unistd_h")
     end
 
@@ -120,4 +120,8 @@ target("libbacktrace")
         add_files("mmapio.c", "mmap.c")
     else
         add_files("read.c", "alloc.c")
+    end
+
+    if is_plat("windows") and is_kind("shared") then
+        add_rules("utils.symbols.export_all")
     end
