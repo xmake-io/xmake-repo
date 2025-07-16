@@ -6,6 +6,7 @@ package("libplist")
     set_urls("https://github.com/libimobiledevice/libplist/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libimobiledevice/libplist.git")
 
+    add_versions("2.7.0", "66fa17a29270cb25ceaf189430ea38037c066652c2989b58d7ef6120b1a208d3")
     add_versions("2.6.0", "e6491c2fa3370e556ac41b8705dd7f8f0e772c8f78641c3878cabd45bd84d950")
     add_versions("2.2.0", "7e654bdd5d8b96f03240227ed09057377f06ebad08e1c37d0cfa2abe6ba0cee2")
 
