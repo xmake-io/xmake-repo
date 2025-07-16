@@ -77,7 +77,9 @@ option_end()
 configvar_check_cfuncs("HAVE_GETEXECNAME", "getexecname", {includes = "stdlib.h"})
 configvar_check_cfuncs("HAVE_KERN_PROC", "KERN_PROC", {includes = "sys/sysctl.h"})
 configvar_check_cfuncs("HAVE_KERN_PROC_ARGS", "KERN_PROC_ARGS", {includes = "sys/sysctl.h"})
-configvar_check_cfuncs("HAVE_SYNC_FUNCTIONS", "__sync_synchronize", {includes = {"stdio.h", "pthread.h"}})
+configvar_check_csnippets("HAVE_SYNC_FUNCTIONS", [[#include <stdio.h>
+#include <pthread.h>
+void test() { __sync_synchronize(); }]], {default = 0})
 
 if has_config("arch64") then
     if get_config("arch64") == "64" then
