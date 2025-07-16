@@ -58,8 +58,8 @@ target("clp")
      "Clp/src/*Abc*.cpp"
     )
     add_includedirs("Clp/src")
-    add_headerfiles("Clp/src/*.hpp", "Clp/src/*.h")
-    add_headerfiles("Clp/src/OsiClp/*.hpp")
+    add_headerfiles("Clp/src/*.hpp", "Clp/src/*.h", {prefixdir = "coin"})
+    add_headerfiles("Clp/src/OsiClp/*.hpp", {prefixdir = "coin"})
     remove_headerfiles(
      "Clp/src/ClpCholeskyMumps.hpp",
      "Clp/src/ClpCholeskyUfl.hpp",
@@ -74,4 +74,4 @@ target("clp")
     if is_plat("windows") and is_kind("shared") then
         add_rules("utils.symbols.export_all", {export_classes = true})
     end
-    add_packages("coin-or-coinutils", "coin-or-osi", "glpk")
+    add_packages("coin-or-coinutils", "coin-or-osi")

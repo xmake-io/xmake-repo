@@ -19,8 +19,8 @@ end
 
 includes("@builtin/check")
 
-configvar_check_cincludes("HAVE_EXECINFO_H", "execinfo.h")
-configvar_check_cfuncs("HAVE_GETLINE", "getline")
+check_cincludes("HAVE_STDBOOL_H", "stdbool.h")
+check_cfuncs("HAVE_GETLINE", "getline")
 
 target("gklib")
     set_kind("$(kind)")
@@ -44,6 +44,9 @@ target("gklib")
         add_defines("_FILE_OFFSET_BITS=64")
     elseif is_plat("bsd") then
         add_syslinks("m")
+    end
+    if is_plat("linux", "bsd", "macosx") then
+        add_cflags("-fvisibility=default")
     end
 
     on_config(function (target)

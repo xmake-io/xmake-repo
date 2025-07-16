@@ -48,8 +48,8 @@ package("glog")
         end
 
         -- fix cmake try run
-        if package:is_plat("mingw") then
-            table.insert(configs, "-DHAVE_SYMBOLIZE_EXITCODE=ON")
+        if package:is_plat("mingw") or (package:is_plat("windows") and package:is_arch("arm64")) then
+            table.insert(configs, "-DHAVE_SYMBOLIZE_EXITCODE=1")
         end
 
         import("package.tools.cmake").install(package, configs)
@@ -57,7 +57,7 @@ package("glog")
         -- fix https://github.com/xmake-io/xmake-repo/discussions/4221
         if package:version() and package:version():ge("0.7.0") then
             io.replace(path.join(package:installdir("include"), "glog/logging.h"),
-                "#define GLOG_LOGGING_H", "#define GLOG_LOGGING_H\n#define GLOG_USE_GLOG_EXPORT", {plain = true})
+                "#define GLOG_LOGGING_H", "#define GLOG_LOGGING_H\n#ifndef GLOG_USE_GLOG_EXPORT\n#define GLOG_USE_GLOG_EXPORT\n#endif", {plain = true})
         end
     end)
 
