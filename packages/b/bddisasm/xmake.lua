@@ -47,18 +47,13 @@ package("bddisasm")
         table.insert(configs, "-DBDD_USE_EXTERNAL_MEMSET=" .. (package:config("memset") and "ON" or "OFF"))
         table.insert(configs, "-DBDD_NO_MNEMONIC=" .. (package:config("mnemonics") and "OFF" or "ON"))
         table.insert(configs, "-DBDD_INCLUDE_TOOL=" .. (package:config("tools") and "ON" or "OFF"))
-        if package:is_plat("windows") then
-            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
-            if package:config("shared") then
-                table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
-            end
+        if package:config("shared") and package:is_plat("windows") then
+            table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
         import("package.tools.cmake").install(package, configs)
-
-        if package:is_plat("windows") and package:is_debug() then
-            local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.vcp(path.join(package:buildir(), "*.pdb"), dir)
-        end
+        -- patch v3.0.0
+        os.trycp("inc/bdx86_api_legacy.h", package:installdir("include/bddisasm"))
+        os.trycp("inc/bdx86_api_mini.h", package:installdir("include/bddisasm"))
     end)
 
     on_test(function (package)
