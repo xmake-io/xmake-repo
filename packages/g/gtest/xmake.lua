@@ -29,17 +29,22 @@ package("gtest")
     end
 
     on_install(function (package)
-        io.writefile("xmake.lua", [[
+        local std = "cxx14"
+        if package:version():gt("1.16.0") then
+            std = "cxx17"
+        end
+
+        io.writefile("xmake.lua", format([[
             target("gtest")
                 set_kind("static")
-                set_languages("cxx14")
+                set_languages("%s")
                 add_files("googletest/src/gtest-all.cc")
                 add_includedirs("googletest/include", "googletest")
                 add_headerfiles("googletest/include/(**.h)")
 
             target("gtest_main")
                 set_kind("static")
-                set_languages("cxx14")
+                set_languages("%s")
                 set_default(]] .. tostring(package:config("main")) .. [[)
                 add_files("googletest/src/gtest_main.cc")
                 add_includedirs("googletest/include", "googletest")
@@ -47,16 +52,20 @@ package("gtest")
 
             target("gmock")
                 set_kind("static")
-                set_languages("cxx14")
+                set_languages("%s")
                 set_default(]] .. tostring(package:config("gmock")) .. [[)
                 add_files("googlemock/src/gmock-all.cc")
                 add_includedirs("googlemock/include", "googlemock", "googletest/include", "googletest")
                 add_headerfiles("googlemock/include/(**.h)")
-        ]])
+        ]], std, std, std))
         import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
+        local std = "c++14"
+        if package:version():gt("1.16.0") then
+            std = "c++17"
+        end
         assert(package:check_cxxsnippets({test = [[
             int factorial(int number) { return number <= 1 ? number : factorial(number - 1) * number; }
             TEST(FactorialTest, Zero) {
@@ -66,7 +75,7 @@ package("gtest")
               EXPECT_EQ(6, factorial(3));
               EXPECT_EQ(3628800, factorial(10));
             }
-        ]]}, {configs = {languages = "c++14"}, includes = "gtest/gtest.h"}))
+        ]]}, {configs = {languages = std}, includes = "gtest/gtest.h"}))
 
         if package:config("gmock") then
             assert(package:check_cxxsnippets({test = [[
@@ -98,6 +107,6 @@ package("gtest")
 
                     EXPECT_TRUE(b_obj.b_foo());
                 }
-            ]]}, {configs = {languages = "c++14"}, includes = {"gtest/gtest.h", "gmock/gmock.h"}}))
+            ]]}, {configs = {languages = std}, includes = {"gtest/gtest.h", "gmock/gmock.h"}}))
         end
     end)
