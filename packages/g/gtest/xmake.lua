@@ -33,18 +33,16 @@ package("gtest")
         if package:version():gt("1.16.0") then
             std = "cxx17"
         end
-
         io.writefile("xmake.lua", format([[
+            set_languages("%s")
             target("gtest")
                 set_kind("static")
-                set_languages("%s")
                 add_files("googletest/src/gtest-all.cc")
                 add_includedirs("googletest/include", "googletest")
                 add_headerfiles("googletest/include/(**.h)")
 
             target("gtest_main")
                 set_kind("static")
-                set_languages("%s")
                 set_default(]] .. tostring(package:config("main")) .. [[)
                 add_files("googletest/src/gtest_main.cc")
                 add_includedirs("googletest/include", "googletest")
@@ -52,12 +50,11 @@ package("gtest")
 
             target("gmock")
                 set_kind("static")
-                set_languages("%s")
                 set_default(]] .. tostring(package:config("gmock")) .. [[)
                 add_files("googlemock/src/gmock-all.cc")
                 add_includedirs("googlemock/include", "googlemock", "googletest/include", "googletest")
                 add_headerfiles("googlemock/include/(**.h)")
-        ]], std, std, std))
+        ]], std))
         import("package.tools.xmake").install(package)
     end)
 
