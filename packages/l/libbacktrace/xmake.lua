@@ -6,7 +6,7 @@ package("libbacktrace")
     add_urls("https://github.com/ianlancetaylor/libbacktrace.git")
     add_versions("2025.04.10", "793921876c981ce49759114d7bb89bb89b2d3a2d")
 
-    add_configs("arch64", {default = "64", type = "string", values = {"64", "32"}})
+    add_configs("bitswidth", {default = "64", type = "string", values = {"64", "32"}})
 
     add_deps("xz", "zlib", "zstd")
     if is_plat("windows") then
@@ -32,7 +32,7 @@ package("libbacktrace")
     # define _SSIZE_T_DEFINED
     #endif]])
         end
-        local configs = {arch64 = package:is_arch64() and "64" or "32"}
+        local configs = {bitswidth = package:is_arch64() and "64" or "32"}
         io.gsub("config.h.in", "# *undef (.-)\n", "${define %1}\n")
         io.gsub("backtrace-supported.h.in", "# *define (.-)\n", "${define %1}\n")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
