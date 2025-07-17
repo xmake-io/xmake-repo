@@ -1,4 +1,4 @@
-option("arch64", {default = "64", type = "string", values = {"64", "32"}})
+option("bitswidth", {default = "64", type = "string", values = {"64", "32"}})
 set_version("1.0.0")
 
 includes("@builtin/check")
@@ -92,8 +92,8 @@ configvar_check_csnippets("HAVE_SYNC_FUNCTIONS", [[#include <stdio.h>
 #include <pthread.h>
 void test() { __sync_synchronize(); }]])
 
-if has_config("arch64") then
-    if get_config("arch64") == "64" then
+if has_config("bitswidth") then
+    if get_config("bitswidth") == "64" then
         set_configvar("BACKTRACE_ELF_SIZE", 64)
         set_configvar("BACKTRACE_XCOFF_SIZE", 64)
     else
