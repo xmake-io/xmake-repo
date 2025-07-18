@@ -8,7 +8,6 @@ package("libyuv")
 
     -- Versions from LIBYUV_VERSION definition in include/libyuv/version.h
     -- Pay attention to package commits incrementing this definition
-    add_versions("git:1913", "6f729fbe658a40dfd993fa8b22bd612bb17cde5c")
     add_versions("git:1891", "611806a1559b92c97961f51c78805d8d9d528c08")
 
     add_patches("1891", "patches/1891/cmake.patch", "87086566b2180f65ff3d5ef9db7c59a6e51e2592aeeb787e45305beb4cf9d30d")
@@ -52,13 +51,6 @@ package("libyuv")
         table.insert(configs, "-DLIBYUV_WITH_JPEG=" .. (package:config("jpeg") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
-        if package:config("shared") then
-            os.tryrm(package:installdir("lib/*.a"))
-        else
-            os.tryrm(package:installdir("lib/*.dll"))
-            os.tryrm(package:installdir("lib/*.dylib"))
-            os.tryrm(package:installdir("lib/*.so"))
-        end
     end)
 
     on_test(function (package)
