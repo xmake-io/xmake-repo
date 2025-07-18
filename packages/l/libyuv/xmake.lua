@@ -4,19 +4,12 @@ package("libyuv")
     set_license("BSD-3-Clause")
 
     add_urls("https://chromium.googlesource.com/libyuv/libyuv.git",
-             "https://github.com/lemenkov/libyuv.git")
+             "https://github.com/lemenkov/libyuv.git", {alias = "git"})
 
-    add_urls("https://github.com/lemenkov/libyuv/archive/$(version).tar.gz", {
-        version = function (version)
-            -- Versions from LIBYUV_VERSION definition in include/libyuv/version.h
-            -- Pay attention to package commits incrementing this definition
-            local table = {
-                ["1891"] = "611806a1559b92c97961f51c78805d8d9d528c08",
-            }
-            return table[tostring(version)]
-        end})
-
-    add_versions("1891", "a8dddc6f45d6987cd3c08e00824792f3c72651fde29f475f572ee2292c03761f")
+    -- Versions from LIBYUV_VERSION definition in include/libyuv/version.h
+    -- Pay attention to package commits incrementing this definition
+    add_versions("git:1913", "6f729fbe658a40dfd993fa8b22bd612bb17cde5c")
+    add_versions("git:1891", "611806a1559b92c97961f51c78805d8d9d528c08")
 
     add_patches("1891", "patches/1891/cmake.patch", "87086566b2180f65ff3d5ef9db7c59a6e51e2592aeeb787e45305beb4cf9d30d")
 
@@ -33,11 +26,6 @@ package("libyuv")
         on_check("android", function (package)
             local ndk = package:toolchain("ndk"):config("ndkver")
             assert(ndk and tonumber(ndk) > 22, "package(libyuv): need ndk version > 22")
-        end)
-        on_check("linux", function (package)
-            if package:is_arch("arm64") then
-                raise("package(libyuv) unsupport compile flags -march=armv9-a+sme")
-            end
         end)
     end
 
@@ -64,6 +52,13 @@ package("libyuv")
         table.insert(configs, "-DLIBYUV_WITH_JPEG=" .. (package:config("jpeg") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
+        if package:config("shared") then
+            os.tryrm(package:installdir("lib/*.a"))
+        else
+            os.tryrm(package:installdir("lib/*.dll"))
+            os.tryrm(package:installdir("lib/*.dylib"))
+            os.tryrm(package:installdir("lib/*.so"))
+        end
     end)
 
     on_test(function (package)
