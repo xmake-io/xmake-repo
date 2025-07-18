@@ -6,6 +6,7 @@ package("libdrm")
     add_urls("https://dri.freedesktop.org/libdrm/libdrm-$(version).tar.xz",
              "https://gitlab.freedesktop.org/mesa/drm.git")
 
+    add_versions("2.4.125", "d4bae92797a50f81a93524762e0410a49cd84cfa0f997795bc0172ac8fb1d96a")
     add_versions("2.4.123", "a2b98567a149a74b0f50e91e825f9c0315d86e7be9b74394dae8b298caadb79e")
     add_versions("2.4.118", "a777bd85f2b5fc9c57f886c82058300578317cafdbc77d0a769d7e9a9567ab88")
 
