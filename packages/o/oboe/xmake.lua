@@ -52,7 +52,7 @@ package("oboe")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             void test() {
-                oboe::FifoBuffer * buf = new oboe::FifoBuffer(4, 10240);
+                oboe::FifoBuffer * buf = new oboe::FifoBuffer(2, 10240);
                 auto bytes = buf->convertFramesToBytes(32);
             }
         ]]}, {configs = {languages = "c++17"}, includes = "oboe/Oboe.h"}))
