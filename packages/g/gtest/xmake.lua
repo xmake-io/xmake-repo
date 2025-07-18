@@ -5,6 +5,7 @@ package("gtest")
 
     add_urls("https://github.com/google/googletest/archive/refs/tags/$(version).zip", {alias = "archive"})
     add_urls("https://github.com/google/googletest.git", {alias = "github"})
+
     add_versions("github:v1.8.1", "release-1.8.1")
     add_versions("archive:v1.8.1", "927827c183d01734cc5cfef85e0ff3f5a92ffe6188e0d18e909c5efebf28a0c7")
     add_versions("github:v1.10.0", "release-1.10.0")
@@ -15,6 +16,7 @@ package("gtest")
     add_versions("archive:v1.12.0", "ce7366fe57eb49928311189cb0e40e0a8bf3d3682fca89af30d884c25e983786")
     add_versions("github:v1.12.1", "release-1.12.1")
     add_versions("archive:v1.12.1", "24564e3b712d3eb30ac9a85d92f7d720f60cc0173730ac166f27dda7fed76cb2")
+
     add_versions("v1.13.0", "ffa17fbc5953900994e2deec164bb8949879ea09b411e07f215bfbb1f87f4632")
     add_versions("v1.14.0", "1f357c27ca988c3f7c6b4bf68a9395005ac6761f034046e9dde0896e3aba00e4")
     add_versions("v1.15.2", "f179ec217f9b3b3f3c6e8b02d3e7eda997b49e4ce26d6b235c9053bec9c0bf9f")
@@ -30,26 +32,26 @@ package("gtest")
 
     on_install(function (package)
         local std = "cxx14"
-        if package:version():gt("1.16.0") then
+        if package:version() and package:version():gt("1.16.0") then
             std = "cxx17"
         end
         io.writefile("xmake.lua", format([[
             set_languages("%s")
             target("gtest")
-                set_kind("static")
+                set_kind("$(kind)")
                 add_files("googletest/src/gtest-all.cc")
                 add_includedirs("googletest/include", "googletest")
                 add_headerfiles("googletest/include/(**.h)")
 
             target("gtest_main")
-                set_kind("static")
+                set_kind("$(kind)")
                 set_default(]] .. tostring(package:config("main")) .. [[)
                 add_files("googletest/src/gtest_main.cc")
                 add_includedirs("googletest/include", "googletest")
                 add_headerfiles("googletest/include/(**.h)")
 
             target("gmock")
-                set_kind("static")
+                set_kind("$(kind)")
                 set_default(]] .. tostring(package:config("gmock")) .. [[)
                 add_files("googlemock/src/gmock-all.cc")
                 add_includedirs("googlemock/include", "googlemock", "googletest/include", "googletest")
@@ -60,7 +62,7 @@ package("gtest")
 
     on_test(function (package)
         local std = "c++14"
-        if package:version():gt("1.16.0") then
+        if package:version() and package:version():gt("1.16.0") then
             std = "c++17"
         end
         assert(package:check_cxxsnippets({test = [[
