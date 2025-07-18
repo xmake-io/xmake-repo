@@ -30,6 +30,12 @@ package("gtest")
         add_syslinks("pthread")
     end
 
+    on_load(function (package)
+        if package:config("shared") and package:is_plat("windows") then
+            package:add("defines", "GTEST_LINKED_AS_SHARED_LIBRARY=1")
+        end
+    end)
+
     on_install(function (package)
         local std = "cxx14"
         if package:version() and package:version():gt("1.16.0") then
@@ -42,13 +48,16 @@ package("gtest")
                 add_files("googletest/src/gtest-all.cc")
                 add_includedirs("googletest/include", "googletest")
                 add_headerfiles("googletest/include/(**.h)")
+                if is_kind("shared") and is_plat("windows") then
+                    add_defines("GTEST_CREATE_SHARED_LIBRARY=1")
+                end
 
             target("gtest_main")
                 set_kind("$(kind)")
                 set_default(]] .. tostring(package:config("main")) .. [[)
                 add_files("googletest/src/gtest_main.cc")
                 add_includedirs("googletest/include", "googletest")
-                add_headerfiles("googletest/include/(**.h)")
+                add_deps("gtest")
 
             target("gmock")
                 set_kind("$(kind)")
@@ -56,6 +65,10 @@ package("gtest")
                 add_files("googlemock/src/gmock-all.cc")
                 add_includedirs("googlemock/include", "googlemock", "googletest/include", "googletest")
                 add_headerfiles("googlemock/include/(**.h)")
+                if is_kind("shared") and is_plat("windows") then
+                    add_defines("GTEST_CREATE_SHARED_LIBRARY=1")
+                end
+                add_deps("gtest")
         ]], std))
         import("package.tools.xmake").install(package)
     end)
