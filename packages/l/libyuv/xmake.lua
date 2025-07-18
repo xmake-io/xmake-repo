@@ -36,7 +36,7 @@ package("libyuv")
         end)
         on_check("linux", function (package)
             if package:is_arch("arm64") then
-                raise("package(libuv) unsupport compile flags -march=armv9-a+sme")
+                raise("package(libyuv) unsupport compile flags -march=armv9-a+sme")
             end
         end)
     end
