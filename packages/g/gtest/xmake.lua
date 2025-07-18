@@ -26,7 +26,7 @@ package("gtest")
     add_configs("main",  {description = "Link to the gtest_main entry point.", default = false, type = "boolean"})
     add_configs("gmock", {description = "Link to the googlemock library.", default = true, type = "boolean"})
 
-    if is_plat("linux") then
+    if is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
 
@@ -42,6 +42,7 @@ package("gtest")
             std = "cxx17"
         end
         io.writefile("xmake.lua", format([[
+            add_rules("utils.install.cmake_importfiles")
             set_languages("%s")
             target("gtest")
                 set_kind("$(kind)")
