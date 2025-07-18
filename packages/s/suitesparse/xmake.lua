@@ -5,6 +5,7 @@ package("suitesparse")
 
     add_urls("https://github.com/DrTimothyAldenDavis/SuiteSparse/archive/refs/tags/$(version).tar.gz",
              "https://github.com/DrTimothyAldenDavis/SuiteSparse.git")
+    add_versions("v7.10.3", "09e7bcc8e5de0a5b55d2ae9fd6378d5f4dc1b85a933593339a0872b24e2cc102")
     add_versions("v7.8.1", "b645488ec0d9b02ebdbf27d9ae307f705de2b6133edb64617a72c7b4c6c3ff44")
     add_versions("v7.7.0", "529b067f5d80981f45ddf6766627b8fc5af619822f068f342aab776e683df4f3")
     add_versions("v7.6.0", "19cbeb9964ebe439413dd66d82ace1f904adc5f25d8a823c1b48c34bd0d29ea5")
