@@ -15,7 +15,7 @@ package("luau")
     add_versions("0.623", "5a72f9e5b996c5ec44ee2c7bd9448d2b2e5061bdf7d057de7490f92fb3003f40")
     add_versions("0.538", "8a1240e02a7daacf1e5cff249040a3298c013157fc496c66adce6dcb21cc30be")
 
-    add_configs("extern_c", { description = "Use extern C for all APIs.", default = false, type = "boolean" })
+    add_configs("extern_c", { description = "Use extern C for all APIs.", default = true, type = "boolean" })
     add_configs("build_web", { description = "Build web module.", default = false, type = "boolean" })
 
     add_deps("cmake")
@@ -79,17 +79,33 @@ package("luau")
     end)
 
     on_test(function(package)
-        assert(package:check_cxxsnippets({ test = [[
-            #include <lua.h>
-            #include <luacode.h>
-            #include <lualib.h>
+        if package:config("extern_c") then
+            assert(package:check_cxxsnippets({ test = [[
+                extern "C" {
+                    #include <lua.h>
+                    #include <luacode.h>
+                    #include <lualib.h>
+                }
 
-            void test() {
-                auto L = luaL_newstate();
-                luaL_openlibs(L);
-                lua_close(L);
-            }
-        ]]}, {configs = {languages = "cxx11"}}))
+                void test() {
+                    lua_State* L = luaL_newstate();
+                    luaL_openlibs(L);
+                    lua_close(L);
+                }
+            ]]}, {configs = {languages = "cxx11"}}))
+        else
+            assert(package:check_cxxsnippets({ test = [[
+                #include <lua.h>
+                #include <luacode.h>
+                #include <lualib.h>
+
+                void test() {
+                    lua_State* L = luaL_newstate();
+                    luaL_openlibs(L);
+                    lua_close(L);
+                }
+            ]]}, {configs = {languages = "cxx11"}}))
+        end
         assert(package:check_cxxsnippets({ test = [[
             #include <Luau/Common.h>
 
