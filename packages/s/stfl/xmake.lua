@@ -24,7 +24,7 @@ package("stfl")
         end
     end)
 
-    on_install("linux", "bsd", "macosx", "cross", "android", function (package)
+    on_install("!wasm and !iphoneos and !mingw and @!windows", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             add_requires("ncurses")
