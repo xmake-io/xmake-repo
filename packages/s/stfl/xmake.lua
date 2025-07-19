@@ -9,11 +9,22 @@ package("stfl")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
+    elseif is_plat("macosx") then
+        add_syslinks("iconv")
     end
 
     add_deps("ncurses")
 
-    on_install("!wasm and !iphoneos and @!windows", function (package)
+    on_check("android", function (package)
+        local ndk = package:toolchain("ndk")
+        local ndkver = ndk:config("ndkver")
+        local ndk_sdkver = ndk:config("ndk_sdkver")
+        if ndkver and tonumber(ndkver) <= 22 then
+            assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(stfl) require ndk api level > 21")
+        end
+    end)
+
+    on_install("linux", "bsd", "macosx", "cross", "android", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             add_requires("ncurses")
@@ -27,6 +38,8 @@ package("stfl")
 
                 if is_plat("linux", "bsd") then
                     add_syslinks("pthread")
+                elseif is_plat("macosx") then
+                    add_syslinks("iconv")
                 end
                 add_packages("ncurses")
         ]])
