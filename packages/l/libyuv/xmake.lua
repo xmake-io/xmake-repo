@@ -42,9 +42,9 @@ package("libyuv")
 
     on_install("!cross", function (package)
         if package:is_plat("iphoneos") then
-            io.replace("CMakeLists.txt",
-            [[STRING(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" arch_lowercase)]],
-            [[set(arch_lowercase "]] .. package:arch() .. [[")]], {plain = true})
+            local patch = [[set(arch_lowercase "]] .. package:arch() .. [[")]]
+            io.replace("CMakeLists.txt", [[STRING(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" arch_lowercase)]], patch, {plain = true})
+            io.replace("CMakeLists.txt", [[string(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" arch_lowercase)]], patch, {plain = true})
         end
         -- fix linux arm64 build error
         -- -- commit 1724c4be72f32d2f04eead939f7b3f35ad4e39e3
