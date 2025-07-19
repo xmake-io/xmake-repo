@@ -106,7 +106,7 @@ index 21e44153..e3154d7f 100644
 +    aui_link(aui.audio PRIVATE soxr)
 +endif ()
 diff --git a/aui.core/CMakeLists.txt b/aui.core/CMakeLists.txt
-index 6aa1b072..6552c008 100644
+index 6aa1b072..5cb497f6 100644
 --- a/aui.core/CMakeLists.txt
 +++ b/aui.core/CMakeLists.txt
 @@ -6,7 +6,9 @@ option(AUI_ENABLE_ASAN "Enable AddressSanitizer" OFF)
@@ -135,7 +135,7 @@ index 6aa1b072..6552c008 100644
          set(_use_backtrace TRUE)
      else()
  
-@@ -84,7 +90,11 @@ endif()
+@@ -84,13 +90,17 @@ endif()
  
  if(_use_backtrace)
      message(STATUS "Stacktrace backend: backtrace")
@@ -148,6 +148,13 @@ index 6aa1b072..6552c008 100644
      target_compile_definitions(aui.core PRIVATE AUI_USE_BACKTRACE=1)
  elseif(_use_unwind)
      message(STATUS "Stacktrace backend: unwind")
+     target_compile_definitions(aui.core PRIVATE AUI_USE_UNWIND=1)
+ elseif(WIN32)
+-    aui_link(aui.core PRIVATE dbghelp shlwapi.lib)
++    aui_link(aui.core PRIVATE dbghelp shell32 shlwapi.lib)
+     message(STATUS "Stacktrace backend: dbghelp")
+ else()
+     message(STATUS "Stacktrace backend: none")
 @@ -146,17 +156,23 @@ if (AUI_SHARED_PTR_FIND_INSTANCES)
  endif()
  

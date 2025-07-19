@@ -7,7 +7,7 @@ package("aui")
              "https://github.com/aui-framework/aui.git")
 
     add_versions("v7.1.2", "a4cf965c50d75e20a319c9c8b231ad9c13c25a06ad303e1eb65d1ff141b1f85c")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle.diff", "416f16ef7040aae0f50b750ddca1cb34a0493d4b209b911581ff0f38143ed793")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle.diff", "927c6f6ee6e0998f2e79d6d8cfc9dea8de62b301cf1baa1c84c325d5d654275b")
 
     add_deps("cmake")
     if is_subhost("windows") then
@@ -38,7 +38,7 @@ package("aui")
         add_deps("libbacktrace")
         add_syslinks("threads", "dl")
     elseif is_plat("windows", "mingw") then
-        add_syslinks("dbghelp", "shlwapi", "kernel32", "psapi")
+        add_syslinks("dbghelp", "shell32", "shlwapi", "kernel32", "psapi")
     elseif is_plat("android") then
         add_syslinks("log")
     end
