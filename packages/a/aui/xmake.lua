@@ -7,7 +7,7 @@ package("aui")
              "https://github.com/aui-framework/aui.git")
 
     add_versions("v7.1.2", "a4cf965c50d75e20a319c9c8b231ad9c13c25a06ad303e1eb65d1ff141b1f85c")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle.diff", "880a5b280e7df8d038c2dc90e1afe6c38902afeabdc6906e71aac517c11d118d")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle.diff", "416f16ef7040aae0f50b750ddca1cb34a0493d4b209b911581ff0f38143ed793")
 
     add_deps("cmake")
     if is_subhost("windows") then
@@ -91,6 +91,8 @@ package("aui")
         if not package:config("shared") then
             package:add("defines", "AUI_STATIC")
         end
+        package:add("defines", "AUI_DEBUG=" .. (package:is_debug() and "1" or "0"))
+        package:add("defines", "API_AUI_CORE=AUI_IMPORT")
     end)
 
     on_install("!bsd and !wasm", function (package)
