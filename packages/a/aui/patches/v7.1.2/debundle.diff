@@ -266,6 +266,27 @@ index 033e7ad5..a272f2b9 100644
 +if (NOT AUIB_DISABLE)
 +    aui_enable_tests(aui.image)
 +endif ()
+diff --git a/aui.image/src/AUI/Image/svg/SvgImageFactory.cpp b/aui.image/src/AUI/Image/svg/SvgImageFactory.cpp
+index 7b638202..c4449d5b 100644
+--- a/aui.image/src/AUI/Image/svg/SvgImageFactory.cpp
++++ b/aui.image/src/AUI/Image/svg/SvgImageFactory.cpp
+@@ -15,7 +15,15 @@
+ 
+ #include "SvgImageFactory.h"
+ #include "AUI/Common/AByteBuffer.h"
+-#include <lunasvg/lunasvg.h>
++#if defined(__has_include)
++    #if __has_include(<lunasvg/lunasvg.h>)
++        #include <lunasvg/lunasvg.h>
++    #else
++        #include <lunasvg.h>
++    #endif
++#else
++    #include <lunasvg.h>
++#endif
+ 
+ 
+ SvgImageFactory::SvgImageFactory(AByteBufferView buf) {
 diff --git a/aui.json/CMakeLists.txt b/aui.json/CMakeLists.txt
 index d0190bd5..980456da 100644
 --- a/aui.json/CMakeLists.txt

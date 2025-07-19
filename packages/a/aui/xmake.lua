@@ -7,7 +7,7 @@ package("aui")
              "https://github.com/aui-framework/aui.git")
 
     add_versions("v7.1.2", "a4cf965c50d75e20a319c9c8b231ad9c13c25a06ad303e1eb65d1ff141b1f85c")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle.diff", "38b541580f5d19535262f66962b929469e57c5a6c68a664360a98b29939275a7")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle.diff", "f5f21bb8813c342a62cde01a7023b106c896236043ab68ea073aefbea51382a9")
 
     add_deps("cmake")
     if is_subhost("windows") then
