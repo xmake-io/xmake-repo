@@ -19,7 +19,7 @@ package("stfl")
         local ndk = package:toolchain("ndk")
         local ndkver = ndk:config("ndkver")
         local ndk_sdkver = ndk:config("ndk_sdkver")
-        if ndkver and tonumber(ndkver) <= 22 then
+        if ndkver and tonumber(ndkver) == 27 then
             assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(stfl) require ndk api level > 21")
         end
     end)
