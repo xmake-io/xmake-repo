@@ -106,7 +106,7 @@ index 21e44153..e3154d7f 100644
 +    aui_link(aui.audio PRIVATE soxr)
 +endif ()
 diff --git a/aui.core/CMakeLists.txt b/aui.core/CMakeLists.txt
-index 6aa1b072..01e3fe81 100644
+index 6aa1b072..6552c008 100644
 --- a/aui.core/CMakeLists.txt
 +++ b/aui.core/CMakeLists.txt
 @@ -6,7 +6,9 @@ option(AUI_ENABLE_ASAN "Enable AddressSanitizer" OFF)
@@ -148,7 +148,7 @@ index 6aa1b072..01e3fe81 100644
      target_compile_definitions(aui.core PRIVATE AUI_USE_BACKTRACE=1)
  elseif(_use_unwind)
      message(STATUS "Stacktrace backend: unwind")
-@@ -146,17 +156,22 @@ if (AUI_SHARED_PTR_FIND_INSTANCES)
+@@ -146,17 +156,23 @@ if (AUI_SHARED_PTR_FIND_INSTANCES)
  endif()
  
  
@@ -156,13 +156,6 @@ index 6aa1b072..01e3fe81 100644
 -auib_import(fmt https://github.com/fmtlib/fmt
 -            VERSION 9.1.0
 -            CMAKE_ARGS -DFMT_TEST=FALSE -DFMT_DOC=FALSE)
--
--auib_import(range-v3 https://github.com/ericniebler/range-v3
--        VERSION 0.12.0
--        CMAKE_ARGS -DRANGE_V3_DOCS=OFF -DRANGE_V3_TESTS=OFF -DRANGE_V3_EXAMPLES=OFF -DRANGE_V3_PERF=OFF -DRANGE_V3_HEADER_CHECKS=OFF)
--# [auib_import examples]
--
--aui_link(aui.core PUBLIC fmt::fmt-header-only range-v3::range-v3)
 +if (AUIB_DISABLE)
 +    find_package(fmt CONFIG REQUIRED)
 +    find_package(range-v3 CONFIG REQUIRED)
@@ -172,11 +165,17 @@ index 6aa1b072..01e3fe81 100644
 +    auib_import(fmt https://github.com/fmtlib/fmt
 +                VERSION 9.1.0
 +                CMAKE_ARGS -DFMT_TEST=FALSE -DFMT_DOC=FALSE)
+ 
+-auib_import(range-v3 https://github.com/ericniebler/range-v3
+-        VERSION 0.12.0
+-        CMAKE_ARGS -DRANGE_V3_DOCS=OFF -DRANGE_V3_TESTS=OFF -DRANGE_V3_EXAMPLES=OFF -DRANGE_V3_PERF=OFF -DRANGE_V3_HEADER_CHECKS=OFF)
+-# [auib_import examples]
 +    auib_import(range-v3 https://github.com/ericniebler/range-v3
 +            VERSION 0.12.0
 +            CMAKE_ARGS -DRANGE_V3_DOCS=OFF -DRANGE_V3_TESTS=OFF -DRANGE_V3_EXAMPLES=OFF -DRANGE_V3_PERF=OFF -DRANGE_V3_HEADER_CHECKS=OFF)
 +    # [auib_import examples]
-+
+ 
+-aui_link(aui.core PUBLIC fmt::fmt-header-only range-v3::range-v3)
 +    aui_link(aui.core PUBLIC fmt::fmt-header-only range-v3::range-v3)
 +endif ()
  
@@ -229,25 +228,25 @@ index 5141c8ee..00be58b4 100644
  aui_link(aui.curl PUBLIC aui::core aui::json)
  aui_link(aui.curl PRIVATE CURL::libcurl aui::crypt)
 diff --git a/aui.image/CMakeLists.txt b/aui.image/CMakeLists.txt
-index 033e7ad5..a272f2b9 100644
+index 033e7ad5..1f8d8915 100644
 --- a/aui.image/CMakeLists.txt
 +++ b/aui.image/CMakeLists.txt
-@@ -1,8 +1,11 @@
+@@ -1,8 +1,12 @@
  cmake_minimum_required(VERSION 3.10)
  
 -auib_import(lunasvg https://github.com/aui-framework/lunasvg
 -            VERSION 272ceee)
--
 +if (AUIB_DISABLE)
 +    find_package(lunasvg CONFIG REQUIRED)
 +else ()
 +    auib_import(lunasvg https://github.com/aui-framework/lunasvg
 +                VERSION 272ceee)
+ 
 +endif ()
  
  set(WEBP_COMPONENTS_TO_DISABLE ANIM_UTILS CWEBP DWEBP GIF2WEBP IMG2WEBP VWEBP WEBPINFO LIBWEBPMUX WEBPMUX EXTRAS)
  
-@@ -10,9 +13,16 @@ foreach(_component ${WEBP_COMPONENTS_TO_DISABLE})
+@@ -10,9 +14,15 @@ foreach(_component ${WEBP_COMPONENTS_TO_DISABLE})
      list(APPEND WEBP_CMAKE_ARGS "-DWEBP_BUILD_${_component}=OFF")
  endforeach()
  
@@ -262,7 +261,6 @@ index 033e7ad5..a272f2b9 100644
  add_subdirectory(3rdparty)
  aui_link(aui.image PRIVATE aui::core lunasvg::lunasvg WebP::webp WebP::webpdemux)
 -aui_enable_tests(aui.image)
-+
 +if (NOT AUIB_DISABLE)
 +    aui_enable_tests(aui.image)
 +endif ()
@@ -366,7 +364,7 @@ index 5070f0a3..e4188094 100644
  aui_enable_tests(aui.uitests)
  aui_enable_benchmarks(aui.uitests)
 diff --git a/aui.views/CMakeLists.txt b/aui.views/CMakeLists.txt
-index dfe6b18b..ac4d3cf6 100644
+index dfe6b18b..556261df 100644
 --- a/aui.views/CMakeLists.txt
 +++ b/aui.views/CMakeLists.txt
 @@ -9,10 +9,14 @@ find_package(OpenGL)
@@ -405,7 +403,7 @@ index dfe6b18b..ac4d3cf6 100644
      endif ()
  
      aui_module(aui.views EXPORT aui)
-@@ -92,17 +100,33 @@ if (OPENGL_FOUND OR ANDROID OR IOS)
+@@ -92,17 +100,29 @@ if (OPENGL_FOUND OR ANDROID OR IOS)
          aui_link(aui.views PRIVATE Freetype::Freetype)
          aui_link(aui.views PRIVATE OpenGL::GL)
  
@@ -414,9 +412,18 @@ index dfe6b18b..ac4d3cf6 100644
 -            set_target_properties(GLEW::GLEW PROPERTIES INTERFACE_LINK_LIBRARIES "")
 +        if (AUIB_DISABLE)
 +            if (AUI_PLATFORM_LINUX)
-+                
 +                # glew defines unwanted dependencies to OpenGL which may vary from distro to distro; silence them
 +                set_target_properties(glew::glew PROPERTIES INTERFACE_LINK_LIBRARIES "")
++                auib_use_system_libs_begin()
++                find_package(X11 REQUIRED)
++                find_package(Fontconfig REQUIRED)
++                auib_use_system_libs_end()
++            endif ()
++            aui_link(aui.views PUBLIC glew::glew)
++        else ()
++            if (AUI_PLATFORM_LINUX)
++                # glew defines unwanted dependencies to OpenGL which may vary from distro to distro; silence them
++                set_target_properties(GLEW::GLEW PROPERTIES INTERFACE_LINK_LIBRARIES "")
  
 -            auib_use_system_libs_begin()
 -            find_package(X11 REQUIRED)
@@ -427,19 +434,6 @@ index dfe6b18b..ac4d3cf6 100644
 +                find_package(Fontconfig REQUIRED)
 +                auib_use_system_libs_end()
  
-+            endif ()
-+            aui_link(aui.views PUBLIC glew::glew)
-+        else ()
-+            if (AUI_PLATFORM_LINUX)
-+                
-+                # glew defines unwanted dependencies to OpenGL which may vary from distro to distro; silence them
-+                set_target_properties(GLEW::GLEW PROPERTIES INTERFACE_LINK_LIBRARIES "")
-+
-+                auib_use_system_libs_begin()
-+                find_package(X11 REQUIRED)
-+                find_package(Fontconfig REQUIRED)
-+                auib_use_system_libs_end()
-+
 +            endif ()
 +            aui_link(aui.views PUBLIC GLEW::GLEW)
          endif ()

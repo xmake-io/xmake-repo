@@ -7,7 +7,7 @@ package("aui")
              "https://github.com/aui-framework/aui.git")
 
     add_versions("v7.1.2", "a4cf965c50d75e20a319c9c8b231ad9c13c25a06ad303e1eb65d1ff141b1f85c")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle.diff", "f5f21bb8813c342a62cde01a7023b106c896236043ab68ea073aefbea51382a9")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle.diff", "880a5b280e7df8d038c2dc90e1afe6c38902afeabdc6906e71aac517c11d118d")
 
     add_deps("cmake")
     if is_subhost("windows") then
@@ -17,6 +17,7 @@ package("aui")
     end
     add_deps("zlib")
     -- aui.audio
+    add_includedirs("aui.audio/include")
     add_deps("libopus", "soxr")
     if is_plat("linux") then
         add_syslinks("pulse")
@@ -31,6 +32,7 @@ package("aui")
         end
     end
     -- aui.core
+    add_includedirs("aui.core/include")
     add_deps("fmt 9.1.0", "range-v3")
     if is_plat("linux") then
         add_deps("libbacktrace")
@@ -41,15 +43,31 @@ package("aui")
         add_syslinks("log")
     end
     -- aui.crypt
+    add_includedirs("aui.crypt/include")
     add_deps("openssl3")
     if is_plat("windows", "mingw") then
         add_syslinks("wsock32", "ws2_32")
     end
     -- aui.curl
+    add_includedirs("aui.curl/include")
     add_deps("libcurl")
     -- aui.image
+    add_includedirs("aui.image/include")
     add_deps("lunasvg", "libwebp")
+    -- aui.json
+    add_includedirs("aui.json/include")
+    -- aui.network
+    add_includedirs("aui.network/include")
+    if is_plat("windows", "mingw") then
+        add_syslinks("wsock32", "ws2_32", "iphlpapi")
+    end
+    -- aui.toolbox
+    add_includedirs("aui.toolbox/include")
+    -- aui.uitests
+    add_includedirs("aui.uitests/include")
+    add_deps("gtest", "benchmark")
     -- aui.views
+    add_includedirs("aui.views/include")
     add_deps("freetype")
     if is_plat("windows", "mingw", "linux", "macosx") then
         add_deps("glew")
@@ -66,12 +84,8 @@ package("aui")
     elseif is_plat("macosx") then
         add_frameworks("AppKit", "Cocoa", "CoreData", "Foundation", "QuartzCore", "UniformTypeIdentifiers")
     end
-    --aui.uitests
-    add_deps("gtest", "benchmark")
-    --aui.network
-    if is_plat("windows", "mingw") then
-        add_syslinks("wsock32", "ws2_32", "iphlpapi")
-    end
+    -- aui.xml
+    add_includedirs("aui.xml/include")
 
     on_install("!bsd and !wasm", function (package)
         local configs = {
