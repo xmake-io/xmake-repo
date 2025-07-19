@@ -421,7 +421,7 @@ index 5070f0a3..e4188094 100644
  aui_enable_tests(aui.uitests)
  aui_enable_benchmarks(aui.uitests)
 diff --git a/aui.views/CMakeLists.txt b/aui.views/CMakeLists.txt
-index dfe6b18b..556261df 100644
+index dfe6b18b..c5c1fb27 100644
 --- a/aui.views/CMakeLists.txt
 +++ b/aui.views/CMakeLists.txt
 @@ -9,10 +9,14 @@ find_package(OpenGL)
@@ -443,7 +443,7 @@ index dfe6b18b..556261df 100644
  
      if (NOT TARGET Freetype::Freetype)
          message(FATAL_ERROR "Freetype not imported")
-@@ -20,9 +24,13 @@ if (OPENGL_FOUND OR ANDROID OR IOS)
+@@ -20,29 +24,40 @@ if (OPENGL_FOUND OR ANDROID OR IOS)
  
  
      if (AUI_PLATFORM_WIN OR AUI_PLATFORM_LINUX OR AUI_PLATFORM_MACOS)
@@ -460,7 +460,44 @@ index dfe6b18b..556261df 100644
      endif ()
  
      aui_module(aui.views EXPORT aui)
-@@ -92,17 +100,29 @@ if (OPENGL_FOUND OR ANDROID OR IOS)
+     aui_enable_tests(aui.views)
+ 
+     if (AUI_PLATFORM_LINUX)
+-        auib_use_system_libs_begin()
+-        find_package(PkgConfig REQUIRED)
++        if (AUIB_DISABLE)
++            include(FindPkgConfig)
++            pkg_check_modules(DBUS REQUIRED IMPORTED_TARGET dbus-1)
++            pkg_check_modules(GTK3 REQUIRED IMPORTED_TARGET gtk+-3.0)
++            aui_link(aui.views PRIVATE X11::X11 X11::Xrandr X11::Xcursor X11::Xi PkgConfig::DBUS PkgConfig::GTK3 Fontconfig::Fontconfig)
++        else ()
++            auib_use_system_libs_begin()
++            find_package(PkgConfig REQUIRED)
+ 
+-        pkg_check_modules(DBUS REQUIRED dbus-1)
+-        include_directories(${DBUS_INCLUDE_DIRS})
+-        link_directories(${DBUS_LIBRARY_DIRS})
++            pkg_check_modules(DBUS REQUIRED dbus-1)
++            include_directories(${DBUS_INCLUDE_DIRS})
++            link_directories(${DBUS_LIBRARY_DIRS})
+ 
+-        pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
+-        include_directories(${GTK3_INCLUDE_DIRS})
+-        link_directories(${GTK3_LIBRARY_DIRS})
++            pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
++            include_directories(${GTK3_INCLUDE_DIRS})
++            link_directories(${GTK3_LIBRARY_DIRS})
+ 
+-        auib_use_system_libs_end()
++            auib_use_system_libs_end()
+ 
+-        aui_link(aui.views PRIVATE X11::X11 X11::Xrandr X11::Xcursor X11::Xi ${DBUS_LIBRARIES} ${GTK3_LIBRARIES} Fontconfig::Fontconfig)
++            aui_link(aui.views PRIVATE X11::X11 X11::Xrandr X11::Xcursor X11::Xi ${DBUS_LIBRARIES} ${GTK3_LIBRARIES} Fontconfig::Fontconfig)
++        endif ()
+     endif ()
+ 
+     if (NOT AUI_PLATFORM_WINDOWS)
+@@ -92,17 +107,29 @@ if (OPENGL_FOUND OR ANDROID OR IOS)
          aui_link(aui.views PRIVATE Freetype::Freetype)
          aui_link(aui.views PRIVATE OpenGL::GL)
  
