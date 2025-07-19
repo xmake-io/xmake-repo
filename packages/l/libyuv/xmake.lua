@@ -8,8 +8,10 @@ package("libyuv")
 
     -- Versions from LIBYUV_VERSION definition in include/libyuv/version.h
     -- Pay attention to package commits incrementing this definition
+    add_versions("git:1913", "6f729fbe658a40dfd993fa8b22bd612bb17cde5c")
     add_versions("git:1891", "611806a1559b92c97961f51c78805d8d9d528c08")
 
+    add_patches("1913", "patches/1913/cmake.patch", "f983ea3e419c684b8d32bb3fbdf4a4431e25488ee09b5161a92d505a7504b9d8")
     add_patches("1891", "patches/1891/cmake.patch", "87086566b2180f65ff3d5ef9db7c59a6e51e2592aeeb787e45305beb4cf9d30d")
 
     add_configs("jpeg", {description = "Build with JPEG.", default = false, type = "boolean"})
@@ -39,13 +41,20 @@ package("libyuv")
     end)
 
     on_install("!cross", function (package)
-        -- commit 1724c4be72f32d2f04eead939f7b3f35ad4e39e3
-        io.replace("CMakeLists.txt", "-march=armv9-a+sme", "-march=armv9-a+i8mm+sme", {plain = true})
+        io.replace("CMakeLists.txt", "SET(CMAKE_POSITION_INDEPENDENT_CODE ON)", "", {plain = true})
         if package:is_plat("iphoneos") then
             io.replace("CMakeLists.txt",
-                [[STRING(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" arch_lowercase)]],
-                [[set(arch_lowercase "]] .. package:arch() .. [[")]], {plain = true})
+            [[STRING(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" arch_lowercase)]],
+            [[set(arch_lowercase "]] .. package:arch() .. [[")]], {plain = true})
         end
+        if not package:config("tools") then
+            io.replace("CMakeLists.txt", "install ( TARGETS yuvconvert DESTINATION bin )", "", {plain = true})
+        end
+        -- fix linux arm64 build error
+        -- -- commit 1724c4be72f32d2f04eead939f7b3f35ad4e39e3
+        -- io.replace("CMakeLists.txt", "-march=armv9-a+sme", "-march=armv9-a+i8mm+sme", {plain = true})
+        io.replace("CMakeLists.txt", "-march=armv9-a+sme", "", {plain = true})
+        io.replace("CMakeLists.txt", "-march=armv9-a+i8mm+sme", "", {plain = true})
 
         local configs = {"-DCMAKE_CXX_STANDARD=14"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
