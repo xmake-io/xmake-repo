@@ -89,6 +89,7 @@ package("aui")
 
     on_install("!bsd and !wasm", function (package)
         local configs = {
+            "-DAUIB_NO_PRECOMPILED=TRUE",
             "-DAUIB_DISABLE=ON"
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
