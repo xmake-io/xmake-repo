@@ -1,0 +1,121 @@
+package("aui")
+    set_homepage("https://github.com/aui-framework/aui")
+    set_description("Declarative UI toolkit for modern C++20")
+    set_license("MPL-2.0")
+
+    add_urls("https://github.com/aui-framework/aui/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/aui-framework/aui.git")
+
+    add_versions("v7.1.2", "a4cf965c50d75e20a319c9c8b231ad9c13c25a06ad303e1eb65d1ff141b1f85c")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle.diff", "1eb3da88e82503e6a9a893c112b4dd97909341905fe0e28d3fb5a4d2a50075ea")
+
+    add_deps("cmake")
+    if is_subhost("windows") then
+        add_deps("pkgconf")
+    else
+        add_deps("pkg-config")
+    end
+    add_deps("zlib")
+    -- aui.audio
+    add_includedirs("aui.audio/include")
+    add_deps("libopus", "soxr")
+    if is_plat("linux") then
+        add_syslinks("pulse")
+    elseif is_plat("android") then
+        add_deps("oboe")
+    elseif is_plat("windows", "mingw") then
+        add_syslinks("winmm", "dsound", "dxguid")
+    elseif is_plat("macosx", "iphoneos") then
+        add_frameworks("CoreAudio", "AVFoundation", "AudioToolbox")
+        if is_plat("macosx") then
+            add_frameworks("AppKit", "Cocoa", "CoreData", "Foundation", "QuartzCore")
+        end
+    end
+    -- aui.core
+    add_includedirs("aui.core/include")
+    add_deps("fmt 9.1.0", "range-v3")
+    if is_plat("linux") then
+        add_deps("libbacktrace")
+        add_syslinks("threads", "dl")
+    elseif is_plat("windows", "mingw") then
+        add_syslinks("dbghelp", "shell32", "shlwapi", "kernel32", "psapi")
+    elseif is_plat("android") then
+        add_syslinks("log")
+    end
+    -- aui.crypt
+    add_includedirs("aui.crypt/include")
+    add_deps("openssl3")
+    if is_plat("windows", "mingw") then
+        add_syslinks("wsock32", "ws2_32")
+    end
+    -- aui.curl
+    add_includedirs("aui.curl/include")
+    add_deps("libcurl")
+    -- aui.image
+    add_includedirs("aui.image/include")
+    add_deps("lunasvg", "libwebp")
+    -- aui.json
+    add_includedirs("aui.json/include")
+    -- aui.network
+    add_includedirs("aui.network/include")
+    if is_plat("windows", "mingw") then
+        add_syslinks("wsock32", "ws2_32", "iphlpapi")
+    end
+    -- aui.toolbox
+    add_includedirs("aui.toolbox/include")
+    -- aui.uitests
+    add_includedirs("aui.uitests/include")
+    add_deps("gtest", "benchmark")
+    -- aui.views
+    add_includedirs("aui.views/include")
+    add_deps("freetype")
+    if is_plat("windows", "mingw", "linux", "macosx") then
+        add_deps("glew")
+        if is_plat("linux") then
+            add_deps("libx11", "dbus", "gtk3", "fontconfig")
+        end
+    end
+    if is_plat("windows", "mingw") then
+        add_syslinks("dwmapi", "winmm", "shlwapi")
+    elseif is_plat("android") then
+        add_syslinks("EGL", "GLESv2", "GLESv3")
+    elseif is_plat("iphoneos") then
+        add_frameworks("OpenGLES")
+    elseif is_plat("macosx") then
+        add_frameworks("AppKit", "Cocoa", "CoreData", "Foundation", "QuartzCore", "UniformTypeIdentifiers")
+    end
+    -- aui.xml
+    add_includedirs("aui.xml/include")
+
+    on_load(function (package)
+        if not package:config("shared") then
+            package:add("defines", "AUI_STATIC")
+        end
+        package:add("defines", "AUI_DEBUG=" .. (package:is_debug() and "1" or "0"))
+        package:add("defines", "API_AUI_CORE=AUI_IMPORT")
+    end)
+
+    on_install("!bsd and !wasm", function (package)
+        local configs = {
+            "-DAUIB_NO_PRECOMPILED=TRUE",
+            "-DAUIB_DISABLE=ON"
+        }
+        if package:is_plat("windows") and package:is_arch("arm64") then
+            io.replace("cmake/aui.build.cmake", [[if (CMAKE_GENERATOR_PLATFORM MATCHES "(arm64)|(ARM64)" OR CMAKE_SYSTEM_PROCESSOR MATCHES "(aarch64|arm64)")]], [[if (1)]], {plain = true})
+        end
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        import("package.tools.cmake").install(package, configs)
+    end)
+
+    on_test(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            #include <AUI/Platform/Entry.h>
+            #include <AUI/Logging/ALogger.h>
+            #include <AUI/Common/AByteBuffer.h>
+            #include <AUI/Url/AUrl.h>
+            void test() {
+                auto buf = AByteBuffer::fromStream(AUrl(":test.txt").open());
+            }
+        ]]}, {configs = {languages = "c++20"}}))
+    end)
