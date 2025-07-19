@@ -22,6 +22,7 @@ package("stfl")
                 add_files("*.c|example.c")
                 add_files("widgets/*.c")
                 add_includedirs(".")
+                add_defines("_XOPEN_SOURCE=700", "_GNU_SOURCE")
                 add_headerfiles("stfl.h")
 
                 if is_plat("linux", "bsd") then
