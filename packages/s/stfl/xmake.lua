@@ -3,10 +3,9 @@ package("stfl")
     set_description("stfl with Newsboat-related bugfixes")
     set_license("LGPL-3.0")
 
-    add_urls("https://github.com/newsboat/stfl/archive/c2c10b8a50fef613c0aacdc5d06a0fa610bf79e9.tar.gz",
-             "https://github.com/newsboat/stfl.git")
+    add_urls("https://github.com/newsboat/stfl.git")
 
-    add_versions("0.24", "59d3f43522161bc2252bd806f973ad64c86a081f06a57a6d628b1c7bdfee7551")
+    add_versions("2024.12.24", "bbb2404580e845df2556560112c8aefa27494d66")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
@@ -14,11 +13,10 @@ package("stfl")
 
     add_deps("ncurses")
 
-    on_install("linux", "macosx", "bsd", function (package)
+    on_install("!wasm and !iphoneos and @!windows", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             add_requires("ncurses")
-            add_packages("ncurses")
             target("stfl")
                 set_kind("$(kind)")
                 add_files("*.c|example.c")
@@ -29,6 +27,7 @@ package("stfl")
                 if is_plat("linux", "bsd") then
                     add_syslinks("pthread")
                 end
+                add_packages("ncurses")
         ]])
         import("package.tools.xmake").install(package)
     end)
