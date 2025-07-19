@@ -39,6 +39,8 @@ package("libyuv")
     end)
 
     on_install("!cross", function (package)
+        -- commit 1724c4be72f32d2f04eead939f7b3f35ad4e39e3
+        io.replace("CMakeLists.txt", "-march=armv9-a+sme", "-march=armv9-a+i8mm+sme", {plain = true})
         if package:is_plat("iphoneos") then
             io.replace("CMakeLists.txt",
                 [[STRING(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" arch_lowercase)]],
