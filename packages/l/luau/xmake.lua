@@ -6,6 +6,7 @@ package("luau")
     add_urls("https://github.com/luau-lang/luau/archive/refs/tags/$(version).tar.gz",
              "https://github.com/luau-lang/luau.git")
     
+    add_versions("0.683", "a2c7aaf906d625e43ca468792acf8e47a9cbd1d4352623b5e62d2a4011faa15c")
     add_versions("0.643", "069702be7646917728ffcddcc72dae0c4191b95dfe455c8611cc5ad943878d3d")
     add_versions("0.642", "cc7954979d2b1f6a138a9b0cb0f2d27e3c11d109594379551bc290c0461965ba")
     add_versions("0.640", "63ada3e4c8c17e5aff8964b16951bfd1b567329dd81c11ae1144b6e95f354762")
@@ -27,7 +28,7 @@ package("luau")
         ]], {plain = true})
 
         local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "RelWithDebInfo"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "RelWithDebInfo"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DLUAU_BUILD_TESTS=OFF")
         table.insert(configs, "-DLUAU_BUILD_WEB=" .. ((package:is_plat("wasm") or package:config("build_web")) and "ON" or "OFF"))
@@ -38,9 +39,9 @@ package("luau")
         end
 
         if package:is_plat("wasm") then
-            import("package.tools.cmake").build(package, configs, { target = "Luau.Web", buildir = "build" })
+            import("package.tools.cmake").build(package, configs, { target = "Luau.Web", builddir = "build" })
         else
-            import("package.tools.cmake").install(package, configs, { buildir = "build" })
+            import("package.tools.cmake").build(package, configs, { builddir = "build" })
         end
 
         local cmake_file = io.readfile("CMakeLists.txt")
