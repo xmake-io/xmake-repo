@@ -31,7 +31,7 @@ index 6902d56a..98ebd001 100644
  # [configure file example]
  configure_file(cmake/aui-config.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/aui-config.cmake @ONLY)
 diff --git a/aui.audio/CMakeLists.txt b/aui.audio/CMakeLists.txt
-index 21e44153..e3154d7f 100644
+index 21e44153..afbc367b 100644
 --- a/aui.audio/CMakeLists.txt
 +++ b/aui.audio/CMakeLists.txt
 @@ -5,26 +5,36 @@ add_subdirectory(3rdparty/ogg)
@@ -75,7 +75,7 @@ index 21e44153..e3154d7f 100644
 -auib_import(Opus https://github.com/xiph/opus.git VERSION v1.4)
 -aui_link(aui.audio PRIVATE Opus::opus)
 +if (AUIB_DISABLE)
-+    find_package(opus CONFIG REQUIRED)
++    find_package(Opus CONFIG REQUIRED)
 +    aui_link(aui.audio PRIVATE Opus::opus)
 +else ()
 +    auib_import(Opus https://github.com/xiph/opus.git VERSION v1.4)

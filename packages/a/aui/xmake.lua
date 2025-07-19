@@ -7,7 +7,7 @@ package("aui")
              "https://github.com/aui-framework/aui.git")
 
     add_versions("v7.1.2", "a4cf965c50d75e20a319c9c8b231ad9c13c25a06ad303e1eb65d1ff141b1f85c")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle.diff", "927c6f6ee6e0998f2e79d6d8cfc9dea8de62b301cf1baa1c84c325d5d654275b")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle.diff", "61aa96174f63aceb93cd39ae5f81be08bb28a8345f87db77f3f3ea89f218fb12")
 
     add_deps("cmake")
     if is_subhost("windows") then
@@ -100,6 +100,9 @@ package("aui")
             "-DAUIB_NO_PRECOMPILED=TRUE",
             "-DAUIB_DISABLE=ON"
         }
+        if package:is_plat("windows") and package:is_arch("arm64") then
+            io.replace("cmake/aui.build.cmake", [[if (CMAKE_GENERATOR_PLATFORM MATCHES "(arm64)|(ARM64)" OR CMAKE_SYSTEM_PROCESSOR MATCHES "(aarch64|arm64)")]], [[if (1)]], {plain = true})
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
