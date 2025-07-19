@@ -31,7 +31,7 @@ package("aui")
         end
     end
     -- aui.core
-    add_deps("fmt", "range-v3")
+    add_deps("fmt 9.1.0", "range-v3")
     if is_plat("linux") then
         add_deps("libbacktrace")
         add_syslinks("threads", "dl")
