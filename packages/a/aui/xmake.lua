@@ -87,6 +87,12 @@ package("aui")
     -- aui.xml
     add_includedirs("aui.xml/include")
 
+    on_load(function (package)
+        if not package:config("shared") then
+            package:add("defines", "AUI_STATIC")
+        end
+    end)
+
     on_install("!bsd and !wasm", function (package)
         local configs = {
             "-DAUIB_NO_PRECOMPILED=TRUE",
