@@ -12,6 +12,10 @@ package("pulseaudio")
         add_extsources("pacman::libpulse", "apt::libpulse-dev")
     end
 
+    if is_plat("linux", "bsd") then
+        add_syslinks("pthread")
+    end
+
     add_deps("meson", "ninja")
     if is_plat("linux") then
         add_deps("alsa-lib")
@@ -19,6 +23,9 @@ package("pulseaudio")
     add_deps("dbus", "fftw", "glib", "jack2", "libatomic_ops", "libiconv", "libsndfile", "openssl3", "soxr", "speex")
 
     on_install("linux", function (package)
+        io.replace("meson.build", 
+            "fftw_dep = dependency('fftw3f', required : get_option('fftw'))",
+            "fftw_dep = dependency('fftw3', method: 'pkg-config', required : get_option('fftw'))", {plain = true})
         if package:version() then
             local v = package:version_str():gsub("v", "")
             io.writefile(".tarball-version", v)
