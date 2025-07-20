@@ -13,7 +13,7 @@ package("speex")
 
     add_deps("autotools")
 
-    on_install("!windows", function (package)
+    on_install("linux", "macosx", "bsd", "mingw", "wasm", "cross", "iphoneos", "android@linux,macosx", function (package)
         local configs = {"--disable-binaries"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         if package:is_debug() then
