@@ -3,8 +3,14 @@ package("pulseaudio")
     set_description("A featureful, general-purpose sound server")
     set_license("LGPL-2.1-or-later")
 
-    add_urls("https://github.com/pulseaudio/pulseaudio.git")
-    add_versions("2025.05.01", "98c7c9eafb148c6e66e5fe178fc156b00f3bf51a")
+    add_urls("https://github.com/pulseaudio/pulseaudio/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/pulseaudio/pulseaudio.git")
+    add_versions("v17.0", "ed36c8a0cdff7b57382a258d3e1a916f42500fbafd64dd3c2e258ed8f017ee90")
+
+    add_extsources("pkgconfig::libpulse")
+    if is_plat("linux") then
+        add_extsources("pacman::libpulse", "apt::libpulse-dev")
+    end
 
     add_deps("meson", "ninja")
     if is_plat("linux") then
@@ -13,11 +19,14 @@ package("pulseaudio")
     add_deps("dbus", "fftw", "glib", "jack2", "libatomic_ops", "libiconv", "libsndfile", "openssl3", "soxr", "speex")
 
     on_install("linux", function (package)
-        io.writefile(".tarball-version", package:version_str())
-        os.rm("git-version-gen")
-        io.replace("meson.build",
-            "run_command(find_program('git-version-gen'), join_paths(meson.current_source_dir(), '.tarball-version'), check : false).stdout().strip()",
-            package:version_str(), {plain = true})
+        if package:version() then
+            local v = package:version_str():gsub("v", "")
+            io.writefile(".tarball-version", v)
+            os.rm("git-version-gen")
+            io.replace("meson.build",
+                "run_command(find_program('git-version-gen'), join_paths(meson.current_source_dir(), '.tarball-version'), check : false).stdout().strip()",
+                "'" .. v .. "'", {plain = true})
+        end
         local configs = {
             "-Dgstreamer=disabled",
 
