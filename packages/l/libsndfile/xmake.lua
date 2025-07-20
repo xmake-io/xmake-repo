@@ -11,7 +11,8 @@ package("libsndfile")
 
     add_patches("1.2.2", "patches/1.2.2/do-not-install-find.diff", "008f66254b7d0f7602b3c6153a0e9b2c74395c9e9cc0e2e75784a6ed8eb23209")
 
-    add_deps("cmake", "libflac", "libopus", "libvorbis", "libogg")
+    add_deps("cmake")
+    add_deps("libflac", "libopus", "libvorbis", "libogg")
 
     on_load("windows", "linux", "macosx", "iphoneos", "mingw", "android", function (package)
         if package:config("shared") then
@@ -20,8 +21,12 @@ package("libsndfile")
     end)
 
     on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", function (package)
+        os.rm("cmake/FindFLAC.cmake")
+        os.rm("cmake/FindOgg.cmake")
+        os.rm("cmake/FindOpus.cmake")
+        os.rm("cmake/FindSndio.cmake")
+        os.rm("cmake/FindVorbis.cmake")
         local configs = {
-            "-DCMAKE_FIND_PACKAGE_PREFER_CONFIG=ON",
             "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"
         }
         table.insert(configs, "-DBUILD_PROGRAMS=OFF")
