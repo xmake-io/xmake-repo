@@ -19,7 +19,7 @@ package("aui")
 
     -- aui.audio
     on_component("audio", function (package, component)
-        component:add("includedirs", "aui.audio/include")
+        package:add("includedirs", "aui.audio/include")
         component:add("links", "aui.audio")
         package:add("deps", "libopus", "soxr")
         if package:is_plat("linux") then
