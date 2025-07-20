@@ -17,10 +17,6 @@ package("aui")
     end
     add_deps("zlib")
 
-    on_load(function (package)
-        package:add("components", "audio", "core", "crypt", "curl", "image", "json", "network", "toolbox", "uitests", "views", "xml")
-    end)
-
     -- aui.audio
     on_component("audio", function (package, component)
         component:add("includedirs", "aui.audio/include")
@@ -135,6 +131,7 @@ package("aui")
     end)
 
     on_load(function (package)
+        package:add("components", "audio", "core", "crypt", "curl", "image", "json", "network", "toolbox", "uitests", "views", "xml")
         if not package:config("shared") then
             package:add("defines", "AUI_STATIC")
         end
