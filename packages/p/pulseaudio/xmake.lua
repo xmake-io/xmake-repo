@@ -23,9 +23,14 @@ package("pulseaudio")
     add_deps("dbus", "fftw", "glib", "jack2", "libatomic_ops", "libiconv", "libsndfile", "openssl3", "soxr", "speex")
 
     on_install("linux", function (package)
-        io.replace("meson.build", 
+        -- FFTW dependency has broken CMakeConfig
+        io.replace("meson.build",
             "fftw_dep = dependency('fftw3f', required : get_option('fftw'))",
             "fftw_dep = dependency('fftw3', method: 'pkg-config', required : get_option('fftw'))", {plain = true})
+        -- SndFile dependency has 4 FindDep.cmake files
+        io.replace("meson.build",
+            "sndfile_dep = dependency('sndfile', version : '>= 1.0.20')",
+            "sndfile_dep = dependency('sndfile', method: 'pkg-config', version : '>= 1.0.20')", {plain = true})
         if package:version() then
             local v = package:version_str():gsub("v", "")
             io.writefile(".tarball-version", v)
