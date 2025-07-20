@@ -56,9 +56,9 @@ package("libwebp")
         end
     end)
 
-    on_install("linux", "macosx", "windows", "mingw", "bsd", "wasm", function (package)
+    on_install(function (package)
         local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
         for name, enabled in pairs(package:configs()) do
