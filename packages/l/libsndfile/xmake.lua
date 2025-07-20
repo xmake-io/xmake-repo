@@ -20,7 +20,7 @@ package("libsndfile")
     end)
 
     on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", function (package)
-        local configs = {}
+        local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DBUILD_PROGRAMS=OFF")
         table.insert(configs, "-DBUILD_EXAMPLES=OFF")
         table.insert(configs, "-DBUILD_TESTING=OFF")
