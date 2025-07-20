@@ -20,11 +20,14 @@ package("libsndfile")
     end)
 
     on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", function (package)
-        local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
+        local configs = {
+            "-DCMAKE_FIND_PACKAGE_PREFER_CONFIG=ON",
+            "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"
+        }
         table.insert(configs, "-DBUILD_PROGRAMS=OFF")
         table.insert(configs, "-DBUILD_EXAMPLES=OFF")
         table.insert(configs, "-DBUILD_TESTING=OFF")
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_MPEG=OFF")
 
