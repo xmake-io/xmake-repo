@@ -30,7 +30,7 @@ package("pulseaudio")
         -- SndFile dependency has 4 FindDep.cmake files
         io.replace("meson.build",
             "sndfile_dep = dependency('sndfile', version : '>= 1.0.20')",
-            "sndfile_dep = dependency('sndfile', method: 'cmake')", {plain = true})
+            "sndfile_dep = dependency('SndFile', method: 'cmake')", {plain = true})
         if package:version() then
             local v = package:version_str():gsub("v", "")
             io.writefile(".tarball-version", v)
