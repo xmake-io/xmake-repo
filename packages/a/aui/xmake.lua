@@ -38,7 +38,7 @@ package("aui")
 
     -- aui.core
     on_component("core", function (package, component)
-        component:add("includedirs", "aui.core/include")
+        package:add("includedirs", "aui.core/include")
         component:add("links", "aui.core")
         package:add("deps", "fmt 9.1.0", "range-v3")
         if package:is_plat("linux") then
@@ -53,7 +53,7 @@ package("aui")
 
     -- aui.crypt
     on_component("crypt", function (package, component)
-        component:add("includedirs", "aui.crypt/include")
+        package:add("includedirs", "aui.crypt/include")
         component:add("links", "aui.crypt")
         package:add("deps", "openssl3")
         if package:is_plat("windows", "mingw") then
@@ -63,27 +63,27 @@ package("aui")
 
     -- aui.curl
     on_component("curl", function (package, component)
-        component:add("includedirs", "aui.curl/include")
+        package:add("includedirs", "aui.curl/include")
         component:add("links", "aui.curl")
         package:add("deps", "libcurl")
     end)
 
     -- aui.image
     on_component("image", function (package, component)
-        component:add("includedirs", "aui.image/include")
+        package:add("includedirs", "aui.image/include")
         component:add("links", "aui.image")
         package:add("deps", "lunasvg", "libwebp")
     end)
 
     -- aui.json
     on_component("json", function (package, component)
-        component:add("includedirs", "aui.json/include")
+        package:add("includedirs", "aui.json/include")
         component:add("links", "aui.json")
     end)
 
     -- aui.network
     on_component("network", function (package, component)
-        component:add("includedirs", "aui.network/include")
+        package:add("includedirs", "aui.network/include")
         component:add("links", "aui.network")
         if package:is_plat("windows", "mingw") then
             component:add("syslinks", "wsock32", "ws2_32", "iphlpapi")
@@ -92,19 +92,19 @@ package("aui")
 
     -- aui.toolbox
     on_component("toolbox", function (package, component)
-        component:add("includedirs", "aui.toolbox/include")
+        package:add("includedirs", "aui.toolbox/include")
     end)
 
     -- aui.uitests
     on_component("uitests", function (package, component)
-        component:add("includedirs", "aui.uitests/include")
+        package:add("includedirs", "aui.uitests/include")
         component:add("links", "aui.uitests")
         package:add("deps", "gtest", "benchmark")
     end)
 
     -- aui.views
     on_component("views", function (package, component)
-        component:add("includedirs", "aui.views/include")
+        package:add("includedirs", "aui.views/include")
         component:add("links", "aui.views")
         package:add("deps", "freetype")
         if package:is_plat("windows", "mingw", "linux", "macosx") then
@@ -126,7 +126,7 @@ package("aui")
 
     -- aui.xml
     on_component("xml", function (package, component)
-        component:add("includedirs", "aui.xml/include")
+        package:add("includedirs", "aui.xml/include")
         component:add("links", "aui.xml")
     end)
 
