@@ -22,15 +22,10 @@ package("luau")
 
     on_install(function(package)
         io.replace("extern/isocline/src/completers.c", "__finddata64_t", "_finddatai64_t", {plain = true})
-        io.replace("CMakeLists.txt", [[cmake_policy(SET CMP0054 NEW)]], [[
-            cmake_policy(SET CMP0054 NEW)
-            cmake_policy(SET CMP0057 NEW)
-        ]], {plain = true})
 
-        local configs = {}
+        local configs = {"-DLUAU_BUILD_TESTS=OFF", "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "RelWithDebInfo"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DLUAU_BUILD_TESTS=OFF")
         table.insert(configs, "-DLUAU_BUILD_WEB=" .. ((package:is_plat("wasm") or package:config("build_web")) and "ON" or "OFF"))
         table.insert(configs, "-DLUAU_EXTERN_C=" .. (package:config("extern_c") and "ON" or "OFF"))
 
