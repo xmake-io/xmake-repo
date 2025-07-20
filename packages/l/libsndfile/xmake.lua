@@ -21,10 +21,6 @@ package("libsndfile")
     end)
 
     on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", function (package)
-        os.rm("cmake/FindFLAC.cmake")
-        os.rm("cmake/FindOpus.cmake")
-        os.rm("cmake/FindVorbis.cmake")
-        os.rm("cmake/FindOgg.cmake")
         local configs = {
             "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"
         }
