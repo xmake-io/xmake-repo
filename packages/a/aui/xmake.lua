@@ -21,11 +21,11 @@ package("aui")
     on_component("audio", function (package, component)
         component:add("includedirs", "aui.audio/include")
         component:add("links", "aui.audio")
-        component:add("deps", "libopus", "soxr")
+        package:add("deps", "libopus", "soxr")
         if package:is_plat("linux") then
             component:add("syslinks", "pulse")
         elseif package:is_plat("android") then
-            component:add("deps", "oboe")
+            package:add("deps", "oboe")
         elseif package:is_plat("windows", "mingw") then
             component:add("syslinks", "winmm", "dsound", "dxguid")
         elseif package:is_plat("macosx", "iphoneos") then
@@ -40,9 +40,9 @@ package("aui")
     on_component("core", function (package, component)
         component:add("includedirs", "aui.core/include")
         component:add("links", "aui.core")
-        component:add("deps", "fmt 9.1.0", "range-v3")
+        package:add("deps", "fmt 9.1.0", "range-v3")
         if package:is_plat("linux") then
-            component:add("deps", "libbacktrace")
+            package:add("deps", "libbacktrace")
             component:add("syslinks", "threads", "dl")
         elseif package:is_plat("windows", "mingw") then
             component:add("syslinks", "dbghelp", "shell32", "shlwapi", "kernel32", "psapi")
@@ -55,7 +55,7 @@ package("aui")
     on_component("crypt", function (package, component)
         component:add("includedirs", "aui.crypt/include")
         component:add("links", "aui.crypt")
-        component:add("deps", "openssl3")
+        package:add("deps", "openssl3")
         if package:is_plat("windows", "mingw") then
             component:add("syslinks", "wsock32", "ws2_32")
         end
@@ -65,14 +65,14 @@ package("aui")
     on_component("curl", function (package, component)
         component:add("includedirs", "aui.curl/include")
         component:add("links", "aui.curl")
-        component:add("deps", "libcurl")
+        package:add("deps", "libcurl")
     end)
 
     -- aui.image
     on_component("image", function (package, component)
         component:add("includedirs", "aui.image/include")
         component:add("links", "aui.image")
-        component:add("deps", "lunasvg", "libwebp")
+        package:add("deps", "lunasvg", "libwebp")
     end)
 
     -- aui.json
@@ -99,19 +99,19 @@ package("aui")
     on_component("uitests", function (package, component)
         component:add("includedirs", "aui.uitests/include")
         component:add("links", "aui.uitests")
-        component:add("deps", "gtest", "benchmark")
+        package:add("deps", "gtest", "benchmark")
     end)
 
     -- aui.views
     on_component("views", function (package, component)
         component:add("includedirs", "aui.views/include")
         component:add("links", "aui.views")
-        component:add("deps", "freetype")
+        package:add("deps", "freetype")
         if package:is_plat("windows", "mingw", "linux", "macosx") then
-            component:add("deps", "glew")
+            package:add("deps", "glew")
         end
         if package:is_plat("linux") then
-            component:add("deps", "libx11", "dbus", "gtk3", "fontconfig")
+            package:add("deps", "libx11", "dbus", "gtk3", "fontconfig")
         end
         if package:is_plat("windows", "mingw") then
             component:add("syslinks", "dwmapi", "winmm", "shlwapi")
