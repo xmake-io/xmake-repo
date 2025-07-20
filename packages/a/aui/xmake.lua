@@ -16,76 +16,123 @@ package("aui")
         add_deps("pkg-config")
     end
     add_deps("zlib")
+
+    on_load(function (package)
+        package:add("components", "audio", "core", "crypt", "curl", "image", "json", "network", "toolbox", "uitests", "views", "xml")
+    end)
+
     -- aui.audio
-    add_includedirs("aui.audio/include")
-    add_deps("libopus", "soxr")
-    if is_plat("linux") then
-        add_syslinks("pulse")
-    elseif is_plat("android") then
-        add_deps("oboe")
-    elseif is_plat("windows", "mingw") then
-        add_syslinks("winmm", "dsound", "dxguid")
-    elseif is_plat("macosx", "iphoneos") then
-        add_frameworks("CoreAudio", "AVFoundation", "AudioToolbox")
-        if is_plat("macosx") then
-            add_frameworks("AppKit", "Cocoa", "CoreData", "Foundation", "QuartzCore")
+    on_component("audio", function (package, component)
+        component:add("includedirs", "aui.audio/include")
+        component:add("links", "aui.audio")
+        component:add("deps", "libopus", "soxr")
+        if package:is_plat("linux") then
+            component:add("syslinks", "pulse")
+        elseif package:is_plat("android") then
+            component:add("deps", "oboe")
+        elseif package:is_plat("windows", "mingw") then
+            component:add("syslinks", "winmm", "dsound", "dxguid")
+        elseif package:is_plat("macosx", "iphoneos") then
+            component:add("frameworks", "CoreAudio", "AVFoundation", "AudioToolbox")
+            if package:is_plat("macosx") then
+                component:add("frameworks", "AppKit", "Cocoa", "CoreData", "Foundation", "QuartzCore")
+            end
         end
-    end
+    end)
+
     -- aui.core
-    add_includedirs("aui.core/include")
-    add_deps("fmt 9.1.0", "range-v3")
-    if is_plat("linux") then
-        add_deps("libbacktrace")
-        add_syslinks("threads", "dl")
-    elseif is_plat("windows", "mingw") then
-        add_syslinks("dbghelp", "shell32", "shlwapi", "kernel32", "psapi")
-    elseif is_plat("android") then
-        add_syslinks("log")
-    end
-    -- aui.crypt
-    add_includedirs("aui.crypt/include")
-    add_deps("openssl3")
-    if is_plat("windows", "mingw") then
-        add_syslinks("wsock32", "ws2_32")
-    end
-    -- aui.curl
-    add_includedirs("aui.curl/include")
-    add_deps("libcurl")
-    -- aui.image
-    add_includedirs("aui.image/include")
-    add_deps("lunasvg", "libwebp")
-    -- aui.json
-    add_includedirs("aui.json/include")
-    -- aui.network
-    add_includedirs("aui.network/include")
-    if is_plat("windows", "mingw") then
-        add_syslinks("wsock32", "ws2_32", "iphlpapi")
-    end
-    -- aui.toolbox
-    add_includedirs("aui.toolbox/include")
-    -- aui.uitests
-    add_includedirs("aui.uitests/include")
-    add_deps("gtest", "benchmark")
-    -- aui.views
-    add_includedirs("aui.views/include")
-    add_deps("freetype")
-    if is_plat("windows", "mingw", "linux", "macosx") then
-        add_deps("glew")
-        if is_plat("linux") then
-            add_deps("libx11", "dbus", "gtk3", "fontconfig")
+    on_component("core", function (package, component)
+        component:add("includedirs", "aui.core/include")
+        component:add("links", "aui.core")
+        component:add("deps", "fmt 9.1.0", "range-v3")
+        if package:is_plat("linux") then
+            component:add("deps", "libbacktrace")
+            component:add("syslinks", "threads", "dl")
+        elseif package:is_plat("windows", "mingw") then
+            component:add("syslinks", "dbghelp", "shell32", "shlwapi", "kernel32", "psapi")
+        elseif package:is_plat("android") then
+            component:add("syslinks", "log")
         end
-    end
-    if is_plat("windows", "mingw") then
-        add_syslinks("dwmapi", "winmm", "shlwapi")
-    elseif is_plat("android") then
-        add_syslinks("EGL", "GLESv2", "GLESv3")
-    elseif is_plat("iphoneos") then
-        add_frameworks("OpenGLES")
-    elseif is_plat("macosx") then
-        add_frameworks("AppKit", "Cocoa", "CoreData", "Foundation", "QuartzCore", "UniformTypeIdentifiers")
-    end
+    end)
+
+    -- aui.crypt
+    on_component("crypt", function (package, component)
+        component:add("includedirs", "aui.crypt/include")
+        component:add("links", "aui.crypt")
+        component:add("deps", "openssl3")
+        if package:is_plat("windows", "mingw") then
+            component:add("syslinks", "wsock32", "ws2_32")
+        end
+    end)
+
+    -- aui.curl
+    on_component("curl", function (package, component)
+        component:add("includedirs", "aui.curl/include")
+        component:add("links", "aui.curl")
+        component:add("deps", "libcurl")
+    end)
+
+    -- aui.image
+    on_component("image", function (package, component)
+        component:add("includedirs", "aui.image/include")
+        component:add("links", "aui.image")
+        component:add("deps", "lunasvg", "libwebp")
+    end)
+
+    -- aui.json
+    on_component("json", function (package, component)
+        component:add("includedirs", "aui.json/include")
+        component:add("links", "aui.json")
+    end)
+
+    -- aui.network
+    on_component("network", function (package, component)
+        component:add("includedirs", "aui.network/include")
+        component:add("links", "aui.network")
+        if package:is_plat("windows", "mingw") then
+            component:add("syslinks", "wsock32", "ws2_32", "iphlpapi")
+        end
+    end)
+
+    -- aui.toolbox
+    on_component("toolbox", function (package, component)
+        component:add("includedirs", "aui.toolbox/include")
+    end)
+
+    -- aui.uitests
+    on_component("uitests", function (package, component)
+        component:add("includedirs", "aui.uitests/include")
+        component:add("links", "aui.uitests")
+        component:add("deps", "gtest", "benchmark")
+    end)
+
+    -- aui.views
+    on_component("views", function (package, component)
+        component:add("includedirs", "aui.views/include")
+        component:add("links", "aui.views")
+        component:add("deps", "freetype")
+        if package:is_plat("windows", "mingw", "linux", "macosx") then
+            component:add("deps", "glew")
+        end
+        if package:is_plat("linux") then
+            component:add("deps", "libx11", "dbus", "gtk3", "fontconfig")
+        end
+        if package:is_plat("windows", "mingw") then
+            component:add("syslinks", "dwmapi", "winmm", "shlwapi")
+        elseif package:is_plat("android") then
+            component:add("syslinks", "EGL", "GLESv2", "GLESv3")
+        elseif package:is_plat("iphoneos") then
+            component:add("frameworks", "OpenGLES")
+        elseif package:is_plat("macosx") then
+            component:add("frameworks", "AppKit", "Cocoa", "CoreData", "Foundation", "QuartzCore", "UniformTypeIdentifiers")
+        end
+    end)
+
     -- aui.xml
-    add_includedirs("aui.xml/include")
+    on_component("xml", function (package, component)
+        component:add("includedirs", "aui.xml/include")
+        component:add("links", "aui.xml")
+    end)
 
     on_load(function (package)
         if not package:config("shared") then
