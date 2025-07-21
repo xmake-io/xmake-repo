@@ -10,10 +10,14 @@ package("libsndfile")
     add_versions("1.0.31", "8cdee0acb06bb0a3c1a6ca524575643df8b1f3a55a0893b4dd9f829d08263785")
 
     add_patches("1.2.2", "patches/1.2.2/do-not-install-find.diff", "008f66254b7d0f7602b3c6153a0e9b2c74395c9e9cc0e2e75784a6ed8eb23209")
-    add_patches("1.2.2", "patches/1.2.2/do-not-set-cmake-module-path.diff", "f2729dcef255c1ff8eaefea2101cd77973bc874ec4ca7231e2be1531bf842966")
+    add_patches("1.2.2", "patches/1.2.2/do-not-set-cmake-module-path.diff", "d59b50d14dca44485aae56ae27456779b0a38c0cfec9785bab500d31cf35188e")
 
     add_deps("cmake")
     add_deps("libflac", "libopus", "libvorbis", "libogg")
+
+    if is_plat("linux", "bsd") then
+        add_syslinks("m")
+    end
 
     on_load("windows", "linux", "macosx", "iphoneos", "mingw", "android", function (package)
         if package:config("shared") then
@@ -22,7 +26,10 @@ package("libsndfile")
     end)
 
     on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", function (package)
-        local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
+        local configs = {
+            "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
+            "-DCMAKE_FIND_PACKAGE_PREFER_CONFIG=ON"
+        }
         table.insert(configs, "-DBUILD_PROGRAMS=OFF")
         table.insert(configs, "-DBUILD_EXAMPLES=OFF")
         table.insert(configs, "-DBUILD_TESTING=OFF")
