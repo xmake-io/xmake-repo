@@ -3,9 +3,9 @@ package("openmvg")
     set_description("open Multiple View Geometry library. Basis for 3D computer vision and Structure from Motion.")
     set_license("MPL-2.0")
 
-    add_urls("https://github.com/openMVG/openMVG/archive/refs/tags/v$(version).tar.gz",
+    add_urls("https://github.com/openMVG/openMVG/archive/refs/tags/$(version).tar.gz",
              "https://github.com/openMVG/openMVG.git")
-    add_versions("2.1", "5538c1c8453385e5595047198fc9d0e3d8cdaa85a53b3a27c70cb05ae3f5fc2c")
+    add_versions("v2.1", "5538c1c8453385e5595047198fc9d0e3d8cdaa85a53b3a27c70cb05ae3f5fc2c")
 
     add_configs("openmp", {description = "Enable OpenMP parallelization", default = true, type = "boolean"})
     if is_plat("windows") then
