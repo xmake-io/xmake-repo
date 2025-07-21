@@ -17,7 +17,7 @@ package("hpx")
     add_configs("lci", {description = "Enable the LCI parcelport", default = false, type = "boolean"})
     add_configs("apex", {description = "Enable APEX integration", default = false, type = "boolean"})
     add_configs("context", {description = "Enable Boost. Context for task context switching", default = false, type = "boolean"})
-    add_configs("cpu_count", {description = "Set the maximum CPU count supported by HPX", default = "64", type = "number"})
+    add_configs("cpu_count", {description = "Set the maximum CPU count supported by HPX", default = 64, type = "number"})
 
     if is_plat("linux") then
         add_syslinks("pthread")
