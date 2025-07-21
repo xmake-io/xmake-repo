@@ -26,6 +26,10 @@ package("libsndfile")
     end)
 
     on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", function (package)
+        os.rm("cmake/FindFLAC.cmake")
+        os.rm("cmake/FindOgg.cmake")
+        os.rm("cmake/FindOpus.cmake")
+        os.rm("cmake/FindVorbis.cmake")
         -- we pass libogg as packagedeps instead of findOgg.cmake (it does not work)
         io.replace("cmake/SndFileChecks.cmake", [[find_package (Ogg 1.3 CONFIG)]], [[]], {plain = true})
         local configs = {
