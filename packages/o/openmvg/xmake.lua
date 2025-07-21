@@ -20,6 +20,8 @@ package("openmvg")
     end
     add_deps("eigen", "libpng", "libjpeg", "libtiff", "flann", "lemon", "cereal", "ceres-solver", "coin-or-clp")
 
+    add_links("openMVG_easyexif", "openMVG_exif", "openMVG_fast", "openMVG_features", "openMVG_geometry", "openMVG_image", "openMVG_kvld", "openMVG_lInftyComputerVision", "openMVG_linearProgramming", "openMVG_matching", "openMVG_matching_image_collection", "openMVG_multiview", "openMVG_numeric", "openMVG_robust_estimation", "openMVG_sfm", "openMVG_stlplus", "openMVG_system", "vlsift")
+
     if on_check then
         on_check("linux", function (package)
             assert(not package:has_tool("cxx", "clang"), "Linux Clang is not supported.")
@@ -29,11 +31,6 @@ package("openmvg")
     on_load(function (package)
         if package:config("openmp") then
             package:add("deps", "openmp")
-        end
-
-        local libs = {"openMVG_easyexif", "openMVG_exif", "openMVG_fast", "openMVG_features", "openMVG_geometry", "openMVG_image", "openMVG_kvld", "openMVG_lInftyComputerVision", "openMVG_linearProgramming", "openMVG_matching", "openMVG_matching_image_collection", "openMVG_multiview", "openMVG_numeric", "openMVG_robust_estimation", "openMVG_sfm", "openMVG_stlplus", "openMVG_system", "vlsift"}
-        for _, lib in ipairs(libs) do
-            package:add("links", lib)
         end
     end)
 
