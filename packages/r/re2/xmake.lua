@@ -16,9 +16,9 @@ package("re2")
     add_versions("2024.04.01", "3f6690c3393a613c3a0b566309cf04dc381d61470079b653afc47c67fb898198")
     add_versions("2024.06.01", "7326c74cddaa90b12090fcfc915fe7b4655723893c960ee3c2c66e85c5504b6c")
     add_versions("2024.07.02", "eb2df807c781601c14a260a507a5bb4509be1ee626024cb45acbd57cb9d4032b")
-    add_versions("2025.06.26", "6090fc23a189e1a04a0e751b4f285922a794a39b6ecc6670b6141af74c82fe08")
+    add_versions("2025.07.17", "41bea2a95289d112e7c2ccceeb60ee03d54269e7fe53e3a82bab40babdfa51ef")
 
-    add_versions("git:2025.06.26", "2025-06-26")
+    add_versions("git:2025.07.17", "2025-07-17")
 
     add_deps("cmake", "abseil")
 
