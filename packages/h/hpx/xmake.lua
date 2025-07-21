@@ -23,17 +23,30 @@ package("hpx")
         add_syslinks("pthread")
     end
 
-    add_deps("cmake", "hwloc", "asio >=1.12.0")
+    add_deps("cmake", "hwloc")
 
     on_load("windows", "linux", "macosx", function (package)
         local malloc = package:config("malloc")
         if malloc ~= "system" then
             package:add("deps", malloc)
         end
+
+        local boost_libs = {
+            thread = true,
+            chrono = true,
+            serialization = true,
+            iostreams = true
+        }
         if package:config("context") or not is_arch("x86") then
-            package:add("deps", "boost >=1.71.0", {configs = {context = true}})
+            boost_libs.context = true
+        end
+        package:add("deps", "boost >=1.71.0", {configs = boost_libs})
+
+        -- after v1.11.0, hpx adds macro guard to handle breaking changes in asio.
+        if package:version():gt("1.11.0") then
+            package:add("deps", "asio >=1.12.0")
         else
-            package:add("deps", "boost >=1.71.0")
+            package:add("deps", "asio >=1.12.0 <1.34.0")
         end
     end)
 
@@ -51,6 +64,8 @@ package("hpx")
         if not package:config("shared") then
             table.insert(configs, "-DHPX_WITH_STATIC_LINKING=ON")
         end
+        -- https://hpx-docs.stellar-group.org/latest/html/manual/building_hpx.html#most-important-cmake-options
+        -- `HPX_WITH_GENERIC_CONTEXT_COROUTINES` must be enabled for non-x86 architectures such as ARM and Power.
         if not is_arch("x86") then
             table.insert(configs, "-DHPX_WITH_GENERIC_CONTEXT_COROUTINES=ON")
         else
