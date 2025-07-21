@@ -26,6 +26,8 @@ package("libsndfile")
     end)
 
     on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", function (package)
+        -- we pass libogg as packagedeps instead of findOgg.cmake (it does not work)
+        io.replace("cmake/SndFileChecks.cmake", [[find_package (Ogg 1.3 CONFIG)]], [[]], {plain = true})
         local configs = {
             "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
             "-DCMAKE_FIND_PACKAGE_PREFER_CONFIG=ON"
@@ -45,7 +47,7 @@ package("libsndfile")
                 cmake:close()
             end
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = "libogg"})
    end)
 
     on_test(function (package)
