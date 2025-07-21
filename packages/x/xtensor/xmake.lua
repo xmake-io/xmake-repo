@@ -55,7 +55,7 @@ package("xtensor")
     on_test(function (package)
         local version = package:version()
         local includes, languages
-        if version then
+        if version and version:ge("0.26.0") then
             if version:ge("0.27.0") then
                 languages = "c++20"
             else
