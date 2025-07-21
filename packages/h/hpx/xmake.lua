@@ -72,11 +72,42 @@ package("hpx")
             table.insert(configs, "-DHPX_WITH_GENERIC_CONTEXT_COROUTINES=" .. (package:config("context") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
+
+        -- add links
+        package:add("linkdirs", "lib")
+        local internal_targets_path = path.join(package:installdir(), "lib/cmake/HPX/HPXInternalTargets.cmake")
+        if os.isfile(internal_targets_path) then
+            local cmake_content = io.readfile(internal_targets_path)
+            local link_string_core = cmake_content:match('set_target_properties%(HPXInternal::hpx_core PROPERTIES.-INTERFACE_LINK_LIBRARIES "([^"]*)"')
+            if link_string_core then
+                for _, lib_target in ipairs(link_string_core:split(";")) do
+                    lib_target = lib_target:gsub("%$<LINK_ONLY:([^>]+)>", "%1")
+                    local lib_name = lib_target:match("HPXInternal::(hpx.*)")
+                    if lib_name then
+                        package:add("links", lib_name)
+                    end
+                end
+            end
+            local link_string_full = cmake_content:match('set_target_properties%(HPXInternal::hpx_full PROPERTIES.-INTERFACE_LINK_LIBRARIES "([^"]*)"')
+            if link_string_full then
+                for _, lib_target in ipairs(link_string_full:split(";")) do
+                    lib_target = lib_target:gsub("%$<LINK_ONLY:([^>]+)>", "%1")
+                    local lib_name = lib_target:match("HPXInternal::(hpx.*)")
+                    if lib_name then
+                        package:add("links", lib_name)
+                    end
+                end
+            end
+            package:add("links", "hpx_init")
+        else
+            os.raise("Could not find file HPXInternalTargets.cmake to add link dependencies.")
+        end
     end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <hpx/iostream.hpp>
+            #include <hpx/hpx_main.hpp>
             void test() {
                 hpx::cout << "Hello World!\n" << std::flush;
             }
