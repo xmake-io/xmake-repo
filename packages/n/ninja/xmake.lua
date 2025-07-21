@@ -9,6 +9,7 @@ package("ninja")
         if os.arch() == "arm64" then
             set_urls("https://github.com/ninja-build/ninja/releases/download/$(version)/ninja-winarm64.zip")
             add_versions("v1.12.1", "79c96a50e0deafec212cfa85aa57c6b74003f52d9d1673ddcd1eab1c958c5900")
+            add_versions("v1.13.1", "fb959b674970e36a7c9a23191524b80fb5298fc71fc98bfa42456bcc0a8dfb2f")
         else
             set_urls("https://github.com/ninja-build/ninja/releases/download/$(version)/ninja-win.zip")
             add_versions("v1.9.0", "2d70010633ddaacc3af4ffbd21e22fae90d158674a09e132e06424ba3ab036e9")
@@ -17,6 +18,7 @@ package("ninja")
             add_versions("v1.11.0", "d0ee3da143211aa447e750085876c9b9d7bcdd637ab5b2c5b41349c617f22f3b")
             add_versions("v1.11.1", "524b344a1a9a55005eaf868d991e090ab8ce07fa109f1820d40e74642e289abc")
             add_versions("v1.12.1", "f550fec705b6d6ff58f2db3c374c2277a37691678d6aba463adcbb129108467a")
+            add_versions("v1.13.1", "26a40fa8595694dec2fad4911e62d29e10525d2133c9a4230b66397774ae25bf")
         end
     elseif is_host("macosx") then
         set_urls("https://github.com/ninja-build/ninja/releases/download/$(version)/ninja-mac.zip")
@@ -26,6 +28,7 @@ package("ninja")
         add_versions("v1.11.0", "21915277db59756bfc61f6f281c1f5e3897760b63776fd3d360f77dd7364137f")
         add_versions("v1.11.1", "482ecb23c59ae3d4f158029112de172dd96bb0e97549c4b1ca32d8fad11f873e")
         add_versions("v1.12.1", "89a287444b5b3e98f88a945afa50ce937b8ffd1dcc59c555ad9b1baf855298c9")
+        add_versions("v1.13.1", "da7797794153629aca5570ef7c813342d0be214ba84632af886856e8f0063dd9")
     elseif is_host("linux", "bsd") then
         add_urls("https://github.com/ninja-build/ninja/archive/refs/tags/$(version).tar.gz",
                  "https://github.com/ninja-build/ninja.git")
@@ -35,13 +38,8 @@ package("ninja")
         add_versions("v1.11.0", "3c6ba2e66400fe3f1ae83deb4b235faf3137ec20bd5b08c29bfc368db143e4c6")
         add_versions("v1.11.1", "31747ae633213f1eda3842686f83c2aa1412e0f5691d1c14dbbcc67fe7400cea")
         add_versions("v1.12.1", "821bdff48a3f683bc4bb3b6f0b5fe7b2d647cf65d52aeb63328c91a6c6df285a")
+        add_versions("v1.13.1", "f0055ad0369bf2e372955ba55128d000cfcc21777057806015b45e4accbebf23")
     end
-
-    on_load("linux", "bsd", function (package)
-        if package:is_built() then
-            package:add("deps", package:version():ge("1.10.0") and "python" or "python2", {kind = "binary"})
-        end
-    end)
 
     on_install("@windows", "@msys", "@cygwin", function (package)
         os.cp("./ninja.exe", package:installdir("bin"))
@@ -52,16 +50,10 @@ package("ninja")
     end)
 
     on_install("@linux", "@bsd", function (package)
-        import("lib.detect.find_tool")
-        local python = assert(find_tool("python"), "python not found!")
-        local envs = {}
-        if package:has_tool("cxx", "gcc", "g++") then
-            envs.CXX = "g++"
-        elseif package:has_tool("cxx", "clang", "clang++") then
-            envs.CXX = "clang++"
-        end
-        os.vrunv(python.program, {"configure.py", "--bootstrap"}, {envs = envs})
-        os.cp("./ninja", package:installdir("bin"))
+        local configs = {}
+        configs.version = package:version_str()
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
