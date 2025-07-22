@@ -5,6 +5,7 @@ package("inipp")
     set_license("MIT")
 
     add_urls("https://github.com/mcmtroffaes/inipp.git")
+    add_versions("2025.06.17", "83e731cb75a04377ca41818bf55dd7b43cf5f267")
     add_versions("2022.02.03", "c61e699682d3f1091209c2179f1d03f5fc593327")
 
     on_install(function (package)

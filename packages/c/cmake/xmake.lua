@@ -25,6 +25,8 @@ package("cmake")
         add_versions("3.30.2", "c6fdda745f9ce69bca048e91955c7d043ba905d6388a62e0ff52b681ac17183c")
         add_versions("4.0.0",  "a7d66b55c673845e21b5541340417bae4823958393a59f4b644c26d433b19a0b")
         add_versions("4.0.1",  "5bb98e3096f0efe159bd862c2f293a43b5ebee6c0646bbc5fe7244cf2fc1c261")
+        add_versions("4.0.2",  "4c53ba41092617d1be2205dbc10bb5873a4c5ef5e9e399fc927ffbe78668a6d3")
+        add_versions("4.0.3",  "4e85de4daf1c3e82d7dc6b8ba5683972944b466343aeb9c327a742437bb3ce9a")
     elseif is_host("linux") then
         if os.arch():find("arm64.*") then
             add_urls("https://cmake.org/files/v$(version)-aarch64.tar.gz", {version = function (version)
@@ -42,6 +44,8 @@ package("cmake")
             add_versions("3.30.2", "d18f50f01b001303d21f53c6c16ff12ee3aa45df5da1899c2fe95be7426aa026")
             add_versions("4.0.0",  "3727d7a6ca900331447a55c08404cc11248b2e8d2709a6b3ed85b01189bb16af")
             add_versions("4.0.1",  "e4549bc77be50c4dacac18602befe0ec5cfc19444dbc64e16256f5ae98f7b63e")
+            add_versions("4.0.2",  "7a88303641c85ce1af09dfc4ffc201520bc7061f71ceafbf59680fc42af7d553")
+            add_versions("4.0.3",  "391da1544ef50ac31300841caaf11db4de3976cdc4468643272e44b3f4644713")
         else
             add_urls("https://cmake.org/files/v$(version)-x86_64.tar.gz", {version = function (version)
                     return table.concat(table.slice((version):split('%.'), 1, 2), '.') .. "/cmake-" .. version .. (version:ge("3.20") and "-linux" or "-Linux")
@@ -64,6 +68,8 @@ package("cmake")
             add_versions("3.30.2", "cdd7fb352605cee3ae53b0e18b5929b642900e33d6b0173e19f6d4f2067ebf16")
             add_versions("4.0.0",  "a06e6e32da747e569162bc0442a3fd400fadd9db7d4f185c9e4464ab299a294b")
             add_versions("4.0.1",  "d66c11c010588c8256ee20a26b45977cd5b2f4aee2b742d4b8a353769940d147")
+            add_versions("4.0.2",  "80940e81de61584fe4eedd3c40adc597d7c5b76ad8709668007b467a3c2a36c7")
+            add_versions("4.0.3",  "585ae9e013107bc8e7c7c9ce872cbdcbdff569e675b07ef57aacfb88c886faac")
         end
     elseif is_host("windows") then
         if os.arch() == "x64" then
@@ -88,6 +94,8 @@ package("cmake")
             add_versions("3.30.2", "48bf4b3dc2d668c578e0884cac7878e146b036ca6b5ce4f8b5572f861b004c25")
             add_versions("4.0.0",  "89e87f3e297b70f1349ee7c5f90783ca96efb986b70c558c799c3c9b1b716456")
             add_versions("4.0.1",  "31742b9a264b36897e0c904ab3520baf00a5b5ac5bc801aeede28d0d217eec65")
+            add_versions("4.0.2",  "109ec7de10416d6d78991bab9714d2cb1ccb71d1b436dff42ec978dd283c29fc")
+            add_versions("4.0.3",  "b59a31dfbfa376a4aaea9ff560ff2b29f78ee5f9fb15447fc71ae7bf9fea9379")
         elseif os.arch() == "x86" then
             add_urls("https://cmake.org/files/v$(version).zip", {excludes = {"*/doc/*"}, version = function (version)
                     return table.concat(table.slice((version):split('%.'), 1, 2), '.') .. "/cmake-" .. version .. (version:ge("3.20") and "-windows-i386" or "-win32-x86")
@@ -110,6 +118,8 @@ package("cmake")
             add_versions("3.30.2", "d01f7ea52097dd58aa225884b1ecc543827e9ef99d36dac2898609a0d5e60eb6")
             add_versions("4.0.0",  "28408c0ca3b4461550bbcad94c526846699ed79366d81b57db0375cb119875dd")
             add_versions("4.0.1",  "9174c1f0b519418436eb37c9b419aff40a8b12e12feee649abf04826544f2cdd")
+            add_versions("4.0.2",  "026009a57d06cb8342e42840fcbd83bc5e58ee3ea90d3ddc8e46f82a0d93d9ff")
+            add_versions("4.0.3",  "9f71df30cf0194f7214d135afb277017bd4a58baba2ae14e6ae8b0533b5a3dbf")
         elseif os.arch() == "arm64" then
             add_urls("https://cmake.org/files/v$(version).zip", {excludes = {"*/doc/*"}, version = function (version)
                     return table.concat(table.slice((version):split('%.'), 1, 2), '.') .. "/cmake-" .. version .. "-windows-arm64"
@@ -124,6 +134,8 @@ package("cmake")
             add_versions("3.30.2", "c0cef52e8f60eb1c3058f8bc0b3803c27d79f066b7d7d94f46a2c689bbd36f22")
             add_versions("4.0.0",  "6a24f1ea0965a10a2508b16db1ec8b62c83d5323ac33a1aa7d201797ba147302")
             add_versions("4.0.1",  "3de43c9c826349bba61eef04de90c12c2ad8632b0e0af31c57145f6da69898fb")
+            add_versions("4.0.2",  "634d6bab01a639e314f4fb2fee0967c84c3a37e39b9b2c9455c2dff2deb6a6dc")
+            add_versions("4.0.3",  "86ccd6485bbd4bb41a1a858db397be5bca5e0de96858bf8dbba7a64407bd6c00")
         end
     else
         add_urls("https://github.com/Kitware/CMake/releases/download/v$(version)/cmake-$(version).tar.gz")
@@ -140,6 +152,8 @@ package("cmake")
         add_versions("3.30.2", "46074c781eccebc433e98f0bbfa265ca3fd4381f245ca3b140e7711531d60db2")
         add_versions("4.0.0",  "ddc54ad63b87e153cf50be450a6580f1b17b4881de8941da963ff56991a4083b")
         add_versions("4.0.1",  "d630a7e00e63e520b25259f83d425ef783b4661bdc8f47e21c7f23f3780a21e1")
+        add_versions("4.0.2",  "1c3a82c8ca7cf12e0b17178f9d0c32f7ac773bd5651a98fcfd80fbf4977f8d48")
+        add_versions("4.0.3",  "8d3537b7b7732660ea247398f166be892fe6131d63cc291944b45b91279f3ffb")
     end
 
     if is_plat("mingw") and is_subhost("msys") then

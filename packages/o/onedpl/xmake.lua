@@ -12,7 +12,7 @@ package("onedpl")
     add_versions("2022.7.0", "095be49a9f54633d716e82f66cc3f1e5e858f19ef47639e4c94bfc6864292990")
     add_versions("2022.7.1", "0e6a1bee7a4f4375091c98b0b5290edf3178bb810384e0e106bf96c03649a754")
     add_versions("2022.8.0", "bef761a15364ffc51a74bd99b692185e5bca518d8b6a89770eeaf17309bd66b8")
-
+    add_versions("2022.9.0", "b38844878af9ecee07ca719426b90fec77f79a35c7bc55154422cb0d7f654343")
     add_configs("backend", {description = "Choose threading backend.", default = "tbb", type = "string", values = {"tbb", "dpcpp", "dpcpp_only", "omp", "serial"}})
 
     add_deps("cmake")

@@ -7,6 +7,7 @@ package("pyincpp")
     add_urls("https://github.com/chen-qingyu/pyincpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/chen-qingyu/pyincpp.git")
 
+    add_versions("v2.6.1", "1157d85018d0a44157ff4a17f70f8a868f336790ce30bc62516d32f397644f84")
     add_versions("v2.6.0", "70d0dba92c51baf3591104e191a899f4f701b1450aa3bc4f9bcfffc532c68c97")
     add_versions("v2.5.2", "f99df02c2a2121e2658e770113a8c9ebec5643b81daf82786039653966999f2d")
     add_versions("v2.5.1", "305bdf437146e7230c1fc7a1e59009e765468b24133b6def4e17bb01d80f54ad")

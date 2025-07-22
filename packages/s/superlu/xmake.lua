@@ -9,6 +9,7 @@ package("superlu")
     add_versions("v5.2.2", "470334a72ba637578e34057f46948495e601a5988a602604f5576367e606a28c")
     add_versions("v5.3.0", "3e464afa77335de200aeb739074a11e96d9bef6d0b519950cfa6684c4be1f350")
     add_versions("v7.0.0", "d7b91d4e0bb52644ca74c1a4dd466a694ddf1244a7bbf93cb453e8ca1f6527eb")
+    add_versions("v7.0.1", "86dcca1e086f8b8079990d07f00eb707fc9ef412cf3b2ce808b37956f0de2cb8")
 
     add_configs("blas", {description = "Choose BLAS library to use.", default = "openblas", type = "string", values = {"mkl", "openblas"}})
 
@@ -19,7 +20,30 @@ package("superlu")
     on_install("windows|!arm64", "linux", "macosx", function (package)
         os.cd("SRC")
         if package:version():ge("7.0.0") then
-            io.replace("superlu_config.h", "#define HAVE_METIS TRUE", "", {plain = true})
+            io.writefile("superlu_config.h", [[
+                #ifndef SUPERLU_CONFIG_H
+                #define SUPERLU_CONFIG_H
+
+                /* Enable metis */
+                /* #undef HAVE_METIS */
+
+                /* Enable colamd */
+                /* #undef HAVE_COLAMD */
+
+                /* enable 64bit index mode */
+                /* #undef XSDK_INDEX_SIZE */
+
+                /* Integer type for indexing sparse matrix meta structure */
+                #if defined(XSDK_INDEX_SIZE) && (XSDK_INDEX_SIZE == 64)
+                #include <stdint.h>
+                #define _LONGINT 1
+                typedef int64_t int_t;
+                #else
+                typedef int int_t; /* default */
+                #endif
+
+                #endif /* SUPERLU_CONFIG_H */
+            ]])
         end
         io.writefile("xmake.lua", format([[
             add_rules("mode.debug", "mode.release")

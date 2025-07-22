@@ -3,7 +3,14 @@ package("vc-ltl5")
     set_description("Shared to msvcrt.dll or ucrtbase.dll and optimize the C/C++ application file size")
     set_license("EPL-2.0")
 
-    add_urls("https://github.com/Chuyu-Team/VC-LTL5/releases/download/v$(version)/VC-LTL-$(version)-Binary.7z")
+    add_urls("https://github.com/Chuyu-Team/VC-LTL5/releases/download/$(version)", {version = function (version)
+        if version:ge("5.2.1") then
+            return "v" .. version .. "/VC-LTL-Binary.7z"
+        else
+            return "v" .. version .. "/VC-LTL-" .. version .. "-Binary.7z"
+        end
+    end})
+    add_versions("5.2.1", "0b0b17b7a4ed993701208b2eaeba91f3acf2f1b5402430b52ac7bfbca2519464")
     add_versions("5.1.1", "71eb81ad7d5270cb2a247d6b1c5c01b8efb8f2c869d2e5222be8aafab2fc07de")
     add_versions("5.0.6", "e406f829f75d59c34ee1e34cb6e994eb7db0810123ae7196499f26df88bc0a6f")
     add_versions("5.0.7", "08555aca30b2f77a484534be0799cfed05bfdeb1d1e461d91576264d7123e687")
@@ -26,8 +33,8 @@ package("vc-ltl5")
     add_configs("subsystem", {description = "Windows xp subsystem", default = "windows", type = "string", values = {"console", "windows"}})
     add_configs("clean_import", {description = "Do not use ucrt apiset, such as api-ms-win-crt-time-l1-1-0.dll (for geeks) (Duplicated after vc-ltl 5.1 version)", default = false, type = "boolean"})
     add_configs("openmp", {description = "Use openmp library", default = false, type = "boolean", readonly = true})
-    add_configs("shared", {description = "Use vs_runtime", default = true, type = "boolean", readonly = true})
-    add_configs("debug", {description = "Use vs_runtime", default = true, type = "boolean", readonly = true})
+    add_configs("shared", {description = "Use runtimes configs", default = true, type = "boolean", readonly = true})
+    add_configs("debug", {description = "Use runtimes configs", default = false, type = "boolean", readonly = true})
 
     set_policy("package.precompiled", false)
 
@@ -35,16 +42,17 @@ package("vc-ltl5")
         -- check vs version
         local vs = package:toolchain("msvc"):config("vs")
         if vs and tonumber(vs) < 2015 then
-            cprint("${color.warning}vc-ltl5 only supports vc14.0 or later versions")
+            wprint("vc-ltl5 only supports vc14.0 or later versions")
         end
         -- is xp?
+        local version = package:version()
         if package:config("min_version"):startswith("5") then
-            if package:version():ge("5.1.0") then
+            if version:ge("5.1.0") then
                 package:add("deps", "yy-thunks")
                 wprint([[package(vc-ltl5 >=5.1) require yy-thunks, you need to use `add_rules("yy-thunks@xp")` for windows xp target]])
             end
 
-            if package:config("vs_runtime"):startswith("MD") then
+            if package:has_runtime("MD") then
                 package:add("cxflags", "/Zc:threadSafeInit-")
             end
 
@@ -58,6 +66,11 @@ package("vc-ltl5")
             if arch then
                 local flag = format("/subsystem:%s,%s", package:config("subsystem"), arch)
                 package:add("ldflags", flag)
+            end
+
+            if version:ge("5.2.1") and package:has_runtime("MD", "MDd") and package:is_arch("x64", "x86") then
+                local url = format("https://github.com/Chuyu-Team/VC-LTL5/releases/download/v%s/VC-LTL.Redist.Dlls.zip", package:version_str())
+                package:add("resources", package:version_str(), "dlls", url, "99d99d7df5ce1643c0e8f0aadb457ab177199db8255d7ae5e68ff9c16492cfcd")
             end
         end
     end)
@@ -78,10 +91,14 @@ package("vc-ltl5")
             elseif semver_min_version:ge("6.0.6000") then
                 min_version = "6.0.6000.0"
             else
-                min_version = "5.1.2600.0"
+                if package:is_arch("x86") then
+                    min_version = "5.1.2600.0"
+                elseif package:is_arch("x64") then
+                    min_version = "5.2.3790.0"
+                end
             end
         else
-            cprint("${color.warning}Invalid min_version, use default min_version")
+            wprint("Invalid min_version, use default min_version")
             min_version = default_min_version
         end
 
@@ -118,7 +135,12 @@ package("vc-ltl5")
         ]])
         import("package.tools.xmake").install(package)
 
-        -- Duplicated after vc-ltl 5.1 version
+        local dlls = package:resourcedir("dlls")
+        if dlls then
+            os.vcp(path.join(dlls, "Dlls", package:arch()), package:installdir("bin"))
+        end
+
+        -- deprecated after vc-ltl 5.1 version
         local clean_import_dir = libdir .. "/CleanImport"
         if package:config("clean_import") and os.isdir(clean_import_dir) then
             os.cp(clean_import_dir, package:installdir("lib"))

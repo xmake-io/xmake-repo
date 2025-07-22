@@ -7,6 +7,7 @@ package("iguana")
     add_urls("https://github.com/qicosmos/iguana/archive/refs/tags/$(version).tar.gz",
              "https://github.com/qicosmos/iguana.git")
 
+    add_versions("1.0.9", "b6e3f11a0c37538e84e25397565f5f12b0e6810e582bce7f3ca046425b0b1edf")
     add_versions("1.0.8", "d73da8c876a060781ccf56ec79a6984dadefc7a6b00820365edf0d4ce71b822d")
     add_versions("1.0.7", "6e9bd93ac7f7e9a390042bea8922f18c745f726a6d7266ef6bfb0f7b7c94f789")
     add_versions("1.0.6", "cfacf1cce4ebe49b947ec823f93a23c2a7fd220f67f6847e9f449e7c469deb9e")

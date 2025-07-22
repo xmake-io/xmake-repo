@@ -7,6 +7,7 @@ package("watcher")
     set_urls("https://github.com/e-dant/watcher/archive/refs/tags/release/$(version).tar.gz",
              "https://github.com/e-dant/watcher.git")
 
+    add_versions("0.13.6", "b58b3a9f91d96d90080fd56cd998b1649633c43f92fc1bfe5562a000db472016")
     add_versions("0.13.5", "5bb0ea65b94d9444a6853eacff3a9b2121f0415d0ac895388d241f6f8be1e695")
     add_versions("0.13.2", "b037b4717a292892d61f619f9a2497ac0a49e8fd73d2c6bf4f9a6bef320718b2")
     add_versions("0.12.2", "1423b16734e588bce2a79e0ed205c8c2d651eea891b915862d7270873c72ca54")

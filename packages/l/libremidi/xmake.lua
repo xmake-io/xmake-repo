@@ -6,6 +6,8 @@ package("libremidi")
     add_urls("https://github.com/jcelerier/libremidi/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jcelerier/libremidi.git")
 
+    add_versions("v5.3.1", "b68cdb81feb168bfafa44a139c76b459ff622e75c36fda76b39baf2f3efabdd6")
+    add_versions("v5.3.0", "56d23d13c8d3fc40f0b46442af320865d485da908ad52d8950a87e05f9073c87")
     add_versions("v5.2.0", "d34a2e8aaede56f234f0f1b653fef0d84aeae1084e66d71c7237c85280d4be1a")
     add_versions("v5.1.0", "bd5f2f81fbed58c9d926741f5df5ec5b714854004492d1cf30609f650e199338")
     add_versions("v4.5.0", "2e884a4c826dd87157ee4fab8cd8c7b9dbbc1ddb804cb10ef0852094200724db")

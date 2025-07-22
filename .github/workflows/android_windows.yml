@@ -7,19 +7,29 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
     strategy:
       fail-fast: false
       matrix:
+        os: [windows-latest]
         arch: [armeabi-v7a, arm64-v8a]
         ndk: ["r22", "r27"]
         ndk_sdkver: ["30"]
+
+    runs-on: ${{ matrix.os }}
 
     concurrency:
       group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-Android-Windows-${{ matrix.arch }}-${{ matrix.ndk }}-${{ matrix.ndk_sdkver }}
       cancel-in-progress: true
     steps:
+      - name: Cache ndk
+        id: cache-ndk
+        uses: actions/cache@v4
+        with:
+          path: C:/Users/runneradmin/AppData/Local/.xmake/packages/n/ndk
+          key: ${{ matrix.os }}-ndk
+
       - uses: actions/checkout@v1
+
       - uses: xmake-io/github-action-setup-xmake@v1
         with:
           xmake-version: branch@master
@@ -31,20 +41,15 @@ jobs:
         with:
           minimum-size: 8GB
           maximum-size: 32GB
-          disk-root: "D:"
-
-      - name: Prepare
-        run: |
-          if ("${{ matrix.ndk }}" -eq "r27") {
-            curl -fsSL "https://dl.google.com/android/repository/android-ndk-r27-windows.zip" -o android-ndk-r27-windows.zip
-            Expand-Archive ./android-ndk-r27-windows.zip -DestinationPath ./ndk
-          } else {
-            curl -fsSL "https://dl.google.com/android/repository/android-ndk-r22-windows-x86_64.zip" -o android-ndk-r22-windows-x86_64.zip
-            Expand-Archive ./android-ndk-r22-windows-x86_64.zip -DestinationPath ./ndk
-          }
+          disk-root: "C:"
 
       - name: Tests
+        env:
+          ANDROID_NDK_ROOT: ""
+          ANDROID_NDK_HOME: ""
         run: |
-          $Env:XMAKE_MAIN_REPO = "https://github.com/xmake-io/xmake-repo.git"
-          xmake --version
-          xmake l ./scripts/test.lua -D -p android --ndk=D:/a/xmake-repo/xmake-repo/ndk/android-ndk-${{ matrix.ndk }} --ndk_sdkver=${{ matrix.ndk_sdkver }} -a ${{ matrix.arch }}
+          if ("${{ matrix.ndk }}" -eq "r27") {
+            xrepo env -y -b "ndk 27.0" xmake l ./scripts/test.lua -D -p android -a ${{ matrix.arch }} --ndk_sdkver=${{ matrix.ndk_sdkver }} 
+          } else {
+            xrepo env -y -b "ndk 22.0" xmake l ./scripts/test.lua -D -p android -a ${{ matrix.arch }} --ndk_sdkver=${{ matrix.ndk_sdkver }} 
+          }

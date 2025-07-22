@@ -7,6 +7,8 @@ package("imgui")
     add_urls("https://github.com/ocornut/imgui.git", {alias = "git"})
 
     -- don't forget to add the docking versions as well
+    add_versions("v1.92.0", "42250c45df2736bcef867ae4ff404d138e5135cd36466c63143b1ea3b1c81091")
+    add_versions("v1.91.9", "3872a5f90df78fced023c1945f4466b654fd74573370b77b17742149763a7a7c")
     add_versions("v1.91.8", "db3a2e02bfd6c269adf0968950573053d002f40bdfb9ef2e4a90bce804b0f286")
     add_versions("v1.91.7", "2001dab4bdd7d178d8277d3b17c40aa1ff1e76e2ccac5e7ab8c6daf9756312c2")
     add_versions("v1.91.6", "c5fbc5dcab1d46064001c3b84d7a88812985cde7e0e9ced03f5677bec1ba502a")
@@ -50,6 +52,8 @@ package("imgui")
     add_versions("v1.76",   "e482dda81330d38c87bd81597cacaa89f05e20ed2c4c4a93a64322e97565f6dc")
     add_versions("v1.75",   "1023227fae4cf9c8032f56afcaea8902e9bfaad6d9094d6e48fb8f3903c7b866")
 
+    add_versions("git:v1.92.0-docking", "v1.92.0-docking")
+    add_versions("git:v1.91.9-docking", "v1.91.9-docking")
     add_versions("git:v1.91.8-docking", "v1.91.8-docking")
     add_versions("git:v1.91.7-docking", "v1.91.7-docking")
     add_versions("git:v1.91.6-docking", "v1.91.6-docking")
@@ -81,6 +85,10 @@ package("imgui")
     add_versions("git:v1.87-docking",   "1ee252772ae9c0a971d06257bb5c89f628fa696a")
     add_versions("git:v1.85-docking",   "dc8c3618e8f8e2dada23daa1aa237626af341fd8")
     add_versions("git:v1.83-docking",   "80b5fb51edba2fd3dea76ec3e88153e2492243d1")
+
+    -- Fix conflicting IMGUI_API definitions in v1.92.0 only (https://github.com/ocornut/imgui/pull/8729)
+    add_patches("v1.92.0", "patches/v1.92.0/fix_imgui_api.patch", "e8ca0502056acf356f83703e7190dda87fde43ed245f65f0fb55b85cd164ed83")
+    add_patches("v1.92.0-docking", "patches/v1.92.0/fix_imgui_api.patch", "e8ca0502056acf356f83703e7190dda87fde43ed245f65f0fb55b85cd164ed83")
 
     add_configs("dx9",              {description = "Enable the dx9 backend", default = false, type = "boolean"})
     add_configs("dx10",             {description = "Enable the dx10 backend", default = false, type = "boolean"})

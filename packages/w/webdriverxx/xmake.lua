@@ -5,8 +5,10 @@ package("webdriverxx")
     set_license("MIT")
 
     add_urls("https://github.com/GermanAizek/webdriverxx.git", {submodules = false})
+    add_versions("2025.03.20", "6ed56fa0f5d65507762c5945155984661d21247b")
     add_versions("2023.04.22", "b8c9ac36360021daca7b0fd006a092b605b19e29")
 
+    add_patches("2025.03.20", "patches/2025.03.20/picojson.diff", "d7314048f11611ce38715093f7bc73251a75dfb11e74e1a715526a5d8ce8b72d")
     add_patches("2023.04.22", "patches/2023.04.22/picojson.patch", "11e23fe37c7e3b8ec174642542567c9d6bae3657892f5d7ac8203cbb89c9112c")
     add_patches("2023.04.22", "patches/2023.04.22/fix_cxx23.patch", "da63a9b134ba78cb17b099486b83d2bc846c9786590265eb4e31f88a9911aeab")
     

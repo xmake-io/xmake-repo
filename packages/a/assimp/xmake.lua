@@ -5,6 +5,7 @@ package("assimp")
 
     set_urls("https://github.com/assimp/assimp/archive/refs/tags/$(version).zip",
              "https://github.com/assimp/assimp.git")
+    add_versions("v6.0.1", "24256974f66e36df6c72b78d4903e1bb6875b6d3f8aa8638639def68f2c50fd0")
     add_versions("v5.4.3", "795c29716f4ac123b403e53b677e9f32a8605c4a7b2d9904bfaae3f4053b506d")
     add_versions("v5.4.2", "03e38d123f6bf19a48658d197fd09c9a69db88c076b56a476ab2da9f5eb87dcc")
     add_versions("v5.4.1", "08837ee7c50b98ca72d2c9e66510ca6640681db8800aa2d3b1fcd61ccc615113")
