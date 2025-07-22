@@ -169,7 +169,7 @@ target("imgui")
 
         if has_config("wgpu_backend") then
             local user_config = get_config("user_config")
-            add_defines("IMGUI_IMPL_WEBGPU_BACKEND_=" .. get_config("wgpu_backend"))
+            add_defines("IMGUI_IMPL_WEBGPU_BACKEND_" .. get_config("wgpu_backend"))
         end
     end
 
