@@ -99,6 +99,7 @@ package("imgui")
     add_configs("win32",            {description = "Enable the win32 backend", default = false, type = "boolean"})
     add_configs("osx",              {description = "Enable the OS X backend", default = false, type = "boolean"})
     add_configs("wgpu",             {description = "Enable the wgpu backend", default = false, type = "boolean"})
+    add_configs("wgpu_backend",     {description = "Use specific wgpu backend", default = "WGPU", type = "string", values = {"WGPU", "DAWN"}})
     add_configs("freetype",         {description = "Use FreeType to build and rasterize the font atlas", default = false, type = "boolean"})
     add_configs("user_config",      {description = "Use user config (disables test!)", default = nil, type = "string"})
     add_configs("wchar32",          {description = "Use 32-bit for ImWchar (default is 16-bit)", default = false, type = "boolean"})
@@ -159,6 +160,9 @@ package("imgui")
         end
         if package:config("wgpu") then
             package:add("deps", "wgpu-native")
+        end
+        if package:config("wgpu_backend") then
+            package:add("defines", "IMGUI_IMPL_WEBGPU_BACKEND_=" .. package:config("wgpu_backend"))
         end
         if package:config("freetype") then
             package:add("deps", "freetype")

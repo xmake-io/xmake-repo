@@ -19,6 +19,7 @@ option("vulkan",           {showmenu = true,  default = false})
 option("win32",            {showmenu = true,  default = false})
 option("osx",              {showmenu = true,  default = false})
 option("wgpu",             {showmenu = true,  default = false})
+option("wgpu_backend",     {showmenu = true,  default = "WGPU", type = "string", values = {"WGPU", "DAWN"}})
 option("freetype",         {showmenu = true,  default = false})
 option("user_config",      {showmenu = true,  default = nil, type = "string"})
 option("wchar32",          {showmenu = true,  default = false})
@@ -165,6 +166,11 @@ target("imgui")
         add_files("backends/imgui_impl_wgpu.cpp")
         add_headerfiles("(backends/imgui_impl_wgpu.h)")
         add_packages("wgpu-native")
+    end
+
+    if has_config("wgpu_backend") then
+        local user_config = get_config("user_config")
+        add_defines("IMGUI_IMPL_WEBGPU_BACKEND_=" .. get_config("wgpu_backend"))
     end
 
     if has_config("freetype") then
