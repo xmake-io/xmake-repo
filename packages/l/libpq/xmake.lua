@@ -8,7 +8,7 @@ package("libpq")
     end})
     add_versions("14.1", "14809c9f669851ab89b344a50219e85b77f3e93d9df9e255b9781d8d60fcfbc9")
 
-    add_deps("krb5", "openssl", "zlib")
+    add_deps("krb5", "openssl3", "zlib")
     if is_plat("linux") then
         add_deps("flex", "bison")
     end
@@ -26,7 +26,7 @@ package("libpq")
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
-        import("package.tools.autoconf").install(package, configs, {packagedeps = {"openssl", "zlib"}})
+        import("package.tools.autoconf").install(package, configs, {packagedeps = {"openssl3", "zlib"}})
     end)
 
     on_test(function (package)
