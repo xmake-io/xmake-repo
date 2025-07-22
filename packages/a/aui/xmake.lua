@@ -140,7 +140,7 @@ package("aui")
         package:add("defines", "API_AUI_CORE=AUI_IMPORT")
     end)
 
-    on_install("!bsd and !wasm", function (package)
+    on_install("windows|!arm*", "macosx", function (package)
         local configs = {
             "-DAUI_INSTALL_RUNTIME_DEPENDENCIES=OFF",
             "-DAUIB_NO_PRECOMPILED=TRUE",
