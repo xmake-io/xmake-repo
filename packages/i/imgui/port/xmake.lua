@@ -19,7 +19,7 @@ option("vulkan",           {showmenu = true,  default = false})
 option("win32",            {showmenu = true,  default = false})
 option("osx",              {showmenu = true,  default = false})
 option("wgpu",             {showmenu = true,  default = false})
-option("wgpu_backend",     {showmenu = true,  default = "WGPU", type = "string", values = {"WGPU", "DAWN"}})
+option("wgpu_backend",     {showmenu = true,  default = "wgpu", type = "string", values = {"wgpu", "dawn"}})
 option("freetype",         {showmenu = true,  default = false})
 option("user_config",      {showmenu = true,  default = nil, type = "string"})
 option("wchar32",          {showmenu = true,  default = false})
@@ -169,7 +169,7 @@ target("imgui")
 
         if has_config("wgpu_backend") then
             local user_config = get_config("user_config")
-            add_defines("IMGUI_IMPL_WEBGPU_BACKEND_" .. get_config("wgpu_backend"))
+            add_defines("IMGUI_IMPL_WEBGPU_BACKEND_" .. string.upper(get_config("wgpu_backend")))
         end
     end
 
