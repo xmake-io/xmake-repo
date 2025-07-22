@@ -4,6 +4,7 @@ package("librdkafka")
 
     add_urls("https://github.com/edenhill/librdkafka/archive/refs/tags/$(version).tar.gz",
              "https://github.com/edenhill/librdkafka.git")
+    add_versions("v2.3.0", "2d49c35c77eeb3d42fa61c43757fcbb6a206daa560247154e60642bcdcc14d12")
     add_versions("v1.6.2", "b9be26c632265a7db2fdd5ab439f2583d14be08ab44dc2e33138323af60c39db")
     add_versions("v1.8.2-POST2", "d556d07cb88ea689e28c8e058ec3265ab333c9fc5e8f4ac0b7509bb5ae0e9f25")
 
