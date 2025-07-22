@@ -147,7 +147,11 @@ package("aui")
             "-DAUIB_DISABLE=ON"
         }
         local opt = {}
-        if package:is_plat("windows") then
+        if package:is_plat("macosx") then
+            if package:config("shared") then
+                opt.packagedeps = {"gtest"}
+            end
+        elseif package:is_plat("windows") then
             if package:config("shared") then
                 opt.packagedeps = {"glew", "gtest"}
             end
