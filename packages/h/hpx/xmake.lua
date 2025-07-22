@@ -85,6 +85,8 @@ package("hpx")
                     local lib_name = lib_target:match("HPXInternal::(hpx.*)")
                     if lib_name then
                         package:add("links", lib_name)
+                    elseif lib_target:startswith("-Wl,") then
+                        package:add("linkflags", lib_target)
                     end
                 end
             end
@@ -95,6 +97,8 @@ package("hpx")
                     local lib_name = lib_target:match("HPXInternal::(hpx.*)")
                     if lib_name then
                         package:add("links", lib_name)
+                    elseif lib_target:startswith("-Wl,") then
+                        package:add("linkflags", lib_target)
                     end
                 end
             end
