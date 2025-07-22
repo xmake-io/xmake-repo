@@ -56,6 +56,7 @@ package("libwebsockets")
 
     on_install("!wasm", function (package)
         io.replace("CMakeLists.txt", "/WX", "", {plain = true})
+        io.replace("CMakeLists.txt", "set(CMAKE_MSVC_RUNTIME_LIBRARY MultiThreaded$<$<CONFIG:Debug>:Debug>DLL)", "", {plain = true})
         if not package:is_plat("linux") or not package:config("libcap") then
             io.replace("CMakeLists.txt", [[CHECK_LIBRARY_EXISTS(cap cap_set_flag "" LWS_HAVE_LIBCAP)]], "", {plain = true})
         end
