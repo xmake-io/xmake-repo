@@ -47,7 +47,7 @@ package("libsndfile")
                 cmake:close()
             end
         end
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"libflac", "libopus", "libvorbis", "libogg"}})
+        import("package.tools.cmake").install(package, configs, {packagedeps = "libogg"})
    end)
 
     on_test(function (package)
