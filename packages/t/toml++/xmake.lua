@@ -1,11 +1,11 @@
 package("toml++")
-
     set_homepage("https://marzer.github.io/tomlplusplus/")
     set_description("toml++ is a header-only TOML config file parser and serializer for C++17 (and later!).")
     set_license("MIT")
 
     add_urls("https://github.com/marzer/tomlplusplus/archive/refs/tags/$(version).tar.gz",
              "https://github.com/marzer/tomlplusplus.git")
+
     add_versions("v2.5.0", "2e246ee126cfb7bd68edd7285d5bb5c8c5296121ce809306ee71cfd6127c76a6")
     add_versions("v3.0.0", "934ad62e82ae5ee67bdef512b39d24ddba45e012fb94e22b39fa1fb192bdabab")
     add_versions("v3.1.0", "dae72714fc356ca1b019298d9e6275cc41ba95546ae722ccdb6795e92f47762e")
@@ -14,6 +14,14 @@ package("toml++")
     add_versions("v3.4.0", "8517f65938a4faae9ccf8ebb36631a38c1cadfb5efa85d9a72e15b9e97d25155")
 
     add_configs("header_only", {description = "Use header only version.", default = true, type = "boolean"})
+
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::tomlplusplus")
+    elseif is_plat("linux") then
+        add_extsources("pacman::tomlplusplus", "apt::libtomlplusplus-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::tomlplusplus")
+    end
 
     on_load(function (package)
         if package:config("header_only") then

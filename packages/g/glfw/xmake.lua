@@ -29,7 +29,7 @@ package("glfw")
         add_frameworks("Cocoa", "IOKit")
     elseif is_plat("windows") then
         add_syslinks("user32", "shell32", "gdi32")
-    elseif is_plat("mingw") then
+    elseif is_plat("mingw", "msys") then
         add_syslinks("gdi32")
     elseif is_plat("linux") then
         add_syslinks("dl", "pthread")
@@ -44,7 +44,7 @@ package("glfw")
             package:add("deps", "libx11", "libxrandr", "libxrender", "libxinerama", "libxfixes", "libxcursor", "libxi", "libxext")
         end
         if package:config("wayland") then
-            package:add("deps", "wayland")
+            package:add("deps", "wayland", "wayland-protocols")
         end
     end)
 

@@ -1,5 +1,5 @@
 package("flex")
-    set_kind("binary")
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/westes/flex/")
     set_license("BSD-2-Clause")
 
@@ -7,26 +7,39 @@ package("flex")
 
     if on_source then
         on_source(function (package)
-            if not package:is_plat("windows") then
+            if not package:is_plat("windows", "mingw", "msys") then
                 package:add("urls", "https://github.com/westes/flex/releases/download/v$(version)/flex-$(version).tar.gz")
             end
         end)
-    elseif not is_plat("windows") then
+    elseif not is_plat("windows", "mingw", "msys") then
         add_urls("https://github.com/westes/flex/releases/download/v$(version)/flex-$(version).tar.gz")
     end
 
-    on_load("macosx", "linux", "bsd", "windows", function (package)
+    on_load("macosx", "linux", "bsd", "windows", "@msys", function (package)
         if package:is_plat("windows") then
             package:add("deps", "winflexbison", {private = true})
         elseif package:is_plat("linux") then
             package:add("deps", "m4")
         end
 
-        -- we always set it, because flex may be modified as library
-        -- by add_deps("flex", {kind = "library"})
-        package:addenv("PATH", "bin")
+        if is_subhost("msys") and xmake:version():ge("2.9.7") then
+            package:add("deps", "pacman::flex", {private = true, configs = {msystem = "msys"}})
+        end
+
+        if not package:is_cross() then
+            package:addenv("PATH", "bin")
+        end
+        -- https://github.com/Seifert69/DikuMUD3/issues/70#issuecomment-1100932157
+        -- Don't link libfl.so
+        package:add("links", "")
+    end)
+
+    on_install("@msys", function (package)
+        -- https://github.com/msys2/MSYS2-packages/issues/1911
         if package:is_library() then
-            package:set("kind", "library", {headeronly = true})
+            local msys_dir = os.getenv("MINGW_PREFIX")
+            local header = path.join(path.directory(msys_dir), "usr/include/FlexLexer.h")
+            os.vcp(header, package:installdir("include"))
         end
     end)
 
@@ -35,8 +48,14 @@ package("flex")
         os.rm(path.join(package:installdir(), "bin", "bison.exe"))
     end)
 
-    on_install("macosx", "linux", "bsd", "android", "iphoneos", "cross", function (package)
-        import("package.tools.autoconf").install(package)
+    on_install("macosx", "linux", "bsd", function (package)
+        local configs = {}
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        if package:is_debug() then
+            table.insert(configs, "--enable-debug")
+        end
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)

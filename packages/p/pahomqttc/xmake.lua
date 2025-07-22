@@ -6,6 +6,7 @@ package("pahomqttc")
     add_urls("https://github.com/eclipse/paho.mqtt.c/archive/refs/tags/$(version).zip",
              "https://github.com/eclipse/paho.mqtt.c.git")
 
+    add_versions("v1.3.14", "ad67f3920b4dc618867c573626f6dbddc213d3f759abbdb9d785f7f85d086e41")
     add_versions("v1.3.13", "5ba7c7ab7ebb1499938fa2e358e6c1f9a926b270f2bf082acf89d59b4771a132")
 
     add_configs("uuid", {description = "Flag that defines whether libuuid or a custom uuid implementation should be used", default = false, type = "boolean"})

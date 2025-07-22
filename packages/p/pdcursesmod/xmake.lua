@@ -4,6 +4,7 @@ package("pdcursesmod")
 
     add_urls("https://github.com/Bill-Gray/PDCursesMod/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Bill-Gray/PDCursesMod.git")
+    add_versions("v4.5.2", "bd61d0026826b40ac43265c1f9a462a1903fef76f3ee231265ba22d528cf5ae3")
     add_versions("v4.4.0", "a53bf776623decb9e4b2c2ffe43e52d83fe4455ffd20229b4ba36c92918f67dd")
     add_versions("v4.3.4", "abbd099a51612200d1bfe236d764e0f0748ee71c3a6bc2c4069447d907d55b82")
 
@@ -20,9 +21,9 @@ package("pdcursesmod")
 
     on_load(function (package)
         if package:config("port") == "sdl2" then
-            package:add("deps", "libsdl")
+            package:add("deps", "libsdl2")
             if package:config("utf8") then
-                package:add("deps", "libsdl_ttf")
+                package:add("deps", "libsdl2_ttf")
             end
         end
         if package:config("utf8") then
@@ -32,7 +33,7 @@ package("pdcursesmod")
             package:add("defines", "PDC_DLL_BUILD")
         end
     end)
-    
+
     on_install("linux", "macosx", "mingw", "windows", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
@@ -40,9 +41,9 @@ package("pdcursesmod")
             option("utf8", {description = "Treat all narrow characters as UTF-8."})
                 add_defines("PDC_WIDE", "PDC_FORCE_UTF8")
             if is_config("port", "sdl2") then
-                add_requires("libsdl")
+                add_requires("libsdl2")
                 if has_config("utf8") then
-                    add_requires("libsdl_ttf")
+                    add_requires("libsdl2_ttf")
                 end
             end
             target("pdcursesmod")
@@ -53,13 +54,13 @@ package("pdcursesmod")
                 if is_kind("shared") then
                     add_defines("PDC_DLL_BUILD")
                 end
-                add_packages("libsdl", "libsdl_ttf")
+                add_packages("libsdl2", "libsdl2_ttf")
                 if is_plat("windows", "mingw") then
                     add_syslinks("user32", "advapi32", "winmm")
                 end
         ]])
         local configs = {}
-        if package:config("shared") then 
+        if package:config("shared") then
             configs.kind = "shared"
         end
         configs.port = package:config("port")

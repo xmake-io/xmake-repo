@@ -51,7 +51,7 @@ package("fluidsynth")
             libsndfile = "libsndfile",
             openmp = "openmp",
             readline = "readline",
-            sdl2 = "libsdl"
+            sdl2 = "libsdl2"
         }
         for config, info in pairs(configdeps) do
             if package:config(config) then

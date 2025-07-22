@@ -4,8 +4,11 @@ package("pahomqttcpp")
     set_license("EPL-2.0")
 
     add_urls("https://github.com/eclipse/paho.mqtt.cpp/archive/refs/tags/$(version).zip",
-             "https://github.com/eclipse/paho.mqtt.cpp.git")
+             "https://github.com/eclipse/paho.mqtt.cpp.git", {submodules = false})
 
+    add_versions("v1.5.2", "121ddfc8f35080f01ddf5c0e6557593cc34380623566d78639335d050ce20fb2")
+    add_versions("v1.5.1", "ad80c9cdf4c2e557fe0afb95e3170c818bd8f072c7efe6f19e174814d482c131")
+    add_versions("v1.5.0", "0805f9d8003b80d3d389930bfb8d369c56cdea402effa76b6c1c61ba5aa0d804")
     add_versions("v1.4.1", "a3b2782ef6d19ff2ac4c6cfe29de79d8888f75122deb361ae91ca3d3a14456ee")
     add_versions("v1.4.0", "c165960f64322de21697eb06efdca3d74cce90f45ff5ff0efdd968708e13ba0c")
     add_versions("v1.3.2", "e01f43cf0ba35efa666503c7adb2786d4a6f7fe6eb44ce5311ac4785a0ce8a98")
@@ -43,11 +46,17 @@ package("pahomqttcpp")
     end)
 
     on_test(function (package)
+        local languages
+        if package:version() and package:version():ge("1.5.0") then
+            languages = "c++17"
+        else
+            languages = "c++11"
+        end
         assert(package:check_cxxsnippets({test = [[
             #include <mqtt/client.h>
             void test() {
                 mqtt::client cli{"localhost", "some_id"};
                 cli.connect();
             }
-        ]]}, {configs = {languages = "c++11"}}))
+        ]]}, {configs = {languages = languages}}))
     end)

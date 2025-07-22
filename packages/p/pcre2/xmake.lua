@@ -63,11 +63,30 @@ package("pcre2")
         end
         if package:is_debug() then
             table.insert(configs, "-DPCRE2_DEBUG=ON")
+            table.insert(configs, "-DINSTALL_MSVC_PDB=ON")
         end
         if package:is_plat("windows") then
             table.insert(configs, "-DPCRE2_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
+
+        local defines = table.wrap(package:get("defines"))
+        if defines and #defines ~= 0 then
+            defines = table.clone(defines)
+            for i, define in ipairs(defines) do
+                defines[i] = "-D" .. define
+            end
+            table.insert(defines, 1, "Cflags: -I${includedir}")
+            local pkgconfig_dir = package:installdir("lib/pkgconfig")
+
+            local pcre2_pc = path.join(pkgconfig_dir, format("libpcre2-%d.pc", package:config("bitwidth")))
+            io.replace(pcre2_pc, "Cflags: -I${includedir}", table.concat(defines, " "), {plain = true})
+
+            local pcre2_posix_pc = path.join(pkgconfig_dir, "libpcre2-posix.pc")
+            if os.isfile(pcre2_posix_pc) then
+                io.replace(pcre2_posix_pc, "Cflags: -I${includedir}", table.concat(defines, " "), {plain = true})
+            end
+        end
     end)
 
     on_test(function (package)

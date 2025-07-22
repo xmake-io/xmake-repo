@@ -1,0 +1,147 @@
+diff --git a/Hydrogent/interface/Tasks/HnBeginFrameTask.hpp b/Hydrogent/interface/Tasks/HnBeginFrameTask.hpp
+index 9b26a77..d7e766e 100644
+--- a/Hydrogent/interface/Tasks/HnBeginFrameTask.hpp
++++ b/Hydrogent/interface/Tasks/HnBeginFrameTask.hpp
+@@ -36,8 +36,8 @@
+ #include "../interface/HnTypes.hpp"
+ #include "../interface/HnFrameRenderTargets.hpp"
+ 
+-#include "../../../../DiligentCore/Common/interface/BasicMath.hpp"
+-#include "../../../../DiligentCore/Common/interface/Timer.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
++#include "DiligentCore/Common/interface/Timer.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Hydrogent/interface/Tasks/HnPostProcessTask.hpp b/Hydrogent/interface/Tasks/HnPostProcessTask.hpp
+index d34fbcd..6935de5 100644
+--- a/Hydrogent/interface/Tasks/HnPostProcessTask.hpp
++++ b/Hydrogent/interface/Tasks/HnPostProcessTask.hpp
+@@ -31,14 +31,14 @@
+ #include "HnTask.hpp"
+ #include "HnTypes.hpp"
+ 
+-#include "../../../../DiligentCore/Graphics/GraphicsEngine/interface/PipelineState.h"
+-#include "../../../../DiligentCore/Graphics/GraphicsEngine/interface/PipelineResourceSignature.h"
+-#include "../../../../DiligentCore/Graphics/GraphicsEngine/interface/ShaderResourceBinding.h"
+-#include "../../../../DiligentCore/Graphics/GraphicsEngine/interface/Buffer.h"
+-#include "../../../../DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
+-#include "../../../../DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+-#include "../../../../DiligentCore/Common/interface/BasicMath.hpp"
+-#include "../../../../DiligentCore/Graphics/GraphicsEngine/interface/GraphicsTypesX.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/PipelineState.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/PipelineResourceSignature.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/ShaderResourceBinding.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/Buffer.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.h"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/GraphicsTypesX.hpp"
+ #include "../../PBR/interface/PBR_Renderer.hpp"
+ #include "../../PostProcess/ScreenSpaceAmbientOcclusion/interface/ScreenSpaceAmbientOcclusion.hpp"
+ #include "../../PostProcess/ScreenSpaceReflection/interface/ScreenSpaceReflection.hpp"
+diff --git a/Hydrogent/interface/Tasks/HnProcessSelectionTask.hpp b/Hydrogent/interface/Tasks/HnProcessSelectionTask.hpp
+index fc66e58..e6201d2 100644
+--- a/Hydrogent/interface/Tasks/HnProcessSelectionTask.hpp
++++ b/Hydrogent/interface/Tasks/HnProcessSelectionTask.hpp
+@@ -30,11 +30,11 @@
+ 
+ #include "HnTask.hpp"
+ 
+-#include "../../../../DiligentCore/Graphics/GraphicsEngine/interface/PipelineState.h"
+-#include "../../../../DiligentCore/Graphics/GraphicsEngine/interface/ShaderResourceBinding.h"
+-#include "../../../../DiligentCore/Graphics/GraphicsEngine/interface/Buffer.h"
+-#include "../../../../DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+-#include "../../../../DiligentCore/Common/interface/BasicMath.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/PipelineState.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/ShaderResourceBinding.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/Buffer.h"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Hydrogent/interface/Tasks/HnReadRprimIdTask.hpp b/Hydrogent/interface/Tasks/HnReadRprimIdTask.hpp
+index 60595a7..1f77ea0 100644
+--- a/Hydrogent/interface/Tasks/HnReadRprimIdTask.hpp
++++ b/Hydrogent/interface/Tasks/HnReadRprimIdTask.hpp
+@@ -30,7 +30,7 @@
+ 
+ #include <memory>
+ 
+-#include "../../../../DiligentCore/Graphics/GraphicsTools/interface/GPUCompletionAwaitQueue.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/GPUCompletionAwaitQueue.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Hydrogent/interface/Tasks/HnRenderBoundBoxTask.hpp b/Hydrogent/interface/Tasks/HnRenderBoundBoxTask.hpp
+index eea7d5d..44e59b5 100644
+--- a/Hydrogent/interface/Tasks/HnRenderBoundBoxTask.hpp
++++ b/Hydrogent/interface/Tasks/HnRenderBoundBoxTask.hpp
+@@ -30,7 +30,7 @@
+ 
+ #include <memory>
+ 
+-#include "../../../../DiligentCore/Common/interface/BasicMath.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Hydrogent/interface/Tasks/HnRenderRprimsTask.hpp b/Hydrogent/interface/Tasks/HnRenderRprimsTask.hpp
+index 5e097f6..7fbde16 100644
+--- a/Hydrogent/interface/Tasks/HnRenderRprimsTask.hpp
++++ b/Hydrogent/interface/Tasks/HnRenderRprimsTask.hpp
+@@ -29,7 +29,7 @@
+ #include "HnTask.hpp"
+ #include "HnTypes.hpp"
+ 
+-#include "../../../Common/interface/BasicMath.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
+ 
+ #include "pxr/imaging/hd/renderPass.h"
+ 
+diff --git a/Hydrogent/interface/Tasks/HnRenderShadowsTask.hpp b/Hydrogent/interface/Tasks/HnRenderShadowsTask.hpp
+index f834865..43e61ef 100644
+--- a/Hydrogent/interface/Tasks/HnRenderShadowsTask.hpp
++++ b/Hydrogent/interface/Tasks/HnRenderShadowsTask.hpp
+@@ -32,10 +32,10 @@
+ 
+ #include "../interface/HnRenderPassState.hpp"
+ 
+-#include "../../../../DiligentCore/Graphics/GraphicsEngine/interface/GraphicsTypes.h"
+-#include "../../../../DiligentCore/Graphics/GraphicsEngine/interface/PipelineState.h"
+-#include "../../../../DiligentCore/Graphics/GraphicsEngine/interface/Buffer.h"
+-#include "../../../../DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/GraphicsTypes.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/PipelineState.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/Buffer.h"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Hydrogent/interface/Tasks/HnTask.hpp b/Hydrogent/interface/Tasks/HnTask.hpp
+index 4d341c7..794f6db 100644
+--- a/Hydrogent/interface/Tasks/HnTask.hpp
++++ b/Hydrogent/interface/Tasks/HnTask.hpp
+@@ -31,7 +31,7 @@
+ #include "pxr/imaging/hd/task.h"
+ #include "pxr/imaging/hd/renderIndex.h"
+ 
+-#include "../../../../DiligentCore/Platforms/Basic/interface/DebugUtilities.hpp"
++#include "DiligentCore/Platforms/Basic/interface/DebugUtilities.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/Hydrogent/interface/Tasks/HnTaskManager.hpp b/Hydrogent/interface/Tasks/HnTaskManager.hpp
+index fba0132..42611c3 100644
+--- a/Hydrogent/interface/Tasks/HnTaskManager.hpp
++++ b/Hydrogent/interface/Tasks/HnTaskManager.hpp
+@@ -31,7 +31,7 @@
+ 
+ #include "Tasks/HnTask.hpp"
+ 
+-#include "../../../../DiligentCore/Platforms/Basic/interface/DebugUtilities.hpp"
++#include "DiligentCore/Platforms/Basic/interface/DebugUtilities.hpp"
+ 
+ namespace Diligent
+ {

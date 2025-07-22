@@ -1,0 +1,7 @@
+target("ta-lib")
+    set_kind("static")
+    add_includedirs("include", "src/ta_abstract", "src/ta_abstract/frames", "src/ta_common")
+    add_files("src/ta_abstract/**.c")
+    add_files("src/ta_common/**.c")
+    add_files("src/ta_func/**.c")
+    add_headerfiles("include/*.h)", {prefixdir = "ta-lib"})

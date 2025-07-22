@@ -1,0 +1,137 @@
+diff --git a/lib_acl_cpp/CMakeLists.txt b/lib_acl_cpp/CMakeLists.txt
+index ea3868d..52f868f 100644
+--- a/lib_acl_cpp/CMakeLists.txt
++++ b/lib_acl_cpp/CMakeLists.txt
+@@ -263,6 +263,7 @@ set(LIBRARY_OUTPUT_PATH ${lib_output_path})
+ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${lib_output_path})
+ 
+ add_library(acl_cpp_static STATIC ${lib_src})
++target_link_libraries(acl_cpp_static ZLIB::ZLIB)
+ 
+ if (${WIN_OS})
+ 	set_target_properties(acl_cpp_static PROPERTIES
+@@ -297,23 +298,23 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/acl_cpp/
+ if (ACL_BUILD_SHARED MATCHES "YES")
+ 	if (CMAKE_SYSTEM_NAME MATCHES "Android")
+ 		if (ANDROID_STL MATCHES "gnustl_shared")
+-			set(sys_ldflags "-shared -lz")
++			set(sys_ldflags "-shared")
+ 		else()
+-			set(sys_ldflags "-shared -flto -lz")
++			set(sys_ldflags "-shared -flto")
+ 		endif()
+ 		target_compile_options(acl_cpp_static PRIVATE
+ 			-fvisibility=hidden -fvisibility-inlines-hidden)
+ 	elseif (CMAKE_SYSTEM_NAME MATCHES "OHOS")
+-		set(sys_ldflags "-shared -flto -lz")
++		set(sys_ldflags "-shared -flto")
+ 		target_compile_options(acl_cpp_static PRIVATE
+ 				-fvisibility=hidden -fvisibility-inlines-hidden)
+ 	elseif (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+-		set(sys_ldflags "-shared -lz -liconv -lpthread -ldl")
++		set(sys_ldflags "-shared -liconv -lpthread -ldl")
+ 		target_compile_options(acl_cpp_static PRIVATE
+ 			-fvisibility=hidden -fvisibility-inlines-hidden)
+ 		set(CMAKE_MACOSX_RPATH 1)
+ 	elseif (${UNIX_OS})
+-		set(sys_ldflags "-shared -lz -lpthread -ldl")
++		set(sys_ldflags "-shared -lpthread -ldl")
+ 		target_compile_options(acl_cpp_static PRIVATE
+ 			-fvisibility=hidden -fvisibility-inlines-hidden)
+ 	endif()
+@@ -336,7 +337,7 @@ if (ACL_BUILD_SHARED MATCHES "YES")
+ 		set(lc_flags "-Wl,-rpath,${CMAKE_INSTALL_PREFIX}/lib -L${lib_output_path}")
+ 		set(CMAKE_SHARED_LINKER_FLAGS "${lc_flags} ${sys_ldflags}")
+ 		set_target_properties(acl_cpp_shared PROPERTIES OUTPUT_NAME "acl_cpp")
+-		target_link_libraries(acl_cpp_shared protocol acl)
++		target_link_libraries(acl_cpp_shared protocol acl ZLIB::ZLIB)
+ 	endif()
+ 
+ 	if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS|Android|FreeBSD")
+diff --git a/lib_fiber/cpp/CMakeLists.txt b/lib_fiber/cpp/CMakeLists.txt
+index 96c1fee..5398551 100644
+--- a/lib_fiber/cpp/CMakeLists.txt
++++ b/lib_fiber/cpp/CMakeLists.txt
+@@ -139,6 +139,7 @@ set(LIBRARY_OUTPUT_PATH ${lib_output_path})
+ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${lib_output_path})
+ 
+ add_library(fiber_cpp_static STATIC ${lib_src})
++target_link_libraries(fiber_cpp_static ZLIB::ZLIB)
+ 
+ if (${WIN_OS})
+ 	set_target_properties(fiber_cpp_static PROPERTIES
+@@ -173,19 +174,19 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/fiber/
+ if (ACL_BUILD_SHARED MATCHES "YES")
+ 	if (CMAKE_SYSTEM_NAME MATCHES "Android")
+ 		if (ANDROID_STL MATCHES "gnustl_shared")
+-			set(sys_ldflags "-shared -lz")
++			set(sys_ldflags "-shared")
+ 		else()
+-			set(sys_ldflags "-shared -O3 -flto -lz")
++			set(sys_ldflags "-shared -O3 -flto")
+ 		endif()
+ 		target_compile_options(fiber_cpp_static PRIVATE
+ 			-fvisibility=hidden -fvisibility-inlines-hidden)
+ 	elseif (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+-		set(sys_ldflags "-shared -liconv -lz -lpthread -ldl")
++		set(sys_ldflags "-shared -liconv -lpthread -ldl")
+ 		target_compile_options(fiber_cpp_static PRIVATE
+ 			-fvisibility=hidden -fvisibility-inlines-hidden)
+ 		set(CMAKE_MACOSX_RPATH 1)
+ 	elseif (${UNIX_OS})
+-		set(sys_ldflags "-shared -lz -lpthread -ldl")
++		set(sys_ldflags "-shared -lpthread -ldl")
+ 		target_compile_options(fiber_cpp_static PRIVATE
+ 			-fvisibility=hidden -fvisibility-inlines-hidden)
+ 	endif()
+@@ -209,7 +210,7 @@ if (ACL_BUILD_SHARED MATCHES "YES")
+ 		set_target_properties(fiber_cpp_shared PROPERTIES OUTPUT_NAME "fiber_cpp")
+ 		set(lc_ldflags "-Wl,-rpath,${CMAKE_INSTALL_PREFIX}/lib -L${lib_output_path}")
+ 		set(CMAKE_SHARED_LINKER_FLAGS "${lc_ldflags} ${sys_ldflags}")
+-		target_link_libraries(fiber_cpp_shared acl_cpp protocol acl fiber)
++		target_link_libraries(fiber_cpp_shared acl_cpp protocol acl fiber ZLIB::ZLIB)
+ 	endif()
+ 
+ 	if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS|Android|FreeBSD")
+diff --git a/lib_protocol/CMakeLists.txt b/lib_protocol/CMakeLists.txt
+index 545c78b..79bb706 100644
+--- a/lib_protocol/CMakeLists.txt
++++ b/lib_protocol/CMakeLists.txt
+@@ -140,6 +140,7 @@ set(LIBRARY_OUTPUT_PATH ${lib_output_path})
+ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${lib_output_path})
+ 
+ add_library(protocol_static STATIC ${lib_src})
++target_link_libraries(protocol_static ZLIB::ZLIB)
+ 
+ if (${WIN_OS})
+ 	set_target_properties(protocol_static PROPERTIES
+@@ -174,16 +175,16 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
+ if (ACL_BUILD_SHARED MATCHES "YES")
+ 	if (CMAKE_SYSTEM_NAME MATCHES "Android")
+ 		if (ANDROID_STL MATCHES "gnustl_shared")
+-			set(sys_ldflags "-shared -lz")
++			set(sys_ldflags "-shared")
+ 		else()
+-			set(sys_ldflags "-shared -flto -lz")
++			set(sys_ldflags "-shared -flto")
+ 		endif()
+ 		target_compile_options(protocol_static PRIVATE -fvisibility=hidden)
+ 	elseif (CMAKE_SYSTEM_NAME MATCHES "OHOS")
+-		set(sys_ldflags "-shared -flto -lz")
++		set(sys_ldflags "-shared -flto")
+ 		target_compile_options(protocol_static PRIVATE -fvisibility=hidden)
+ 	elseif (${UNIX_OS})
+-		set(sys_ldflags "-shared -lz -lpthread -ldl")
++		set(sys_ldflags "-shared -lpthread -ldl")
+ #		target_compile_options(protocol_static PRIVATE -fvisibility=hidden)
+ 
+ 		if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+@@ -210,7 +211,7 @@ if (ACL_BUILD_SHARED MATCHES "YES")
+ 		set_target_properties(protocol_shared PROPERTIES OUTPUT_NAME "protocol")
+ 		set(lc_flags "-Wl,-rpath,${CMAKE_INSTALL_PREFIX}/lib -L${lib_output_path}")
+ 		set(CMAKE_SHARED_LINKER_FLAGS "${lc_flags} ${sys_ldflags}")
+-		target_link_libraries(protocol_shared acl)
++		target_link_libraries(protocol_shared acl ZLIB::ZLIB)
+ 	endif()
+ 
+ 	if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS|Android|FreeBSD")

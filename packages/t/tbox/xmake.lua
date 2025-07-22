@@ -18,6 +18,7 @@ package("tbox")
     add_versions("v1.7.1", "236493a71ffc9d07111e906fc2630893b88d32c0a5fbb53cd94211f031bd65a1")
     add_versions("v1.7.4", "c2eb29ad0cab15b851ab54cea6ae99555222a337a0f83340ae820b4a6e76a10c")
     add_versions("v1.7.5", "6382cf7d6110cbe6f29e8346d0e4eb078dd2cbf7e62913b96065848e351eb15e")
+    add_versions("v1.7.6", "2622de5473b8f2e94b800b86ff6ef4a535bc138c61c940c3ab84737bb94a126a")
 
     add_configs("micro",      {description = "Compile micro core library for the embed system.", default = false, type = "boolean"})
     add_configs("float",      {description = "Enable or disable the float type.", default = true, type = "boolean"})
@@ -76,6 +77,9 @@ package("tbox")
             end
         end
         import("package.tools.xmake").install(package, configs)
+        if package:has_tool("cc", "cosmocc") then
+            os.trycp(path.join(package:buildir(), "**", ".aarch64"), package:installdir("lib"))
+        end
     end)
 
     on_test(function (package)

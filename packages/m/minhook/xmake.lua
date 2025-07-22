@@ -1,5 +1,4 @@
 package("minhook")
-
     set_homepage("https://github.com/TsudaKageyu/minhook")
     set_description("The Minimalistic x86/x64 API Hooking Library for Windows.")
     set_license("BSD-2-Clause")
@@ -7,9 +6,10 @@ package("minhook")
     set_urls("https://github.com/TsudaKageyu/minhook/archive/$(version).tar.gz",
              "https://github.com/TsudaKageyu/minhook.git")
 
+    add_versions("v1.3.4", "1aebeae4ca898330c507860acc2fca2eb335fe446a3a2b8444c3bf8b2660a14e")
     add_versions("v1.3.3", "5bec16358ec9086d4593124bf558635e89135abea2c76e5761ecaf09f4546b19")
 
-    on_install("windows", "mingw", function (package)
+    on_install("windows|!arm*", "mingw|!arm*", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             target("minhook")

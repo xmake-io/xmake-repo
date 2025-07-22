@@ -5,6 +5,7 @@ package("lapack")
     add_urls("https://github.com/Reference-LAPACK/lapack/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Reference-LAPACK/lapack.git")
 
+    add_versions("v3.12.1", "2ca6407a001a474d4d4d35f3a61550156050c48016d949f0da0529c0aa052422")
     add_versions("v3.12.0", "eac9570f8e0ad6f30ce4b963f4f033f0f643e7c3912fc9ee6cd99120675ad48b")
 
     if is_plat("linux") then

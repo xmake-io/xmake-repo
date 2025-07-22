@@ -5,6 +5,7 @@ package("dr_wav")
     set_license("MIT")
 
     set_urls("https://github.com/mackron/dr_libs.git", {submodules = false})
+    add_versions("0.13.17", "660795b2834aebb2217c9849d668b6e4bd4ef810")
     add_versions("0.13.16", "4ec70a37c4450b021a6653f0813f1b9ceaae65fb")
     add_versions("0.13.13", "9eed1be421749ba68a87e5b4c3b10858f8580689")
     add_versions("0.13.12", "d35a3bc5efd02455d98cbe12b94647136f09b42d")

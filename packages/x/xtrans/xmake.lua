@@ -5,16 +5,17 @@ package("xtrans")
 
     set_urls("https://www.x.org/archive/individual/lib/xtrans-$(version).tar.gz")
     add_versions("1.4.0", "48ed850ce772fef1b44ca23639b0a57e38884045ed2cbb18ab137ef33ec713f9")
+    add_versions("1.6.0", "936b74c60b19c317c3f3cb1b114575032528dbdaf428740483200ea874c2ca0a")
 
     if is_plat("linux") then
         add_extsources("apt::xtrans-dev", "pacman::xtrans")
     end
 
-    if is_plat("macosx", "linux", "bsd") then
+    if is_plat("macosx", "linux", "bsd", "cross") then
         add_deps("pkg-config", "util-macros", "xorgproto")
     end
 
-    on_install("macosx", "linux", "bsd", function (package)
+    on_install("macosx", "linux", "bsd", "cross", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
                          "--localstatedir=" .. package:installdir("var"),
                          "--disable-dependency-tracking",
@@ -22,6 +23,7 @@ package("xtrans")
                          "--enable-docs=no"}
         -- fedora systems do not provide sys/stropts.h
         io.replace("Xtranslcl.c", "# include <sys/stropts.h>", "# include <sys/ioctl.h>")
+        io.replace("Xtranslcl.c", "# include <stropts.h>", "# include <sys/ioctl.h>")
         import("package.tools.autoconf").install(package, configs)
     end)
 

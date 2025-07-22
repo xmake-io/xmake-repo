@@ -6,6 +6,16 @@ package("s2n-tls")
     add_urls("https://github.com/aws/s2n-tls/archive/refs/tags/$(version).tar.gz",
              "https://github.com/aws/s2n-tls.git")
 
+    add_versions("v1.5.21", "203d69d6f557f6ab303438ad186fca13fd2c60581b2cca6348a9fbee10d79995")
+    add_versions("v1.5.17", "3ab786720ac23b35bcf6f4354659652e2ec8eb20b1a3989e7be93c3e7985ea5e")
+    add_versions("v1.5.15", "103f9361c736fea7278038891b0566ff975c40ac59cef5ac5b9225a476c8abc6")
+    add_versions("v1.5.14", "3f65f1eca85a8ac279de204455a3e4940bc6ad4a1df53387d86136bcecde0c08")
+    add_versions("v1.5.12", "718866ea8276f4d5c78a4b6506561599a4ff5c05b3fccee7ef7ad6198b23e660")
+    add_versions("v1.5.10", "6f13d37658954cc24f4eb8c7f30736e026ce06f8c9609f7820ab82504618a98d")
+    add_versions("v1.5.9", "8a9aa2ba9a25f936e241eaa6bb7e39bc1a097d178c4b255fa36795c0457e3f4e")
+    add_versions("v1.5.7", "c30b97c8bcccc0557331dd1a043010a70984c9cff11b0bbd769651db68f8b91d")
+    add_versions("v1.5.6", "85602d0ad672cb233052504624dec23b47fc6d324bb82bd6eaff13b8f652dec3")
+    add_versions("v1.5.5", "6316e1ad2c8ef5807519758bb159d314b9fef31d79ae27bc8f809104b978bb04")
     add_versions("v1.5.1", "d79710d6ef089097a3b84fc1e5cec2f08d1ec46e93b1d400df59fcfc859e15a3")
     add_versions("v1.5.0", "5e86d97d8f24653ef3dff3abe6165169f0ba59cdf52b5264987125bba070174d")
     add_versions("v1.4.18", "a55b0b87eaaffc58bd44d90c5bf7903d11be816aa144296193e7d1a6bea5910e")
@@ -28,8 +38,12 @@ package("s2n-tls")
 
     add_deps("cmake", "openssl")
 
-    on_install("linux", "bsd", "cross", function (package)
-        local configs = {"-DBUILD_TESTING=OFF", "-DUNSAFE_TREAT_WARNINGS_AS_ERRORS=OFF"}
+    on_install("linux", "bsd", "cross", "android", function (package)
+        local configs = {
+            "-DBUILD_TESTING=OFF",
+            "-DUNSAFE_TREAT_WARNINGS_AS_ERRORS=OFF",
+            "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
+        }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DS2N_LTO=" .. (package:config("lto") and "ON" or "OFF"))

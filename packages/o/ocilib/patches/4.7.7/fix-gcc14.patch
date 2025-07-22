@@ -1,0 +1,23 @@
+From 4b67124796225c6e1b6038ab1c9f11b232aa50fb Mon Sep 17 00:00:00 2001
+From: Vincent Rogier <vince.rogier@ocilib.net>
+Date: Mon, 20 Jan 2025 13:47:30 +0100
+Subject: [PATCH] Fixed # #371 (missing cast leading compile falieur on gcc14
+ as -Wincompatible-pointer-types becomes default)
+
+---
+ src/reference.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/reference.c b/src/reference.c
+index d760420c..428318b7 100644
+--- a/src/reference.c
++++ b/src/reference.c
+@@ -443,7 +443,7 @@ boolean OcilibReferenceToString
+     }
+     else
+     {
+-        dbstr = str;
++        dbstr = (dbtext *) str;
+     }
+ 
+     CHECK_OCI

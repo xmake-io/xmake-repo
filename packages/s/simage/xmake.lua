@@ -6,6 +6,7 @@ package("simage")
 
     add_urls("https://github.com/coin3d/simage/releases/download/v$(version)/simage-$(version)-src.zip",
              "https://github.com/coin3d/simage.git")
+    add_versions("1.8.4", "1dda9a76281ddb3a87e63358593779b2e95a7ee4631d478f071de36fca255d6f")
     add_versions("1.8.1", "308a8712c1f28cf6e662acab2e1fdd263fbfcb11323869806f4fef435653d4d3")
     add_versions("1.8.3", "48fd116bf8493df08729ad8468ce42d7c9c73ddbb21feff48bf6aac187294f1b")
 

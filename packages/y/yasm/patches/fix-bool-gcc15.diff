@@ -1,0 +1,24 @@
+diff --git a/libyasm/bitvect.h b/libyasm/bitvect.h
+index 3aee3a5..9b84bf3 100644
+--- a/libyasm/bitvect.h
++++ b/libyasm/bitvect.h
+@@ -80,11 +80,15 @@ typedef  Z_longword         *Z_longwordptr;
+ #ifdef __cplusplus
+     typedef bool boolean;
+ #else
+-    #ifdef MACOS_TRADITIONAL
++     #ifdef MACOS_TRADITIONAL
+         #define boolean Boolean
+-    #else
+-        typedef enum boolean { false = FALSE, true = TRUE } boolean;
+-    #endif
++     #else
++        #if __STDC_VERSION__ < 202311L
++            typedef enum boolean { false = FALSE, true = TRUE } boolean;
++        #else
++            typedef bool boolean;
++        #endif
++     #endif
+ #endif
+ 
+ /*****************************************************************************/

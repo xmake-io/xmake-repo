@@ -1,0 +1,27 @@
+From 0f049b61b6f611ed6d3b8c44b4f1232290936aa3 Mon Sep 17 00:00:00 2001
+From: Redbeanw44602 <redbeana44945@gmail.com>
+Date: Thu, 2 Jan 2025 22:03:20 +0800
+Subject: [PATCH] fix build under clang/msabi.
+
+---
+ db/c.cc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/db/c.cc b/db/c.cc
+index 8bdde38..8c6418a 100644
+--- a/db/c.cc
++++ b/db/c.cc
+@@ -19,6 +19,10 @@
+ #include "leveldb/status.h"
+ #include "leveldb/write_batch.h"
+ 
++#if defined(_MSC_VER)
++#define strdup _strdup
++#endif
++
+ using leveldb::Cache;
+ using leveldb::Comparator;
+ using leveldb::CompressionType;
+-- 
+2.47.1
+

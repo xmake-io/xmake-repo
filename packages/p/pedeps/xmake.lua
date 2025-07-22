@@ -10,11 +10,16 @@ package("pedeps")
 
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
 
-    on_install(function (package)
+    on_load(function (package)
+        if package:config("tools") then
+            package:add("patches", "0.1.15", "patches/0.1.15/tool.patch", "7c25438c0357721ddb6ee74c28a074ad1b7772f4c0b7604de11885569d7b4cb0")
+        end
         if not package:config("shared") and package:is_plat("windows", "mingw", "msys") then
             package:add("defines", "STATIC")
         end
+    end)
 
+    on_install(function (package)
         io.writefile("xmake.lua", [[
             option("tools", {default = false})
             add_rules("mode.debug", "mode.release")
@@ -35,6 +40,7 @@ package("pedeps")
                 add_includedirs("lib", {public = true})
                 if is_kind("static") then
                     add_defines("BUILD_PEDEPS_STATIC")
+                    add_defines("STATIC", {interface = true})
                 elseif is_kind("shared") then
                     add_defines("BUILD_PEDEPS_DLL")
                 end

@@ -1,13 +1,13 @@
 package("cppast")
     set_homepage("https://github.com/foonathan/cppast")
     set_description("Library to parse and work with the C++ AST")
+    set_license("MIT")
 
     add_urls("https://github.com/foonathan/cppast.git")
-    add_versions("2023.02.07", "3fb7c24bc22d129e9f5cce80c7358fd725b94105")
+    add_versions("2024.06.14", "5329e377ab9b9ab9309e9641f3fcda04366a449a")
 
     add_deps("cmake", "debug_assert", "tiny-process-library", "type_safe")
-    add_deps("llvm", {kind = "library"})
-    add_links("cppast")
+    add_deps("llvm 16.x", {kind = "library"})
 
     on_install("linux", function (package)
         io.replace("CMakeLists.txt", [[ OR (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)]], "", { plain = true })
