@@ -141,6 +141,7 @@ package("aui")
 
     on_install("!bsd and !wasm", function (package)
         local configs = {
+            "-DAUI_INSTALL_RUNTIME_DEPENDENCIES=OFF",
             "-DAUIB_NO_PRECOMPILED=TRUE",
             "-DAUIB_DISABLE=ON"
         }
