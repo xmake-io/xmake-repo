@@ -20,7 +20,7 @@ package("hpx")
     add_configs("cpu_count", {description = "Set the maximum CPU count supported by HPX", default = 64, type = "number"})
 
     if is_plat("linux") then
-        add_syslinks("pthread")
+        add_syslinks("pthread", "dl", "rt")
     end
 
     add_deps("cmake", "hwloc")
@@ -79,27 +79,23 @@ package("hpx")
         if os.isfile(internal_targets_path) then
             local cmake_content = io.readfile(internal_targets_path)
             local link_string_core = cmake_content:match('set_target_properties%(HPXInternal::hpx_core PROPERTIES.-INTERFACE_LINK_LIBRARIES "([^"]*)"')
-            if link_string_core then
-                for _, lib_target in ipairs(link_string_core:split(";")) do
+            for _, lib_target in ipairs(link_string_core:split(";")) do
+                if lib_target:startswith("-Wl") then
+                    package:add("linkflags", lib_target)
+                elseif lib_target:startswith("$<LINK_ONLY:HPXInternal::") then
                     lib_target = lib_target:gsub("%$<LINK_ONLY:([^>]+)>", "%1")
                     local lib_name = lib_target:match("HPXInternal::(hpx.*)")
-                    if lib_name then
-                        package:add("links", lib_name)
-                    elseif lib_target:startswith("-Wl,") then
-                        package:add("linkflags", lib_target)
-                    end
+                    package:add("links", lib_name)
                 end
             end
             local link_string_full = cmake_content:match('set_target_properties%(HPXInternal::hpx_full PROPERTIES.-INTERFACE_LINK_LIBRARIES "([^"]*)"')
-            if link_string_full then
-                for _, lib_target in ipairs(link_string_full:split(";")) do
+            for _, lib_target in ipairs(link_string_full:split(";")) do
+                if lib_target:startswith("-Wl") then
+                    package:add("linkflags", lib_target)
+                elseif lib_target:startswith("$<LINK_ONLY:HPXInternal::") then
                     lib_target = lib_target:gsub("%$<LINK_ONLY:([^>]+)>", "%1")
                     local lib_name = lib_target:match("HPXInternal::(hpx.*)")
-                    if lib_name then
-                        package:add("links", lib_name)
-                    elseif lib_target:startswith("-Wl,") then
-                        package:add("linkflags", lib_target)
-                    end
+                    package:add("links", lib_name)
                 end
             end
             package:add("links", "hpx_init")
