@@ -147,7 +147,7 @@ package("aui")
         local opt = {}
         if package:is_plat("windows") then
             if package:config("shared") then
-                opt.packagedeps = {"glew"}
+                opt.packagedeps = {"glew", "gtest"}
             end
             if package:has_tool("cxx", "cl", "clang_cl") then
                 opt.cxflags = {"/EHsc"}
