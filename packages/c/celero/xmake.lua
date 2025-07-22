@@ -15,13 +15,13 @@ package("celero")
 
     add_deps("cmake")
 
-    on_load("windows", function (package)
+    on_load("windows", "mingw", function (package)
         if not package:config("shared") then
             package:add("defines", "CELERO_STATIC")
         end
     end)
 
-    on_install(function (package)
+    on_install("!bsd", function (package)
         local configs = {"-DCELERO_TREAT_WARNINGS_AS_ERRORS=OFF", "-DCELERO_ENABLE_WARNINGS_AS_ERRORS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DCELERO_COMPILE_DYNAMIC_LIBRARIES=" .. (package:config("shared") and "ON" or "OFF"))
