@@ -8,6 +8,7 @@ package("aui")
 
     add_versions("v7.1.2", "a4cf965c50d75e20a319c9c8b231ad9c13c25a06ad303e1eb65d1ff141b1f85c")
     add_patches("v7.1.2", "patches/v7.1.2/debundle.diff", "1eb3da88e82503e6a9a893c112b4dd97909341905fe0e28d3fb5a4d2a50075ea")
+    add_patches("v7.1.2", "patches/v7.1.2/fix-osx-enforce-cpp-template.diff", "eef4147a8b037552887777cd497c190ecc22514bb11fb3a3d6ea433a78cce61b")
 
     add_deps("cmake")
     if is_subhost("windows") then
