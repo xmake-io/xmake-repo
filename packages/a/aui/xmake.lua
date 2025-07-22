@@ -144,12 +144,21 @@ package("aui")
             "-DAUIB_NO_PRECOMPILED=TRUE",
             "-DAUIB_DISABLE=ON"
         }
-        if package:is_plat("windows") and package:is_arch("arm64") then
-            io.replace("cmake/aui.build.cmake", [[if (CMAKE_GENERATOR_PLATFORM MATCHES "(arm64)|(ARM64)" OR CMAKE_SYSTEM_PROCESSOR MATCHES "(aarch64|arm64)")]], [[if (1)]], {plain = true})
+        local opt = {}
+        if package:is_plat("windows") then
+            if package:config("shared") then
+                opt.packagedeps = {"glew"}
+            end
+            if package:has_tool("cxx", "cl", "clang_cl") then
+                opt.cxflags = {"/EHsc"}
+            end
+            if package:is_arch("arm64") then
+                io.replace("cmake/aui.build.cmake", [[if (CMAKE_GENERATOR_PLATFORM MATCHES "(arm64)|(ARM64)" OR CMAKE_SYSTEM_PROCESSOR MATCHES "(aarch64|arm64)")]], [[if (1)]], {plain = true})
+            end
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
