@@ -84,7 +84,7 @@ package("pulseaudio")
         table.insert(configs, "-Doss-output=" .. (package:is_plat("linux") and "enabled" or "disabled"))
 
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-        import("package.tools.meson").install(package, configs, {packagedeps = {"libflac", "libopus", "libvorbis", "libogg"}})
+        import("package.tools.meson").install(package, configs, {packagedeps = {"libiconv", "libflac", "libopus", "libvorbis", "libogg"}})
     end)
 
     on_test(function (package)
