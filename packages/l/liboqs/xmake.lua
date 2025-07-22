@@ -6,6 +6,7 @@ package("liboqs")
     add_urls("https://github.com/open-quantum-safe/liboqs/archive/refs/tags/$(version).tar.gz",
              "https://github.com/open-quantum-safe/liboqs.git")
 
+    add_versions("0.14.0", "5b0df6138763b3fc4e385d58dbb2ee7c7c508a64a413d76a917529e3a9a207ea")
     add_versions("0.13.0", "789e9b56bcb6b582467ccaf5cdb5ab85236b0c1007d30c606798fa8905152887")
     add_versions("0.12.0", "df999915204eb1eba311d89e83d1edd3a514d5a07374745d6a9e5b2dd0d59c08")
     add_versions("0.11.0", "f77b3eff7dcd77c84a7cd4663ef9636c5c870f30fd0a5b432ad72f7b9516b199")
