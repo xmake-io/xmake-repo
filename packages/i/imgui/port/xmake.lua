@@ -166,11 +166,11 @@ target("imgui")
         add_files("backends/imgui_impl_wgpu.cpp")
         add_headerfiles("(backends/imgui_impl_wgpu.h)")
         add_packages("wgpu-native")
-    end
 
-    if has_config("wgpu_backend") then
-        local user_config = get_config("user_config")
-        add_defines("IMGUI_IMPL_WEBGPU_BACKEND_=" .. get_config("wgpu_backend"))
+        if has_config("wgpu_backend") then
+            local user_config = get_config("user_config")
+            add_defines("IMGUI_IMPL_WEBGPU_BACKEND_=" .. get_config("wgpu_backend"))
+        end
     end
 
     if has_config("freetype") then

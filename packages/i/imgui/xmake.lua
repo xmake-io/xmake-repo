@@ -160,9 +160,9 @@ package("imgui")
         end
         if package:config("wgpu") then
             package:add("deps", "wgpu-native")
-        end
-        if package:config("wgpu_backend") then
-            package:add("defines", "IMGUI_IMPL_WEBGPU_BACKEND_=" .. package:config("wgpu_backend"))
+            if package:config("wgpu_backend") then
+                package:add("defines", "IMGUI_IMPL_WEBGPU_BACKEND_=" .. package:config("wgpu_backend"))
+            end
         end
         if package:config("freetype") then
             package:add("deps", "freetype")
