@@ -12,7 +12,6 @@ package("argus")
 
     add_configs("regex", {description = "Enable regex validation support using PCRE2", default = false, type = "boolean"})
 
-
     on_load(function (package)
         if package:config("regex") then
             package:add("deps", "pcre2")
@@ -20,6 +19,10 @@ package("argus")
     end)
 
     on_install(function (package)
+        if package:is_plat("windows") then
+            io.replace("includes/argus/internal/compiler.h", "#define ARGUS_API __declspec(dllimport)", "#define ARGUS_API", {plain = true})
+        end
+        io.replace("meson.build", "both_libraries", "library", {plain = true})
         local configs = {"-Dregex=" .. (package:config("regex") and "true" or "false")}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         import("package.tools.meson").install(package, configs)
