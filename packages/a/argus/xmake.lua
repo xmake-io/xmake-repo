@@ -19,9 +19,12 @@ package("argus")
     end)
 
     on_install(function (package)
-        if package:is_plat("windows") then
+        if package:is_plat("mingw") then
+            io.replace("includes/argus/internal/compiler.h", "#define ARGUS_API __declspec(dllimport) __cdecl", "#define ARGUS_API", {plain = true})
+        elseif package:is_plat("windows") then
             io.replace("includes/argus/internal/compiler.h", "#define ARGUS_API __declspec(dllimport)", "#define ARGUS_API", {plain = true})
         end
+        io.replace("meson.build", "werror=true", "werror=false", {plain = true})
         io.replace("meson.build", "both_libraries", "library", {plain = true})
         local configs = {"-Dregex=" .. (package:config("regex") and "true" or "false")}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
