@@ -21,7 +21,9 @@ package("pybind11")
     add_versions("v2.13.1", "a3c9ea1225cb731b257f2759a0c12164db8409c207ea5cf851d4b95679dda072")
 
     add_deps("cmake")
-    if is_plat("macosx") then
+    if is_plat("windows", "mingw") then
+        add_deps("python 3.x", {configs = {headeronly = false}})
+    elseif is_plat("macosx") then
         add_deps("python 3.x", {configs = {headeronly = true}})
     else
         add_deps("python 3.x")
