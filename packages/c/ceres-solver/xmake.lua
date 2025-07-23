@@ -9,12 +9,13 @@ package("ceres-solver")
     add_versions("2.2.0", "48b2302a7986ece172898477c3bcd6deb8fb5cf19b3327bc49969aad4cede82d")
 
     add_patches("2.1.0", "patches/2.1.0/int64.patch", "1df14f30abf1a942204b408c780eabbeac0859ba5a6db3459b55c47479583c57")
+    add_patches("2.2.0", "patches/2.2.0/suitesparse.patch", "1eaa17d98a99e8f5ac5a75f8685ee165bd1e05f5ea6da3774b4933de4084e3b5")
 
     add_configs("blas", {description = "Choose BLAS library to use.", default = "openblas", type = "string", values = {"mkl", "openblas"}})
     add_configs("suitesparse", {description = "Enable SuiteSparse.", default = true, type = "boolean"})
     add_configs("cuda", {description = "Enable CUDA support.", default = false, type = "boolean"})
 
-    add_deps("cmake", "eigen", "glog", "gflags")
+    add_deps("cmake", "eigen", "glog", "gflags", "pkgconf")
 
     on_load(function (package)
         if package:config("suitesparse") then
@@ -38,7 +39,7 @@ package("ceres-solver")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DMSVC_USE_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DMSVC_USE_STATIC_CRT=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
         end
         table.insert(configs, "-DSUITESPARSE=" .. (package:config("suitesparse") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_CUDA=" .. (package:config("cuda") and "ON" or "OFF"))
