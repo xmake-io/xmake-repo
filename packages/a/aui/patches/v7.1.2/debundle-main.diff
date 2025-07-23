@@ -1,8 +1,8 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 6902d56a..98ebd001 100644
+index 6902d56..a6d4b2d 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -64,9 +64,13 @@ function(define_aui_component AUI_COMPONENT_NAME)
+@@ -64,9 +64,14 @@ function(define_aui_component AUI_COMPONENT_NAME)
      add_subdirectory("aui.${AUI_COMPONENT_NAME}")
  endfunction()
  
@@ -11,6 +11,7 @@ index 6902d56a..98ebd001 100644
 -            CMAKE_ARGS -DZLIB_BUILD_EXAMPLES=OFF)
 +if (AUIB_DISABLE)
 +    find_package(ZLIB REQUIRED)
++    add_compile_definitions(GLM_ENABLE_EXPERIMENTAL=1)
 +else ()
 +    auib_import(ZLIB https://github.com/aui-framework/zlib
 +                VERSION 448a9c76a97202a21f68bd82e453dd743e944a3a
@@ -19,7 +20,7 @@ index 6902d56a..98ebd001 100644
  
  # define all components
  define_aui_component(core)
-@@ -195,7 +199,9 @@ auib_precompiled_binary()
+@@ -195,7 +200,9 @@ auib_precompiled_binary()
  # [auib_precompiled_binary]
  
  # test aui.boot on ci/cd
