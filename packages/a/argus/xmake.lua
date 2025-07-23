@@ -8,9 +8,12 @@ package("argus")
 
     add_versions("v0.1.0", "0e7780db65a06f72268a60336d8621ea17f704ec12c6d679c0ae86048ec6e8fc")
 
-    add_deps("meson", "ninja")
-
     add_configs("regex", {description = "Enable regex validation support using PCRE2", default = false, type = "boolean"})
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
+    add_deps("meson", "ninja")
 
     on_load(function (package)
         if package:config("regex") then
