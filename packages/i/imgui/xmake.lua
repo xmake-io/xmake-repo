@@ -104,6 +104,7 @@ package("imgui")
     add_configs("sdl3_renderer",    {description = "Enable the sdl3 renderer backend", default = false, type = "boolean"})
     add_configs("sdl3_gpu",         {description = "Enable the sdl3 gpu backend", default = false, type = "boolean"})
     add_configs("vulkan",           {description = "Enable the vulkan backend", default = false, type = "boolean"})
+    add_configs("volk",             {description = "Enable the vulkan backend, and use volk to load Vulkan functions", default = false, type = "boolean"})
     add_configs("win32",            {description = "Enable the win32 backend", default = false, type = "boolean"})
     add_configs("osx",              {description = "Enable the OS X backend", default = false, type = "boolean"})
     add_configs("wgpu",             {description = "Enable the wgpu backend", default = false, type = "boolean"})
@@ -111,6 +112,7 @@ package("imgui")
     add_configs("freetype",         {description = "Use FreeType to build and rasterize the font atlas", default = false, type = "boolean"})
     add_configs("user_config",      {description = "Use user config (disables test!)", default = nil, type = "string"})
     add_configs("wchar32",          {description = "Use 32-bit for ImWchar (default is 16-bit)", default = false, type = "boolean"})
+    
 
     -- deprecated configs (kept for backwards compatibility)
     add_configs("sdlrenderer",  {description = "(deprecated)", default = false, type = "boolean"})
@@ -166,6 +168,9 @@ package("imgui")
         if package:config("vulkan") then
             package:add("deps", "vulkan-headers")
         end
+        if package:config("volk") then
+            package:add("deps", "volk")
+        end
         if package:config("wgpu") then
             package:add("deps", "wgpu-native")
             if package:config("wgpu_backend") then
@@ -196,6 +201,7 @@ package("imgui")
             sdl3_renderer    = package:config("sdl3_renderer"),
             sdl3_gpu         = package:config("sdl3_gpu"),
             vulkan           = package:config("vulkan"),
+            volk             = package:config("volk"),
             win32            = package:config("win32"),
             osx              = package:config("osx"),
             wgpu             = package:config("wgpu"),

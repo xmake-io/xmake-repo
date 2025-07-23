@@ -16,6 +16,7 @@ option("sdl3",             {showmenu = true,  default = false})
 option("sdl3_renderer",    {showmenu = true,  default = false})
 option("sdl3_gpu",         {showmenu = true,  default = false})
 option("vulkan",           {showmenu = true,  default = false})
+option("volk",             {showmenu = true,  default = false})
 option("win32",            {showmenu = true,  default = false})
 option("osx",              {showmenu = true,  default = false})
 option("wgpu",             {showmenu = true,  default = false})
@@ -43,6 +44,10 @@ end
 
 if has_config("vulkan") then
     add_requires("vulkan-headers")
+end
+
+if has_config("volk") then
+    add_requires("volk")
 end
 
 if has_config("wgpu") then
@@ -149,6 +154,13 @@ target("imgui")
         add_files("backends/imgui_impl_vulkan.cpp")
         add_headerfiles("(backends/imgui_impl_vulkan.h)")
         add_packages("vulkan-headers")
+    end
+
+    if has_config("volk") then
+        add_files("backends/imgui_impl_vulkan.cpp")
+        add_headerfiles("(backends/imgui_impl_vulkan.h)")
+        add_packages("volk")
+        add_defines("IMGUI_IMPL_VULKAN_USE_VOLK")
     end
 
     if has_config("win32") then
