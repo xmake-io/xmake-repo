@@ -6,38 +6,49 @@ package("mailio")
     add_urls("https://github.com/karastojko/mailio/archive/refs/tags/$(version).tar.gz",
              "https://github.com/karastojko/mailio.git")
 
+    add_versions("0.24.1", "52d5ced35b6a87677d897010fb2e7c2d2ddbd834d59aab991c65c0c6627af40f")
     add_versions("0.23.0", "9fc3f1f803a85170c2081cbbef2e301473a400683fc1dffefa2d6707598206a5")
 
-    if is_plat("linux") then
-        add_syslinks("m")
-    elseif is_plat("bsd") then
+    if is_plat("linux", "bsd") then
         add_syslinks("m", "pthread")
     end
 
     add_deps("cmake")
-    add_deps("boost", {configs = {regex = true, date_time = true, system = true}})
+    add_deps("boost", {configs = {regex = true, date_time = true, system = true, exception = true, container = true}})
     add_deps("openssl")
 
-    on_install("windows", "linux", "macosx", "bsd", "mingw", "cross", function (package)
+    on_load(function (package)
+        if not package:config("shared") then
+            package:add("defines", "MAILIO_STATIC_DEFINE")
+        end
+    end)
+
+    on_install("!iphoneos and !wasm", function (package)
+        local version = package:version()
+        io.replace("CMakeLists.txt", "/WX", "", {plain = true})
+        io.replace("CMakeLists.txt", "set(Boost_USE_STATIC_LIBS ON)", "", {plain = true})
+
+        if package:gitref() or version:le("0.24.1") then
+            io.replace("CMakeLists.txt", " unit_test_framework", "", {plain = true})
+            if package:is_plat("windows") then
+                io.replace("CMakeLists.txt", "if (MSVC)",
+                "if (MSVC)\n    target_link_libraries(${PROJECT_NAME} crypt32)", {plain = true})
+            elseif package:is_plat("mingw") then
+                io.replace("CMakeLists.txt", "if(MINGW)",
+                "if (MINGW)\n    target_link_libraries(${PROJECT_NAME} crypt32)", {plain = true})
+            end
+        end
+
         local configs = {
             "-DMAILIO_BUILD_EXAMPLES=OFF",
             "-DMAILIO_BUILD_TESTS=OFF",
             "-DMAILIO_DYN_LINK_TESTS=OFF",
+            "-DMAILIO_BUILD_DOCUMENTATION=OFF"
         }
-
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        if package:version():le("0.23.0") then
+        if version and version:le("0.23.0") then
             table.insert(configs, "-DMAILIO_BUILD_SHARED_LIBRARY=" .. (package:config("shared") and "ON" or "OFF"))
-            io.replace("CMakeLists.txt", " unit_test_framework", "", {plain = true})
-        end
-        if package:is_plat("windows") then
-            table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. (package:dep("boost"):config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
-            io.replace("CMakeLists.txt", "if (MSVC)",
-            "if (MSVC)\n    target_link_libraries(${PROJECT_NAME} crypt32)", {plain = true})
-        elseif package:is_plat("mingw") then
-            io.replace("CMakeLists.txt", "if(MINGW)",
-            "if (MINGW)\n    target_link_libraries(${PROJECT_NAME} crypt32)", {plain = true})
         end
         import("package.tools.cmake").install(package, configs)
     end)

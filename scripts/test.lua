@@ -17,6 +17,7 @@ local options =
 ,   {'j', "jobs",           "kv", nil, "Set the build jobs."                        }
 ,   {'f', "configs",        "kv", nil, "Set the configs."                           }
 ,   {'d', "debugdir",       "kv", nil, "Set the debug source directory."            }
+,   {nil, "policies",       "kv", nil, "Set the policies."                          }
 ,   {nil, "fetch",          "k",  nil, "Fetch package only."                        }
 ,   {nil, "precompiled",    "k",  nil, "Attemp to install the precompiled package." }
 ,   {nil, "remote",         "k",  nil, "Test package on the remote server."         }
@@ -37,6 +38,7 @@ local options =
 ,   {nil, "appledev",       "kv", nil, "The Apple Device Type"                      }
 ,   {nil, "mingw",          "kv", nil, "Set the MingW directory."                   }
 ,   {nil, "toolchain",      "kv", nil, "Set the toolchain name."                    }
+,   {nil, "toolchain_host", "kv", nil, "Set the host toolchain name."               }
 ,   {nil, "packages",       "vs", nil, "The package list."                          }
 }
 
@@ -51,8 +53,8 @@ function _check_package_is_supported()
     end
 end
 
--- require packages
-function _require_packages(argv, packages)
+-- config packages
+function _config_packages(argv, packages)
     local config_argv = {"f", "-c"}
     if argv.verbose then
         table.insert(config_argv, "-v")
@@ -68,6 +70,9 @@ function _require_packages(argv, packages)
     end
     if argv.mode then
         table.insert(config_argv, "--mode=" .. argv.mode)
+    end
+    if argv.policies then
+        table.insert(config_argv, "--policies=" .. argv.policies)
     end
     if argv.ndk then
         table.insert(config_argv, "--ndk=" .. argv.ndk)
@@ -110,6 +115,9 @@ function _require_packages(argv, packages)
     if argv.toolchain then
         table.insert(config_argv, "--toolchain=" .. argv.toolchain)
     end
+    if argv.toolchain_host then
+        table.insert(config_argv, "--toolchain_host=" .. argv.toolchain_host)
+    end
     if argv.cflags then
         table.insert(config_argv, "--cflags=" .. argv.cflags)
     end
@@ -119,7 +127,57 @@ function _require_packages(argv, packages)
     if argv.ldflags then
         table.insert(config_argv, "--ldflags=" .. argv.ldflags)
     end
-    os.vexecv("xmake", config_argv)
+    os.vexecv(os.programfile(), config_argv)
+end
+
+-- get extra string
+function _get_extra_str(argv)
+    local extra = {}
+    if argv.mode == "debug" then
+        extra.debug = true
+    end
+    -- Some packages set shared=true as default, so we need to force set
+    -- shared=false to test static build.
+    extra.configs = extra.configs or {}
+    extra.configs.shared = argv.kind == "shared"
+    local configs = argv.configs
+    if configs then
+        extra.system  = false
+        extra.configs = extra.configs or {}
+        local extra_configs, errors = ("{" .. configs .. "}"):deserialize()
+        if extra_configs then
+            table.join2(extra.configs, extra_configs)
+        else
+            raise(errors)
+        end
+    end
+    return string.serialize(extra, {indent = false, strip = true})
+end
+
+-- load packages
+function _load_packages(argv, packages)
+    _config_packages(argv, packages)
+    local info_argv = {"require", "-f", "-y", "--info"}
+    if argv.verbose then
+        table.insert(info_argv, "-v")
+    end
+    if argv.diagnosis then
+        table.insert(info_argv, "-D")
+    end
+    local extra_str = _get_extra_str(argv)
+    table.insert(info_argv, "--extra=" .. extra_str)
+
+    -- call `xrepo info` to test on_load
+    if #packages > 0 then
+        print("testing to load packages ...")
+        print("  > if it causes errors, please remove assert/raise() to on_check.")
+        os.vexecv(os.programfile(), table.join(info_argv, packages))
+    end
+end
+
+-- require packages
+function _require_packages(argv, packages)
+    _config_packages(argv, packages)
     local require_argv = {"require", "-f", "-y"}
     local check_argv = {"require", "-f", "-y", "--check"}
     if not argv.precompiled then
@@ -150,33 +208,16 @@ function _require_packages(argv, packages)
     if argv.fetch then
         table.insert(require_argv, "--fetch")
     end
-    local extra = {}
-    if argv.mode == "debug" then
-        extra.debug = true
-    end
-    -- Some packages set shared=true as default, so we need to force set
-    -- shared=false to test static build.
-    extra.configs = extra.configs or {}
-    extra.configs.shared = argv.kind == "shared"
-    local configs = argv.configs
-    if configs then
-        extra.system  = false
-        extra.configs = extra.configs or {}
-        local extra_configs, errors = ("{" .. configs .. "}"):deserialize()
-        if extra_configs then
-            table.join2(extra.configs, extra_configs)
-        else
-            raise(errors)
-        end
-    end
-    local extra_str = string.serialize(extra, {indent = false, strip = true})
+    local extra_str = _get_extra_str(argv)
     table.insert(require_argv, "--extra=" .. extra_str)
     table.insert(check_argv, "--extra=" .. extra_str)
 
+    -- test on_check
     local install_packages = {}
     if _check_package_is_supported() then
+        print("testing to check packages ...")
         for _, package in ipairs(packages) do
-            local ok = os.vexecv("xmake", table.join(check_argv, package), {try = true})
+            local ok = os.vexecv(os.programfile(), table.join(check_argv, package), {try = true})
             if ok == 0 then
                 table.insert(install_packages, package)
             end
@@ -184,8 +225,11 @@ function _require_packages(argv, packages)
     else
         install_packages = packages
     end
+
+    -- test installation
     if #install_packages > 0 then
-        os.vexecv("xmake", table.join(require_argv, install_packages))
+        print("testing to install packages ...")
+        os.vexecv(os.programfile(), table.join(require_argv, install_packages))
     else
         print("no testable packages on %s or you're using lower version xmake!", argv.plat or os.subhost())
     end
@@ -207,11 +251,61 @@ function _package_is_supported(argv, packagename)
                     arch = os.subarch()
                 end
                 for _, package_arch in ipairs(package.archs) do
+                    print(package_arch, package.archs)
                     if arch == package_arch then
                         return true
                     end
                 end
             end
+        end
+    end
+end
+
+function get_modified_packages()
+    local packages = {}
+    local diff = os.iorun("git --no-pager diff HEAD^")
+    for _, line in ipairs(diff:split("\n")) do
+        if line:startswith("+++ b/") then
+            local file = line:sub(7)
+            if file:startswith("packages") then
+                assert(file == file:lower(), "%s must be lower case!", file)
+                local package = file:match("packages/%w/(%S-)/")
+                table.insert(packages, package)
+            end
+        elseif line:startswith("+") and line:find("add_versions") then
+            local version = line:match("add_versions%(\"(.-)\"")
+            if version:find(":", 1, true) then
+                version = version:split(":")[2]
+            end
+            if #packages > 0 and version then
+                local lastpackage = packages[#packages]
+                local splitinfo = lastpackage:split("%s+")
+                table.insert(packages, splitinfo[1] .. " " .. version)
+            end
+        end
+    end
+    return table.unique(packages)
+end
+
+-- @see https://github.com/xmake-io/xmake-repo/issues/6940
+function _lock_packages(packages)
+    local locked_packages = {
+        "xor_singleheader",
+        "libsolv",
+        "libnfc",
+        "flashlight",
+        "telegram-bot-api",
+        "openvpn3",
+        "systemd",
+        "libxcrypt",
+        "libselinux",
+        "libxls",
+        "openssh",
+        "hashcat"
+    }
+    for _, package in ipairs(packages) do
+        if table.contains(locked_packages, package) then
+            raise("package(%s) has been locked, please do not submit it, @see https://github.com/xmake-io/xmake-repo/issues/6940", package)
         end
     end
 end
@@ -225,29 +319,10 @@ function main(...)
     -- get packages
     local packages = argv.packages or {}
     if #packages == 0 then
-        local files = os.iorun("git diff --name-only HEAD^")
-        for _, file in ipairs(files:split('\n'), string.trim) do
-            if file:startswith("packages") then
-                assert(file == file:lower(), "%s must be lower case!", file)
-                local package = file:match("packages/%w/(%S-)/")
-                table.insert(packages, package)
-            end
-        end
+        packages = get_modified_packages()
     end
     if #packages == 0 then
         table.insert(packages, "tbox dev")
-    end
-
-    -- remove unsupported packages
-    for idx, package in irpairs(packages) do
-        assert(package == package:lower(), "package(%s) must be lower case!", package)
-        if not _package_is_supported(argv, package) then
-            table.remove(packages, idx)
-        end
-    end
-    if #packages == 0 then
-        print("no testable packages on %s!", argv.plat or os.subhost())
-        return
     end
 
     -- prepare test project
@@ -259,7 +334,7 @@ function main(...)
         os.tryrm(workdir)
         os.mkdir(workdir)
         os.cd(workdir)
-        os.exec("xmake create test")
+        os.execv(os.programfile(), {"create", "test"})
     else
         os.cd(workdir)
     end
@@ -267,20 +342,41 @@ function main(...)
     print(os.curdir())
     -- do action for remote?
     if os.isdir("xmake-repo") then
-        os.exec("xmake service --disconnect")
+        os.execv(os.programfile(), {"service", "--disconnect"})
     end
     if argv.remote then
         os.tryrm("xmake-repo")
         os.cp(path.join(repodir, "packages"), "xmake-repo/packages")
-        os.exec("xmake service --connect")
+        os.execv(os.programfile(), {"service", "--connect"})
         repodir = "xmake-repo"
     end
-    os.exec("xmake repo --add local-repo %s", repodir)
-    os.exec("xmake repo -l")
+    os.execv(os.programfile(), {"repo", "--add", "local-repo", repodir})
+    os.execv(os.programfile(), {"repo", "-l"})
+
+    local packages_original = table.clone(packages)
+
+    -- load packages
+    _load_packages(argv, packages_original)
+
+    local old_dir = os.cd(repodir)
+    -- remove unsupported packages
+    for idx, package in irpairs(packages) do
+        assert(package == package:lower(), "package(%s) must be lower case!", package)
+        if not _package_is_supported(argv, package) then
+            table.remove(packages, idx)
+        end
+    end
+    os.cd(old_dir)
+
+    -- no testable packages
+    if #packages == 0 then
+        print("no testable packages on %s!", argv.plat or os.subhost())
+        return
+    end
+
+    -- lock packages
+    _lock_packages(packages)
 
     -- require packages
     _require_packages(argv, packages)
-    --[[for _, package in ipairs(packages) do
-        _require_packages(argv, package)
-    end]]
 end

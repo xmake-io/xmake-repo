@@ -3,6 +3,7 @@ package("meowhash")
     set_kind("library", {headeronly = true})
     set_homepage("https://mollyrocket.com/meowhash")
     set_description("Official version of the Meow hash, an extremely fast level 1 hash")
+    set_license("zlib")
 
     add_urls("https://github.com/cmuratori/meow_hash.git")
 

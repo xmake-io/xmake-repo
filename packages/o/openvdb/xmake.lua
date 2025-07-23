@@ -24,6 +24,7 @@ package("openvdb")
     add_configs("with_houdini", {description = "Location of Houdini installation. Set to enable built with Houdini.", default = "", type = "string"})
     add_configs("with_maya", {description = "Location of Maya installation. Set to enable built with Maya.", default = "", type = "string"})
     add_configs("simd", {description = "SIMD acceleration architecture.", type = "string", values = {"None", "SSE42", "AVX"}})
+    add_configs("python", {description = "Build the pyopenvdb Python module.", default = false, type = "boolean"})
     add_configs("print", {description = "Command line binary for displaying information about OpenVDB files.", default = true, type = "boolean"})
     add_configs("lod", {description = "Command line binary for generating volume mipmaps from an OpenVDB grid.", default = false, type = "boolean"})
     add_configs("render", {description = "Command line binary for ray-tracing OpenVDB grids.", default = false, type = "boolean"})
@@ -44,6 +45,10 @@ package("openvdb")
             if package:config("with_maya") == "" then
                 package:add("deps", package:version():ge("9.0.0") and "tbb" or "tbb <2021.0")
             end
+        end
+        if package:config("python") then
+            package:add("deps", "python 3.x")
+            package:add("deps", "pybind11")
         end
         if package:config("view") then
             package:add("deps", "glew", {configs = {shared = true}})
@@ -92,6 +97,7 @@ package("openvdb")
             end
             table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
+        table.insert(configs, "-DOPENVDB_BUILD_PYTHON_MODULE=" .. (package:config("python") and "ON" or "OFF"))
         table.insert(configs, "-DOPENVDB_BUILD_VDB_LOD=" .. (package:config("lod") and "ON" or "OFF"))
         table.insert(configs, "-DOPENVDB_BUILD_VDB_PRINT=" .. (package:config("print") and "ON" or "OFF"))
         table.insert(configs, "-DOPENVDB_BUILD_BINARIES=" .. (package:config("print") and "ON" or "OFF"))
@@ -128,6 +134,22 @@ package("openvdb")
         end
         import("package.tools.cmake").install(package, configs)
         package:addenv("PATH", "bin")
+        if package:config("python") then
+            local pyver = package:dep("python"):version()
+            local pydpath = path.join(package:installdir("lib"), format("python%d.%d", pyver:major(), pyver:minor()), "site-packages")
+            package:addenv("PYTHONPATH", pydpath)
+            -- after python 3.8, python will not search in PATH for dlls
+            if package:is_plat("windows") then
+                local tbb = package:dep("tbb"):fetch()
+                if tbb and tbb.linkdirs then
+                    local tbb_dir = path.directory(tbb.linkdirs[1])
+                    os.cp(path.join(tbb_dir, "bin", "tbb*.dll"), pydpath)
+                end
+                if package:config("shared") then
+                    os.cp(path.join(package:installdir("bin"), "openvdb.dll"), pydpath)
+                end
+            end
+        end
     end)
 
     on_test(function (package)
@@ -150,5 +172,8 @@ package("openvdb")
                 }
             ]]}, {configs = {languages = "c++17"},
                   includes = {"nanovdb/util/GridBuilder.h"}}))
+        end
+        if package:config("python") then
+            os.vrun("python -c 'import pyopenvdb'")
         end
     end)

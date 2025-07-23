@@ -1,18 +1,25 @@
 package("inja")
-
+    set_kind("library", {headeronly = true})
     set_homepage("https://pantor.github.io/inja/")
     set_description("A Template Engine for Modern C++")
+    set_license("MIT")
 
-    add_urls("https://github.com/pantor/inja/archive/$(version).tar.gz",
+    add_urls("https://github.com/pantor/inja/archive/refs/tags/$(version).tar.gz",
              "https://github.com/pantor/inja.git")
 
-    add_versions("v2.1.0", "038ecde8f6dbad5d3cedb6ceb0853fd0e488d5dc57593a869633ecb30b0dfa6e")
     add_versions("v3.4.0", "7155f944553ca6064b26e88e6cae8b71f8be764832c9c7c6d5998e0d5fd60c55")
+    add_versions("v2.1.0", "038ecde8f6dbad5d3cedb6ceb0853fd0e488d5dc57593a869633ecb30b0dfa6e")
 
-    add_deps("nlohmann_json")
+    add_deps("cmake")
+    add_deps("nlohmann_json", {configs = {cmake = true}})
 
     on_install(function (package)
-        os.cp("single_include/inja", package:installdir("include"))
+        import("package.tools.cmake").install(package, {
+            "-DINJA_INSTALL=ON",
+            "-DINJA_USE_EMBEDDED_JSON=OFF",
+            "-DBUILD_TESTING=OFF",
+            "-DBUILD_BENCHMARK=OFF"
+        })
     end)
 
     on_test(function (package)

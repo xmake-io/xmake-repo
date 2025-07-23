@@ -3,6 +3,7 @@ package("jsmn")
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/zserge/jsmn")
     set_description("Jsmn is a world fastest JSON parser/tokenizer")
+    set_license("MIT")
 
     set_urls("https://github.com/zserge/jsmn/archive/refs/tags/$(version).tar.gz",
              "https://github.com/zserge/jsmn.git")

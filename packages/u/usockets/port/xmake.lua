@@ -9,7 +9,7 @@ local ssl = get_config("ssl")
 if ssl then
     add_requires(ssl)
     add_packages(ssl)
-    if ssl == "openssl" or ssl == "boringssl" then
+    if ssl == "openssl" or ssl == "openssl3" or ssl == "boringssl" then
         add_defines("LIBUS_USE_OPENSSL")
     elseif ssl == "wolfssl" then
         add_defines("LIBUS_USE_WOLFSSL")

@@ -1,0 +1,90 @@
+diff --git a/build/cmake/DefineInstallationPaths.cmake b/build/cmake/DefineInstallationPaths.cmake
+index d6b66e59..a089a790 100644
+--- a/build/cmake/DefineInstallationPaths.cmake
++++ b/build/cmake/DefineInstallationPaths.cmake
+@@ -22,11 +22,7 @@
+ set(BIN_INSTALL_DIR "bin" CACHE PATH "The binary install dir (default: bin)")
+ # For MSVC builds, install shared libs to bin/, while keeping the install
+ # dir for static libs as lib/.
+-if(MSVC AND BUILD_SHARED_LIBS)
+-    set(LIB_INSTALL_DIR "bin${LIB_SUFFIX}" CACHE PATH "The library install dir (default: bin${LIB_SUFFIX})")
+-else()
+-    set(LIB_INSTALL_DIR "lib${LIB_SUFFIX}" CACHE PATH "The library install dir (default: lib${LIB_SUFFIX})")
+-endif()
++set(LIB_INSTALL_DIR "lib${LIB_SUFFIX}" CACHE PATH "The library install dir (default: lib${LIB_SUFFIX})")
+ set(INCLUDE_INSTALL_DIR "include" CACHE PATH "The library install dir (default: include)")
+ set(CMAKE_INSTALL_DIR "lib/cmake" CACHE PATH "The subdirectory to install cmake config files (default: cmake)")
+ set(PKGCONFIG_INSTALL_DIR "lib/pkgconfig" CACHE PATH "The subdirectory to install pkgconfig config files (default: lib/pkgconfig)")
+diff --git a/build/cmake/DefineOptions.cmake b/build/cmake/DefineOptions.cmake
+index b59292cd3..23caa09fe 100644
+--- a/build/cmake/DefineOptions.cmake
++++ b/build/cmake/DefineOptions.cmake
+@@ -39,10 +39,7 @@ option(BUILD_LIBRARIES "Build Thrift libraries" ON)
+ # and enables the library if all are found. This means the default is to build as
+ # much as possible but leaving out libraries if their dependencies are not met.
+ 
+-if (NOT Boost_USE_STATIC_LIBS)
+-    add_definitions(-DBOOST_ALL_DYN_LINK)
+-    add_definitions(-DBOOST_TEST_DYN_LINK)
+-endif()
++
+ 
+ # as3
+ option(WITH_AS3 "Build ActionScript 3 Thrift Library" ON)
+diff --git a/lib/c_glib/CMakeLists.txt b/lib/c_glib/CMakeLists.txt
+index 35571233d..ac6fc1d52 100644
+--- a/lib/c_glib/CMakeLists.txt
++++ b/lib/c_glib/CMakeLists.txt
+@@ -71,7 +71,8 @@ set(thrift_c_glib_zlib_SOURCES
+ )
+ 
+ # If OpenSSL is not found just ignore the OpenSSL stuff
+-if(OPENSSL_FOUND AND WITH_OPENSSL)
++if(WITH_OPENSSL)
++    find_package(OpenSSL REQUIRED)
+     list(APPEND thrift_c_glib_SOURCES
+ 	    src/thrift/c_glib/transport/thrift_ssl_socket.c
+     )
+@@ -83,8 +84,7 @@ if(OPENSSL_FOUND AND WITH_OPENSSL)
+             list(APPEND SYSLIBS OpenSSL::Crypto)
+         endif()
+     else()
+-        include_directories(SYSTEM "${OPENSSL_INCLUDE_DIR}")
+-        list(APPEND SYSLIBS "${OPENSSL_LIBRARIES}")
++        list(APPEND SYSLIBS OpenSSL::SSL OpenSSL::Crypto)
+     endif()
+ endif()
+ 
+diff --git a/lib/cpp/CMakeLists.txt b/lib/cpp/CMakeLists.txt
+index c2f15dd57..3f36a23c1 100644
+--- a/lib/cpp/CMakeLists.txt
++++ b/lib/cpp/CMakeLists.txt
+@@ -97,7 +97,8 @@ else()
+ endif()
+ 
+ # If OpenSSL is not found or disabled just ignore the OpenSSL stuff
+-if(OPENSSL_FOUND AND WITH_OPENSSL)
++if(WITH_OPENSSL)
++    find_package(OpenSSL REQUIRED)
+     list(APPEND thriftcpp_SOURCES
+        src/thrift/transport/TSSLSocket.cpp
+        src/thrift/transport/TSSLServerSocket.cpp
+@@ -112,8 +113,7 @@ if(OPENSSL_FOUND AND WITH_OPENSSL)
+             list(APPEND SYSLIBS OpenSSL::Crypto)
+         endif()
+     else()
+-        include_directories(SYSTEM "${OPENSSL_INCLUDE_DIR}")
+-        list(APPEND SYSLIBS "${OPENSSL_LIBRARIES}")
++        list(APPEND SYSLIBS OpenSSL::SSL OpenSSL::Crypto)
+     endif()
+ endif()
+ 
+@@ -174,7 +174,7 @@ if(WITH_LIBEVENT)
+     target_link_libraries(thriftnb PUBLIC thrift)
+     if(TARGET libevent::core AND TARGET libevent::extra)
+         # libevent was found via its cmake config, use modern style targets
+-        target_link_libraries(thriftnb PUBLIC libevent::core libevent::extra)
++    target_link_libraries(thriftnb PUBLIC libevent::core libevent::extra)
+     else()
+         target_link_libraries(thriftnb PUBLIC ${LIBEVENT_LIBRARIES})
+     endif()

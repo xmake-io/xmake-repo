@@ -23,10 +23,10 @@ package("vulkansdk")
             if vulkansdk then
                 local result = {includedirs = vulkansdk.includedirs, linkdirs = vulkansdk.linkdirs, links = {}}
                 local utils = package:config("utils")
-                table.insert(utils, package:is_plat("windows") and "vulkan-1" or "vulkan")
+                table.insert(utils, package:is_plat("windows", "mingw") and "vulkan-1" or "vulkan")
         
                 for _, util in ipairs(utils) do
-                    if not find_library(util, vulkansdk.linkdirs) then
+                    if not find_library(util, vulkansdk.linkdirs, {plat = package:plat()}) then
                         wprint(format("The library %s for %s is not found!", util, package:arch()))
                         return
                     end

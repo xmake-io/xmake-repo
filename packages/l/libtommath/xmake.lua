@@ -19,6 +19,8 @@ package("libtommath")
 
     add_deps("cmake")
 
+    add_includedirs("include", "include/libtommath")
+
     on_install(function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
@@ -28,8 +30,10 @@ package("libtommath")
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
         import("package.tools.cmake").install(package, configs)
+        os.trymv(package:installdir("include/*.h"), package:installdir("include/libtommath"))
     end)
 
     on_test(function (package)
         assert(package:has_cfuncs("mp_init", {includes = "tommath.h"}))
+        assert(package:has_cfuncs("mp_init", {includes = "libtommath/tommath.h"}))
     end)

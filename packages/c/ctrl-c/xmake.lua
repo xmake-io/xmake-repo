@@ -3,29 +3,24 @@ package("ctrl-c")
     set_description("Crossplatform code to handle Ctrl+C signal")
     set_license("MIT")
 
-    add_urls("https://github.com/evgenykislov/ctrl-c.git")
-    add_versions("2023.09.02", "98b39d689ecb1a7193a3647c9a7d58a521892f9b")
+    add_urls("https://github.com/evgenykislov/ctrl-c/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/evgenykislov/ctrl-c.git")
 
-    on_install("windows", "macosx", "linux", "mingw", "android", "msys", "iphoneos", "cross", function (package)
+    add_versions("v1.0.0", "9f63ff2e02ac62a19e30208af746d5a2655ecf040773b6c7d1e27e85be45ee1a")
+
+    on_install("!bsd and !wasm", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
+            set_languages("c++11")
             target("ctrl-c")
                 set_kind("$(kind)")
-                add_headerfiles("src/(ctrl-c.h)")
-                add_files("src/ctrl-c.cpp")
-                set_languages("c++11")
-                if is_plat("windows") then
-                    add_defines("_WIN32")
-                end
-                if is_plat("linux") then
-                    add_defines("__linux__")
-                end
-                if is_plat("macosx") then
-                    add_defines("__APPLE__")
+                add_files("src/*.cpp")
+                add_headerfiles("src/*.h")
+                if is_plat("windows") and is_kind("shared") then
+                    add_rules("utils.symbols.export_all", {export_classes = true})
                 end
         ]])
-        local configs = {}
-        import("package.tools.xmake").install(package, configs)
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)

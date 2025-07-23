@@ -5,6 +5,7 @@ package("suitesparse")
 
     add_urls("https://github.com/DrTimothyAldenDavis/SuiteSparse/archive/refs/tags/$(version).tar.gz",
              "https://github.com/DrTimothyAldenDavis/SuiteSparse.git")
+    add_versions("v7.8.1", "b645488ec0d9b02ebdbf27d9ae307f705de2b6133edb64617a72c7b4c6c3ff44")
     add_versions("v7.7.0", "529b067f5d80981f45ddf6766627b8fc5af619822f068f342aab776e683df4f3")
     add_versions("v7.6.0", "19cbeb9964ebe439413dd66d82ace1f904adc5f25d8a823c1b48c34bd0d29ea5")
     add_versions("v5.10.1", "acb4d1045f48a237e70294b950153e48dce5b5f9ca8190e86c2b8c54ce00a7ee")
@@ -76,6 +77,9 @@ package("suitesparse")
             table.insert(configs, "-DBLA_VENDOR=" .. bla_vendor[package:config("blas")])
             table.insert(configs, "-DBLA_STATIC=" .. (package:config("blas_static") and "ON" or "OFF"))
             if package:is_plat("windows") then
+                if not package:has_tool("cxx", "ifort", "ifx") then
+                    table.insert(configs, "-DSUITESPARSE_USE_FORTRAN=OFF")
+                end
                 if package:config("graphblas") then
                     table.insert(configs, "-DSUITESPARSE_ENABLE_PROJECTS=suitesparse_config;mongoose;amd;btf;camd;ccolamd;colamd;cholmod;cxsparse;ldl;klu;umfpack;paru;rbio;spqr;graphblas;lagraph") -- remove spex since it does not support windows
                 else

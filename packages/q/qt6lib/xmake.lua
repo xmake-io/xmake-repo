@@ -7,12 +7,26 @@ package("qt6lib")
     add_configs("shared", {description = "Download shared binaries.", default = true, type = "boolean", readonly = true})
     add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MD", readonly = true})
 
+    -- Sync with qt6base and qt-tools
     add_versions("6.3.0", "dummy")
+    add_versions("6.3.1", "dummy")
+    add_versions("6.3.2", "dummy")
+    add_versions("6.4.0", "dummy")
+    add_versions("6.4.1", "dummy")
+    add_versions("6.4.2", "dummy")
+    add_versions("6.4.3", "dummy")
     add_versions("6.5.0", "dummy")
     add_versions("6.5.1", "dummy")
     add_versions("6.5.2", "dummy")
     add_versions("6.5.3", "dummy")
     add_versions("6.6.0", "dummy")
+    add_versions("6.6.1", "dummy")
+    add_versions("6.6.2", "dummy")
+    add_versions("6.6.3", "dummy")
+    add_versions("6.7.0", "dummy")
+    add_versions("6.7.1", "dummy")
+    add_versions("6.7.2", "dummy")
+    add_versions("6.8.0", "dummy")
 
     on_load(function (package)
         package:add("deps", "qt6base", {debug = package:is_debug(), version = package:version_str()})
@@ -22,6 +36,12 @@ package("qt6lib")
         local qt = package:dep("qt6base"):fetch()
         if not qt then
             return
+        end
+        -- Ensure all direct dependencies are fetched
+        for _, dep in ipairs(package:plaindeps()) do
+            if not dep:fetch() and dep:parents(package:name()) then
+                return
+            end
         end
 
         local libname = assert(package:data("libname"), "this package must not be used directly")
@@ -75,7 +95,17 @@ package("qt6lib")
         }
     end)
 
-    on_install("windows|x64", "linux|x86_64", "macosx|x86_64", "mingw|x86_64", function (package)
+    on_install("windows|x64,linux|x86_64,macosx,mingw|x86_64@windows,linux,macosx", function (package)
+        local qt = package:dep("qt6base"):data("qt")
+        assert(qt, "qt6base is required")
+    end)
+
+    on_install("android|arm64-v8a,armeabi-v7a,armeabi,x86_64,x86@windows,linux,macosx", function (package)
+        local qt = package:dep("qt6base"):data("qt")
+        assert(qt, "qt6base is required")
+    end)
+
+    on_install("iphoneos,wasm@windows,linux,macosx", function (package)
         local qt = package:dep("qt6base"):data("qt")
         assert(qt, "qt6base is required")
     end)

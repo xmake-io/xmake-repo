@@ -21,7 +21,18 @@ package("libsodium")
         end
 
         if package:is_plat("linux", "macosx") then
-            import("package.tools.autoconf").install(package)
+            local configs = {}
+            if package:debug() then
+                table.insert(configs, "--enable-debug")
+            end
+            if package:config("shared") then
+                table.insert(configs, "--enable-static=no")
+                table.insert(configs, "--enable-shared=yes")
+            else
+                table.insert(configs, "--enable-static=yes")
+                table.insert(configs, "--enable-shared=no")
+            end
+            import("package.tools.autoconf").install(package, configs)
         else
             os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
             import("package.tools.xmake").install(package)

@@ -4,6 +4,13 @@ package("gdal")
     set_license("MIT")
 
     add_urls("https://github.com/OSGeo/gdal/releases/download/v$(version)/gdal-$(version).tar.gz")
+    add_versions("3.11.3", "54638f6990f84c16142d93c9daaafaf1eab0a6a61538162095c334de086ef91f")
+    add_versions("3.11.1", "21f1806070ccff697946ba5df5a0ec9ee9ecfcbb7e7e6163f2c61466883e23f8")
+    add_versions("3.10.2", "ca710aab81eb4d638f5dbd4f03d4d4b902aeb6ee73a3d4a8c5e966b6b648b0da")
+    add_versions("3.10.0", "946ef444489bedbc1b04bd4c115d67ae8d3f3e4a5798d5a2f1cb2a11014105b2")
+    add_versions("3.9.3", "f293d8ccc6b98f617db88f8593eae37f7e4b32d49a615b2cba5ced12c7bebdae")
+    add_versions("3.9.2", "c9767e79ca7245f704bfbcb47d771b2dc317d743536b78d648c3e92b95fbc21e")
+    add_versions("3.9.1", "46cd95ad0f270af0cd317ddc28fa5e0a7ad0b0fd160a7bd22909150df53e3418")
     add_versions("3.9.0", "3b29b573b60d156cf160805290474b625c4197ca36a79fd14f83ec8f77f29ba0")
     add_versions("3.8.5", "0c865c7931c7e9bb4832f50fb53aec8676cbbaccd6e55945011b737fb89a49c2")
     add_versions("3.5.1", "7c4406ca010dc8632703a0a326f39e9db25d9f1f6ebaaeca64a963e3fac123d1")
@@ -117,9 +124,5 @@ package("gdal")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            #include <ogrsf_frmts.h>
-            void test(int argc, char** argv) {
-                GDALAllRegister();
-            }]]}, {configs = {languages = "c++11"}, includes = "ogrsf_frmts.h"}))
+        assert(package:has_cxxfuncs("GDALAllRegister", {configs = {languages = "c++11"}, includes = "ogrsf_frmts.h"}))
     end)

@@ -1,0 +1,46 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index e537c90..ea16a73 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -38,20 +38,16 @@ if(REFLECTCPP_USE_BUNDLED_DEPENDENCIES)
+         add_library(reflectcpp STATIC src/yyjson.c)
+     endif()
+ else()
+-    if (REFLECTCPP_BUILD_SHARED)
+-        add_library(reflectcpp SHARED)
+-    else()
+-        add_library(reflectcpp STATIC)
+-    endif()
++    add_library(reflectcpp INTERFACE)
+ endif()
+ 
+ set_target_properties(reflectcpp PROPERTIES LINKER_LANGUAGE CXX)
+-target_compile_features(reflectcpp PUBLIC cxx_std_20)
++target_compile_features(reflectcpp INTERFACE cxx_std_20)
+ 
+ if(REFLECTCPP_USE_BUNDLED_DEPENDENCIES)
+     target_include_directories(reflectcpp PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include> $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/rfl/thirdparty>)
+ else()
+-    target_include_directories(reflectcpp PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include> )
++    target_include_directories(reflectcpp INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include> )
+     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DREFLECTCPP_NO_BUNDLED_DEPENDENCIES")
+     find_package(ctre CONFIG REQUIRED)
+     find_package(yyjson CONFIG REQUIRED)
+@@ -103,7 +99,7 @@ if (REFLECTCPP_YAML OR REFLECTCPP_BUILD_BENCHMARKS)
+     target_link_libraries(reflectcpp INTERFACE yaml-cpp::yaml-cpp)
+ endif ()
+ 
+-target_compile_options(reflectcpp PRIVATE -Wall)
++# target_compile_options(reflectcpp PRIVATE -Wall)
+ 
+ if (REFLECTCPP_BUILD_TESTS)
+     if (MSVC)
+@@ -137,7 +133,7 @@ install(
+ file(GLOB_RECURSE RFL_HEADERS RELATIVE ${CMAKE_CURRENT_LIST_DIR} "${CMAKE_CURRENT_LIST_DIR}/include/*" )
+ 
+ target_sources(reflectcpp
+-    PUBLIC
++    INTERFACE
+     FILE_SET reflectcpp_headers    
+     TYPE HEADERS
+     BASE_DIRS $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>

@@ -2,6 +2,7 @@ package("debugbreak")
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/scottt/debugbreak")
     set_description("break into the debugger programmatically")
+    set_license("BSD-2-Clause")
 
     add_urls("https://github.com/scottt/debugbreak/archive/refs/tags/$(version).tar.gz",
              "https://github.com/scottt/debugbreak.git")

@@ -1,6 +1,6 @@
 set_project("libiconv")
 
-add_rules("mode.debug", "mode.release")
+add_rules("mode.debug", "mode.release", "set_language")
 
 set_configvar("PACKAGE", "libiconv")
 set_configvar("PACKAGE_NAME", "libiconv")
@@ -31,11 +31,7 @@ if has_config("vers") then
     set_configvar("PACKAGE_STRING", "libiconv " .. get_config("vers"))
 end
 
-includes("check_cfuncs.lua")
-includes("check_ctypes.lua")
-includes("check_macros.lua")
-includes("check_cincludes.lua")
-includes("check_csnippets.lua")
+includes("@builtin/check")
 
 -- config.h variables
 option("__NO_BROKEN_WCHAR_H")
@@ -101,11 +97,14 @@ set_configvar("GNULIB_TEST_REALPATH", 1)
 set_configvar("GNULIB_TEST_SIGPROCMASK", 1)
 set_configvar("GNULIB_TEST_STAT", 1)
 set_configvar("GNULIB_TEST_STRERROR", 1)
-set_configvar("ssize_t", "int", {quote = false})
-set_configvar("uid_t", "int", {quote = false})
+if not is_plat("android", "iphoneos") then
+    set_configvar("ssize_t", "int", {quote = false})
+    set_configvar("uid_t", "int", {quote = false})
+end
 configvar_check_ctypes("USE_MBSTATE_T", "mbstate_t", {includes = "wchar.h", default = 0})
 configvar_check_cincludes("ENABLE_NLS", "libintl.h", {default = 0})
 configvar_check_cincludes("HAVE_DLFCN_H", "dlfcn.h")
+configvar_check_cincludes("HAVE_FCNTL", "fcntl.h")
 configvar_check_cincludes("HAVE_INTTYPES_H", "inttypes.h")
 configvar_check_cincludes("HAVE_MACH_O_DYLD_H", "mach-o/dyld.h")
 configvar_check_cincludes("HAVE_MEMORY_H", "memory.h")
@@ -194,7 +193,7 @@ configvar_check_csnippets("GNULIB_SIGPIPE", [[#include <signal.h>
 #error SIGPIPE not defined
 #endif]])
 configvar_check_csnippets("HAVE_LANGINFO_CODESET", [[#include <langinfo.h>
-int test() { char* cs = nl_langinfo(CODESET); return !cs; }]])
+int test() { char* cs = nl_langinfo(CODESET); return !cs; }]], {links = "c"})
 configvar_check_csnippets("HAVE_ENVIRON_DECL=0", [[extern struct {int foo;} environ;
 void test() {environ.foo = 1;}]], {includes = has_config("__HAVE_UNISTD_H") and "unistd.h" or "stdlib.h", default = 1})
 
@@ -221,15 +220,26 @@ target("iconv")
     add_deps("charset", {inherit = false})
     add_defines("HAVE_CONFIG_H", "NO_XMALLOC", "IN_LIBRARY")
     if is_kind("shared") then
-        add_defines("BUILDING_LIBICONV", "BUILDING_DLL")
+        add_defines("BUILDING_LIBICONV", "BUILDING_DLL", "DLL_EXPORT")
     end
+    -- relocatable.c doesn't exists anymore from >= 1.16
+    on_load(function (target)
+        import("core.base.semver")
+
+        local ver = semver.new(get_config("vers"))
+        if ver:ge("1.16") then
+            target:add("files", "lib/compat.c")
+        else
+            target:add("files", "lib/relocatable.c")
+        end
+    end)
     set_configdir(".")
     set_configvar("DLL_VARIABLE", (is_plat("windows") and is_kind("shared")) and "__declspec(dllimport)" or "")
     add_configfiles("(include/iconv.h.build.in)", {filename = "iconv.h", pattern = "@(.-)@", variables = {EILSEQ = ""}})
     add_configfiles("(include/iconv.h.in)", {filename = "iconv.h.inst", pattern = "@(.-)@", variables = {EILSEQ = ""}})
     add_configfiles("(config.h.in)", {filename = "config.h"})
     add_includedirs(".", "lib", "include", "libcharset/include", {public = true})
-    add_files("lib/iconv.c", "lib/relocatable.c", "libcharset/lib/localcharset.c")
+    add_files("lib/iconv.c", "libcharset/lib/localcharset.c")
     after_install(function (target)
         os.cp("include/iconv.h.inst", path.join(target:installdir(), "include", "iconv.h"))
         for _, name in ipairs(os.files("po/*.gmo")) do
@@ -260,3 +270,21 @@ target("iconv_no_i18n")
         add_defines("LOCALEDIR=\"" .. path.join(get_config("installprefix"), "share", "locale"):gsub("\\", "\\\\") .. "\"")
     end
     add_files("src/iconv_no_i18n.c")
+
+    if is_plat("android", "iphoneos") then
+        -- Gnulib defines these macros to 0 on GNU and other platforms that do not distinguish between text and binary I/O.
+        -- https://www.gnu.org/software/gnulib/manual/html_node/fcntl_002eh.html
+        add_defines("O_BINARY=0")
+    end
+
+rule("set_language")
+    on_load(function (target)
+        import("core.base.semver")
+
+        local ver = semver.new(get_config("vers"))
+        if ver:ge("1.18") then
+            target:set("languages", "c23")
+        else
+            target:set("languages", "c99")
+        end
+    end)

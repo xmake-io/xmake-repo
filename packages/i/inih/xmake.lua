@@ -6,6 +6,8 @@ package("inih")
     add_urls("https://github.com/benhoyt/inih.git")
 
     add_versions("58", "e79216260d5dffe809bda840be48ab0eec7737b2bb9f02d2275c1b46344ea7b7")
+    add_versions("59", "062279922805f5e9a369551a08d5ddb506140fe50774183ffdbb7c22bb97e3f4")
+    add_versions("60", "706aa05c888b53bd170e5d8aa8f8a9d9ccf5449dfed262d5103d1f292af26774")
 
     add_configs("ini_parser", {description = "compile and (if selected) install INIReader", default = true, type = "boolean"})
     add_configs("multi_line_entries", {description = "support for multi-line entries in the style of Python's ConfigParser", default = true, type = "boolean"})

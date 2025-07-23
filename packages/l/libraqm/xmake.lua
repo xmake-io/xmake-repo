@@ -6,6 +6,7 @@ package("libraqm")
     add_urls("https://github.com/HOST-Oman/libraqm/archive/refs/tags/$(version).tar.gz",
              "https://github.com/HOST-Oman/libraqm.git")
 
+    add_versions("v0.10.2", "db68fd9f034fc40ece103e511ffdf941d69f5e935c48ded8a31590468e42ba72")
     add_versions("v0.10.1", "ff8f0604dc38671b57fc9ca5c15f3613e063d2f988ff14aa4de60981cb714134")
 
     add_configs("sheenbidi", {description = "Enable SheenBidi", default = false, type = "boolean"})

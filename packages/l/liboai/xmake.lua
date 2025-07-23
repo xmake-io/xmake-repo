@@ -1,20 +1,18 @@
 package("liboai")
-
     set_homepage("https://github.com/D7EAD/liboai")
     set_description("A C++17 library to access the entire OpenAI API.")
+    set_license("MIT")
 
-    set_urls("https://github.com/D7EAD/liboai/archive/refs/tags/v$(version).tar.gz",
+    set_urls("https://github.com/D7EAD/liboai/archive/refs/tags/$(version).tar.gz",
              "https://github.com/D7EAD/liboai.git")
 
-    add_versions("4.0.1", "abe127ae1cd3049f19976e31d8414e8130a73d7978552e863b767fe04b20697f")
-    add_versions("3.2.1", "9058bcc1485967061c9c33b2e7a109a254cdf71638b1448f21cfefd7ffd9c4fa")
-    add_versions("3.1.0", "4b3564740f7dbf099c785d5720327a4e7acaca2535d329f487d877ce17524a73")
+    add_versions("v4.0.1", "abe127ae1cd3049f19976e31d8414e8130a73d7978552e863b767fe04b20697f")
+    add_versions("v3.2.1", "9058bcc1485967061c9c33b2e7a109a254cdf71638b1448f21cfefd7ffd9c4fa")
 
     add_deps("nlohmann_json")
     add_deps("libcurl", {configs = {openssl = true, zlib = true}})
 
     on_install("windows", "linux", "macosx", function (package)
-        local configs = {}
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             add_requires("nlohmann_json")
@@ -30,10 +28,7 @@ package("liboai")
                 end
                 add_packages("nlohmann_json", "libcurl")
         ]])
-        if package:config("shared") then
-            configs.kind = "shared"
-        end
-        import("package.tools.xmake").install(package, configs)
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)

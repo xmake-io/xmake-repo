@@ -6,10 +6,12 @@ package("libbsd")
 
     add_urls("https://libbsd.freedesktop.org/releases/libbsd-$(version).tar.xz")
     add_versions("0.11.5", "1a9c952525635c1bb6770cb22e969b938d8e6a9d7912362b98ee8370599b0efd")
+    add_versions("0.12.2", "b88cc9163d0c652aaf39a99991d974ddba1c3a9711db8f1b5838af2a14731014")
 
-    add_deps("libmd")
+    add_deps("autotools", "libmd")
     add_links("bsd")
-    on_install("linux", function (package)
+
+    on_install("linux", "cross", function (package)
         local configs = {"--disable-dependency-tracking"}
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))

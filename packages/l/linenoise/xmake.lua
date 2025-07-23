@@ -2,6 +2,7 @@ package("linenoise")
 
     set_homepage("https://github.com/antirez/linenoise")
     set_description("A small self-contained alternative to readline and libedit")
+    set_license("BSD-2-Clause")
 
     add_urls("https://github.com/antirez/linenoise.git")
 

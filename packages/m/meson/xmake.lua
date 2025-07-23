@@ -6,6 +6,17 @@ package("meson")
 
     add_urls("https://github.com/mesonbuild/meson/releases/download/$(version)/meson-$(version).tar.gz",
              "https://github.com/mesonbuild/meson.git")
+
+    add_versions("1.8.2", "c105816d8158c76b72adcb9ff60297719096da7d07f6b1f000fd8c013cd387af")
+    add_versions("1.8.1", "b4e3b80e8fa633555abf447a95a700aba1585419467b2710d5e5bf88df0a7011")
+    add_versions("1.8.0", "eea5274173e00b4b8144b754df5c6e9ccf9ea5acd4e9768efe5d591db2aa3f45")
+    add_versions("1.7.2", "4d40d63aa748a9c139cc41ab9bffe43edd113c5639d78bde81544ca955aea890")
+    add_versions("1.7.0", "08efbe84803eed07f863b05092d653a9d348f7038761d900412fddf56deb0284")
+    add_versions("1.6.1", "1eca49eb6c26d58bbee67fd3337d8ef557c0804e30a6d16bfdf269db997464de")
+    add_versions("1.6.0", "999b65f21c03541cf11365489c1fad22e2418bb0c3d50ca61139f2eec09d5496")
+    add_versions("1.5.2", "f955e09ab0d71ef180ae85df65991d58ed8430323de7d77a37e11c9ea630910b")
+    add_versions("1.5.1", "567e533adf255de73a2de35049b99923caf872a455af9ce03e01077e0d384bed")
+    add_versions("1.4.2", "ea2546a26f4a171a741c1fd036f22c9c804d6198e3259f1df588e01f842dd69f")
     add_versions("1.4.1", "1b8aad738a5f6ae64294cc8eaba9a82988c1c420204484ac02ef782e5bba5f49")
     add_versions("1.4.0", "8fd6630c25c27f1489a8a0392b311a60481a3c161aa699b330e25935b750138d")
     add_versions("1.3.2", "492eb450c8b073024276f916f5adbb3c4bb7e90e9e6ec124efda064f3d9b5baa")

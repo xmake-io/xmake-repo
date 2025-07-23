@@ -19,6 +19,10 @@ package("gklib")
     end
 
     on_install("!iphoneos", function (package)
+        if package:has_cincludes("execinfo.h") then
+            package:add("defines",  "HAVE_EXECINFO_H")
+        end
+
         local configs = {
             openmp = package:config("openmp"),
             regex = package:config("regex"),

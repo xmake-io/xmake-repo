@@ -7,6 +7,7 @@ package("automake")
     add_urls("https://ftpmirror.gnu.org/gnu/automake/automake-$(version).tar.gz",
              "https://ftp.gnu.org/gnu/automake/automake-$(version).tar.gz",
              "https://mirrors.ustc.edu.cn/gnu/automake/automake-$(version).tar.gz")
+    add_versions("1.17", "397767d4db3018dd4440825b60c64258b636eaf6bf99ac8b0897f06c89310acd")
     add_versions("1.16.5", "07bd24ad08a64bc17250ce09ec56e921d6343903943e99ccf63bbf0705e34605")
     add_versions("1.16.4", "8a0f0be7aaae2efa3a68482af28e5872d8830b9813a6a932a2571eac63ca1794")
     add_versions("1.16.1", "608a97523f97db32f1f5d5615c98ca69326ced2054c9f82e65bade7fc4c9dea8")

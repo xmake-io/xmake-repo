@@ -1,5 +1,5 @@
 package("openmp")
-
+    set_kind("library", {headeronly = true})
     set_homepage("https://openmp.org/")
     set_description("The OpenMP API specification for parallel programming")
 
@@ -19,10 +19,9 @@ package("openmp")
     end)
 
     on_fetch(function (package)
-        for _, dep in ipairs(package:orderdeps()) do
-            if not dep:fetch() then
-                return
-            end
+        local libomp = package:dep("libomp")
+        if libomp and not libomp:fetch() then
+            return
         end
         local result = {}
         if package.has_tool then
@@ -51,30 +50,35 @@ package("openmp")
                     end
                 elseif package:has_tool(toolkind, "gcc", "gxx", "gfortran") then
                     result[flagname] = "-fopenmp"
-                elseif package:has_tool(toolkind, "icc", "icpc", "ifort") then
+                elseif package:has_tool(toolkind, "icc", "icpc", "ifort", "icx", "icpx", "ifx") then
                     result[flagname] = "-qopenmp"
                 elseif package:has_tool(toolkind, "icl") then
                     result[flagname] = "-Qopenmp"
                 end
+            end
+            for _, toolkind in ipairs({"ld", "fcld"}) do
                 if package:config("runtime") == "default" then
                     if package:has_tool(toolkind, "clang", "clangxx") then
                         if not package:is_plat("macosx") then
                             result.ldflags = "-fopenmp"
                             result.shflags = "-fopenmp"
                         end
-                    elseif package:has_tool(toolkind, "gcc", "gxx", "gfortran") then
+                    elseif package:has_tool(toolkind, "gcc", "gxx") then
                         result.ldflags = "-fopenmp"
                         result.shflags = "-fopenmp"
-                    elseif package:has_tool(toolkind, "icc", "icpc") then
+                    elseif package:has_tool(toolkind, "icc", "icpc", "icx", "icpx") then
                         result.ldflags = "-qopenmp"
                         result.shflags = "-qopenmp"
                     elseif package:has_tool(toolkind, "icl") then
                         result.ldflags = "-Qopenmp"
                         result.shflags = "-Qopenmp"
+                    elseif package:has_tool(toolkind, "gfortran") then
+                        result.fcldflags = "-fopenmp"
+                        result.fcshflags = "-fopenmp"
                     end
                 end
                 if package:config("runtime") == "custom" then
-                    if package:has_tool(toolkind, "cl") then
+                    if package:has_tool(toolkind, "link") then
                         result.ldflags = "/nodefaultlib:vcomp"
                         result.shflags = "/nodefaultlib:vcomp"
                     end
@@ -82,6 +86,9 @@ package("openmp")
             end
         else
             raise("This package(openmp) requires xmake version 2.6.1 or newer.")
+        end
+        if package:has_tool("cu", "nvcc") and result.cxxflags then
+            result.cuflags = "-Xcompiler " .. result.cxxflags
         end
         return (result.cflags or result.cxxflags or result.fcflags) and result
     end)

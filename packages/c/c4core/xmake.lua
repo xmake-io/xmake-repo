@@ -6,6 +6,9 @@ package("c4core")
     add_urls("https://github.com/biojppm/c4core/releases/download/v$(version)/c4core-$(version)-src.zip",
              "https://github.com/biojppm/c4core.git")
 
+    add_versions("0.2.6", "4dbb64c0d1450a05af427541959f4117b6951b560df91cfead4c3b3ed88c9634")
+    add_versions("0.2.5", "3d87765a612d72182d161f0bea401adf6f0df1c65fba54fb7f0727fa8585d0d2")
+    add_versions("0.2.2", "5a9508385daa5b2608ed007784d76586af21c5367411efe9ae26d5b4aea03305")
     add_versions("0.2.1", "81ff1c0d15e24da6d76fdd1b6fdd903fa23d0df7c82e564f993147a4dac88773")
 
     add_configs("fast_float", {description = "use fastfloat to parse floats", default = false, type = "boolean"})
@@ -26,7 +29,7 @@ package("c4core")
         end
 
         if package:config("fast_float") or package:config("debugbreak") then
-            package:add("patches", "0.2.1", "patches/0.2.1/cmake-deps.patch", "92c0c6510cc3b8cbd10b575b5b9d0defa2a19d19f24c1618a73d4f4636da4c9b")
+            package:add("patches", ">=0.2.1", "patches/0.2.1/cmake-deps.patch", "92c0c6510cc3b8cbd10b575b5b9d0defa2a19d19f24c1618a73d4f4636da4c9b")
         end
     end)
 

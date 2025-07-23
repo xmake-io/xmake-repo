@@ -1,11 +1,12 @@
 package("gperf")
-
     set_kind("binary")
     set_homepage("https://www.gnu.org/software/gperf")
     set_description("Perfect hash function generator.")
+    set_license("GPL-3.0-or-later")
 
     set_urls("https://ftpmirror.gnu.org/gnu/gperf/gperf-$(version).tar.gz",
              "https://ftp.gnu.org/gnu/gperf/gperf-$(version).tar.gz")
+
     add_versions("3.1", "588546b945bba4b70b6a3a616e80b4ab466e3f33024a352fc2198112cdbb3ae2")
 
     if is_host("linux") then
@@ -24,7 +25,9 @@ package("gperf")
         import("package.tools.xmake").install(package)
     end)
 
-    on_install("@macosx", "@linux", function (package)
+    on_install("@macosx", "@linux", "@bsd", "@msys", function (package)
+        io.replace("lib/getline.cc", "register", "", {plain = true})
+        io.replace("lib/getopt.c", "register", "", {plain = true})
         import("package.tools.autoconf").install(package)
     end)
 

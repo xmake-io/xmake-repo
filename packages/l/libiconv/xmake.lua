@@ -1,11 +1,12 @@
 package("libiconv")
-
     set_homepage("https://www.gnu.org/software/libiconv")
     set_description("Character set conversion library.")
     set_license("LGPL-2.0")
 
     set_urls("https://ftpmirror.gnu.org/gnu/libiconv/libiconv-$(version).tar.gz",
              "https://ftp.gnu.org/gnu/libiconv/libiconv-$(version).tar.gz")
+
+    add_versions("1.18", "3b08f5f4f9b4eb82f151a7040bfd6fe6c6fb922efe4b1659c66ea933276965e8")
     add_versions("1.17", "8f74213b56238c85a50a5329f77e06198771e70dd9a739779f4c02f65d971313")
     add_versions("1.16", "e6a1b1b589654277ee790cce3734f07876ac4ccfaecbee8afa0b649cf529cc04")
     add_versions("1.15", "ccf536620a45458d26ba83887a983b96827001e92a13847b45e4925cc8913178")
@@ -13,17 +14,14 @@ package("libiconv")
     if is_plat("macosx") then
         add_patches("1.15", path.join(os.scriptdir(), "patches", "1.15", "patch-utf8mac.diff"),
             "e8128732f22f63b5c656659786d2cf76f1450008f36bcf541285268c66cabeab")
-    elseif is_plat("android") then
-        add_patches("1.x", path.join(os.scriptdir(), "patches", "1.16", "makefile.in.patch"),
-            "d09e4212040f5adf1faa5cf5a9a18f6f79d4cdce9affb05f2e75df2ea3b3d686")
     elseif is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
     on_fetch("macosx", "linux", function (package, opt)
         if opt.system then
-            if package:is_plat("linux") and package:has_tool("cc", "gcc", "gxx") then
-                return {} -- on linux libiconv is already a part of glibc
+            if package:is_plat("linux") and package:has_tool("cc", "gcc", "gxx", "clang", "clangxx") then
+                return {} -- libiconv is already a part of glibc (GNU iconv)
             else
                 return package:find_package("system::iconv", {includes = "iconv.h"})
             end
@@ -34,13 +32,26 @@ package("libiconv")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("windows", "mingw", function (package)
+    on_install("windows", "mingw", "android", "iphoneos", function (package)
         io.gsub("config.h.in", "%$", "")
         io.gsub("config.h.in", "# ?undef (.-)\n", "${define %1}\n")
         io.gsub("libcharset/config.h.in", "%$", "")
         io.gsub("libcharset/config.h.in", "# ?undef (.-)\n", "${define %1}\n")
-        io.gsub("srclib/safe-read.c", "#include <unistd.h>", "")
-        io.gsub("srclib/progreloc.c", "#include <unistd.h>", "")
+
+        if package:is_plat("windows") then
+            io.gsub("srclib/safe-read.c", "#include <unistd.h>", "#include <io.h>")
+            io.gsub("srclib/progreloc.c", "#include <unistd.h>", "")
+            for _, file in ipairs(os.files("**")) do
+                io.gsub(file, "#include <stdbool.h>", "#include <cstdbool>")
+            end
+            io.gsub("config.h.in", "#  if HAVE_STDBOOL_H", "#  if 1")
+            io.replace("srclib/binary-io.h", "#  define __gl_setmode _setmode", "#  include <io.h>\n#  define __gl_setmode _setmode", {plain = true})
+        end
+        -- Enforce #include <stdbool.h>
+        if package:is_plat("android") then
+            io.gsub("config.h.in", "#  if HAVE_STDBOOL_H", "#  if 1")
+        end
+
         os.cp(path.join(os.scriptdir(), "port", "xmake.lua"), ".")
         import("package.tools.xmake").install(package, {
             relocatable = true,
@@ -49,19 +60,20 @@ package("libiconv")
         })
     end)
 
-    on_install("macosx", "linux", "bsd", "cross", "android", "wasm", function (package)
+    on_install("macosx", "linux", "bsd", "cross", "wasm", function (package)
         local configs = {"--disable-dependency-tracking", "--enable-extra-encodings", "--enable-relocatable"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:debug() then
             table.insert(configs, "--enable-debug")
         end
-        if package:is_plat("android") then
-            io.replace("./configure", "#define gid_t int", "")
-            io.replace("./configure", "#define uid_t int", "")
+
+        local opt = {}
+        if package:version():lt("1.18") then
+            opt.cxflags = "-std=c99"
+            os.vrunv("make", {"-f", "Makefile.devel", "CFLAGS=" .. (package:config("cflags") or "")})
         end
-        os.vrunv("make", {"-f", "Makefile.devel", "CFLAGS=" .. (package:config("cflags") or "")})
-        import("package.tools.autoconf").install(package, configs)
+        import("package.tools.autoconf").install(package, configs, opt)
     end)
 
     on_test(function (package)
@@ -76,4 +88,3 @@ package("libiconv")
             }
         ]]}))
     end)
-

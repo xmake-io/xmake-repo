@@ -1,0 +1,98 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index ce3c5ba..b05667f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -42,7 +42,7 @@
+ ############################################################
+ 
+ cmake_minimum_required(VERSION 3.10)
+-project(SCOTCH LANGUAGES C Fortran)
++project(SCOTCH LANGUAGES C)
+ 
+ # Add module directory
+ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
+diff --git a/src/esmumps/CMakeLists.txt b/src/esmumps/CMakeLists.txt
+index 7d2fb92..fa2ca12 100644
+--- a/src/esmumps/CMakeLists.txt
++++ b/src/esmumps/CMakeLists.txt
+@@ -135,6 +135,7 @@ install(TARGETS esmumps
+   EXPORT esmumpsTargets
+   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+   PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+ 
+ # Dummy PTEsMUMPS library file
+@@ -169,4 +170,5 @@ install(TARGETS ptesmumps
+   EXPORT ptesmumpsTargets
+   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+   PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+diff --git a/src/libscotch/CMakeLists.txt b/src/libscotch/CMakeLists.txt
+index f314d3a..e539ab9 100644
+--- a/src/libscotch/CMakeLists.txt
++++ b/src/libscotch/CMakeLists.txt
+@@ -359,7 +359,7 @@ set(SCOTCH_C_SOURCES
+   library_context_graph_f.c
+   library_context_f.c
+   #library_errcom.c
+-  #library_error.c
++  library_error.c
+   #library_error_exit.c
+   library_f.h
+   library_geom.c
+@@ -833,6 +833,7 @@ foreach(_target ${TARGETS_LIST})
+     EXPORT ${_target}Targets
+     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+ 
+   if (BUILD_PTSCOTCH)
+@@ -847,6 +848,7 @@ foreach(_target ${TARGETS_LIST})
+       EXPORT pt${_target}Targets
+       ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+       LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+       PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+ 
+   endif()
+diff --git a/src/libscotchmetis/CMakeLists.txt b/src/libscotchmetis/CMakeLists.txt
+index e08fe6a..ac8b089 100644
+--- a/src/libscotchmetis/CMakeLists.txt
++++ b/src/libscotchmetis/CMakeLists.txt
+@@ -127,13 +127,15 @@ foreach(version 3 5)
+       EXPORT scotchmetisTargets
+       ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+       LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+       PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+   else()
+     install(TARGETS scotchmetisv${version}
+       COMPONENT libscotch
+       EXPORT scotchmetisTargets
+       ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+-      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
++      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+   endif()
+ endforeach(version 3 5)
+ 
+@@ -204,13 +206,15 @@ if(BUILD_PTSCOTCH)
+         EXPORT ptscotchparmetisTargets
+         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+     else()
+       install(TARGETS ptscotchparmetisv${version}
+         COMPONENT libptscotch
+         EXPORT ptscotchparmetisTargets
+         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
++        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+     endif()
+   endforeach(version 3)
+ endif(BUILD_PTSCOTCH)

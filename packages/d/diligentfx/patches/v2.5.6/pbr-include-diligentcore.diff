@@ -1,0 +1,118 @@
+diff --git a/PBR/interface/GLTF_PBR_Renderer.hpp b/PBR/interface/GLTF_PBR_Renderer.hpp
+index b8271ca..830b8ef 100644
+--- a/PBR/interface/GLTF_PBR_Renderer.hpp
++++ b/PBR/interface/GLTF_PBR_Renderer.hpp
+@@ -32,7 +32,7 @@
+ #include <vector>
+ #include <array>
+ 
+-#include "../../../DiligentTools/AssetLoader/interface/GLTFLoader.hpp"
++#include "DiligentTools/AssetLoader/interface/GLTFLoader.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/PBR/interface/PBR_Renderer.hpp b/PBR/interface/PBR_Renderer.hpp
+index 1b8fbc6..b17782d 100644
+--- a/PBR/interface/PBR_Renderer.hpp
++++ b/PBR/interface/PBR_Renderer.hpp
+@@ -31,14 +31,14 @@
+ #include <functional>
+ #include <array>
+ 
+-#include "../../../DiligentCore/Platforms/Basic/interface/DebugUtilities.hpp"
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/DeviceContext.h"
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
+-#include "../../../DiligentCore/Graphics/GraphicsEngine/interface/GraphicsTypesX.hpp"
+-#include "../../../DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.hpp"
+-#include "../../../DiligentCore/Graphics/GraphicsTools/interface/ShaderMacroHelper.hpp"
+-#include "../../../DiligentCore/Common/interface/RefCntAutoPtr.hpp"
+-#include "../../../DiligentCore/Common/interface/HashUtils.hpp"
++#include "DiligentCore/Platforms/Basic/interface/DebugUtilities.hpp"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/DeviceContext.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
++#include "DiligentCore/Graphics/GraphicsEngine/interface/GraphicsTypesX.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ShaderMacroHelper.hpp"
++#include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
++#include "DiligentCore/Common/interface/HashUtils.hpp"
+ 
+ namespace Diligent
+ {
+diff --git a/PBR/src/GLTF_PBR_Renderer.cpp b/PBR/src/GLTF_PBR_Renderer.cpp
+index 3292ad8..77f2945 100644
+--- a/PBR/src/GLTF_PBR_Renderer.cpp
++++ b/PBR/src/GLTF_PBR_Renderer.cpp
+@@ -32,10 +32,10 @@
+ #include <algorithm>
+ #include <cmath>
+ 
+-#include "BasicMath.hpp"
+-#include "MapHelper.hpp"
+-#include "GraphicsAccessories.hpp"
+-#include "GLTFLoader.hpp"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/MapHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsAccessories/interface/GraphicsAccessories.hpp"
++#include "DiligentTools/AssetLoader/interface/GLTFLoader.hpp"
+ 
+ namespace Diligent
+ {
+@@ -52,7 +52,7 @@ GLTF_PBR_Renderer::ALPHA_MODE GLTF_PBR_Renderer::GltfAlphaModeToAlphaMode(GLTF::
+ namespace HLSL
+ {
+ 
+-#include "Shaders/PBR/public/PBR_Structures.fxh"
++#include "../../../Shaders/PBR/public/PBR_Structures.fxh"
+ 
+ } // namespace HLSL
+ 
+diff --git a/PBR/src/PBR_Renderer.cpp b/PBR/src/PBR_Renderer.cpp
+index 286e2d8..7d39ba8 100644
+--- a/PBR/src/PBR_Renderer.cpp
++++ b/PBR/src/PBR_Renderer.cpp
+@@ -29,19 +29,19 @@
+ #include <array>
+ #include <vector>
+ 
+-#include "RenderStateCache.hpp"
+-#include "GraphicsUtilities.h"
+-#include "CommonlyUsedStates.h"
+-#include "BasicMath.hpp"
+-#include "MapHelper.hpp"
+-#include "GraphicsAccessories.hpp"
+-#include "PlatformMisc.hpp"
+-#include "TextureUtilities.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/GraphicsUtilities.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/CommonlyUsedStates.h"
++#include "DiligentCore/Common/interface/BasicMath.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/MapHelper.hpp"
++#include "DiligentCore/Graphics/GraphicsAccessories/interface/GraphicsAccessories.hpp"
++#include "DiligentCore/Platforms/interface/PlatformMisc.hpp"
++#include "DiligentTools/TextureLoader/interface/TextureUtilities.h"
+ #include "Utilities/interface/DiligentFXShaderSourceStreamFactory.hpp"
+-#include "ShaderSourceFactoryUtils.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ShaderSourceFactoryUtils.hpp"
+ 
+ #if HLSL2GLSL_CONVERTER_SUPPORTED
+-#    include "../include/HLSL2GLSLConverterImpl.hpp"
++#    include "HLSL2GLSLConverterImpl.hpp"
+ #endif
+ 
+ namespace Diligent
+diff --git a/PBR/src/USD_Renderer.cpp b/PBR/src/USD_Renderer.cpp
+index 07f22e7..4c0f240 100644
+--- a/PBR/src/USD_Renderer.cpp
++++ b/PBR/src/USD_Renderer.cpp
+@@ -30,9 +30,9 @@
+ #include <unordered_set>
+ #include <functional>
+ 
+-#include "RenderStateCache.hpp"
++#include "DiligentCore/Graphics/GraphicsTools/interface/RenderStateCache.hpp"
+ #include "Utilities/interface/DiligentFXShaderSourceStreamFactory.hpp"
+-#include "ShaderSourceFactoryUtils.h"
++#include "DiligentCore/Graphics/GraphicsTools/interface/ShaderSourceFactoryUtils.h"
+ 
+ namespace Diligent
+ {

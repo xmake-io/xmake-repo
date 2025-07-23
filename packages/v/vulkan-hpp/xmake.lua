@@ -6,7 +6,9 @@ package("vulkan-hpp")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/KhronosGroup/Vulkan-Hpp.git")
-    -- when adding a new sdk version, please also update vulkan-headers, vulkan-loader, vulkan-utility-libraries, spirv-headers, spirv-reflect, glslang and volk packages
+
+    -- when adding a new sdk version, please ensure vulkan-headers, vulkan-hpp, vulkan-loader, vulkan-tools, vulkan-validationlayers, vulkan-utility-libraries, spirv-headers, spirv-reflect, spirv-tools, glslang and volk packages are updated simultaneously
+    add_versions("v1.4.309", "16da8bd29e5d0b921c92d406d194759c0df6a2b8")
     add_versions("v1.2.180", "bfa6d4765212505c8241a44b97dc5a9ce3aa2969")
     add_versions("v1.2.189", "58ff1da4c03f5f124eb835f41a9dd8fe3c2e8087")
     add_versions("v1.2.198", "d8c9f4f0eee6972622a1c3aabab5ed558d37c1c0")
@@ -27,6 +29,7 @@ package("vulkan-hpp")
     add_versions("v1.3.281", "88d508b32f207ba85b37fe22fe3732322d1c248d")
     add_versions("v1.3.282", "4bf2835dd1a530291cd2b340a58dd7e369d5c86c")
     add_versions("v1.3.283", "2fbc146feefa43b8201af4b01eb3570110f9fa32")
+    add_versions("v1.3.290", "e3b0737d57e81875361bf1943f083eac902dacb7")
 
     add_configs("modules", {description = "Build with C++20 modules support.", default = false, type = "boolean"})
 
