@@ -1,5 +1,4 @@
 package("libvorbis")
-
     set_homepage("https://xiph.org/vorbis")
     set_description("Reference implementation of the Ogg Vorbis audio format.")
     set_license("BSD-3")
