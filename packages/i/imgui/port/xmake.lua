@@ -168,7 +168,6 @@ target("imgui")
         add_packages("wgpu-native")
 
         if has_config("wgpu_backend") then
-            local user_config = get_config("user_config")
             add_defines("IMGUI_IMPL_WEBGPU_BACKEND_" .. string.upper(get_config("wgpu_backend")))
         end
     end
