@@ -10,7 +10,7 @@ package("aui")
 
     add_patches("v7.1.2", "patches/v7.1.2/debundle-audio.diff", "464d798caaf366f3fadb689504584ad38b15af05c4f044c74c8290a151b082d9")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-build.diff", "92bfd68e28a703518c12cf51b898a6b75cacae1fec9384328562c47b003e9577")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-core.diff", "888ef698fc213dfdb624f5d9f5e39bcf92e395a70cf17e1540ed7a635b29e177")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-core.diff", "eceb483a998e2840534560940b2f2beddcf0a107f4cd388623011db9653ee567")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-crypt.diff", "58045d168a8c7f2658554e0a3010579ec53b54e2c51f524a4fb61e5e4d6fc0a7")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-curl.diff", "937280a828ce0bc30a590606e7d65de55c9421d0650897c2d775e3731405a4b0")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-image.diff", "44bb7e78eab9629c92ef953ec1e0aca9e80712fe2488d6ffa804924d418ebf05")
@@ -55,7 +55,7 @@ package("aui")
     on_component("core", function (package, component)
         package:add("includedirs", "aui.core/include")
         component:add("links", "aui.core")
-        package:add("deps", "fmt 9.1.0", "range-v3")
+        package:add("deps", "fmt 9.1.0", "range-v3", "glm")
         if package:is_plat("linux") then
             package:add("deps", "libbacktrace")
             component:add("syslinks", "threads", "dl")
@@ -152,6 +152,7 @@ package("aui")
         end
         package:add("defines", "AUI_DEBUG=" .. (package:is_debug() and "1" or "0"))
         package:add("defines", "API_AUI_CORE=AUI_IMPORT")
+        package:add("defines", "GLM_ENABLE_EXPERIMENTAL=1")
     end)
 
     on_install("windows|!arm*", "macosx", function (package)
@@ -159,17 +160,7 @@ package("aui")
             "-DAUI_INSTALL_RUNTIME_DEPENDENCIES=OFF",
             "-DAUIB_NO_PRECOMPILED=TRUE",
             "-DAUIB_DISABLE=ON"
-        }
-        local glm = package:dep("glm")
-        if glm and not glm:is_system() then
-            local fetchinfo = glm:fetch()
-            if fetchinfo then
-                local includedirs = fetchinfo.includedirs or fetchinfo.sysincludedirs
-                if includedirs and #includedirs > 0 then
-                    table.insert(configs, "-DGLM_INCLUDE_DIR=" .. table.concat(includedirs, " "))
-                end
-            end
-        end
+        }        
         local opt = {}
         if package:is_plat("macosx") then
             if package:config("shared") then

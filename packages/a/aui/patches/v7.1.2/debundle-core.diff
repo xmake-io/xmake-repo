@@ -1,8 +1,8 @@
 diff --git a/aui.core/CMakeLists.txt b/aui.core/CMakeLists.txt
-index 6aa1b07..5cb497f 100644
+index 6aa1b07..025bf35 100644
 --- a/aui.core/CMakeLists.txt
 +++ b/aui.core/CMakeLists.txt
-@@ -6,7 +6,9 @@ option(AUI_ENABLE_ASAN "Enable AddressSanitizer" OFF)
+@@ -6,12 +6,18 @@ option(AUI_ENABLE_ASAN "Enable AddressSanitizer" OFF)
  option(AUI_ENABLE_DEATH_TESTS "Enable GTest death tests" ON)
  
  aui_module(aui.core EXPORT aui)
@@ -13,7 +13,17 @@ index 6aa1b07..5cb497f 100644
  aui_enable_benchmarks(aui.core)
  
  
-@@ -49,8 +51,12 @@ if (NOT WIN32)
+ get_filename_component(SELF_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+-if (GLM_INCLUDE_DIR)
++if (AUIB_DISABLE)
++    include(FindPkgConfig)
++    pkg_check_modules(GLM REQUIRED glm)
++    message(STATUS "Using pkg-config GLM_INCLUDE_DIR: ${GLM_INCLUDE_DIR}")
++elseif (GLM_INCLUDE_DIR)
+     message(STATUS "Using custom GLM_INCLUDE_DIR: ${GLM_INCLUDE_DIR}")
+ else()
+     set(GLM_INCLUDE_DIR "${SELF_DIR}/3rdparty/glm")
+@@ -49,8 +55,12 @@ if (NOT WIN32)
      endif()
  
      if (AUI_PLATFORM_LINUX)
@@ -28,7 +38,7 @@ index 6aa1b07..5cb497f 100644
          set(_use_backtrace TRUE)
      else()
  
-@@ -84,13 +90,17 @@ endif()
+@@ -84,13 +94,17 @@ endif()
  
  if(_use_backtrace)
      message(STATUS "Stacktrace backend: backtrace")
@@ -48,7 +58,7 @@ index 6aa1b07..5cb497f 100644
      message(STATUS "Stacktrace backend: dbghelp")
  else()
      message(STATUS "Stacktrace backend: none")
-@@ -146,17 +156,23 @@ if (AUI_SHARED_PTR_FIND_INSTANCES)
+@@ -146,17 +160,23 @@ if (AUI_SHARED_PTR_FIND_INSTANCES)
  endif()
  
  
