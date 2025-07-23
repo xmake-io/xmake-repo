@@ -1,0 +1,22 @@
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 517e13f..2a6427a 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -35,7 +35,7 @@ else ()
+ 	set(JTHREAD_COMPILE_STATIC ON CACHE BOOL "Flag indicating if a static library should be built, or a dynamic one")
+ endif ()
+ 
+-if (NOT MSVC OR JTHREAD_COMPILE_STATIC)
++if (JTHREAD_COMPILE_STATIC)
+ 	set(JTHREAD_INSTALLTARGETS jthread-static)
+ 	add_library(jthread-static STATIC ${SOURCES} ${HEADERS})
+ 	set_target_properties(jthread-static PROPERTIES OUTPUT_NAME jthread)
+@@ -43,7 +43,7 @@ if (NOT MSVC OR JTHREAD_COMPILE_STATIC)
+ 	target_link_libraries(jthread-static ${CMAKE_THREAD_LIBS_INIT})
+ endif()
+ 
+-if ((NOT MSVC AND NOT JTHREAD_COMPILE_STATIC_ONLY) OR (MSVC AND NOT JTHREAD_COMPILE_STATIC))
++if (NOT JTHREAD_COMPILE_STATIC)
+ 	add_library(jthread-shared SHARED ${SOURCES} ${HEADERS})
+ 	set_target_properties(jthread-shared PROPERTIES VERSION ${VERSION})
+ 	set_target_properties(jthread-shared PROPERTIES OUTPUT_NAME jthread)

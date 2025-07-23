@@ -32,9 +32,17 @@ package("rttr")
         table.insert(configs, "-DBUILD_RTTR_DYNAMIC=" .. (shared and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_STATIC=" .. (shared and "OFF" or "ON"))
         table.insert(configs, "-DBUILD_WITH_RTTI=" .. (package:config("rtti") and "ON" or "OFF"))
+
+        if package:is_plat("windows") then
+            os.mkdir(path.join(package:buildir(), "src/rttr/pdb"))
+        end
         import("package.tools.cmake").install(package, configs)
-        if package:is_plat("windows") and shared then
-            package:add("defines", "RTTR_DLL")
+        if package:is_plat("windows")then
+            if shared then
+                package:add("defines", "RTTR_DLL")
+            end
+            local dir = package:installdir(shared and "bin" or "lib")
+            os.vcp(path.join(package:buildir(), "bin/*.pdb"), dir)
         end
     end)
 

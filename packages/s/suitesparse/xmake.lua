@@ -89,6 +89,9 @@ package("suitesparse")
             table.insert(configs, "-DBLA_VENDOR=" .. bla_vendor[package:config("blas")])
             table.insert(configs, "-DBLA_STATIC=" .. (package:config("blas_static") and "ON" or "OFF"))
             if package:is_plat("windows") then
+                if not package:has_tool("cxx", "ifort", "ifx") then
+                    table.insert(configs, "-DSUITESPARSE_USE_FORTRAN=OFF")
+                end
                 if package:config("graphblas") then
                     table.insert(configs, "-DSUITESPARSE_ENABLE_PROJECTS=suitesparse_config;mongoose;amd;btf;camd;ccolamd;colamd;cholmod;cxsparse;ldl;klu;umfpack;paru;rbio;spqr;graphblas;lagraph") -- remove spex since it does not support windows
                 else

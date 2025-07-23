@@ -12,6 +12,9 @@ package("sockpp")
 
     add_patches(">=0.8.1", path.join(os.scriptdir(), "patches", "0.8.1", "strerror.patch"), "161796afa58b838a504cbee14f3db8b1bba451b54acb3165503966cad527cafe")
 
+    add_configs("openssl", {description = "Enable OpenSSL.", default = false, type = "boolean"})
+    add_configs("mbedtls", {description = "Enable mbedtls.", default = false, type = "boolean"})
+
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32")
     end
@@ -22,10 +25,17 @@ package("sockpp")
 
     add_deps("cmake")
 
+    on_load(function (package)
+        if package:config("openssl") then
+            package:add("deps", "openssl3")
+        elseif package:config("mbedtls") then
+            package:add("deps", "mbedtls")
+        end
+    end)
+
     on_install(function (package)
         local configs =
         {
-            "-DSOCKPP_BUILD_STATIC=OFF",
             "-DSOCKPP_BUILD_EXAMPLES=OFF",
             "-DSOCKPP_BUILD_TESTS=OFF",
             "-DSOCKPP_BUILD_DOCUMENTATION=OFF",
@@ -40,6 +50,11 @@ package("sockpp")
         end
         if package:is_plat("linux") then
             table.insert(configs, "-DSOCKPP_BUILD_CAN=" .. (package:config("can") and "ON" or "OFF"))
+        end
+        if package:config("openssl") then
+            table.insert(configs, "-DSOCKPP_WITH_OPENSSL=ON")
+        elseif package:config("mbedtls") then
+            table.insert(configs, "-DSOCKPP_WITH_MBEDTLS=ON")
         end
         import("package.tools.cmake").install(package, configs)
     end)

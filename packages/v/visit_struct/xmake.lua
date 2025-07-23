@@ -6,7 +6,7 @@ package("visit_struct")
 
     add_urls("https://github.com/cbeck88/visit_struct/archive/refs/tags/$(version).tar.gz",
              "https://github.com/garbageslam/visit_struct.git")
-    add_versions('v1.1.0', '73a84f2d8a8844bc03a919163b27ee3b3f85d8c64f6151ce098ca50dbed6be51')
+    add_versions("v1.1.0", "73a84f2d8a8844bc03a919163b27ee3b3f85d8c64f6151ce098ca50dbed6be51")
 
     on_install(function (package)
         os.cp("include", package:installdir())

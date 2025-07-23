@@ -1,0 +1,37 @@
+name: Linux (arm64)
+
+on:
+  pull_request:
+    branches:
+      - dev
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-24.04-arm]
+        kind: [static, shared]
+        mode: [debug, release]
+
+    runs-on: ${{ matrix.os }}
+
+    concurrency:
+        group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-Linux-arm64-${{ matrix.kind }}-${{ matrix.mode }}
+        cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v1
+      - uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: branch@master
+          actions-cache-folder: '.xmake-cache'
+          actions-cache-key: 'ubuntu-arm'
+
+      - name: Installation
+        run: |
+          # TODO we will remove it later
+          sudo apt-get update
+          sudo apt-get install -y libgl1-mesa-dev libglu1-mesa-dev p7zip gobjc gcc g++
+
+      - name: Tests
+        run: |
+          xmake l ./scripts/test.lua -D -k ${{ matrix.kind }} -m ${{ matrix.mode }}

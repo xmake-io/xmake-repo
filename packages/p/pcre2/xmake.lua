@@ -6,6 +6,7 @@ package("pcre2")
     add_urls("https://github.com/PhilipHazel/pcre2/releases/download/pcre2-$(version)/pcre2-$(version).tar.gz",
              "https://github.com/PhilipHazel/pcre2.git")
 
+    add_versions("10.44", "86b9cb0aa3bcb7994faa88018292bc704cdbb708e785f7c74352ff6ea7d3175b")
     add_versions("10.43", "889d16be5abb8d05400b33c25e151638b8d4bac0e2d9c76e9d6923118ae8a34e")
     add_versions("10.42", "c33b418e3b936ee3153de2c61cc638e7e4fe3156022a5c77d0711bcbb9d64f1f")
     add_versions("10.40", "ded42661cab30ada2e72ebff9e725e745b4b16ce831993635136f2ef86177724")
@@ -62,11 +63,30 @@ package("pcre2")
         end
         if package:is_debug() then
             table.insert(configs, "-DPCRE2_DEBUG=ON")
+            table.insert(configs, "-DINSTALL_MSVC_PDB=ON")
         end
         if package:is_plat("windows") then
             table.insert(configs, "-DPCRE2_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
+
+        local defines = table.wrap(package:get("defines"))
+        if defines and #defines ~= 0 then
+            defines = table.clone(defines)
+            for i, define in ipairs(defines) do
+                defines[i] = "-D" .. define
+            end
+            table.insert(defines, 1, "Cflags: -I${includedir}")
+            local pkgconfig_dir = package:installdir("lib/pkgconfig")
+
+            local pcre2_pc = path.join(pkgconfig_dir, format("libpcre2-%d.pc", package:config("bitwidth")))
+            io.replace(pcre2_pc, "Cflags: -I${includedir}", table.concat(defines, " "), {plain = true})
+
+            local pcre2_posix_pc = path.join(pkgconfig_dir, "libpcre2-posix.pc")
+            if os.isfile(pcre2_posix_pc) then
+                io.replace(pcre2_posix_pc, "Cflags: -I${includedir}", table.concat(defines, " "), {plain = true})
+            end
+        end
     end)
 
     on_test(function (package)

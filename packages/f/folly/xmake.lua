@@ -25,11 +25,12 @@ package("folly")
     add_versions("2024.07.01", "a619f2759e821d4657aa9f1cae0dedcec2085e656e16a3c458e053a759d2ce83")
     add_versions("2024.07.08", "93c9c7c7e3cb30c1b4437ac3043c05a245383fbb6e558abda704d61f14dc67bd")
     add_versions("2024.07.15", "cbdd4400999c86d7ba271fdf3c15485ec5e250302aa98aebbca6f7e5715e6d8a")
+    add_versions("2024.10.07", "8702d7b82d8bde1bebe9ecb50f0e3d4db73a7e128f5d809ac75f69a52c346205")
 
     add_patches("<=2022.08.29", path.join(os.scriptdir(), "patches", "2021.06.28", "reorder.patch"), "9a6bf283881580474040cfc7a8e89d461d68b89bae5583d89fff0a3198739980")
     add_patches("<=2022.08.29", path.join(os.scriptdir(), "patches", "2021.06.28", "regex.patch"), "6a77ade9f48dd9966d3f7154e66ca8a5c030ae2b6d335cbe3315784aefd8f495")
-    add_patches("<=2024.07.15", path.join(os.scriptdir(), "patches", "2023.11.20", "pkgconfig.patch"), "6838623d453418569853f62ad97c729e802a120c13d804aabba6d6455997e674")
-    add_patches("<=2024.07.15", path.join(os.scriptdir(), "patches", "2023.11.20", "msvc.patch"), "1ee01c75528bd42736541022af461e44af3031c01d62c9342006f0abc0f44f2d")
+    add_patches("<=2024.10.07", path.join(os.scriptdir(), "patches", "2023.11.20", "pkgconfig.patch"), "6838623d453418569853f62ad97c729e802a120c13d804aabba6d6455997e674")
+    add_patches("<=2024.10.07", path.join(os.scriptdir(), "patches", "2023.11.20", "msvc.patch"), "1ee01c75528bd42736541022af461e44af3031c01d62c9342006f0abc0f44f2d")
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
@@ -43,7 +44,7 @@ package("folly")
     add_deps("cmake")
     add_deps("boost", {configs = {date_time = true, iostreams = true, context = true, filesystem = true, program_options = true, regex = true, system = true, thread = true}})
     add_deps("libevent", {configs = {openssl = true}})
-    add_deps("double-conversion", "gflags", "glog <0.7.0", "zlib", "fmt <11")
+    add_deps("double-conversion", "fast_float", "gflags", "glog <0.7.0", "zlib", "fmt <11")
     add_deps("bzip2", "lz4", "zstd", {optional = true})
     if is_plat("linux") then
         add_syslinks("pthread")
@@ -93,12 +94,19 @@ package("folly")
     end)
 
     on_test("linux", function (package)
-        assert(package:check_cxxsnippets({test = [[
-            #include "folly/experimental/io/IoUring.h"
-            #include "folly/experimental/io/AsyncIO.h"
-            void test() {
-                folly::AsyncIOOp asyncIOOp;
-                folly::IoUringOp ioUringOp;
-            }
-        ]]}, {configs = {languages = "c++17"}}))
+        if package:config("libaio") then
+            assert(package:check_cxxsnippets({test = [[
+                void test() {
+                    folly::AsyncIOOp asyncIOOp;
+                }
+            ]]}, {configs = {languages = "c++17"}, includes = "folly/experimental/io/AsyncIO.h"}))
+        end
+
+        if package:config("liburing") then
+            assert(package:check_cxxsnippets({test = [[
+                void test() {
+                    folly::IoUringOp ioUringOp;
+                }
+            ]]}, {configs = {languages = "c++17"}, includes = "folly/experimental/io/IoUring.h"}))
+        end
     end)

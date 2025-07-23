@@ -2,9 +2,11 @@ add_rules("mode.debug", "mode.release")
 add_rules("utils.install.cmake_importfiles")
 set_languages("c++11")
 
-option("exceptions", {showmenu = true,  default = false})
+option("exceptions", {default = true})
+option("vers", {description = "Set the version"})
 
 target("angelscript")
+    set_version("$(vers)")
     set_kind("shared")
     add_files("angelscript/source/*.cpp")
     add_headerfiles("angelscript/include/*.h")

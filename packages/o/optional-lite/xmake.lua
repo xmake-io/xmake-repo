@@ -4,8 +4,10 @@ package("optional-lite")
     set_description("optional lite - A C++17-like optional, a nullable object for C++98, C++11 and later in a single-file header-only library")
     set_license("BSL-1.0")
 
-    add_urls("https://github.com/martinmoene/optional-lite.git")
-    add_versions("2023.05.11", "00e9cf5ca5a496e857bc6a28ffed9f4189ce6646")
+    add_urls("https://github.com/martinmoene/optional-lite/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/martinmoene/optional-lite.git")
+
+    add_versions("v3.6.0", "2be17fcfc764809612282c3e728cabc42afe703b9dc333cc87c48d882fcfc2c2")
 
     on_install(function (package)
         os.cp("include", package:installdir())

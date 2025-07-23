@@ -1,0 +1,33 @@
+diff --git a/Src/CMakeLists.txt b/Src/CMakeLists.txt
+index 6e8af043..df5ca007 100644
+--- a/Src/CMakeLists.txt
++++ b/Src/CMakeLists.txt
+@@ -27,11 +27,7 @@ add_library(amrex ALIAS amrex_${AMReX_SPACEDIM_LAST}d)
+ add_library(AMReX::amrex ALIAS amrex_${AMReX_SPACEDIM_LAST}d)
+ 
+ # legacy symlink for build directory: libamrex.[so|a] / amrex.[dll.lib]
+-add_custom_command(TARGET amrex_${AMReX_SPACEDIM_LAST}d POST_BUILD
+-    COMMAND ${CMAKE_COMMAND} -E create_symlink
+-        $<TARGET_FILE_NAME:amrex_${AMReX_SPACEDIM_LAST}d>
+-        $<TARGET_FILE_DIR:amrex_${AMReX_SPACEDIM_LAST}d>/$<TARGET_FILE_PREFIX:amrex_${AMReX_SPACEDIM_LAST}d>amrex$<TARGET_FILE_SUFFIX:amrex_${AMReX_SPACEDIM_LAST}d>
+-)
++
+ 
+ 
+ #
+diff --git a/Tools/CMake/AMReXInstallHelpers.cmake b/Tools/CMake/AMReXInstallHelpers.cmake
+index 7c832d3a..ea5ea535 100644
+--- a/Tools/CMake/AMReXInstallHelpers.cmake
++++ b/Tools/CMake/AMReXInstallHelpers.cmake
+@@ -72,11 +72,6 @@ function (install_amrex_targets)
+        # legacy symlink for: libamrex.[so|a] / amrex.[dll.lib]
+        #   escape spaces for generated cmake_install.cmake file
+        file(TO_CMAKE_PATH "${CMAKE_INSTALL_PREFIX}/lib" ABS_INSTALL_LIB_DIR)
+-       install(CODE "file(CREATE_LINK
+-           $<TARGET_FILE_NAME:amrex_${AMReX_SPACEDIM_LAST}d>
+-           \"${ABS_INSTALL_LIB_DIR}/$<TARGET_FILE_PREFIX:amrex_${AMReX_SPACEDIM_LAST}d>amrex$<TARGET_FILE_SUFFIX:amrex_${AMReX_SPACEDIM_LAST}d>\"
+-           COPY_ON_ERROR SYMBOLIC)"
+-       )
+ 
+        # Install fortran modules if Fortran is enabled
+        get_property(_lang GLOBAL PROPERTY ENABLED_LANGUAGES)

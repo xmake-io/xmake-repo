@@ -1,0 +1,21 @@
+--- a/upb/hash/common.c	2025-06-02 14:39:32.082862245 +0800
++++ b/upb/hash/common.c	2025-06-02 14:42:34.036621441 +0800
+@@ -43,8 +43,18 @@
+ #elif defined(__GNUC__)
+ #define UPB_FAST_POPCOUNT32(i) __builtin_popcount(i)
+ #elif defined(_MSC_VER)
++#if defined(_M_ARM64)
++unsigned int UPB_FAST_POPCOUNT32(unsigned int x) {
++	unsigned int c = 0;
++	for(; x; c++) {
++		x &= x - 1;
++	}
++	return c;
++}
++#else
+ #define UPB_FAST_POPCOUNT32(i) __popcnt(i)
+ #endif
++#endif
+ 
+ UPB_INLINE int _upb_popcnt32(uint32_t i) {
+ #ifdef UPB_FAST_POPCOUNT32

@@ -1,5 +1,4 @@
 package("libvorbis")
-
     set_homepage("https://xiph.org/vorbis")
     set_description("Reference implementation of the Ogg Vorbis audio format.")
     set_license("BSD-3")
@@ -72,9 +71,9 @@ package("libvorbis")
     end)
 
     on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", "wasm", function (package)
-        local configs = {}
+        local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DBUILD_TESTING=OFF")
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if not package:config("vorbisenc") then
             io.replace("CMakeLists.txt", "${CMAKE_CURRENT_BINARY_DIR}/vorbisenc.pc", "", {plain = true})

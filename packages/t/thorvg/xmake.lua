@@ -6,6 +6,11 @@ package("thorvg")
     add_urls("https://github.com/thorvg/thorvg/archive/refs/tags/$(version).tar.gz",
              "https://github.com/thorvg/thorvg.git")
 
+    add_versions("v1.0-pre10", "a8d2cff9c64495b24b4f51730d26d16f5a12136c7a5c38ac18c0e6caa8d4efc6")
+    add_versions("v0.15.8", "bc0d6cf60a49fa760d562e125300d144d9f0436a8499f942ce234bd2acb7a5d5")
+    add_versions("v0.15.2", "98fcd73567c003a33fad766a7dbb9244c61e9b4721397d42e7fa04fc2e499dce")
+    add_versions("v0.15.1", "4935228bb11e1a5303fc98d2a4b355c94eb82bff10cff581821b0b3c41368049")
+    add_versions("v0.14.10", "e11e2e27ef26ed018807e828cce3bca1fb9a7f25683a152c9cd1f7aac9f3b67a")
     add_versions("v0.14.6", "13d7778968ce10f4f7dd1ea1f66861d4ee8ff22f669566992b4ac00e050496cf")
     add_versions("v0.14.3", "302e7bb2082a5c4528b6ec9b95d500b2c0f54f4333870a709cc122b5b393dcfe")
     add_versions("v0.14.2", "04202e8f5e17b427c3b16ae3b3d4be5d3f3cdac96d5c64ed3efd7b6db3ad731f")
@@ -37,6 +42,18 @@ package("thorvg")
         add_deps("pkgconf")
     end
 
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
+            local ndkver = ndk:config("ndkver")
+            assert(ndkver and tonumber(ndkver) > 22, "package(thorvg) require ndk version > 22")
+            if package:is_arch("armeabi-v7a") then
+                local ndk_sdkver = ndk:config("ndk_sdkver")
+                assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(thorvg/armeabi-v7a) require ndk api level > 21")
+            end
+        end)
+    end
+
     on_load(function (package)
         import("core.base.hashset")
 
@@ -58,20 +75,19 @@ package("thorvg")
                 end
             end
         end
+
+        if not package:config("shared") then
+            package:add("defines", "TVG_STATIC")
+        end
     end)
 
-    on_install("!android", function (package)
+    on_install(function (package)
         if package:is_plat("mingw") then
             io.replace("src/loaders/svg/tvgSvgLoader.cpp", "float_t", "float", {plain = true})
         end
 
         local configs = {}
-        if package:config("shared") then
-            table.insert(configs, "-Ddefault_library=shared")
-        else
-            table.insert(configs, "-Ddefault_library=static")
-            package:add("defines", "TVG_STATIC")
-        end
+        table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
 
         local loaders = package:config("loaders")
         local savers = package:config("savers")
@@ -95,10 +111,9 @@ package("thorvg")
         assert(package:check_cxxsnippets({test = [[
             #include <thorvg.h>
             void test() {
-                tvg::Initializer::init(tvg::CanvasEngine::Sw, 0);
+                auto canvas = tvg::SwCanvas::gen();
             }
         ]]}, {configs = {languages = "c++14"}}))
-
         if package:config("c_api") then
             assert(package:has_cxxfuncs("tvg_engine_init", {includes = "thorvg_capi.h"}))
         end

@@ -7,6 +7,7 @@ package("fakeit")
     add_urls("https://github.com/eranpeer/FakeIt/archive/refs/tags/$(version).tar.gz",
              "https://github.com/eranpeer/FakeIt.git")
 
+    add_versions("2.4.1", "f5234a36d42363cb7ccd2cf99c8a754c832d9092035d984ad40aafa5371d0e95")
     add_versions("2.4.0", "eb79459ad6a97a5c985e3301b0d44538bdce2ba26115afe040f3874688edefb5")
 
     local test_frameworks = {

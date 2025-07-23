@@ -7,24 +7,34 @@ package("soci")
              "https://github.com/SOCI/soci.git")
 
     add_versions("v4.0.3", "4b1ff9c8545c5d802fbe06ee6cd2886630e5c03bf740e269bb625b45cf934928")
+    add_patches("v4.0.3", path.join(os.scriptdir(), "patches", "v4.0.3", "cmake_policy_fix.patch"), "6d8746c3ae39edf1b750d47dcfde97dedbe4211c2563481e877d36a9dccc556a")
 
-    add_configs("empty", {description = "Build empty backend", default = false, type = "boolean"})
-    add_configs("sqlite3", {description = "Build sqlite3 backend", default = false, type = "boolean"})
-    add_configs("db2", {description = "Build db2 backend", default = false, type = "boolean"})
-    add_configs("odbc", {description = "Build odbc backend", default = false, type = "boolean"})
-    add_configs("oracle", {description = "Build oracle backend", default = false, type = "boolean"})
-    add_configs("firebird", {description = "Build firebird backend", default = false, type = "boolean"})
-    add_configs("mysql", {description = "Build mysql backend", default = false, type = "boolean"})
-    add_configs("postgresql", {description = "Build postgresql backend", default = false, type = "boolean"})
-    add_configs("boost", {description = "Build boost backend", default = false, type = "boolean"})
+    local backends = {
+        "empty",
+        "sqlite3",
+        "db2",
+        "odbc",
+        "oracle",
+        "firebird",
+        "mysql",
+        "postgresql",
+    }
+    for _, backend in ipairs(backends) do
+        add_configs(backend, {description = "Build " .. backend .. " backend", default = false, type = "boolean"})
+    end
+    add_configs("boost", {description = "Enable boost integration", default = false, type = "boolean"})
+    add_configs("visibility", {description = "Enable hiding private symbol using ELF visibility if supported by the platform", default = true, type = "boolean"})
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_load(function (package)
         for _, pkg in ipairs({"sqlite3", "mysql", "postgresql"}) do
             if package:config(pkg) then
                 package:add("deps", pkg)
             end
+        end
+        if package:config("boost") then
+            package:add("deps", "boost")
         end
     end)
 
@@ -35,6 +45,7 @@ package("soci")
         table.insert(configs, "-DSOCI_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DSOCI_LTO=" .. (package:config("lto") and "ON" or "OFF"))
         table.insert(configs, "-DSOCI_ASAN=" .. (package:config("asan") and "ON" or "OFF"))
+        table.insert(configs, "-DSOCI_VISIBILITY=" .. (package:config("visibility") and "ON" or "OFF"))
         table.insert(configs, "-DSOCI_EMPTY=" .. (package:config("empty") and "ON" or "OFF"))
         for name, enabled in pairs(package:configs()) do
             if (not package:extraconf("configs", name, "builtin")) and (name ~= "empty") then
@@ -45,10 +56,15 @@ package("soci")
     end)
 
     on_test(function (package)
+        local includes = {"soci/soci.h"}
+        for _, pkg in ipairs(backends) do
+            if package:config(pkg) then
+                table.insert(includes, "soci/" .. pkg .. "/soci-" .. pkg .. ".h")
+            end
+        end
         assert(package:check_cxxsnippets({test = [[
-            #include <soci/soci.h>
             void test() {
                 soci::session sql("connectString");
             }
-        ]]}, {configs = {languages = "c++14"}}))
+        ]]}, {configs = {languages = "c++14", defines = package:config("boost") and "SOCI_USE_BOOST" or {}}, includes = includes}))
     end)

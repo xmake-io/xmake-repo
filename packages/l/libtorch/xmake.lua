@@ -17,6 +17,7 @@ package("libtorch")
     add_versions("v2.2.2", "39901f229520a5256505ec24782f716ee7ddc843")
     add_versions("v2.3.1", "63d5e9221bedd1546b7d364b5ce4171547db12a9")
     add_versions("v2.4.0", "d990dada86a8ad94882b5c23e859b88c0c255bda")
+    add_versions("v2.5.0", "32f585d9346e316e554c8d9bf7548af9f62141fc")
 
     add_patches("1.9.x", "patches/1.9.0/gcc11.patch", "4191bb3296f18f040c230d7c5364fb160871962d6278e4ae0f8bc481f27d8e4b")
     add_patches("1.11.0", "patches/1.11.0/gcc11.patch", "1404b0bc6ce7433ecdc59d3412e3d9ed507bb5fd2cd59134a254d7d4a8d73012")
@@ -61,7 +62,9 @@ package("libtorch")
         end
         if package:config("cuda") then
             package:add("deps", "cuda", {configs = {utils = {"nvrtc", "cudnn", "cufft", "curand", "cublas", "cudart_static"}}})
-            package:add("deps", "nvtx")
+            if package:version():lt("2.5.0") then
+                package:add("deps", "nvtx")
+            end
         end
         if package:config("distributed") then
             package:add("deps", "libuv")

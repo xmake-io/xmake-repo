@@ -4,6 +4,7 @@ package("godotcpp4")
     set_license("MIT")
 
     set_urls("https://github.com/godotengine/godot-cpp.git")
+    add_versions("4.4", "714c9e2c165db2dcb7e6ea57e62a04204d3cfbfa")
     add_versions("4.3", "fbbf9ec4efd8f1055d00edb8d926eef8ba4c2cce")
     add_versions("4.2", "d6e5286cc19bbd5b2c626207d3b01a8f145c0f76")
     add_versions("4.1", "32becf6a13681119ad63b6d7cc4e816c9a0cc86b")

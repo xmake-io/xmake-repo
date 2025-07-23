@@ -1,6 +1,7 @@
 package("objfw")
     set_homepage("https://objfw.nil.im")
     set_description("Portable framework for the Objective-C language.")
+    set_license("LGPL-3.0")
 
     add_urls("https://objfw.nil.im/downloads/objfw-$(version).tar.gz")
     add_versions("1.0.0",   "a6aa3bf590c6a7ae21cf13dbaa94a72926e67af5c7d5aef4a2b172543d1f26a3")
@@ -23,7 +24,15 @@ package("objfw")
     add_versions("1.1.4",   "f6bfdbab22008aae3e4b48d77ced1a04c5153961c6f7e5492891f90ae5131a78")
     add_versions("1.1.5",   "9d45d2009a0bb9b1a0918918e454b47b8161670df8016b5f3a85eccea91d8988")
     add_versions("1.1.6",   "c19a97a011e14780fb32cfbdbbd6a699a955b57124e4e079768cb8aad4430e1d")
-
+	add_versions("1.1.7",   "5107d8a0627e2270d211abf1b4f6c50fd89c8d672d2179b50daa7d3b66d68a70")
+    add_versions("1.2.0",   "f1d92b64f524a1aaf8e8b572a0edf5817d589c3d3c60cab9bb182ccbac3ee405")
+    add_versions("1.2.1",   "637fdeccae149cec236e62c5289450afad542fe930343918856e76594ab3fcfd")
+    add_versions("1.2.2",   "4fe0bed1ec21561a184d804aa577ff630f1e3d20b1c3b973073e23ce829294a1")
+    add_versions("1.2.3",   "8324d3b352121544f817f40f71c21005457ee0255104c7e0d5aedbd6d968bced")
+    add_versions("1.2.4",   "5d914e2ba6f2f0c8698be1f73752120bf2c7befed72b0f8d18c7957d415a98ab")
+    add_versions("1.3",     "de9e8a84437c01dacb9e83d7de0e3f7add3152165707d51a4caec640e4f56ba6")
+    add_versions("1.3.1",   "a3bdf28c2e166f97680601c29f204670a8c4c8e43d393321a7d1f64fe1d2f513")
+    add_versions("1.3.2",   "8148df0d55d1a3218fe9965144b5c3ee2a7f4d8e43e430a6107e294043872cab")
 
     if is_host("linux", "macosx") then
         add_deps("autoconf", "automake", "libtool")
@@ -84,6 +93,15 @@ package("objfw")
         end
     end)
 
+    on_check(function (package)
+        assert(package:check_msnippets({test = [[
+            void test() {
+                @autoreleasepool {
+                }
+            }
+        ]]}))
+    end)
+
     on_install("linux", "macosx", function (package)
         local configs = {}
         local tls = package:config("tls")
@@ -120,7 +138,6 @@ package("objfw")
             local ssl_incdir = find_path(is_gnu and "gnutls/gnutls.h" or "openssl/ssl.h", { ssl:installdir("include"), "/usr/include/", "/usr/local/include" })
 
             if libssl then
-                print("Using SSL "..ssl:name().." from "..libssl.linkdir..", include dir: "..ssl_incdir)
                 table.insert(configs, "CPPFLAGS=-I"..ssl_incdir)
                 table.insert(configs, "LDFLAGS=-L"..libssl.linkdir)
             else

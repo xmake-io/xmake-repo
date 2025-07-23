@@ -1,19 +1,28 @@
 package("opensubdiv")
-
     set_homepage("https://graphics.pixar.com/opensubdiv/docs/intro.html")
     set_description("OpenSubdiv is a set of open source libraries that implement high performance subdivision surface (subdiv) evaluation on massively parallel CPU and GPU architectures.")
     set_license("Apache-2.0")
 
+    add_urls("https://github.com/PixarAnimationStudios/OpenSubdiv.git", {alias = "git"})
     add_urls("https://github.com/PixarAnimationStudios/OpenSubdiv/archive/refs/tags/v$(version).tar.gz", {version = function (version) return version:gsub("%.", "_") end})
+
     add_versions("3.4.4", "20d49f80a2b778ad4d01f091ad88d8c2f91cf6c7363940c6213241ce6f1048fb")
     add_versions("3.5.0", "8f5044f453b94162755131f77c08069004f25306fd6dc2192b6d49889efb8095")
+    add_versions("3.6.0", "bebfd61ab6657a4f4ff27845fb66a167d00395783bfbd253254d87447ed1d879")
 
-    if is_plat("windows") then
+    add_versions("git:3.6.0", "v3_6_0")
+
+    if is_plat("windows", "wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    add_configs("glfw",   {description = "Enable components depending on GLFW.", default = true, type = "boolean"})
-    add_configs("ptex",   {description = "Enable components depending on Ptex.", default = true, type = "boolean"})
+    if is_plat("windows", "linux", "macosx") then
+        add_configs("glfw",   {description = "Enable components depending on GLFW.", default = true, type = "boolean"})
+        add_configs("ptex",   {description = "Enable components depending on Ptex.", default = true, type = "boolean"})
+    else
+        add_configs("glfw",   {description = "Enable components depending on GLFW.", default = false, type = "boolean"})
+        add_configs("ptex",   {description = "Enable components depending on Ptex.", default = false, type = "boolean"})
+    end
     add_configs("tbb",    {description = "Enable components depending on TBB.", default = false, type = "boolean"})
     add_configs("openmp", {description = "Enable OpenMP backend.", default = false, type = "boolean"})
     add_configs("opencl", {description = "Enable OpenCL backend.", default = false, type = "boolean"})
@@ -23,7 +32,8 @@ package("opensubdiv")
     if is_plat("windows") then
         add_defines("NOMINMAX")
     end
-    on_load("windows", "macosx", "linux", function (package)
+
+    on_load(function (package)
         for _, dep in ipairs({"glfw", "ptex", "tbb"}) do
             if package:config(dep) then
                 package:add("deps", dep)
@@ -36,7 +46,7 @@ package("opensubdiv")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows", "linux", "macosx", "wasm", function (package)
         local configs = {"-DNO_EXAMPLES=ON", "-DNO_TUTORIALS=ON", "-DNO_REGRESSION=ON", "-DNO_DOC=ON", "-DNO_CLEW=ON", "-DNO_TESTS=ON", "-DNO_GLTESTS=ON"}
         if package:config("glfw") then
             io.replace("cmake/FindGLFW.cmake", "NOT X11_xf86vmode_FOUND", "FALSE", {plain = true})

@@ -13,6 +13,7 @@ package("libepoxy")
     if is_plat("linux") then
         add_extsources("apt::libepoxy-dev")
         add_deps("libx11", "pkg-config")
+        add_syslinks("pthread", "dl")
     end
 
     add_deps("meson", "ninja")

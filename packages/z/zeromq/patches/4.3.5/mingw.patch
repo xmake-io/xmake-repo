@@ -1,0 +1,68 @@
+From 241c24cb038770d0c9b499fea8ae1e6df5d170a4 Mon Sep 17 00:00:00 2001
+From: Stephan Lachnit <stephanlachnit@debian.org>
+Date: Tue, 23 Apr 2024 16:02:59 +0200
+Subject: [PATCH] Do not use _MSC_VER if windows
+
+This fixes several instances where _MSC_VER was used to determine whether to use afunix.h or not. For example, MinGW requires the use of afunix.h but does not define _MSC_VER. The correct behavior is checking ZMQ_HAVE_WINDOWS.
+
+Signed-off-by: Stephan Lachnit <stephanlachnit@debian.org>
+---
+ src/ipc_address.hpp   | 2 +-
+ src/ipc_connecter.cpp | 2 +-
+ src/ipc_listener.cpp  | 2 +-
+ tests/testutil.cpp    | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/ipc_address.hpp b/src/ipc_address.hpp
+index 422c271127..87f1245b1b 100644
+--- a/src/ipc_address.hpp
++++ b/src/ipc_address.hpp
+@@ -7,7 +7,7 @@
+ 
+ #include <string>
+ 
+-#if defined _MSC_VER
++#if defined ZMQ_HAVE_WINDOWS
+ #include <afunix.h>
+ #else
+ #include <sys/socket.h>
+diff --git a/src/ipc_connecter.cpp b/src/ipc_connecter.cpp
+index 3f988745e7..ed2a0645ab 100644
+--- a/src/ipc_connecter.cpp
++++ b/src/ipc_connecter.cpp
+@@ -16,7 +16,7 @@
+ #include "ipc_address.hpp"
+ #include "session_base.hpp"
+ 
+-#ifdef _MSC_VER
++#if defined ZMQ_HAVE_WINDOWS
+ #include <afunix.h>
+ #else
+ #include <unistd.h>
+diff --git a/src/ipc_listener.cpp b/src/ipc_listener.cpp
+index 586bd7641c..92293da792 100644
+--- a/src/ipc_listener.cpp
++++ b/src/ipc_listener.cpp
+@@ -17,7 +17,7 @@
+ #include "socket_base.hpp"
+ #include "address.hpp"
+ 
+-#ifdef _MSC_VER
++#ifdef ZMQ_HAVE_WINDOWS
+ #ifdef ZMQ_IOTHREAD_POLLER_USE_SELECT
+ #error On Windows, IPC does not work with POLLER=select, use POLLER=epoll instead, or disable IPC transport
+ #endif
+diff --git a/tests/testutil.cpp b/tests/testutil.cpp
+index bdc80283cb..6f21e8f608 100644
+--- a/tests/testutil.cpp
++++ b/tests/testutil.cpp
+@@ -7,7 +7,7 @@
+ 
+ #if defined _WIN32
+ #include "../src/windows.hpp"
+-#if defined _MSC_VER
++#if defined ZMQ_HAVE_WINDOWS
+ #if defined ZMQ_HAVE_IPC
+ #include <direct.h>
+ #include <afunix.h>
+ 

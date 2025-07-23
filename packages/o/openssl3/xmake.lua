@@ -5,6 +5,7 @@ package("openssl3")
 
     add_urls("https://github.com/openssl/openssl/archive/refs/tags/openssl-$(version).zip")
 
+    add_versions("3.3.2", "4cda357946f9dd5541b565dba35348d614288e88aeb499045018970c789c9d61")
     add_versions("3.3.1", "307284f39bfb7061229c57e263e707655aa80aa9950bf6def28ed63fec91a726")
     add_versions("3.0.14", "9590b9ae18c4de183be74dfc9da5be1f1e8f85dd631a78bc74c0ebc3d7e27a93")
     add_versions("3.0.7", "fcb37203c6bf7376cfd3aeb0be057937b7611e998b6c0d664abde928c8af3eb7")
@@ -16,7 +17,16 @@ package("openssl3")
     add_versions("3.0.1", "53d8121af1c33c62a05a5370e9ba40fcc237717b79a7d99009b0c00c79bd7d78")
     add_versions("3.0.0", "1bdb33f131af75330de94475563c62d6908ac1c18586f7f4aa209b96b0bfc2f9")
 
+    -- https://github.com/microsoft/vcpkg/blob/11faa3f168ec2a2f77510b92a42fb5c8a7e28bd8/ports/openssl/command-line-length.patch
+    add_patches("3.3.2", path.join(os.scriptdir(), "patches/3.3.2/command-line-length.patch"), "e969153046f22d6abbdedce19191361f20edf3814b3ee47fb79a306967e03d81")
+
     on_fetch("fetch")
+
+    -- https://security.stackexchange.com/questions/173425/how-do-i-calculate-md2-hash-with-openssl
+    add_configs("md2", {description = "Enable MD2 on OpenSSl3 or not", default = false, type = "boolean"})
+    if is_plat("cross", "android", "iphoneos", "wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     on_load(function (package)
         if not package:is_precompiled() then
@@ -30,7 +40,7 @@ package("openssl3")
                 if jom then
                     package:add("deps", "jom", {private = true})
                 end
-            elseif package:is_plat("android") and is_subhost("windows") and os.arch() == "x64" then
+            elseif package:is_plat("android", "wasm") and is_subhost("windows") and os.arch() == "x64" then
                 -- when building for android on windows, use msys2 perl instead of strawberry-perl to avoid configure issue
                 package:add("deps", "msys2", {configs = {msystem = "MINGW64", base_devel = true}, private = true})
             end
@@ -73,6 +83,11 @@ package("openssl3")
         table.insert(configs, package:config("shared") and "shared" or "no-shared")
         table.insert(configs, "--prefix=" .. package:installdir())
         table.insert(configs, "--openssldir=" .. package:installdir())
+
+        if package:config("md2") then
+            table.insert(configs, "enable-md2")
+        end
+
         if jom then
             table.insert(configs, "no-makedepend")
             table.insert(configs, "/FS")
@@ -99,6 +114,11 @@ package("openssl3")
         end
         table.insert(configs, "--prefix=" .. installdir)
         table.insert(configs, "--openssldir=" .. installdir)
+
+        if package:config("md2") then
+            table.insert(configs, "enable-md2")
+        end
+
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
         buildenvs.RC = package:build_getenv("mrc")
         if is_subhost("msys") then
@@ -126,6 +146,11 @@ package("openssl3")
         if package:debug() then
             table.insert(configs, "--debug")
         end
+
+        if package:config("md2") then
+            table.insert(configs, "enable-md2")
+        end
+
         os.vrunv("./config", configs, {envs = buildenvs})
         local makeconfigs = {CFLAGS = buildenvs.CFLAGS, ASFLAGS = buildenvs.ASFLAGS}
         import("package.tools.make").build(package, makeconfigs)
@@ -135,8 +160,7 @@ package("openssl3")
         end
     end)
 
-    on_install("cross", "android", function (package)
-
+    on_install("cross", "android", "iphoneos", "wasm", function (package)
         local target_arch = "generic32"
         if package:is_arch("x86_64") then
             target_arch = "x86_64"
@@ -154,6 +178,20 @@ package("openssl3")
         if package:is_plat("macosx") then
             target_plat = "darwin64"
             target_arch = "x86_64-cc"
+        elseif package:is_plat("iphoneos") then
+            local xcode = package:toolchain("xcode")
+            local simulator = xcode and xcode:config("appledev") == "simulator"
+            if simulator then
+                target_plat = "iossimulator"
+                target_arch = "xcrun"
+            else
+                if package:is_arch("arm64", "x86_64") then
+                    target_plat = "ios64"
+                else
+                    target_plat = "ios"
+                end
+                target_arch = "cross"
+            end
         end
 
         local target = target_plat .. "-" .. target_arch
@@ -163,8 +201,19 @@ package("openssl3")
                          "no-threads",
                          "--openssldir=" .. package:installdir():gsub("\\", "/"),
                          "--prefix=" .. package:installdir():gsub("\\", "/")}
+
+        if package:config("md2") then
+            table.insert(configs, "enable-md2")
+        end
+        if package:is_plat("wasm") then
+            -- @see https://github.com/openssl/openssl/issues/12174
+            table.insert(configs, "no-afalgeng")
+        end
+
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
-        if package:is_cross() and package:is_plat("android") and is_subhost("windows") then
+        if (package:is_cross() and package:is_plat("android") and is_subhost("windows")) or
+            package:is_plat("wasm") then
+
             buildenvs.CFLAGS = buildenvs.CFLAGS:gsub("\\", "/")
             buildenvs.CXXFLAGS = buildenvs.CXXFLAGS:gsub("\\", "/")
             buildenvs.CPPFLAGS = buildenvs.CPPFLAGS:gsub("\\", "/")
@@ -172,6 +221,10 @@ package("openssl3")
             os.vrunv("perl", table.join("./Configure", configs), {envs = buildenvs})
         else
             os.vrunv("./Configure", configs, {envs = buildenvs})
+        end
+
+        if is_host("windows") and package:is_plat("wasm") then
+            io.replace("Makefile", "bat.exe", "bat", {plain = true})
         end
         local makeconfigs = {CFLAGS = buildenvs.CFLAGS, ASFLAGS = buildenvs.ASFLAGS}
         import("package.tools.make").build(package, makeconfigs)
@@ -181,4 +234,3 @@ package("openssl3")
     on_test(function (package)
         assert(package:has_cfuncs("SSL_new", {includes = "openssl/ssl.h"}))
     end)
-

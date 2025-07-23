@@ -13,7 +13,8 @@ package("libsndio")
     on_install("linux", "bsd", "macosx", function (package)
         import("package.tools.autoconf")
         local configs = {}
-        local buildenvs = autoconf.buildenvs(package, {packagedeps = "alsa-lib"})
+        local packagedeps = package:is_plat("linux") and "alsa-lib" or nil
+        local buildenvs = autoconf.buildenvs(package, {packagedeps = packagedeps})
         if not package:config("shared") then
             io.replace("libsndio/Makefile.in",
                 "${CC} ${LDFLAGS} ${SO_CFLAGS} ${SO_LDFLAGS} -o ${SO} ${OBJS} ${LDADD}",
@@ -22,8 +23,8 @@ package("libsndio")
                 "cp libsndio.a ${DESTDIR}${LIB_DIR}", {plain = true})
         end
         autoconf.configure(package, configs, {envs = buildenvs})
-        os.vrunv("make", {}, {envs = buildenvs})
-        os.vrunv("make", {"install"}, {envs = buildenvs})
+        os.vrunv("make", {}, {curdir = "libsndio", envs = buildenvs})
+        os.vrunv("make", {"install"}, {curdir = "libsndio", envs = buildenvs})
     end)
 
     on_test(function (package)
