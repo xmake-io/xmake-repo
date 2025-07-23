@@ -51,7 +51,7 @@ package("hpx")
     end)
 
     on_install("windows", "linux", "macosx", function (package)
-        local configs = {"-DHPX_WITH_EXAMPLES=OFF", "-DHPX_WITH_TESTS=OFF", "-DHPX_WITH_UNITY_BUILD=OFF"}
+        local configs = {"-DHPX_WITH_EXAMPLES=OFF", "-DHPX_WITH_TESTS=OFF", "-DHPX_WITH_UNITY_BUILD=OFF", "-DHPX_WITH_PKGCONFIG=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DHPX_WITH_MALLOC=" .. package:config("malloc"))
@@ -73,34 +73,32 @@ package("hpx")
         end
         import("package.tools.cmake").install(package, configs)
 
-        -- add links
-        package:add("linkdirs", "lib")
-        local internal_targets_path = path.join(package:installdir(), "lib/cmake/HPX/HPXInternalTargets.cmake")
-        if os.isfile(internal_targets_path) then
-            local cmake_content = io.readfile(internal_targets_path)
-            local link_string_core = cmake_content:match('set_target_properties%(HPXInternal::hpx_core PROPERTIES.-INTERFACE_LINK_LIBRARIES "([^"]*)"')
-            for _, lib_target in ipairs(link_string_core:split(";")) do
-                if lib_target:startswith("-Wl") then
-                    package:add("linkflags", lib_target)
-                elseif lib_target:startswith("$<LINK_ONLY:HPXInternal::") then
-                    lib_target = lib_target:gsub("%$<LINK_ONLY:([^>]+)>", "%1")
-                    local lib_name = lib_target:match("HPXInternal::(hpx.*)")
-                    package:add("links", lib_name)
+        -- Get links from the generated .pc file
+        local links = {}
+        local link_set = {}
+        local syslinks = {pthread = true, dl = true, rt = true}
+        local pkgconfigdir = package:installdir("lib", "pkgconfig")
+        for _, pcfile in ipairs(os.files(path.join(pkgconfigdir, "*.pc"))) do
+            local content = io.readfile(pcfile)
+            local libs_line = content:match("Libs:%s*(.-)\n")
+            for token in libs_line:gmatch("%S+") do
+                if token:startswith("-l") then
+                    local link = token:sub(3)
+                    -- Filter out syslinks, boost libs and existing libs
+                    if not syslinks[link] and not link:startswith("Boost::") and not link_set[link] then
+                        table.insert(links, link)
+                        link_set[link] = true
+                    end
                 end
             end
-            local link_string_full = cmake_content:match('set_target_properties%(HPXInternal::hpx_full PROPERTIES.-INTERFACE_LINK_LIBRARIES "([^"]*)"')
-            for _, lib_target in ipairs(link_string_full:split(";")) do
-                if lib_target:startswith("-Wl") then
-                    package:add("linkflags", lib_target)
-                elseif lib_target:startswith("$<LINK_ONLY:HPXInternal::") then
-                    lib_target = lib_target:gsub("%$<LINK_ONLY:([^>]+)>", "%1")
-                    local lib_name = lib_target:match("HPXInternal::(hpx.*)")
-                    package:add("links", lib_name)
-                end
-            end
-            package:add("links", "hpx_init")
+        end
+
+        if #links > 0 then
+            package:add("links", "hpx_iostreams")
+            package:add("links", links)
         else
-            os.raise("Could not find file HPXInternalTargets.cmake to add link dependencies.")
+            wprint("Failed to parse .pc file, using fallback links for hpx. If this fails, please submit an issue")
+            package:add("links", "hpx", "hpx_iostreams", "hpx_core", "hpx_wrap", "hpx_init")
         end
     end)
 
