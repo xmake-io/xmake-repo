@@ -7,7 +7,21 @@ package("aui")
              "https://github.com/aui-framework/aui.git")
 
     add_versions("v7.1.2", "a4cf965c50d75e20a319c9c8b231ad9c13c25a06ad303e1eb65d1ff141b1f85c")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle.diff", "1eb3da88e82503e6a9a893c112b4dd97909341905fe0e28d3fb5a4d2a50075ea")
+
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-audio.diff", "464d798caaf366f3fadb689504584ad38b15af05c4f044c74c8290a151b082d9")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-build.diff", "92bfd68e28a703518c12cf51b898a6b75cacae1fec9384328562c47b003e9577")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-core.diff", "888ef698fc213dfdb624f5d9f5e39bcf92e395a70cf17e1540ed7a635b29e177")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-crypt.diff", "58045d168a8c7f2658554e0a3010579ec53b54e2c51f524a4fb61e5e4d6fc0a7")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-curl.diff", "937280a828ce0bc30a590606e7d65de55c9421d0650897c2d775e3731405a4b0")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-image.diff", "44bb7e78eab9629c92ef953ec1e0aca9e80712fe2488d6ffa804924d418ebf05")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-json-network.diff", "6d7d8da64cf85212e14757f7d24ac5ac6501dfd0ff3a4fcbe973c7c58c4f213c")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-main.diff", "f9f5400579465cf07087a91633571b8b01c73cdc8dcc3ef4144da16528d53f8a")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-sqlite.diff", "1728a4b9afc473acc81b16c544239e6f70a147c0623d894d59dd124e27c94311")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-toolbox.diff", "1ec1abf993eb7e583d32602e1ae8ee4d3358d156e9fac185c0d19ed85660bd3b")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-uitests.diff", "831a208eff22c5536ada4ea4a4e2496868977c2ee9b7d7e534bc6bdeae537d86")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-views.diff", "b691b46fc425f7c497de18b77b4ad2ac62cf61c983688f2402a50d727770e28f")
+    add_patches("v7.1.2", "patches/v7.1.2/fix-backport-lunasvg.diff", "daf24391b88e44bdb801b2c1ba36a695f95384d8157ccb23cfc635d5f30bea4a")
+    add_patches("v7.1.2", "patches/v7.1.2/fix-msvc-pretty-function.diff", "268f66f42594f0188fe50d33f5783e66f66024087097ebfdfef60c9768e151fd")
     add_patches("v7.1.2", "patches/v7.1.2/fix-osx-enforce-cpp-template.diff", "eef4147a8b037552887777cd497c190ecc22514bb11fb3a3d6ea433a78cce61b")
 
     add_deps("cmake")
@@ -146,6 +160,16 @@ package("aui")
             "-DAUIB_NO_PRECOMPILED=TRUE",
             "-DAUIB_DISABLE=ON"
         }
+        local glm = package:dep("glm")
+        if glm and not glm:is_system() then
+            local fetchinfo = glm:fetch()
+            if fetchinfo then
+                local includedirs = fetchinfo.includedirs or fetchinfo.sysincludedirs
+                if includedirs and #includedirs > 0 then
+                    table.insert(configs, "-DGLM_INCLUDE_DIR=" .. table.concat(includedirs, " "))
+                end
+            end
+        end
         local opt = {}
         if package:is_plat("macosx") then
             if package:config("shared") then

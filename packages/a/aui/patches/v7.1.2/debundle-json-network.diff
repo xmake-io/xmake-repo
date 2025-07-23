@@ -1,0 +1,29 @@
+diff --git a/aui.json/CMakeLists.txt b/aui.json/CMakeLists.txt
+index d0190bd5..980456da 100644
+--- a/aui.json/CMakeLists.txt
++++ b/aui.json/CMakeLists.txt
+@@ -3,7 +3,9 @@ cmake_minimum_required(VERSION 3.10)
+ aui_module(aui.json EXPORT aui)
+ 
+ aui_link(aui.json PRIVATE aui::core)
+-aui_enable_tests(aui.json)
++if (NOT AUIB_DISABLE)
++    aui_enable_tests(aui.json)
++endif ()
+ aui_enable_benchmarks(aui.json)
+ if (TARGET Benchmarks)
+     # curl needed to download the benchmark data
+diff --git a/aui.network/CMakeLists.txt b/aui.network/CMakeLists.txt
+index bb668703..1f85acd3 100644
+--- a/aui.network/CMakeLists.txt
++++ b/aui.network/CMakeLists.txt
+@@ -9,4 +9,6 @@ if(WIN32)
+   target_compile_definitions(aui.network PRIVATE PIO_APC_ROUTINE_DEFINED=1)
+ endif()
+ 
+-aui_enable_tests(aui.network)
+\ No newline at end of file
++if (NOT AUIB_DISABLE)
++  aui_enable_tests(aui.network)
++endif()
+\ No newline at end of file
