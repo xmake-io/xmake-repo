@@ -10,7 +10,7 @@ package("aui")
 
     add_patches("v7.1.2", "patches/v7.1.2/debundle-audio.diff", "464d798caaf366f3fadb689504584ad38b15af05c4f044c74c8290a151b082d9")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-build.diff", "92bfd68e28a703518c12cf51b898a6b75cacae1fec9384328562c47b003e9577")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-core.diff", "eceb483a998e2840534560940b2f2beddcf0a107f4cd388623011db9653ee567")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-core.diff", "0b3cf2140767e2f5232a3769301f1ca8af8c5e07ded55a8f8a98e627a597fd64")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-crypt.diff", "58045d168a8c7f2658554e0a3010579ec53b54e2c51f524a4fb61e5e4d6fc0a7")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-curl.diff", "937280a828ce0bc30a590606e7d65de55c9421d0650897c2d775e3731405a4b0")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-image.diff", "44bb7e78eab9629c92ef953ec1e0aca9e80712fe2488d6ffa804924d418ebf05")
@@ -160,7 +160,7 @@ package("aui")
             "-DAUI_INSTALL_RUNTIME_DEPENDENCIES=OFF",
             "-DAUIB_NO_PRECOMPILED=TRUE",
             "-DAUIB_DISABLE=ON"
-        }        
+        }
         local opt = {}
         if package:is_plat("macosx") then
             if package:config("shared") then
