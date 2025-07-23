@@ -73,32 +73,49 @@ package("hpx")
         end
         import("package.tools.cmake").install(package, configs)
 
-        -- Get links from the generated .pc file
-        local links = {}
-        local link_set = {}
+        package:add("linkdirs", "lib")
+        package:add("includedirs", "include")
+        local linksB = false
+        local linkflagsB = false
+        local is_dup = {}
         local syslinks = {pthread = true, dl = true, rt = true}
         local pkgconfigdir = package:installdir("lib", "pkgconfig")
+        package:add("links", "hpx_iostreams")
         for _, pcfile in ipairs(os.files(path.join(pkgconfigdir, "*.pc"))) do
             local content = io.readfile(pcfile)
+            content = content:gsub("%${installdir}", package:installdir()):gsub("%${prefix}", package:installdir())
             local libs_line = content:match("Libs:%s*(.-)\n")
-            for token in libs_line:gmatch("%S+") do
-                if token:startswith("-l") then
-                    local link = token:sub(3)
-                    -- Filter out syslinks, boost libs and existing libs
-                    if not syslinks[link] and not link:startswith("Boost::") and not link_set[link] then
-                        table.insert(links, link)
-                        link_set[link] = true
+            if libs_line then
+                for token in libs_line:gmatch("%S+") do
+                    if not is_dup[token] then
+                        if token:startswith("-l") then
+                            local link = token:sub(3)
+                            -- Filter out syslinks, deps libs and existing libs
+                            if not syslinks[link] and not link:find("Boost") and link ~= "hwloc" and not link:find("boost") then
+                                package:add("links", link)
+                                is_dup[link] = true
+                                linksB = true
+                            end
+                        elseif token:endswith(".a") then
+                            local link = token:match(".*/lib(.-)%.a$")
+                            if link and not is_dup[link] then
+                                package:add("links", link)
+                                is_dup[link] = true
+                                linksB = true
+                            end
+                        elseif token:startswith("-Wl,") then
+                            package:add("linkflags", token)
+                            linkflagsB = true
+                        end
+                        is_dup[token] = true
                     end
                 end
             end
         end
 
-        if #links > 0 then
-            package:add("links", "hpx_iostreams")
-            package:add("links", links)
-        else
+        if not linksB and not linkflagsB then
             wprint("Failed to parse .pc file, using fallback links for hpx. If this fails, please submit an issue")
-            package:add("links", "hpx", "hpx_iostreams", "hpx_core", "hpx_wrap", "hpx_init")
+            package:add("links", "hpx", "hpx_core", "hpx_wrap", "hpx_init")
         end
     end)
 
