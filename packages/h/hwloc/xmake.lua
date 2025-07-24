@@ -26,15 +26,46 @@ package("hwloc")
         add_versions("2.12.1", "ffa02c3a308275a9339fbe92add054fac8e9a00cb8fe8c53340094012cb7c633")
     end
 
-    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+    add_configs("lstopo", {description = "Build/install lstopo.", default = false, type = "boolean"})
+    add_configs("tools", {description = "Build/install other hwloc tools.", default = false, type = "boolean"})
+    add_configs("libxml2", {description = "Use libxml2 instead of minimal XML.", default = false, type = "boolean"})
+    add_configs("opencl", {description = "Enable OpenCL support", default = false, type = "boolean"})
+    add_configs("cuda", {description = "Enable CUDA support.", default = false, type = "boolean"})
+
+    on_load(function (package)
+        if package:config("libxml2") then
+            package:add("deps", "libxml2")
+        end
+        if package:config("opencl") then
+            package:add("deps", "opencl")
+        end
+        if package:config("cuda") then
+            package:add("deps", "cuda")
+        end
+    end)
 
     on_install("windows", "macosx", "linux", function (package)
-        if package:is_plat("windows") and (package:is_arch("x86", "x64")) then
+        if package:is_plat("windows") and package:is_arch("x86", "x64") then
             os.cp("bin", package:installdir())
             os.cp("include", package:installdir())
             os.cp("lib/*|*.a", package:installdir("lib"))
+        elseif package:is_plat("windows") then
+            local configs = {"-DHWLOC_ENABLE_TESTING=OFF"}
+            table.insert(configs, "-DHWLOC_SKIP_LSTOPO=" .. ((not package:config("lstopo")) and "ON" or "OFF"))
+            table.insert(configs, "-DHWLOC_SKIP_TOOLS=" .. ((not package:config("tools")) and "ON" or "OFF"))
+            table.insert(configs, "-DHWLOC_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+            table.insert(configs, "-DHWLOC_WITH_LIBXML2=" .. (package:config("libxml2") and "ON" or "OFF"))
+            table.insert(configs, "-DHWLOC_WITH_OPENCL=" .. (package:config("opencl") and "ON" or "OFF"))
+            table.insert(configs, "-DHWLOC_WITH_CUDA=" .. (package:config("cuda") and "ON" or "OFF"))
+            os.cd("./contrib/windows-cmake")
+            import("package.tools.cmake").install(package, configs)
         else
-            import("package.tools.autoconf").install(package)
+            local configs = {}
+            table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+            table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+            -- TODO: add configs
+            import("package.tools.autoconf").install(package, configs)
         end
     end)
 
