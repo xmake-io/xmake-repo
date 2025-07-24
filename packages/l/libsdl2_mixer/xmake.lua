@@ -60,8 +60,7 @@ target_link_libraries(SDL2_mixer PRIVATE ${SDL2_LIBRARY})
                             "-DSDL2MIXER_OPUS=OFF",
                             "-DSDL2MIXER_SAMPLES=OFF",
                             "-DSDL2MIXER_WAVE=ON", -- was on by not being here
-                            "-DSDL2MIXER_WAVPACK=OFF",
-                            "-DSDL2MIXER_FLAC_DRFLAC=OFF"
+                            "-DSDL2MIXER_WAVPACK=OFF"
                         }
         table.insert(configs, "-DSDL2MIXER_VENDORED=" .. (package:config("vendored") and "ON" or "OFF"))
         table.insert(configs, "-DSDL2MIXER_FLAC=" .. (package:config("flac") and "ON" or "OFF"))
@@ -75,6 +74,7 @@ target_link_libraries(SDL2_mixer PRIVATE ${SDL2_LIBRARY})
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         local opt = {}
         if package:config("flac") then
+            table.insert(configs, "-DSDL2MIXER_FLAC_DRFLAC=OFF")
             opt.packagedeps = {"libogg"}
         end
         local libsdl2 = package:dep("libsdl2")
