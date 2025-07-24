@@ -37,7 +37,7 @@ package("hpx")
             serialization = true,
             iostreams = true
         }
-        if package:config("context") or not is_arch("x86") then
+        if package:config("context") or not (is_plat("linux", "windows") and is_arch("x86", "x86_64", "x64")) then
             boost_libs.context = true
         end
         package:add("deps", "boost >=1.71.0", {configs = boost_libs})
@@ -67,12 +67,13 @@ package("hpx")
         if package:config("shared") and package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
+        -- On almost all platforms except Linux (x86) and Windows, HPX requires Boost.Context.
         -- https://hpx-docs.stellar-group.org/latest/html/manual/building_hpx.html#most-important-cmake-options
-        -- `HPX_WITH_GENERIC_CONTEXT_COROUTINES` must be enabled for non-x86 architectures such as ARM and Power.
-        if not is_arch("x86", "x86_64", "x64") then
-            table.insert(configs, "-DHPX_WITH_GENERIC_CONTEXT_COROUTINES=ON")
-        else
+        -- See: https://github.com/STEllAR-GROUP/hpx/issues/4829
+        if is_plat("linux", "windows") and is_arch("x86", "x86_64", "x64") then
             table.insert(configs, "-DHPX_WITH_GENERIC_CONTEXT_COROUTINES=" .. (package:config("context") and "ON" or "OFF"))
+        else
+            table.insert(configs, "-DHPX_WITH_GENERIC_CONTEXT_COROUTINES=ON")
         end
         import("package.tools.cmake").install(package, configs)
 
