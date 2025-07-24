@@ -1,10 +1,10 @@
 package("suitesparse")
-
     set_homepage("https://people.engr.tamu.edu/davis/suitesparse.html")
     set_description("SuiteSparse is a suite of sparse matrix algorithms")
 
     add_urls("https://github.com/DrTimothyAldenDavis/SuiteSparse/archive/refs/tags/$(version).tar.gz",
              "https://github.com/DrTimothyAldenDavis/SuiteSparse.git")
+
     add_versions("v7.8.1", "b645488ec0d9b02ebdbf27d9ae307f705de2b6133edb64617a72c7b4c6c3ff44")
     add_versions("v7.7.0", "529b067f5d80981f45ddf6766627b8fc5af619822f068f342aab776e683df4f3")
     add_versions("v7.6.0", "19cbeb9964ebe439413dd66d82ace1f904adc5f25d8a823c1b48c34bd0d29ea5")
@@ -22,17 +22,32 @@ package("suitesparse")
     add_configs("graphblas", {description = "Enable GraphBLAS module.", default = not is_arch("x86"), type = "boolean"})
     add_configs("graphblas_static", {description = "Enable static GraphBLAS module.", default = false, type = "boolean"})
 
-    add_deps("metis")
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::suitesparse")
+    elseif is_plat("linux") then
+        add_extsources("pacman::suitesparse", "apt::libsuitesparse-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::suite-sparse")
+    end
+
     if not is_plat("windows") then
         add_deps("gmp", "mpfr")
     end
     if is_plat("linux") then
         add_syslinks("m", "rt")
     end
+
     on_load("windows", "macosx", "linux", function (package)
-        if package:version():ge("7.4.0") then
-            package:add("deps", "cmake")
+        local version = package:version()
+        if version then
+            if version:ge("7.4.0") then
+                package:add("deps", "cmake")
+            end
+            if version:lt("6.0.0") then
+                package:add("deps", "metis")
+            end
         end
+
         if package:config("openmp") then
             package:add("deps", "openmp")
         end
@@ -41,7 +56,7 @@ package("suitesparse")
         else
             package:add("deps", package:config("blas"))
         end
-        if package:version():ge("7.4.0") then
+        if version and version:ge("7.4.0") then
             local suffix = ""
             if package:is_plat("windows") and not package:config("shared") then
                 suffix = "_static"
@@ -65,7 +80,7 @@ package("suitesparse")
     end)
 
     on_install("windows|x64", "windows|x86", "macosx", "linux", function (package)
-        if package:version():ge("7.4.0") then
+        if package:version() and package:version():ge("7.4.0") then
             local configs = {"-DSUITESPARSE_DEMOS=OFF"}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -108,7 +123,7 @@ package("suitesparse")
     end)
 
     on_test(function (package)
-        if package:version():ge("7.4.0") then
+        if package:version() and package:version():ge("7.4.0") then
             assert(package:has_cfuncs("SuiteSparse_start", {includes = "suitesparse/SuiteSparse_config.h"}))
         else
             assert(package:has_cfuncs("SuiteSparse_start", {includes = "SuiteSparse_config.h"}))
