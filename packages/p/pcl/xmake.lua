@@ -25,11 +25,15 @@ package("pcl")
         local version = assert(package:version())
         package:add("includedirs", "include/pcl-" .. version:major() .. "." .. version:minor())
 
-        if version:le("1.14.1") then
-            package:add("deps", "boost", {version = "1.85.0", configs = {filesystem = true, serialization = true, date_time = true, iostreams = true, system = true, thread = true, graph = true}})
+        local boost_opt = {
+            configs = {filesystem = true, serialization = true, date_time = true, iostreams = true, system = true, thread = true, graph = true}
+        }
+        if version:lt("1.14.1") then
+            boost_opt.version = "<1.85.0"
         else
-            package:add("deps", "boost", {configs = {asio = true, filesystem = true, serialization = true, date_time = true, iostreams = true, system = true, thread = true, graph = true}})
+            boost_opt.configs.asio = true
         end
+        package:add("deps", "boost", boost_opt)
 
         if package:config("vtk") then
             package:add("deps", "vtk")
@@ -37,12 +41,14 @@ package("pcl")
         if package:config("cuda") then
             package:add("deps", "cuda", {system = true})
         end
+
+        package:addenv("PATH", "bin")
     end)
 
     on_install("windows", "linux", "macosx", function (package)
         io.replace("CMakeLists.txt", "set(CMAKE_CXX_FLAGS_DEFAULT \"/DWIN32 /D_WINDOWS /W3 /GR /EHsc\")", "set(CMAKE_CXX_FLAGS_DEFAULT \" /DWIN32 /D_WINDOWS /W3 /GR /EHsc\")\nstring(APPEND CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS_DEFAULT})", {plain = true})
         io.replace("cmake/Modules/FindFLANN.cmake", "flann_cpp", "flann")
-        if package:version() and package:version():le("1.12.0") then
+        if package:version():le("1.12.0") then
             io.replace("cmake/pcl_options.cmake", "set(CMAKE_FIND_LIBRARY_SUFFIXES", "#set(CMAKE_FIND_LIBRARY_SUFFIXES", {plain = true})
         end
 
@@ -55,7 +61,6 @@ package("pcl")
             table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs, {packagedeps = {"lz4", "dl"}})
-        package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)
