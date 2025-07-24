@@ -34,7 +34,7 @@ package("libsdl2_mixer")
     on_load(function (package)
         package:add("deps", "libsdl2", { configs = { shared = package:config("shared") }})
         if package:config("flac") then
-            package:add("deps", "libflac")
+            package:add("deps", "libflac", { configs = { shared = package:config("shared") }})
         end
     end)
 
@@ -73,6 +73,10 @@ target_link_libraries(SDL2_mixer PRIVATE ${SDL2_LIBRARY})
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        local opt = {}
+        if package:config("flac") then
+            opt.packagedeps = {"libogg"}
+        end
         local libsdl2 = package:dep("libsdl2")
         if libsdl2 and not libsdl2:is_system() then
             table.insert(configs, "-DSDL2_DIR=" .. libsdl2:installdir())
@@ -95,7 +99,7 @@ target_link_libraries(SDL2_mixer PRIVATE ${SDL2_LIBRARY})
                 table.insert(configs, "-DSDL2_LIBRARY=" .. table.concat(libfiles, ";"))
             end
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
