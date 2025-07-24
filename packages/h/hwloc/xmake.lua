@@ -26,8 +26,8 @@ package("hwloc")
         add_versions("2.12.1", "ffa02c3a308275a9339fbe92add054fac8e9a00cb8fe8c53340094012cb7c633")
     end
 
-    add_configs("lstopo", {description = "Build/install lstopo.", default = false, type = "boolean"})
-    add_configs("tools", {description = "Build/install other hwloc tools.", default = false, type = "boolean"})
+    add_configs("lstopo", {description = "Build/install lstopo(only for win arm64).", default = false, type = "boolean"})
+    add_configs("tools", {description = "Build/install other hwloc tools(only for win arm64).", default = false, type = "boolean"})
     add_configs("libxml2", {description = "Use libxml2 instead of minimal XML.", default = false, type = "boolean"})
     add_configs("opencl", {description = "Enable OpenCL support", default = false, type = "boolean"})
     add_configs("cuda", {description = "Enable CUDA support.", default = false, type = "boolean"})
@@ -64,7 +64,18 @@ package("hwloc")
             local configs = {}
             table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
             table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
-            -- TODO: add configs
+            if package:is_debug() then
+                table.insert(configs, "--enable-debug")
+            end
+            if not package:config("libxml2") then
+                table.insert(configs, "--disable-libxml2")
+            end
+            if not package:config("opencl") then
+                table.insert(configs, "--disable-opencl")
+            end
+            if not package:config("cuda") then
+                table.insert(configs, "--disable-cuda")
+            end
             import("package.tools.autoconf").install(package, configs)
         end
     end)
