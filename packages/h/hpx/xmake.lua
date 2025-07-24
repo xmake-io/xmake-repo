@@ -51,7 +51,7 @@ package("hpx")
     end)
 
     on_install("windows", "linux", "macosx", function (package)
-        local configs = {"-DHPX_WITH_EXAMPLES=OFF", "-DHPX_WITH_TESTS=OFF", "-DHPX_WITH_UNITY_BUILD=OFF", "-DHPX_WITH_PKGCONFIG=ON"}
+        local configs = {"-DHPX_WITH_EXAMPLES=OFF", "-DHPX_WITH_TESTS=OFF", "-DHPX_WITH_UNITY_BUILD=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DHPX_WITH_MALLOC=" .. package:config("malloc"))
@@ -64,58 +64,74 @@ package("hpx")
         if not package:config("shared") then
             table.insert(configs, "-DHPX_WITH_STATIC_LINKING=ON")
         end
+        if package:config("shared") and package:is_plat("windows") then
+            table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
+        end
         -- https://hpx-docs.stellar-group.org/latest/html/manual/building_hpx.html#most-important-cmake-options
         -- `HPX_WITH_GENERIC_CONTEXT_COROUTINES` must be enabled for non-x86 architectures such as ARM and Power.
-        if not is_arch("x86") then
+        if not is_arch("x86", "x86_64", "x64") then
             table.insert(configs, "-DHPX_WITH_GENERIC_CONTEXT_COROUTINES=ON")
         else
             table.insert(configs, "-DHPX_WITH_GENERIC_CONTEXT_COROUTINES=" .. (package:config("context") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
 
-        package:add("linkdirs", "lib")
         package:add("includedirs", "include")
-        local linksB = false
-        local linkflagsB = false
-        local is_dup = {}
-        local syslinks = {pthread = true, dl = true, rt = true}
-        local pkgconfigdir = package:installdir("lib", "pkgconfig")
-        package:add("links", "hpx_iostreams")
-        for _, pcfile in ipairs(os.files(path.join(pkgconfigdir, "*.pc"))) do
-            local content = io.readfile(pcfile)
-            content = content:gsub("%${installdir}", package:installdir()):gsub("%${prefix}", package:installdir())
-            local libs_line = content:match("Libs:%s*(.-)\n")
-            if libs_line then
-                for token in libs_line:gmatch("%S+") do
-                    if not is_dup[token] then
-                        if token:startswith("-l") then
-                            local link = token:sub(3)
-                            -- Filter out syslinks, deps libs and existing libs
-                            if not syslinks[link] and not link:find("Boost") and link ~= "hwloc" and not link:find("boost") then
-                                package:add("links", link)
-                                is_dup[link] = true
-                                linksB = true
-                            end
-                        elseif token:endswith(".a") then
-                            local link = token:match(".*/lib(.-)%.a$")
-                            if link and not is_dup[link] then
-                                package:add("links", link)
-                                is_dup[link] = true
-                                linksB = true
-                            end
-                        elseif token:startswith("-Wl,") then
-                            package:add("linkflags", token)
-                            linkflagsB = true
-                        end
-                        is_dup[token] = true
+        package:add("linkdirs", "lib")
+
+        if package:config("shared") then
+            -- handle shared lib
+            package:add("links", "hpx", "hpx_iostreams", "hpx_core", "hpx_init")
+        else
+            -- handle static lib
+            import("utils.binary.deplibs")
+            import("core.base.graph")
+
+            -- scan all libs
+            local hpx_libs_map = {}
+            local lib_pattern = package:is_plat("windows") and "hpx_*.lib" or "libhpx_*.a"
+            for _, libpath in ipairs(os.files(path.join(package:installdir(), "lib", lib_pattern))) do
+                local basename = path.basename(libpath)
+                local linkname
+                if package:is_plat("windows") then
+                    linkname = basename:gsub("%.lib$", "")
+                else
+                    linkname = basename:gsub("lib(.-)%.a", "%1")
+                end
+                hpx_libs_map[linkname] = libpath
+            end
+
+            -- create a DAG
+            local dag = graph.new()
+            for linkname, libpath in pairs(hpx_libs_map) do
+                dag:add_vertex(linkname)
+                local dependencies = deplibs(libpath, {plat = package:plat(), arch = package:arch()})
+                for _, dep_path in ipairs(dependencies) do
+                    local dep_basename = path.basename(dep_path)
+                    local dep_linkname
+                    if package:is_plat("windows") then
+                        dep_linkname = dep_basename:gsub("%.lib$", "")
+                    else
+                        dep_linkname = dep_basename:gsub("lib(.-)%.a", "%1")
+                    end
+                    if hpx_libs_map[dep_linkname] then
+                        dag:add_edge(linkname, dep_linkname)
                     end
                 end
             end
-        end
 
-        if not linksB and not linkflagsB then
-            wprint("Failed to parse .pc file, using fallback links for hpx. If this fails, please submit an issue")
-            package:add("links", "hpx", "hpx_core", "hpx_wrap", "hpx_init")
+            local sorted_links = dag:topological_sort()
+            local cycle = dag:find_cycle()
+            if cycle then
+                wprint("cycle links found", cycle)
+            end
+            
+            for _, link in ipairs(sorted_links) do
+                if link ~= "hpx_init" then
+                    package:add("links", link)
+                end
+            end
+            package:add("links", "hpx_init")
         end
     end)
 
@@ -123,8 +139,9 @@ package("hpx")
         assert(package:check_cxxsnippets({test = [[
             #include <hpx/iostream.hpp>
             #include <hpx/hpx_main.hpp>
-            void test() {
+            int main() {
                 hpx::cout << "Hello World!\n" << std::flush;
+                return 0;
             }
         ]]}, {configs = {languages = "c++17"}}))
     end)
