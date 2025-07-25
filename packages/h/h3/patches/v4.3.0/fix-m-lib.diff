@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index b59b470f..a1d71f6e 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -360,7 +360,7 @@ function(add_h3_library name h3_alloc_prefix_override)
+     target_link_libraries(${name} PRIVATE ${H3_LINK_FLAGS})
+     target_compile_features(${name} PUBLIC c_std_99)
+ 
+-    find_library(M_LIB m)
++    find_library(M_LIB m PATHS ${CMAKE_C_IMPLICIT_LINK_DIRECTORIES})
+     if(M_LIB)
+         target_link_libraries(${name} PUBLIC ${M_LIB})
+     endif()

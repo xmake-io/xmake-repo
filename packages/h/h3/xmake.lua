@@ -8,6 +8,10 @@ package("h3")
 
     add_versions("v4.3.0", "a47cfa36e255e4bf16c63015aaff8e6fe2afc14ffaa3f6b281718158446c0e9b")
 
+    if is_plat("cross") then
+        add_patches("v4.3.0", "patches/v4.3.0/fix-m-lib.diff", "599ac8532942f695d69e10cb25598833408a6972e0d9a06f08f3284dada323d2")
+    end
+
     add_configs("filters", {description = "Build filters.", default = true, type = "boolean"})
 
     add_deps("cmake")
