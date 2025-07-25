@@ -19,6 +19,10 @@ package("h3")
     end
 
     on_install(function (package)
+        if package:is_plat("windows") and package:config("shared") then
+            package:add("defines", "BUILD_SHARED_LIBS")
+        end
+
         local configs = {
             "-DENABLE_COVERAGE=OFF",
             "-DENABLE_DOCS=OFF",
