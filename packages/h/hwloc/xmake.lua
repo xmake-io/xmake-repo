@@ -21,10 +21,14 @@ package("hwloc")
         add_urls("https://download.open-mpi.org/release/hwloc/v$(version).tar.gz", {version = function (version)
             return format("%d.%d/hwloc-%s", version:major(), version:minor(), version)
         end})
-        add_versions("2.5.0", "38aa8102faec302791f6b4f0d23960a3ffa25af3af6af006c64dbecac23f852c")
+        if not is_plat("windows") then
+            add_versions("2.5.0", "38aa8102faec302791f6b4f0d23960a3ffa25af3af6af006c64dbecac23f852c")
+        end
         add_versions("2.7.1", "4cb0a781ed980b03ad8c48beb57407aa67c4b908e45722954b9730379bc7f6d5")
         add_versions("2.12.1", "ffa02c3a308275a9339fbe92add054fac8e9a00cb8fe8c53340094012cb7c633")
     end
+
+    add_patches("2.12.1", "patches/2.12.1/cmake-win-arm64.patch", "e825ecc61c66fd11750f342cd86056798f44545d4bfd3b7c38885878a8d61903")
 
     add_configs("lstopo", {description = "Build/install lstopo(only for win arm64).", default = false, type = "boolean"})
     add_configs("tools", {description = "Build/install other hwloc tools(only for win arm64).", default = false, type = "boolean"})
@@ -67,12 +71,6 @@ package("hwloc")
             table.insert(configs, "-DHWLOC_WITH_OPENCL=" .. (package:config("opencl") and "ON" or "OFF"))
             table.insert(configs, "-DHWLOC_WITH_CUDA=" .. (package:config("cuda") and "ON" or "OFF"))
             os.cd("contrib/windows-cmake")
-            -- try conditionalizing add_library line
-            io.replace("CMakeLists.txt",
-                [[${TOPDIR}/hwloc/topology-x86.c]],
-                [[$<$<OR:$<BOOL:${HWLOC_X86_32_ARCH}>,$<BOOL:${HWLOC_X86_64_ARCH}>>:${TOPDIR}/hwloc/topology-x86.c>]],
-                {plain = true}
-            )
             import("package.tools.cmake").install(package, configs)
         else
             local configs = {"--disable-pci"}
