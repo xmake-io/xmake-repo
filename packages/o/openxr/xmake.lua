@@ -39,8 +39,8 @@ package("openxr")
             elseif package:has_runtime("MDd") then
                 CMAKE_MSVC_RUNTIME_LIBRARY = "MultiThreadedDebugDLL"
             end
-            io.replace("src/loader/CMakeLists.txt", "MultiThreaded$<$<CONFIG:Debug>:Debug>", CMAKE_MSVC_RUNTIME_LIBRARY, {plain = true})
             io.replace("src/loader/CMakeLists.txt", "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL", CMAKE_MSVC_RUNTIME_LIBRARY, {plain = true})
+            io.replace("src/loader/CMakeLists.txt", "MultiThreaded$<$<CONFIG:Debug>:Debug>", CMAKE_MSVC_RUNTIME_LIBRARY, {plain = true})
         end
 
         local configs = {
@@ -57,7 +57,7 @@ package("openxr")
             table.insert(configs, "-DINSTALL_TO_ARCHITECTURE_PREFIXES=ON")
             os.vcp("include", package:installdir())
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = "libx11"})
     end)
 
     on_test(function (package)
