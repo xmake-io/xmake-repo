@@ -32,6 +32,14 @@ package("hwloc")
     add_configs("opencl", {description = "Enable OpenCL support", default = false, type = "boolean"})
     add_configs("cuda", {description = "Enable CUDA support.", default = false, type = "boolean"})
 
+    -- TODO: add pciaccess lib into xmake-repo
+    if is_plat("linux") then
+        add_deps("libudev")
+    end
+    if is_plat("macosx") then
+        add_frameworks("Foundation", "IOKit")
+    end
+
     on_load(function (package)
         if package:config("libxml2") then
             package:add("deps", "libxml2")
@@ -58,10 +66,16 @@ package("hwloc")
             table.insert(configs, "-DHWLOC_WITH_LIBXML2=" .. (package:config("libxml2") and "ON" or "OFF"))
             table.insert(configs, "-DHWLOC_WITH_OPENCL=" .. (package:config("opencl") and "ON" or "OFF"))
             table.insert(configs, "-DHWLOC_WITH_CUDA=" .. (package:config("cuda") and "ON" or "OFF"))
-            os.cd("./contrib/windows-cmake")
+            os.cd("contrib/windows-cmake")
+            -- try conditionalizing add_library line
+            io.replace("CMakeLists.txt",
+                [[${TOPDIR}/hwloc/topology-x86.c]],
+                [[$<$<OR:$<BOOL:${HWLOC_X86_32_ARCH}>,$<BOOL:${HWLOC_X86_64_ARCH}>>:${TOPDIR}/hwloc/topology-x86.c>]],
+                {plain = true}
+            )
             import("package.tools.cmake").install(package, configs)
         else
-            local configs = {}
+            local configs = {"--disable-pci"}
             table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
             table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
             if package:is_debug() then
