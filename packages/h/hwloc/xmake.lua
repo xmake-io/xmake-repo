@@ -70,6 +70,9 @@ package("hwloc")
             os.cp("lib/*|*.a", package:installdir("lib"))
         elseif package:is_plat("windows") then
             local configs = {"-DHWLOC_ENABLE_TESTING=OFF"}
+            if package:is_arch("arm64") then
+                table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=ARM64")
+            end
             table.insert(configs, "-DHWLOC_SKIP_LSTOPO=" .. ((not package:config("lstopo")) and "ON" or "OFF"))
             table.insert(configs, "-DHWLOC_SKIP_TOOLS=" .. ((not package:config("tools")) and "ON" or "OFF"))
             table.insert(configs, "-DHWLOC_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
