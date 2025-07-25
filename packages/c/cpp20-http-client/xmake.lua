@@ -6,6 +6,7 @@ package("cpp20-http-client")
     add_urls("https://github.com/avocadoboi/cpp20-http-client.git")
 
     add_versions("2023.08.11", "bb011a055a1813a4fb2a0b67db0ffa455221aaf8")
+    add_versions("2025.07.24", "2c0efb938486c3edb81705c4abe6486457d9d88f")
 
     if is_plat("windows") then
         add_syslinks("ws2_32", "crypt32")
