@@ -45,7 +45,7 @@ package("libflac")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", "wasm", function (package)
+    on_install(function (package)
         local configs = {}
         table.insert(configs, "-DBUILD_CXXLIBS=OFF")
         table.insert(configs, "-DBUILD_DOCS=OFF")

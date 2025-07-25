@@ -5,6 +5,7 @@ package("xgrammar")
 
     add_urls("https://github.com/mlc-ai/xgrammar/archive/refs/tags/$(version).tar.gz",
              "https://github.com/mlc-ai/xgrammar.git")
+    add_versions("v0.1.21", "071a40a2a27ead8128214bd29cd4f5a9386e913ef0fb189e33ce768b28771436")
     add_versions("v0.1.19", "f05f8d05b12b29523a2f299535a42180e665ce80109360a6afafc300d82f1b78")
 
     add_configs("python_bindings", {description = "Build Python bindings", default = false, type = "boolean"})
