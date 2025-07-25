@@ -5,6 +5,7 @@ package("marisa")
     add_urls("https://github.com/s-yata/marisa-trie/archive/refs/tags/$(version).tar.gz",
              "https://github.com/s-yata/marisa-trie.git")
 
+    add_versions("v0.3.1", "986ed5e2967435e3a3932a8c95980993ae5a196111e377721f0849cad4e807f3")
     add_versions("v0.2.6", "1063a27c789e75afa2ee6f1716cc6a5486631dcfcb7f4d56d6485d2462e566de")
     add_versions("v0.3.0", "a3057d0c2da0a9a57f43eb8e07b73715bc5ff053467ee8349844d01da91b5efb")
 
