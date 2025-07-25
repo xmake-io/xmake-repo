@@ -21,14 +21,14 @@ package("hwloc")
         add_urls("https://download.open-mpi.org/release/hwloc/v$(version).tar.gz", {version = function (version)
             return format("%d.%d/hwloc-%s", version:major(), version:minor(), version)
         end})
-        if not is_plat("windows") then
-            add_versions("2.5.0", "38aa8102faec302791f6b4f0d23960a3ffa25af3af6af006c64dbecac23f852c")
-        end
+        add_versions("2.5.0", "38aa8102faec302791f6b4f0d23960a3ffa25af3af6af006c64dbecac23f852c")
         add_versions("2.7.1", "4cb0a781ed980b03ad8c48beb57407aa67c4b908e45722954b9730379bc7f6d5")
         add_versions("2.12.1", "ffa02c3a308275a9339fbe92add054fac8e9a00cb8fe8c53340094012cb7c633")
     end
 
-    add_patches("2.12.1", "patches/2.12.1/cmake-win-arm64.patch", "e825ecc61c66fd11750f342cd86056798f44545d4bfd3b7c38885878a8d61903")
+    if is_plat("windows") and is_arch("arm64") then
+        add_patches(">=2.7.1", "patches/2.12.1/cmake-win-arm64.patch", "987880ba30b05c41386d7242057ef6de313d29f925c3b936945e13e9f492dc68")
+    end
 
     add_configs("lstopo", {description = "Build/install lstopo(only for win arm64).", default = false, type = "boolean"})
     add_configs("tools", {description = "Build/install other hwloc tools(only for win arm64).", default = false, type = "boolean"})
@@ -43,6 +43,13 @@ package("hwloc")
     if is_plat("macosx") then
         add_frameworks("Foundation", "IOKit")
     end
+
+    on_check("windows", function (package)
+        -- v2.5.0 have no cmake file.
+        if package:is_arch("arm64") and package:version():eq("2.5.0") then
+            assert(false, "hwloc version 2.5.0 is not supported on Windows ARM64.")
+        end
+    end)
 
     on_load(function (package)
         if package:config("libxml2") then
