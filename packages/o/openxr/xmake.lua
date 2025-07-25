@@ -14,16 +14,35 @@ package("openxr")
 
     add_deps("cmake", "python 3.x", {kind = "binary"})
     add_deps("jsoncpp")
-    if is_plat("android") then
+    if is_plat("linux", "cross") then
+        add_deps("libx11")
+    elseif is_plat("android") then
         add_deps("egl-headers")
     end
 
     if is_plat("windows") then
         add_syslinks("advapi32")
+    elseif is_plat("linux") then
+        add_syslinks("pthread")
     end
 
-    on_install(function (package)
+    on_install("!bsd and !wasm", function (package)
         io.replace("src/CMakeLists.txt", "set(CMAKE_POSITION_INDEPENDENT_CODE ON)", "", {plain = true})
+        if package:is_plat("windows") then
+            local CMAKE_MSVC_RUNTIME_LIBRARY
+            if package:has_runtime("MT") then
+                CMAKE_MSVC_RUNTIME_LIBRARY = "MultiThreaded"
+            elseif package:has_runtime("MTd") then
+                CMAKE_MSVC_RUNTIME_LIBRARY = "MultiThreadedDebug"
+            elseif package:has_runtime("MD") then
+                CMAKE_MSVC_RUNTIME_LIBRARY = "MultiThreadedDLL"
+            elseif package:has_runtime("MDd") then
+                CMAKE_MSVC_RUNTIME_LIBRARY = "MultiThreadedDebugDLL"
+            end
+            io.replace("src/loader/CMakeLists.txt", "MultiThreaded$<$<CONFIG:Debug>:Debug>", CMAKE_MSVC_RUNTIME_LIBRARY, {plain = true})
+            io.replace("src/loader/CMakeLists.txt", "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL", CMAKE_MSVC_RUNTIME_LIBRARY, {plain = true})
+        end
+
         local configs = {
             "-DBUILD_CONFORMANCE_TESTS=OFF",
             "-DBUILD_TESTS=OFF",
@@ -36,7 +55,7 @@ package("openxr")
 
         if package:is_plat("android") then
             table.insert(configs, "-DINSTALL_TO_ARCHITECTURE_PREFIXES=ON")
-            os.cp("include", package:installdir())
+            os.vcp("include", package:installdir())
         end
         import("package.tools.cmake").install(package, configs)
     end)
