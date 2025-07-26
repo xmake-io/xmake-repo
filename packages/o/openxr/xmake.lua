@@ -12,6 +12,7 @@ package("openxr")
 
     add_patches("1.1.49", "patches/1.1.49/fix-mingw.diff", "8cc18048e3be5f64e6f2038303bcfff7137290cf60785ff795d3d57ef1a717b3")
     add_patches("1.1.49", "patches/1.1.49/fix-freebsd.diff", "f4b63875a75609d2c4ce112f67e74713edb25eb238e9a544441f534a87b523b9")
+    add_patches("1.1.49", "patches/1.1.49/ppc-support.diff", "1bb423ec10110f9003803c63d50154f60ba063917c34f066f12e957eef4424c0")
 
     add_configs("api_layers", {description = "Build the API layers.", default = false, type = "boolean"})
 
