@@ -39,7 +39,7 @@ package("soxr")
             end
         end
         if package:is_plat("linux") and not package:config("shared") and package:is_arch("arm64") then
-            package:add("defines", "SOXR=__attribute__ ((visibility("default")))")
+            package:add("defines", [[SOXR=__attribute__ ((visibility("default")))]])
         end
     end)
 
