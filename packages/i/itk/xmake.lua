@@ -38,7 +38,8 @@ package("itk")
             table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
         end
         if package:is_plat("windows") then
-            import("package.tools.cmake").install(package, configs, {buildir = path.join(os.tmpdir(), "itk_build")})
+            table.insert(configs, "-DITK_MSVC_STATIC_RUNTIME_LIBRARY=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
+            import("package.tools.cmake").install(package, configs, {builddir = path.join(os.tmpdir(), "itk_build")})
         else
             import("package.tools.cmake").install(package, configs)
         end
