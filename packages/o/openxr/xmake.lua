@@ -9,11 +9,9 @@ package("openxr")
     add_versions("1.1.49", "74e9260a1876b0540171571a09bad853302ec68a911200321be8b0591ca94111")
 
     add_versions("git:1.1.49", "release-1.1.49")
+    add_patches("1.1.49", "patches/1.1.49/fix-mingw.diff", "8cc18048e3be5f64e6f2038303bcfff7137290cf60785ff795d3d57ef1a717b3")
 
     add_configs("api_layers", {description = "Build the API layers.", default = false, type = "boolean"})
-    if is_plat("mingw") then
-        add_configs("shared", {description = "Build shared binaries.", default = false, type = "boolean", readonly = true})
-    end
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::openxr-sdk")
@@ -29,7 +27,7 @@ package("openxr")
         add_deps("egl-headers")
     end
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("advapi32")
     elseif is_plat("linux") then
         add_syslinks("pthread")
@@ -39,7 +37,9 @@ package("openxr")
 
     on_install("!bsd and !wasm", function (package)
         io.replace("src/CMakeLists.txt", "set(CMAKE_POSITION_INDEPENDENT_CODE ON)", "", {plain = true})
-        if package:is_plat("windows") then
+        if package:is_plat("mingw") then
+            io.replace("src/loader/openxr-loader.def", "LIBRARY", "LIBRARY libopenxr_loader.dll", {plain = true})
+        elseif package:is_plat("windows") then
             local CMAKE_MSVC_RUNTIME_LIBRARY
             if package:has_runtime("MT") then
                 CMAKE_MSVC_RUNTIME_LIBRARY = "MultiThreaded"
