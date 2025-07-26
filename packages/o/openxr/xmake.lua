@@ -13,8 +13,6 @@ package("openxr")
     add_configs("api_layers", {description = "Build the API layers.", default = false, type = "boolean"})
     if is_plat("windows", "mingw") then
         add_configs("shared", {description = "Build shared binaries.", default = false, type = "boolean", readonly = true})
-    elseif is_plat("android") then
-        add_configs("shared", {description = "Build shared binaries.", default = true, type = "boolean", readonly = true})
     end
 
     if is_plat("mingw") and is_subhost("msys") then
@@ -35,6 +33,8 @@ package("openxr")
         add_syslinks("advapi32")
     elseif is_plat("linux") then
         add_syslinks("pthread")
+    elseif is_plat("android") then
+        add_syslinks("android")
     end
 
     on_install("!bsd and !wasm", function (package)
