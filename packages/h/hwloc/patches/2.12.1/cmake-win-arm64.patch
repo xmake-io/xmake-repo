@@ -1,12 +1,11 @@
 diff --git a/contrib/windows-cmake/CMakeLists.txt b/contrib/windows-cmake/CMakeLists.txt
-index 8a7610fc7..9c8253166 100644
+index 8a7610fc7..958c36947 100644
 --- a/contrib/windows-cmake/CMakeLists.txt
 +++ b/contrib/windows-cmake/CMakeLists.txt
-@@ -46,18 +46,36 @@ endif()
- 
+@@ -47,18 +47,9 @@ endif()
  
  set(SIZEOF_VOID_P ${CMAKE_SIZEOF_VOID_P})
--# disable x86 entirely by default
+ # disable x86 entirely by default
 -set(HWLOC_X86_32_ARCH)
 -set(HWLOC_X86_64_ARCH)
 -set(HWLOC_HAVE_X86_CPUID 1)
@@ -16,46 +15,20 @@ index 8a7610fc7..9c8253166 100644
 -elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "(^x86$|i.86)")
 -    # "x86" on Windows, "i.86" on Linux
 -    set(HWLOC_X86_32_ARCH 1)
-+if(MSVC AND CMAKE_VS_PLATFORM_NAME)
-+    message(STATUS "[MSVC] Detected architecture: ${CMAKE_VS_PLATFORM_NAME}")
-+    if(CMAKE_VS_PLATFORM_NAME STREQUAL "ARM64")
-+        set(HWLOC_HAVE_X86_CPUID OFF)
-+        set(HWLOC_X86_64_ARCH OFF)
-+        set(HWLOC_X86_32_ARCH OFF)
-+    elseif(CMAKE_VS_PLATFORM_NAME STREQUAL "x64")
-+        set(HWLOC_HAVE_X86_CPUID ON)
-+        set(HWLOC_X86_64_ARCH ON)
-+        set(HWLOC_X86_32_ARCH OFF)
-+    elseif(CMAKE_VS_PLATFORM_NAME STREQUAL "Win32")
-+        set(HWLOC_HAVE_X86_CPUID ON)
-+        set(HWLOC_X86_64_ARCH OFF)
-+        set(HWLOC_X86_32_ARCH ON)
-+    endif()
- else()
+-else()
 -    set(HWLOC_HAVE_X86_CPUID 0)
-+    message(STATUS "[Non-MSVC] or CMAKE_VS_PLATFORM_NAME not set. CMAKE_SYSTEM_PROCESSOR: ${CMAKE_SYSTEM_PROCESSOR}.")
-+    # disable x86 entirely by default
-+    set(HWLOC_X86_32_ARCH)
-+    set(HWLOC_X86_64_ARCH)
-+    set(HWLOC_HAVE_X86_CPUID 1)
-+    if (CMAKE_SYSTEM_PROCESSOR MATCHES "(^AMD64$|^x86_64$)")
-+        # "AMD64" on Windows, "x86_64" on Linux
-+        set(HWLOC_X86_64_ARCH 1)
-+    elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "(^x86$|i.86)")
-+        # "x86" on Windows, "i.86" on Linux
-+        set(HWLOC_X86_32_ARCH 1)
-+    else()
-+        set(HWLOC_HAVE_X86_CPUID 0)
-+    endif()
- endif()
+-endif()
++set(HWLOC_X86_32_ARCH 0)
++set(HWLOC_X86_64_ARCH 0)
++set(HWLOC_HAVE_X86_CPUID 0)
  
  check_c_source_compiles("int main(void) {int cpuinfo[4]; __cpuidex(cpuinfo,0,0); return 0;}"
-@@ -122,7 +140,7 @@ add_library(hwloc
+ HWLOC_HAVE_MSVC_CPUIDEX
+@@ -122,7 +113,6 @@ add_library(hwloc
      ${TOPDIR}/hwloc/topology-xml.c
      ${TOPDIR}/hwloc/topology-xml-nolibxml.c
      ${TOPDIR}/hwloc/topology-windows.c
 -    ${TOPDIR}/hwloc/topology-x86.c
-+    $<$<BOOL:${HWLOC_HAVE_X86_CPUID}>:${TOPDIR}/hwloc/topology-x86.c>
      $<$<BOOL:${HWLOC_HAVE_LIBXML2}>:${TOPDIR}/hwloc/topology-xml-libxml.c>
      $<$<BOOL:${HWLOC_HAVE_OPENCL}>:${TOPDIR}/hwloc/topology-opencl.c>
      $<$<BOOL:${HAVE_CUDA}>:${TOPDIR}/hwloc/topology-cuda.c>
