@@ -56,6 +56,7 @@ package("protobuf-cpp")
     end
 
     add_deps("cmake")
+    add_components("protobuf", "protoc", "utf8_range")
 
     on_load(function (package)
         -- Fix MSVC 2019 arm64 error LNK2019: unresolved external symbol __popcnt referenced in function _upb_log2_table_size
@@ -70,12 +71,6 @@ package("protobuf-cpp")
         if package:is_plat("android") and is_host("windows") then
             package:add("deps", "ninja")
             package:set("policy", "package.cmake_generator.ninja", true)
-        end
-
-        if package:is_plat("windows") then
-            package:add("links", "libprotoc", "libprotobuf", "utf8_range", "utf8_validity", "libutf8_range", "libutf8_validity")
-        else
-            package:add("links", "protoc", "protobuf", "utf8_range", "utf8_validity")
         end
 
         if package:is_plat("linux", "bsd", "mingw") then
@@ -104,25 +99,37 @@ package("protobuf-cpp")
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "PROTOBUF_USE_DLLS")
         end
+
+        if package:config("upb") then
+            package:add("components", "upb")
+        end
+
+        if package:config("lite") then
+            package:add("components", "protobuf-lite")
+        end
     end)
     -- ref: https://github.com/conan-io/conan-center-index/blob/19c9de61cce5a5089ce42b0cf15a88ade7763275/recipes/protobuf/all/conanfile.py
     on_component("utf8_range", function (package, component)
         component:add("extsources", "pkgconfig::utf8_range")
+        if package:is_plat("windows") then
+            component:add("links", "libutf8_range", "libutf8_validity")
+        end
         component:add("links", "utf8_validity", "utf8_range")
     end)
 
     on_component("protobuf", function (package, component)
         component:add("extsources", "pkgconfig::protobuf")
-        if is_plat("windows") then
-            component:add("links", "libprotobuf", "utf8_validity")
+        component:add("deps", "utf8_range")
+        if package:is_plat("windows") then
+            component:add("links", "libprotobuf")
         else
-            component:add("links", "protobuf", "utf8_validity")
+            component:add("links", "protobuf")
         end
     end)
 
     on_component("protobuf-lite", function (package, component)
         component:add("extsources", "pkgconfig::protobuf-lite")
-        if is_plat("windows") then
+        if package:is_plat("windows") then
             component:add("links", "libprotobuf-lite", "utf8_validity")
         else
             component:add("links", "protobuf-lite", "utf8_validity")
@@ -131,7 +138,7 @@ package("protobuf-cpp")
 
     on_component("protoc", function (package, component)
         component:add("deps", "protobuf")
-        if is_plat("windows") then
+        if package:is_plat("windows") then
             component:add("links", "libprotoc")
         else
             component:add("links", "protoc")
@@ -139,7 +146,7 @@ package("protobuf-cpp")
     end)
 
     on_component("upb", function (package, component)
-        if is_plat("windows") then
+        if package:is_plat("windows") then
             component:add("links", "libupb", "utf8_range")
         else
             component:add("links", "upb", "utf8_range")
