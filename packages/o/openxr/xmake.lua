@@ -35,6 +35,10 @@ package("openxr")
         add_syslinks("pthread")
     elseif is_plat("android") then
         add_syslinks("log", "android")
+    elseif is_plat("macosx") then
+        add_frameworks("AppKit", "Foundation", "CoreGraphics")
+    elseif is_plat("iphoneos") then
+        add_frameworks("Foundation", "CoreGraphics", "OpenGLES")
     end
 
     on_install("!wasm", function (package)
