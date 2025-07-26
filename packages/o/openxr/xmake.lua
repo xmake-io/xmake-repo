@@ -11,6 +11,15 @@ package("openxr")
     add_versions("git:1.1.49", "release-1.1.49")
 
     add_configs("api_layers", {description = "Build the API layers.", default = false, type = "boolean"})
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared binaries.", default = false, type = "boolean", readonly = true})
+    end
+
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::openxr-sdk")
+    elseif is_plat("linux") then
+        add_extsources("pacman::openxr", "apt::libopenxr-dev")
+    end
 
     add_deps("cmake", "python 3.x", {kind = "binary"})
     add_deps("jsoncpp")
@@ -51,6 +60,7 @@ package("openxr")
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DDYNAMIC_LOADER=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_API_LAYERS=" .. (package:config("api_layers") and "ON" or "OFF"))
 
         if package:is_plat("android") then
