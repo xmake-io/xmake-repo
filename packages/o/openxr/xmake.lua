@@ -11,7 +11,7 @@ package("openxr")
     add_versions("git:1.1.49", "release-1.1.49")
 
     add_configs("api_layers", {description = "Build the API layers.", default = false, type = "boolean"})
-    if is_plat("windows", "mingw") then
+    if is_plat("mingw") then
         add_configs("shared", {description = "Build shared binaries.", default = false, type = "boolean", readonly = true})
     end
 
