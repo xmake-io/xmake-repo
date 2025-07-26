@@ -7,6 +7,7 @@ package("itk")
     add_urls("https://github.com/InsightSoftwareConsortium/ITK/releases/download/v$(version)/InsightToolkit-$(version).tar.gz")
     add_versions("5.2.0", "12c9cf543cbdd929330322f0a704ba6925a13d36d01fc721a74d131c0b82796e")
     add_versions("5.2.1", "192d41bcdd258273d88069094f98c61c38693553fd751b54f8cda308439555db")
+    add_versions("5.4.4", "d2092cd018a7b9d88e8c3dda04acb7f9345ab50619b79800688c7bc3afcca82a")
 
     add_deps("cmake", "eigen")
     if is_plat("windows") then
@@ -29,9 +30,10 @@ package("itk")
                          "-DBUILD_EXAMPLES=OFF",
                          "-DITK_WRAPPING=OFF",
                          "-DITK_USE_SYSTEM_EIGEN=ON",
-                         "-DCMAKE_CXX_STANDARD=14"}
+        }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DCMAKE_CXX_STANDARD=" .. (package:version():ge("5.4.0") and "17" or "14"))
         if package:config("pic") ~= false then
             table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
         end
@@ -48,5 +50,5 @@ package("itk")
                 using ImageType = itk::Image<unsigned short, 3>;
                 ImageType::Pointer image = ImageType::New();
             }
-        ]]}, {configs = {languages = "c++14"}, includes = "itkImage.h"}))
+        ]]}, {configs = {languages = (package:version():ge("5.4.0") and "c++17" or "c++14")}, includes = "itkImage.h"}))
     end)
