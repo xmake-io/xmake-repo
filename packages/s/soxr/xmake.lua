@@ -31,7 +31,8 @@ package("soxr")
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "SOXR_DLL")
         end
-        if package:is_plat("mingw", "linux") and not package:config("shared") then
+        if package:is_plat("mingw") and not package:config("shared") or
+        package:is_plat("linux") and not package:config("shared") and package:is_arch("arm64") then
             package:add("defines", "SOXR_DLL")
             package:add("defines", "soxr_EXPORTS")
             if package:config("lsr") then
