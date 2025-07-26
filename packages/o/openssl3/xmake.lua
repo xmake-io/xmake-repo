@@ -135,6 +135,9 @@ package("openssl3")
         os.vrunv("perl", configs, {envs = buildenvs})
         import("package.tools.make").build(package)
         import("package.tools.make").make(package, {"install_sw"})
+        if package:is_arch("x86_64") then
+            os.trycp(path.join(package:installdir("lib64"), "*"), package:installdir("lib"))
+        end
     end)
 
     on_install("linux", "macosx", "bsd", function (package)
@@ -157,6 +160,9 @@ package("openssl3")
         import("package.tools.make").make(package, {"install_sw"})
         if package:config("shared") then
             os.tryrm(path.join(package:installdir("lib"), "*.a"), path.join(package:installdir("lib64"), "*.a"))
+        end
+        if package:is_plat("linux") and package:is_arch("x86_64") then
+            os.trycp(path.join(package:installdir("lib64"), "*"), package:installdir("lib"))
         end
     end)
 
