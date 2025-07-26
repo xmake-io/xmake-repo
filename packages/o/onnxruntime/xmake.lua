@@ -79,6 +79,14 @@ package("onnxruntime")
         end
     end
 
+    if on_check then
+        on_check("windows", function (package)
+            if package:version() and package:version():eq("1.22.0") then
+                assert(false, "package(onnxruntime 1.22.0): Unsupported version on Windows OS.")
+            end
+        end)
+    end
+
     on_load(function (package)
         if package:config("gpu") then
             package:add("deps", "cuda", {configs = {utils = {"cudart", "nvrtc"}}})
