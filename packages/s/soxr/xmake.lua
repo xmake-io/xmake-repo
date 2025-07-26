@@ -17,6 +17,8 @@ package("soxr")
     add_versions("snapshot:0.1.3", "b797a5d23078be234e520af1041b5e11b49864696d56f0d0b022a0349d1e8d1b")
     add_versions("sourceforge:0.1.3", "b111c15fdc8c029989330ff559184198c161100a59312f5dc19ddeb9b5a15889")
 
+    add_patches("0.1.3", "patches/0.1.3/fix-arm64.diff", "7ee8025d04e2db863558e1d974e1853edc7dc6ce6ec9a4432b158aa3f72f53db")
+
     add_configs("openmp",   {description = "Include OpenMP threading.", default = false, type = "boolean"})
     add_configs("lsr",      {description = "Include a `libsamplerate'-like interface.", default = true, type = "boolean"})
     if is_plat("mingw") and is_subhost("macosx") then
@@ -46,6 +48,7 @@ package("soxr")
     end)
 
     on_install(function (package)
+        io.replace("CMakeLists.txt", "if (VISIBILITY_HIDDEN)", "if (0)", {plain = true})
         local configs = {
             "-DBUILD_TESTS=OFF", "-DBUILD_EXAMPLES=OFF"
         }
