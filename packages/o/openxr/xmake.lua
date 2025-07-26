@@ -47,18 +47,18 @@ package("openxr")
         if package:is_plat("mingw") then
             io.replace("src/loader/openxr-loader.def", "LIBRARY", "LIBRARY libopenxr_loader.dll", {plain = true})
         elseif package:is_plat("windows") then
-            local CMAKE_MSVC_RUNTIME_LIBRARY
+            local runtime
             if package:has_runtime("MT") then
-                CMAKE_MSVC_RUNTIME_LIBRARY = "MultiThreaded"
+                runtime = "MultiThreaded"
             elseif package:has_runtime("MTd") then
-                CMAKE_MSVC_RUNTIME_LIBRARY = "MultiThreadedDebug"
+                runtime = "MultiThreadedDebug"
             elseif package:has_runtime("MD") then
-                CMAKE_MSVC_RUNTIME_LIBRARY = "MultiThreadedDLL"
+                runtime = "MultiThreadedDLL"
             elseif package:has_runtime("MDd") then
-                CMAKE_MSVC_RUNTIME_LIBRARY = "MultiThreadedDebugDLL"
+                runtime = "MultiThreadedDebugDLL"
             end
-            io.replace("src/loader/CMakeLists.txt", "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL", CMAKE_MSVC_RUNTIME_LIBRARY, {plain = true})
-            io.replace("src/loader/CMakeLists.txt", "MultiThreaded$<$<CONFIG:Debug>:Debug>", CMAKE_MSVC_RUNTIME_LIBRARY, {plain = true})
+            io.replace("src/loader/CMakeLists.txt", "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL", runtime, {plain = true})
+            io.replace("src/loader/CMakeLists.txt", "MultiThreaded$<$<CONFIG:Debug>:Debug>", runtime, {plain = true})
         end
 
         local configs = {
