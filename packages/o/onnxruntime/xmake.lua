@@ -17,7 +17,6 @@ package("onnxruntime")
             add_versions("1.17.0", "b0436634108c001e2284cb685646047a7b088715b64c05e39ee8a1a8930776a9")
             add_versions("1.17.1", "4802af9598db02153d7da39432a48823ff69b2fb4b59155461937f20782aa91c")
             add_versions("1.19.2", "dc4f841e511977c0a4f02e5066c3d9a58427644010ab4f89b918614a1cd4c2b0")
-            add_versions("1.22.1", "855276cd4be3cda14fe636c69eb038d75bf5bcd552bda1193a5d79c51f436dfe")
         elseif is_arch("x86") then
             set_urls("https://github.com/microsoft/onnxruntime/releases/download/v$(version)/onnxruntime-win-x86-$(version).zip")
             add_versions("1.11.1", "734ee4b76a17c466d5a5e628c27c38eccaf512e0228237cfc3d7a0a408986d1c")
@@ -27,14 +26,12 @@ package("onnxruntime")
             add_versions("1.17.0", "3f3214f99165d3282cc5647c5a18451aaaaf326599c7e98913ce6c50e50c6463")
             add_versions("1.17.1", "9404130825474bd36b2538ed925d6b5f2cf1fb6a443f3e125054ae3470019291")
             add_versions("1.19.2", "cffed1d2976ef8cd82b953f9cf1c4332e9d2b05b8270aeb123f7ca90b51cbb4f")
-            add_versions("1.22.1", "da9fe96efacb0d1b9f4ae0b8f69f9694b6b3f673fc2a697c6b932679610ed292")
         elseif is_arch("arm64") then
             set_urls("https://github.com/microsoft/onnxruntime/releases/download/v$(version)/onnxruntime-win-arm64-$(version).zip")
             add_versions("1.14.1", "7039cd2268806e79c3975f02db9a20b00f9db553421aebc72fa3d76c006347c7")
             add_versions("1.15.1", "7d9a837c02b1fbed8ee5698e7e18976fe73988df411e97693fd5cf5b09ee0552")
             add_versions("1.17.1", "47782cebcab0fd7a1f0a3f0676b088c1bc0f4fbf21666f6fe57570dc362fa5a8")
             add_versions("1.19.2", "8c0ffad278a65ea72b8c95d008733ec151602031e35f29d6b510b795b13a42fa")
-            add_versions("1.22.1", "3c984f25de07fdbbd2be36792dabfa18810c7483262238ea241ca5a1e52a4f82")
         end
     elseif is_plat("linux") then
         if is_arch("x86_64") then
@@ -95,7 +92,6 @@ package("onnxruntime")
                 versions["1.17.0"] = "3c90a38769e2f7bdb088c00410de4895b07b7d53a7c80955f18989775c2a25e7"
                 versions["1.17.1"] = "b7a66f50ad146c2ccb43471d2d3b5ad78084c2d4ddbd3ea82d65f86c867408b2"
                 versions["1.19.2"] = "c04c6342b9e351d2ec7ebd84ce08f3ea4f20706993b40172234c535ace25f629"
-                versions["1.22.1"] = "4e6eeb8bfe4137cf98ccdc0b01f0400928bc3f8261b90e8e0d1c28410a33cac4"
                 if package:config("cuda_version") == "12" and package:version():le("1.19.0") then
                     versions["1.17.0"] = "63823f29039e593da435a6af6757949262ac592e575bfe08675a11d4963b47cf"
                     versions["1.17.1"] = "5c6e1433d63e699d97d66d66427830caf5e69ea077569bc1e2ab5e1450d8fac1"
