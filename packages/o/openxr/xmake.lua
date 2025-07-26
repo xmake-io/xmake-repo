@@ -9,7 +9,9 @@ package("openxr")
     add_versions("1.1.49", "74e9260a1876b0540171571a09bad853302ec68a911200321be8b0591ca94111")
 
     add_versions("git:1.1.49", "release-1.1.49")
+
     add_patches("1.1.49", "patches/1.1.49/fix-mingw.diff", "8cc18048e3be5f64e6f2038303bcfff7137290cf60785ff795d3d57ef1a717b3")
+    add_patches("1.1.49", "patches/1.1.49/fix-freebsd.diff", "f4b63875a75609d2c4ce112f67e74713edb25eb238e9a544441f534a87b523b9")
 
     add_configs("api_layers", {description = "Build the API layers.", default = false, type = "boolean"})
 
@@ -21,7 +23,7 @@ package("openxr")
 
     add_deps("cmake", "python 3.x", {kind = "binary"})
     add_deps("jsoncpp")
-    if is_plat("linux", "cross") then
+    if is_plat("linux", "cross", "bsd") then
         add_deps("libx11")
     elseif is_plat("android") then
         add_deps("egl-headers")
@@ -29,13 +31,13 @@ package("openxr")
 
     if is_plat("windows", "mingw") then
         add_syslinks("advapi32")
-    elseif is_plat("linux") then
+    elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
     elseif is_plat("android") then
-        add_syslinks("android")
+        add_syslinks("log", "android")
     end
 
-    on_install("!bsd and !wasm", function (package)
+    on_install("!wasm", function (package)
         io.replace("src/CMakeLists.txt", "set(CMAKE_POSITION_INDEPENDENT_CODE ON)", "", {plain = true})
         if package:is_plat("mingw") then
             io.replace("src/loader/openxr-loader.def", "LIBRARY", "LIBRARY libopenxr_loader.dll", {plain = true})
