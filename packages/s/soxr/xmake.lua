@@ -17,6 +17,9 @@ package("soxr")
     if is_plat("mingw") and is_subhost("macosx") then
         add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
     end
+    if is_plat("linux") and is_arch("arm64") then
+        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+    end
 
     add_deps("cmake")
 
@@ -37,9 +40,6 @@ package("soxr")
             if package:config("lsr") then
                 package:add("defines", "soxr_lsr_EXPORTS")
             end
-        end
-        if package:is_plat("linux") and not package:config("shared") and package:is_arch("arm64") then
-            package:add("defines", [[SOXR=__attribute__ ((visibility("default")))]])
         end
     end)
 
