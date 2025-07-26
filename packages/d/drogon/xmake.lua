@@ -43,7 +43,7 @@ package("drogon")
     end
 
     add_configs("c_ares", {description = "Enable async DNS query support.", default = false, type = "boolean"})
-    add_configs("mysql", {description = "Enable mysql support.", default = false, type = "boolean"})
+    add_configs("mysql", {description = "Enable mysql support.", default = true, type = "boolean"})
     add_configs("openssl", {description = "Enable openssl support.", default = true, type = "boolean"})
     add_configs("postgresql", {description = "Enable postgresql support.", default = false, type = "boolean"})
     add_configs("sqlite3", {description = "Enable sqlite3 support.", default = false, type = "boolean"})
