@@ -3,7 +3,21 @@ package("soxr")
     set_description("The SoX Resampler library libsoxr performs fast, high-quality one-dimensional sample rate conversion.")
     set_license("LGPL-2.1")
 
-    add_urls("https://sourceforge.net/code-snapshots/git/s/so/soxr/code.git/soxr-code-$(version).zip", {alias = "snapshot", version = function (version)
+    set_policy("package.download.http_headers",
+        "Referer: https://sourceforge.net/p/soxr/code/ci/0.1.3/tarball?path",
+        "Upgrade-Insecure-Requests: 1",
+        "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0",
+        "sec-ch-ua: Not)A;Brand;v=8, Chromium;v=138, Microsoft Edge;v=138",
+        "sec-ch-ua-arch: x86",
+        "sec-ch-ua-bitness: 64",
+        "sec-ch-ua-full-version: 138.0.3351.95",
+        "sec-ch-ua-full-version-list: Not)A;Brand;v=8.0.0.0, Chromium;v=138.0.7204.158, Microsoft Edge;v=138.0.3351.95",
+        "sec-ch-ua-mobile: ?0",
+        "sec-ch-ua-model: ",
+        "sec-ch-ua-platform: Windows",
+        "sec-ch-ua-platform-version: 19.0.0)")
+    add_urls("https://sourceforge.net/code-snapshots/git/s/so/soxr/code.git/soxr-code-$(version).zip", {alias = "snapshot",
+     version = function (version)
         local versions = {
             ["0.1.3"] = "945b592b70470e29f917f4de89b4281fbbd540c0"
         }
