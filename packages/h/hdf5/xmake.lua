@@ -38,7 +38,11 @@ package("hdf5")
             package:add("deps", "szip")
         end
         if package:config("cpplib") then -- make sure link order is correct
-            package:add("links", "hdf5_cpp", "hdf5_hl_cpp", "hdf5_hl", "hdf5_tools", "hdf5")
+            local libs = {"hdf5_cpp", "hdf5_hl_cpp", "hdf5_hl", "hdf5_tools", "hdf5"}
+            local prefix = package:is_plat("windows") and "lib" or ""
+            for _, lib in ipairs(libs) do
+                package:add("links", prefix .. lib)
+            end
         end
     end)
     on_install("windows", "macosx", "linux", function (package)
