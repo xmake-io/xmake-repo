@@ -1,0 +1,14 @@
+diff --git a/aui.sqlite/CMakeLists.txt b/aui.sqlite/CMakeLists.txt
+index 6afd58f4..78a2a593 100644
+--- a/aui.sqlite/CMakeLists.txt
++++ b/aui.sqlite/CMakeLists.txt
+@@ -11,4 +11,6 @@ target_include_directories(aui.sqlite PRIVATE 3rdparty/sqlite3)
+ aui_link(aui.sqlite PUBLIC aui::core)
+ aui_link(aui.sqlite PUBLIC aui::data)
+ 
+-aui_enable_tests(aui.sqlite)
+\ No newline at end of file
++if (NOT AUIB_DISABLE)
++    aui_enable_tests(aui.sqlite)
++endif ()
+\ No newline at end of file
