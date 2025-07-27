@@ -5,12 +5,13 @@ package("libmem")
 
     add_urls("https://github.com/rdbo/libmem/archive/refs/tags/$(version).tar.gz",
              "https://github.com/rdbo/libmem.git", {submodules = false})
+    add_versions("5.1.0", "9f61b53ce86fd59afb13bc4f48db40e8c8dc156f56879b9e9929014924f95495")
     add_versions("5.0.5", "9693d38b17b000b06cd9fbaff72f4e0873d3cf219a6e99a20bb90cf98a7b562d")
     add_versions("5.0.4", "32b968fb2bd1e33ae854db3bd3fc9ce4374bd9e61ff420f365c52d5f7bbd85dd")
     add_versions("5.0.3", "75a190d1195c641c7d5d2c37ac79d8d1b5f18e43268d023454765a566d6f0d88")
     add_versions("5.0.2", "99adea3e86bd3b83985dce9076adda16968646ebd9d9316c9f57e6854aeeab9c")
 
-    add_patches("5.0.5", "patches/5.0.5/fix-mingw.diff", "7239f459204975ce2efcf63529dcb09273028c4dc166d7cbacb5f5f0e70f93a9")
+    add_patches(">=5.0.5", "patches/5.0.5/fix-mingw.diff", "7239f459204975ce2efcf63529dcb09273028c4dc166d7cbacb5f5f0e70f93a9")
 
     add_deps("capstone", "keystone")
 
@@ -31,7 +32,7 @@ package("libmem")
         end
     end)
 
-    on_install("windows", "linux|!arm64", "bsd", "mingw", "msys", function (package)
+    on_install("windows", "linux", "bsd", "mingw", "msys", "android", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)
     end)
