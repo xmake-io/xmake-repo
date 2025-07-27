@@ -3,10 +3,6 @@ package("soxr")
     set_description("The SoX Resampler library libsoxr performs fast, high-quality one-dimensional sample rate conversion.")
     set_license("LGPL-2.1")
 
-    add_urls("https://downloads.sourceforge.net/project/soxr/soxr-$(version)-Source.tar.xz",
-             "https://deac-fra.dl.sourceforge.net/project/soxr/soxr-$(version)-Source.tar.xz",
-             "https://deac-riga.dl.sourceforge.net/project/soxr/soxr-$(version)-Source.tar.xz", {alias = "sourceforge"})
-
     add_urls("https://sourceforge.net/code-snapshots/git/s/so/soxr/code.git/soxr-code-$(version).zip", {alias = "snapshot", version = function (version)
         local versions = {
             ["0.1.3"] = "945b592b70470e29f917f4de89b4281fbbd540c0"
@@ -15,11 +11,13 @@ package("soxr")
     end})
 
     add_versions("snapshot:0.1.3", "b797a5d23078be234e520af1041b5e11b49864696d56f0d0b022a0349d1e8d1b")
-    add_versions("sourceforge:0.1.3", "b111c15fdc8c029989330ff559184198c161100a59312f5dc19ddeb9b5a15889")
 
     add_configs("openmp",   {description = "Include OpenMP threading.", default = false, type = "boolean"})
     add_configs("lsr",      {description = "Include a `libsamplerate'-like interface.", default = true, type = "boolean"})
     if is_plat("mingw") and is_subhost("macosx") then
+        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+    end
+    if is_plat("linux") and is_arch("arm64") then
         add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
     end
 
