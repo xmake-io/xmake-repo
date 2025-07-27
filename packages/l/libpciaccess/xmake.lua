@@ -10,7 +10,7 @@ package("libpciaccess")
 
     add_configs("zlib", {description = "Enable zlib support to read gzip compressed pci.ids.", default = false, type = "boolean"})
     add_configs("linux_rom_fallback", {description = "Enable support for falling back to /dev/mem for roms on Linux.", default = false, type = "boolean"})
-    add_configs("pci_ids_path", {description = "Path to pci ids. If relative is assumed relative to $datadir.", default = "hwdata", type = "string"})
+    add_configs("pci_ids_path", {description = "Subdirectory name for pci.ids under the system's share directory", default = "hwdata", type = "string"})
 
     add_deps("meson", "ninja")
 
