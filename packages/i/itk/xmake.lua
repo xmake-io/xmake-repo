@@ -46,6 +46,7 @@ package("itk")
             if package:is_arch("arm64") then
                 table.insert(configs, "-DQNANHIBIT_VALUE=1")
                 table.insert(configs, "-DQNANHIBIT_VALUE__TRYRUN_OUTPUT=1")
+                table.insert(configs, "-DHDF_NO_IOEO_TEST=1")
             end
             import("package.tools.cmake").install(package, configs, {builddir = path.join(os.tmpdir(), "itk_build")})
         else
