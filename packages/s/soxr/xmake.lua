@@ -58,7 +58,6 @@ package("soxr")
     end)
 
     on_install(function (package)
-        io.replace("CMakeLists.txt", "if (VISIBILITY_HIDDEN)", "if (0)", {plain = true})
         local configs = {
             "-DBUILD_TESTS=OFF", "-DBUILD_EXAMPLES=OFF"
         }
