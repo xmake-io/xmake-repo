@@ -7,7 +7,7 @@ package("termcolor")
     add_urls("https://github.com/ikalnytskyi/termcolor/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ikalnytskyi/termcolor.git")
 
-    add_versions("2.1.0", "435994c32557674469404cb1527c283fdcf45746f7df75fd2996bb200d6a759f")
+    add_versions("v2.1.0", "435994c32557674469404cb1527c283fdcf45746f7df75fd2996bb200d6a759f")
 
     add_deps("cmake")
 
