@@ -28,7 +28,7 @@ package("itk")
         end
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows|!arm64", "linux", "macosx", function (package)
         local configs = {"-DITK_SKIP_PATH_LENGTH_CHECKS=ON",
                          "-DBUILD_TESTING=OFF",
                          "-DBUILD_EXAMPLES=OFF",

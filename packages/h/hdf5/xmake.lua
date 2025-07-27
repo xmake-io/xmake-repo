@@ -39,7 +39,7 @@ package("hdf5")
         end
         if package:config("cpplib") then -- make sure link order is correct
             local libs = {"hdf5_cpp", "hdf5_hl_cpp", "hdf5_hl", "hdf5_tools", "hdf5"}
-            local prefix = package:is_plat("windows") and "lib" or ""
+            local prefix = (package:is_plat("windows") and not package:config("shared")) and "lib" or ""
             for _, lib in ipairs(libs) do
                 package:add("links", prefix .. lib)
             end
