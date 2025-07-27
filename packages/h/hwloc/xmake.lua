@@ -30,13 +30,17 @@ package("hwloc")
         add_patches(">=2.7.1", "patches/2.12.1/cmake-win-arm64.patch", "eded5f3c5d8375d07c9b4812edcf131be033451fbe2428b0089faba43f6e3b82")
     end
 
-    add_configs("lstopo", {description = "Build/install lstopo(only for win arm64).", default = false, type = "boolean"})
-    add_configs("tools", {description = "Build/install other hwloc tools(only for win arm64).", default = false, type = "boolean"})
     add_configs("libxml2", {description = "Use libxml2 instead of minimal XML.", default = false, type = "boolean"})
     add_configs("opencl", {description = "Enable OpenCL support", default = false, type = "boolean"})
     add_configs("cuda", {description = "Enable CUDA support.", default = false, type = "boolean"})
+    if is_plat("linux") then
+        add_configs("pci", {description = "Enable pciaccess support", default = false, type = "boolean"})
+    end
+    if is_plat("windows") and is_arch("arm64") then
+        add_configs("lstopo", {description = "Build/install lstopo", default = false, type = "boolean"})
+        add_configs("tools", {description = "Build/install other hwloc tools", default = false, type = "boolean"})
+    end
 
-    -- TODO: add pciaccess lib into xmake-repo
     if is_plat("linux") then
         add_deps("libudev")
     end
@@ -80,7 +84,7 @@ package("hwloc")
             os.cd("contrib/windows-cmake")
             import("package.tools.cmake").install(package, configs)
         else
-            local configs = {"--disable-pci"}
+            local configs = {}
             table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
             table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
             if package:is_debug() then
@@ -94,6 +98,9 @@ package("hwloc")
             end
             if not package:config("cuda") then
                 table.insert(configs, "--disable-cuda")
+            end
+            if not package:config("pci") then
+                table.insert(configs, "--disable-pci")
             end
             import("package.tools.autoconf").install(package, configs)
         end
