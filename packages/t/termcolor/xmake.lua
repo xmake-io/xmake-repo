@@ -12,7 +12,9 @@ package("termcolor")
     add_deps("cmake")
 
     on_install(function (package)
-        local configs = {}
+        io.replace("include/termcolor/termcolor.hpp", "#define TERMCOLOR_HPP_", "#define TERMCOLOR_HPP_\n#include <cstdint>", {plain = true})
+
+        local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
     end)
