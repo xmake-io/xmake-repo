@@ -37,6 +37,9 @@ package("hdf5")
         if package:config("szip") then
             package:add("deps", "szip")
         end
+        if package:config("cpplib") then -- make sure link order is correct
+            package:add("links", "hdf5_cpp", "hdf5_hl_cpp", "hdf5_hl", "hdf5_tools", "hdf5")
+        end
     end)
     on_install("windows", "macosx", "linux", function (package)
         local configs = {
