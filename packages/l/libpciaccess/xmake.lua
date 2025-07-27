@@ -13,13 +13,13 @@ package("libpciaccess")
 
     add_deps("meson", "ninja")
 
-    on_load(function (package)
+    on_load("linux", "bsd", function (package)
         if package:config("zlib") then
             package:add("deps", "zlib")
         end
     end)
 
-    on_install(function (package)
+    on_install("linux", "bsd", function (package)
         local configs = {}
         if package:is_debug() then
             table.insert(configs, "-Dbuildtype=debug")
@@ -34,6 +34,6 @@ package("libpciaccess")
         import("package.tools.meson").install(package, configs)
     end)
 
-    on_test(function (package)
+    on_test("linux", "bsd", function (package)
         assert(package:has_cfuncs("pci_system_init", {includes = "pciaccess.h"}))
     end)
