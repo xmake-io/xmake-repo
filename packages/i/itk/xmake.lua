@@ -13,7 +13,11 @@ package("itk")
     if is_plat("windows") then
         add_syslinks("shell32", "advapi32")
     elseif is_plat("linux") then
+        add_extsources("apt::libinsighttoolkit5-dev", "pacman::itk")
+        add_patches("5.4.4", "patch/linux.patch", "e3971fb669bc20135310d912dd7272ce038a4745f35e21dec6e1e676a5045b94")
         add_syslinks("dl", "pthread")
+    elseif is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::itk")
     end
     on_load("windows", "linux", "macosx", function (package)
         local ver = package:version():major() .. "." .. package:version():minor()
