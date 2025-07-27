@@ -63,6 +63,9 @@ target("libmem")
         end
         add_files("internal/winutils/*.c")
         add_files("src/win/*.c")
+        if os.exists("src/common/arch/generic.c") then
+            remove_files("src/common/arch/generic.c")
+        end
     elseif os.exists("src/common/arch/generic.c") and is_plat("linux", "android") then
         if is_plat("linux") then
             add_syslinks("dl", "stdc++", "m")

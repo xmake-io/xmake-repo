@@ -32,7 +32,7 @@ package("libmem")
         end
     end)
 
-    on_install("windows", "linux", "bsd", "mingw", "msys", "android", function (package)
+    on_install("windows", "linux|!arm64", "bsd", "mingw", "msys", "android", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)
     end)
