@@ -43,6 +43,10 @@ package("itk")
         end
         if package:is_plat("windows") then
             table.insert(configs, "-DITK_MSVC_STATIC_RUNTIME_LIBRARY=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
+            if package:is_arch("arm64") then
+                table.insert(configs, "-DQNANHIBIT_VALUE=1")
+                table.insert(configs, "-DQNANHIBIT_VALUE__TRYRUN_OUTPUT=1")
+            end
             import("package.tools.cmake").install(package, configs, {builddir = path.join(os.tmpdir(), "itk_build")})
         else
             import("package.tools.cmake").install(package, configs)
