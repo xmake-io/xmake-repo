@@ -9,7 +9,7 @@ package("itk")
     add_versions("5.2.1", "192d41bcdd258273d88069094f98c61c38693553fd751b54f8cda308439555db")
     add_versions("5.4.4", "d2092cd018a7b9d88e8c3dda04acb7f9345ab50619b79800688c7bc3afcca82a")
 
-    add_deps("cmake", "eigen")
+    add_deps("cmake", "eigen", "hdf5")
     if is_plat("windows") then
         add_syslinks("shell32", "advapi32")
     elseif is_plat("linux") then
@@ -34,6 +34,7 @@ package("itk")
                          "-DBUILD_EXAMPLES=OFF",
                          "-DITK_WRAPPING=OFF",
                          "-DITK_USE_SYSTEM_EIGEN=ON",
+                         "-DITK_USE_SYSTEM_HDF5=ON",
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
