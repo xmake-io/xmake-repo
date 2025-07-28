@@ -11,6 +11,7 @@ package("libmem")
     add_versions("5.0.3", "75a190d1195c641c7d5d2c37ac79d8d1b5f18e43268d023454765a566d6f0d88")
     add_versions("5.0.2", "99adea3e86bd3b83985dce9076adda16968646ebd9d9316c9f57e6854aeeab9c")
 
+    add_patches("5.1.0", "patches/5.1.0/fix-freebsd.diff", "69b86a91728d402a7a3f64ca919429675053121b0d574707ef5a2d74aa9dcd7f")
     add_patches(">=5.0.5", "patches/5.0.5/fix-mingw.diff", "7239f459204975ce2efcf63529dcb09273028c4dc166d7cbacb5f5f0e70f93a9")
 
     add_deps("capstone", "keystone")
@@ -25,6 +26,12 @@ package("libmem")
     elseif is_plat("bsd") then
         add_syslinks("dl", "kvm", "procstat", "elf", "m")
     end
+
+    on_check("android", function(package)
+        local ndk = package:toolchain("ndk")
+        local ndk_sdkver = ndk:config("ndk_sdkver")
+        assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(libmem): need ndk api level >= 24 for android")
+    end)
 
     on_load(function(package)
         if package:is_plat("windows") or package:config("shared") then
