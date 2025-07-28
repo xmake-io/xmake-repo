@@ -9,7 +9,7 @@ package("itk")
     add_versions("5.2.1", "192d41bcdd258273d88069094f98c61c38693553fd751b54f8cda308439555db")
     add_versions("5.4.4", "d2092cd018a7b9d88e8c3dda04acb7f9345ab50619b79800688c7bc3afcca82a")
 
-    add_deps("cmake", "eigen", "hdf5[cpplib]")
+    add_deps("cmake", "eigen")
     if is_plat("windows") then
         add_syslinks("shell32", "advapi32")
     elseif is_plat("linux") then
@@ -19,12 +19,18 @@ package("itk")
     elseif is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::itk")
     end
+
     on_load("windows", "linux", "macosx", function (package)
         local ver = package:version():major() .. "." .. package:version():minor()
         package:add("includedirs", "include/ITK-" .. ver)
         local libs = {"ITKWatersheds", "ITKVideoIO", "ITKVideoCore", "ITKVTK", "ITKTestKernel", "ITKRegistrationMethodsv4", "ITKRegionGrowing", "ITKQuadEdgeMeshFiltering", "ITKOptimizersv4", "ITKMarkovRandomFieldsClassifiers", "itklbfgs", "ITKKLMRegionGrowing", "ITKIOVTK", "ITKIOTransformMatlab", "ITKIOTransformInsightLegacy", "ITKIOTransformHDF5", "ITKIOTransformBase", "ITKTransformFactory", "ITKIOStimulate", "ITKIOSpatialObjects", "ITKIOXML", "ITKIOSiemens", "ITKIOPNG", "itkpng", "ITKIONRRD", "ITKNrrdIO", "ITKIONIFTI", "ITKIOMeta", "ITKIOMeshVTK", "ITKIOMeshOFF", "ITKIOMeshOBJ", "ITKIOMeshGifti", "ITKIOMeshFreeSurfer", "ITKIOMeshBYU", "ITKIOMeshBase", "ITKIOMRC", "ITKIOMINC", "itkminc2", "ITKIOLSM", "ITKIOTIFF", "itktiff", "ITKIOJPEG2000", "itkopenjpeg", "ITKIOJPEG", "itkjpeg", "ITKIOHDF5", "ITKIOGIPL", "ITKIOGE", "ITKIOIPL", "ITKIOGDCM", "ITKIOCSV", "ITKIOBruker", "ITKIOBioRad", "ITKIOBMP", "ITKPDEDeformableRegistration", "ITKgiftiio", "ITKniftiio", "ITKznz", "gdcmMSFF", "gdcmDICT", "ITKEXPAT", "ITKDiffusionTensorImage", "ITKDenoising", "ITKDeformableMesh", "ITKDICOMParser", "ITKConvolution", "ITKFFT", "ITKColormap", "ITKBiasCorrection", "ITKPolynomials", "ITKOptimizers", "ITKImageFeature", "ITKSmoothing", "ITKIOImageBase", "ITKFastMarching", "ITKQuadEdgeMesh", "ITKMathematicalMorphology", "ITKLabelMap", "ITKPath", "ITKSpatialObjects", "ITKMetaIO", "itkzlib", "ITKMesh", "ITKTransform", "ITKStatistics", "itkNetlibSlatec", "ITKCommon", "itkvcl", "itkvnl_algo", "itkvnl", "itkv3p_netlib", "itksys", "itkdouble-conversion"}
         for _, lib in ipairs(libs) do
             package:add("links", lib .. "-" .. ver)
+        end
+        if package:is_plat("windows", "macosx") and package:config("shared") then
+            package:add("deps", "hdf5[shared,cpplib]")
+        else
+            package:add("deps", "hdf5[cpplib]")
         end
     end)
 
