@@ -38,6 +38,9 @@ package("acl-dev")
         add_syslinks("ws2_32", "iphlpapi", "kernel32", "user32", "gdi32")
     elseif is_plat("linux", "bsd", "cross") then
         add_syslinks("pthread", "dl")
+        if is_plat("bsd") then
+            add_syslinks("execinfo")
+        end
     end
 
     on_load(function (package)
