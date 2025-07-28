@@ -13,10 +13,6 @@ package("urdfdom")
 
     add_patches("1.0.4", path.join(os.scriptdir(), "patches", "1.0.4", "build.patch"), "1f51148afccef7b9bf079ef4137c12d578fb7a76f7aed6e282ca2ceaf4a188ba")
 
-    if is_plat("windows") then
-        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
-    end
-
     add_deps("cmake")
     add_deps("urdfdom-headers", "console-bridge")
 
@@ -58,7 +54,12 @@ package("urdfdom")
         local configs = {"-DBUILD_TESTING=OFF", "-DAPPEND_PROJECT_NAME_TO_INCLUDEDIR=OFF", "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+
+        local opt = {}
+        if not package:config("shared") then
+            opt.cxflags = "-DURDFDOM_STATIC"
+        end
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
