@@ -43,10 +43,15 @@ package("cpp-httplib")
     add_deps("cmake")
 
     if on_check then
-        on_check("android", function (package)
-            local ndk = package:toolchain("ndk")
-            local ndk_sdkver = ndk:config("ndk_sdkver")
-            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(httplib): need ndk api level >= 24 for android")
+        on_check(function (package)
+            if package:is_plat("android") then
+                local ndk = package:toolchain("ndk")
+                local ndk_sdkver = ndk:config("ndk_sdkver")
+                assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(httplib): need ndk api level >= 24 for android")
+            end
+            if package:check_sizeof("void*") == "4" then
+                raise("package(cpp-httplib >=0.23.1) unsupported 32-bit")
+            end
         end)
     end
 
