@@ -6,6 +6,7 @@ package("acl-dev")
     add_urls("https://github.com/acl-dev/acl/archive/refs/tags/$(version).tar.gz",
              "https://github.com/acl-dev/acl.git")
 
+    add_versions("v3.6.4", "2c98f4ff58f774c6dd5e8753a6a32db2045a2d40b77d65b0e5ebdaaffa348285")
     add_versions("v3.6.2", "888fd9b8fb19db4f8e7760a12a28f37f24ba0a2952bb0409b8380413a4b6506b")
     add_versions("v3.6.3", "4c1fe78cc3dbf2843aab440ca638464d1d1e490e81e904115b8f96a88a3b44de")
 
@@ -37,6 +38,9 @@ package("acl-dev")
         add_syslinks("ws2_32", "iphlpapi", "kernel32", "user32", "gdi32")
     elseif is_plat("linux", "bsd", "cross") then
         add_syslinks("pthread", "dl")
+        if is_plat("bsd") then
+            add_syslinks("execinfo")
+        end
     end
 
     on_load(function (package)
