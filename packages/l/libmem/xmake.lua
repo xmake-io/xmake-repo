@@ -11,7 +11,7 @@ package("libmem")
     add_versions("5.0.3", "75a190d1195c641c7d5d2c37ac79d8d1b5f18e43268d023454765a566d6f0d88")
     add_versions("5.0.2", "99adea3e86bd3b83985dce9076adda16968646ebd9d9316c9f57e6854aeeab9c")
 
-    add_patches("5.1.0", "patches/5.1.0/fix-freebsd.diff", "b8a398db7f24e1b01ff68f25467d5d33b6f5bdd4d90dc5a24184bb03024e2156")
+    add_patches("5.1.0", "patches/5.1.0/fix-freebsd.diff", "98a454d2c71f8f7a63ed5714301ad5f51f92790e3debe5b35a16f14b83c34404")
     add_patches(">=5.0.5", "patches/5.0.5/fix-mingw.diff", "7239f459204975ce2efcf63529dcb09273028c4dc166d7cbacb5f5f0e70f93a9")
 
     add_deps("capstone", "keystone")
