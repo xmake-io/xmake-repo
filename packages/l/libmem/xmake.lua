@@ -41,11 +41,11 @@ package("libmem")
 
     on_install("windows", "linux|!arm64", "bsd", "mingw", "msys", "android", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        local opt = {}
+        local cflags = {}
         if package:is_plat("mingw") then
-            opt.cflags = {"-Wno-int-conversion", "-Wno-incompatible-pointer-types"}
+            cflags = {"-Wno-int-conversion", "-Wno-incompatible-pointer-types"}
         end
-        import("package.tools.xmake").install(package, opt)
+        import("package.tools.xmake").install(package, {cflags = cflags})
     end)
 
     on_test(function (package)
