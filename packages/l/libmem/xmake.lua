@@ -45,7 +45,7 @@ package("libmem")
         if package:is_plat("mingw") then
             cflags = {"-Wno-int-conversion", "-Wno-incompatible-pointer-types"}
         end
-        import("package.tools.xmake").install(package, {cflags = cflags})
+        import("package.tools.xmake").install(package, {cflags = "-Wno-int-conversion -Wno-incompatible-pointer-types"})
     end)
 
     on_test(function (package)
