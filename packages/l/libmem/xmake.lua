@@ -43,7 +43,7 @@ package("libmem")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         local opt = {}
         if package:is_plat("mingw") then
-            opt.cflags = " -Wno-int-conversion -Wno-incompatible-pointer-types"
+            opt.cflags = {"-Wno-int-conversion", "-Wno-incompatible-pointer-types"}
         end
         import("package.tools.xmake").install(package, opt)
     end)
