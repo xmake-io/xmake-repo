@@ -51,8 +51,10 @@ package("cpp-httplib")
                 local ndk_sdkver = ndk:config("ndk_sdkver")
                 assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(httplib): need ndk api level >= 24 for android")
             end
-            if package:check_sizeof("void*") == "4" then
-                raise("package(cpp-httplib >=0.23.1) unsupported 32-bit")
+            if package:version() and package:version():ge("0.23.0") then
+                if package:check_sizeof("void*") == "4" then
+                    raise("package(cpp-httplib >=0.23.0) unsupported 32-bit")
+                end
             end
         end)
     end
