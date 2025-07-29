@@ -27,7 +27,7 @@ package("hwloc")
     end
 
     if is_plat("windows") and is_arch("arm64") then
-        add_patches(">=2.7.1", "patches/2.12.1/cmake-win-arm64.patch", "eded5f3c5d8375d07c9b4812edcf131be033451fbe2428b0089faba43f6e3b82")
+        add_patches(">=2.7.1", "patches/2.12.1/cmake-win-arm64.patch", "2f261838409ed286be114fad061cb7ba8335046c9b33dfd35fd9ca7a61da2a1b")
     end
 
     add_configs("libxml2", {description = "Use libxml2 instead of minimal XML.", default = false, type = "boolean"})
