@@ -35,6 +35,8 @@ package("cpp-httplib")
     add_versions("v0.15.3", "2121bbf38871bb2aafb5f7f2b9b94705366170909f434428352187cb0216124e")
     add_versions("v0.16.2", "75565bcdf12522929a26fb57a2c7f8cc0e175e27a9ecf51616075f3ea960da44")
 
+    add_patches("v0.23.1", "patches/v0.23.1/fix-mingw.diff", "d2d8a4c16de3a00d9872526a187257c7ad344eba2a9f109d10b58eadce1c4059")
+
     add_configs("ssl",  { description = "Requires OpenSSL", default = false, type = "boolean"})
     add_configs("zlib",  { description = "Requires Zlib", default = false, type = "boolean"})
     add_configs("brotli",  { description = "Requires Brotli", default = false, type = "boolean"})
