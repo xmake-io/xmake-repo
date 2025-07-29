@@ -7,6 +7,8 @@ package("pulseaudio")
              "https://github.com/pulseaudio/pulseaudio.git")
     add_versions("v17.0", "ed36c8a0cdff7b57382a258d3e1a916f42500fbafd64dd3c2e258ed8f017ee90")
 
+    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+
     add_extsources("pkgconfig::libpulse")
     if is_plat("linux") then
         add_extsources("pacman::libpulse", "apt::libpulse-dev")
