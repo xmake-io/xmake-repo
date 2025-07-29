@@ -26,6 +26,10 @@ package("cpp20-http-client")
     end
 
     on_install("windows", "linux", "macosx", "bsd", "android", "cross", function (package)
+        if package:is_plat("bsd") then
+            io.replace("source/cpp20_http_client.cpp", [[#	include <netinet/tcp.h>]], [[#	include <netinet/tcp.h>
+#	include <netinet/in.h>]], {plain = true})
+        end
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             if not is_plat("windows") then
