@@ -19,8 +19,8 @@ package("plutovg")
 
     add_deps("cmake")
 
-    if is_plat("linux", "bsd") then
-        add_syslinks("pthread")
+    if is_plat("bsd") then
+        add_syslinks("stdthreads", "pthread")
     end
 
     add_includedirs("include", "include/plutovg")
