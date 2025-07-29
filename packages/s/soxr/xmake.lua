@@ -16,7 +16,7 @@ package("soxr")
                 "sec-ch-ua-mobile: ?0",
                 "sec-ch-ua-model: ",
                 "sec-ch-ua-platform: Windows",
-                "sec-ch-ua-platform-version: 19.0.0)"
+                "sec-ch-ua-platform-version: 19.0.0"
             },
     version = function (version)
         local versions = {
