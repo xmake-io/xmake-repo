@@ -16,7 +16,7 @@ package("cpp-ipc")
         add_syslinks("pthread")
     end
 
-    on_install(function (package)
+    on_install("windows", "linux", "mingw", "msys", "cross", function (package)
         if package:config("shared") then
             package:add("defines", "LIBIPC_LIBRARY_SHARED_USING__")
         end
