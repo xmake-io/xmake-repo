@@ -25,6 +25,9 @@ package("reproc")
     on_install(function(package)
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "REPROC_SHARED")
+            if package:config("c++") then
+                package:add("defines", "REPROCXX_SHARED")
+            end
         end
         if package:config("multithreaded") and not package:is_plat("windows", "android") then
             package:add("syslinks", "pthread")
