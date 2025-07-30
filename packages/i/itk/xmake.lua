@@ -28,9 +28,9 @@ package("itk")
             package:add("links", lib .. "-" .. ver)
         end
         if package:is_plat("windows", "macosx") and package:config("shared") then
-            package:add("deps", "hdf5[shared,cpplib]")
+            package:add("deps", "hdf5", {configs = {shared = true, cpplib = true}})
         else
-            package:add("deps", "hdf5[cpplib]")
+            package:add("deps", "hdf5", {configs = {cpplib = true}})
         end
     end)
 
