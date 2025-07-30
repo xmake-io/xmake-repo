@@ -44,7 +44,7 @@ package("drogon")
     add_patches("1.9.11", path.join(os.scriptdir(), "patches", "1.9.11", "find-mysql.patch"), "0813b02190dad0bb3e6f524e3f39a8fec1e231153fb91d9869391fd6f2fb91de")
 
     add_configs("c_ares", {description = "Enable async DNS query support.", default = false, type = "boolean"})
-    add_configs("mysql", {description = "Enable mysql support.", default = true, type = "boolean"})
+    add_configs("mysql", {description = "Enable mysql support.", default = false, type = "boolean"})
     add_configs("openssl", {description = "Enable openssl support.", default = true, type = "boolean"})
     add_configs("postgresql", {description = "Enable postgresql support.", default = false, type = "boolean"})
     add_configs("sqlite3", {description = "Enable sqlite3 support.", default = false, type = "boolean"})
