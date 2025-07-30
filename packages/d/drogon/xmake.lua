@@ -41,7 +41,7 @@ package("drogon")
     if is_plat("windows") then
         add_patches("1.9.6", path.join(os.scriptdir(), "patches", "1.9.6", "windows-build.patch"), "4a798dc3ba7df2f1541ecf66b1b03bab15f200d310ac63f7893770cb3b199453")
     end
-    add_patches("1.9.11", path.join(os.scriptdir(), "patches", "1.9.11", "find-mysql.patch"), "da7bf2fcf32b42f094888029468a915ec5eb100eb179bc040bc815a17830a10f")
+    add_patches("1.9.11", path.join(os.scriptdir(), "patches", "1.9.11", "find-mysql.patch"), "0813b02190dad0bb3e6f524e3f39a8fec1e231153fb91d9869391fd6f2fb91de")
 
     add_configs("c_ares", {description = "Enable async DNS query support.", default = false, type = "boolean"})
     add_configs("mysql", {description = "Enable mysql support.", default = true, type = "boolean"})
