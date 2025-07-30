@@ -60,6 +60,7 @@ target("libmem")
         add_syslinks("user32", "psapi", "ntdll", "shell32", "ole32")
         if is_plat("mingw") then
             add_syslinks("uuid")
+            add_cflags("-Wno-int-conversion", "-Wno-incompatible-pointer-types")
         end
         add_files("internal/winutils/*.c")
         add_files("src/win/*.c")
