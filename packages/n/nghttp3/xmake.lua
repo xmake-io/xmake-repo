@@ -6,6 +6,7 @@ package("nghttp3")
     add_urls("https://github.com/ngtcp2/nghttp3/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ngtcp2/nghttp3.git", {submodules = false})
 
+    add_versions("v1.11.0", "2fc58fbb8a4b463e62ce985dbc6ef5e215bfd41dc23ee625225e0589b97ac82a")
     add_versions("v1.10.1", "6d8714b9a077e02c17b85a0a5d8e90ceb26e9c91b149d3238130a91ca3df3e3a")
     add_versions("v1.8.0", "d2cac7cd17966c915f87fa6b823963db4b555397e43c69d16d289765af7ab442")
     add_versions("v1.7.0", "2e6c5599995939a96b759e9f8987c69c0872ed1c219f57730685a93c1c36c9ef")
