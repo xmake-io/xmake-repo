@@ -13,8 +13,8 @@ package("openimagedenoise")
     add_configs("cuda", {description = "Enable CUDA device.", default = false, type = "boolean"})
     add_configs("hip", {description = "Enable HIP device.", default = false, type = "boolean"})
 
-    add_configs("filter_rt", {description = "Include trained weights of the RT filter.", default = false, type = "boolean"})
-    add_configs("filter_rtlightmap", {description = "Include trained weights of the RTLightmap filter.", default = false, type = "boolean"})
+    add_configs("filter_rt", {description = "Include trained weights of the RT filter.", default = true, type = "boolean"})
+    add_configs("filter_rtlightmap", {description = "Include trained weights of the RTLightmap filter.", default = true, type = "boolean"})
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
 
     if is_plat("mingw") and is_subhost("msys") then
@@ -38,6 +38,14 @@ package("openimagedenoise")
 
     add_deps("cmake", "python 3.x", {kind = "binary"})
 
+    if on_check then
+        on_check(function (package)
+            if package:check_sizeof("void*") == "4" then
+                raise("package(openimagedenoise) unsupported 32-bit")
+            end
+        end)
+    end
+
     on_load(function (package)
         if package:config("cpu") then
             package:add("deps", "ispc", "tbb >=2017")
@@ -46,6 +54,13 @@ package("openimagedenoise")
             package:add("deps", "cuda")
         end
         if package:config("filter_rt") or package:config("filter_rtlightmap") then
+            local ok = try { function()
+                os.vrun("git lfs version")
+                return true
+            end }
+            if not ok then
+                raise("package(openimagedenoise) filter_rt or filter_rtlightmap config require git lfs to donwload weights")
+            end
             package:add("resources", "*", "weights", "https://github.com/RenderKit/oidn-weights.git", "28883d1769d5930e13cf7f1676dd852bd81ed9e7")
         end
 
@@ -54,7 +69,7 @@ package("openimagedenoise")
         end
     end)
 
-    on_install(function (package)
+    on_install("!android", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
