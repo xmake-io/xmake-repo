@@ -83,8 +83,9 @@ package("libsdl2")
     add_versions("github:2.30.10", "release-2.30.10")
     add_versions("github:2.32.2", "release-2.32.2")
 
-    add_patches("2.30.0", path.join(os.scriptdir(), "patches", "2.30.0", "fix_mingw.patch"), "ab54eebc2e58d88653b257bc5b48a232c5fb0e6fad5d63661b6388215a7b0cd0")
+    add_patches("2.30.0", "patches/2.30.0/fix_mingw.patch", "ab54eebc2e58d88653b257bc5b48a232c5fb0e6fad5d63661b6388215a7b0cd0")
     add_patches("2.30.6", "https://github.com/libsdl-org/SDL/commit/7cf3234efeb7a68636bcfdfb3b1507b43fbb0845.patch", "c2fba1e76f8f10631544b63e8ce105a67d582b23bba7c96bdef5f135bd6b4cad")
+    add_patches("2.32.2", "patches/2.32.2/fix-arm64.patch", "11ba63e6f93299030750afd26234da63c534f6cb0f10f9e87bd4efb248768261")
 
     add_deps("cmake")
 

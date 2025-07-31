@@ -1,0 +1,23 @@
+diff --git a/aui.crypt/CMakeLists.txt b/aui.crypt/CMakeLists.txt
+index c5354f2e..9c194be4 100644
+--- a/aui.crypt/CMakeLists.txt
++++ b/aui.crypt/CMakeLists.txt
+@@ -3,10 +3,16 @@ cmake_minimum_required(VERSION 3.10)
+ 
+ unset(OPENSSL_CRYPTO_LIBRARY CACHE)
+ unset(OPENSSL_SSL_LIBRARY CACHE)
+-auib_import(OpenSSL https://github.com/aui-framework/openssl-cmake/archive/56ee19b7e11b418e0f29825414abdca96ff6b83e.zip ARCHIVE)
++if (AUIB_DISABLE)
++    find_package(OpenSSL CONFIG REQUIRED)
++else ()
++    auib_import(OpenSSL https://github.com/aui-framework/openssl-cmake/archive/56ee19b7e11b418e0f29825414abdca96ff6b83e.zip ARCHIVE)
++endif ()
+ 
+ aui_module(aui.crypt EXPORT aui)
+-aui_enable_tests(aui.crypt)
++if (NOT AUIB_DISABLE)
++    aui_enable_tests(aui.crypt)
++endif ()
+ aui_link(aui.crypt PUBLIC aui::core)
+ target_include_directories(aui.crypt PRIVATE ${OPENSSL_INCLUDE_DIR})
+ aui_link(aui.crypt PRIVATE OpenSSL::SSL OpenSSL::Crypto)

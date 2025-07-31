@@ -12,6 +12,9 @@ package("libsdl2_mixer")
     add_versions("2.6.2", "61549615a67e731805ca1df553e005be966a625c1d20fb085bf99edeef6e0469")
     add_versions("2.8.0", "02df784cc68723419dd266530ee6964f810a6f02a27b03ecc85689c2e5e442ce")
 
+    add_configs("vendored", {description = "Use vendored third-party libraries.", default = false, type = "boolean"})
+    add_configs("flac", {description = "Use libflac to play FLAC audio format.", default = true, type = "boolean"})
+
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::SDL2_mixer")
     elseif is_plat("linux") then
@@ -30,6 +33,9 @@ package("libsdl2_mixer")
 
     on_load(function (package)
         package:add("deps", "libsdl2", { configs = { shared = package:config("shared") }})
+        if package:config("flac") then
+            package:add("deps", "libflac", { configs = { shared = package:config("shared") }})
+        end
     end)
 
     on_install(function (package)
@@ -47,7 +53,6 @@ target_link_libraries(SDL2_mixer PRIVATE ${SDL2_LIBRARY})
 
         local configs = {
                             "-DSDL2MIXER_CMD=OFF",
-                            "-DSDL2MIXER_FLAC=OFF",
                             "-DSDL2MIXER_GME=OFF",
                             "-DSDL2MIXER_MIDI=OFF",
                             "-DSDL2MIXER_MOD=OFF",
@@ -55,10 +60,23 @@ target_link_libraries(SDL2_mixer PRIVATE ${SDL2_LIBRARY})
                             "-DSDL2MIXER_OPUS=OFF",
                             "-DSDL2MIXER_SAMPLES=OFF",
                             "-DSDL2MIXER_WAVE=ON", -- was on by not being here
-                            "-DSDL2MIXER_WAVPACK=OFF",
+                            "-DSDL2MIXER_WAVPACK=OFF"
                         }
+        table.insert(configs, "-DSDL2MIXER_VENDORED=" .. (package:config("vendored") and "ON" or "OFF"))
+        table.insert(configs, "-DSDL2MIXER_FLAC=" .. (package:config("flac") and "ON" or "OFF"))
+        table.insert(configs, "-DSDL2MIXER_FLAC_LIBFLAC=" .. (package:config("flac") and "ON" or "OFF"))
+        -- If dependency FLAC is static or shared
+        local flac = package:dep("libflac")
+        if flac then
+            table.insert(configs, "-DSDL2MIXER_FLAC_LIBFLAC_SHARED=" .. (flac:config("shared") and "ON" or "OFF"))
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        local opt = {}
+        if package:config("flac") then
+            table.insert(configs, "-DSDL2MIXER_FLAC_DRFLAC=OFF")
+            opt.packagedeps = {"libogg"}
+        end
         local libsdl2 = package:dep("libsdl2")
         if libsdl2 and not libsdl2:is_system() then
             table.insert(configs, "-DSDL2_DIR=" .. libsdl2:installdir())
@@ -81,7 +99,7 @@ target_link_libraries(SDL2_mixer PRIVATE ${SDL2_LIBRARY})
                 table.insert(configs, "-DSDL2_LIBRARY=" .. table.concat(libfiles, ";"))
             end
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
