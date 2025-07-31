@@ -7,6 +7,7 @@ package("imgui")
     add_urls("https://github.com/ocornut/imgui.git", {alias = "git"})
 
     -- don't forget to add the docking versions as well
+    add_versions("v1.92.1", "32c237c2abf67a2ffccaac17192f711d4a787554b4133187a153d49057d6109c")
     add_versions("v1.92.0", "42250c45df2736bcef867ae4ff404d138e5135cd36466c63143b1ea3b1c81091")
     add_versions("v1.91.9", "3872a5f90df78fced023c1945f4466b654fd74573370b77b17742149763a7a7c")
     add_versions("v1.91.8", "db3a2e02bfd6c269adf0968950573053d002f40bdfb9ef2e4a90bce804b0f286")
@@ -52,6 +53,7 @@ package("imgui")
     add_versions("v1.76",   "e482dda81330d38c87bd81597cacaa89f05e20ed2c4c4a93a64322e97565f6dc")
     add_versions("v1.75",   "1023227fae4cf9c8032f56afcaea8902e9bfaad6d9094d6e48fb8f3903c7b866")
 
+    add_versions("git:v1.92.1-docking", "v1.92.1-docking")
     add_versions("git:v1.92.0-docking", "v1.92.0-docking")
     add_versions("git:v1.91.9-docking", "v1.91.9-docking")
     add_versions("git:v1.91.8-docking", "v1.91.8-docking")
@@ -112,7 +114,7 @@ package("imgui")
     add_configs("freetype",         {description = "Use FreeType to build and rasterize the font atlas", default = false, type = "boolean"})
     add_configs("user_config",      {description = "Use user config (disables test!)", default = nil, type = "string"})
     add_configs("wchar32",          {description = "Use 32-bit for ImWchar (default is 16-bit)", default = false, type = "boolean"})
-    
+
 
     -- deprecated configs (kept for backwards compatibility)
     add_configs("sdlrenderer",  {description = "(deprecated)", default = false, type = "boolean"})
