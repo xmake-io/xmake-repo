@@ -3,22 +3,24 @@ package("ndk")
     set_homepage("https://developer.android.com/ndk")
     set_description("Android NDK toolchain.")
 
-    set_urls("https://dl.google.com/android/repository/android-ndk-$(version).zip", {version = function(version)
-        -- 27.3 -> r27d-linux
-        local minor = ''
-        local suffix = ''
-        local host = os.host()
-        if version:minor() > 0 then
-            minor = string.char(97 + version:minor())
-        end
-        if version:major() < 23 then
-            suffix = '-x86_64'
-        end
-        if host == "macosx" then
-            host = "darwin"
-        end
-        return ("r%s%s-%s%s"):format(version:major(), minor, host, suffix)
-    end})
+    if is_host("windows", "linux", "macosx") then
+        set_urls("https://dl.google.com/android/repository/android-ndk-$(version).zip", {version = function(version)
+            -- 27.3 -> r27d-linux
+            local minor = ''
+            local suffix = ''
+            local host = os.host()
+            if version:minor() > 0 then
+                minor = string.char(97 + version:minor())
+            end
+            if version:major() < 23 then
+                suffix = '-x86_64'
+            end
+            if host == "macosx" then
+                host = "darwin"
+            end
+            return ("r%s%s-%s%s"):format(version:major(), minor, host, suffix)
+        end})
+    end
 
     if is_host("windows") then
         add_versionfiles("versions/windows.txt")
