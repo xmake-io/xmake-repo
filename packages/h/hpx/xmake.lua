@@ -77,78 +77,34 @@ package("hpx")
         end
         import("package.tools.cmake").install(package, configs)
 
-        package:add("includedirs", "include")
+        -- add links
         package:add("linkdirs", "lib")
-
-        if package:config("shared") then
-            -- handle shared lib
-            package:add("links", "hpx", "hpx_iostreams", "hpx_core", "hpx_init")
-        else
-            -- handle static lib
-            import("utils.binary.deplibs", {alias = "get_depend_libs"})
-            import("core.base.graph")
-
-            -- scan all libs
-            local hpx_libs_map = {}
-            local lib_pattern = package:is_plat("windows") and "*.lib" or "*.a"
-            cprint('\n${red}current lib path: %s', path.join(package:installdir(), "lib", lib_pattern))
-            for _, libpath in ipairs(os.files(path.join(package:installdir(), "lib", lib_pattern))) do
-                local basename = path.basename(libpath)
-                local linkname
-                if package:is_plat("windows") then
-                    linkname = basename
-                else
-                    linkname = basename:gsub("lib(.-)", "%1")
-                end
-                cprint('${bright} basename=%s, linkname=%s', basename, linkname)
-                hpx_libs_map[linkname] = libpath
-            end
-
-            cprint("\n*************************\n${yellow}Found HPX static libraries:")
-            for name, path in pairs(hpx_libs_map) do
-                cprint("  - ${bright green}" .. name .. "${clear} @ ${blue}" .. path)
-            end
-
-            -- create a DAG
-            local dag = graph.new()
-            local cnt = 0
-            for linkname, libpath in pairs(hpx_libs_map) do
-                -- dag:add_vertex(linkname)
-                cprint("\n\n${bright underline}deps analyzing... %s", libpath)
-                local dependencies = get_depend_libs(libpath, {plat = package:plat(), arch = package:arch()})
-                if (dependencies) then
-                    print(dependencies)
-                else
-                    cprint("${red}\n !!!status!!!: have analyzed %d lib(s)", cnt)
-                    os.raise("error!!!!!!!! found no deps of the current lib")
-                end
-                for _, dep_path in ipairs(dependencies) do
-                    local dep_basename = path.basename(dep_path)
-                    local dep_linkname
-                    if package:is_plat("windows") then
-                        dep_linkname = dep_basename:gsub("%.lib$", "")
-                    else
-                        dep_linkname = dep_basename:gsub("lib(.-)%.a", "%1")
-                    end
-                    if hpx_libs_map[dep_linkname] then
-                        cprint("  ${cyan}%s ${yellow}-> ${green}%s", linkname, dep_linkname)
-                        dag:add_edge(linkname, dep_linkname)
-                    end
+        local internal_targets_path = path.join(package:installdir(), "lib/cmake/HPX/HPXInternalTargets.cmake")
+        if os.isfile(internal_targets_path) then
+            local cmake_content = io.readfile(internal_targets_path)
+            local link_string_core = cmake_content:match('set_target_properties%(HPXInternal::hpx_core PROPERTIES.-INTERFACE_LINK_LIBRARIES "([^"]*)"')
+            for _, lib_target in ipairs(link_string_core:split(";")) do
+                if lib_target:startswith("-Wl") then
+                    package:add("linkflags", lib_target)
+                elseif lib_target:startswith("$<LINK_ONLY:HPXInternal::") then
+                    lib_target = lib_target:gsub("%$<LINK_ONLY:([^>]+)>", "%1")
+                    local lib_name = lib_target:match("HPXInternal::(hpx.*)")
+                    package:add("links", lib_name)
                 end
             end
-
-            local sorted_links = dag:topological_sort()
-            local cycle = dag:find_cycle()
-            if cycle then
-                wprint("cycle links found", cycle)
-            end
-            
-            for _, link in ipairs(sorted_links) do
-                if link ~= "hpx_init" then
-                    package:add("links", link)
+            local link_string_full = cmake_content:match('set_target_properties%(HPXInternal::hpx_full PROPERTIES.-INTERFACE_LINK_LIBRARIES "([^"]*)"')
+            for _, lib_target in ipairs(link_string_full:split(";")) do
+                if lib_target:startswith("-Wl") then
+                    package:add("linkflags", lib_target)
+                elseif lib_target:startswith("$<LINK_ONLY:HPXInternal::") then
+                    lib_target = lib_target:gsub("%$<LINK_ONLY:([^>]+)>", "%1")
+                    local lib_name = lib_target:match("HPXInternal::(hpx.*)")
+                    package:add("links", lib_name)
                 end
             end
             package:add("links", "hpx_init")
+        else
+            os.raise("Could not find file HPXInternalTargets.cmake to add link dependencies.")
         end
     end)
 
