@@ -6,6 +6,7 @@ package("re-flex")
     add_urls("https://github.com/Genivia/RE-flex/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Genivia/RE-flex.git")
 
+    add_versions("v6.0.0", "488a778577429408a3390b6aeac796eccaaa1297bb7573feccf3b608b9ae9d95")
     add_versions("v5.3.0", "f886b2a6354bd5c5e27dce64f5c701a0a8fcb62eafc58d41f8aed9c0582be764")
     add_versions("v5.2.2", "be7f4adb3141dcb9079f5431f36f35ed553d972eb76565e3bb36da635d9aa126")
     add_versions("v5.0.1", "b74430fe63a6e3e665676d23601e332fcf12714efb798661bf307cb7a230ca4f")
