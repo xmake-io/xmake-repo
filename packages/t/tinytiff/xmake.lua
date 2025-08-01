@@ -19,7 +19,7 @@ package("tinytiff")
     on_install(function (package)
         local opt = {}
         if package:is_plat("bsd") then
-            opt.cflags = "-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1"
+            opt.cflags = "-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2"
         end
         if not package:config("shared") then
             package:add("defines", "TINYTIFF_STATIC_DEFINE")
