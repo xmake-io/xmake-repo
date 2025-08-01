@@ -3,14 +3,9 @@ package("soxr")
     set_description("The SoX Resampler library libsoxr performs fast, high-quality one-dimensional sample rate conversion.")
     set_license("LGPL-2.1")
 
-    add_urls("https://sourceforge.net/code-snapshots/git/s/so/soxr/code.git/soxr-code-$(version).zip", {alias = "snapshot", version = function (version)
-        local versions = {
-            ["0.1.3"] = "945b592b70470e29f917f4de89b4281fbbd540c0"
-        }
-        return versions[tostring(version)]
-    end})
+    add_urls("https://salsa.debian.org/multimedia-team/libsoxr/-/archive/upstream/$(version)/libsoxr-upstream-$(version).zip", {alias = "debian"})
 
-    add_versions("snapshot:0.1.3", "b797a5d23078be234e520af1041b5e11b49864696d56f0d0b022a0349d1e8d1b")
+    add_versions("debian:0.1.3", "b755c59aa3eebeb7fb5591fc606bf56f4214d86d3668886ac6df48d3a9552817")
 
     add_configs("openmp",   {description = "Include OpenMP threading.", default = false, type = "boolean"})
     add_configs("lsr",      {description = "Include a `libsamplerate'-like interface.", default = true, type = "boolean"})
