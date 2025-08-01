@@ -7,6 +7,7 @@ package("async_simple")
              "https://github.com/alibaba/async_simple/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/alibaba/async_simple.git")
 
+    add_versions("1.4", "6188f7a5f4211754fee758dfebf73759b74ce78c208719b5cc37d5ab4775d550")
     add_versions("1.1", "32d1ea16dfc1741206b6e4a3fbe532eeb1c378619766c1abe11a9efc53109c10")
     add_versions("1.2", "a59a2674ac2b0a3997b90873b2bf0fbe4d96fdedbe6a2628c16c92a65a3fa39a")
     add_versions("1.3", "0ba0dc3397882611b538d04b8ee6668b1a04ce046128599205184c598b718743")
