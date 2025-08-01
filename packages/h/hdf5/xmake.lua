@@ -30,7 +30,7 @@ package("hdf5")
     elseif is_plat("linux") then
         add_syslinks("dl")
     end
-    on_load("windows", "macosx", "linux", function (package)
+    on_load("windows", "macosx", "linux", "bsd", function (package)
         if package:config("zlib") then
             package:add("deps", "zlib")
         end
@@ -45,7 +45,7 @@ package("hdf5")
             end
         end
     end)
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", "bsd", function (package)
         local configs = {
             "-DHDF5_GENERATE_HEADERS=OFF",
             "-DBUILD_TESTING=OFF",
