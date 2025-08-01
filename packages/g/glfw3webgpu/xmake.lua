@@ -11,6 +11,8 @@ package("glfw3webgpu")
     add_versions("v1.1.0", "307ba86a724adc84a875e8bd2374baad0fabc77797f20f9a1779eef8d9ffe95a")
     add_versions("v1.0.1", "b98c63f1905f0e4cf99229de8b7e5c2693fdf3b8d684b5a43d60f21f67d33e6b")
 
+    add_deps("wgpu-native", "glfw")
+
     if is_plat("macosx", "iphoneos") then
         add_frameworks("Metal", "Foundation", "QuartzCore")
     end
