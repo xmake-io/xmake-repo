@@ -101,6 +101,9 @@ package("openssl3")
 
         io.replace("Configurations/10-main.conf", "/Fd", "/Fd\\\"" .. package:installdir("bin"):gsub("\\", "/") .. "/", {plain = true})
         io.replace("Configurations/10-main.conf", ".pdb\"", ".pdb\\\"\"", {plain = true})
+        io.replace("Configurations/windows-makefile.tmpl", [[	@if not "$(INSTALL_PROGRAMS)"=="" \
+	 "$(PERL)" "$(SRCDIR)\util\copy.pl" $(INSTALL_PROGRAMPDBS) \
+                                        "$(INSTALLTOP)\bin"]], "", {plain = true})
 
         os.vrunv("perl", configs)
 
