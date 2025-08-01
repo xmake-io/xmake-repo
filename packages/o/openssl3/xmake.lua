@@ -58,12 +58,12 @@ package("openssl3")
         else
             package:add("links", "ssl", "crypto")
         end
-        if package:is_plat("windows", "mingw") then
+        if package:is_plat("windows", "mingw", "msys") then
             package:add("syslinks", "ws2_32", "user32", "crypt32", "advapi32")
         elseif package:is_plat("linux", "bsd", "cross") then
             package:add("syslinks", "pthread", "dl")
         end
-        if package:is_plat("linux", "mingw") and package:is_arch("x86_64") then
+        if package:is_plat("linux", "mingw", "msys") and package:is_arch("x86_64") then
             package:add("linkdirs", "lib64")
         end
         if package:is_plat("linux") then
@@ -109,7 +109,7 @@ package("openssl3")
         end
     end)
 
-    on_install("mingw", function (package)
+    on_install("mingw", "msys", function (package)
         local configs = {"Configure", "no-tests"}
         table.insert(configs, package:is_arch("i386", "x86") and "mingw" or "mingw64")
         table.insert(configs, package:config("shared") and "shared" or "no-shared")
