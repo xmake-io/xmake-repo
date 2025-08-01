@@ -13,8 +13,8 @@ package("openimagedenoise")
     add_configs("cuda", {description = "Enable CUDA device.", default = false, type = "boolean"})
     add_configs("hip", {description = "Enable HIP device.", default = false, type = "boolean"})
 
-    add_configs("filter_rt", {description = "Include trained weights of the RT filter.", default = true, type = "boolean"})
-    add_configs("filter_rtlightmap", {description = "Include trained weights of the RTLightmap filter.", default = true, type = "boolean"})
+    add_configs("filter_rt", {description = "Include trained weights of the RT filter.", default = false, type = "boolean"})
+    add_configs("filter_rtlightmap", {description = "Include trained weights of the RTLightmap filter.", default = false, type = "boolean"})
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
 
     if is_plat("mingw") and is_subhost("msys") then
@@ -69,7 +69,7 @@ package("openimagedenoise")
         end
     end)
 
-    on_install("!android", function (package)
+    on_install("!android and !wasm", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
