@@ -17,8 +17,9 @@ package("tinytiff")
     add_deps("cmake")
 
     on_install(function (package)
+        local opt = {}
         if package:is_plat("bsd") then
-            package:add("defines", "_FORTIFY_SOURCE=2")
+            opt.cflags = "-Wp,-D_FORTIFY_SOURCE=2"
         end
         if not package:config("shared") then
             package:add("defines", "TINYTIFF_STATIC_DEFINE")
@@ -27,7 +28,7 @@ package("tinytiff")
         local configs = {"-DTinyTIFF_BUILD_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
