@@ -6,6 +6,7 @@ package("orc")
     add_urls("https://github.com/apache/orc/archive/refs/tags/$(version).tar.gz",
              "https://github.com/apache/orc.git")
 
+    add_versions("v2.2.0", "2ea9eb10f3172879f554a7c129d058be78c70723de390f1f51434de4a1e90eed")
     add_versions("v2.1.2", "277638a1e408ed405f29f1cdc254ff28b69b7c152cbf6c9f40418765dfe4bd24")
     add_versions("v2.1.1", "1f8eef537814fdcd003de13e49c6edb35427b45eb40bafd3355f775d99a0ff99")
     add_versions("v2.1.0", "c7f1b36e28a468fe7e3f92e581fb499825b7c342b7952c593f004defb50777d0")
