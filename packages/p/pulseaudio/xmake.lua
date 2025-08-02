@@ -33,7 +33,7 @@ package("pulseaudio")
         io.replace("meson.build",
             "sndfile_dep = dependency('sndfile', version : '>= 1.0.20')",
             "sndfile_dep = dependency('SndFile', method: 'cmake')", {plain = true})
-        if package:version() then
+        if package:version_str() then
             local v = package:version_str():gsub("v", "")
             io.writefile(".tarball-version", v)
             os.rm("git-version-gen")
@@ -43,7 +43,6 @@ package("pulseaudio")
         end
         local configs = {
             "-Dgstreamer=disabled",
-
             "-Ddaemon=false",
             "-Dclient=true",
             "-Ddoxygen=false",
@@ -52,7 +51,6 @@ package("pulseaudio")
             "-Dtests=false",
             "-Dbashcompletiondir=no",
             "-Dzshcompletiondir=no",
-
             "-Dasyncns=disabled",
             "-Davahi=disabled",
             "-Dbluez5=disabled",
@@ -69,7 +67,6 @@ package("pulseaudio")
             "-Dlirc=enabled",
             "-Dopenssl=enabled",
             "-Dorc=disabled",
-
             "-Dsoxr=enabled",
             "-Dspeex=enabled",
             "-Dsystemd=disabled",
@@ -77,15 +74,14 @@ package("pulseaudio")
             "-Dudev=disabled",
             "-Dvalgrind=disabled",
             "-Dx11=disabled",
-
             "-Dadrian-aec=false",
             "-Dwebrtc-aec=disabled"
         }
 
         table.insert(configs, "-Dalsa=" .. (package:is_plat("linux") and "enabled" or "disabled"))
         table.insert(configs, "-Doss-output=" .. (package:is_plat("linux") and "enabled" or "disabled"))
-
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
+        
         import("package.tools.meson").install(package, configs, {packagedeps = {"libiconv", "libflac", "libopus", "libvorbis", "libogg"}})
     end)
 
