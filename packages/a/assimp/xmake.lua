@@ -47,6 +47,7 @@ package("assimp")
     add_configs("android_jniiosysystem", {description = "Enable Android JNI IOSystem support.", default = false, type = "boolean"})
     add_configs("asan",                  {description = "Enable AddressSanitizer.", default = false, type = "boolean"})
     add_configs("ubsan",                 {description = "Enable Undefined Behavior sanitizer.", default = false, type = "boolean"})
+    add_configs("draco",                 {description = "Enable Draco, primary for GLTF.", default = false, type = "boolean"})
 
     add_deps("cmake", "minizip", "zlib")
 
@@ -105,6 +106,10 @@ package("assimp")
         add_config_arg("no_export",        "ASSIMP_NO_EXPORT")
         add_config_arg("asan",             "ASSIMP_ASAN")
         add_config_arg("ubsan",            "ASSIMP_UBSAN")
+
+        if package:version():ge("5.2.5") then
+            add_config_arg("draco", "ASSIMP_BUILD_DRACO")
+        end
 
         if package:is_plat("android") then
             add_config_arg("android_jniiosysystem", "ASSIMP_ANDROID_JNIIOSYSTEM")
