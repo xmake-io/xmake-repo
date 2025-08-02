@@ -129,7 +129,7 @@ package("aui")
             package:add("deps", "libx11", "dbus", "gtk3", "fontconfig")
         end
         if package:is_plat("windows", "mingw") then
-            component:add("syslinks", "dwmapi", "winmm", "shlwapi")
+            component:add("syslinks", "dwmapi", "winmm", "shlwapi", "gdi32", "ole32")
         elseif package:is_plat("android") then
             component:add("syslinks", "EGL", "GLESv2", "GLESv3")
         elseif package:is_plat("iphoneos") then
@@ -151,7 +151,75 @@ package("aui")
             package:add("defines", "AUI_STATIC")
         end
         package:add("defines", "AUI_DEBUG=" .. (package:is_debug() and "1" or "0"))
-        package:add("defines", "API_AUI_CORE=AUI_IMPORT")
+        package:add("defines",
+            "API_AUI_AUDIO=AUI_IMPORT",
+            "API_AUI_CORE=AUI_IMPORT",
+            "API_AUI_CRYPT=AUI_IMPORT",
+            "API_AUI_CURL=AUI_IMPORT",
+            "API_AUI_DATA=AUI_IMPORT",
+            "API_AUI_IMAGE=AUI_IMPORT",
+            "API_AUI_JSON=AUI_IMPORT",
+            "API_AUI_NETWORK=AUI_IMPORT",
+            "API_AUI_UITESTS=AUI_IMPORT",
+            "API_AUI_UPDATER=AUI_IMPORT",
+            "API_AUI_XML=AUI_IMPORT"
+        )
+        if package:is_plat("windows") then
+            package:add("defines",
+                "AUI_PLATFORM_WIN=1", "AUI_PLATFORM_LINUX=0",
+                "AUI_PLATFORM_APPLE=0", "AUI_PLATFORM_MACOS=0",
+                "AUI_PLATFORM_IOS=0", "AUI_PLATFORM_ANDROID=0",
+                "AUI_PLATFORM_UNIX=0", "AUI_PLATFORM_EMSCRIPTEN=0"
+            )
+        elseif package:is_plat("linux") then
+            package:add("defines",
+                "AUI_PLATFORM_WIN=0", "AUI_PLATFORM_LINUX=1",
+                "AUI_PLATFORM_APPLE=0", "AUI_PLATFORM_MACOS=0",
+                "AUI_PLATFORM_IOS=0", "AUI_PLATFORM_ANDROID=0",
+                "AUI_PLATFORM_UNIX=1", "AUI_PLATFORM_EMSCRIPTEN=0"
+            )
+        elseif package:is_plat("macosx") then
+            package:add("defines",
+                "AUI_PLATFORM_WIN=0", "AUI_PLATFORM_LINUX=0",
+                "AUI_PLATFORM_APPLE=1", "AUI_PLATFORM_MACOS=1",
+                "AUI_PLATFORM_IOS=0", "AUI_PLATFORM_ANDROID=0",
+                "AUI_PLATFORM_UNIX=1", "AUI_PLATFORM_EMSCRIPTEN=0"
+            )
+        elseif package:is_plat("android") then
+            package:add("defines",
+                "AUI_PLATFORM_WIN=0", "AUI_PLATFORM_LINUX=0",
+                "AUI_PLATFORM_APPLE=0", "AUI_PLATFORM_MACOS=0",
+                "AUI_PLATFORM_IOS=0", "AUI_PLATFORM_ANDROID=1",
+                "AUI_PLATFORM_UNIX=1", "AUI_PLATFORM_EMSCRIPTEN=0"
+            )
+        elseif package:is_plat("iphoneos") then
+            package:add("defines",
+                "AUI_PLATFORM_WIN=0", "AUI_PLATFORM_LINUX=0",
+                "AUI_PLATFORM_APPLE=1", "AUI_PLATFORM_MACOS=0",
+                "AUI_PLATFORM_IOS=1", "AUI_PLATFORM_ANDROID=0",
+                "AUI_PLATFORM_UNIX=1", "AUI_PLATFORM_EMSCRIPTEN=0"
+            )
+        end
+        if package:has_tool("cxx", "clang", "clangxx", "clang++") then
+            package:add("defines", "AUI_COMPILER_CLANG=1", "AUI_COMPILER_GCC=0", "AUI_COMPILER_MSVC=0")
+        elseif package:has_tool("cxx", "gcc", "gxx", "g++") then
+            package:add("defines", "AUI_COMPILER_CLANG=0", "AUI_COMPILER_GCC=1", "AUI_COMPILER_MSVC=0")
+        elseif package:has_tool("cxx", "cl") then
+            package:add("defines", "AUI_COMPILER_CLANG=0", "AUI_COMPILER_GCC=0", "AUI_COMPILER_MSVC=1")
+        end
+        if package:is_arch("arm.*") then
+            if package:check_sizeof("void*") == "4" then
+                package:add("defines", "AUI_ARCH_X86=0", "AUI_ARCH_X86_64=0", "AUI_ARCH_ARM_64=0", "AUI_ARCH_ARM_V7=1")
+            else
+                package:add("defines", "AUI_ARCH_X86=0", "AUI_ARCH_X86_64=0", "AUI_ARCH_ARM_64=1", "AUI_ARCH_ARM_V7=0")
+            end
+        else
+            if package:check_sizeof("void*") == "4" then
+                package:add("defines", "AUI_ARCH_X86=1", "AUI_ARCH_X86_64=0", "AUI_ARCH_ARM_64=0", "AUI_ARCH_ARM_V7=0")
+            else
+                package:add("defines", "AUI_ARCH_X86=0", "AUI_ARCH_X86_64=1", "AUI_ARCH_ARM_64=0", "AUI_ARCH_ARM_V7=0")
+            end
+        end
         package:add("defines", "GLM_ENABLE_EXPERIMENTAL=1")
     end)
 
@@ -181,12 +249,37 @@ package("aui")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+            #include <AUI/Platform/AWindow.h>
+            #include <AUI/Util/UIBuildingHelpers.h>
+            #include <AUI/View/ALabel.h>
+            #include <AUI/View/AButton.h>
+            #include <AUI/Platform/APlatform.h>
             #include <AUI/Platform/Entry.h>
-            #include <AUI/Logging/ALogger.h>
-            #include <AUI/Common/AByteBuffer.h>
-            #include <AUI/Url/AUrl.h>
+            using namespace declarative;
+            class MainWindow: public AWindow {
+            public:
+                MainWindow();
+            };
+            MainWindow::MainWindow(): AWindow("Project template app", 300_dp, 200_dp) {
+                setContents(
+                    Centered{
+                        Vertical{
+                            Centered { Label { "Hello world from AUI!" } },
+                            _new<AButton>("Visit GitHub repo").connect(&AView::clicked, this, [] {
+                                APlatform::openUrl("https://github.com/aui-framework/aui");
+                            }),
+                            _new<AButton>("Visit docs").connect(&AView::clicked, this, [] {
+                                APlatform::openUrl("https://aui-framework.github.io/");
+                            }),
+                            _new<AButton>("Submit an issue").connect(&AView::clicked, this, [] {
+                                APlatform::openUrl("https://github.com/aui-framework/aui/issues/new");
+                            }),
+                        }
+                    }
+                );
+            }
             void test() {
-                auto buf = AByteBuffer::fromStream(AUrl(":test.txt").open());
+                _new<MainWindow>()->show();
             }
         ]]}, {configs = {languages = "c++20"}}))
     end)
