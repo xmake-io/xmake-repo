@@ -6,6 +6,7 @@ package("cdt")
     add_urls("https://github.com/artem-ogre/CDT/archive/refs/tags/$(version).tar.gz",
              "https://github.com/artem-ogre/CDT.git")
 
+    add_versions("1.4.4", "97e57bdd1cf8219dcc81634236a502390a20dda3599dd3414a74343b7f03427f")
     add_versions("1.4.1", "86df99eb5f02a73eeb8c6ea45765eed0d7f206e8d4d9f6479f77e3c590ae5bb3")
 
     add_deps("cmake")
