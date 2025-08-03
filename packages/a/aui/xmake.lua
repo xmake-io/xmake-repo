@@ -199,6 +199,13 @@ package("aui")
                 "AUI_PLATFORM_IOS=1", "AUI_PLATFORM_ANDROID=0",
                 "AUI_PLATFORM_UNIX=1", "AUI_PLATFORM_EMSCRIPTEN=0"
             )
+        elseif package:is_plat("wasm") then
+            package:add("defines",
+                "AUI_PLATFORM_WIN=0", "AUI_PLATFORM_LINUX=0",
+                "AUI_PLATFORM_APPLE=0", "AUI_PLATFORM_MACOS=0",
+                "AUI_PLATFORM_IOS=0", "AUI_PLATFORM_ANDROID=0",
+                "AUI_PLATFORM_UNIX=0", "AUI_PLATFORM_EMSCRIPTEN=1"
+            )
         end
         if package:has_tool("cxx", "clang", "clangxx", "clang++") then
             package:add("defines", "AUI_COMPILER_CLANG=1", "AUI_COMPILER_GCC=0", "AUI_COMPILER_MSVC=0")
