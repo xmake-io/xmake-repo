@@ -7,6 +7,7 @@ package("cutlass")
     add_urls("https://github.com/NVIDIA/cutlass/archive/refs/tags/$(version).tar.gz",
              "https://github.com/NVIDIA/cutlass.git")
 
+    add_versions("v4.1.0", "8d4675b11e9e5207e3940eaac0f46db934ada371cbb3627c9fda642d912b6230")
     add_versions("v4.0.0", "44a121c5878827875856c175ebe82e955062e37cd61fcdf31ebe2e8874f2fc5c")
     add_versions("v3.9.0", "0ea98a598d1f77fade5187ff6ec6d9e6ef3acd267ee68850aae6e800dcbd69c7")
     add_versions("v3.8.0", "14a5e6314f23e41295d8377b6fa6028b35392757a0ee4538a4eacaaa5d7eee37")
