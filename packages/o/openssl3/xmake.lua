@@ -34,6 +34,11 @@ package("openssl3")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
+    -- @see https://github.com/xmake-io/xmake-repo/pull/7797#issuecomment-3153471643
+    if is_plat("windows") then
+        add_configs("jom", {description = "Try using jom to compile in parallel.", default = false, type = "boolean"})
+    end
+
     on_load(function (package)
         if not package:is_precompiled() then
             if package:is_plat("windows") then
@@ -41,10 +46,12 @@ package("openssl3")
                 -- the perl executable found in GitForWindows will fail to build OpenSSL
                 -- see https://github.com/openssl/openssl/blob/master/NOTES-PERL.md#perl-on-windows
                 package:add("deps", "strawberry-perl", {system = false})
-                -- check xmake tool jom
-                import("package.tools.jom", {try = true})
-                if jom then
-                    package:add("deps", "jom", {private = true})
+                if package:config("jom") then
+                    -- check xmake tool jom
+                    import("package.tools.jom", {try = true})
+                    if jom then
+                        package:add("deps", "jom", {private = true})
+                    end
                 end
             elseif package:is_plat("android", "wasm") and is_subhost("windows") and os.arch() == "x64" then
                 -- when building for android on windows, use msys2 perl instead of strawberry-perl to avoid configure issue
@@ -94,7 +101,7 @@ package("openssl3")
             table.insert(configs, "enable-md2")
         end
 
-        if jom then
+        if package:config("jom") and jom then
             table.insert(configs, "no-makedepend")
             table.insert(configs, "/FS")
         end
@@ -104,8 +111,7 @@ package("openssl3")
 
         os.vrunv("perl", configs)
 
-        -- @see https://github.com/xmake-io/xmake-repo/pull/7797#issuecomment-3153471643
-        if false then
+        if package:config("jom") and jom then
             jom.build(package)
             jom.make(package, {"install_sw"})
         else
