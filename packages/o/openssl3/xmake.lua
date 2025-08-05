@@ -109,23 +109,9 @@ package("openssl3")
         if not package:is_debug() then
             io.replace("Configurations/10-main.conf", "/debug", "", {plain = true})
             io.replace("Configurations/10-main.conf", "/Zi", "", {plain = true})
-            io.replace("Configurations/10-main.conf", "/Fdossl_static.pdb", {plain = true})
-            io.replace("Configurations/10-main.conf", "/Fddso.pdb", {plain = true})
-            io.replace("Configurations/10-main.conf", "/Fdapp.pdb", {plain = true})
             io.replace("Configurations/50-masm.conf", "/Zi", "", {plain = true})
             io.replace("Configurations/50-win-clang-cl.conf", "/Zi", "", {plain = true})
-            io.replace("Configurations/windows-makefile.tmpl", [[	@if "$(SHLIBS)"=="" \
-	 "$(PERL)" "$(SRCDIR)\util\copy.pl ossl_static.pdb "$(libdir)"]], "", {plain = true})
-            io.replace("Configurations/windows-makefile.tmpl", [[	@if not "$(INSTALL_ENGINES)"=="" \
-	 "$(PERL)" "$(SRCDIR)\util\copy.pl" $(INSTALL_ENGINEPDBS) "$(ENGINESDIR)"]], "", {plain = true})
-            io.replace("Configurations/windows-makefile.tmpl", [[	@if not "$(INSTALL_MODULES)"=="" \
-	 "$(PERL)" "$(SRCDIR)\util\copy.pl" $(INSTALL_MODULEPDBS) "$(MODULESDIR)"]], "", {plain = true})
-            io.replace("Configurations/windows-makefile.tmpl", [[	@if not "$(SHLIBS)"=="" \
-	 "$(PERL)" "$(SRCDIR)\util\copy.pl" $(INSTALL_SHLIBPDBS) \
-                                        "$(INSTALLTOP)\bin"]], "", {plain = true})
-            io.replace("Configurations/windows-makefile.tmpl", [[	@if not "$(INSTALL_PROGRAMS)"=="" \
-	 "$(PERL)" "$(SRCDIR)\util\copy.pl" $(INSTALL_PROGRAMPDBS) \
-                                        "$(INSTALLTOP)\bin"]], "", {plain = true})
+            io.replace("util/copy.pl", "if (-d $dest)", "if (! -e $_) { next; }\n\tif (-d $dest)", {plain = true})
         end
 
         os.vrunv("perl", configs)
