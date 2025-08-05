@@ -110,7 +110,9 @@ package("openssl3")
             io.replace("Configurations/10-main.conf", "/debug", "", {plain = true})
             io.replace("Configurations/10-main.conf", "/Zi", "", {plain = true})
             io.replace("Configurations/50-masm.conf", "/Zi", "", {plain = true})
-            io.replace("Configurations/50-win-clang-cl.conf", "/Zi", "", {plain = true})
+            if package:version():gt("3.0.17") then
+                io.replace("Configurations/50-win-clang-cl.conf", "/Zi", "", {plain = true})
+            end
             io.replace("util/copy.pl", "if (-d $dest)", "if (! -e $_) { next; }\n\tif (-d $dest)", {plain = true})
         end
 
