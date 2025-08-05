@@ -17,6 +17,15 @@ package("async_simple")
 
     add_deps("cmake")
 
+    if on_check then
+        on_check("android", function (package)
+            if package:version() and package:version():ge("1.4") then
+                local ndk = package:toolchain("ndk"):config("ndkver")
+                assert(ndk and tonumber(ndk) > 22, "package(async_simple >=1.4) require ndk version > 22")
+            end
+        end)
+    end
+
     on_load("!linux and !macosx", function (package)
         package:set("kind", "library", {headeronly = true})
     end)
