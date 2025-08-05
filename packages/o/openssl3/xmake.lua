@@ -106,8 +106,15 @@ package("openssl3")
             table.insert(configs, "/FS")
         end
 
-        io.replace("Configurations/10-main.conf", "/Fd", "/Fd\\\"" .. os.curdir():gsub("\\", "/") .. "/", {plain = true})
-        io.replace("Configurations/10-main.conf", ".pdb\"", ".pdb\\\"\"", {plain = true})
+        if not package:is_debug() then
+            io.replace("Configurations/10-main.conf", "/debug", "", {plain = true})
+            io.replace("Configurations/10-main.conf", "/Zi", "", {plain = true})
+            io.replace("Configurations/10-main.conf", "/Fdossl_static.pdb", {plain = true})
+            io.replace("Configurations/10-main.conf", "/Fddso.pdb", {plain = true})
+            io.replace("Configurations/10-main.conf", "/Fdapp.pdb", {plain = true})
+            io.replace("Configurations/50-masm.conf", "/Zi", "", {plain = true})
+            io.replace("Configurations/50-win-clang-cl.conf", "/Zi", "", {plain = true})
+        end
 
         os.vrunv("perl", configs)
 
