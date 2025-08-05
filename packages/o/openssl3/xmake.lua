@@ -104,7 +104,8 @@ package("openssl3")
 
         os.vrunv("perl", configs)
 
-        if jom then
+        -- @see https://github.com/xmake-io/xmake-repo/pull/7797#issuecomment-3153471643
+        if false then
             jom.build(package)
             jom.make(package, {"install_sw"})
         else
