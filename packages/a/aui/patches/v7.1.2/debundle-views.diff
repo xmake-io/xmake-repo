@@ -1,5 +1,5 @@
 diff --git a/aui.views/CMakeLists.txt b/aui.views/CMakeLists.txt
-index dfe6b18b..a30b03fa 100644
+index dfe6b18b..0bb0c64d 100644
 --- a/aui.views/CMakeLists.txt
 +++ b/aui.views/CMakeLists.txt
 @@ -9,10 +9,14 @@ find_package(OpenGL)
@@ -75,7 +75,7 @@ index dfe6b18b..a30b03fa 100644
      endif ()
  
      if (NOT AUI_PLATFORM_WINDOWS)
-@@ -92,22 +107,34 @@ if (OPENGL_FOUND OR ANDROID OR IOS)
+@@ -92,23 +107,37 @@ if (OPENGL_FOUND OR ANDROID OR IOS)
          aui_link(aui.views PRIVATE Freetype::Freetype)
          aui_link(aui.views PRIVATE OpenGL::GL)
  
@@ -116,6 +116,9 @@ index dfe6b18b..a30b03fa 100644
              aui_link(aui.views PRIVATE winmm)
 -            aui_link(aui.views PRIVATE shlwapi.lib)
 +            aui_link(aui.views PRIVATE shlwapi)
++            aui_link(aui.views PRIVATE gdi32 ole32 opengl32)
              if (MINGW)
++                aui_link(aui.views PRIVATE uuid)
                  find_package(ZLIB REQUIRED)
                  aui_link(aui.views PRIVATE ZLIB::ZLIB)
+             endif ()

@@ -18,8 +18,8 @@ package("aui")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-main.diff", "c1cac9dfbae14baaddb68837055a7a858c08786750a16cbbfe955a1f18e5878d")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-sqlite.diff", "1728a4b9afc473acc81b16c544239e6f70a147c0623d894d59dd124e27c94311")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-toolbox.diff", "1ec1abf993eb7e583d32602e1ae8ee4d3358d156e9fac185c0d19ed85660bd3b")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-uitests.diff", "831a208eff22c5536ada4ea4a4e2496868977c2ee9b7d7e534bc6bdeae537d86")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-views.diff", "9247b2986de53510f26d05cd25b35b449bda34b1acc97e601d16f933c14afe6c")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-uitests.diff", "8132a8a22ba320dbff5bfa98b8dc0341064468238f9765ff244a6ea523e45415")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-views.diff", "8194b46068c7a6a0c0a3991d1a462faeea6d8ac00c9f7b046d335312e2258e85")
     add_patches("v7.1.2", "patches/v7.1.2/fix-backport-lunasvg.diff", "daf24391b88e44bdb801b2c1ba36a695f95384d8157ccb23cfc635d5f30bea4a")
     add_patches("v7.1.2", "patches/v7.1.2/fix-msvc-pretty-function.diff", "268f66f42594f0188fe50d33f5783e66f66024087097ebfdfef60c9768e151fd")
     add_patches("v7.1.2", "patches/v7.1.2/fix-osx-enforce-cpp-template.diff", "eef4147a8b037552887777cd497c190ecc22514bb11fb3a3d6ea433a78cce61b")
@@ -131,6 +131,9 @@ package("aui")
         end
         if package:is_plat("windows", "mingw") then
             component:add("syslinks", "dwmapi", "winmm", "shlwapi", "gdi32", "ole32")
+            if package:is_plat("mingw") then
+                component:add("syslinks", "uuid")
+            end
         elseif package:is_plat("android") then
             component:add("syslinks", "EGL", "GLESv2", "GLESv3")
         elseif package:is_plat("iphoneos") then
@@ -232,7 +235,7 @@ package("aui")
         package:add("defines", "GLM_ENABLE_EXPERIMENTAL=1")
     end)
 
-    on_install("windows", "macosx", "linux", "android", "iphoneos", "mingw", function (package)
+    on_install("windows", "macosx", "linux", "android", "iphoneos", "mingw", "msys", function (package)
         local configs = {
             "-DAUI_INSTALL_RUNTIME_DEPENDENCIES=OFF",
             "-DAUIB_NO_PRECOMPILED=TRUE",
@@ -255,7 +258,7 @@ package("aui")
             if package:config("shared") then
                 opt.packagedeps = {"gtest"}
             end
-        elseif package:is_plat("windows") then
+        elseif package:is_plat("windows", "mingw") then
             opt.packagedeps = {"glew", "gtest"}
             if package:has_tool("cxx", "cl", "clang_cl") then
                 opt.cxflags = {"/EHsc"}
