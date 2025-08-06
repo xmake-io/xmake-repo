@@ -167,7 +167,7 @@ package("aui")
             "API_AUI_VIEWS=AUI_IMPORT",
             "API_AUI_XML=AUI_IMPORT"
         )
-        if package:is_plat("windows") then
+        if package:is_plat("windows", "mingw") then
             package:add("defines",
                 "AUI_PLATFORM_WIN=1", "AUI_PLATFORM_LINUX=0",
                 "AUI_PLATFORM_APPLE=0", "AUI_PLATFORM_MACOS=0",
@@ -233,7 +233,7 @@ package("aui")
         package:add("defines", "GLM_ENABLE_EXPERIMENTAL=1")
     end)
 
-    on_install("windows", "macosx", "linux", "android", "iphoneos", "wasm", function (package)
+    on_install("windows", "macosx", "linux", "android", "iphoneos", "mingw", function (package)
         local configs = {
             "-DAUI_INSTALL_RUNTIME_DEPENDENCIES=OFF",
             "-DAUIB_NO_PRECOMPILED=TRUE",
@@ -251,9 +251,7 @@ package("aui")
                 opt.packagedeps = {"gtest"}
             end
         elseif package:is_plat("windows") then
-            if package:config("shared") then
-                opt.packagedeps = {"glew", "gtest"}
-            end
+            opt.packagedeps = {"glew", "gtest"}
             if package:has_tool("cxx", "cl", "clang_cl") then
                 opt.cxflags = {"/EHsc"}
             end
