@@ -162,6 +162,7 @@ package("aui")
             "API_AUI_NETWORK=AUI_IMPORT",
             "API_AUI_UITESTS=AUI_IMPORT",
             "API_AUI_UPDATER=AUI_IMPORT",
+            "API_AUI_VIEWS=AUI_IMPORT",
             "API_AUI_XML=AUI_IMPORT"
         )
         if package:is_plat("windows") then
