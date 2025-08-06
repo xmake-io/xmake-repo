@@ -1,5 +1,4 @@
 package("dcmtk")
-
     set_homepage("https://dcmtk.org/dcmtk.php.en")
     set_description("DCMTK - DICOM Toolkit")
     set_license("BSD-3-Clause")
@@ -8,6 +7,7 @@ package("dcmtk")
         return version:gsub("%.", "") .. "/dcmtk-" .. version
     end})
     add_versions("3.6.6", "6859c62b290ee55677093cccfd6029c04186d91cf99c7642ae43627387f3458e")
+    add_versions("3.6.9", "b93ff5561244916a6e1e7e3ecccf2e26e6932c4edb5961268401cea7d4ab9c16")
 
     local configdeps = {libtiff    = "TIFF",
                         libpng     = "PNG",
@@ -26,6 +26,7 @@ package("dcmtk")
     if is_plat("windows") then
         add_syslinks("ws2_32", "netapi32")
     end
+
     on_load("windows", "macosx", "linux", function (package)
         for config, _ in pairs(configdeps) do
             if package:config(config) then
@@ -37,14 +38,18 @@ package("dcmtk")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows|!arm64", "macosx", "linux", "bsd", function (package)
         io.replace("CMake/3rdparty.cmake", "OpenJPEG QUIET", "OpenJPEG CONFIG QUIET", {plain = true})
         io.replace("CMake/3rdparty.cmake", "include_directories(${LIBXML2_INCLUDE_DIR})", "include_directories(${LIBXML2_INCLUDE_DIR})\nadd_definitions(-DLIBXML_STATIC)", {plain = true})
+
         local configs = {"-DDCMTK_USE_FIND_PACKAGE=ON", "-DDCMTK_WITH_WRAP=OFF", "-DDCMTK_WITH_DOXYGEN=OFF", "-DDCMTK_ENABLE_MANPAGES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DDCMTK_COMPILE_WIN32_MULTITHREADED_DLL=" .. (package:config("vs_runtime"):startswith("MD") and "ON" or "OFF"))
+            table.insert(configs, "-DDCMTK_COMPILE_WIN32_MULTITHREADED_DLL=" .. (package:has_runtime("MD", "MDd") and "ON" or "OFF"))
+            if package:has_tool("cxx", "cl") then
+                package:add("cxxflags", "/Zc:__cplusplus")
+            end
         elseif package:config("pic") ~= false then
             table.insert(configs, "-DDCMTK_FORCE_FPIC_ON_UNIX=ON")
         end

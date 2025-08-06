@@ -1,5 +1,4 @@
 package("mpich")
-
     set_homepage("https://www.mpich.org/")
     set_description("MPICH is a high performance and widely portable implementation of the Message Passing Interface (MPI) standard.")
 
@@ -15,34 +14,43 @@ package("mpich")
     end
 
     add_deps("hwloc")
-    on_load("macosx", "linux", function (package)
+
+    on_load(function (package)
         if package:config("x11") then
             package:add("deps", "libx11")
             package:add("deps", "libxnvctrl", {system = true, optional = true})
         end
-    end)
-
-    on_install("macosx", "linux", function (package)
-        local configs = {"--disable-fortran",
-                         "--without-slurm",
-                         "--without-xpmem",
-                         "--without-hcoll",
-                         "--without-blcr",
-                         "--without-papi",
-                         "--without-pmix"}
-        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
-        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
-        if package:config("pic") ~= false then
-            table.insert(configs, "--with-pic")
-        end
-        table.insert(configs, "--with-device=ch4:" .. package:config("device"))
-        table.insert(configs, "--with-hwloc-prefix=" .. package:dep("hwloc"):installdir())
-        table.insert(configs, "--with-x=" .. (package:config("x11") and "yes" or "no"))
-        import("package.tools.autoconf").install(package, configs)
         package:addenv("PATH", "bin")
     end)
 
+    on_install("macosx", "linux", function (package)
+        local configs = {
+            "--disable-dependency-tracking",
+            "--disable-fortran",
+            "--without-slurm",
+            "--without-xpmem",
+            "--without-hcoll",
+            "--without-blcr",
+            "--without-papi",
+            "--without-pmix"
+        }
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        table.insert(configs, "--with-device=ch4:" .. package:config("device"))
+        table.insert(configs, "--with-hwloc-prefix=" .. package:dep("hwloc"):installdir())
+        table.insert(configs, "--with-x=" .. (package:config("x11") and "yes" or "no"))
+
+        local opt = {}
+        if package:is_plat("linux") then
+            opt.ldflags = "-lm"
+            opt.shflags = "-lm"
+        end
+        import("package.tools.autoconf").install(package, configs, opt)
+    end)
+
     on_test(function (package)
-        os.vrun("mpicc --version")
+        if not package:is_cross() then
+            os.vrun("mpicc --version")
+        end
         assert(package:has_cfuncs("MPI_Init", {includes = "mpi.h"}))
     end)
