@@ -48,6 +48,9 @@ package("xz")
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:config("asan") then
+            table.insert(configs,  "-DXZ_SANDBOX=no")
+        end
         local cxflags
         if not package:is_plat("windows") and package:is_arch("arm.*") then
             cxflags = "-march=armv8-a+crc+crypto"
