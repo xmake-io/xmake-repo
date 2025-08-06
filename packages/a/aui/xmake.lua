@@ -25,13 +25,11 @@ package("aui")
     add_patches("v7.1.2", "patches/v7.1.2/fix-osx-enforce-cpp-template.diff", "eef4147a8b037552887777cd497c190ecc22514bb11fb3a3d6ea433a78cce61b")
 
     add_deps("cmake")
-
     if is_subhost("windows") then
         add_deps("pkgconf")
     else
         add_deps("pkg-config")
     end
-
     add_deps("zlib")
 
     -- aui.audio
