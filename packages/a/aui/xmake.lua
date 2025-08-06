@@ -258,7 +258,7 @@ package("aui")
             if package:has_tool("cxx", "cl", "clang_cl") then
                 opt.cxflags = {"/EHsc"}
             end
-            if package:is_arch("arm64") then
+            if package:targetarch():startswith("arm") then
                 io.replace("cmake/aui.build.cmake", [[if (CMAKE_GENERATOR_PLATFORM MATCHES "(arm64)|(ARM64)" OR CMAKE_SYSTEM_PROCESSOR MATCHES "(aarch64|arm64)")]], [[if (1)]], {plain = true})
             end
         end
