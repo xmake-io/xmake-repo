@@ -36,7 +36,7 @@ package("openssl3")
 
     -- @see https://github.com/xmake-io/xmake-repo/pull/7797#issuecomment-3153471643
     if is_plat("windows") then
-        add_configs("jom", {description = "Try using jom to compile in parallel.", default = false, type = "boolean"})
+        add_configs("jom", {description = "Try using jom to compile in parallel.", default = true, type = "boolean"})
     end
 
     on_load(function (package)
@@ -103,10 +103,11 @@ package("openssl3")
 
         if package:config("jom") and jom then
             table.insert(configs, "no-makedepend")
-            table.insert(configs, "/FS")
         end
 
-        if not package:is_debug() then
+        if package:is_debug() then
+            table.insert(configs, "/FS")
+        else
             io.replace("Configurations/10-main.conf", "/debug", "", {plain = true})
             io.replace("Configurations/10-main.conf", "/Zi", "", {plain = true})
             io.replace("Configurations/50-masm.conf", "/Zi", "", {plain = true})
