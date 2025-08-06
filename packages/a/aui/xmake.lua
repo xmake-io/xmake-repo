@@ -245,7 +245,7 @@ package("aui")
             if package:config("shared") then
                 opt.packagedeps = {"gtest"}
             end
-        elseif package:is_plat("windows") then
+        elseif package:is_plat("windows", "mingw") then
             opt.packagedeps = {"glew", "gtest"}
             if package:has_tool("cxx", "cl", "clang_cl") then
                 opt.cxflags = {"/EHsc"}
