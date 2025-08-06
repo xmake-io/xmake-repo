@@ -242,6 +242,10 @@ package("aui")
         local opt = {}
         if package:is_plat("linux") then
             opt.packagedeps = {"pulseaudio"}
+        elseif package:is_plat("android") then
+            table.insert(configs, "-DAUI_BUILD_FOR=android")
+        elseif package:is_plat("iphoneos") then
+            table.insert(configs, "-DAUI_BUILD_FOR=ios")
         elseif package:is_plat("macosx") then
             if package:config("shared") then
                 opt.packagedeps = {"gtest"}
@@ -252,6 +256,9 @@ package("aui")
             end
             if package:has_tool("cxx", "cl", "clang_cl") then
                 opt.cxflags = {"/EHsc"}
+            end
+            if package:is_arch("arm64") then
+                io.replace("cmake/aui.build.cmake", [[if (CMAKE_GENERATOR_PLATFORM MATCHES "(arm64)|(ARM64)" OR CMAKE_SYSTEM_PROCESSOR MATCHES "(aarch64|arm64)")]], [[if (1)]], {plain = true})
             end
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
