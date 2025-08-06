@@ -131,6 +131,9 @@ package("aui")
         end
         if package:is_plat("windows", "mingw") then
             component:add("syslinks", "dwmapi", "winmm", "shlwapi", "gdi32", "ole32")
+            if package:is_plat("mingw") then
+                component:add("syslinks", "uuid")
+            end
         elseif package:is_plat("android") then
             component:add("syslinks", "EGL", "GLESv2", "GLESv3")
         elseif package:is_plat("iphoneos") then
