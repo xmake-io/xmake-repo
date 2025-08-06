@@ -37,7 +37,7 @@ index 21e44153..088647d6 100644
  elseif (AUI_PLATFORM_LINUX)
 -    aui_link(aui.audio PUBLIC pulse)
 +    if (AUIB_DISABLE)
-+        find_package(PkgConfig)
++        include(FindPkgConfig)
 +        pkg_check_modules(PULSEAUDIO REQUIRED IMPORTED_TARGET libpulse pulseaudio)
 +        aui_link(aui.audio PUBLIC PkgConfig::PULSEAUDIO)
 +    else ()
