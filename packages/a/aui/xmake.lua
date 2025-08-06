@@ -38,7 +38,7 @@ package("aui")
         component:add("links", "aui.audio")
         package:add("deps", "libopus", "soxr")
         if package:is_plat("linux") then
-            component:add("syslinks", "pulse")
+            component:add("deps", "pulseaudio")
         elseif package:is_plat("android") then
             package:add("deps", "oboe")
         elseif package:is_plat("windows", "mingw") then
