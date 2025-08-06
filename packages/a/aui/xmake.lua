@@ -246,6 +246,7 @@ package("aui")
         elseif package:is_plat("iphoneos") then
             table.insert(configs, "-DCMAKE_CROSSCOMPILING=OFF")
             table.insert(configs, "-DAUI_BUILD_FOR=ios")
+            io.replace("CMakeLists.txt", "if (NOT CMAKE_CROSSCOMPILING)", "if (0)", {plain = true})
             if package:is_arch("arm.*") then
                 io.replace("cmake/aui.build.cmake", [[if (CMAKE_GENERATOR_PLATFORM MATCHES "(arm64)|(ARM64)" OR CMAKE_SYSTEM_PROCESSOR MATCHES "(aarch64|arm64)")]], [[if (1)]], {plain = true})
             end
