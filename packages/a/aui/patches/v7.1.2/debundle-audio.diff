@@ -39,7 +39,7 @@ index 21e44153..f6732e73 100644
 +    if (AUIB_DISABLE)
 +        auib_use_system_libs_begin()
 +        find_package(PkgConfig)
-+        pkg_check_modules(PULSEAUDIO REQUIRED IMPORTED_TARGET libpulse)
++        pkg_check_modules(PULSEAUDIO REQUIRED IMPORTED_TARGET libpulse pulseaudio)
 +        aui_link(aui.audio PUBLIC PkgConfig::PULSEAUDIO)
 +        auib_use_system_libs_end()
 +    else ()
