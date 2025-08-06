@@ -37,7 +37,7 @@ package("directxtex")
         end
     end)
 
-    on_install("windows", "linux", function (package)
+    on_install("windows|x64", "windows|arm64", "linux", function (package)
         local configs = {"-DBUILD_TOOLS=OFF", "-DBUILD_SAMPLE=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
