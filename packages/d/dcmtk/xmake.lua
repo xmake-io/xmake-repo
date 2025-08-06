@@ -1,5 +1,4 @@
 package("dcmtk")
-
     set_homepage("https://dcmtk.org/dcmtk.php.en")
     set_description("DCMTK - DICOM Toolkit")
     set_license("BSD-3-Clause")
@@ -27,7 +26,8 @@ package("dcmtk")
     if is_plat("windows") then
         add_syslinks("ws2_32", "netapi32")
     end
-    on_load("windows", "macosx", "linux", function (package)
+
+    on_load(function (package)
         for config, _ in pairs(configdeps) do
             if package:config(config) then
                 package:add("deps", config)
@@ -41,12 +41,13 @@ package("dcmtk")
     on_install("windows|!arm64", "macosx", "linux", "bsd", function (package)
         io.replace("CMake/3rdparty.cmake", "OpenJPEG QUIET", "OpenJPEG CONFIG QUIET", {plain = true})
         io.replace("CMake/3rdparty.cmake", "include_directories(${LIBXML2_INCLUDE_DIR})", "include_directories(${LIBXML2_INCLUDE_DIR})\nadd_definitions(-DLIBXML_STATIC)", {plain = true})
+
         local configs = {"-DDCMTK_USE_FIND_PACKAGE=ON", "-DDCMTK_WITH_WRAP=OFF", "-DDCMTK_WITH_DOXYGEN=OFF", "-DDCMTK_ENABLE_MANPAGES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
             table.insert(configs, "-DDCMTK_COMPILE_WIN32_MULTITHREADED_DLL=" .. (package:has_runtime("MD", "MDd") and "ON" or "OFF"))
-            if package:toolchain("msvc") then -- enable msvc __cplusplus
+            if package:has_tool("cxx", "cl") then
                 package:add("cxxflags", "/Zc:__cplusplus")
             end
         elseif package:config("pic") ~= false then
