@@ -241,8 +241,10 @@ package("aui")
         if package:is_plat("linux") then
             opt.packagedeps = {"pulseaudio"}
         elseif package:is_plat("android") then
+            table.insert(configs, "-DCMAKE_CROSSCOMPILING=OFF")
             table.insert(configs, "-DAUI_BUILD_FOR=android")
         elseif package:is_plat("iphoneos") then
+            table.insert(configs, "-DCMAKE_CROSSCOMPILING=OFF")
             table.insert(configs, "-DAUI_BUILD_FOR=ios")
         elseif package:is_plat("macosx") then
             if package:config("shared") then
