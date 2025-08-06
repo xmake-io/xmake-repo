@@ -1,5 +1,5 @@
 diff --git a/aui.audio/CMakeLists.txt b/aui.audio/CMakeLists.txt
-index 21e44153..088647d6 100644
+index 21e44153..18281f68 100644
 --- a/aui.audio/CMakeLists.txt
 +++ b/aui.audio/CMakeLists.txt
 @@ -5,26 +5,42 @@ add_subdirectory(3rdparty/ogg)
@@ -44,7 +44,8 @@ index 21e44153..088647d6 100644
 +        aui_link(aui.audio PUBLIC pulse)
 +    endif ()
  elseif (AUI_PLATFORM_WIN)
-     aui_link(aui.audio PUBLIC Winmm dsound.lib dxguid.lib)
+-    aui_link(aui.audio PUBLIC Winmm dsound.lib dxguid.lib)
++    aui_link(aui.audio PUBLIC Winmm dsound dxguid)
  endif()
  
 -auib_import(Opus https://github.com/xiph/opus.git VERSION v1.4)
