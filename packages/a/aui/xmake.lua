@@ -235,7 +235,7 @@ package("aui")
         package:add("defines", "GLM_ENABLE_EXPERIMENTAL=1")
     end)
 
-    on_install("windows", "macosx", "linux", "android", "iphoneos", "mingw", "msys", function (package)
+    on_install("windows", "macosx", "linux", "android", "iphoneos", "mingw", function (package)
         local configs = {
             "-DAUI_INSTALL_RUNTIME_DEPENDENCIES=OFF",
             "-DAUIB_NO_PRECOMPILED=TRUE",
@@ -244,16 +244,6 @@ package("aui")
         local opt = {}
         if package:is_plat("linux") then
             opt.packagedeps = {"pulseaudio"}
-        elseif package:is_plat("android") then
-            table.insert(configs, "-DCMAKE_CROSSCOMPILING=OFF")
-            table.insert(configs, "-DAUI_BUILD_FOR=android")
-        elseif package:is_plat("iphoneos") then
-            table.insert(configs, "-DCMAKE_CROSSCOMPILING=OFF")
-            table.insert(configs, "-DAUI_BUILD_FOR=ios")
-            io.replace("CMakeLists.txt", "if (NOT CMAKE_CROSSCOMPILING)", "if (0)", {plain = true})
-            if package:is_arch("arm.*") then
-                io.replace("cmake/aui.build.cmake", [[if (CMAKE_GENERATOR_PLATFORM MATCHES "(arm64)|(ARM64)" OR CMAKE_SYSTEM_PROCESSOR MATCHES "(aarch64|arm64)")]], [[if (1)]], {plain = true})
-            end
         elseif package:is_plat("macosx") then
             if package:config("shared") then
                 opt.packagedeps = {"gtest"}
