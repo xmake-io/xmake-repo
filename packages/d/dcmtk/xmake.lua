@@ -27,7 +27,7 @@ package("dcmtk")
         add_syslinks("ws2_32", "netapi32")
     end
 
-    on_load(function (package)
+    on_load("windows", "macosx", "linux", function (package)
         for config, _ in pairs(configdeps) do
             if package:config(config) then
                 package:add("deps", config)
