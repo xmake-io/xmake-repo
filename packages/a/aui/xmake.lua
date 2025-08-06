@@ -130,7 +130,7 @@ package("aui")
             package:add("deps", "libx11", "dbus", "gtk3", "fontconfig")
         end
         if package:is_plat("windows", "mingw") then
-            component:add("syslinks", "dwmapi", "winmm", "shlwapi", "gdi32", "ole32")
+            component:add("syslinks", "dwmapi", "winmm", "shlwapi", "gdi32", "ole32", "opengl32")
             if package:is_plat("mingw") then
                 component:add("syslinks", "uuid")
             end
