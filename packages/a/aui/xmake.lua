@@ -246,6 +246,9 @@ package("aui")
         elseif package:is_plat("iphoneos") then
             table.insert(configs, "-DCMAKE_CROSSCOMPILING=OFF")
             table.insert(configs, "-DAUI_BUILD_FOR=ios")
+            if package:is_arch("arm.*") then
+                io.replace("cmake/aui.build.cmake", [[if (CMAKE_GENERATOR_PLATFORM MATCHES "(arm64)|(ARM64)" OR CMAKE_SYSTEM_PROCESSOR MATCHES "(aarch64|arm64)")]], [[if (1)]], {plain = true})
+            end
         elseif package:is_plat("macosx") then
             if package:config("shared") then
                 opt.packagedeps = {"gtest"}
