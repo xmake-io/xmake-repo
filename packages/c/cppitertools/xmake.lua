@@ -6,6 +6,7 @@ package("cppitertools")
 
     add_urls("https://github.com/ryanhaining/cppitertools.git")
 
+    add_versions("v2.3", "13947eb68f464cb014343de7a155016290655d1a")
     add_versions("2024.10.19", "5a7f4aa357ed9b0ad59823e3d2acd57217d5beaf")
     add_versions("2023.07.04", "492c15aab96f4ca3938a6b734d6a08cb7feea75a")
 
