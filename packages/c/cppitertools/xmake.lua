@@ -20,7 +20,7 @@ package("cppitertools")
     end)
 
     on_install(function (package)
-        if package:version():gt("2.1") then
+        if package:version() and package:version():gt("2.1") then
             os.cp("cppitertools", package:installdir("include"))
         else
             os.cp("*.hpp", package:installdir("include/cppitertools"))
