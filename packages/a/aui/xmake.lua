@@ -169,73 +169,97 @@ package("aui")
             "API_AUI_VIEWS=AUI_IMPORT",
             "API_AUI_XML=AUI_IMPORT"
         )
-        if package:is_plat("windows", "mingw") then
-            package:add("defines",
-                "AUI_PLATFORM_WIN=1", "AUI_PLATFORM_LINUX=0",
-                "AUI_PLATFORM_APPLE=0", "AUI_PLATFORM_MACOS=0",
-                "AUI_PLATFORM_IOS=0", "AUI_PLATFORM_ANDROID=0",
-                "AUI_PLATFORM_UNIX=0", "AUI_PLATFORM_EMSCRIPTEN=0"
-            )
-        elseif package:is_plat("linux") then
-            package:add("defines",
-                "AUI_PLATFORM_WIN=0", "AUI_PLATFORM_LINUX=1",
-                "AUI_PLATFORM_APPLE=0", "AUI_PLATFORM_MACOS=0",
-                "AUI_PLATFORM_IOS=0", "AUI_PLATFORM_ANDROID=0",
-                "AUI_PLATFORM_UNIX=1", "AUI_PLATFORM_EMSCRIPTEN=0"
-            )
-        elseif package:is_plat("macosx") then
-            package:add("defines",
-                "AUI_PLATFORM_WIN=0", "AUI_PLATFORM_LINUX=0",
-                "AUI_PLATFORM_APPLE=1", "AUI_PLATFORM_MACOS=1",
-                "AUI_PLATFORM_IOS=0", "AUI_PLATFORM_ANDROID=0",
-                "AUI_PLATFORM_UNIX=1", "AUI_PLATFORM_EMSCRIPTEN=0"
-            )
-        elseif package:is_plat("android") then
-            package:add("defines",
-                "AUI_PLATFORM_WIN=0", "AUI_PLATFORM_LINUX=0",
-                "AUI_PLATFORM_APPLE=0", "AUI_PLATFORM_MACOS=0",
-                "AUI_PLATFORM_IOS=0", "AUI_PLATFORM_ANDROID=1",
-                "AUI_PLATFORM_UNIX=1", "AUI_PLATFORM_EMSCRIPTEN=0"
-            )
-        elseif package:is_plat("iphoneos") then
-            package:add("defines",
-                "AUI_PLATFORM_WIN=0", "AUI_PLATFORM_LINUX=0",
-                "AUI_PLATFORM_APPLE=1", "AUI_PLATFORM_MACOS=0",
-                "AUI_PLATFORM_IOS=1", "AUI_PLATFORM_ANDROID=0",
-                "AUI_PLATFORM_UNIX=1", "AUI_PLATFORM_EMSCRIPTEN=0"
-            )
-        elseif package:is_plat("wasm") then
-            package:add("defines",
-                "AUI_PLATFORM_WIN=0", "AUI_PLATFORM_LINUX=0",
-                "AUI_PLATFORM_APPLE=0", "AUI_PLATFORM_MACOS=0",
-                "AUI_PLATFORM_IOS=0", "AUI_PLATFORM_ANDROID=0",
-                "AUI_PLATFORM_UNIX=0", "AUI_PLATFORM_EMSCRIPTEN=1"
-            )
+        ----------------------------------------------------------------
+        -- helper
+        ----------------------------------------------------------------
+        function add_flags(pkg, flags, names)
+            local defs = {}
+            for _, name in ipairs(names) do
+                local val = flags[name] or 0
+                defs[#defs+1] = string.format("%s=%d", name, val)
+            end
+            pkg:add("defines", table.unpack(defs))
         end
-        if package:has_tool("cxx", "clang", "clangxx", "clang++") then
-            package:add("defines", "AUI_COMPILER_CLANG=1", "AUI_COMPILER_GCC=0", "AUI_COMPILER_MSVC=0")
-        elseif package:has_tool("cxx", "gcc", "gxx", "g++") then
-            package:add("defines", "AUI_COMPILER_CLANG=0", "AUI_COMPILER_GCC=1", "AUI_COMPILER_MSVC=0")
-        elseif package:has_tool("cxx", "cl") then
-            package:add("defines", "AUI_COMPILER_CLANG=0", "AUI_COMPILER_GCC=0", "AUI_COMPILER_MSVC=1")
+        ----------------------------------------------------------------
+        -- platform
+        ----------------------------------------------------------------
+        local platform_names = {
+            "AUI_PLATFORM_WIN",
+            "AUI_PLATFORM_LINUX",
+            "AUI_PLATFORM_APPLE",
+            "AUI_PLATFORM_MACOS",
+            "AUI_PLATFORM_IOS",
+            "AUI_PLATFORM_ANDROID",
+            "AUI_PLATFORM_UNIX",
+            "AUI_PLATFORM_EMSCRIPTEN"
+        }
+
+        local platform_map = {
+            windows  = { AUI_PLATFORM_WIN = 1 },
+            linux    = { AUI_PLATFORM_LINUX = 1,    AUI_PLATFORM_UNIX = 1 },
+            macosx   = { AUI_PLATFORM_APPLE = 1,    AUI_PLATFORM_MACOS = 1, AUI_PLATFORM_UNIX = 1 },
+            android  = { AUI_PLATFORM_ANDROID = 1,  AUI_PLATFORM_UNIX = 1 },
+            iphoneos = { AUI_PLATFORM_APPLE = 1,    AUI_PLATFORM_IOS = 1,   AUI_PLATFORM_UNIX = 1 },
+            wasm     = { AUI_PLATFORM_EMSCRIPTEN = 1 },
+        }
+
+        for key, flags in pairs(platform_map) do
+            local plats = (key == "windows") and {"windows", "mingw"} or {key}
+            if package:is_plat(table.unpack(plats)) then
+                add_flags(package, flags, platform_names)
+                break
+            end
         end
+        ----------------------------------------------------------------
+        -- compiler
+        ----------------------------------------------------------------
+        local compiler_names = {
+            "AUI_COMPILER_CLANG",
+            "AUI_COMPILER_GCC",
+            "AUI_COMPILER_MSVC",
+        }
+
+        local compiler_map = {
+            clang = { tools = {"clang", "clangxx", "clang++"}, flags = { AUI_COMPILER_CLANG = 1 } },
+            gcc   = { tools = {"gcc",   "gxx",      "g++"   }, flags = { AUI_COMPILER_GCC   = 1 } },
+            msvc  = { tools = {"cl"                         }, flags = { AUI_COMPILER_MSVC  = 1 } },
+        }
+
+        for _, info in pairs(compiler_map) do
+            if package:has_tool("cxx", table.unpack(info.tools)) then
+                add_flags(package, info.flags, compiler_names)
+                break
+            end
+        end
+        ----------------------------------------------------------------
+        -- architecture
+        ----------------------------------------------------------------
+        local arch_names = {
+            "AUI_ARCH_X86",
+            "AUI_ARCH_X86_64",
+            "AUI_ARCH_ARM_64",
+            "AUI_ARCH_ARM_V7"
+        }
+
+        local ptrsize = package:check_sizeof("void*")
+        local arch_flags
+
         if package:is_arch("arm.*") then
-            if package:check_sizeof("void*") == "4" then
-                package:add("defines", "AUI_ARCH_X86=0", "AUI_ARCH_X86_64=0", "AUI_ARCH_ARM_64=0", "AUI_ARCH_ARM_V7=1")
-            else
-                package:add("defines", "AUI_ARCH_X86=0", "AUI_ARCH_X86_64=0", "AUI_ARCH_ARM_64=1", "AUI_ARCH_ARM_V7=0")
-            end
+            arch_flags = (ptrsize == "4")
+                and {AUI_ARCH_ARM_V7 = 1}
+                or  {AUI_ARCH_ARM_64 = 1}
         else
-            if package:check_sizeof("void*") == "4" then
-                package:add("defines", "AUI_ARCH_X86=1", "AUI_ARCH_X86_64=0", "AUI_ARCH_ARM_64=0", "AUI_ARCH_ARM_V7=0")
-            else
-                package:add("defines", "AUI_ARCH_X86=0", "AUI_ARCH_X86_64=1", "AUI_ARCH_ARM_64=0", "AUI_ARCH_ARM_V7=0")
-            end
+            arch_flags = (ptrsize == "4")
+                and {AUI_ARCH_X86   = 1}
+                or  {AUI_ARCH_X86_64 = 1}
         end
+
+        add_flags(package, arch_flags, arch_names)
+
         package:add("defines", "GLM_ENABLE_EXPERIMENTAL=1")
     end)
 
-    on_install("windows", "macosx", "linux", "android", "iphoneos", "mingw", function (package)
+    on_install("windows", "macosx", "linux", "android", "iphoneos", "mingw", "msys", function (package)
         local configs = {
             "-DAUI_INSTALL_RUNTIME_DEPENDENCIES=OFF",
             "-DAUIB_NO_PRECOMPILED=TRUE",
