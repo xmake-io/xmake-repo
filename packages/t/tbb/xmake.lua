@@ -52,7 +52,7 @@ package("tbb")
         end
     end
 
-    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+    add_configs("shared", {description = "Build shared library.", default = not is_plat("wasm"), type = "boolean", readonly = true})
 
     on_fetch("fetch")
 
