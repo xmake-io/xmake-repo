@@ -18,7 +18,14 @@ package("dxil-spirv")
         add_syslinks("log")
     end
 
-    on_install(function (package)
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk"):config("ndkver")
+            assert(ndk and tonumber(ndk) > 22, "package(dxil-spirv) require ndk version > 22")
+        end)
+    end
+
+    on_install("!wasm", function (package)
         io.replace("third_party/CMakeLists.txt", "add_subdirectory(spirv-headers EXCLUDE_FROM_ALL)", "find_package(SPIRV-Headers REQUIRED)", {plain = true})
         io.replace("third_party/CMakeLists.txt", "target_link_libraries(glslang-spirv-builder PUBLIC dxil-spirv-headers)", "target_link_libraries(glslang-spirv-builder PUBLIC SPIRV-Headers::SPIRV-Headers)", {plain = true})
 
