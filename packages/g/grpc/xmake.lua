@@ -60,6 +60,8 @@ package("grpc")
     end)
 
     on_install("!wasm", function (package)
+        // Fix ucrt
+        io.replace("CMakeLists.txt", "include(cmake/msvc_static_runtime.cmake)", "", {plain = true})
         -- @see https://github.com/grpc/grpc/issues/36654#issuecomment-2228569158
         if package:is_plat("macosx") and package:config("shared") then
             io.replace("CMakeLists.txt", "target_compile_features(upb_textformat_lib PUBLIC cxx_std_14)",
