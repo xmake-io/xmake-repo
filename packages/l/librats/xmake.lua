@@ -8,6 +8,10 @@ package("librats")
 
     add_versions("0.1.5", "6e026e66c8a339f383a15ad1243d48acea601d91e584e146b8472cfc17709946")
 
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32", "iphlpapi", "bcrypt")
     elseif is_plat("linux", "bsd") then
@@ -16,7 +20,15 @@ package("librats")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(librats) require ndk api level > 21")
+        end)
+    end
+
+    on_install("windows|!arm*", "linux", "macosx", "cross", function (package)
         local file = io.open("CMakeLists.txt", "a")
         file:write([[
             include(GNUInstallDirs)
