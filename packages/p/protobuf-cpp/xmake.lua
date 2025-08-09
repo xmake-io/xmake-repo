@@ -170,6 +170,7 @@ package("protobuf-cpp")
         end
 
         local configs = {
+            "-DCMAKE_CXX_STANDARD=" .. package:dep("abseil"):config("cxx_standard"),
             "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
             "-Dprotobuf_BUILD_TESTS=OFF",
             "-Dprotobuf_LOCAL_DEPENDENCIES_ONLY=ON",
@@ -226,6 +227,6 @@ package("protobuf-cpp")
                     google::protobuf::Timestamp ts;
                     google::protobuf::util::TimeUtil::FromString("1972-01-01T10:00:20.021Z", &ts);
                 }
-            ]]}, {configs = {languages = "c++17"}}))
+            ]]}, {configs = {languages =  "cxx" .. package:dep("abseil"):config("cxx_standard")}}))
         end
     end)
