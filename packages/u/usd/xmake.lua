@@ -94,7 +94,11 @@ package("usd")
         table.insert(configs, "-DPXR_BUILD_USDVIEW=" .. (package:config("usdview") and "ON" or "OFF"))
         table.insert(configs, "-DPXR_BUILD_USD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
 
-        import("package.tools.cmake").install(package, configs)
+        local opt = {}
+        if package:is_plat("windows") then
+            opt.cxflags = "-D__TBB_NO_IMPLICIT_LINKAGE"
+        end
+        import("package.tools.cmake").install(package, configs, opt)
         -- If use mv, we need to fix `xxx.cmake` file
         os.cp(package:installdir("lib/*.dll"), package:installdir("bin"))
     end)
