@@ -294,7 +294,6 @@ function _lock_packages(packages)
         "libsolv",
         "libnfc",
         "flashlight",
-        "telegram-bot-api",
         "openvpn3",
         "systemd",
         "libxcrypt",
