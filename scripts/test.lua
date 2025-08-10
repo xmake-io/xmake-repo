@@ -291,7 +291,6 @@ end
 function _lock_packages(packages)
     local locked_packages = {
         "xor_singleheader",
-        "libsolv",
         "libnfc",
         "flashlight",
         "telegram-bot-api",
