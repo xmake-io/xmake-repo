@@ -51,7 +51,7 @@ package("hpx")
     end)
 
     on_install("windows", "linux", "macosx", function (package)
-        local configs = {"-DHPX_WITH_EXAMPLES=OFF", "-DHPX_WITH_TESTS=OFF", "-DHPX_WITH_UNITY_BUILD=OFF"}
+        local configs = {"-DHPX_WITH_EXAMPLES=OFF", "-DHPX_WITH_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DHPX_WITH_MALLOC=" .. package:config("malloc"))
@@ -64,13 +64,10 @@ package("hpx")
         if not package:config("shared") then
             table.insert(configs, "-DHPX_WITH_STATIC_LINKING=ON")
         end
-        if package:config("shared") and package:is_plat("windows") then
-            table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
-        end
         -- On almost all platforms except Linux (x86) and Windows, HPX requires Boost.Context.
         -- https://hpx-docs.stellar-group.org/latest/html/manual/building_hpx.html#most-important-cmake-options
         -- See: https://github.com/STEllAR-GROUP/hpx/issues/4829
-        if is_plat("linux", "windows") and is_arch("x86", "x86_64", "x64") then
+        if package:is_plat("linux", "windows") and package:is_arch("x86", "x86_64", "x64") then
             table.insert(configs, "-DHPX_WITH_GENERIC_CONTEXT_COROUTINES=" .. (package:config("context") and "ON" or "OFF"))
         else
             table.insert(configs, "-DHPX_WITH_GENERIC_CONTEXT_COROUTINES=ON")
@@ -80,75 +77,73 @@ package("hpx")
         package:add("includedirs", "include")
         package:add("linkdirs", "lib")
 
-        if package:config("shared") then
-            -- handle shared lib
-            package:add("links", "hpx", "hpx_iostreams", "hpx_core", "hpx_init")
+        if not package:config("shared") then
+            -- static lib
+            package:add("linkgroups",
+                "hpx_core",
+                "hpx_partitioned_vector",
+                "hpx_unordered",
+                "hpx_component_storage",
+                "hpx_process",
+                "hpx",
+                "hpx_iostreams",
+                {group = true}
+            )
+            cprint("\n${yellow}get links:")
+            print(package:get("links"))
+            cprint("\n${yellow}get linkgroups:")
+            print(package:get("linkgroups"))
         else
-            -- handle static lib
+            -- shared lib
             import("utils.binary.deplibs", {alias = "get_depend_libs"})
             import("core.base.graph")
 
-            -- scan all libs
             local hpx_libs_map = {}
-            local lib_pattern = package:is_plat("windows") and "*.lib" or "*.a"
-            cprint('\n${red}current lib path: %s', path.join(package:installdir(), "lib", lib_pattern))
-            for _, libpath in ipairs(os.files(path.join(package:installdir(), "lib", lib_pattern))) do
-                local basename = path.basename(libpath)
-                local linkname
-                if package:is_plat("windows") then
-                    linkname = basename
-                else
-                    linkname = basename:gsub("lib(.-)", "%1")
-                end
-                cprint('${bright} basename=%s, linkname=%s', basename, linkname)
+            local lib_pattern = package:is_plat("windows") and "hpx*.dll" or "libhpx*.so"
+            cprint('\n${red}Scanning for libraries in: %s', path.join(package:installdir(package:is_plat("windows") and "bin" or "lib"), lib_pattern))
+            for _, libpath in ipairs(os.files(path.join(package:installdir(package:is_plat("windows") and "bin" or "lib"), lib_pattern))) do
+                local linkname = package:is_plat("windows") and path.basename(libpath) or path.basename(libpath):sub(4)
                 hpx_libs_map[linkname] = libpath
+                cprint('${bright}Found library: libpath=%s, linkname=%s', libpath, linkname)
             end
 
-            cprint("\n*************************\n${yellow}Found HPX static libraries:")
-            for name, path in pairs(hpx_libs_map) do
-                cprint("  - ${bright green}" .. name .. "${clear} @ ${blue}" .. path)
-            end
-
-            -- create a DAG
             local dag = graph.new()
-            local cnt = 0
+            local all_hpx_lib_paths = table.values(hpx_libs_map)
             for linkname, libpath in pairs(hpx_libs_map) do
-                -- dag:add_vertex(linkname)
-                cprint("\n\n${bright underline}deps analyzing... %s", libpath)
-                local dependencies = get_depend_libs(libpath, {plat = package:plat(), arch = package:arch()})
-                if (dependencies) then
-                    print(dependencies)
-                else
-                    cprint("${red}\n !!!status!!!: have analyzed %d lib(s)", cnt)
-                    os.raise("error!!!!!!!! found no deps of the current lib")
-                end
-                for _, dep_path in ipairs(dependencies) do
-                    local dep_basename = path.basename(dep_path)
-                    local dep_linkname
-                    if package:is_plat("windows") then
-                        dep_linkname = dep_basename:gsub("%.lib$", "")
-                    else
-                        dep_linkname = dep_basename:gsub("lib(.-)%.a", "%1")
-                    end
-                    if hpx_libs_map[dep_linkname] then
-                        cprint("  ${cyan}%s ${yellow}-> ${green}%s", linkname, dep_linkname)
-                        dag:add_edge(linkname, dep_linkname)
+                cprint("\n${bright underline}Analyzing dependencies for: %s", libpath)
+                local dependencies = get_depend_libs(libpath, {
+                    plat = package:plat(),
+                    arch = package:arch(),
+                    recursive = true,
+                    resolve_path = true,
+                    resolve_hint_paths = all_hpx_lib_paths
+                })
+
+                if dependencies then
+                    for _, dep_path in ipairs(dependencies) do
+                        cprint("  ${red} found dependencies = %s", dep_path)
+                        local dep_basename = package:is_plat("windows") and path.basename(dep_path) or path.basename(dep_path)
+                        local dep_linkname = package:is_plat("windows") and dep_basename or dep_basename:sub(4)
+                        if hpx_libs_map[dep_linkname] then
+                            cprint("  ${cyan}%s ${yellow}-> ${green}%s", linkname, dep_linkname)
+                            dag:add_edge(linkname, dep_linkname)
+                        end
                     end
                 end
             end
 
-            local sorted_links = dag:topological_sort()
-            local cycle = dag:find_cycle()
-            if cycle then
-                wprint("cycle links found", cycle)
+            local sorted_links, has_cycle = dag:topo_sort()
+            if has_cycle then
+                os.raise("Cyclic dependency detected in HPX libraries")
             end
-            
-            for _, link in ipairs(sorted_links) do
-                if link ~= "hpx_init" then
-                    package:add("links", link)
-                end
-            end
-            package:add("links", "hpx_init")
+
+            cprint("\n${yellow}Topo-sorted dependency order (deps first):")
+            print(sorted_links)
+
+            package:add("links", sorted_links)
+
+            cprint("\n${yellow}get links:")
+            print(package:get("links"))
         end
     end)
 
