@@ -13,6 +13,8 @@ package("libusb")
 
     add_resources(">=1.0.26", "libusb-cmake", "https://github.com/libusb/libusb-cmake.git", "8f0b4a38fc3eefa2b26a99dff89e1c12bf37afd4")
 
+    add_patches("v1.0.26", "patches/windows-add-clock-gettime-check.patch", "38cc23fd5a9c2445951dbe6c6f19e677d333f82332ff5be18a4f362637265f0d")
+
     if is_plat("macosx") then
         add_extsources("brew::libusb")
     elseif is_plat("linux") then
@@ -38,6 +40,13 @@ package("libusb")
         add_ldflags("--bind", "-s ASYNCIFY=1")
     end
 
+    on_check("wasm", function (package)
+        if package:version() and package:version():le("1.0.26") then
+            raise("package(libusb <=1.0.26) unsupported platform!")
+        end
+    end)
+
+    -- @see https://github.com/libusb/libusb-cmake/issues/33#issuecomment-3028680966
     on_install("!iphoneos and !bsd", function (package)
         local dir = package:resourcefile("libusb-cmake")
         os.cp(path.join(dir, "CMakeLists.txt"), os.curdir())
