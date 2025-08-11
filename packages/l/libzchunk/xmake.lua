@@ -14,8 +14,8 @@ package("libzchunk")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    add_configs("with_zstd", {description = "Enable compression support.", default = false, type = "boolean"})
-    add_configs("with_openssl", {description = "Use openssl or bundled sha libraries.", default = false, type = "boolean"})
+    add_configs("zstd", {description = "Enable compression support.", default = false, type = "boolean"})
+    add_configs("openssl", {description = "Use openssl or bundled sha libraries.", default = false, type = "boolean"})
 
     add_deps("meson", "ninja")
     if not is_subhost("windows") then
@@ -27,10 +27,10 @@ package("libzchunk")
         if not package:config("shared") then
             package:add("defines", "ZCHUNK_STATIC_LIB")
         end
-        if package:config("with_zstd") then
+        if package:config("zstd") then
             package:add("deps", "zstd")
         end
-        if package:config("with_openssl") then
+        if package:config("openssl") then
             package:add("deps", "openssl3")
         end
     end)
@@ -43,31 +43,15 @@ package("libzchunk")
             '-Dwith-curl=disabled'
         }
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-        table.insert(configs, "-Dwith-zstd=" .. (package:config("with_zstd") and "enabled" or "disabled"))
-        table.insert(configs, "-Dwith-openssl=" .. (package:config("with_openssl") and "enabled" or "disabled"))
+        table.insert(configs, "-Dwith-zstd=" .. (package:config("zstd") and "enabled" or "disabled"))
+        table.insert(configs, "-Dwith-openssl=" .. (package:config("openssl") and "enabled" or "disabled"))
 
         io.replace("meson.build", "subdir('src')", "subdir('src/lib')", {plain = true})
         io.replace("meson.build", "not argplib.found()", "false", {plain = true})
-        if is_plat("windows") then
-            -- fix dll name & fix install dir
-            io.replace("src/lib/meson.build", "soversion: so_version,", "install_dir: get_option('libdir'),", {plain = true})
-            io.replace("src/lib/meson.build", "version: meson.project_version(),", "", {plain = true})
-            -- fix lib name
-            io.replace("src/lib/meson.build", "lib_suffix = 'lib'", "", {plain = true})
-        end
 
         import("package.tools.meson").install(package, configs)
-        if is_plat("windows") and not package:config("shared") then
-            -- fix lib name
-            os.cd(package:installdir("lib"))
-            os.trymv("libzck.a", "zck.lib")
-        end
     end)
 
     on_test(function (package)
-        assert(package:check_csnippets({test = [[
-            void test() {
-                zck_create();
-            }
-        ]]}, {configs = {languages = "c99"}, includes = "zck.h"}))
+        assert(package:has_cfuncs("zck_create", {configs = {languages = "c99"}, includes = "zck.h"}))
     end)
