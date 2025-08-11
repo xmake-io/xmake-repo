@@ -8,8 +8,8 @@ package("openvpn3")
     add_versions("tarball:3.11.3", "4a5d18059d6270bd103e290ed4e3bc773e838bc3b22c861408190869fd43074e")
     add_versions("git:3.11.3", "release/3.11.3")
 
-    add_configs("use_mbedtls", {description = "Use mbed TLS instead of OpenSSL.", default = false, type = "boolean"})
-    add_configs("use_lzo", {description = "Enable LZO compression.", default = false, type = "boolean"})
+    add_configs("mbedtls", {description = "Use mbed TLS instead of OpenSSL.", default = false, type = "boolean"})
+    add_configs("lzo", {description = "Enable LZO compression.", default = false, type = "boolean"})
 
     add_deps("cmake")
     if not is_subhost("windows") then
@@ -25,25 +25,26 @@ package("openvpn3")
         add_defines("_WIN32_WINNT=0x0600", "TAP_WIN_COMPONENT_ID=tap0901", "_CRT_SECURE_NO_WARNINGS", "ASIO_DISABLE_LOCAL_SOCKETS")
         add_syslinks("fwpuclnt", "iphlpapi", "wininet", "setupapi", "rpcrt4", "wtsapi32", "advapi32", "ole32", "shell32", "ws2_32", "wsock32")
     end
-    if is_plat("macosx") then
-        add_frameworks("CoreFoundation", "IOKit", "CoreServices", "SystemConfiguration")
-    end
+
     if is_plat("linux") then
         add_deps("libcap")
     end
-    if is_plat("linux", "bsd") then
+
+    if is_plat("macosx") then
+        add_frameworks("CoreFoundation", "IOKit", "CoreServices", "SystemConfiguration")
+    elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
 
     on_load(function (package)
-        if package:config("use_mbedtls") then
+        if package:config("mbedtls") then
             package:add("deps", "mbedtls")
             package:add("defines", "USE_MBEDTLS")
         else
             package:add("deps", "openssl3")
             package:add("defines", "USE_OPENSSL")
         end
-        if package:config("use_lzo") then
+        if package:config("lzo") then
             package:add("deps", "lzo")
             package:add("defines", "HAVE_LZO")
         end
