@@ -134,9 +134,5 @@ package("libnfc")
     end)
 
     on_test(function (package)
-        assert(package:check_csnippets({test = [[
-            void test() {
-                nfc_version();
-            }
-        ]]}, {configs = {languages = "c99"}, includes = "nfc/nfc.h"}))
+        assert(package:has_cfuncs("nfc_version", {configs = {languages = "c99"}, includes = "nfc/nfc.h"}))
     end)
