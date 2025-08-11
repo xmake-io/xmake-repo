@@ -10,6 +10,10 @@ package("telegram-bot-api")
         ["9.1"] = "1.8.51"
     }
 
+    on_load(function (package)
+        package:add("deps", "td " .. tdlib_versions[package:version_str()])
+    end)
+    
     on_install(function (package)
         io.replace("telegram-bot-api/ClientManager.cpp", [[#include "memprof/memprof.h"]], "", {plain = true})
         io.replace("telegram-bot-api/ClientManager.cpp", "if (is_memprof_on()) {", "#if 0", {plain = true})
