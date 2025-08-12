@@ -34,6 +34,10 @@ package("libpq")
             table.insert(configs, "--buildtype=debug")
         end
 
+        if package:is_plat("bsd") then
+            table.insert(configs, "-Dreadline=disabled")
+        end
+
         import("package.tools.meson").install(package)
     end)
 
