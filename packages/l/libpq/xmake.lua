@@ -20,10 +20,6 @@ package("libpq")
             package:add("deps", "flex")
         end
 
-        if package:is_plat("linux", "macosx") then
-            package:add("deps", "krb5")
-        end
-
         if package:is_plat("bsd") then
             package:add("deps", "readline")
         end
