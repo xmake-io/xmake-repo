@@ -12,15 +12,15 @@ package("libpq")
     
 
     on_load("!cross and !iphoneos and !android and !wasm", function (package)
-        if is_plat("android", "mingw", "macosx", "windows") then
+        if package:is_plat("android", "mingw", "macosx", "windows") then
             package:add("deps", "libintl")
         end
 
-        if is_plat("macosx", "linux", "bsd", "windows", "@msys") and is_arch("i386") ~= false then
+        if package:is_plat("macosx", "linux", "bsd", "windows", "@msys") and package:is_arch("i386") ~= false then
             package:add("deps", "flex")
         end
 
-        if is_plat("linux", "macosx") then
+        if package:is_plat("linux", "macosx") then
             package:add("krb5")
         end
     end)
