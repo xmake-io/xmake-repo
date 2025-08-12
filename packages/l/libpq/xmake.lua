@@ -16,7 +16,7 @@ package("libpq")
             package:add("deps", "libintl")
         end
 
-        if is_plat("mingw") ~= false or is_arch("i386") ~= false then
+        if is_plat("macosx", "linux", "bsd", "windows", "@msys") and is_arch("i386") ~= false then
             package:add("deps", "flex")
         end
 
