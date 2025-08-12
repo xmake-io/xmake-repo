@@ -21,7 +21,7 @@ package("libpq")
         end
 
         if is_plat("linux", "macosx") then
-            add_deps("krb5")
+            package:add("krb5")
         end
     end)
 
