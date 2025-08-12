@@ -8,7 +8,7 @@ package("libpq")
     end})
     add_versions("17.5", "476e0522af981352177c12a05295b08d2f49b35c667aecb5bae1af4807999467")
 
-    add_deps("openssl", "zlib")
+    add_deps("meson", "ninja", "openssl", "zlib")
     if is_plat("linux") then
         add_deps("flex", "bison", "krb5")
     end
