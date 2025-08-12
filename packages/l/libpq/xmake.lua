@@ -9,9 +9,7 @@ package("libpq")
     add_versions("17.5", "476e0522af981352177c12a05295b08d2f49b35c667aecb5bae1af4807999467")
 
     add_deps("meson", "ninja", "openssl", "zlib", "bison")
-    if is_plat("linux", "bsd") then
-        add_deps("krb5")
-    end
+    
 
     on_load("!cross and !iphoneos and !android and !wasm", function (package)
         if is_plat("android", "mingw", "macosx", "windows") then
@@ -20,6 +18,10 @@ package("libpq")
 
         if is_plat("mingw") ~= false or is_arch("i386") ~= false then
             package:add("deps", "flex")
+        end
+
+        if is_plat("linux", "macosx") then
+            add_deps("krb5")
         end
     end)
 
