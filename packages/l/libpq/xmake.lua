@@ -11,8 +11,8 @@ package("libpq")
     add_deps("meson", "ninja", "openssl", "zlib", "bison")
     
 
-    on_load("!cross and !iphoneos and !android and !wasm", function (package)
-        if package:is_plat("android", "mingw", "macosx", "windows") then
+    on_load("(windows or macosx or linux or bsd) and !arm64", function (package)
+        if package:is_plat("mingw", "macosx", "windows") then
             package:add("deps", "libintl")
         end
 
@@ -25,7 +25,7 @@ package("libpq")
         end
     end)
 
-    on_install("!cross and !iphoneos and !android and !wasm", function (package)
+    on_install("(windows or macosx or linux or bsd) and !arm64", function (package)
         local configs = {"-Dssl=openssl", "-Dzlib=enabled"}
 
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
