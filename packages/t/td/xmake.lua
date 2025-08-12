@@ -14,23 +14,33 @@ package("td")
 
     add_deps("cmake")
     add_deps("openssl3", "zlib", "gperf")
-    if is_plat("linux", "bsd") then
-        add_syslinks("pthread", "dl")
-    end
-    if is_plat("android") then
-        add_syslinks("dl", "log")
-    end
 
-    if is_plat("windows", "mingw", "msys", "cygwin") then
-        add_syslinks("ws2_32", "mswsock", "crypt32", "normaliz", "psapi")
-    end
+    on_check("mingw", function (package)
+        -- @see https://github.com/xmake-io/xmake-repo/pull/7855#issuecomment-3176844746
+        if is_subhost("msys") then
+            local msystem = os.getenv("MSYSTEM")
+            if msystem and msystem == "MINGW32" then
+                raise("package(td): MINGW32 under MSYS will not be able to compile this package due to insufficient memory.")
+            end
+        end
+    end)
+
     on_load(function(package)
+        if package:is_plat("linux", "bsd") then
+            package:add("syslinks", "pthread", "dl")
+        elseif package:is_plat("android") then
+            package:add("syslinks", "dl", "log")
+        elseif package:is_plat("windows", "mingw", "msys", "cygwin") then
+            package:add("syslinks", "ws2_32", "mswsock", "crypt32", "normaliz", "psapi")
+        end
+
+        if package:is_cross() then
+            package:add("deps", "tdtl " .. package:version_str())
+        end
+
         package:add("links", "tdjson", "tdjson_static", "tdjson_private", "tdclient", "tdcore", "tdcore_part1", "tdcore_part2", "tdmtproto", "tdapi", "tddb", "tdsqlite", "tdnet", "tdactor", "tde2e", "tdutils")
         if not package:config("shared") then
             package:add("defines", "TDJSON_STATIC_DEFINE")
-        end
-        if package:is_cross() then
-            package:add("deps", "tdtl " .. package:version_str())
         end
     end)
 
