@@ -17,7 +17,8 @@ package("libpq")
         if is_plat("android", "mingw", "macosx", "windows") then
             package:add("deps", "libintl")
         end
-        if is_plat("mingw") ~= false then
+
+        if is_plat("mingw") ~= false or is_arch("i386") ~= false then
             package:add("deps", "flex")
         end
     end)
