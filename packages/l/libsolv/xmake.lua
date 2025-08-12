@@ -16,6 +16,8 @@ package("libsolv")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
+    add_configs("tools", {description = "Build tools.", default = false, type = "boolean"}) 
+
      -- needs rpm, rpmdb, rpmio, rpmmisc, db
     add_configs("rpmdb",             {description = "Build with rpm database support.", default = false, type = "boolean"})
     add_configs("rpmdb_librpm",      {description = "Use librpm to access the rpm database.", default = false, type = "boolean"})
@@ -152,7 +154,9 @@ package("libsolv")
             end
         end
 
-        io.replace("CMakeLists.txt", "ADD_SUBDIRECTORY (tools)", "", {plain = true})
+        if not package:config("tools") then
+            io.replace("CMakeLists.txt", "ADD_SUBDIRECTORY (tools)", "", {plain = true})
+        end
         io.replace("CMakeLists.txt", "ADD_SUBDIRECTORY (examples)", "", {plain = true})
         io.replace("CMakeLists.txt", "ADD_SUBDIRECTORY (doc)", "", {plain = true})
         io.replace("ext/CMakeLists.txt", "repo_testcase.c", "", {plain = true})
