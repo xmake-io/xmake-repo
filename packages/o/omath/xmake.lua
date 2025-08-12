@@ -7,6 +7,7 @@ package("omath")
              "https://github.com/orange-cpp/omath.git", {submodules = false})
 
     add_versions("v3.0.3", "f72ec671eb99d83bf6d63ec5eee7436110a9f340b416eefac51464665bbda06c")
+    add_versions("v3.2.0", "ecc474076df4c4435ab3aabe608b7c9e57c00d25dfdda8ff75197e49cba7f1bf")
 
     add_configs("avx2",  {description = "Enable AVX2", default = true, type = "boolean"})
     add_configs("imgui", {description = "Define method to convert omath types to imgui types", default = true, type = "boolean"})
