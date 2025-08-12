@@ -32,7 +32,7 @@ package("libjpeg-turbo")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "android", "mingw", function (package)
+    on_install("windows", "linux", "macosx", "bsd", "android", "mingw", function (package)
         io.replace("sharedlib/CMakeLists.txt", "string(REGEX REPLACE \"/MT\" \"/MD\"", "#", {plain = true})
         io.replace("sharedlib/CMakeLists.txt", "set(CMAKE_MSVC_RUNTIME_LIBRARY", "#", {plain = true})
         io.replace("sharedlib/CMakeLists.txt", "/NODEFAULTLIB:LIBCMT /NODEFAULTLIB:LIBCMTD", "", {plain = true})
