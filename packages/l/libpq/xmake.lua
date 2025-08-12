@@ -36,6 +36,7 @@ package("libpq")
 
         if package:is_plat("bsd") then
             table.insert(configs, "-Dreadline=disabled")
+            table.insert(configs, "-Dlibedit_preferred=true")
         end
 
         import("package.tools.meson").install(package)
