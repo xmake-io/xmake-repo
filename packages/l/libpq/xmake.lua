@@ -13,13 +13,13 @@ package("libpq")
         add_deps("krb5")
     end
 
-    on_load(function (package)
+    on_load("!cross and !iphoneos and !android and !wasm", function (package)
         if is_plat("android", "mingw", "macosx", "windows") then
             package:add("deps", "libintl")
         end
     end)
 
-    on_install("!cross and !iphoneos and !android", function (package)
+    on_install("!cross and !iphoneos and !android and !wasm", function (package)
         local configs = {"-Dssl=openssl", "-Dzlib=enabled"}
 
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
