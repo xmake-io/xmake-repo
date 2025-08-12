@@ -48,12 +48,11 @@ package("libsolv")
     add_configs("zstd_compression",   {description = "Build with zstd compression support.", default = false, type = "boolean"})
     add_configs("zchunk_compression", {description = "Build with zchunk compression support.", default = false, type = "boolean"})
 
-    add_configs("with_system_zchunk", {description = "Use system zchunk library.", default = false, type = "boolean"})
-    add_configs("with_libxml2",       {description = "Build with libxml2 instead of libexpat.", default = false, type = "boolean"})
+    add_configs("libxml2", {description = "Build with libxml2 instead of libexpat.", default = false, type = "boolean"})
     if not is_plat("windows", "mingw", "msys", "cygwin") then
-        add_configs("without_cookieopen", {description = "Disable the use of stdio cookie opens.", default = false, type = "boolean"})
+        add_configs("cookieopen", {description = "Enable the use of stdio cookie opens.", default = true, type = "boolean"})
     else
-        add_configs("without_cookieopen", {description = "Disable the use of stdio cookie opens.", default = true, type = "boolean", readonly = true})
+        add_configs("cookieopen", {description = "Enable the use of stdio cookie opens.", default = false, type = "boolean", readonly = true})
     end
 
     add_configs("FEDORA",    {description = "Building for Fedora.", default = false, type = "boolean"})
@@ -103,9 +102,6 @@ package("libsolv")
         if package:config("rpmmd") or package:config("suserepo") or package:config("appdata") or package:config("comps") or package:config("helixrepo") or mdkrepo_enabled then
             libxml2_or_expat_enabled = true
         end
-        if package:config("with_system_zchunk") then
-            package:config_set("zchunk_compression", true)
-        end
 
         package:add("deps", "zlib")
         if package:config("lzma_compression") then
@@ -118,10 +114,10 @@ package("libsolv")
             package:add("deps", "zstd")
         end
         if package:config("zchunk_compression") then
-            package:add("deps", "zchunk", {system = package:config("with_system_zchunk")})
+            package:add("deps", "zchunk")
         end
         if libxml2_or_expat_enabled then
-            if package:config("with_libxml2") then
+            if package:config("libxml2") then
                 package:add("deps", "libxml2")
             else
                 package:add("deps", "expat")
@@ -138,11 +134,10 @@ package("libsolv")
             "rpmdb", "rpmdb_librpm", "rpmdb_bdb", "rpmdb_byrpmheader", "rpmpkg", "rpmpkg_librpm", "pubkey", "rpmmd", "rpm5",
             "suserepo", "comps", "helixrepo", "debian", "mdkrepo", "archrepo", "apk", "cudfrepo",
             "haiku", "conda", "appdata", "multi_semantics",
-            "lzma_compression", "bzip2_compression", "zstd_compression", "zchunk_compression",
-            "with_system_zchunk", "with_libxml2", "without_cookieopen"
+            "lzma_compression", "bzip2_compression", "zstd_compression", "zchunk_compression"
         }
         local no_prefix_options = {
-            "multi_semantics", "with_system_zchunk", "with_libxml2", "without_cookieopen", "rpm5"
+            "multi_semantics", "rpm5"
         }
         for _, option in ipairs(options) do
             if package:config(option) then
@@ -154,6 +149,12 @@ package("libsolv")
             end
         end
 
+        table.insert(configs, "-DWITHOUT_COOKIEOPEN=" .. (package:config("cookieopen") and "OFF" or "ON"))
+        table.insert(configs, "-DWITH_LIBXML2=" .. (package:config("libxml2") and "ON" or "OFF"))
+        if package:config("zchunk_compression") then
+            table.insert(configs, "-DWITH_SYSTEM_ZCHUNK=ON")
+        end
+
         if not package:config("tools") then
             io.replace("CMakeLists.txt", "ADD_SUBDIRECTORY (tools)", "", {plain = true})
         end
@@ -163,7 +164,7 @@ package("libsolv")
         io.replace("ext/CMakeLists.txt", "testcase.c", "", {plain = true})
         io.replace("ext/CMakeLists.txt", "testcase.h", "", {plain = true})
 
-        if not package:config("without_cookieopen") then
+        if package:config("cookieopen") then
             -- @see https://developer.android.com/ndk/guides/common-problems
             -- funopen() is sometimes not available when API < 24.
             if package:is_plat("android") and package:is_arch("armeabi-v7a") then
