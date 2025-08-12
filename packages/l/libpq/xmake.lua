@@ -13,7 +13,7 @@ package("libpq")
         add_deps("flex", "bison", "krb5")
     end
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         local configs = {"-Dssl=openssl", "-Dzlib=enabled"}
 
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
