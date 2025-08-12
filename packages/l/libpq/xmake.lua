@@ -23,6 +23,10 @@ package("libpq")
         if package:is_plat("linux", "macosx") then
             package:add("krb5")
         end
+
+        if package:is_plat("bsd") then
+            package:add("readline")
+        end
     end)
 
     on_install("windows|!arm64 or macosx|!arm64 or linux|!arm64 or bsd|!arm64", function (package)
