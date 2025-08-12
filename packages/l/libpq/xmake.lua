@@ -21,7 +21,7 @@ package("libpq")
         end
 
         if package:is_plat("bsd") then
-            package:add("deps", "readline", "libedit")
+            package:add("deps", "libedit")
         end
     end)
 
@@ -39,7 +39,7 @@ package("libpq")
             table.insert(configs, "-Dlibedit_preferred=true")
         end
 
-        import("package.tools.meson").install(package)
+        import("package.tools.meson").install(package, configs)
     end)
 
     on_test(function (package)
