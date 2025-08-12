@@ -21,11 +21,11 @@ package("libpq")
         end
 
         if package:is_plat("linux", "macosx") then
-            package:add("krb5")
+            package:add("deps", "krb5")
         end
 
         if package:is_plat("bsd") then
-            package:add("readline")
+            package:add("deps", "readline")
         end
     end)
 
