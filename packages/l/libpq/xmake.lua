@@ -21,7 +21,7 @@ package("libpq")
         end
 
         if package:is_plat("bsd") then
-            package:add("deps", "readline")
+            package:add("deps", "readline", "libedit")
         end
     end)
 
