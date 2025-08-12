@@ -42,7 +42,7 @@ package("librdkafka")
         end
     end)
 
-    on_install(function (package)
+    on_install("!wasm and !bsd", function (package)
         local configs = {
             "-DRDKAFKA_BUILD_EXAMPLES=OFF",
             "-DRDKAFKA_BUILD_TESTS=OFF",
