@@ -8,7 +8,7 @@ package("libpq")
     end})
     add_versions("17.5", "476e0522af981352177c12a05295b08d2f49b35c667aecb5bae1af4807999467")
 
-    add_deps("meson", "ninja", "openssl", "zlib", "flex", "bison")
+    add_deps("meson", "ninja", "openssl", "zlib", "flex", "bison", "libintl")
     if is_plat("linux", "bsd") then
         add_deps("krb5")
     end
