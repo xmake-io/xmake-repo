@@ -290,11 +290,8 @@ end
 -- @see https://github.com/xmake-io/xmake-repo/issues/6940
 function _lock_packages(packages)
     local locked_packages = {
-        "xor_singleheader",
-        "libsolv",
         "flashlight",
         "telegram-bot-api",
-        "openvpn3",
         "systemd",
         "libxcrypt",
         "libselinux",
