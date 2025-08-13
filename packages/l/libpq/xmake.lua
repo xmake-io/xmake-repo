@@ -10,7 +10,6 @@ package("libpq")
 
     add_deps("meson", "ninja", "openssl", "zlib", "bison")
     
-
     on_load("windows|!arm64 or macosx|!arm64 or linux|!arm64 or bsd|!arm64", function (package)
         if package:is_plat("mingw", "macosx", "windows") then
             package:add("deps", "libintl")
@@ -23,16 +22,16 @@ package("libpq")
         if package:is_plat("bsd") then
             package:add("deps", "libedit")
         end
+
+        if package:is_plat("windows", "mingw") then
+            package:add("crypt32")
+        end
     end)
 
     on_install("windows|!arm64 or macosx|!arm64 or linux|!arm64 or bsd|!arm64", function (package)
         local configs = {"-Dssl=openssl", "-Dzlib=enabled"}
 
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-
-        if package:debug() then
-            table.insert(configs, "--buildtype=debug")
-        end
 
         if package:is_plat("bsd") then
             table.insert(configs, "-Dreadline=disabled")
