@@ -11,11 +11,11 @@ package("libpq")
     add_deps("pkgconf", "meson", "ninja", "openssl", "zlib", "bison")
     
     on_load("windows|!arm64 or macosx|!arm64 or linux|!arm64 or bsd|!arm64", function (package)
-        if package:is_plat("mingw", "macosx", "windows") then
+        if package:is_plat("macosx", "windows") then
             package:add("deps", "libintl")
         end
 
-        if package:is_plat("macosx", "linux", "bsd", "windows", "@msys") and package:is_arch("i386") ~= false then
+        if package:is_plat("macosx", "linux", "bsd", "windows") and package:is_arch("i386") ~= false then
             package:add("deps", "flex")
         end
 
