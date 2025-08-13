@@ -8,7 +8,7 @@ package("libpq")
     end})
     add_versions("17.5", "476e0522af981352177c12a05295b08d2f49b35c667aecb5bae1af4807999467")
 
-    add_deps("meson", "ninja", "openssl", "zlib", "bison")
+    add_deps("pkgconf", "meson" "ninja", "openssl", "zlib", "bison")
     
     on_load("windows|!arm64 or macosx|!arm64 or linux|!arm64 or bsd|!arm64", function (package)
         if package:is_plat("mingw", "macosx", "windows") then
@@ -21,10 +21,6 @@ package("libpq")
 
         if package:is_plat("bsd") then
             package:add("deps", "libedit")
-        end
-
-        if package:is_plat("windows", "mingw") then
-           package:add("syslinks", "ws2_32", "user32", "crypt32", "advapi32")
         end
     end)
 
