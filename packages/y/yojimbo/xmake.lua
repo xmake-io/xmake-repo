@@ -19,9 +19,7 @@ package("yojimbo")
         end
     end
 
-    on_install(function (package)
-        import("package.tools.xmake")
-
+    on_install("!wasn and !bsd",function (package)
         io.writefile("xmake.lua", [[
         add_rules("mode.release", "mode.debug")
 
@@ -44,8 +42,7 @@ package("yojimbo")
             add_headerfiles("include/**.h", "tlsf/**.h", "netcode/**.h", "reliable/**.h", "serialize/**.h")
             add_packages("libsodium")
         ]])
-
-        xmake.install(package)
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
