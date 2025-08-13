@@ -12,6 +12,8 @@ package("glgpuselect")
     add_configs("asserts", {description = "Enable asserts", default = false, type = "boolean"})
     add_configs("logging", {description = "Enable logging", default = false, type = "boolean"})
 
+    add_deps("concerto-core")
+
     on_load(function (package)
         if package:config("profiling") then
             package:add("deps", "tracy")
