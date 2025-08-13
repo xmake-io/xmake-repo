@@ -56,6 +56,9 @@ package("wxwidgets")
         add_resources("3.2.4", "headers",
             "https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.4/wxWidgets-3.2.4-headers.7z",
             "b8c4fd1a62c104c65089a088670d80e827b3893b7425c1cab8d7e49879797326")
+        add_resources("3.3.1", "headers",
+            "https://github.com/wxWidgets/wxWidgets/releases/download/v3.3.1/wxWidgets-3.3.1-headers.7z",
+            "2c9eecb179a24c2eeeb55b4a09d869bf4019b3e124a8c8c6de5d8e82a0aa3e91")            
 
         add_configs("shared",     {description = "Build shared library.", default = true, type = "boolean", readonly = true})
         add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MD", readonly = true})
