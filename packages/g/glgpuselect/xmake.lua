@@ -12,7 +12,7 @@ package("glgpuselect")
     add_configs("asserts", {description = "Enable asserts", default = false, type = "boolean"})
     add_configs("logging", {description = "Enable logging", default = false, type = "boolean"})
 
-    on_load("windows", function (package)
+    on_load(function (package)
         if package:config("profiling") then
             package:add("deps", "tracy")
         end
