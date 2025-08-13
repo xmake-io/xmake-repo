@@ -258,6 +258,7 @@ package("go")
         os.cp("pkg", package:installdir())
         os.cp("misc", package:installdir())
         os.cp("src", package:installdir())
+        os.trycp("VERSION", package:installdir())
     end)
 
     on_test(function (package)
