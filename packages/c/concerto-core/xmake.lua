@@ -13,7 +13,7 @@ package("concerto-core")
 
 
     on_check("macosx", function (package)
-        assert(macos.version():le("13"), "concerto-core requires version > 13 for macOS")
+        assert(macos.version():gt("13"), "concerto-core requires version > 13 for macOS")
     end)
 
     on_check("android", function (package)
