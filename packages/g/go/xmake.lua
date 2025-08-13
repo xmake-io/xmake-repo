@@ -34,6 +34,7 @@ package("go")
             add_versions("1.24.4", "b751a1136cb9d8a2e7ebb22c538c4f02c09b98138c7c8bfb78a54a4566c013b1")
             add_versions("1.24.5", "658f432689106d4e0a401a2ebb522b1213f497bc8357142fe8def18d79f02957")
             add_versions("1.24.6", "4fbc8af2cfca9e5059019b5150a426eb78e1e57718bf08f0e52b1c942a2782bf")
+            add_versions("1.25.0", "89efb4f9b30812eee083cc1770fdd2913c14d301064f6454851428f9707d190b")
         elseif os.arch() == "arm64" then
             set_urls("https://go.dev/dl/go$(version).windows-arm64.zip")
             add_versions("1.22.6", "7cf55f357ba8116cd3bff992980e20a704ba451b3dab341cf1787b133d900512")
@@ -63,6 +64,7 @@ package("go")
             add_versions("1.24.4", "d17da51bc85bd010754a4063215d15d2c033cc289d67ca9201a03c9041b2969d")
             add_versions("1.24.5", "cd2955c4e3166a0cef4b76830025e4cc6e9ecccff32c02979a63f534d83c2e66")
             add_versions("1.24.6", "45c41b237d00e92e4cf8adce11b4c5258048b47a92bfbb1f4ef3b928d6fcb0b2")
+            add_versions("1.25.0", "27bab004c72b3d7bd05a69b6ec0fc54a309b4b78cc569dd963d8b3ec28bfdb8c")
         elseif os.arch() == "x86" then
             set_urls("https://go.dev/dl/go$(version).windows-386.zip")
             add_versions("1.22.6", "eb734bacc9aabca1273b61dd392bb84a9bb33783f5e2fff2cd6ab9885bbefbe6")
@@ -92,6 +94,7 @@ package("go")
             add_versions("1.24.4", "d454d3cb144432f1726bf00e28c6017e78ccb256a8d01b8e3fb1b2e6b5650f28")
             add_versions("1.24.5", "f1eba3975419b0b693bb24064f8bd775ec0b7f3755413fb64d133b48f517279e")
             add_versions("1.24.6", "39b4d31b933d2f7c8913e70fb0fffef27252e441c386eac5c13632cbb28dfb6e")
+            add_versions("1.25.0", "df9f39db82a803af0db639e3613a36681ab7a42866b1384b3f3a1045663961a7")
         end
     elseif is_host("linux") then
         if os.arch() == "x86_64" then
@@ -123,6 +126,7 @@ package("go")
             add_versions("1.24.4", "77e5da33bb72aeaef1ba4418b6fe511bc4d041873cbf82e5aa6318740df98717")
             add_versions("1.24.5", "10ad9e86233e74c0f6590fe5426895de6bf388964210eac34a6d83f38918ecdc")
             add_versions("1.24.6", "bbca37cc395c974ffa4893ee35819ad23ebb27426df87af92e93a9ec66ef8712")
+            add_versions("1.25.0", "2852af0cb20a13139b3448992e69b868e50ed0f8a1e5940ee1de9e19a123b613")
         elseif os.arch() == "i386" then
             set_urls("https://go.dev/dl/go$(version).linux-386.tar.gz")
             add_versions("1.22.6", "9e680027b058beab10ce5938607660964b6d2c564bf50bdb01aa090dc5beda98")
@@ -152,6 +156,7 @@ package("go")
             add_versions("1.24.4", "130c9b061082eca15513e595e9952a2ded32e737e609dd0e49f7dfa74eba026d")
             add_versions("1.24.5", "ddcd926755a9e1aa66baf16c42cf705fc00defa4bdf3225f1676b7672c9a46fa")
             add_versions("1.24.6", "bb5bf69d75e7edbc93339824753a1a4655a928451a2c5e13ff90959ad69e065b")
+            add_versions("1.25.0", "8c602dd9d99bc9453b3995d20ce4baf382cc50855900a0ece5de9929df4a993a")
         elseif os.arch() == "arm64" then
             set_urls("https://go.dev/dl/go$(version).linux-arm64.tar.gz")
             add_versions("1.22.6", "c15fa895341b8eaf7f219fada25c36a610eb042985dc1a912410c1c90098eaf2")
@@ -181,6 +186,7 @@ package("go")
             add_versions("1.24.4", "d5501ee5aca0f258d5fe9bfaed401958445014495dc115f202d43d5210b45241")
             add_versions("1.24.5", "0df02e6aeb3d3c06c95ff201d575907c736d6c62cfa4b6934c11203f1d600ffa")
             add_versions("1.24.6", "124ea6033a8bf98aa9fbab53e58d134905262d45a022af3a90b73320f3c3afd5")
+            add_versions("1.25.0", "05de75d6994a2783699815ee553bd5a9327d8b79991de36e38b66862782f54ae")
         end
     elseif is_host("macosx") then
         if os.arch() == "x86_64" then
@@ -212,6 +218,7 @@ package("go")
             add_versions("1.24.4", "69bef555e114b4a2252452b6e7049afc31fbdf2d39790b669165e89525cd3f5c")
             add_versions("1.24.5", "2fe5f3866b8fbcd20625d531f81019e574376b8a840b0a096d8a2180308b1672")
             add_versions("1.24.6", "4a8d7a32052f223e71faab424a69430455b27b3fff5f4e651f9d97c3e51a8746")
+            add_versions("1.25.0", "5bd60e823037062c2307c71e8111809865116714d6f6b410597cf5075dfd80ef")
         elseif os.arch() == "arm64" then
             set_urls("https://go.dev/dl/go$(version).darwin-arm64.tar.gz")
             add_versions("1.22.6", "ebac39fd44fc22feed1bb519af431c84c55776e39b30f4fd62930da9c0cfd1e3")
@@ -241,6 +248,7 @@ package("go")
             add_versions("1.24.4", "27973684b515eaf461065054e6b572d9390c05e69ba4a423076c160165336470")
             add_versions("1.24.5", "92d30a678f306c327c544758f2d2fa5515aa60abe9dba4ca35fbf9b8bfc53212")
             add_versions("1.24.6", "4e29202c49573b953be7cc3500e1f8d9e66ddd12faa8cf0939a4951411e09a2a")
+            add_versions("1.25.0", "544932844156d8172f7a28f77f2ac9c15a23046698b6243f633b0a0b00c0749c")
         end
     end
 
