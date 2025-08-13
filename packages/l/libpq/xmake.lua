@@ -24,7 +24,7 @@ package("libpq")
         end
 
         if package:is_plat("windows", "mingw") then
-            package:add("crypt32")
+           package:add("syslinks", "ws2_32", "user32", "crypt32", "advapi32")
         end
     end)
 
