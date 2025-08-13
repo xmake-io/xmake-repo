@@ -11,6 +11,12 @@ package("concerto-core")
     add_configs("asserts", {description = "Enable asserts.", default = false, type = "boolean"})
     add_configs("enet", {description = "Enable ENet support.", default = false, type = "boolean"})
 
+
+    on_check("android", function (package)
+        local ndk = package:toolchain("ndk"):config("ndkver")
+        assert(ndk and tonumber(ndk) >= 27, "concerto-core require ndk version >= 27")
+    end)
+
     on_load(function (package)
         if package:config("enet") then
             package:add("deps", "enet")
