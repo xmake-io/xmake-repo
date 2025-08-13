@@ -10,7 +10,7 @@ package("libpq")
 
     add_deps("pkgconf", "meson", "ninja", "openssl", "zlib", "bison")
     
-    on_load("windows|!arm64 or macosx|!arm64 or linux|!arm64 or bsd|!arm64", function (package)
+    on_load(function (package)
         if package:is_plat("macosx", "windows") then
             package:add("deps", "libintl")
         end
