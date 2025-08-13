@@ -5,7 +5,7 @@ package("concerto-core")
 
     add_urls("https://github.com/ConcertoEngine/ConcertoCore.git")
 
-    add_versions("2025.08.13+2", "98ff4caea31ae9754e1c4851da219f9fb4ef360a")
+    add_versions("2025.08.13+3", "4799b8843a14242922a190bfaf6ef8fbd426516e")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean"})
     add_configs("asserts", {description = "Enable asserts.", default = false, type = "boolean"})
