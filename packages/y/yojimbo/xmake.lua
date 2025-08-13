@@ -10,13 +10,8 @@ package("yojimbo")
 
     add_deps("libsodium")
 
-    if os.host() == "windows" then
-        local host_arch = os.arch()
-        if is_plat("windows") then 
-             if (host_arch == "x86" or host_arch == "x64") and is_arch("arm64") then 
-                add_defines("SERIALIZE_LITTLE_ENDIAN")
-             end
-        end
+    if is_plat("windows") and is_arch("arm64") then
+        add_defines("SERIALIZE_LITTLE_ENDIAN")
     end
 
     on_install("!wasn and !bsd",function (package)
@@ -25,6 +20,10 @@ package("yojimbo")
 
         add_requires("libsodium")
         add_includedirs(".", "include", "tlsf", "netcode", "reliable", "serialize", {public = true})
+
+        if is_plat("windows") and is_arch("arm64") then
+            add_defines("SERIALIZE_LITTLE_ENDIAN")
+        end
 
         if is_mode("release") then
             add_defines("YOJIMBO_DEBUG", "NETCODE_DEBUG", "RELIABLE_DEBUG")
