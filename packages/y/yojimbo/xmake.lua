@@ -14,7 +14,7 @@ package("yojimbo")
         add_defines("SERIALIZE_LITTLE_ENDIAN")
     end
 
-    on_install("!wasn and !bsd",function (package)
+    on_install("!wasm and !bsd",function (package)
         io.writefile("xmake.lua", [[
         add_rules("mode.release", "mode.debug")
 
@@ -26,13 +26,13 @@ package("yojimbo")
         end
 
         if is_mode("release") then
-            add_defines("YOJIMBO_DEBUG", "NETCODE_DEBUG", "RELIABLE_DEBUG")
+            add_defines("YOJIMBO_RELEASE", "NETCODE_RELEASE", "RELIABLE_RELEASE")
             set_optimize("fastest")
             set_symbols(none)
         end
 
         if is_mode("debug") then
-            add_defines("YOJIMBO_RELEASE", "NETCODE_RELEASE", "RELIABLE_RELEASE")
+            add_defines("YOJIMBO_DEBUG", "NETCODE_DEBUG", "RELIABLE_DEBUG")
         end
 
         target("yojimbo")
