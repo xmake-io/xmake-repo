@@ -10,6 +10,15 @@ package("yojimbo")
 
     add_deps("libsodium")
 
+    if os.host() == "windows" then
+        local host_arch = os.arch()
+        if is_plat("windows") then 
+             if (host_arch == "x86" or host_arch == "x64") and is_arch("arm64") then 
+                add_defines("SERIALIZE_LITTLE_ENDIAN")
+             end
+        end
+    end
+
     on_install(function (package)
         import("package.tools.xmake")
 
