@@ -6,12 +6,12 @@ package("netcdf-c")
     add_urls("https://github.com/Unidata/netcdf-c/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Unidata/netcdf-c.git")
     add_versions("v4.9.3", "990f46d49525d6ab5dc4249f8684c6deeaf54de6fec63a187e9fb382cc0ffdff")
-    add_patches("v4.9.3", "patches/dependencies.patch", "d707097e4fe72d9d747b97d61b3e6ba9ee84dfc403af477402893b4130481bfb")
+    add_patches("v4.9.3", "patches/v4.9.3/deps.patch", "a133eba3f888902cc12e2cf65dc7d463ce1f466bea4d09ad09a3d448ef952ed8")
 
     add_deps("cmake", "libcurl", "libxml2", "libzip", "zlib")
     add_deps("hdf5", {configs = {zlib = true}})
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "bsd", function (package)
         local configs = {
             "-DNCNN_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"),
             "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
@@ -22,6 +22,9 @@ package("netcdf-c")
             "-DENABLE_DAP_REMOTE_TESTS=OFF",
             "-DDISABLE_INSTALL_DEPENDENCIES=ON",
         }
+        if is_plat("windows") and package:config("shared") then
+            table.insert(configs, "-DNETCDF_ENABLE_DLL=ON")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
