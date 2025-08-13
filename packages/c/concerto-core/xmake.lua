@@ -12,6 +12,10 @@ package("concerto-core")
     add_configs("enet", {description = "Enable ENet support.", default = false, type = "boolean"})
 
 
+    on_check("macosx", function (package)
+        assert(macos.version():le("13"), "concerto-core requires version > 13 for macOS")
+    end)
+
     on_check("android", function (package)
         local ndk = package:toolchain("ndk"):config("ndkver")
         assert(ndk and tonumber(ndk) >= 27, "concerto-core require ndk version >= 27")
