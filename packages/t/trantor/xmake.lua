@@ -6,6 +6,7 @@ package("trantor")
     add_urls("https://github.com/an-tao/trantor/archive/refs/tags/$(version).tar.gz",
              "https://github.com/an-tao/trantor.git")
 
+    add_versions("v1.5.24", "3ffe8f6eeeef841b5550540edbed8cb3b3fda2bc5a1d536cc9c6f1809b7cb164")
     add_versions("v1.5.23", "eeb54b096129e89355b578d1d1c730123458ed1b64deab5531481e35476ece13")
     add_versions("v1.5.22", "2f870b016a592228d617ef51eec4e9a9ab7dc56c066923af9bf6dd42fefb63de")
     add_versions("v1.5.21", "c267e8d3657a85751554a6877efd1199f6766a9fd6418d2c72839ad0a8943988")
