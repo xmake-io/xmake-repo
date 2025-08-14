@@ -8,6 +8,8 @@ package("yojimbo")
 
     add_versions("v1.2.3", "3cf69218654df0e4da904b0a291e63e7470a7b6a6350f599f84f862e98f7c707")
 
+    add_patches("v1.2.3", "patches/v1.2.3/nominmax.patch", "4dfa72b763a7ac06b153a92ebe6e2c1daa55de97852c8f739e0ab17f306c8324")
+
     add_deps("libsodium")
 
     if is_plat("windows") and is_arch("arm64") then
