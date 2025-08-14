@@ -5,6 +5,7 @@ package("emscripten")
     set_license("MIT")
 
     set_urls("https://github.com/emscripten-core/emsdk.git")
+    add_versions("4.0.12", "f39e849effe1bd679aa9ef3cd1798d327c9619db")
     add_versions("3.1.55", "7815dcaa5c97ee387e925137a42dd4219e7cec82")
     add_versions("3.1.42", "c2260b4f28f53b411032de0955a6fe6b6bcf3edd")
     add_versions("3.1.25", "92d9023adc4dbc66424df9483cee302c68817d3c")
