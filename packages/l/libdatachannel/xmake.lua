@@ -49,7 +49,7 @@ package("libdatachannel")
         table.insert(configs, "-DNO_EXAMPLES=ON")
         import("package.tools.cmake").install(package, configs, {
             targets = {
-                package:config("shared") and "libdatachannel" or "libdatachannel-static",
+                package:config("shared") and "datachannel" or "datachannel-static",
             }
         })
     end)
