@@ -8,6 +8,7 @@ package("arrow")
 
     add_urls("https://github.com/apache/arrow/archive/refs/tags/apache-arrow-$(version).tar.gz",
              "https://github.com/apache/arrow.git")
+    add_versions('21.0.0', '5d3f8db7e72fb9f65f4785b7a1634522e8d8e9657a445af53d4a34a3849857b5')
     add_versions('7.0.0', '57e13c62f27b710e1de54fd30faed612aefa22aa41fa2c0c3bacd204dd18a8f3')
 
     add_configs("csv",      {description = "CSV reader module", default = true, type = "boolean"})
@@ -121,5 +122,5 @@ package("arrow")
                 arrow::Int64Builder id_builder(pool);
                 (void)id_builder;
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "arrow/api.h"}))
+        ]]}, {configs = {languages = "c++17"}, includes = "arrow/api.h"}))
     end)
