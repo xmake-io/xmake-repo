@@ -6,6 +6,7 @@ package("bzip3")
     add_urls("https://github.com/kspalaiologos/bzip3/archive/refs/tags/$(version).tar.gz",
              "https://github.com/kspalaiologos/bzip3.git")
 
+    add_versions("1.5.3", "21eb292f70866d23ffa12fc3e4fae3fd5bb9a1341c01410dc6bbc5dd62cf2040")
     add_versions("1.5.2", "1664d27a1ad3fdfecade917a7c2f7597cad4dbea4b1c526d3eedd7583b920bef")
     add_versions("1.5.1", "1116c5984c87c2193f3981b53669c8cbb4ffd1b158de880be3c5ff27a35db400")
     add_versions("1.4.0", "d70334c19c7cce2cc6c823566b7d8968ff08a52043d518f55caebd2e407b2233")
