@@ -67,6 +67,9 @@ package("mimalloc")
         if package:version():le("2.0.1") and package:config("shared") and package:is_plat("windows") and package:is_arch("x86") then
             io.replace("CMakeLists.txt", "-redirect.", "-redirect32.", {plain = true})
         end
+        if package:version():ge("2.2.4") and package:config("shared") and package:is_plat("windows", "mingw") and not package:is_arch64() then
+            io.replace("CMakeLists.txt", "-redirect${MIMALLOC_REDIRECT_SUFFIX}", "-redirect32", {plain = true})
+        end
         local cxflags
         if package:config("rltgenrandom") then
             if xmake:version():ge("2.5.1") then
