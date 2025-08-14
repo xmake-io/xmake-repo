@@ -36,12 +36,15 @@ package("arrow")
         add_configs(config, {description = "Enable " .. dep .. " support.", default = false, type = "boolean"})
     end
 
-    add_deps("cmake", "boost", "xsimd")
+    add_deps("cmake >=3.25", "xsimd", "ninja")
+    add_deps("boost", {configs={date_time=true, regex=true, math=true}})
 
     if is_plat("bsd") then
         add_syslinks("pthread", "execinfo")
     elseif is_plat("linux") then
         add_syslinks("pthread")
+    elseif is_plat("windows") then
+        add_syslinks("Ole32")
     end
 
     on_load(function (package)
@@ -79,9 +82,18 @@ package("arrow")
         if package:config("parquet") then
             package:add("deps", "thrift")
         end
+
+        if package:is_plat("windows") then
+            if not package:config("shared") then
+                package:add("defines", "ARROW_STATIC")
+                package:add("links", "arrow_static", "arrow_dataset_static", "arrow_compute_stati", "arrow_acero_static", "arrow_bundled_dependencies")
+            else
+                package:add("links", "arrow_compute", "arrow_acero")
+            end
+        end
     end)
 
-    on_install("linux", "macosx", "bsd", function (package)
+    on_install("windows", "linux", "macosx", "bsd", function (package)
         local configs = {
             "-DARROW_BUILD_TESTS=OFF",
             "-DARROW_DEPENDENCY_SOURCE=SYSTEM",
