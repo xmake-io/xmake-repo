@@ -36,7 +36,7 @@ package("arrow")
         add_configs(config, {description = "Enable " .. dep .. " support.", default = false, type = "boolean"})
     end
 
-    add_deps("cmake", "boost")
+    add_deps("cmake", "boost", "xsimd")
 
     if is_plat("bsd") then
         add_syslinks("pthread", "execinfo")
