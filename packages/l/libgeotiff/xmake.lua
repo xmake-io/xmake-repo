@@ -11,7 +11,7 @@ package("libgeotiff")
 
     add_deps("cmake", "libtiff")
     add_deps("proj", {configs = {tiff = true}})
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", "bsd", function (package)
         local configs = {"-DHAVE_TIFFOPEN=1", "-DHAVE_TIFFMERGEFIELDINFO=1"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
