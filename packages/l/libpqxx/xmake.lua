@@ -10,7 +10,13 @@ package("libpqxx")
 
     add_deps("cmake", "libpq")
 
-    on_install("windows|!arm64 or macosx|!arm64 or linux|!arm64 or bsd|!arm64", function (package)
+    on_check(function (package) 
+        if package:is_arch("arm.*") then
+            raise("package(libpqxx/arm64): unsupported arch") 
+        end 
+    end) 
+
+    on_install("windows", "macosx", "linux", "bsd", function (package)
         local configs = {"-DSKIP_BUILD_TEST=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
