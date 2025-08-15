@@ -32,13 +32,10 @@ package("yojimbo")
         end
 
         target("yojimbo")
-            set_kind("$(kind)")
+            set_kind("static")
             add_files("source/**.cpp", "netcode/netcode.c", "reliable/reliable.c", "tlsf/tlsf.c")
             add_headerfiles("include/(**.h)", "serialize/(**.h)")
             add_packages("libsodium")
-            if is_kind("shared") then
-                add_rules("utils.symbols.export_all")
-            end
         ]])
         import("package.tools.xmake").install(package)
     end)
