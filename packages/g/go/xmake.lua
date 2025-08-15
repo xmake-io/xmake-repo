@@ -250,15 +250,31 @@ package("go")
             add_versions("1.24.6", "4e29202c49573b953be7cc3500e1f8d9e66ddd12faa8cf0939a4951411e09a2a")
             add_versions("1.25.0", "544932844156d8172f7a28f77f2ac9c15a23046698b6243f633b0a0b00c0749c")
         end
+    elseif is_host("bsd") then
+        if os.arch() == "x86_64" then
+            set_urls("https://go.dev/dl/go$(version).freebsd-amd64.tar.gz")
+            add_versions("1.24.6", "4983e2b10ae1f754e4eb07e1e589691c7e1d0dc428a92c16bd0e2ba03cc23ed9")
+            add_versions("1.25.0", "86e6fe0a29698d7601c4442052dac48bd58d532c51cccb8f1917df648138730b")
+        elseif os.arch() == "i386" then
+            set_urls("https://go.dev/dl/go$(version).freebsd-386.tar.gz")
+            add_versions("1.24.6", "9cd74ad74f3ad833e92529f2fd9b0d7d9ffaab46307eccadb0afcf9a1ba09553")
+            add_versions("1.25.0", "abea5d5c6697e6b5c224731f2158fe87c602996a2a233ac0c4730cd57bf8374e")
+        elseif os.arch() == "arm64" then
+            set_urls("https://go.dev/dl/go$(version).freebsd-arm64.tar.gz")
+            add_versions("1.24.6", "76a75ad5125217c268029c0ad9c7295cc7f6042fe9cba4bebf9a89f7f42ad8af")
+            add_versions("1.25.0", "451d0da1affd886bfb291b7c63a6018527b269505db21ce6e14724f22ab0662e")
+        end
     end
 
-    on_install("macosx", "linux", "windows", function (package)
+    on_install("macosx", "linux", "windows", "bsd", function (package)
         os.cp("bin", package:installdir())
         os.cp("lib", package:installdir())
         os.cp("pkg", package:installdir())
         os.cp("misc", package:installdir())
         os.cp("src", package:installdir())
         os.trycp("VERSION", package:installdir())
+        os.trycp("doc", package:installdir())
+        os.trycp("api", package:installdir())
     end)
 
     on_test(function (package)
