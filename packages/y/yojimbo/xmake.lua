@@ -15,7 +15,7 @@ package("yojimbo")
     end
 
     if is_plat("windows", "mingw") then
-        add_syslinks("ws2_32")
+        add_syslinks("ws2_32", "iphlpapi")
     end
 
     on_install("!wasm and !bsd",function (package)
