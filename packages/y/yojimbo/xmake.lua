@@ -14,6 +14,10 @@ package("yojimbo")
         add_defines("SERIALIZE_LITTLE_ENDIAN")
     end
 
+    if is_plat("windows", "mingw") then
+        add_syslinks("ws2_32")
+    end
+
     on_install("!wasm and !bsd",function (package)
         io.writefile("xmake.lua", [[
         add_rules("mode.release", "mode.debug")
