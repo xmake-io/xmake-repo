@@ -15,10 +15,9 @@ package("td")
     add_deps("cmake")
     add_deps("openssl3", "zlib", "gperf")
 
-    on_check("msys", function (package)
+    on_check("mingw", function (package)
         -- @see https://github.com/xmake-io/xmake-repo/pull/7855#issuecomment-3176844746
-        local msystem = os.getenv("MSYSTEM")
-        if msystem and msystem == "MINGW32" then
+        if is_subhost("msys") and not package:is_arch64() then
             raise("package(td): MINGW32 under MSYS will not be able to compile this package due to insufficient memory.")
         end
     end)
