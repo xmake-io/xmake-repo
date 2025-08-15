@@ -27,16 +27,12 @@ package("yojimbo")
 
         if is_mode("release") then
             add_defines("YOJIMBO_RELEASE", "NETCODE_RELEASE", "RELIABLE_RELEASE")
-            set_optimize("fastest")
-            set_symbols(none)
-        end
-
-        if is_mode("debug") then
+        elseif is_mode("debug") then
             add_defines("YOJIMBO_DEBUG", "NETCODE_DEBUG", "RELIABLE_DEBUG")
         end
 
         target("yojimbo")
-            set_kind("static")
+            set_kind("$(kind)")
             add_files("source/**.cpp", "netcode/netcode.c", "reliable/reliable.c", "tlsf/tlsf.c")
             add_headerfiles("include/**.h", "tlsf/**.h", "netcode/**.h", "reliable/**.h", "serialize/**.h")
             add_packages("libsodium")
