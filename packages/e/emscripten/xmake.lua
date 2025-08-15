@@ -26,7 +26,7 @@ package("emscripten")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows|!arm*", "macosx", "linux", function (package)
         import("lib.detect.find_directory")
 
         -- installation
