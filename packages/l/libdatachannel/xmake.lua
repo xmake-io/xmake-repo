@@ -23,6 +23,10 @@ package("libdatachannel")
 
 
     on_install(function (package)
+         if package:is_plat("windows") and not package:config("shared") then 
+            package:add("defines", "RTC_STATIC") 
+        end 
+
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
 
