@@ -6,6 +6,7 @@ package("snmalloc")
     add_urls("https://github.com/microsoft/snmalloc/archive/refs/tags/$(version).tar.gz",
              "https://github.com/microsoft/snmalloc.git")
 
+    add_versions("0.7.2", "580e4a1445f6a6a294728363856cea6b4a6ae40fc42e02d9687271bed9c5386b")
     add_versions("0.7.1", "91824fdf553f03cf6ef8be57f29f1d4f79cd651667455e9fe4af8b7c09e705d3")
     add_versions("0.7.0", "9e6bd04e58d981218bd5bd3a853d93bbcb1a82dd914f912670f798e011e86746")
     add_versions("0.6.2", "e0486ccf03eac5dd8acbb66ea8ad33bec289572a51614acdf7117397e4f1af8c")
