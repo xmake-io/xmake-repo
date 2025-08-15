@@ -34,7 +34,7 @@ package("yojimbo")
         target("yojimbo")
             set_kind("$(kind)")
             add_files("source/**.cpp", "netcode/netcode.c", "reliable/reliable.c", "tlsf/tlsf.c")
-            add_headerfiles("include/(**.h)")
+            add_headerfiles("include/(**.h)", "serialize/(**.h)")
             add_packages("libsodium")
             if is_kind("shared") then
                 add_rules("utils.symbols.export_all")
