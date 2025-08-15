@@ -4,12 +4,19 @@ package("libpqxx")
 
     add_urls("https://github.com/jtv/libpqxx/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jtv/libpqxx.git")
+             
+    add_versions("7.10.1", "9bfaf9cb5a73ac23f9b7a9dfd7ef069a6e2124fb")
     add_versions("7.7.0", "2d99de960aa3016915bc69326b369fcee04425e57fbe9dad48dd3fa6203879fb")
 
-    add_deps("cmake", "python 3.x")
-    add_deps("xmlto", "libpq")
+    add_deps("cmake", "libpq")
 
-    on_install("linux", "macosx", function (package)
+    on_check(function (package) 
+        if package:is_arch("arm.*") then
+            raise("package(libpqxx/arm64): unsupported arch") 
+        end 
+    end) 
+
+    on_install("windows", "macosx", "linux", "bsd", function (package)
         local configs = {"-DSKIP_BUILD_TEST=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
