@@ -6,6 +6,7 @@ package("quickjs-ng")
     add_urls("https://github.com/quickjs-ng/quickjs/archive/refs/tags/$(version).tar.gz",
              "https://github.com/quickjs-ng/quickjs.git", {submodules = false})
 
+    add_versions("v0.10.1", "4e917eea3bb6051a0551fdd3aac45199ff705fa08920c15b824a08c5fbb032e4")
     add_versions("v0.9.0", "77f9e79b42e2e7cff9517bae612431af47e120730286cb1dcfad0753bc160f10")
     add_versions("v0.8.0", "7e60e1e0dcd07d25664331308a2f4aee2a88d60d85896e828d25df7c3d40204e")
     add_versions("v0.7.0", "46c45cc2ed174474765dac8e41062998d92c4dd5fd779624da4073d6cd430eeb")
