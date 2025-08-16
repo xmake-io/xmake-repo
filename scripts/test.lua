@@ -291,7 +291,6 @@ end
 function _lock_packages(packages)
     local locked_packages = {
         "flashlight",
-        "telegram-bot-api",
         "systemd",
         "libxcrypt",
         "libselinux",
