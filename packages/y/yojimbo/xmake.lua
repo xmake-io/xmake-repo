@@ -19,7 +19,7 @@ package("yojimbo")
     end
 
     if is_plat("windows", "mingw") then
-        add_syslinks("ws2_32", "iphlpapi")
+        add_syslinks("ws2_32", "iphlpapi", "qwave")
     end
 
     on_install("!wasm and !bsd", function (package)
@@ -46,7 +46,7 @@ package("yojimbo")
             add_packages("libsodium")
 
             if is_plat("windows", "mingw") then
-                add_syslinks("ws2_32", "iphlpapi")
+                add_syslinks("ws2_32", "iphlpapi", "qwave")
             end
         ]])
         import("package.tools.xmake").install(package)
