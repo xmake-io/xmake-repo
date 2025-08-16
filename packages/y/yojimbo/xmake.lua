@@ -8,6 +8,10 @@ package("yojimbo")
 
     add_versions("v1.2.5", "0bbac01643f47f4167c884b88a10ed64b327eb4c6cae920551d7bcd447f1e292")
 
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     add_deps("libsodium")
 
     if is_plat("windows") and is_arch("arm64") then
@@ -18,7 +22,7 @@ package("yojimbo")
         add_syslinks("ws2_32", "iphlpapi")
     end
 
-    on_install("!wasm and !bsd",function (package)
+    on_install("!wasm and !bsd", function (package)
         io.writefile("xmake.lua", [[
         add_rules("mode.release", "mode.debug")
 
@@ -36,10 +40,14 @@ package("yojimbo")
         end
 
         target("yojimbo")
-            set_kind("static")
+            set_kind("$(kind)")
             add_files("source/**.cpp", "netcode/netcode.c", "reliable/reliable.c", "tlsf/tlsf.c")
             add_headerfiles("include/(**.h)", "serialize/(**.h)")
             add_packages("libsodium")
+
+            if is_plat("windows", "mingw") then
+                add_syslinks("ws2_32", "iphlpapi")
+            end
         ]])
         import("package.tools.xmake").install(package)
     end)
