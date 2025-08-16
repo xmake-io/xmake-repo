@@ -3,8 +3,10 @@ package("libwebsockets")
     set_description("canonical libwebsockets.org websocket library")
     set_license("MIT")
 
-    set_urls("https://github.com/warmcat/libwebsockets/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/warmcat/libwebsockets.git")
+    add_urls("https://github.com/warmcat/libwebsockets.git")
+    if not is_subhost("msys") then
+        add_urls("https://github.com/warmcat/libwebsockets/archive/refs/tags/$(version).tar.gz")
+    end
 
     add_versions("v4.4.1", "472e6cfa77b6f80ff2cc176bc59f6cb2856df7e30e8f31afcbd1fc94ffd2f828")
     add_versions("v4.3.5", "87f99ad32803ed325fceac5327aae1f5c1b417d54ee61ad36cffc8df5f5ab276")
