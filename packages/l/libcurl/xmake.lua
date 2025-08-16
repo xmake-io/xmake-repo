@@ -38,7 +38,7 @@ package("libcurl")
 
     -- we init all configurations in on_load, because package("curl") need it.
     on_load(function (package)
-        if package:is_plat("linux", "android", "cross") then
+        if package:is_plat("linux", "bsd", "android", "cross") then
             -- if no TLS backend has been enabled nor disabled, enable openssl by default
             if package:config("openssl") == nil and package:config("openssl3") == nil and package:config("mbedtls") == nil then
                 package:config_set("openssl", true)
@@ -49,7 +49,7 @@ package("libcurl")
 
         if package:is_plat("macosx", "iphoneos") then
             package:add("frameworks", "Security", "CoreFoundation", "SystemConfiguration")
-        elseif package:is_plat("linux") then
+        elseif package:is_plat("linux", "bsd") then
             package:add("syslinks", "pthread")
         elseif package:is_plat("windows", "mingw") then
             package:add("syslinks", "advapi32", "crypt32", "wldap32", "winmm", "ws2_32", "user32")
@@ -57,7 +57,7 @@ package("libcurl")
 
         if package:is_plat("mingw") and is_subhost("msys") then
             package:add("extsources", "pacman::curl")
-        elseif package:is_plat("linux") then
+        elseif package:is_plat("linux", "bsd") then
             package:add("extsources", "pacman::curl", "apt::libcurl4-gnutls-dev", "apt::libcurl4-nss-dev", "apt::libcurl4-openssl-dev")
         elseif package:is_plat("macosx") then
             package:add("extsources", "brew::curl")
@@ -89,12 +89,12 @@ package("libcurl")
                 has_deps = true
             end
         end
-        if has_deps and package:is_plat("linux", "macosx") then
+        if has_deps and package:is_plat("linux", "bsd", "macosx") then
             package:add("deps", "pkg-config")
         end
     end)
 
-    on_install("windows", "mingw", "linux", "macosx", "iphoneos", "cross", "android", function (package)
+    on_install("windows", "mingw", "linux", "bsd", "macosx", "iphoneos", "cross", "android", function (package)
         local version = package:version()
 
         local configs = {"-DBUILD_TESTING=OFF", "-DENABLE_MANUAL=OFF", "-DENABLE_CURL_MANUAL=OFF"}
@@ -134,7 +134,7 @@ package("libcurl")
         if package:is_plat("mingw") and version:le("7.85.0") then
             io.replace("src/CMakeLists.txt", 'COMMAND ${CMAKE_COMMAND} -E echo "/* built-in manual is disabled, blank function */" > tool_hugehelp.c', "", {plain = true})
         end
-        if package:is_plat("linux", "cross") then
+        if package:is_plat("linux", "bsd", "cross") then
             io.replace("CMakeLists.txt", "list(APPEND CURL_LIBS OpenSSL::SSL OpenSSL::Crypto)", "list(APPEND CURL_LIBS OpenSSL::SSL OpenSSL::Crypto dl)", {plain = true})
             io.replace("CMakeLists.txt", "list(APPEND CURL_LIBS ${OPENSSL_LIBRARIES})", "list(APPEND CURL_LIBS ${OPENSSL_LIBRARIES} dl)", {plain = true})
         end
