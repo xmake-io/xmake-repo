@@ -7,6 +7,9 @@ package("imgui")
     add_urls("https://github.com/ocornut/imgui.git", {alias = "git"})
 
     -- don't forget to add the docking versions as well
+    add_versions("v1.92.1", "32c237c2abf67a2ffccaac17192f711d4a787554b4133187a153d49057d6109c")
+    add_versions("v1.92.0", "42250c45df2736bcef867ae4ff404d138e5135cd36466c63143b1ea3b1c81091")
+    add_versions("v1.91.9", "3872a5f90df78fced023c1945f4466b654fd74573370b77b17742149763a7a7c")
     add_versions("v1.91.8", "db3a2e02bfd6c269adf0968950573053d002f40bdfb9ef2e4a90bce804b0f286")
     add_versions("v1.91.7", "2001dab4bdd7d178d8277d3b17c40aa1ff1e76e2ccac5e7ab8c6daf9756312c2")
     add_versions("v1.91.6", "c5fbc5dcab1d46064001c3b84d7a88812985cde7e0e9ced03f5677bec1ba502a")
@@ -50,6 +53,9 @@ package("imgui")
     add_versions("v1.76",   "e482dda81330d38c87bd81597cacaa89f05e20ed2c4c4a93a64322e97565f6dc")
     add_versions("v1.75",   "1023227fae4cf9c8032f56afcaea8902e9bfaad6d9094d6e48fb8f3903c7b866")
 
+    add_versions("git:v1.92.1-docking", "v1.92.1-docking")
+    add_versions("git:v1.92.0-docking", "v1.92.0-docking")
+    add_versions("git:v1.91.9-docking", "v1.91.9-docking")
     add_versions("git:v1.91.8-docking", "v1.91.8-docking")
     add_versions("git:v1.91.7-docking", "v1.91.7-docking")
     add_versions("git:v1.91.6-docking", "v1.91.6-docking")
@@ -82,6 +88,10 @@ package("imgui")
     add_versions("git:v1.85-docking",   "dc8c3618e8f8e2dada23daa1aa237626af341fd8")
     add_versions("git:v1.83-docking",   "80b5fb51edba2fd3dea76ec3e88153e2492243d1")
 
+    -- Fix conflicting IMGUI_API definitions in v1.92.0 only (https://github.com/ocornut/imgui/pull/8729)
+    add_patches("v1.92.0", "patches/v1.92.0/fix_imgui_api.patch", "e8ca0502056acf356f83703e7190dda87fde43ed245f65f0fb55b85cd164ed83")
+    add_patches("v1.92.0-docking", "patches/v1.92.0/fix_imgui_api.patch", "e8ca0502056acf356f83703e7190dda87fde43ed245f65f0fb55b85cd164ed83")
+
     add_configs("dx9",              {description = "Enable the dx9 backend", default = false, type = "boolean"})
     add_configs("dx10",             {description = "Enable the dx10 backend", default = false, type = "boolean"})
     add_configs("dx11",             {description = "Enable the dx11 backend", default = false, type = "boolean"})
@@ -96,11 +106,15 @@ package("imgui")
     add_configs("sdl3_renderer",    {description = "Enable the sdl3 renderer backend", default = false, type = "boolean"})
     add_configs("sdl3_gpu",         {description = "Enable the sdl3 gpu backend", default = false, type = "boolean"})
     add_configs("vulkan",           {description = "Enable the vulkan backend", default = false, type = "boolean"})
+    add_configs("volk",             {description = "Enable the vulkan backend, and use volk to load Vulkan functions", default = false, type = "boolean"})
     add_configs("win32",            {description = "Enable the win32 backend", default = false, type = "boolean"})
+    add_configs("osx",              {description = "Enable the OS X backend", default = false, type = "boolean"})
     add_configs("wgpu",             {description = "Enable the wgpu backend", default = false, type = "boolean"})
+    add_configs("wgpu_backend",     {description = "Use specific wgpu backend", default = "wgpu", type = "string", values = {"wgpu", "dawn"}})
     add_configs("freetype",         {description = "Use FreeType to build and rasterize the font atlas", default = false, type = "boolean"})
     add_configs("user_config",      {description = "Use user config (disables test!)", default = nil, type = "string"})
     add_configs("wchar32",          {description = "Use 32-bit for ImWchar (default is 16-bit)", default = false, type = "boolean"})
+
 
     -- deprecated configs (kept for backwards compatibility)
     add_configs("sdlrenderer",  {description = "(deprecated)", default = false, type = "boolean"})
@@ -156,11 +170,20 @@ package("imgui")
         if package:config("vulkan") then
             package:add("deps", "vulkan-headers")
         end
+        if package:config("volk") then
+            package:add("deps", "volk")
+        end
         if package:config("wgpu") then
             package:add("deps", "wgpu-native")
+            if package:config("wgpu_backend") then
+                package:add("defines", "IMGUI_IMPL_WEBGPU_BACKEND_" .. string.upper(package:config("wgpu_backend")))
+            end
         end
         if package:config("freetype") then
             package:add("deps", "freetype")
+        end
+        if package:config("osx") then
+            package:add("frameworks", "Cocoa", "Carbon", "GameController")
         end
     end)
 
@@ -180,7 +203,9 @@ package("imgui")
             sdl3_renderer    = package:config("sdl3_renderer"),
             sdl3_gpu         = package:config("sdl3_gpu"),
             vulkan           = package:config("vulkan"),
+            volk             = package:config("volk"),
             win32            = package:config("win32"),
+            osx              = package:config("osx"),
             wgpu             = package:config("wgpu"),
             freetype         = package:config("freetype"),
             user_config      = package:config("user_config"),

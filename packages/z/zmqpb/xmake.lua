@@ -14,11 +14,12 @@ package("zmqpb")
     add_versions("0.10.2", "3dc82384cb79cc46262a2ba4007351be8606fadda7b8f399df3cbde9dd77560b")
     add_versions("0.10.3", "01d6b737c5316947eac133589f53c4fb03e28f9b178f3c6a8f2a8956a1ff2932")
     add_versions("0.10.4", "89844672229e4e4a75ddec65bdb1e2e825ef5f4b56667f40a29ec68ff215be45")
+    add_versions("0.10.5", "28db7f721d4d63da5f911af369265fdaf63c604858416d32207bc50869dade6f")
 
     add_deps("cppzmq")
-    add_deps("protobuf-cpp")
+    add_deps("protoc", "protobuf-cpp")
 
-    on_load("windows|native", "macosx", "linux", function (package)
+    on_load("windows", "macosx", "linux", function (package)
         if not package:gitref() and package:version():lt("0.3") then
             package:add("deps", "fmt")
         end
@@ -34,7 +35,7 @@ package("zmqpb")
         end
     end)
 
-    on_install("windows|native", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", function (package)
         local configs = {}
         import("package.tools.xmake").install(package, configs)
     end)

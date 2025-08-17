@@ -11,6 +11,7 @@ package("sfml")
         add_versions("2.5.1", "438c91a917cc8aa19e82c6f59f8714da353c488584a007d401efac8368e1c785")
     end
 
+    add_versions("3.0.1", "f99f71bb2f2608835b1a37e078512b75dd39d52b89e13e12246603a950da3c1f")
     add_versions("3.0.0", "37506fafbd618b1f8e153bbca8811e62203a70b32a1183279fb9612fd0501d2b")
     add_versions("2.6.1", "82535db9e57105d4f3a8aedabd138631defaedc593cab589c924b7d7a11ffb9d")
     add_versions("2.6.0", "0c3f84898ea1db07dc46fa92e85038d8c449e3c8653fe09997383173de96bc06")

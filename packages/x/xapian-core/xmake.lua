@@ -6,6 +6,8 @@ package("xapian-core")
     add_urls("https://oligarchy.co.uk/xapian/$(version)/xapian-core-$(version).tar.xz")
 
     add_versions("1.4.27", "bcbc99cfbf16080119c2571fc296794f539bd542ca3926f17c2999600830ab61")
+    add_versions("1.4.28", "3d0976e142217c1baba48bf89b405e674422e7e4448ae5016f67fe0dd49daa07")
+    add_versions("1.4.29", "c55c9bc8613ad3ec2c218eafca088c218ab7cddcba7ef08f3af0e542f4e521bc")
 
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})

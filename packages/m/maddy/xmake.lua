@@ -7,6 +7,8 @@ package("maddy")
     add_urls("https://github.com/progsource/maddy/archive/refs/tags/$(version).tar.gz",
              "https://github.com/progsource/maddy.git")
 
+    add_versions("1.6.0", "811b19efbc2fbf1957486ed78aabaf5d164d15f84464f7b4a7033b44591845c5")
+    add_versions("1.5.0", "192f6e2d689da0b53c2654d4b46f14d55d883737368ac7f10dd94696b662eec6")
     add_versions("1.3.0", "561681f8c8d2b998c153cda734107a0bc1dea4bb0df69fd813922da63fa9f3e7")
     add_versions("1.2.1", "b6058bce7ca32506969633ee7a4042e75b07464489f1c44be00913543cd687ef")
 

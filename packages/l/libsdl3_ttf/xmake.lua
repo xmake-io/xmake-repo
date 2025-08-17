@@ -11,12 +11,14 @@ package("libsdl3_ttf")
         add_extsources("brew::sdl3_ttf")
     end
 
-    add_urls("https://www.libsdl.org/projects/SDL_ttf/release/SDL3_ttf-$(version).zip",
-             "https://github.com/libsdl-org/SDL_ttf/releases/download/release-$(version)/SDL3_ttf-$(version).zip", { alias = "archive" })
+    add_urls("https://www.libsdl.org/projects/SDL_ttf/release/SDL3_ttf-$(version).tar.gz",
+             "https://github.com/libsdl-org/SDL_ttf/releases/download/release-$(version)/SDL3_ttf-$(version).tar.gz", { alias = "archive" })
     add_urls("https://github.com/libsdl-org/SDL_ttf.git", { alias = "github" })
 
-    add_versions("archive:3.2.0", "ea75fa02ab328cccdff8bf36d2ec891e445e94fa301cd0ef34c662e24d30b704")
+    add_versions("archive:3.2.2", "63547d58d0185c833213885b635a2c0548201cc8f301e6587c0be1a67e1e045d")
+    add_versions("archive:3.2.0", "9a741defb7c7d6dff658d402cb1cc46c1409a20df00949e1572eb9043102eb62")
 
+    add_versions("github:3.2.2", "release-3.2.2")
     add_versions("github:3.2.0", "release-3.2.0")
 
     add_deps("cmake", "freetype")
@@ -49,7 +51,7 @@ package("libsdl3_ttf")
 
     on_install(function (package)
         local configs = {"-DSDLTTF_SAMPLES=OFF", "-DSDLTTF_VENDORED=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSDLTTF_HARFBUZZ=" .. (package:config("harfbuzz") and "ON" or "OFF"))
         table.insert(configs, "-DSDLTTF_PLUTOSVG=" .. (package:config("plutosvg") and "ON" or "OFF"))

@@ -6,6 +6,7 @@ package("screen_capture_lite")
     add_urls("https://github.com/smasherprog/screen_capture_lite/archive/refs/tags/$(version).tar.gz",
              "https://github.com/smasherprog/screen_capture_lite.git")
 
+    add_versions("17.1.2539", "002b495f0691937c9f8046134dc3b14168904b3becf98c866a9fc6a317fe57f6")
     add_versions("17.1.1369", "72abf1cd9fc538e98547841ec56396ba75a36853e861f7bf721f21c64c34453e")
     add_versions("17.1.1368", "78b5f6c2689f49672ff465e4e832377a244455ada90d271d1cd44c3c3ecef952")
 

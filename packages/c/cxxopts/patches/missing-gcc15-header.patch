@@ -1,0 +1,12 @@
+diff --git a/include/cxxopts.hpp b/include/cxxopts.hpp
+index 991ba3fc..a2e71faf 100644
+--- a/include/cxxopts.hpp
++++ b/include/cxxopts.hpp
+@@ -27,6 +27,7 @@ THE SOFTWARE.
+ #ifndef CXXOPTS_HPP_INCLUDED
+ #define CXXOPTS_HPP_INCLUDED
+ 
++#include <cstdint>
+ #include <cstdlib>
+ #include <cstring>
+ #include <exception>

@@ -6,12 +6,14 @@ package("directxtex")
     local tag =
     {
         ["2023.06"] = "jun2023",
+        ["2025.07"] = "jul2025",
     }
 
     add_urls("https://github.com/microsoft/DirectXTex/archive/refs/tags/$(version).tar.gz",
              "https://github.com/microsoft/DirectXTex.git", {version = function (version) return tag[tostring(version)] end})
 
     add_versions("2023.06", "51f0ff3bee0d1015c110e0c92ebdd9704aa6acd91185328fd92f10b9558f4c62")
+    add_versions("2025.07", "25356ef10e0a2ba20fe344c337a6db6c7220a19971fc266831f7a505d88ece5d")
 
     if is_plat("windows") then
         add_configs("dx11", {description = "Build with DirectX11 Runtime support", default = true, type = "boolean"})
@@ -35,7 +37,7 @@ package("directxtex")
         end
     end)
 
-    on_install("windows", "linux", function (package)
+    on_install("windows|x64", "windows|arm64", "linux", function (package)
         local configs = {"-DBUILD_TOOLS=OFF", "-DBUILD_SAMPLE=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))

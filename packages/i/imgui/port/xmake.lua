@@ -16,8 +16,11 @@ option("sdl3",             {showmenu = true,  default = false})
 option("sdl3_renderer",    {showmenu = true,  default = false})
 option("sdl3_gpu",         {showmenu = true,  default = false})
 option("vulkan",           {showmenu = true,  default = false})
+option("volk",             {showmenu = true,  default = false})
 option("win32",            {showmenu = true,  default = false})
+option("osx",              {showmenu = true,  default = false})
 option("wgpu",             {showmenu = true,  default = false})
+option("wgpu_backend",     {showmenu = true,  default = "wgpu", type = "string", values = {"wgpu", "dawn"}})
 option("freetype",         {showmenu = true,  default = false})
 option("user_config",      {showmenu = true,  default = nil, type = "string"})
 option("wchar32",          {showmenu = true,  default = false})
@@ -41,6 +44,10 @@ end
 
 if has_config("vulkan") then
     add_requires("vulkan-headers")
+end
+
+if has_config("volk") then
+    add_requires("volk")
 end
 
 if has_config("wgpu") then
@@ -149,15 +156,32 @@ target("imgui")
         add_packages("vulkan-headers")
     end
 
+    if has_config("volk") then
+        add_files("backends/imgui_impl_vulkan.cpp")
+        add_headerfiles("(backends/imgui_impl_vulkan.h)")
+        add_packages("volk")
+        add_defines("IMGUI_IMPL_VULKAN_USE_VOLK")
+    end
+
     if has_config("win32") then
         add_files("backends/imgui_impl_win32.cpp")
         add_headerfiles("(backends/imgui_impl_win32.h)")
+    end
+
+    if has_config("osx") then
+        add_frameworks("Cocoa", "Carbon", "GameController")
+        add_files("backends/imgui_impl_osx.mm")
+        add_headerfiles("(backends/imgui_impl_osx.h)")
     end
 
     if has_config("wgpu") then
         add_files("backends/imgui_impl_wgpu.cpp")
         add_headerfiles("(backends/imgui_impl_wgpu.h)")
         add_packages("wgpu-native")
+
+        if has_config("wgpu_backend") then
+            add_defines("IMGUI_IMPL_WEBGPU_BACKEND_" .. string.upper(get_config("wgpu_backend")))
+        end
     end
 
     if has_config("freetype") then

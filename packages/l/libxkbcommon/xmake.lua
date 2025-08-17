@@ -15,10 +15,11 @@ package("libxkbcommon")
 
     add_configs("x11", {description = "Enable backend to X11 (default is false).", default = false, type = "boolean"})
     add_configs("wayland", {description = "Enable backend to X11 (default is true).", default = true, type = "boolean"})
+    add_configs("tools", {description = "Enable xkbcommon binaries.", default = false, type = "boolean"})
 
     on_load(function (package)
         if package:config("x11") then
-            package:add("deps", "libxcb", "xcb-proto", "libxml2")
+            package:add("deps", "libxcb", "xcb-proto", "libxml2", "libxau", "libxdmcp")
             if package:is_plat("linux") then
                 package:add("extsources", "pacman::libxkbcommon-x11", "apt::libxkbcommon-x11-dev")
             end
@@ -38,13 +39,30 @@ package("libxkbcommon")
         package:addenv("PATH", "bin")
         local configs = {
             "-Denable-docs=false",
-            "-Dc_link_args=-lm",
             "-Dxkb-config-root=/usr/share/X11/xkb",
             "-Dx-locale-root=/usr/share/X11/locale",
+            format("-Denable-tools=%s", package:config("tools")),
+            format("-Denable-bash-completion=%s", package:config("tools")),
             format("-Denable-x11=%s", package:config("x11")),
-            format("-Denable-wayland=%s", package:config("wayland"))
+            format("-Denable-wayland=%s", package:config("wayland")),
+            format("-Dbash-completion-path=%s", path.join(package:installdir(), "share", "bash-completion", "completions"))
         }
-
+        local c_link_args = "-lm"
+        -- fix undefined reference to XauGetBestAuthByAddr on linux
+        if package:config("x11") then
+            for _, dep in ipairs(package:orderdeps()) do
+                local fetchinfo = dep:fetch()
+                if fetchinfo then
+                    for _, linkdir in ipairs(fetchinfo.linkdirs) do
+                        c_link_args = c_link_args .. " -L" .. linkdir
+                    end
+                    for _, link in ipairs(fetchinfo.links) do
+                        c_link_args = c_link_args .. " -l" .. link
+                    end
+                end
+            end
+        end
+        table.insert(configs, "-Dc_link_args=" .. c_link_args)
         import("package.tools.meson").install(package, configs)
     end)
 

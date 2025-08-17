@@ -1,0 +1,65 @@
+diff --git a/lib_acl/CMakeLists.txt b/lib_acl/CMakeLists.txt
+index 287d5f3..d0c8241 100644
+--- a/lib_acl/CMakeLists.txt
++++ b/lib_acl/CMakeLists.txt
+@@ -177,7 +177,7 @@ if (ACL_CLIENT_ONLY MATCHES "YES")
+ endif()
+ 
+ if (CMAKE_SYSTEM_NAME MATCHES "Android")
+-	set(acl_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../android/lib/${ANDROID_ABI})
++	set(acl_output_path ${PROJECT_BINARY_DIR}/../lib)
+ elseif (CMAKE_SYSTEM_NAME MATCHES "OHOS")
+ 	set(acl_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../harmony/lib/${OHOS_ARCH})
+ else()
+diff --git a/lib_acl_cpp/CMakeLists.txt b/lib_acl_cpp/CMakeLists.txt
+index 08c558e..afb3936 100644
+--- a/lib_acl_cpp/CMakeLists.txt
++++ b/lib_acl_cpp/CMakeLists.txt
+@@ -252,7 +252,7 @@ elseif (${WIN_OS})
+ endif()
+ 
+ if (CMAKE_SYSTEM_NAME MATCHES "Android")
+-	set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../android/lib/${ANDROID_ABI})
++	set(lib_output_path ${PROJECT_BINARY_DIR}/../lib)
+ elseif (CMAKE_SYSTEM_NAME MATCHES "OHOS")
+ 	set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../harmony/lib/${OHOS_ARCH})
+ else()
+diff --git a/lib_fiber/c/CMakeLists.txt b/lib_fiber/c/CMakeLists.txt
+index c784212..d8931f6 100644
+--- a/lib_fiber/c/CMakeLists.txt
++++ b/lib_fiber/c/CMakeLists.txt
+@@ -141,7 +141,7 @@ list(APPEND lib_src ${src}/fiber/boost/make_gas.S
+ 	${src}/fiber/boost/jump_gas.S)
+ 
+ if (CMAKE_SYSTEM_NAME MATCHES "Android")
+-	set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../../android/lib/${ANDROID_ABI})
++	set(lib_output_path ${PROJECT_BINARY_DIR}/../lib)
+ else()
+ 	set(lib_output_path ${PROJECT_BINARY_DIR}/../lib)
+ endif()
+diff --git a/lib_fiber/cpp/CMakeLists.txt b/lib_fiber/cpp/CMakeLists.txt
+index 4d70233..1c41f9b 100644
+--- a/lib_fiber/cpp/CMakeLists.txt
++++ b/lib_fiber/cpp/CMakeLists.txt
+@@ -130,7 +130,7 @@ foreach(iter ${sources})
+ endforeach()
+ 
+ if (CMAKE_SYSTEM_NAME MATCHES "Android")
+-	set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../../android/lib/${ANDROID_ABI})
++	set(lib_output_path ${PROJECT_BINARY_DIR}/../lib)
+ else()
+ 	set(lib_output_path ${PROJECT_BINARY_DIR}/../lib)
+ endif()
+diff --git a/lib_protocol/CMakeLists.txt b/lib_protocol/CMakeLists.txt
+index b53ee88..e047e59 100644
+--- a/lib_protocol/CMakeLists.txt
++++ b/lib_protocol/CMakeLists.txt
+@@ -129,7 +129,7 @@ elseif (${WIN_OS})
+ endif()
+ 
+ if (CMAKE_SYSTEM_NAME MATCHES "Android")
+-	set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../android/lib/${ANDROID_ABI})
++	set(lib_output_path ${PROJECT_BINARY_DIR}/../lib)
+ elseif (CMAKE_SYSTEM_NAME MATCHES "OHOS")
+ 	set(lib_output_path ${CMAKE_CURRENT_SOURCE_DIR}/../harmony/lib/${OHOS_ARCH})
+ else()

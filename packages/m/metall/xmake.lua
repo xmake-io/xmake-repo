@@ -6,6 +6,7 @@ package("metall")
     add_urls("https://github.com/LLNL/metall/archive/refs/tags/$(version).tar.gz",
              "https://github.com/LLNL/metall.git")
 
+    add_versions("v0.31", "d7e1c3d953a31e2fe3adddd7553264e0dc61020d300fa0f0ba409859a68420f3")
     add_versions("v0.30", "d241f45978fceeb83a4b2eda7513466341c45452fa26ec224c5235d00d279d37")
 
     add_configs("c_api", {description = "Build C API", default = false, type = "boolean"})

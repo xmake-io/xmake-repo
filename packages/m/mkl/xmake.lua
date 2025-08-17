@@ -33,6 +33,8 @@ package("mkl")
             add_resources("2025.0.1+5", "headers", "https://software.repos.intel.com/python/conda/win-64/mkl-include-2025.0.1-intel_5.tar.bz2", "2492bf11b16bf9b911d65398bbca4f848b7b3b344a483b132a6a5aa68ff3d95c")
             add_versions("conda:2025.1.0+798", "e7e905c58aae00b6497c3feb2208bdd83700293160703ca4371896c3a692ac93")
             add_resources("2025.1.0+798", "headers", "https://software.repos.intel.com/python/conda/win-64/mkl-include-2025.1.0-intel_798.conda", "95f4cb0304186d6638f0033628b802d32791ba907198e32715c156f369ff67cc")
+            add_versions("conda:2025.2.0+627", "cbd5bcda7bd9882c851a9d6358303957c0a8fe047d994af545a20be70558f386")
+            add_resources("2025.2.0+627", "headers", "https://software.repos.intel.com/python/conda/win-64/mkl-include-2025.2.0-intel_627.conda", "c13f5c8fde02698d4780c15e7fa4d39b1055ac7505628e82b699bc18f86a8a4e")
         elseif is_arch("x86") then
             add_urls("https://software.repos.intel.com/python/conda/$(version).tar.bz2", {version = function (version)
                 local mv = version:split("%+")
@@ -92,6 +94,8 @@ package("mkl")
             add_resources("2025.0.1+14", "headers", "https://software.repos.intel.com/python/conda/linux-64/mkl-include-2025.0.1-intel_14.tar.bz2", "a8cef2bc84c135a38031f3bb5b0ec1c42cbb8e8e969754f91c25d50a19fda22b")
             add_versions("conda:2025.1.0+801", "9edb8ef62d24646506dd2afc8160ea84ff9c9add8c63cbbd420d63283a16a541")
             add_resources("2025.1.0+801", "headers", "https://software.repos.intel.com/python/conda/linux-64/mkl-include-2025.1.0-intel_801.conda", "ccf54c873bb7527dc1aab08e7ab731e89d399c09f4cd94db374807a7d78f7902")
+            add_versions("conda:2025.2.0+628", "8300e658101009976eab63789b6a01b8bad20ff3bd27692e1d5324e4b8f78df1")
+            add_resources("2025.2.0+628", "headers", "https://software.repos.intel.com/python/conda/linux-64/mkl-include-2025.2.0-intel_628.conda", "b8485a410756687dae93c2b83f58a01bf38e94c32279d845f72e8c0d60de83ab")
         elseif is_arch("i386") then
             add_urls("https://software.repos.intel.com/python/conda/$(version).tar.bz2", {version = function (version)
                 local mv = version:split("%+")
@@ -177,7 +181,7 @@ package("mkl")
             -- Get version components for filename construction
             local mv = package:version():split("%+")
             local lib_filename = format("mkl-static-%s-intel_%s", mv[1], mv[2])
-            local inc_filename = format("mkl-include-%s-intel_%s", mv[1], mv[2])            
+            local inc_filename = format("mkl-include-%s-intel_%s", mv[1], mv[2])
             -- Find required tools
             local z7 = assert(find_tool("7z"), "7z tool not found!")
             local zstd = assert(find_tool("zstd"), "zstd tool not found!")
@@ -195,8 +199,10 @@ package("mkl")
                 os.tryrm(temp_tar)
                 os.tryrm(archivefile)
             end
+            -- support for xmake 3.0.2
+            os.trycp("../" .. package:name() .. "-" .. package:version_str(), "../" .. lib_filename .. ".conda")
             -- Process library files
-            extract_conda("../" .. lib_filename .. ".conda")            
+            extract_conda("../" .. lib_filename .. ".conda")
             -- Process header files
             extract_conda(path.join(headerdir, "../" .. inc_filename .. ".conda"))
             -- Move headers to the correct location

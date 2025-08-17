@@ -149,7 +149,8 @@ local libs_dep = {
     "regex"
   },
   locale = {
-    "thread"
+    "thread",
+    "charconv"
   },
   graph_parallel = {
     "filesystem",

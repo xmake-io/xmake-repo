@@ -7,6 +7,8 @@ package("arduinojson")
     add_urls("https://github.com/bblanchon/ArduinoJson/archive/refs/tags/$(version).tar.gz",
              "https://github.com/bblanchon/ArduinoJson.git")
 
+    add_versions("v7.4.2", "681f703dd237f5b7f1dc1d7009a9cf246e88676b349572e73eae9154e8994a55")
+    add_versions("v7.4.1", "4db7245408c58c4869c135aece5e92c784d8026f5dbc6efd0485e52b84264d10")
     add_versions("v7.3.1", "1b00fad9bd2b86ff9814d3e0e393fee1dbf0f37ac07f1181b41bc503e6a3b1a2")
     add_versions("v7.3.0", "e2b6739a00c64813169cbcea2d0884cbd63efe2223c0b1307de4e655d87730d8")
     add_versions("v7.2.1", "2780504927533d64cf4256c57de51412b835b327ef4018c38d862b0664d36d4f")
@@ -27,7 +29,11 @@ package("arduinojson")
             #include <ArduinoJson.h>
             void test() {
                 char json[] = "{\"sensor\":\"gps\",\"time\":1351824120,\"data\":[48.756080,2.302038]}";
+                #if ARDUINOJSON_VERSION_MAJOR < 7
                 DynamicJsonDocument doc(1024);
+                #else
+                JsonDocument doc;
+                #endif
                 deserializeJson(doc, json);
             }
         ]]}, {configs = {languages = "c++11"}}))

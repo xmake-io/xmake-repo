@@ -1,11 +1,12 @@
 package("trantor")
-
     set_homepage("https://github.com/an-tao/trantor/")
     set_description("a non-blocking I/O tcp network lib based on c++14/17")
     set_license("BSD-3-Clause")
+
     add_urls("https://github.com/an-tao/trantor/archive/refs/tags/$(version).tar.gz",
              "https://github.com/an-tao/trantor.git")
 
+    add_versions("v1.5.24", "3ffe8f6eeeef841b5550540edbed8cb3b3fda2bc5a1d536cc9c6f1809b7cb164")
     add_versions("v1.5.23", "eeb54b096129e89355b578d1d1c730123458ed1b64deab5531481e35476ece13")
     add_versions("v1.5.22", "2f870b016a592228d617ef51eec4e9a9ab7dc56c066923af9bf6dd42fefb63de")
     add_versions("v1.5.21", "c267e8d3657a85751554a6877efd1199f6766a9fd6418d2c72839ad0a8943988")
@@ -24,40 +25,59 @@ package("trantor")
 	add_versions("v1.5.14", "80775d65fd49dfb0eb85d70cd9c0f0cff38a7f46c90db918862c46e03ae63810")
 	
     add_patches("v1.5.8", path.join(os.scriptdir(), "patches", "1.5.8", "skip_doc.patch" ), "4124f3cc1e486ad75bc5ec2fa454ea5319d68287d0b1d8cfa3b5ab865f8ca5fd")
+    if is_plat("windows", "mingw") then
+	    add_patches("v1.5.8", path.join(os.scriptdir(), "patches", "1.5.8", "fix-win-off_t.patch" ),"f0d7fbfc98085ed8b5f6c7504be29b18ddcd6fe4e14e3551396a643fc4574dc0")
+    end
 
     add_configs("spdlog", {description = "Allow using the spdlog logging library", default = false, type = "boolean"})
 
     add_deps("cmake")
-    add_deps("openssl", "c-ares", {optional = true})
+    add_deps("openssl", "c-ares")
+
     if is_plat("windows", "mingw") then
-	    add_patches("v1.5.8", path.join(os.scriptdir(), "patches", "1.5.8", "fix-win-off_t.patch" ),"f0d7fbfc98085ed8b5f6c7504be29b18ddcd6fe4e14e3551396a643fc4574dc0")
-        add_syslinks("ws2_32")
-    elseif is_plat("linux") then
+        add_syslinks("ws2_32", "rpcrt4")
+    elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
 
+    if on_check then
+        on_check("wasm", function (target)
+            raise("package(trantor) dep(openssl) unsupported platform")
+        end)
+    end
+
     on_load(function (package)
-        if package:version():le("v1.5.15") then
+        if package:version() and package:version():le("v1.5.15") then
             package:config_set("spdlog", false)
         end
         if package:config("spdlog") then
             package:add("deps", "spdlog", {configs = {header_only = false, fmt_external_ho = true}})
         end
+
+        if not package:config("shared") then
+            package:add("defines", "TRANTOR_STATIC_DEFINE")
+        end
     end)
 
-    on_install("windows", "macosx", "linux", "mingw@windows", function (package)
+    on_install(function (package)
         io.replace("CMakeLists.txt", "\"${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules/Findc-ares.cmake\"", "", {plain = true})
         io.replace("CMakeLists.txt", "find_package(c-ares)", "find_package(c-ares CONFIG)", {plain = true})
         io.replace("CMakeLists.txt", "c-ares_lib", "c-ares::cares", {plain = true})
+
         local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        if package:config("pic") ~= false then
-            table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DUSE_SPDLOG=" .. (package:config("spdlog") and "ON" or "OFF"))
+
+        local opt = {}
+        local openssl = package:dep("openssl")
+        if not openssl:is_system() then
+            table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
+            if not package:is_cross() and is_subhost("macosx", "msys") then
+                opt.cxflags = "-I" .. openssl:installdir("include")
+            end
         end
-        if package:config("spdlog") then
-            table.insert(configs, "-DUSE_SPDLOG=ON")
-        end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)

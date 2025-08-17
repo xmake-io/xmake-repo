@@ -6,6 +6,7 @@ package("libogg")
     set_urls("https://gitlab.xiph.org/xiph/ogg/-/archive/$(version)/ogg-$(version).tar.gz",
              "https://gitlab.xiph.org/xiph/ogg.git")
     add_versions("v1.3.4", "62cc64b9fd3cf57bde3a9033e94534ba34313d2bb9698029f623121a4e47bb9b")
+    add_versions("v1.3.5", "769ed632a71bfa8bdd3439ac7c712b74e12affdaeae2852c6a859bbbba424e68")
     add_patches("v1.3.4", "patches/1.3.4/macos_fix.patch", "e12c41ad71206777f399c1048914e5e5a2fe44e18d0d50ebe9bedbfbe0624c35")
 
     add_deps("cmake")
@@ -22,7 +23,7 @@ package("libogg")
     end
 
     on_install("windows", "macosx", "linux", "bsd", "mingw", "iphoneos", "android", "cross", "wasm", function (package)
-        local configs = {"-DBUILD_TESTING=OFF"}
+        local configs = {"-DBUILD_TESTING=OFF", "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")

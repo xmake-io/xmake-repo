@@ -6,6 +6,7 @@ package("pcapplusplus")
     set_urls("https://github.com/seladb/PcapPlusPlus/archive/refs/tags/$(version).zip",
              "https://github.com/seladb/PcapPlusPlus.git")
 
+    add_versions("v25.05", "0e7a1ec30b08f73d490c71dae5e8f17593311275f6052dcda4f9f7d77910070e")
     add_versions("v24.09", "0a9d80d09a906c08a1df5f5a937134355c7cb3fc8a599bf1a0f10002cf0285be")
     add_versions("v23.09", "f2b92d817df6138363be0d144a61716f8ecc43216f0008135da2e0e15727d35a")
 
@@ -15,6 +16,7 @@ package("pcapplusplus")
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     add_configs("zstd", {description = "Support compile with zstd", default = false, type = "boolean"})
     add_configs("winpcap", {description = "Support compile with winpcap", default = false, type = "boolean"})
+    add_configs("log_level", {description = "Compile time log level", default = 3, type = "number"})
 
     add_links("Pcap++", "Packet++", "Common++")
 
@@ -52,6 +54,7 @@ package("pcapplusplus")
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DLIGHT_PCAPNG_ZSTD=" .. (package:config("zstd") and "ON" or "OFF"))
+        table.insert(configs, "-DPCAPPP_LOG_LEVEL=" .. package:config("log_level"))
         for _, cmakefile in ipairs(os.files("**/CMakeLists.txt")) do
             io.replace(cmakefile, "COMPILE_WARNING_AS_ERROR ON", "COMPILE_WARNING_AS_ERROR OFF")
         end

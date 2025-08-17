@@ -8,6 +8,7 @@ package("mimalloc")
 
     add_versions("v3.0.3", "08a917e331164cd77052377f1e6d86de7febc8663dc117648319e662c0d4e6a4")
 
+    add_versions("v2.2.4", "664667a48c9f101d979bbe4e41ee631da49d2024e30d66b7779b6ba4279af367")
     add_versions("v2.1.7", "fa61cf01e3dd869b35275bfd8be95bfde77f0b65dfa7e34012c09a66e1ea463f")
     add_versions("v2.1.2", "86281c918921c1007945a8a31e5ad6ae9af77e510abfec20d000dd05d15123c7")
     add_versions("v2.0.7", "ddb32937aabddedd0d3a57bf68158d4e53ecf9e051618df3331a67182b8b0508")
@@ -67,6 +68,9 @@ package("mimalloc")
         --x64:mimalloc-redirect.lib/dll x86:mimalloc-redirect32.lib/dll
         if package:version():le("2.0.1") and package:config("shared") and package:is_plat("windows") and package:is_arch("x86") then
             io.replace("CMakeLists.txt", "-redirect.", "-redirect32.", {plain = true})
+        end
+        if package:version():ge("2.2.4") and package:config("shared") and package:is_plat("windows", "mingw") and not package:is_arch64() then
+            io.replace("CMakeLists.txt", "-redirect${MIMALLOC_REDIRECT_SUFFIX}", "-redirect32", {plain = true})
         end
         local cxflags
         if package:config("rltgenrandom") then

@@ -1,0 +1,107 @@
+diff --git a/cmake/aui.build.cmake b/cmake/aui.build.cmake
+index 90c53d45..f980b2a3 100644
+--- a/cmake/aui.build.cmake
++++ b/cmake/aui.build.cmake
+@@ -218,23 +218,33 @@ function(aui_add_properties AUI_MODULE_NAME)
+ endfunction(aui_add_properties)
+ 
+ # gtest
+-macro(_aui_import_gtest)
+-    if (NOT TARGET GTest::gtest)
+-        auib_import(GTest https://github.com/google/googletest
+-                    VERSION v1.14.0
+-                    CMAKE_ARGS -Dgtest_force_shared_crt=TRUE
+-                    LINK STATIC)
+-        set_property(TARGET GTest::gtest PROPERTY IMPORTED_GLOBAL TRUE)
+-        set_property(TARGET GTest::gmock PROPERTY IMPORTED_GLOBAL TRUE)
+-    endif()
++macro(_aui_import_gtest AUIB_DISABLE)
++    if (AUIB_DISABLE)
++        find_package(gtest CONFIG REQUIRED)
++        get_target_property(GTEST_TARGET_IMPORTED_GLOBAL gtest::gtest IMPORTED_GLOBAL)
++        if (NOT GTEST_TARGET_IMPORTED_GLOBAL)
++            set_target_properties(gtest::gtest PROPERTIES IMPORTED_GLOBAL TRUE)
++        endif ()
++        find_package(gmock CONFIG REQUIRED)
++        get_target_property(GMOCK_TARGET_IMPORTED_GLOBAL gmock::gmock IMPORTED_GLOBAL)
++        if (NOT GMOCK_TARGET_IMPORTED_GLOBAL)
++            set_target_properties(gmock::gmock PROPERTIES IMPORTED_GLOBAL TRUE)
++        endif ()
++    else ()
++        if (NOT TARGET GTest::gtest)
++            auib_import(GTest https://github.com/google/googletest
++                        VERSION v1.14.0
++                        CMAKE_ARGS -Dgtest_force_shared_crt=TRUE
++                        LINK STATIC)
++            set_property(TARGET GTest::gtest PROPERTY IMPORTED_GLOBAL TRUE)
++            set_property(TARGET GTest::gmock PROPERTY IMPORTED_GLOBAL TRUE)
++        endif()
++    endif ()
+ endmacro()
+ 
+ macro(aui_enable_tests AUI_MODULE_NAME)
+     if (NOT CMAKE_CROSSCOMPILING)
+-        _aui_import_gtest()
+-        if (NOT TARGET GTest::gtest)
+-            message(FATAL_ERROR "GTest::gtest not found!")
+-        endif()
++        _aui_import_gtest(ON)
+ 
+         enable_testing()
+         get_property(_source_dir TARGET ${AUI_MODULE_NAME} PROPERTY SOURCE_DIR)
+@@ -268,7 +278,11 @@ macro(aui_enable_tests AUI_MODULE_NAME)
+             #gtest_add_tests(TARGET ${TESTS_MODULE_NAME})
+             set_property(TARGET ${TESTS_MODULE_NAME} PROPERTY CXX_STANDARD 20)
+             target_include_directories(${TESTS_MODULE_NAME} PUBLIC tests)
+-            target_link_libraries(${TESTS_MODULE_NAME} PUBLIC GTest::gmock)
++            if (AUIB_DISABLE)
++                target_link_libraries(${TESTS_MODULE_NAME} PUBLIC gmock::gmock)
++            else ()
++                target_link_libraries(${TESTS_MODULE_NAME} PUBLIC GTest::gmock)
++            endif ()
+ 
+             target_compile_definitions(${TESTS_MODULE_NAME} PUBLIC AUI_TESTS_MODULE=1)
+ 
+@@ -317,20 +331,32 @@ endmacro()
+ 
+ # google benchmark
+ 
+-macro(_aui_import_google_benchmark)
+-    if (NOT TARGET benchmark::benchmark)
+-        auib_import(benchmark https://github.com/google/benchmark
+-                    VERSION v1.8.3
+-                    CMAKE_ARGS -DBENCHMARK_ENABLE_GTEST_TESTS=OFF
+-                    LINK STATIC)
+-        set_property(TARGET benchmark::benchmark PROPERTY IMPORTED_GLOBAL TRUE)
+-    endif()
++macro(_aui_import_google_benchmark AUIB_DISABLE)
++    if (AUIB_DISABLE)
++        find_package(benchmark CONFIG REQUIRED)
++        get_target_property(BENCHMARK_TARGET_IMPORTED_GLOBAL benchmark::benchmark IMPORTED_GLOBAL)
++        if (NOT BENCHMARK_TARGET_IMPORTED_GLOBAL)
++            set_target_properties(benchmark::benchmark PROPERTIES IMPORTED_GLOBAL TRUE)
++        endif ()
++        get_target_property(BENCHMARK_MAIN_TARGET_IMPORTED_GLOBAL benchmark::benchmark_main IMPORTED_GLOBAL)
++        if (NOT BENCHMARK_MAIN_TARGET_IMPORTED_GLOBAL)
++            set_target_properties(benchmark::benchmark_main PROPERTIES IMPORTED_GLOBAL TRUE)
++        endif ()
++    else ()
++        if (NOT TARGET benchmark::benchmark)
++            auib_import(benchmark https://github.com/google/benchmark
++                        VERSION v1.8.3
++                        CMAKE_ARGS -DBENCHMARK_ENABLE_GTEST_TESTS=OFF
++                        LINK STATIC)
++            set_property(TARGET benchmark::benchmark PROPERTY IMPORTED_GLOBAL TRUE)
++        endif()
++    endif ()
+ endmacro()
+ 
+ macro(aui_enable_benchmarks AUI_MODULE_NAME)
+     if (NOT CMAKE_CROSSCOMPILING)
+-        _aui_import_gtest()
+-        _aui_import_google_benchmark()
++        _aui_import_gtest(ON)
++        _aui_import_google_benchmark(ON)
+         if (NOT TARGET benchmark::benchmark)
+             message(FATAL_ERROR "benchmark::benchmark not found!")
+         endif()

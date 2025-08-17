@@ -30,15 +30,22 @@ package("hdf5")
     elseif is_plat("linux") then
         add_syslinks("dl")
     end
-    on_load("windows", "macosx", "linux", function (package)
+    on_load("windows", "macosx", "linux", "bsd", function (package)
         if package:config("zlib") then
             package:add("deps", "zlib")
         end
         if package:config("szip") then
             package:add("deps", "szip")
         end
+        if package:config("cpplib") then -- make sure link order is correct
+            local libs = {"hdf5_cpp", "hdf5_hl_cpp", "hdf5_hl", "hdf5_tools", "hdf5"}
+            local prefix = (package:is_plat("windows") and not package:config("shared")) and "lib" or ""
+            for _, lib in ipairs(libs) do
+                package:add("links", prefix .. lib)
+            end
+        end
     end)
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", "bsd", function (package)
         local configs = {
             "-DHDF5_GENERATE_HEADERS=OFF",
             "-DBUILD_TESTING=OFF",

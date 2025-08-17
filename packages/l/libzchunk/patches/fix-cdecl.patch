@@ -1,0 +1,36 @@
+From dc93b626e8b58044262725684cc0b848ffa395bc Mon Sep 17 00:00:00 2001
+From: Redbeanw44602 <redbeana44945@gmail.com>
+Date: Sat, 26 Jul 2025 04:47:13 +0800
+Subject: [PATCH] fix cdecl.
+
+---
+ include/zck.h.in | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/include/zck.h.in b/include/zck.h.in
+index 8696231..5ff7ab4 100644
+--- a/include/zck.h.in
++++ b/include/zck.h.in
+@@ -77,6 +77,10 @@ typedef size_t (*zck_wcb)(void *ptr, size_t l, size_t c, void *dl_v);
+     #define ZCK_PUBLIC_API __attribute__((visibility("default")))
+ #endif
+ 
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ /*******************************************************************
+  * Reading a zchunk file
+  *******************************************************************/
+@@ -410,4 +414,8 @@ size_t ZCK_PUBLIC_API zck_write_chunk_cb(void *ptr, size_t l, size_t c, void *dl
+ size_t ZCK_PUBLIC_API zck_write_zck_header_cb(void *ptr, size_t l, size_t c, void *dl_v);
+ size_t ZCK_PUBLIC_API zck_header_cb(char *b, size_t l, size_t c, void *dl_v);
+ 
++#ifdef __cplusplus
++}
++#endif
++
+ #endif
+-- 
+2.50.1
+

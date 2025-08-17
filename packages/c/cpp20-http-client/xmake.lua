@@ -6,6 +6,7 @@ package("cpp20-http-client")
     add_urls("https://github.com/avocadoboi/cpp20-http-client.git")
 
     add_versions("2023.08.11", "bb011a055a1813a4fb2a0b67db0ffa455221aaf8")
+    add_versions("2025.07.24", "2c0efb938486c3edb81705c4abe6486457d9d88f")
 
     if is_plat("windows") then
         add_syslinks("ws2_32", "crypt32")
@@ -13,7 +14,22 @@ package("cpp20-http-client")
         add_deps("openssl")
     end
 
+    if on_check then
+        on_check(function (package)
+            assert(package:check_cxxsnippets({test = [[
+                #include <format>
+                void test() {
+                    auto f = std::format("Hello, {}!", "world");
+                }
+            ]]}, {configs = {languages = "c++20"}}), "package(cpp20-http-client) requires c++20")
+        end)
+    end
+
     on_install("windows", "linux", "macosx", "bsd", "android", "cross", function (package)
+        if package:is_plat("bsd") then
+            io.replace("source/cpp20_http_client.cpp", [[#	include <netinet/tcp.h>]], [[#	include <netinet/tcp.h>
+#	include <netinet/in.h>]], {plain = true})
+        end
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             if not is_plat("windows") then

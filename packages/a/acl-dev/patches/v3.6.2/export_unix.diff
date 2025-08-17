@@ -1,0 +1,16 @@
+diff --git a/lib_acl/include/stdlib/acl_define_unix.h b/lib_acl/include/stdlib/acl_define_unix.h
+index b74c872..52cdef7 100644
+--- a/lib_acl/include/stdlib/acl_define_unix.h
++++ b/lib_acl/include/stdlib/acl_define_unix.h
+@@ -55,7 +55,11 @@
+ #  define acl_assert assert
+ # endif
+ 
++#if defined(__GNUC__)
++# define ACL_API __attribute__((visibility("default")))
++#else
+ # define ACL_API
++#endif
+ 
+ #if 1
+ # define	ACL_ETIMEDOUT		ETIMEDOUT

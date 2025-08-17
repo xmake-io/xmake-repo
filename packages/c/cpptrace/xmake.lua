@@ -6,6 +6,11 @@ package("cpptrace")
     add_urls("https://github.com/jeremy-rifkin/cpptrace/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jeremy-rifkin/cpptrace.git")
 
+    add_versions("v1.0.4", "5c9f5b301e903714a4d01f1057b9543fa540f7bfcc5e3f8bd1748e652e24f9ea")
+    add_versions("v1.0.3", "d9145f3ca2b828a984477fbfb49616b1541aa249af945615f9c2abad573a71cc")
+    add_versions("v1.0.2", "f92825b3c839c3af851204c79ea2a63871f9060f016e7c0411cfdc1727978feb")
+    add_versions("v1.0.1", "bdc1d1ebc3f0e72c384aba6982cdfc08788d85f9ea2228e5621a6ff536df4900")
+    add_versions("v1.0.0", "0e11aebb6b9b98ce9134a58532b63982365aadc76533a4fbb7f6fb6edb32de2e")
     add_versions("v0.8.3", "34f186741a84716edc1b64b372aa1a5b9ec2629d38ab97e5c2a5284b58a8dee8")
     add_versions("v0.8.2", "618fb746174f76eb03c7ece059ebdcfe39b7b6adca6a5da0c9f9bc6a4764d7f9")
     add_versions("v0.7.5", "7df0cae3d7da9be2dc82616292cc86a4a08a8209898716231aef80477a8ca35d")

@@ -11,7 +11,7 @@ package("libfuse")
     add_versions("3.17.1", "2d8ae87a4525fbfa1db5e5eb010ff6f38140627a7004554ed88411c1843d51b2")
     add_versions("3.10.4", "9365b74fd8471caecdb3cc5adf25a821f70a931317ee9103d15bd39089e3590d")
 
-    add_extsources("apt::fuse3", "pacman::fuse3")
+    add_extsources("apt::libfuse3-dev", "pacman::fuse3")
 
     add_syslinks("pthread", "dl", "rt")
 

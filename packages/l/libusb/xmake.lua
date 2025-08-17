@@ -6,10 +6,14 @@ package("libusb")
     add_urls("https://github.com/libusb/libusb/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libusb/libusb.git")
 
+    add_versions("v1.0.29", "7c2dd39c0b2589236e48c93247c986ae272e27570942b4163cb00a060fcf1b74")
+    add_versions("v1.0.28", "378b3709a405065f8f9fb9f35e82d666defde4d342c2a1b181a9ac134d23c6fe")
     add_versions("v1.0.27", "e8f18a7a36ecbb11fb820bd71540350d8f61bcd9db0d2e8c18a6fb80b214a3de")
     add_versions("v1.0.26", "a09bff99c74e03e582aa30759cada218ea8fa03580517e52d463c59c0b25e240")
 
     add_resources(">=1.0.26", "libusb-cmake", "https://github.com/libusb/libusb-cmake.git", "8f0b4a38fc3eefa2b26a99dff89e1c12bf37afd4")
+
+    add_patches("v1.0.26", "patches/windows-add-clock-gettime-check.patch", "38cc23fd5a9c2445951dbe6c6f19e677d333f82332ff5be18a4f362637265f0d")
 
     if is_plat("macosx") then
         add_extsources("brew::libusb")
@@ -36,7 +40,14 @@ package("libusb")
         add_ldflags("--bind", "-s ASYNCIFY=1")
     end
 
-    on_install("!iphoneos", function (package)
+    on_check("wasm", function (package)
+        if package:version() and package:version():le("1.0.26") then
+            raise("package(libusb <=1.0.26) unsupported platform!")
+        end
+    end)
+
+    -- @see https://github.com/libusb/libusb-cmake/issues/33#issuecomment-3028680966
+    on_install("!iphoneos and !bsd", function (package)
         local dir = package:resourcefile("libusb-cmake")
         os.cp(path.join(dir, "CMakeLists.txt"), os.curdir())
         os.cp(path.join(dir, "config.h.in"), os.curdir())
@@ -48,11 +59,14 @@ package("libusb")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
-        local packagedeps = {}
+        local opt = {}
         if package:is_plat("linux", "cross") then
-            table.insert(packagedeps, "eudev")
+            opt.packagedeps = {"eudev"}
         end
-        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
+        if package:config("shared") and package:is_plat("macosx") then
+            opt.shflags = {"-framework", "CoreFoundation", "-framework", "IOKit", "-framework", "Security"}
+        end
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)

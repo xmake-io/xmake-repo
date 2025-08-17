@@ -7,6 +7,7 @@ package("cpp-sort")
     add_urls("https://github.com/Morwenn/cpp-sort/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Morwenn/cpp-sort.git")
 
+    add_versions("1.17.0", "df6cbb805ff71e1b0a30fc1ed55696a2d8c70c3ab87447bee2b749e02415432e")
     add_versions("1.16.0", "54eb65de5655ce58719d45616f29e4b9060135b9cc8b526bcfc9f5434975ea8c")
     add_versions("1.10.0", "48951cac0051d48fee286c3bc02804975f9d83269d80c10dfc5589e76a542765")
     add_versions("1.11.0", "a53b3ea240d6f8d8ea9da0a7e0c8e313cf5e714daedf1617473ab34f111ffeec")

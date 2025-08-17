@@ -86,6 +86,7 @@ function _add_libs_configs(package, configs)
     table.insert(configs, "-DBOOST_ENABLE_MPI=" .. (package:config("mpi") and "ON" or "OFF"))
     if package:config("locale") then
         table.insert(configs, "-DCMAKE_CXX_STANDARD=17")
+        table.insert(configs, "-DBOOST_LOCALE_ENABLE_ICU=" .. (package:config("icu") and "ON" or "OFF"))
     end
 
     _add_iostreams_configs(package, configs)
@@ -108,8 +109,28 @@ function _add_opt(package, opt)
     end
 end
 
+function _patch()
+    -- https://github.com/microsoft/vcpkg/pull/38806
+    local file = io.open("libs/container/CMakeLists.txt", "a")
+    file:write([[
+        if(NOT WIN32)
+            set(THREADS_PREFER_PTHREAD_FLAG 1)
+            find_package(Threads REQUIRED)
+            target_link_libraries(boost_container PUBLIC Threads::Threads)
+            if(EMSCRIPTEN)
+                # Boost config needs `-pthread` to see `_POSIX_THREADS`,
+                # but FindTheads.cmake finishes with `CMAKE_HAVE_LIBC_PTHREAD`.
+                target_compile_options(boost_container PUBLIC -pthread)
+            endif()
+        endif()
+    ]])
+    file:close()
+end
+
 function main(package)
     import("libs", {rootdir = package:scriptdir()})
+
+    _patch()
 
     local configs = {"-DBOOST_INSTALL_LAYOUT=system"}
     table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))

@@ -1,3 +1,16 @@
+-- Usage
+--[[
+    add_requires("vc-ltl5", "yy-thunks")
+
+    target("test")
+        set_kind("binary")
+        add_files("src/*.cpp")
+        add_rules("@yy-thunks/xp")
+        -- add_rules("@yy-thunks/vista")
+        -- add_rules("@yy-thunks/2k")
+        add_packages("vc-ltl5", "yy-thunks")
+--]]
+
 -- TODO:
 -- YY_Thunks_for_Win8.obj
 -- YY_Thunks_for_Win10.0.10240.obj
