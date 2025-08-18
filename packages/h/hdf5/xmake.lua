@@ -54,6 +54,9 @@ package("hdf5")
     on_install("windows", "macosx", "linux", "bsd", function (package)
         -- remove postfix
         io.replace("config/cmake/HDFMacros.cmake", "if(NOT CMAKE_DEBUG_POSTFIX)", "if(0)", {plain = true})
+        if os.isfile("CMakeInstallation.cmake") then
+            io.replace("CMakeInstallation.cmake", "include (InstallRequiredSystemLibraries)", "", {plain = true})
+        end
 
         local configs = {
             "-DHDF5_GENERATE_HEADERS=OFF",
