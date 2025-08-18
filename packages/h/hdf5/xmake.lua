@@ -18,6 +18,7 @@ package("hdf5")
     add_versions("home:1.13.2", "01643fa5b37dba7be7c4db6bbf3c5d07adf5c1fa17dbfaaa632a279b1b2f06da")
     add_versions("home:1.13.3", "83c7c06671f975cee6944b0b217f95005faa55f79ea5532cf4ac268989866af4")
     add_versions("home:1.14.0", "a571cc83efda62e1a51a0a912dd916d01895801c5025af91669484a1575a6ef4")
+
     add_versions("github:1.14.4-3", "019ac451d9e1cf89c0482ba2a06f07a46166caf23f60fea5ef3c37724a318e03")
     add_versions("github:1.14.6", "e4defbac30f50d64e1556374aa49e574417c9e72c6b1de7a4ff88c4b1bea6e9b")
 
@@ -40,7 +41,7 @@ package("hdf5")
             package:add("deps", "szip")
         end
 
-        local libs = {"hdf5_cpp", "hdf5_hl_cpp", "hdf5_hl", "hdf5_tools", "hdf5"}
+        local libs = {"hdf5_hl_cpp", "hdf5_cpp", "hdf5_hl", "hdf5_tools", "hdf5"}
         local prefix = (package:is_plat("windows") and not package:config("shared")) and "lib" or ""
         for _, lib in ipairs(libs) do
             package:add("links", prefix .. lib)
@@ -51,12 +52,16 @@ package("hdf5")
     end)
 
     on_install("windows", "macosx", "linux", "bsd", function (package)
+        -- remove postfix
+        io.replace("config/cmake/HDFMacros.cmake", "if(NOT CMAKE_DEBUG_POSTFIX)", "if(0)", {plain = true})
+
         local configs = {
             "-DHDF5_GENERATE_HEADERS=OFF",
             "-DBUILD_TESTING=OFF",
             "-DHDF5_BUILD_EXAMPLES=OFF",
             "-DHDF_PACKAGE_NAMESPACE:STRING=hdf5::",
-            "-DHDF5_MSVC_NAMING_CONVENTION=OFF"
+            "-DHDF5_MSVC_NAMING_CONVENTION=OFF",
+            "-DCMAKE_DEBUG_POSTFIX:STRING=''",
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
