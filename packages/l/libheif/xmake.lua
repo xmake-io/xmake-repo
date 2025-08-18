@@ -13,11 +13,17 @@ package("libheif")
     add_versions("1.12.0", "e1ac2abb354fdc8ccdca71363ebad7503ad731c84022cf460837f0839e171718")
 
     add_deps("cmake")
-    add_deps("libjpeg-turbo", {configs = {jpeg = "7"}})
+    add_deps("libjpeg-turbo", {configs = {jpeg = "8"}})
     local configdeps = {"libde265", "x265", "dav1d", "kvazaar", "vvenc", "openh264_encoder", "aom_encoder", "aom_decoder"}
     for _, conf in ipairs(configdeps) do
         add_configs(conf, {description = "Build " .. conf .. " encoder/decoder.", default = false, type = "boolean"})
     end
+
+    on_check("macosx", function (package)
+        if macos.version():lt("14") then
+            raise("package(libheif): requires macOS version >= 14.")
+        end
+    end)
 
     on_load("windows", function (package)
         if not package:config("shared") then
