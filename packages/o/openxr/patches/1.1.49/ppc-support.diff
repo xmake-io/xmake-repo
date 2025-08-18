@@ -1,0 +1,13 @@
+diff --git a/src/common/platform_utils.hpp b/src/common/platform_utils.hpp
+index 9715fc0..13d1dcc 100644
+--- a/src/common/platform_utils.hpp
++++ b/src/common/platform_utils.hpp
+@@ -55,6 +55,8 @@
+ #define XR_ARCH_ABI "mips"
+ #elif defined(__powerpc64__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+ #define XR_ARCH_ABI "ppc64"
++#elif defined(__powerpc__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
++#define XR_ARCH_ABI "ppc"
+ #elif defined(__powerpc__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+ #define XR_ARCH_ABI "ppc64el"
+ #elif defined(__s390x__) || defined(__zarch__)

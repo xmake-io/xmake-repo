@@ -46,10 +46,10 @@ package("skia")
         end)
     end
 
-    on_install("macosx", "linux", "windows", function (package)
+    on_install("macosx", "linux|!arm64", "windows|!arm64", function (package)
         local args = {is_official_build = false,
                       is_component_build = false,
-                      is_debug = package:debug(),
+                      is_debug = package:is_debug(),
                       is_shared_library = package:config("shared"),
                       skia_enable_tools = false,
                       skia_use_icu = false,
@@ -81,7 +81,9 @@ package("skia")
             args.cc            = package:build_getenv("cc")
             args.cxx           = package:build_getenv("cxx")
         else
-            args.extra_cflags  = {(package:config("vs_runtime"):startswith("MT") and "/MT" or "/MD")}
+            args.extra_cflags  = {
+                "/" .. package:runtimes()
+            }
         end
         if package:is_plat("macosx") then
             args.extra_ldflags = {"-lstdc++"}

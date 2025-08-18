@@ -8,6 +8,8 @@ package("stringbuilder")
     add_versions("2023.7.10", "ab772a6f0db237155d17a68c8f72b48383137872")
 
     on_install("!windows", function (package)
+        io.replace("include/stringbuilder.h", [[#include <assert.h>]], [[#include <assert.h>
+#include <cstdint>]], {plain = true})
         io.replace("include/stringbuilder.h", "#pragma once", "#pragma once\n#include <ios>\n#include <stdexcept>", {plain = true})
         io.replace("include/stringbuilder.h", "#include <intrin.h>", "", {plain = true})
         os.cp("include", package:installdir())

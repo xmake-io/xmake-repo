@@ -1,0 +1,21 @@
+diff --git a/aui.uitests/CMakeLists.txt b/aui.uitests/CMakeLists.txt
+index 5070f0a3..e4188094 100644
+--- a/aui.uitests/CMakeLists.txt
++++ b/aui.uitests/CMakeLists.txt
+@@ -8,9 +8,13 @@ aui_module(aui.uitests EXPORT aui)
+ 
+ aui_link(aui.uitests PRIVATE aui::core aui::views)
+ 
+-if (TARGET GTest::gmock)
+-  aui_link(aui.uitests PRIVATE GTest::gmock)
+-endif()
++if (AUIB_DISABLE)
++    aui_link(aui.uitests PRIVATE gmock::gmock)
++else ()
++  if (TARGET GTest::gmock)
++    aui_link(aui.uitests PRIVATE GTest::gmock)
++  endif()
++endif ()
+ 
+ aui_enable_tests(aui.uitests)
+ aui_enable_benchmarks(aui.uitests)

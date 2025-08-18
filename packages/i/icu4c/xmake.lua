@@ -71,6 +71,11 @@ package("icu4c")
     on_install("windows", function (package)
         import("package.tools.msbuild")
 
+        if not package:is_cross() and package:is_arch("arm64") then
+            -- Build file always find pkgdata from bin64
+            io.replace("source/extra/uconv/makedata.mak", "bin64", "binARM64", {plain = true})
+        end
+
         if package:has_runtime("MT", "MTd") then
             local files = {
                 "source/common/common.vcxproj",
@@ -132,6 +137,24 @@ package("icu4c")
     end)
 
     on_install("@!windows and !wasm", function (package)
+        if package:version() and package:is_plat("macosx") then
+            local file_path = path.join("source", "common", "uposixdefs.h")
+            if package:version():eq("77.1") then
+                io.replace(
+                    file_path,
+                    "#ifdef _XOPEN_SOURCE",
+                    "#if 1 // #ifdef _XOPEN_SOURCE",
+                    {plain = true}
+                )
+                io.replace(
+                    file_path,
+                    "#define _POSIX_C_SOURCE 200809L",
+                    "// #define _POSIX_C_SOURCE 200809L",
+                    {plain = true}
+                )
+            end
+        end
+
         import("package.tools.autoconf")
 
         os.cd("source")

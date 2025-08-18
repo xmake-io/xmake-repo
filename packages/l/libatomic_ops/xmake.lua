@@ -1,12 +1,12 @@
 package("libatomic_ops")
-    set_homepage("https://github.com/ivmai/libatomic_ops")
+    set_homepage("https://github.com/bdwgc/libatomic_ops/wiki/Download")
     set_description("The atomic_ops project (Atomic memory update operations portable implementation)")
     set_license("GPL-2.0")
 
-    add_urls("https://github.com/ivmai/libatomic_ops/releases/download/v$(version)/libatomic_ops-$(version).tar.gz",
-             "https://github.com/ivmai/libatomic_ops.git")
+    add_urls("https://github.com/bdwgc/libatomic_ops/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/bdwgc/libatomic_ops.git")
 
-    add_versions("7.8.2", "d305207fe207f2b3fb5cb4c019da12b44ce3fcbc593dfd5080d867b1a2419b51")
+    add_versions("v7.8.2", "ad8428a40e01d41bc4ddad3166afa1fc175c9e58d8ef7ddbd7ef3298e32ac37b")
 
     add_configs("gpl", {description = "Build atomic_ops_gpl library", default = false, type = "boolean"})
 

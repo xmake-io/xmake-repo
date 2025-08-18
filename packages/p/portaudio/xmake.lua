@@ -71,7 +71,7 @@ package("portaudio")
         table.insert(configs, "-DPA_USE_SKELETON=" .. (package:config("skeleton") and "ON" or "OFF"))
         table.insert(configs, "-DPA_USE_ASIO=" .. (package:config("asio") and "ON" or "OFF"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DPA_DLL_LINK_WITH_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DPA_DLL_LINK_WITH_STATIC_RUNTIME=" .. (package:has_runtime("MT") and "ON" or "OFF"))
             table.insert(configs, "-DPA_USE_DS=" .. (package:config("direct_sound") and "ON" or "OFF"))
             table.insert(configs, "-DPA_USE_WMME=" .. (package:config("wmme") and "ON" or "OFF"))
             table.insert(configs, "-DPA_USE_WASAPI=" .. (package:config("wasapi") and "ON" or "OFF"))

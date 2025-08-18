@@ -6,6 +6,7 @@ package("bddisasm")
     add_urls("https://github.com/bitdefender/bddisasm/archive/refs/tags/$(version).tar.gz",
              "https://github.com/bitdefender/bddisasm.git")
 
+    add_versions("v3.0.0", "3d02d63af2e0571427fcb3842de37916f7ded83f95b938028eff7a45af03725e")
     add_versions("v2.2.0", "b1aa8749ef1d61ecdc4e5469a823b40e06cf1d077a518995bf86bcac09ba530d")
 
     add_configs("isagenerator", {description = "Include the x86 isagenerator target", default = false, type = "boolean"})
@@ -46,18 +47,13 @@ package("bddisasm")
         table.insert(configs, "-DBDD_USE_EXTERNAL_MEMSET=" .. (package:config("memset") and "ON" or "OFF"))
         table.insert(configs, "-DBDD_NO_MNEMONIC=" .. (package:config("mnemonics") and "OFF" or "ON"))
         table.insert(configs, "-DBDD_INCLUDE_TOOL=" .. (package:config("tools") and "ON" or "OFF"))
-        if package:is_plat("windows") then
-            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
-            if package:config("shared") then
-                table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
-            end
+        if package:config("shared") and package:is_plat("windows") then
+            table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
         import("package.tools.cmake").install(package, configs)
-
-        if package:is_plat("windows") and package:is_debug() then
-            local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.vcp(path.join(package:buildir(), "*.pdb"), dir)
-        end
+        -- patch v3.0.0
+        os.trycp("inc/bdx86_api_legacy.h", package:installdir("include/bddisasm"))
+        os.trycp("inc/bdx86_api_mini.h", package:installdir("include/bddisasm"))
     end)
 
     on_test(function (package)

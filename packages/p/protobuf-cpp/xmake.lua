@@ -56,6 +56,7 @@ package("protobuf-cpp")
     end
 
     add_deps("cmake")
+    add_components("protobuf", "protoc", "utf8_range")
 
     on_load(function (package)
         -- Fix MSVC 2019 arm64 error LNK2019: unresolved external symbol __popcnt referenced in function _upb_log2_table_size
@@ -66,16 +67,10 @@ package("protobuf-cpp")
                 package:add("patches", "31.0", path.join(os.scriptdir(), "patches", "31.0", "msvc2019-arm64.patch"), "3b3fa6e7936df5f10da1bb0303060736a40d55e55055f7bc3b376d7a697c093d")
             end
         end
-        
+
         if package:is_plat("android") and is_host("windows") then
             package:add("deps", "ninja")
             package:set("policy", "package.cmake_generator.ninja", true)
-        end
-
-        if package:is_plat("windows") then
-            package:add("links", "libprotoc", "libprotobuf", "utf8_range", "utf8_validity", "libutf8_range", "libutf8_validity")
-        else
-            package:add("links", "protoc", "protobuf", "utf8_range", "utf8_validity")
         end
 
         if package:is_plat("linux", "bsd", "mingw") then
@@ -104,25 +99,37 @@ package("protobuf-cpp")
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "PROTOBUF_USE_DLLS")
         end
+
+        if package:config("upb") then
+            package:add("components", "upb")
+        end
+
+        if package:config("lite") then
+            package:add("components", "protobuf-lite")
+        end
     end)
     -- ref: https://github.com/conan-io/conan-center-index/blob/19c9de61cce5a5089ce42b0cf15a88ade7763275/recipes/protobuf/all/conanfile.py
     on_component("utf8_range", function (package, component)
         component:add("extsources", "pkgconfig::utf8_range")
+        if package:is_plat("windows") then
+            component:add("links", "libutf8_range", "libutf8_validity")
+        end
         component:add("links", "utf8_validity", "utf8_range")
     end)
 
     on_component("protobuf", function (package, component)
         component:add("extsources", "pkgconfig::protobuf")
-        if is_plat("windows") then
-            component:add("links", "libprotobuf", "utf8_validity")
+        component:add("deps", "utf8_range")
+        if package:is_plat("windows") then
+            component:add("links", "libprotobuf")
         else
-            component:add("links", "protobuf", "utf8_validity")
+            component:add("links", "protobuf")
         end
     end)
 
     on_component("protobuf-lite", function (package, component)
         component:add("extsources", "pkgconfig::protobuf-lite")
-        if is_plat("windows") then
+        if package:is_plat("windows") then
             component:add("links", "libprotobuf-lite", "utf8_validity")
         else
             component:add("links", "protobuf-lite", "utf8_validity")
@@ -131,7 +138,7 @@ package("protobuf-cpp")
 
     on_component("protoc", function (package, component)
         component:add("deps", "protobuf")
-        if is_plat("windows") then
+        if package:is_plat("windows") then
             component:add("links", "libprotoc")
         else
             component:add("links", "protoc")
@@ -139,7 +146,7 @@ package("protobuf-cpp")
     end)
 
     on_component("upb", function (package, component)
-        if is_plat("windows") then
+        if package:is_plat("windows") then
             component:add("links", "libupb", "utf8_range")
         else
             component:add("links", "upb", "utf8_range")
@@ -173,8 +180,13 @@ package("protobuf-cpp")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-Dprotobuf_DISABLE_RTTI=" .. (package:config("rtti") and "OFF" or "ON"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
             table.insert(configs, "-Dprotobuf_MSVC_STATIC_RUNTIME=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
+        end
+
+        if package:dep("abseil") then
+            local std = package:dep("abseil"):config("cxx_standard")
+            table.insert(configs, "-DCMAKE_CXX_STANDARD=" .. std)
+            package:data_set("cxx_standard", std)
         end
 
         table.insert(configs, "-Dprotobuf_WITH_ZLIB=" .. (package:config("zlib") and "ON" or "OFF"))
@@ -211,6 +223,9 @@ package("protobuf-cpp")
             ]])
             os.vrun("protoc test.proto --cpp_out=.")
         end
+
+        local std = package:data("cxx_standard")
+        local languages = "c++" .. (std and std or "17")
         if package:is_library() then
             assert(package:check_cxxsnippets({test = [[
                 #include <google/protobuf/timestamp.pb.h>
@@ -219,6 +234,6 @@ package("protobuf-cpp")
                     google::protobuf::Timestamp ts;
                     google::protobuf::util::TimeUtil::FromString("1972-01-01T10:00:20.021Z", &ts);
                 }
-            ]]}, {configs = {languages = "c++17"}}))
+            ]]}, {configs = {languages =  languages}}))
         end
     end)

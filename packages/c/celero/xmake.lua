@@ -1,11 +1,12 @@
 package("celero")
-
     set_homepage("https://github.com/DigitalInBlue/Celero")
     set_description("C++ Benchmarking Library")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/DigitalInBlue/Celero/archive/refs/tags/$(version).tar.gz",
              "https://github.com/DigitalInBlue/Celero.git")
+
+    add_versions("v2.9.1", "c857d1fa7b20943bcec78ae043686cf77c9447d72537d8d2ba142531bfdc8fad")
     add_versions("v2.9.0", "d59df84696e0dd58022d2c42837362c06eba6d1e29bac61f7b3143bc73d779e5")
     add_versions("v2.8.5", "1f319661c4bee1f6855e45c1764be6cd38bfe27e8afa8da1ad7060c1a793aa20")
     add_versions("v2.8.2", "7d2131ba27ca5343b31f1e04777ed3e666e2ad7f785e79c960c872fc48cd5f88")
@@ -13,16 +14,19 @@ package("celero")
     add_patches("v2.8.2", path.join(os.scriptdir(), "patches", "2.8.2", "gcc11.patch"), "4851cc1ed85d9ee9ce000d7df9d5baabc86f83c50cff09074159239fa37ca8e9")
 
     add_deps("cmake")
-    on_load("windows", function (package)
+
+    on_load("windows", "mingw", function (package)
         if not package:config("shared") then
             package:add("defines", "CELERO_STATIC")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
-        local configs = {"-DCELERO_TREAT_WARNINGS_AS_ERRORS=OFF"}
+    on_install("!bsd", function (package)
+        local configs = {"-DCELERO_TREAT_WARNINGS_AS_ERRORS=OFF", "-DCELERO_ENABLE_WARNINGS_AS_ERRORS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DCELERO_COMPILE_DYNAMIC_LIBRARIES=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DCELERO_COMPILE_PIC=" .. (package:config("pic") and "ON" or "OFF"))
+        table.insert(configs, "-DCELERO_ENABLE_CLANG_ADDRESS_SANITIZER=" .. (package:config("asan") and "ON" or "OFF"))
         if package:is_plat("windows") then
             table.insert(configs, "-DVCPKG_CRT_LINKAGE=" .. (package:config("vs_runtime"):startswith("MT") and "static" or "dynamic"))
         end

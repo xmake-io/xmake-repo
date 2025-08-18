@@ -4,20 +4,14 @@ package("libyuv")
     set_license("BSD-3-Clause")
 
     add_urls("https://chromium.googlesource.com/libyuv/libyuv.git",
-             "https://github.com/lemenkov/libyuv.git")
+             "https://github.com/lemenkov/libyuv.git", {alias = "git"})
 
-    add_urls("https://github.com/lemenkov/libyuv/archive/$(version).tar.gz", {
-        version = function (version)
-            -- Versions from LIBYUV_VERSION definition in include/libyuv/version.h
-            -- Pay attention to package commits incrementing this definition
-            local table = {
-                ["1891"] = "611806a1559b92c97961f51c78805d8d9d528c08",
-            }
-            return table[tostring(version)]
-        end})
+    -- Versions from LIBYUV_VERSION definition in include/libyuv/version.h
+    -- Pay attention to package commits incrementing this definition
+    add_versions("git:1913", "6f729fbe658a40dfd993fa8b22bd612bb17cde5c")
+    add_versions("git:1891", "611806a1559b92c97961f51c78805d8d9d528c08")
 
-    add_versions("1891", "a8dddc6f45d6987cd3c08e00824792f3c72651fde29f475f572ee2292c03761f")
-
+    add_patches("1913", "patches/1913/cmake.patch", "9b61c6a5c26e727d164f06e83a3bf19863f840cd57fcee365429561e640930bf")
     add_patches("1891", "patches/1891/cmake.patch", "87086566b2180f65ff3d5ef9db7c59a6e51e2592aeeb787e45305beb4cf9d30d")
 
     add_configs("jpeg", {description = "Build with JPEG.", default = false, type = "boolean"})
@@ -34,11 +28,6 @@ package("libyuv")
             local ndk = package:toolchain("ndk"):config("ndkver")
             assert(ndk and tonumber(ndk) > 22, "package(libyuv): need ndk version > 22")
         end)
-        on_check("linux", function (package)
-            if package:is_arch("arm64") then
-                raise("package(libuv) unsupport compile flags -march=armv9-a+sme")
-            end
-        end)
     end
 
     on_load(function (package)
@@ -53,10 +42,15 @@ package("libyuv")
 
     on_install("!cross", function (package)
         if package:is_plat("iphoneos") then
-            io.replace("CMakeLists.txt",
-                [[STRING(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" arch_lowercase)]],
-                [[set(arch_lowercase "]] .. package:arch() .. [[")]], {plain = true})
+            local patch = [[set(arch_lowercase "]] .. package:arch() .. [[")]]
+            io.replace("CMakeLists.txt", [[STRING(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" arch_lowercase)]], patch, {plain = true})
+            io.replace("CMakeLists.txt", [[string(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" arch_lowercase)]], patch, {plain = true})
         end
+        -- fix linux arm64 build error
+        -- -- commit 1724c4be72f32d2f04eead939f7b3f35ad4e39e3
+        -- io.replace("CMakeLists.txt", "-march=armv9-a+sme", "-march=armv9-a+i8mm+sme", {plain = true})
+        io.replace("CMakeLists.txt", "-march=armv9-a+sme", "", {plain = true})
+        io.replace("CMakeLists.txt", "-march=armv9-a+i8mm+sme", "", {plain = true})
 
         local configs = {"-DCMAKE_CXX_STANDARD=14"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
