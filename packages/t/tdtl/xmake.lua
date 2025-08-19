@@ -35,7 +35,7 @@ package("tdtl")
     }
 
     add_deps("cmake", "zlib")
-    add_deps("gperf", {public = true})
+    add_deps("gperf")
     on_install(function (package)
         local targets = {}
         for _, tool in ipairs(tools) do
