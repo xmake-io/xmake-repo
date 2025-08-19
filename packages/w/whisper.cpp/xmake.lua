@@ -6,6 +6,7 @@ package("whisper.cpp")
     set_urls("https://github.com/ggerganov/whisper.cpp/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/ggerganov/whisper.cpp.git")
 
+    add_versions("1.7.5", "2fda42b57b7b8427d724551bd041616d85401fb9382e42b0349132a28920a34f")
     add_versions("1.6.2", "da7988072022acc3cfa61b370b3c51baad017f1900c3dc4e68cb276499f66894")
     add_versions("1.6.0", "2729a83662edf909dad66115a3b616c27011cbe4c05335656034954c91ba0c92")
     add_versions("1.5.5", "27fa5c472657af2a6cee63de349a34b23d0f3781fa9b8ef301a940cf64964a79")
