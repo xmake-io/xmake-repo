@@ -11,7 +11,7 @@ package("implot")
 
     add_deps("imgui <1.91")
 
-    on_install("windows", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
+    on_install(function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
             add_requires("imgui <1.91")
@@ -26,10 +26,7 @@ package("implot")
                     add_rules("utils.symbols.export_all", {export_classes = true})
                 end
         ]])
-        if package:config("shared") then
-            configs.kind = "shared"
-        end
-        import("package.tools.xmake").install(package, configs)
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
