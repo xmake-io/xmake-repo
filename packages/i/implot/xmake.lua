@@ -9,12 +9,12 @@ package("implot")
     add_versions("v0.16", "961df327d8a756304d1b0a67316eebdb1111d13d559f0d3415114ec0eb30abd1")
     add_versions("v0.15", "3df87e67a1e28db86828059363d78972a298cd403ba1f5780c1040e03dfa2672")
 
-    add_deps("imgui")
+    add_deps("imgui <1.91")
 
     on_install("windows", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
-            add_requires("imgui")
+            add_requires("imgui <1.91")
             add_rules("mode.release", "mode.debug")
             target("implot")
                 set_kind("$(kind)")
