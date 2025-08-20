@@ -11,9 +11,8 @@ package("concerto-core")
     add_configs("asserts", {description = "Enable asserts.", default = false, type = "boolean"})
     add_configs("enet", {description = "Enable ENet support.", default = false, type = "boolean"})
 
-
     on_check("macosx", function (package)
-        assert(macos.version():gt("13"), "concerto-core requires version > 13 for macOS")
+        assert(macos.version():ge("14"), "concerto-core requires version >= 14 for macOS")
     end)
 
     on_check("android", function (package)
