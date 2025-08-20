@@ -28,6 +28,12 @@ package("steam-audio")
         add_syslinks("log", "android")
     end
 
+    on_check(function (package)
+        if package:version() and package:version():eq("4.7.0") and package:has_tool("cxx", "clang") then
+            raise("package(steam-audio >=4.7.0) unsupported clang")
+        end
+    end)
+
     on_load(function (package)
         package:add("deps", package:config("fft"))
         if package:config("mkl") then
