@@ -5,9 +5,8 @@ package("concerto-core")
 
     add_urls("https://github.com/ConcertoEngine/ConcertoCore.git")
 
-    add_versions("2025.08.13+4", "c11f55e90f10b434f8d1b349e089eabb35b1f53d")
+    add_versions("2025.08.21", "836d4f6ab7a2c961520e692d55bbbc6ff0729b8f")
 
-    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean"})
     add_configs("asserts", {description = "Enable asserts.", default = false, type = "boolean"})
     add_configs("enet", {description = "Enable ENet support.", default = false, type = "boolean"})
 
@@ -35,7 +34,6 @@ package("concerto-core")
         end
 
         local configs = {}
-        configs.static = not package:config("shared")
         configs.tests = false
         configs.mode = package:is_debug() and "debug" or "release"
         configs.override_runtime = false
