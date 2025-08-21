@@ -1,0 +1,44 @@
+diff --git a/src/loader/CMakeLists.txt b/src/loader/CMakeLists.txt
+index 073e07b..23213b0 100644
+--- a/src/loader/CMakeLists.txt
++++ b/src/loader/CMakeLists.txt
+@@ -206,14 +206,14 @@ elseif(WIN32)
+         openxr_loader PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/loader.rc"
+     )
+ 
+-    if(MSVC)
+-        if(DYNAMIC_LOADER)
+-            target_sources(
+-                openxr_loader
+-                PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/openxr-loader.def"
+-            )
+-        endif()
++    if(DYNAMIC_LOADER)
++        target_sources(
++            openxr_loader
++            PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/openxr-loader.def"
++        )
++    endif()
+ 
++    if(MSVC)
+         if(DYNAMIC_LOADER AND NOT (CMAKE_SYSTEM_NAME STREQUAL "WindowsStore"))
+             # If building DLLs, force static CRT linkage
+             set_target_properties(
+@@ -360,7 +360,7 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID MATCHES "Clang")
+             openxr_loader
+             PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/openxr-loader.expsym"
+         )
+-    else()
++    elseif(NOT MINGW)
+         set_target_properties(
+             openxr_loader
+             PROPERTIES
+@@ -402,7 +402,7 @@ export(
+ # Create alias so that it can be used the same whether vendored as source or found with CMake.
+ add_library(OpenXR::openxr_loader ALIAS openxr_loader)
+ 
+-if(WIN32 AND NOT INSTALL_TO_ARCHITECTURE_PREFIXES)
++if(MSVC AND NOT INSTALL_TO_ARCHITECTURE_PREFIXES)
+     set(TARGET_DESTINATION cmake)
+ else()
+     set(TARGET_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/openxr/)

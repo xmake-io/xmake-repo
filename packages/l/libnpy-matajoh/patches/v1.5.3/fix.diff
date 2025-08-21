@@ -1,0 +1,90 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 41ce88d..62d0850 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -95,7 +95,7 @@ endif()
+ 
+ target_include_directories(npy
+   PUBLIC
+-    $<INSTALL_INTERFACE:build/native/include>
++    $<INSTALL_INTERFACE:include>
+     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+   PRIVATE
+     ${CMAKE_CURRENT_SOURCE_DIR}/src
+@@ -124,11 +124,12 @@ set(INSTALL_CONFIGDIR "cmake")
+ 
+ install(TARGETS npy 
+   EXPORT npy-targets
+-  ARCHIVE DESTINATION "build/native/lib"
+-  LIBRARY DESTINATION "build/native/lib"
++  ARCHIVE DESTINATION "lib"
++  LIBRARY DESTINATION "lib"
++  RUNTIME DESTINATION "bin"
+ )
+ 
+-install(DIRECTORY include/ DESTINATION "build/native/include")
++install(DIRECTORY include/ DESTINATION "include")
+ 
+ install(EXPORT npy-targets
+   FILE
+@@ -166,23 +167,19 @@ export(PACKAGE npy)
+ 
+ # -------------------- Package ------------------------------------
+ 
+-set( PROJECT_FILES
+-  README.md
+-  CHANGELOG.md
+-)
+ 
+ # copy these files into the root of the distribution zip
+-install( FILES ${PROJECT_FILES} DESTINATION "." )
+ 
+-if( MSVC )
++if( 0 )
+   # NuGet files
+   set( LIBNPY_NUGET_NAME "npy-${SYSTEM_TOOLKIT}-${SYSTEM_BITS}-${CMAKE_BUILD_TYPE}" CACHE STRING "npy NuGet Name" FORCE )
+   file( READ RELEASE_NOTES LIBNPY_RELEASE_NOTES )
+ 
+   configure_file("${CMAKE_CURRENT_SOURCE_DIR}/nuget/template.nuspec.in" "${CMAKE_CURRENT_BINARY_DIR}/nuget/${LIBNPY_NUGET_NAME}.nuspec" @ONLY )
+   configure_file("${CMAKE_CURRENT_SOURCE_DIR}/nuget/template.targets.in"
+-                "${CMAKE_CURRENT_BINARY_DIR}/nuget/build/native/${LIBNPY_NUGET_NAME}.targets" @ONLY )
+-else()
++                "${CMAKE_CURRENT_BINARY_DIR}/nuget/${LIBNPY_NUGET_NAME}.targets" @ONLY )
++endif()
++if( 0 )
+   set( CPACK_SYSTEM_NAME ${SYSTEM_NAME} )
+   set( CPACK_PACKAGE_VERSION "${LIBNPY_VERSION}" )
+   set( CPACK_GENERATOR "ZIP" )
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 66f8af4..6423546 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -4,12 +4,13 @@ set( SOURCES
+    npz.cpp
+    tensor.cpp
+    zip.cpp
+-   miniz/miniz.cpp
+ )
+ 
+ add_definitions( -DLIBNPY_VERSION=${LIBNPY_VERSION} )
+ 
+-add_library( npy STATIC ${SOURCES} )
++add_library( npy ${SOURCES} )
++find_package( miniz REQUIRED )
++target_link_libraries( npy PRIVATE miniz::miniz )
+ add_library( npy::npy ALIAS npy )
+ 
+ if (LIBNPY_SANITIZE)
+diff --git a/src/zip.cpp b/src/zip.cpp
+index 1269704..0c35083 100644
+--- a/src/zip.cpp
++++ b/src/zip.cpp
+@@ -4,6 +4,8 @@
+ 
+ #include "npy/core.h"
+ #include "zip.h"
++#include <vector>
++#include <sstream>
+ 
+ namespace {
+ const size_t CHUNK = 1024 * 1024;

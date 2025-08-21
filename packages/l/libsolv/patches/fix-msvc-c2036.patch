@@ -1,0 +1,25 @@
+From c56131ef7d3e707fc3b2acc404bb986b5498091a Mon Sep 17 00:00:00 2001
+From: Redbeanw44602 <redbeana44945@gmail.com>
+Date: Thu, 24 Jul 2025 13:42:07 +0800
+Subject: [PATCH] fix msvc c2036.
+
+---
+ src/repo_write.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/repo_write.c b/src/repo_write.c
+index c965a76e..5de1bd6f 100644
+--- a/src/repo_write.c
++++ b/src/repo_write.c
+@@ -188,7 +188,7 @@ write_compressed_blob(Repodata *data, void *blob, int len)
+ 	  write_u8(data, clen);
+ 	  write_blob(data, cpage, clen);
+ 	}
+-      blob += chunk;
++      blob = (char*)blob + chunk;
+       len -= chunk;
+     }
+ }
+-- 
+2.50.1
+

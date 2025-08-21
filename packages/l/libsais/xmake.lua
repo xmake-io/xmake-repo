@@ -5,6 +5,8 @@ package("libsais")
 
     add_urls("https://github.com/IlyaGrebnov/libsais/archive/refs/tags/$(version).tar.gz",
              "https://github.com/IlyaGrebnov/libsais.git")
+    add_versions("v2.10.3", "69cb3ce4982ac0f6228cab4f5b324dc2445f82bb260ad8c927aea8033c661d52")
+    add_versions("v2.10.2", "e2fe778b69dcd9e4a1df57b8eefb577f803788336855b6a5f9fbf22683f3980e")
     add_versions("v2.10.1", "ecf4611c18fefd8d4377343e4dc3f257ae17a501301a13f7cb7585c836405d39")
     add_versions("v2.10.0", "25c80c99945d7148b61ee4108dbda77e3dda605619ebfc7b880fd074af212b50")
     add_versions("v2.8.7", "c957a6955eac415088a879459c54141a2896edc9b40c457899ed2c4280b994c8")

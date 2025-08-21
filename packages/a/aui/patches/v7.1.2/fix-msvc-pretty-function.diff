@@ -1,0 +1,50 @@
+diff --git a/aui.core/src/AUI/Reflect/AClass.h b/aui.core/src/AUI/Reflect/AClass.h
+index 7cbf3cfc..acccb19e 100644
+--- a/aui.core/src/AUI/Reflect/AClass.h
++++ b/aui.core/src/AUI/Reflect/AClass.h
+@@ -36,7 +36,13 @@ public:
+             name = name.substr(0, name.length() - 2);
+         return name;
+ #elif AUI_COMPILER_CLANG
++    #if defined(__PRETTY_FUNCTION__) || defined(__GNUC__) || defined(__clang__)
+         AString s = __PRETTY_FUNCTION__;
++    #elif defined(__FUNCSIG__)
++        AString s = __FUNCSIG__;
++    #else
++		AString s = __FUNCTION__;
++    #endif
+         auto b = s.find("=") + 1;
+         auto e = s.find("&", b);
+         e = std::min(s.find("]", b), e);
+@@ -44,7 +50,13 @@ public:
+         result = result.trim();
+         return result;
+ #else
++    #if defined(__PRETTY_FUNCTION__) || defined(__GNUC__) || defined(__clang__)
+         AString s = __PRETTY_FUNCTION__;
++    #elif defined(__FUNCSIG__)
++        AString s = __FUNCSIG__;
++    #else
++		AString s = __FUNCTION__;
++    #endif
+         auto b = s.find("with T = ") + 9;
+         return { s.begin() + b, s.end() - 1 };
+ #endif
+diff --git a/aui.core/src/AUI/Reflect/AEnumerate.h b/aui.core/src/AUI/Reflect/AEnumerate.h
+index 99d9d281..9419a4b3 100644
+--- a/aui.core/src/AUI/Reflect/AEnumerate.h
++++ b/aui.core/src/AUI/Reflect/AEnumerate.h
+@@ -39,7 +39,13 @@ namespace aui::enumerate::basic {
+ 
+         AString result(begin, end);
+ #else
++    #if defined(__PRETTY_FUNCTION__) || defined(__GNUC__) || defined(__clang__)
+             AString s = __PRETTY_FUNCTION__;
++    #elif defined(__FUNCSIG__)
++            AString s = __FUNCSIG__;
++    #else
++			AString s = __FUNCTION__;
++    #endif
+ #if AUI_COMPILER_CLANG
+             auto end = s.rfind(']');
+ #else

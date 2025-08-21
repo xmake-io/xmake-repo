@@ -6,6 +6,7 @@ package("hexl")
     add_urls("https://github.com/intel/hexl/archive/refs/tags/$(version).tar.gz",
              "https://github.com/intel/hexl.git")
 
+    add_versions("v1.2.6", "5035cedff6984060c10e2ce7587dab83483787ea2010e1b60d18d19bb3538f3b")
     add_versions("v1.2.5", "3692e6e6183dbc49253e51e86c3e52e7affcac925f57db0949dbb4d34b558a9a")
 
     add_configs("experimental", {description = "Enable experimental features", default = false, type = "boolean"})
@@ -29,7 +30,7 @@ package("hexl")
         if package:is_debug() then
             package:add("deps", "easyloggingpp")
             package:add("deps", (is_subhost("windows") and "pkgconf") or "pkg-config")
-            package:add("patches", "1.2.5", "patches/1.2.5/cmake-find-easyloggingpp.patch", "7b239bebc13cd9548334b4dfcc84f1a11895c37e08b414d87e5ce81c944fb239")
+            package:add("patches", ">=1.2.5", "patches/1.2.5/cmake-find-easyloggingpp.patch", "7b239bebc13cd9548334b4dfcc84f1a11895c37e08b414d87e5ce81c944fb239")
         end
     end)
 
@@ -55,11 +56,6 @@ package("hexl")
         end
         table.insert(configs, "-DHEXL_EXPERIMENTAL=" .. (package:config("experimental") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
-
-        if package:is_plat("windows") and package:is_debug() then
-            local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.vcp(path.join(package:buildir(), "**.pdb"), dir)
-        end
     end)
 
     on_test(function (package)

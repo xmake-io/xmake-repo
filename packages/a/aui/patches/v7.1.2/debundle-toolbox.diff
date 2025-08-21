@@ -1,0 +1,14 @@
+diff --git a/aui.toolbox/CMakeLists.txt b/aui.toolbox/CMakeLists.txt
+index c17cb1da..aa088ce4 100644
+--- a/aui.toolbox/CMakeLists.txt
++++ b/aui.toolbox/CMakeLists.txt
+@@ -7,4 +7,6 @@ endif()
+ 
+ aui_executable(aui.toolbox WIN32_SUBSYSTEM_CONSOLE EXPORT aui)
+ aui_link(aui.toolbox PRIVATE aui::core aui::crypt aui::image)
+-aui_enable_tests(aui.toolbox)
+\ No newline at end of file
++if (NOT AUIB_DISABLE)
++    aui_enable_tests(aui.toolbox)
++endif ()
+\ No newline at end of file

@@ -7,6 +7,9 @@ package("cpp-httplib")
     set_urls("https://github.com/yhirose/cpp-httplib/archive/refs/tags/$(version).tar.gz",
              "https://github.com/yhirose/cpp-httplib.git")
 
+    add_versions("v0.23.1", "410a1347ed6bcbcc4a19af8ed8ad3873fe9fa97731d52db845c4c78f3f9c31e6")
+    add_versions("v0.22.0", "fcfea48c8f2c386e7085ef8545c8a4875efa30fa6d5cf9dd31f03c6ad038da9d")
+    add_versions("v0.21.0", "99cfbce46981994d8f34ed21836510d7d408ffac91315bb22c9584a83e220e60")
     add_versions("v0.20.1", "b74b1c2c150be2841eba80192f64d93e9a6711985b3ae8aaa1a9cec4863d1dd9")
     add_versions("v0.20.0", "18064587e0cc6a0d5d56d619f4cbbcaba47aa5d84d86013abbd45d95c6653866")
     add_versions("v0.19.0", "c9b9e0524666e1cd088f0874c57c1ce7c0eaa8552f9f4e15c755d5201fc8c608")
@@ -32,6 +35,8 @@ package("cpp-httplib")
     add_versions("v0.15.3", "2121bbf38871bb2aafb5f7f2b9b94705366170909f434428352187cb0216124e")
     add_versions("v0.16.2", "75565bcdf12522929a26fb57a2c7f8cc0e175e27a9ecf51616075f3ea960da44")
 
+    add_patches("v0.23.1", "patches/v0.23.1/fix-mingw.diff", "d2d8a4c16de3a00d9872526a187257c7ad344eba2a9f109d10b58eadce1c4059")
+
     add_configs("ssl",  { description = "Requires OpenSSL", default = false, type = "boolean"})
     add_configs("zlib",  { description = "Requires Zlib", default = false, type = "boolean"})
     add_configs("brotli",  { description = "Requires Brotli", default = false, type = "boolean"})
@@ -40,10 +45,17 @@ package("cpp-httplib")
     add_deps("cmake")
 
     if on_check then
-        on_check("android", function (package)
-            local ndk = package:toolchain("ndk")
-            local ndk_sdkver = ndk:config("ndk_sdkver")
-            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(httplib): need ndk api level >= 24 for android")
+        on_check(function (package)
+            if package:is_plat("android") then
+                local ndk = package:toolchain("ndk")
+                local ndk_sdkver = ndk:config("ndk_sdkver")
+                assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(httplib): need ndk api level >= 24 for android")
+            end
+            if package:version() and package:version():ge("0.23.0") then
+                if package:check_sizeof("void*") == "4" then
+                    raise("package(cpp-httplib >=0.23.0) unsupported 32-bit")
+                end
+            end
         end)
     end
 

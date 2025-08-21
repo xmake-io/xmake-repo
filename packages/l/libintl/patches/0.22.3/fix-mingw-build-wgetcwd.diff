@@ -1,0 +1,12 @@
+diff --git a/gettext-runtime/intl/dcigettext.c b/gettext-runtime/intl/dcigettext.c
+index 7c122b1..0647f8f 100644
+--- a/gettext-runtime/intl/dcigettext.c
++++ b/gettext-runtime/intl/dcigettext.c
+@@ -66,6 +66,7 @@ extern int errno;
+ #endif
+ 
+ #include <locale.h>
++#include <direct.h>
+ 
+ #ifdef _LIBC
+   /* Guess whether integer division by zero raises signal SIGFPE.

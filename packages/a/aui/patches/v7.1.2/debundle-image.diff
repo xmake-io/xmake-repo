@@ -1,0 +1,37 @@
+diff --git a/aui.image/CMakeLists.txt b/aui.image/CMakeLists.txt
+index 033e7ad5..1f8d8915 100644
+--- a/aui.image/CMakeLists.txt
++++ b/aui.image/CMakeLists.txt
+@@ -1,8 +1,12 @@
+ cmake_minimum_required(VERSION 3.10)
+ 
+-auib_import(lunasvg https://github.com/aui-framework/lunasvg
+-            VERSION 272ceee)
++if (AUIB_DISABLE)
++    find_package(lunasvg CONFIG REQUIRED)
++else ()
++    auib_import(lunasvg https://github.com/aui-framework/lunasvg
++                VERSION 272ceee)
+ 
++endif ()
+ 
+ set(WEBP_COMPONENTS_TO_DISABLE ANIM_UTILS CWEBP DWEBP GIF2WEBP IMG2WEBP VWEBP WEBPINFO LIBWEBPMUX WEBPMUX EXTRAS)
+ 
+@@ -10,9 +14,15 @@ foreach(_component ${WEBP_COMPONENTS_TO_DISABLE})
+     list(APPEND WEBP_CMAKE_ARGS "-DWEBP_BUILD_${_component}=OFF")
+ endforeach()
+ 
+-auib_import(WebP https://github.com/webmproject/libwebp VERSION 1.3.1 CMAKE_ARGS ${WEBP_CMAKE_ARGS})
++if (AUIB_DISABLE)
++    find_package(WebP CONFIG REQUIRED)
++else ()
++    auib_import(WebP https://github.com/webmproject/libwebp VERSION 1.3.1 CMAKE_ARGS ${WEBP_CMAKE_ARGS})
++endif ()
+ 
+ aui_module(aui.image WHOLEARCHIVE EXPORT aui)
+ add_subdirectory(3rdparty)
+ aui_link(aui.image PRIVATE aui::core lunasvg::lunasvg WebP::webp WebP::webpdemux)
+-aui_enable_tests(aui.image)
++if (NOT AUIB_DISABLE)
++    aui_enable_tests(aui.image)
++endif ()

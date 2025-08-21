@@ -1,0 +1,44 @@
+From 5691f303ad272a2514f68a96d6c18aeff62eb33d Mon Sep 17 00:00:00 2001
+From: Rosen Penev <rosenp@gmail.com>
+Date: Sun, 12 Jun 2022 22:22:39 -0700
+Subject: [PATCH] windows: Add clock_gettime check
+
+Under MSYS2, the windows usbi_get_monotonic_time interferes with the
+static inline function under libusbi.h
+
+Closes #1151
+---
+ libusb/os/windows_common.c | 2 ++
+ libusb/version_nano.h      | 2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/libusb/os/windows_common.c b/libusb/os/windows_common.c
+index 24ac095c..1f4b6835 100644
+--- a/libusb/os/windows_common.c
++++ b/libusb/os/windows_common.c
+@@ -848,6 +848,7 @@ static int windows_handle_transfer_completion(struct usbi_transfer *itransfer)
+ 		return usbi_handle_transfer_completion(itransfer, status);
+ }
+ 
++#ifndef HAVE_CLOCK_GETTIME
+ void usbi_get_monotonic_time(struct timespec *tp)
+ {
+ 	static LONG hires_counter_init;
+@@ -872,6 +873,7 @@ void usbi_get_monotonic_time(struct timespec *tp)
+ 	tp->tv_sec = (long)(hires_counter.QuadPart / hires_frequency);
+ 	tp->tv_nsec = (long)(((hires_counter.QuadPart % hires_frequency) * hires_ticks_to_ps) / UINT64_C(1000));
+ }
++#endif
+ 
+ // NB: MSVC6 does not support named initializers.
+ const struct usbi_os_backend usbi_backend = {
+# diff --git a/libusb/version_nano.h b/libusb/version_nano.h
+# index 045fb83c..35ee140b 100644
+# --- a/libusb/version_nano.h
+# +++ b/libusb/version_nano.h
+# @@ -1 +1 @@
+# -#define LIBUSB_NANO 11730
+# +#define LIBUSB_NANO 11731
+# -- 
+# 2.50.1
+

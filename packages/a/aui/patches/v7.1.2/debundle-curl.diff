@@ -1,0 +1,23 @@
+diff --git a/aui.curl/CMakeLists.txt b/aui.curl/CMakeLists.txt
+index 5141c8ee..00be58b4 100644
+--- a/aui.curl/CMakeLists.txt
++++ b/aui.curl/CMakeLists.txt
+@@ -1,9 +1,15 @@
+ cmake_minimum_required(VERSION 3.10)
+ 
+-auib_import(CURL https://github.com/aui-framework/curl/archive/refs/heads/master.zip
+-            ARCHIVE)
++if (AUIB_DISABLE)
++    find_package(CURL CONFIG REQUIRED)
++else ()
++    auib_import(CURL https://github.com/aui-framework/curl/archive/refs/heads/master.zip
++                ARCHIVE)
++endif ()
+ 
+ aui_module(aui.curl EXPORT aui WHOLEARCHIVE)
+-aui_enable_tests(aui.curl)
++if (NOT AUIB_DISABLE)
++    aui_enable_tests(aui.curl)
++endif ()
+ aui_link(aui.curl PUBLIC aui::core aui::json)
+ aui_link(aui.curl PRIVATE CURL::libcurl aui::crypt)
