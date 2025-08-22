@@ -20,10 +20,15 @@ package("innoextract")
     }})
 
     on_install(function (package)
-        local configs = {}
+        local configs = {"-DUSE_STATIC_LIBS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_LTO=" .. (package:config("lto") and "ON" or "OFF"))
+
+        table.insert(configs, "-DLZMA_USE_STATIC_LIBS=" .. (package:dep("xz"):config("shared") and "OFF" or "ON"))
+        table.insert(configs, "-DZLIB_USE_STATIC_LIBS=" .. (package:dep("boost"):config("shared") and "OFF" or "ON"))
+        table.insert(configs, "-DBZip2_USE_STATIC_LIBS=" .. (package:dep("bzip2"):config("shared") and "OFF" or "ON"))
+        table.insert(configs, "-DBoost_USE_STATIC_LIBS=" .. (package:dep("zlib"):config("shared") and "OFF" or "ON"))
         import("package.tools.cmake").install(package, configs)
     end)
 
