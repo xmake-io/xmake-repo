@@ -6,6 +6,7 @@ package("polyscope")
 
     add_urls("https://github.com/nmwsharp/polyscope/archive/refs/tags/$(version).tar.gz",
              "https://github.com/nmwsharp/polyscope.git")
+    add_versions("v2.5.0", "419a1eaa204dedc29ef67bff05c0a387c9c859ec4fe55fdba63390dac353fd4f")
     add_versions("v2.4.0", "bd240ab00797901c3ae9a789bf944e4023127ff7066cc12daf0402285409afbd")
     add_versions("v2.3", "2f57d6d206aa69d277858f046f4db08d27f03c10e97d691a0c3fc9e221a0cd60")
     add_versions("v2.2.1", "1952d20722cb37c5531e88d5b7f5db88c2827c55fd7ada481c2ac425f3bc4d25")
