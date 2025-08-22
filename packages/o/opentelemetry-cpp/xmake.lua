@@ -104,10 +104,9 @@ package("opentelemetry-cpp")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=" .. (package:config("pic") and "ON" or "OFF"))
         if package:config("shared") then
+            table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
             if package:is_plat("windows") then
                 table.insert(configs, "-DOPENTELEMETRY_BUILD_DLL=ON")
-            else
-                table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
             end
         else
             table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
