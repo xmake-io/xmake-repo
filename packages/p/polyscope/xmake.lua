@@ -1,11 +1,11 @@
 package("polyscope")
-
     set_homepage("https://polyscope.run/")
     set_description("A C++ & Python viewer for 3D data like meshes and point clouds")
     set_license("MIT")
 
     add_urls("https://github.com/nmwsharp/polyscope/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/nmwsharp/polyscope.git")
+             "https://github.com/nmwsharp/polyscope.git", {submodules = false})
+
     add_versions("v2.5.0", "419a1eaa204dedc29ef67bff05c0a387c9c859ec4fe55fdba63390dac353fd4f")
     add_versions("v2.4.0", "bd240ab00797901c3ae9a789bf944e4023127ff7066cc12daf0402285409afbd")
     add_versions("v2.3", "2f57d6d206aa69d277858f046f4db08d27f03c10e97d691a0c3fc9e221a0cd60")
@@ -24,12 +24,21 @@ package("polyscope")
 
     add_deps("cmake")
     add_deps("glad", "glfw", "glm", "nlohmann_json", "stb")
-    on_load("windows", "macosx", "linux", function (package)
-        if package:version():ge("2.2.0") then
-            package:add("deps", "imgui <=1.90.4", {configs = {glfw = true, opengl3 = true}})
-        else
-            package:add("deps", "happly")
-            package:add("deps", "imgui <=1.86", {configs = {glfw = true, opengl3 = true}})
+
+    on_load(function (package)
+        local version = package:version()
+        if version then
+            if version:ge("2.5.0") then
+                -- TODO
+                package:add("deps", "implot")
+            else
+                if version:ge("2.2.0") then
+                    package:add("deps", "imgui <=1.90.4", {configs = {glfw = true, opengl3 = true}})
+                else
+                    package:add("deps", "happly")
+                    package:add("deps", "imgui <=1.86", {configs = {glfw = true, opengl3 = true}})
+                end
+            end
         end
         package:add("defines", "GLM_ENABLE_EXPERIMENTAL")
     end)
@@ -37,10 +46,19 @@ package("polyscope")
     on_install("windows", "macosx", "linux", function (package)
         os.cp("deps/stb/stb_impl.cpp", "deps/stb_impl.cpp")
         local configs = {"-DPOLYSCOPE_BACKEND_OPENGL_MOCK=OFF", "-DPOLYSCOPE_BACKEND_OPENGL3_EGL=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"imgui", "glad", "glfw", "glm", "happly", "nlohmann_json", "stb"}})
-        if package:version():lt("2.2.0") then
+
+        local version = package:version()
+        local opt = {}
+        if version and version:ge("2.5.0") then
+            opt.packagedeps = {"implot", "imgui", "glad", "glfw", "glm", "happly", "nlohmann_json", "stb"}
+        else
+            opt.packagedeps = {"imgui", "glad", "glfw", "glm", "happly", "nlohmann_json", "stb"}
+        end
+        import("package.tools.cmake").install(package, configs, opt)
+
+        if version and version:lt("2.2.0") then
             os.cp("include/polyscope", package:installdir("include"))
         end
     end)
