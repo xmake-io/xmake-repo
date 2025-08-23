@@ -6,6 +6,7 @@ package("abseil")
     add_urls("https://github.com/abseil/abseil-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/abseil/abseil-cpp.git")
 
+    add_versions("20250814.0", "9b2b72d4e8367c0b843fa2bcfa2b08debbe3cee34f7aaa27de55a6cbb3e843db")
     add_versions("20250512.1", "9b7a064305e9fd94d124ffa6cc358592eb42b5da588fb4e07d09254aa40086db")
     add_versions("20250512.0", "7262daa7c1711406248c10f41026d685e88223bc92817d16fb93c19adb57f669")
     add_versions("20250127.1", "b396401fd29e2e679cace77867481d388c807671dc2acc602a0259eeb79b7811")
@@ -51,7 +52,7 @@ package("abseil")
         io.replace("CMakeLists.txt", [[set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")]], "", {plain = true})
         if package:version() and package:is_plat("macosx") then
             local file_path = path.join("absl", "time", "internal", "cctz", "src", "time_zone_format.cc")
-            if  package:version():ge("20240116.1") and package:version():le("20250512.1") then
+            if  package:version():ge("20240116.1") and package:version():le("20250814.0") then
                 io.replace(
                     file_path,
                     "#if !defined(_XOPEN_SOURCE) && !defined(__FreeBSD__) && !defined(__OpenBSD__)", 
