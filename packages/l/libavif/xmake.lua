@@ -41,16 +41,20 @@ package("libavif")
     end
 
     on_load(function (package)
-        local config_to_dep_name = {
-            ["svt_av1"] = "svt-av1",
-            -- ["libsharpyuv"] = "libwebp",
-        }
-        for name, enabled in table.orderpairs(package:configs()) do
-            if not package:extraconf("configs", name, "builtin") and name ~= "tools" then
-                if package:config(name) then
-                    package:add("deps", config_to_dep_name[name] or name)
-                end
-            end
+        if package:config("aom") then
+            package:add("deps", "aom")
+        end
+        if package:config("dav1d") then
+            package:add("deps", "dav1d")
+        end
+        if package:config("libgav1") then
+            package:add("deps", "libgav1")
+        end
+        if package:config("rav1e") then
+            package:add("deps", "rav1e")
+        end
+        if package:config("svt_av1") then
+            package:add("deps", "svt-av1")
         end
 
         if package:config("tools") then
@@ -64,23 +68,10 @@ package("libavif")
 
     on_install("!cross and !wasm", function (package)
         io.replace("CMakeLists.txt", "set(CMAKE_POSITION_INDEPENDENT_CODE ON)", "", {plain = true})
-        if package:config("aom") then
-            io.replace("CMakeLists.txt",
-                "check_avif_option(AVIF_CODEC_AOM TARGET aom PKG_NAME aom)",
-                "find_package(aom REQUIRED)", {plain = true})
-        end
-        if package:config("dav1d") then
-            io.replace("CMakeLists.txt",
-                "check_avif_option(AVIF_CODEC_DAV1D TARGET dav1d::dav1d PKG_NAME dav1d)",
-                "find_package(dav1d REQUIRED)", {plain = true})
-        end
         if package:config("svt_av1") then
             io.replace("CMakeLists.txt",
-                "check_avif_option(AVIF_CODEC_SVT TARGET SvtAv1Enc PKG_NAME svt)",
-                "find_package(svt REQUIRED)\nfind_package(cpuinfo REQUIRED)", {plain = true})
-            io.replace("CMakeLists.txt",
                 "avif_target_link_library(SvtAv1Enc)",
-                "avif_target_link_library(SvtAv1Enc)\navif_target_link_library(cpuinfo::cpuinfo)", {plain = true})
+                "avif_target_link_library(SvtAv1Enc)\nfind_package(cpuinfo REQUIRED)\navif_target_link_library(cpuinfo::cpuinfo)", {plain = true})
         end
         if package:config("tools") then
             io.replace("CMakeLists.txt",
@@ -92,27 +83,13 @@ package("libavif")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
-        local config_map = {
-            ["aom"] = "AVIF_CODEC_AOM",
-            ["dav1d"] = "AVIF_CODEC_DAV1D",
-            ["libgav1"] = "AVIF_CODEC_LIBGAV1",
-            ["rav1e"] = "AVIF_CODEC_RAV1E",
-            ["svt_av1"] = "AVIF_CODEC_SVT",
-            ["libsharpyuv"] = "AVIF_LIBSHARPYUV",
-        }
-        for name, enabled in table.orderpairs(package:configs()) do
-            if not package:extraconf("configs", name, "builtin") and name ~= "tools" then
-                local key = config_map[name] or name
-                local value
-                if key:startswith("AVIF_CODEC_") then
-                    value = enabled and "ON" or "OFF"
-                    table.insert(configs, format("-D%s_ENABLED=%s", key, value))
-                else
-                    value = enabled and "SYSTEM" or "OFF"
-                end
-                table.insert(configs, format("-D%s=%s", key, value))
-            end
-        end
+        table.insert(configs, "-DAVIF_CODEC_AOM=" .. (package:config("aom") and "SYSTEM" or "OFF"))
+        table.insert(configs, "-DAVIF_CODEC_DAV1D=" .. (package:config("dav1d") and "SYSTEM" or "OFF"))
+        table.insert(configs, "-DAVIF_CODEC_LIBGAV1=" .. (package:config("libgav1") and "SYSTEM" or "OFF"))
+        table.insert(configs, "-DAVIF_CODEC_RAV1E=" .. (package:config("rav1e") and "SYSTEM" or "OFF"))
+        table.insert(configs, "-DAVIF_CODEC_SVT=" .. (package:config("svt_av1") and "SYSTEM" or "OFF"))
+        table.insert(configs, "-DAVIF_LIBSHARPYUV=" .. (package:config("libsharpyuv") and "SYSTEM" or "OFF"))
+
         table.insert(configs, "-DAVIF_BUILD_APPS=" .. (package:config("tools") and "ON" or "OFF"))
         table.insert(configs, "-DAVIF_ZLIBPNG=" .. (package:config("tools") and "SYSTEM" or "OFF"))
         table.insert(configs, "-DAVIF_JPEG=" .. (package:config("tools") and "SYSTEM" or "OFF"))
