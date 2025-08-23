@@ -1,0 +1,78 @@
+package("llgl")
+    set_description("Low Level Graphics Library (LLGL) is a thin abstraction layer for the modern graphics APIs OpenGL, Direct3D, Vulkan, and Metal")
+    set_homepage("https://github.com/LukasBanana/LLGL")
+    set_license("BSD-3-Clause")
+
+    add_urls("https://github.com/LukasBanana/LLGL/archive/refs/tags/Release-$(version).tar.gz",
+             "https://github.com/LukasBanana/LLGL.git")
+
+    add_versions("v0.04b", "fdeda39bd31522bced0d889655b290e06688975d58ab20756c3eda9a5f21391f")
+
+    add_configs("opengl", {description = "Enable OpenGL Renderer", default = true, type = "boolean"})
+    add_configs("vulkan", {description = "Enable Vulkan Renderer", default = true, type = "boolean"})
+    add_configs("null", {description = "Enable Null Renderer", default = true, type = "boolean"})
+
+    if is_plat("windows") then
+        add_configs("d3d11", {description = "Enable D3D11 Renderer", default = true, type = "boolean"})
+        add_configs("d3d12", {description = "Enable D3D12 Renderer", default = true, type = "boolean"})
+        add_links("dxgi", "d3d11", "d3d12", "d3dcompiler", "comdlg32", "user32", "gdi32")
+    elseif is_plat("linux") then
+        add_configs("wayland", {description = "Enable Wayland", default = true, type = "boolean"})
+    end
+
+    add_deps("cmake")
+    add_deps("gaussianlib")
+
+    on_load(function (package)
+        if package:is_plat("windows") then 
+            package:add("defines", "NOMINMAX", "WIN32_LEAN_AND_MEAN", "UNICODE")
+
+            if package:config("d3d11") or package:config("d3d12") then 
+                package:add("links", "LLGL_DXCommon")
+            end
+
+            if package:config("d3d11") then
+                package:add("links", "LLGL_Direct3D11")
+            end
+
+            if package:config("d3d12") then
+                package:add("links", "LLGL_Direct3D12")
+            end
+        end
+
+        package:add("links", "LLGL")
+
+        if package:config("opengl") then
+            package:add("links", "LLGL_OpenGL")
+        end
+
+        if package:config("vulkan") then
+            package:add("links", "LLGL_Vulkan")
+        end
+
+        if package:config("null") then
+            package:add("links", "LLGL_Null")
+        end
+    end)
+
+    on_install(function (package)
+        local dep_gaussian = package:dep("gaussianlib")
+
+        if dep_gaussian then
+            includedir = dep_gaussian:installdir("include")      
+        else
+            raise("Dependency 'gaussianlib' not found!")
+        end
+
+        local configs = {"-DLLGL_BUILD_TESTS=OFF", "-DLLGL_BUILD_EXAMPLES=OFF"}
+        table.insert(configs, "-DLLGL_BUILD_STATIC_LIB=" .. (package:config("shared") and "OFF" or "ON"))
+        table.insert(configs, "-DLLGL_BUILD_RENDERER_OPENGL=" .. (package:config("opengl") and "ON" or "OFF"))
+        table.insert(configs, "-DLLGL_BUILD_RENDERER_DIRECT3D11=" .. (package:config("d3d11") and "ON" or "OFF"))
+        table.insert(configs, "-DLLGL_BUILD_RENDERER_DIRECT3D12=" .. (package:config("d3d12") and "ON" or "OFF"))
+        table.insert(configs, "-DLLGL_BUILD_RENDERER_VULKAN=" .. (package:config("vulkan") and "ON" or "OFF"))
+        table.insert(configs, "-DLLGL_BUILD_RENDERER_NULL=" .. (package:config("null") and "ON" or "OFF"))
+	    table.insert(configs, "-DLLGL_LINUX_ENABLE_WAYLAND=" .. (package:config("wayland") and "ON" or "OFF"))
+        table.insert(configs, "-DGaussLib_INCLUDE_DIR=" .. includedir)
+
+        import("package.tools.cmake").install(package, configs) 
+    end)
