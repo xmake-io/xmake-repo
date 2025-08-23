@@ -1,5 +1,5 @@
 package("gaussianlib")
-    set_kind("headeronly")
+    set_kind("library", {headeronly = true})
 
     set_description("Basic linear algebra C++ library for 2D and 3D applications")
     set_homepage("https://github.com/LukasBanana/GaussianLib")
@@ -26,4 +26,5 @@ package("gaussianlib")
                 Gs::Matrix<double, 4, 3> B;
             }
         ]]}, {configs = {languages = "cxx11"}}))
+
     end)
