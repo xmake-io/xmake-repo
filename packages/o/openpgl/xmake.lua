@@ -7,6 +7,7 @@ package("openpgl")
     add_urls("https://github.com/OpenPathGuidingLibrary/openpgl/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/OpenPathGuidingLibrary/openpgl.git")
 
+    add_versions("0.7.1", "d62d24241232a526491328f341df9add274fc84ae9818470d3edb5ae6141ac63")
     add_versions("0.7.0", "58be6ac86e3bcf8a787e9c1332d1527e6d18f4b1403b96bb02c909e20af2ca94")
     add_versions("0.6.0", "4192a4096ee3e3d31878cd013f8de23418c8037c576537551f946c4811931c5e")
     add_versions("0.5.0", "1ec806d434d45e43e098f82ee9be0cb74928343898c57490b34ff80584e9805a")
