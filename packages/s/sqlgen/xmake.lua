@@ -16,7 +16,7 @@ package("sqlgen")
     add_configs("postgres", {description = "Enable PostgreSQL Support", default = true})
     add_configs("sqlite", {description = "Enable SQLite Support", default = true})
 
-    on_install(function (package)
+    on_install("windows|!arm64 or macosx|!arm64 or linux|!arm64 or bsd|!arm64", function (package)
         local configs = {
             "-DSQLGEN_USE_VCPKG=OFF",
         }
