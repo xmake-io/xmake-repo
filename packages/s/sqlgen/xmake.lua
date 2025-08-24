@@ -24,7 +24,8 @@ package("sqlgen")
         table.insert(configs, "-DSQLGEN_POSTGRES=" .. (package:config("postgres") and "ON" or "OFF"))
         table.insert(configs, "-DSQLGEN_SQLITE3=" .. (package:config("sqlite") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        -- allow only static linking on Windows
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. ((package:config("shared") and not is_plat("windows")) and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
