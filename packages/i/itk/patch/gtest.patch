@@ -1,0 +1,43 @@
+diff --git a/Modules/ThirdParty/GoogleTest/itk-module-init.cmake b/Modules/ThirdParty/GoogleTest/itk-module-init.cmake
+index 15cd556..509ba54 100644
+--- a/Modules/ThirdParty/GoogleTest/itk-module-init.cmake
++++ b/Modules/ThirdParty/GoogleTest/itk-module-init.cmake
+@@ -6,33 +6,10 @@ if(ITK_USE_SYSTEM_GOOGLETEST)
+   # for system installs, but allow users of the library to include the
+   # source in their project.
+ 
+-  set( GTEST_SRC_SEARCH_PATHS
+-    "/usr/src/googletest"
+-    "/usr/src/gtest"
+-    )
+-
+-  if (NOT DEFINED GTEST_ROOT)
+-    foreach( search_path ${GTEST_SRC_SEARCH_PATHS})
+-      if(EXISTS "${search_path}/CMakeLists.txt")
+-        set( GTEST_ROOT "${search_path}")
+-        break()
+-      endif()
+-    endforeach()
++  find_package(PkgConfig QUIET)
++  pkg_check_modules(GTEST QUIET gtest)
++  if(GTEST_FOUND)
++    set(GTEST_INCLUDE_DIRS ${GTEST_INCLUDE_DIRS})
++    set(GTEST_LIBRARIES ${GTEST_LDFLAGS})
+   endif()
+-
+-  if( DEFINED GTEST_ROOT AND EXISTS "${GTEST_ROOT}/CMakeLists.txt")
+-
+-    find_path(GTEST_INCLUDE_DIRS gtest/gtest.h
+-      PATHS "${GTEST_ROOT}"
+-      NO_DEFAULT_PATH)
+-
+-    if("${GTEST_INCLUDE_DIRS}" STREQUAL "")
+-      message(WARNING "GTEST_ROOT appears to be a source directory \
+-          but \"gtest/gtest.h\"  can not be found in source directory: \
+-          ${GTEST_ROOT}")
+-     endif()
+-
+-   else()
+-     find_package( GTest REQUIRED )
+-   endif ()
+ endif()
