@@ -4,6 +4,7 @@ package("vxl")
 
     add_urls("https://github.com/vxl/vxl/archive/refs/tags/$(version).tar.gz",
              "https://github.com/vxl/vxl.git")
+    add_versions("v3.5.0", "f044d2a9336f45cd4586d68ef468c0d9539f9f1b30ceb4db85bd9b6fdb012776")
     add_versions("v3.3.2", "95ecde4b02bbe00aec0d656fd2c43373de2a5d41487a68135f0b565254919411")
 
     add_configs("contrib", {description = "Build contrib modules.", default = false, type = "boolean"})
