@@ -6,6 +6,7 @@ package("libassert")
     add_urls("https://github.com/jeremy-rifkin/libassert/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jeremy-rifkin/libassert.git")
 
+    add_versions("v2.2.1", "a7882ff2922c6d57f955f5ea9418014619e0855e936eb92e5443914dd1a8f724")
     add_versions("v2.2.0", "c1f6fc06012ca70dc20c7cec80b998ff8f1d8001071fc280d4460850511a5984")
     add_versions("v2.1.5", "0812721d4bbc0193ef2509909b05bb0226d5718284ad9419d478e091ed2101de")
     add_versions("v2.1.4", "9fa5f5b69e24d020a72b706f05802bf0028587b93a43b59bc99b5bef305b0c72")
