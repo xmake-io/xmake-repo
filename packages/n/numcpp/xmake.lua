@@ -7,6 +7,7 @@ package("numcpp")
 
     add_urls("https://github.com/dpilger26/NumCpp/archive/refs/tags/Version_$(version).tar.gz",
              "https://github.com/dpilger26/NumCpp.git")
+    add_versions("2.14.2", "9333115f7f8ec9394a1bc49fb6e07a9175e0efbad29c6eba1aff0dab22ba36de")
     add_versions("2.4.2", "8da0494552796b76e5e9ef691176fa7cb27bc52fec4019da20bfd8fb7ba00b91")
 
     add_deps("cmake")
