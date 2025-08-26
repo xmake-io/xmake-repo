@@ -21,6 +21,7 @@ package("usd")
     add_configs("image", {description = "Build imaging components", default = false, type = "boolean"})
     add_configs("openimageio", {description = "Build OpenImageIO plugin", default = false, type = "boolean"})
     add_configs("opencolorio", {description = "Build OpenColorIO plugin", default = false, type = "boolean"})
+    add_configs("materialx", {description = "Enable MaterialX support", default = false, type = "boolean"})
 
     add_configs("vulkan", {description = "Enable Vulkan based components", default = false, type = "boolean"})
     add_configs("python", {description = "Enable Python based components for USD", default = false, type = "boolean"})
@@ -35,6 +36,7 @@ package("usd")
 
     if on_check then
         on_check(function (package)
+            assert(package:is_arch("x64", "x86_64"), "package(usd) only support x86")
             if package:version() and package:version():eq("25.08") and
                 package:is_plat("linux") and package:has_tool("cxx", "clang") then
 
@@ -65,6 +67,10 @@ package("usd")
         if package:config("opencolorio") then
             package:add("deps", "opencolorio")
         end
+        if package:config("materialx") then
+            package:add("deps", "materialx")
+        end
+
         if package:config("python") then
             package:add("deps", "python >=3.9")
             package:addenv("PYTHONPATH", "lib/python")
@@ -75,9 +81,12 @@ package("usd")
         if package:config("tools") then
             package:addenv("PATH", "bin")
         end
+        package:addenv("PATH", "lib")
+        package:mark_as_pathenv("PXR_PLUGINPATH_NAME")
+        package:addenv("PXR_PLUGINPATH_NAME", "lib/usd")
     end)
 
-    on_install("linux", "macosx|x86_64", "windows|x64", function (package)
+    on_install("linux", "macosx", "windows", function (package)
         local configs = {
             "-DPXR_BUILD_TESTS=OFF",
             "-DPXR_BUILD_EXAMPLES=OFF",
@@ -99,6 +108,7 @@ package("usd")
         table.insert(configs, "-DPXR_BUILD_USD_IMAGING=" .. (package:config("image") and "ON" or "OFF"))
         table.insert(configs, "-DPXR_BUILD_OPENIMAGEIO_PLUGIN=" .. (package:config("openimageio") and "ON" or "OFF"))
         table.insert(configs, "-DPXR_BUILD_OPENCOLORIO_PLUGIN=" .. (package:config("opencolorio") and "ON" or "OFF"))
+        table.insert(configs, "-DPXR_ENABLE_MATERIALX_SUPPORT=" .. (package:config("materialx") and "ON" or "OFF"))
 
         table.insert(configs, "-DPXR_ENABLE_VULKAN_SUPPORT=" .. (package:config("vulkan") and "ON" or "OFF"))
         table.insert(configs, "-DPXR_ENABLE_PYTHON_SUPPORT=" .. (package:config("python") and "ON" or "OFF"))
@@ -110,8 +120,6 @@ package("usd")
             opt.cxflags = "-D__TBB_NO_IMPLICIT_LINKAGE"
         end
         import("package.tools.cmake").install(package, configs, opt)
-        -- If use mv, we need to fix `xxx.cmake` file
-        os.cp(package:installdir("lib/*.dll"), package:installdir("bin"))
     end)
 
     on_test(function (package)
