@@ -32,7 +32,11 @@ package("sqlgen")
         end
     end)
 
-    on_install("windows|!arm64 or macosx|!arm64 or linux|!arm64 or bsd|!arm64", function (package)
+    on_check(function (package)
+        assert(not package:is_arch("arm64"), "package(%s) does not support arm64", package:name())
+    end)
+
+    on_install("windows", "macosx", "linux", "bsd", function (package)
         local configs = {
             "-DSQLGEN_USE_VCPKG=OFF",
         }
@@ -69,9 +73,8 @@ package("sqlgen")
                     int age;
                 };
 
-                int main() {
+                void test() {
                     const auto conn = sqlgen::sqlite::connect("test.db");
-
                     const auto user = User{.name = "John", .age = 30};
                     sqlgen::write(conn, user);
                 }
