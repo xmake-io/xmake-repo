@@ -4,6 +4,7 @@ package("ngtcp2")
     set_license("MIT")
 
     add_urls("https://github.com/ngtcp2/ngtcp2/releases/download/v$(version)/ngtcp2-$(version).tar.gz")
+    add_versions("1.15.0", "7dee899a05334a10cb4945aff030c0bed7079663ec00d6ebc7d67f1f01b544bf")
     add_versions("1.14.0", "25272473f12eaf7a04f8f437edd892753e5e772f490f469609609b75693d4910")
     add_versions("1.13.0", "a175a6a58313d5736256bf7978d20666f030632a5b6ba80c992d6475690633ea")
     add_versions("1.12.0", "c08af5c9bfc019f36681775ff07f5623587ca352694943f49133e670dea4ef10")
