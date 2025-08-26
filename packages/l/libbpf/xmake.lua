@@ -12,8 +12,11 @@ package("libbpf")
 
     if on_check then
         on_check("android", function (package)
-            local ndk = package:toolchain("ndk"):config("ndkver")
-            assert(package:version():ge("0.5") and ndk and tonumber(ndk) > 22, "package(libbpf) >= v0.5 require ndk api version > 22")
+            local ndk = package:toolchain("ndk")
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            local ndkver = ndk:config("ndkver")
+            assert(ndkver and tonumber(ndkver) < 26, "package(libbpf): need ndk version < 26 for android")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) == 23, "package(libbpf): need ndk api level == 23 for android")
         end)
     end
 
