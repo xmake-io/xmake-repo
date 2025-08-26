@@ -15,9 +15,6 @@ package("usd")
     add_versions("v23.02", "a8eefff722db0964ce5b11b90bcdc957f3569f1cf1d44c46026ecd229ce7535d")
     add_versions("v22.11", "f34826475bb9385a9e94e2fe272cc713f517b987cbea15ee6bbc6b21db19aaae")
 
-    if is_plat("windows") then
-        add_configs("debug", {description = "Enable debug symbols.", default = false, type = "boolean", readonly = true})
-    end
     add_configs("shared", {description = "Build shared binaries.", default = true, type = "boolean", readonly = true})
     add_configs("monolithic", {description = "Build single shared library", default = false, type = "boolean"})
 
@@ -34,6 +31,16 @@ package("usd")
 
     if is_plat("windows") then
         add_defines("NOMINMAX")
+    end
+
+    if on_check then
+        on_check(function (package)
+            if package:version() and package:version():eq("25.08") and
+                is_plat("linux") and package:has_tool("cxx", "clang") then
+
+                raise("package(usd v25.08) unsupported clang toolchain")
+            end
+        end)
     end
 
     on_load(function (package)
@@ -84,6 +91,9 @@ package("usd")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DPXR_BUILD_MONOLITHIC=" .. (package:config("monolithic") and "ON" or "OFF"))
+        if package:is_plat("windows") then
+            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=")
+        end
 
         table.insert(configs, "-DPXR_BUILD_IMAGING=" .. (package:config("image") and "ON" or "OFF"))
         table.insert(configs, "-DPXR_BUILD_USD_IMAGING=" .. (package:config("image") and "ON" or "OFF"))
