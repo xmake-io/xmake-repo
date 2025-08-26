@@ -12,22 +12,13 @@ package("sqlgen")
 
     add_deps("cmake", "reflect-cpp")
 
-    -- add_configs("mysql", {description = "Enable MySQL Support", default = false})
+    add_configs("mysql", {description = "Enable MySQL Support", default = false, type = "boolean", readonly = true})
     add_configs("postgres", {description = "Enable PostgreSQL Support", default = true})
     add_configs("sqlite", {description = "Enable SQLite Support", default = true})
 
-    on_install("windows|!arm64 or macosx|!arm64 or linux|!arm64 or bsd|!arm64", function (package)
-        local configs = {
-            "-DSQLGEN_USE_VCPKG=OFF",
-        }
-        table.insert(configs, "-DSQLGEN_MYSQL=" .. (package:config("mysql") and "ON" or "OFF"))
-        table.insert(configs, "-DSQLGEN_POSTGRES=" .. (package:config("postgres") and "ON" or "OFF"))
-        table.insert(configs, "-DSQLGEN_SQLITE3=" .. (package:config("sqlite") and "ON" or "OFF"))
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        -- allow only static linking on Windows
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. ((package:config("shared") and not is_plat("windows")) and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
-    end)
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     on_load(function (package)
         if package:config("mysql") then
@@ -41,12 +32,23 @@ package("sqlgen")
         end
     end)
 
+    on_install("windows|!arm64 or macosx|!arm64 or linux|!arm64 or bsd|!arm64", function (package)
+        local configs = {
+            "-DSQLGEN_USE_VCPKG=OFF",
+        }
+        table.insert(configs, "-DSQLGEN_MYSQL=" .. (package:config("mysql") and "ON" or "OFF"))
+        table.insert(configs, "-DSQLGEN_POSTGRES=" .. (package:config("postgres") and "ON" or "OFF"))
+        table.insert(configs, "-DSQLGEN_SQLITE3=" .. (package:config("sqlite") and "ON" or "OFF"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        import("package.tools.cmake").install(package, configs)
+    end)
+
     on_test(function (package)
         if package:config("postgres") then
             assert(package:check_cxxsnippets({test = [[
                 #include <sqlgen/postgres.hpp>
 
-                // PostgreSQL connection
                 const auto credentials = sqlgen::postgres::Credentials{
                     .user = "username",
                     .password = "password",
@@ -68,10 +70,8 @@ package("sqlgen")
                 };
 
                 int main() {
-                    // Connect to SQLite database
                     const auto conn = sqlgen::sqlite::connect("test.db");
-                    
-                    // Create and insert a user
+
                     const auto user = User{.name = "John", .age = 30};
                     sqlgen::write(conn, user);
                 }
@@ -81,17 +81,13 @@ package("sqlgen")
             assert(package:check_cxxsnippets({test = [[
                 #include <sqlgen/mysql.hpp>
 
-                // Create credentials for the database connection
                 const auto creds = sqlgen::mysql::Credentials{
                                         .host = "localhost",
                                         .user = "myuser",
                                         .password = "mypassword",
-                                        .dbname = "mydatabase",
-                                        .port = 3306,  // Optional, defaults to 3306
-                                        .unix_socket = "/var/run/mysqld/mysqld.sock"  // Optional, defaults to "/var/run/mysqld/mysqld.sock"
+                                        .dbname = "mydatabase"
                                     };
 
-                // Connect to the database
                 const auto conn = sqlgen::mysql::connect(creds);
             ]]}, {configs = {languages = "c++20"}}))
         end
