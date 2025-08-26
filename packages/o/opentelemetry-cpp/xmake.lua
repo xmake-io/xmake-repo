@@ -6,14 +6,16 @@ package("opentelemetry-cpp")
     add_urls("https://github.com/open-telemetry/opentelemetry-cpp.git")
     add_versions("v1.16.1", "baecbb95bd63df53e0af16e87bc683967962c5f8")
     add_versions("v1.19.0", "ced79860f8c8a091a2eabfee6d47783f828a9b59")
+    add_versions("v1.22.0", "9ee0c27886f4cc6afc1afbec07a7e8d99b33a9ce")
 
+    add_configs("abseil", {description = "Whether to use Abseil for C++latest features. (not supported for >= v1.21.0)", default = false, type = "boolean"})
+    add_configs("api_only", {description = "Only build the API (use as a header-only library). Overrides all options to enable exporters.", default = false, type = "boolean"})
+    add_configs("cxx_standard", {description = "Select c++ standard to build.", default = "23", type = "string", values = {"11", "14", "17", "20", "23", "26"}})
     add_configs("otlp_grpc", {description = "Whether to include the OTLP gRPC exporter in the SDK.", default = false, type = "boolean"})
     add_configs("otlp_http", {description = "Whether to include the OTLP http exporter in the SDK.", default = false, type = "boolean"})
     add_configs("otlp_file", {description = "Whether to include the OTLP file exporter in the SDK.", default = false, type = "boolean"})
     add_configs("prometheus", {description = "Enable building prometheus exporter.", default = false, type = "boolean"})
-    add_configs("api_only", {description = "Only build the API (use as a header-only library). Overrides all options to enable exporters.", default = false, type = "boolean"})
-    add_configs("stl", {description = "Which version of the Standard Library for C++ to use. (true, false, cxx11, cxx14, cxx17, cxx20 or cxx23)", default = "false", type = "string", values = {"true", "false", "cxx11", "cxx14", "cxx17", "cxx20", "cxx23"}})
-    add_configs("abseil", {description = "Whether to use Abseil for C++latest features.", default = false, type = "boolean"})
+    add_configs("stl", {description = "Which version of the Standard Library for C++ to use. (true, false, cxx11, cxx14, cxx17, cxx20 or cxx23)", default = "false", type = "string", values = {"true", "false", "cxx11", "cxx14", "cxx17", "cxx20", "cxx23", "cxx26"}})
 
     if is_host("windows") then
         set_policy("platform.longpaths", true)
@@ -68,13 +70,32 @@ package("opentelemetry-cpp")
         end
     end)
 
+    on_fetch(function (package, opt)
+        if package:version():ge("1.21.0") and package:config("abseil") then
+             os.raise("abseil config is not supported for version >= 1.21.0")
+        end
+
+        local stl = package:config("stl")
+        if stl ~= "false" then
+            if stl ~= "true" then
+                package:add("defines", "OPENTELEMETRY_STL_VERSION=20" .. stl:sub(4,5))
+            else
+                if package:version():ge("1.16.1") and package:version():le("1.22.0") then
+                    package:add("defines", "OPENTELEMETRY_STL_VERSION=2023")
+                else
+                    os.raise("Update version or define based on https://github.com/open-telemetry/opentelemetry-cpp/blob/main/api/CMakeLists.txt")
+                end
+            end
+        end
+    end)
+
     on_install("!iphoneos and !cross|!aarch64", function (package)
         local configs = {
             "-DBUILD_TESTING=OFF",
             "-DWITH_EXAMPLES=OFF",
             "-DWITH_BENCHMARK=OFF",
             "-DWITH_FUNC_TESTS=OFF",
-            "-DCMAKE_CXX_STANDARD=14"
+            "-DCMAKE_CXX_STANDARD=" .. package:config("cxx_standard")
         }
         if package:has_tool("cxx", "clang", "clangxx", "emcc", "emxx") then
             package:add("cxxflags", "-Wno-missing-template-arg-list-after-template-kw")
@@ -85,6 +106,7 @@ package("opentelemetry-cpp")
         if package:config("shared") then
             if package:is_plat("windows") then
                 table.insert(configs, "-DOPENTELEMETRY_BUILD_DLL=ON")
+                table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
             else
                 table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
             end
@@ -105,8 +127,11 @@ package("opentelemetry-cpp")
         end
         stl = string.upper(stl)
         table.insert(configs, "-DWITH_STL=" .. stl)
-        local abseil = (package:config("abseil") or package:config("otlp_grpc") or package:config("otlp_http") or package:config("otlp_file")) and "ON" or "OFF"
-        table.insert(configs, "-DWITH_ABSEIL=" .. abseil)
+
+        if package:version() and package:version():lt("1.21.0") then
+            local abseil = (package:config("abseil") or package:config("otlp_grpc") or package:config("otlp_http") or package:config("otlp_file")) and "ON" or "OFF"
+            table.insert(configs, "-DWITH_ABSEIL=" .. abseil)
+        end
 
         import("package.tools.cmake").install(package, configs)
     end)
