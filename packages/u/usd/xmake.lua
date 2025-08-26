@@ -36,7 +36,7 @@ package("usd")
     if on_check then
         on_check(function (package)
             if package:version() and package:version():eq("25.08") and
-                is_plat("linux") and package:has_tool("cxx", "clang") then
+                package:is_plat("linux") and package:has_tool("cxx", "clang") then
 
                 raise("package(usd v25.08) unsupported clang toolchain")
             end
