@@ -93,7 +93,7 @@ package("protobuf-cpp")
             package:add("deps", "zlib")
         end
         if package:version():ge("22.0") then
-            package:add("deps", "abseil")
+            package:add("deps", "abseil <=20250127.0")
         end
 
         if package:is_plat("windows") and package:config("shared") then
