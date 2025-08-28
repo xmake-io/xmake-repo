@@ -2,6 +2,7 @@ package("libpq")
     set_homepage("https://www.postgresql.org/docs/14/libpq.html")
     set_description("Postgres C API library")
     set_license("PostgreSQL")
+    add_extsources("apt::libpq-dev", "brew::libpq", "pacman::postgresql-libs")
 
     add_urls("https://github.com/postgres/postgres/archive/refs/tags/REL_$(version).tar.gz", {alias = "github", version = function (version)
         return version:gsub("%.", "_")
