@@ -27,7 +27,7 @@ package("libpq")
         end
     end)
 
-    on_install("windows|!arm64 or macosx|!arm64 or linux|!arm64 or bsd|!arm64", function (package)
+    on_install("windows", "macosx", "linux", "bsd", function (package)
         local configs = {"-Dssl=openssl", "-Dzlib=enabled"}
 
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
