@@ -22,6 +22,10 @@ package("srtp")
         add_extsources("brew::srtp")
     end
 
+    if is_plat("windows", "mingw") then
+        add_syslinks("ws2_32")
+    end
+
     add_deps("cmake")
 
     on_load(function (package)
