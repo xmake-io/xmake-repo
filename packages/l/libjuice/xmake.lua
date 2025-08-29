@@ -10,7 +10,7 @@ package("libjuice")
 
     add_configs("nettle", {description = "Use Nettle for hash functions", default = false, type = "boolean"})
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("ws2_32", "bcrypt")
     elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
