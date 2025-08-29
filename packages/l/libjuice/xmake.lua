@@ -23,7 +23,7 @@ package("libjuice")
             package:add("deps", "nettle")
         end
 
-        if not package:config("shared") and package:is_plat("windows") then
+        if not package:config("shared") and package:is_plat("windows", "mingw") then
             package:add("defines", "JUICE_STATIC")
         end
     end)
