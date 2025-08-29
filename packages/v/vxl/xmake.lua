@@ -18,10 +18,9 @@ package("vxl")
     end
 
     add_includedirs("include", "include/vxl/core", "include/vxl/vcl", "include/vxl/v3p")
-    -- make sure link order is correct
     add_links("vpgl_xio", "vpgl_io", "vpgl_algo", "vpgl_file_formats", "vpgl", "vpdl", "vcsl", "vil_io", "vgl_xio", "vgl_io", "vnl_xio", "vnl_io", "vbl_io", "vul_io", "vil_algo", "vil", "vil1", "vgl_algo", "vgl", "vnl_algo", "v3p_netlib", "netlib", "testlib", "vnl", "vsl", "vbl", "vul", "vpl", "vcl", "rply", "clipper", "vxl_openjpeg")
 
-    on_install("windows|native", "linux", "macosx", "bsd", function (package)
+    on_install("windows", "linux", "macosx", "bsd", function (package)
         io.replace("config/cmake/Modules/FindGEOTIFF.cmake", "include( ${MODULE_PATH}/NewCMake/FindGEOTIFF.cmake )", "find_package(GeoTIFF CONFIG REQUIRED)", {plain = true})
         io.replace("v3p/openjpeg2/CMakeLists.txt", "set_target_properties(openjpeg2 PROPERTIES", "set_target_properties(openjpeg2 PROPERTIES\n  OUTPUT_NAME   vxl_openjpeg", {plain = true})
         local configs = {
@@ -37,6 +36,9 @@ package("vxl")
             "-DVXL_USING_NATIVE_TIFF=ON",
             "-DVXL_USING_NATIVE_ZLIB=ON",
         }
+        if package:is_plat("windows") and package:is_arch("arm64") and package:is_cross() then
+            table.insert(configs, "-DVCL_HAS_LFS=1")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
