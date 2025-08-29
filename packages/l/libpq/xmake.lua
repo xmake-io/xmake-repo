@@ -2,6 +2,7 @@ package("libpq")
     set_homepage("https://www.postgresql.org/docs/14/libpq.html")
     set_description("Postgres C API library")
     set_license("PostgreSQL")
+    add_extsources("apt::libpq-dev", "brew::libpq", "pacman::postgresql-libs")
 
     add_urls("https://github.com/postgres/postgres/archive/refs/tags/REL_$(version).tar.gz", {alias = "github", version = function (version)
         return version:gsub("%.", "_")
@@ -26,7 +27,7 @@ package("libpq")
         end
     end)
 
-    on_install("windows|!arm64 or macosx|!arm64 or linux|!arm64 or bsd|!arm64", function (package)
+    on_install("windows|!arm64", "macosx", "linux", "bsd", function (package)
         local configs = {"-Dssl=openssl", "-Dzlib=enabled"}
 
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))

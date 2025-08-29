@@ -4,8 +4,9 @@ package("boostdep")
     set_description("A tool to create Boost module dependency reports")
     set_license("BSL-1.0")
 
-    add_urls("https://github.com/boostorg/boostdep.git")
-    add_versions("2024.10.07", "289f2a16286e62348676f2abb75c0bd9968f156b")
+    add_urls("https://github.com/boostorg/boostdep.git", {includes = "src"}) -- sparse checkout
+
+    add_versions("2025.05.07", "de60ee6f8503c798e1d21aab8574c19b00062a7f")
 
     add_deps("boost", {configs = {filesystem = true}})
 
@@ -23,7 +24,7 @@ package("boostdep")
     end)
 
     on_test(function (package)
-        local boostdep = package:installdir("bin/boostdep")
+        local boostdep = path.join(package:installdir(), "bin/boostdep")
         if is_host("windows") then
             boostdep = boostdep .. ".exe"
         end

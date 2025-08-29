@@ -64,12 +64,6 @@ package("boost")
         add_extsources("brew::boost")
     end
 
-    if is_plat("linux", "bsd") then
-        add_syslinks("pthread", "dl")
-    elseif is_plat("windows", "mingw") then
-        add_syslinks("ntdll", "shell32", "advapi32", "user32", "ws2_32")
-    end
-
     on_fetch("fetch")
 
     if on_check then
@@ -83,6 +77,12 @@ package("boost")
     end
 
     on_load(function (package)
+        if package:is_plat("linux", "bsd") then
+            package:add("syslinks", "pthread", "dl")
+        elseif package:is_plat("windows", "mingw") then
+            package:add("syslinks", "ntdll", "shell32", "advapi32", "user32", "ws2_32")
+        end
+
         local version = package:version()
         if package:config("cmake") and version:lt("1.86") then
             -- Don't break old version
