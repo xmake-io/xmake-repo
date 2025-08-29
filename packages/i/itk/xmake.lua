@@ -8,12 +8,10 @@ package("itk")
     add_versions("5.2.1", "192d41bcdd258273d88069094f98c61c38693553fd751b54f8cda308439555db")
     add_versions("5.4.4", "d2092cd018a7b9d88e8c3dda04acb7f9345ab50619b79800688c7bc3afcca82a")
 
-    add_patches("5.4.4", "patch/gtest.patch", "f3a4d4e287bb7f2aabceb84fa4d51bbb99127fc19dc89c0935fb5513a783f2bd")
-
     add_configs("opencv", {description = "Build ITKVideoBridgeOpenCV module.", default = false, type = "boolean"})
     add_configs("vtk", {description = "Build ITKVtkGlue module.", default = false, type = "boolean"})
 
-    add_deps("cmake", "pkgconf", "double-conversion", "eigen", "expat", "gdcm", "gtest", "libjpeg", "libminc", "libpng", "libtiff", "vxl", "zlib")
+    add_deps("cmake", "double-conversion", "eigen", "expat", "gdcm", "libjpeg", "libminc", "libpng", "libtiff", "vxl", "zlib")
     if is_plat("windows") then
         add_syslinks("shell32", "advapi32")
     elseif is_plat("linux") then
@@ -25,7 +23,7 @@ package("itk")
         add_extsources("pacman::itk")
     end
 
-    on_load("windows", "linux", "macosx", "bsd", function (package)
+    on_load(function (package)
         local ver = package:version():major() .. "." .. package:version():minor()
         package:add("includedirs", "include/ITK-" .. ver)
         local libs = { "ITKBiasCorrection", "ITKColormap", "ITKCommon", "ITKConvolution", "ITKDICOMParser", "ITKDeformableMesh", "ITKDenoising", "ITKDiffusionTensorImage", "ITKFFT", "ITKFastMarching", "ITKIOBMP", "ITKIOBioRad", "ITKIOBruker", "ITKIOCSV", "ITKIOGDCM", "ITKIOGE", "ITKIOGIPL", "ITKIOHDF5", "ITKIOIPL", "ITKIOImageBase", "ITKIOJPEG", "ITKIOJPEG2000", "ITKIOLSM", "ITKIOMINC", "ITKIOMRC", "ITKIOMeshBYU", "ITKIOMeshBase", "ITKIOMeshFreeSurfer", "ITKIOMeshGifti", "ITKIOMeshOBJ", "ITKIOMeshOFF", "ITKIOMeshVTK", "ITKIOMeta", "ITKIONIFTI", "ITKIONRRD", "ITKIOPNG", "ITKIOSiemens", "ITKIOSpatialObjects", "ITKIOStimulate", "ITKIOTIFF", "ITKIOTransformBase", "ITKIOTransformHDF5", "ITKIOTransformInsightLegacy", "ITKIOTransformMatlab", "ITKIOVTK", "ITKIOXML", "ITKImageFeature", "ITKImageIntensity", "ITKKLMRegionGrowing", "ITKLabelMap", "ITKMarkovRandomFieldsClassifiers", "ITKMathematicalMorphology", "ITKMesh", "ITKMetaIO", "ITKNrrdIO", "ITKOptimizers", "ITKOptimizersv4", "ITKPDEDeformableRegistration", "ITKPath", "ITKPolynomials", "ITKQuadEdgeMesh", "ITKQuadEdgeMeshFiltering", "ITKRegionGrowing", "ITKRegistrationMethodsv4", "ITKSmoothing", "ITKSpatialObjects", "ITKStatistics", "ITKTestKernel", "ITKTransform", "ITKTransformFactory", "ITKVNLInstantiation", "ITKVTK", "ITKVtkGlue", "ITKVideoCore", "ITKVideoIO", "ITKVideoBridgeOpenCV", "ITKWatersheds", "ITKgiftiio", "ITKniftiio", "ITKznz", "itkNetlibSlatec", "itklbfgs", "itkopenjpeg", "itksys" }
@@ -45,7 +43,8 @@ package("itk")
         end
     end)
 
-    on_install("windows|!arm64", "linux", "macosx", function (package)
+    on_install("windows", "linux", "macosx", "bsd", function (package)
+        io.replace("Modules/ThirdParty/GoogleTest/itk-module.cmake", "DEPENDS", "DEPENDS\n  EXCLUDE_FROM_DEFAULT", {plain = true})
         local configs = {"-DITK_SKIP_PATH_LENGTH_CHECKS=ON",
                          "-DBUILD_TESTING=OFF",
                          "-DBUILD_EXAMPLES=OFF",
