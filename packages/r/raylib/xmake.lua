@@ -45,6 +45,8 @@ package("raylib")
     elseif is_plat("linux") then
         add_syslinks("pthread", "dl", "m")
         add_deps("libx11", "libxrandr", "libxrender", "libxinerama", "libxcursor", "libxi", "libxfixes", "libxext")
+    elseif is_plat("android") then
+        add_syslinks("log", "android", "EGL", "GLESv2", "OpenSLES", "m")
     end
     add_deps("opengl", {optional = true})
 
@@ -53,12 +55,17 @@ package("raylib")
         os.cp("lib/libraylib.a", package:installdir("lib"))
     end)
 
-    on_install("windows", "linux", "macosx|arm64", "mingw", "wasm", function (package)
+    on_install("windows", "linux", "macosx|arm64", "mingw", "wasm", "android", function (package)
         local configs = {"-DBUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if is_plat("wasm") then
             table.insert(configs, "-DPLATFORM=Web")
+        elseif is_plat("android") then
+            table.insert(configs, "-DPLATFORM=Android")
+            table.insert(configs, "-DANDROID_ABI=" .. (package:arch() or "arm64-v8a"))
+            table.insert(configs, "-DOPENGL_API=ES2")
+            table.insert(configs, "-DUSE_EXTERNAL_GLFW=OFF")
         end
         import("package.tools.cmake").install(package, configs, {packagedeps = {"libx11", "libxrender", "libxrandr", "libxinerama", "libxcursor", "libxi", "libxfixes", "libxext"}})
     end)
