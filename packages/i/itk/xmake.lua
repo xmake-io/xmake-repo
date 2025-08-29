@@ -43,7 +43,7 @@ package("itk")
         end
     end)
 
-    on_install("windows|arm64", "linux", "macosx", "bsd", function (package)
+    on_install("windows|!arm64", "linux", "macosx", "bsd", function (package)
         io.replace("Modules/ThirdParty/GoogleTest/itk-module.cmake", "DEPENDS", "DEPENDS\n  EXCLUDE_FROM_DEFAULT", {plain = true})
         local configs = {"-DITK_SKIP_PATH_LENGTH_CHECKS=ON",
                          "-DBUILD_TESTING=OFF",
