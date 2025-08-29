@@ -34,14 +34,20 @@ package("c-blosc2")
     add_deps("cmake")
 
     on_load(function (package)
-        for _, deps in ipairs({"lz4", "zlib", "zstd"}) do
-            if package:config(deps) then
-                package:add("deps", deps)
-            end
+        if package:config("lz4") then
+            package:add("deps", "lz4", {configs = {cmake = true}})
+        end
+        if package:config("zlib") then
+            package:add("deps", "zlib")
+        end
+        if package:config("zstd") then
+            package:add("deps", "zstd", {configs = {cmake = true}})
         end
     end)
 
     on_install(function (package)
+        io.replace("CMakeLists.txt", "include(InstallRequiredSystemLibraries)", "", {plain = true})
+
         local configs =
         {
             "-DBUILD_TESTS=OFF",
@@ -66,13 +72,11 @@ package("c-blosc2")
             table.insert(configs, "-DDEACTIVATE_" .. upper .. (package:config(deps) and "=OFF" or "=ON"))
         end
         import("package.tools.cmake").install(package, configs)
-        -- remove crt dll
-        if package:is_plat("windows") then
-            for _, dll in ipairs(os.files(path.join(package:installdir("bin"), "*.dll"))) do
-                if not path.filename(dll):find("blosc2") then
-                    os.rm(dll)
-                end
-            end
+
+        if package:is_plat("windows") and package:config("shared") then
+            io.replace(path.join(package:installdir(), "include/blosc2/blosc2-export.h"),
+                "#define BLOSC_EXPORT\n",
+                "#define BLOSC_EXPORT __declspec(dllimport)\n", {plain = true})
         end
     end)
 
