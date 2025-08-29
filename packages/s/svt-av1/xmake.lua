@@ -74,10 +74,6 @@ package("svt-av1")
         table.insert(configs, "-DNATIVE=" .. (package:config("native") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_APPS=" .. (package:config("tools") and "ON" or "OFF"))
 
-        if package:is_plat("windows") then
-            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
-        end
-
         if package:version() and package:version():lt("2.0.0") then
             if package:is_plat("wasm") then
                 io.replace("CMakeLists.txt", "if(MINGW)", "if(TRUE)\n    check_both_flags_add(-pthread)\n  elseif(MINGW)", {plain = true})
@@ -107,11 +103,6 @@ package("svt-av1")
             opt.ldflags = {"-fno-stack-protector", "-U_FORTIFY_SOURCE"}
         end
         import("package.tools.cmake").install(package, configs, opt)
-
-        if package:is_plat("windows") and package:is_debug() then
-            local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.vcp("Bin/**.pdb", dir)
-        end
     end)
 
     on_test(function (package)

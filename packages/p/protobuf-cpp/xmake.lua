@@ -67,7 +67,7 @@ package("protobuf-cpp")
                 package:add("patches", "31.0", path.join(os.scriptdir(), "patches", "31.0", "msvc2019-arm64.patch"), "3b3fa6e7936df5f10da1bb0303060736a40d55e55055f7bc3b376d7a697c093d")
             end
         end
-        
+
         if package:is_plat("android") and is_host("windows") then
             package:add("deps", "ninja")
             package:set("policy", "package.cmake_generator.ninja", true)
@@ -180,8 +180,13 @@ package("protobuf-cpp")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-Dprotobuf_DISABLE_RTTI=" .. (package:config("rtti") and "OFF" or "ON"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
             table.insert(configs, "-Dprotobuf_MSVC_STATIC_RUNTIME=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
+        end
+
+        if package:dep("abseil") then
+            local std = package:dep("abseil"):config("cxx_standard")
+            table.insert(configs, "-DCMAKE_CXX_STANDARD=" .. std)
+            package:data_set("cxx_standard", std)
         end
 
         table.insert(configs, "-Dprotobuf_WITH_ZLIB=" .. (package:config("zlib") and "ON" or "OFF"))
@@ -218,6 +223,9 @@ package("protobuf-cpp")
             ]])
             os.vrun("protoc test.proto --cpp_out=.")
         end
+
+        local std = package:data("cxx_standard")
+        local languages = "c++" .. (std and std or "17")
         if package:is_library() then
             assert(package:check_cxxsnippets({test = [[
                 #include <google/protobuf/timestamp.pb.h>
@@ -226,6 +234,6 @@ package("protobuf-cpp")
                     google::protobuf::Timestamp ts;
                     google::protobuf::util::TimeUtil::FromString("1972-01-01T10:00:20.021Z", &ts);
                 }
-            ]]}, {configs = {languages = "c++17"}}))
+            ]]}, {configs = {languages =  languages}}))
         end
     end)

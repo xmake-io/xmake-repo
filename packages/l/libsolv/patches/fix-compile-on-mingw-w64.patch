@@ -1,0 +1,25 @@
+From 7c9611d9940b7dd55a06f458284ef231cb8ef65e Mon Sep 17 00:00:00 2001
+From: Redbeanw44602 <redbeana44945@gmail.com>
+Date: Thu, 24 Jul 2025 13:43:26 +0800
+Subject: [PATCH] fix compile on mingw-w64.
+
+---
+ ext/solv_xfopen.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/ext/solv_xfopen.h b/ext/solv_xfopen.h
+index 24b68252..92255361 100644
+--- a/ext/solv_xfopen.h
++++ b/ext/solv_xfopen.h
+@@ -10,7 +10,7 @@
+ 
+ #include <stddef.h>
+ 
+-#ifdef _WIN32
++#ifdef _MSC_VER
+   #include <BaseTsd.h>
+   typedef SSIZE_T ssize_t;
+ #else
+-- 
+2.50.1
+

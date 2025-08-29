@@ -9,6 +9,8 @@ package("cimg")
     end})
     add_urls("https://github.com/greyclab/cimg.git", {alias="git"})
 
+    add_versions("v3.6.1", "63bf760fd98bde151f8cbb78be595aaf2b1d370eafa36fbd41b4cac2aa6ddc47")
+    add_versions("v3.6.0", "95d623b36073519a1b4511601ede1abaa95127556ff83102e84db8bbde828569")
     add_versions("v3.5.5", "ffc8f0cf77e39cdae79d44de9aec7cf7edb83d787233388b5ad4b5c2475f4241")
     add_versions("v3.5.4", "f3102efc0803cb52693b43adf759579feb3dbc018506a8004af5e29b40649ffb")
     add_versions("v3.5.3", "4b45e413a76ede23cb164fea74b4adc92500a873cfd87dd66cf8c93ce57ab627")
@@ -22,6 +24,8 @@ package("cimg")
     add_versions("v3.3.6", "7bb6621c38458152f3d1cae3f020e4ca6a314076cb7b4b5d6bbf324ad3d0ab88")
     add_versions("v3.2.6", "1fcca9a7a453aa278660c10d54c6db9b4c614b6a29250adeb231e95a0be209e7")
 
+    add_versions("git:v3.6.1", "v.3.6.1")
+    add_versions("git:v3.6.0", "v.3.6.0")
     add_versions("git:v3.5.5", "v.3.5.5")
 
     if is_plat("windows") then

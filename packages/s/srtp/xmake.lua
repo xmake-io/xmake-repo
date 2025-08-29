@@ -1,6 +1,7 @@
 package("srtp")
     set_homepage("https://github.com/cisco/libsrtp")
     set_description("Library for SRTP (Secure Realtime Transport Protocol)")
+    set_license("BSD-3-Clause")
 
     add_urls("https://github.com/cisco/libsrtp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/cisco/libsrtp.git")
@@ -11,12 +12,32 @@ package("srtp")
 
     add_configs("openssl", {description = "Enable OpenSSL crypto engine", default = false, type = "boolean"})
     add_configs("mbedtls", {description = "Enable MbedTLS crypto engine", default = false, type = "boolean"})
-    add_configs("nss", {description = "Enable NSS crypto engine", default = false, type = "boolean"})
-    
-    add_deps("cmake")
-    add_deps("openssl")
+    add_configs("nss", {description = "Enable NSS crypto engine", default = false, type = "boolean", readonly = true})
 
-    on_install("windows", "linux", "macosx", "android@linux,macosx", "cross", "bsd", "mingw", function (package)
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::libsrtp")
+    elseif is_plat("linux") then
+        add_extsources("pacman::libsrtp", "apt::libsrtp2-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::srtp")
+    end
+
+    if is_plat("windows", "mingw") then
+        add_syslinks("ws2_32")
+    end
+
+    add_deps("cmake")
+
+    on_load(function (package)
+        if package:config("openssl") then
+            package:add("deps", "openssl")
+        end
+        if package:config("mbedtls") then
+            package:add("deps", "mbedtls")
+        end
+    end)
+
+    on_install(function (package)
         local configs =
         {
             "-DLIBSRTP_TEST_APPS=OFF",
@@ -26,8 +47,10 @@ package("srtp")
             "-DENABLE_WARNINGS_AS_ERRORS=OFF",
         }
 
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DENABLE_SANITIZE_ADDR=" .. (package:config("asan") and "ON" or "OFF"))
+        table.insert(configs, "-DENABLE_LTO=" .. (package:config("lto") and "ON" or "OFF"))
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
                 table.insert(configs, "-DENABLE_" .. name:upper() .. "=" .. (enabled and "ON" or "OFF"))
@@ -39,4 +62,3 @@ package("srtp")
     on_test(function (package)
         assert(package:has_cfuncs("srtp_init", {includes = "srtp2/srtp.h"}))
     end)
-
