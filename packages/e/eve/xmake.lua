@@ -4,12 +4,22 @@ package("eve")
     set_description("Expressive Vector Engine - SIMD in C++ Goes Brrrr")
     set_license("BSL-1.0")
 
-    add_urls("https://github.com/jfalcou/eve/archive/refs/tags/$(version).tar.gz", {excludes = {"*.paxheader", "*.data"}})
     add_urls("https://github.com/jfalcou/eve.git")
-
-    add_versions("v2023.02.15", "7a5fb59c0e6ef3bef3e8b36d62e138d31e7f2a9f1bdfe95a8e96512b207f84c5")
+    add_versions("v2025.08.27", "8613e5a042399f39934c6432c99750e6dac45b43")
 
     add_deps("cmake")
+
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk"):config("ndkver")
+            assert(ndk and tonumber(ndk) > 22, "package(eve) require ndk version > 22")
+        end)
+        on_check("windows", function (package)
+            if package:has_tool("cxx", "cl") then
+                raise("package(eve) unsupported msvc toolchain now, you can use clang toolchain\nadd_requires(\"eve\", {configs = {toolchains = \"clang-cl\"}}))")
+            end
+        end)
+    end
 
     on_install(function (package)
         io.replace("cmake/config/eve-install.cmake", [[set(MAIN_DEST     "${CMAKE_INSTALL_LIBDIR}/eve-${PROJECT_VERSION}")]], [[set(MAIN_DEST     "${CMAKE_INSTALL_LIBDIR}/eve")]], {plain = true})
