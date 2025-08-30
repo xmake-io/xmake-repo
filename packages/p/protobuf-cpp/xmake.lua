@@ -13,6 +13,7 @@ package("protobuf-cpp")
     end})
 
     -- TODO: Use x.y.z version? https://protobuf.dev/support/version-support
+    add_versions("32.0", "62b6b80ab91a5379c03533bd6d59b6932b4385f0b0dd5299990bbe5e2cc6c428")
     add_versions("31.1", "554e847e46c705bfc44fb2d0ae5bf78f34395fcbfd86ba747338b570eef26771")
     add_versions("31.0", "3fea4fad0fd2d89e0e79937bc4b3083d483d7e5bc5fec2b8a4158916cd9478dd")
     add_versions("30.2", "6544e5ceec7f29d00397193360435ca8b3c4e843de3cf5698a99d36b72d65342")
@@ -39,7 +40,7 @@ package("protobuf-cpp")
     add_patches("3.17.3", "patches/3.17.3/field_access_listener.patch", "ac9bdf49611b01e563fe74b2aaf1398214129454c3e18f1198245549eb281e85")
     add_patches("3.19.4", "patches/3.19.4/vs_runtime.patch", "8e73e585d29f3b9dca3c279df0b11b3ee7651728c07f51381a69e5899b93c367")
     -- https://github.com/msys2/MINGW-packages/blob/e77de8e92025175ffa0a217c3444249aa6f8f4a9/mingw-w64-protobuf/0004-fix-build-with-gcc-15.patch#L7
-    add_patches(">=31.0", "patches/31.0/gcc15.patch", "6475e824fabf7835f77e0410830c80b23e4c7a71fa5d7f4867ee7235942b167f")
+    add_patches(">=31.0<32.0", "patches/31.0/gcc15.patch", "6475e824fabf7835f77e0410830c80b23e4c7a71fa5d7f4867ee7235942b167f")
 
     add_configs("rtti", {description = "Enable runtime type information", default = true, type = "boolean"})
     add_configs("zlib", {description = "Enable zlib", default = false, type = "boolean"})
