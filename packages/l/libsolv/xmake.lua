@@ -6,6 +6,7 @@ package("libsolv")
     add_urls("https://github.com/openSUSE/libsolv/archive/refs/tags/$(version).tar.gz",
              "https://github.com/openSUSE/libsolv.git")
 
+    add_versions("0.7.35", "e6ef552846f908beb3bbf6ca718b6dd431bd8a281086d82af9a6d2a3ba919be5")
     add_versions("0.7.34", "fd9c8a75d3ca09d9ff7b0d160902fac789b3ce6f9fb5b46a7647895f9d3eaf05")
 
     add_patches("<=0.7.34", "patches/fix-msvc-c2036.patch", "a924517033d4f8ba18e922e892953834d3ca1a4fa5a69ae04fd308df40d1b2e8")
