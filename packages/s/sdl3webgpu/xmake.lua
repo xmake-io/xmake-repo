@@ -3,10 +3,10 @@ package("sdl3webgpu")
     set_homepage("https://github.com/eliemichel/sdl3webgpu")
     set_license("MIT")
 
-    add_urls("https://github.com/eliemichel/sdl3webgpu/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/eliemichel/sdl3webgpu.git")
+    -- Version 1.0.0 is too old for the current wgpu-native, we have to fetch a newer version from a more recent commit
+    add_urls("https://github.com/eliemichel/sdl3webgpu.git")
 
-    add_versions("v1.0.0", "06912ce54469a1736a5156b74a19ffb7822b26c1c716ab97cd61457c8b3b1fd1")
+    add_versions("2025.05.01", "4fa9d70935e41c075f664b231ee10a64262a8ac7")
 
     add_deps("wgpu-native", "libsdl3")
 
