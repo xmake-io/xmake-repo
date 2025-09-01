@@ -43,6 +43,7 @@ package("ffmpeg")
     add_configs("bzlib",            {description = "Enable bzlib compression library.", default = false, type = "boolean"})
     add_configs("libx264",          {description = "Enable libx264 encoder.", default = false, type = "boolean"})
     add_configs("libx265",          {description = "Enable libx265 encoder.", default = false, type = "boolean"})
+    add_configs("libopenh264",          {description = "Enable openh264 encoder.", default = false, type = "boolean"})
     add_configs("iconv",            {description = "Enable libiconv library.", default = false, type = "boolean"})
     add_configs("vaapi",            {description = "Enable vaapi library.", default = false, type = "boolean"})
     add_configs("vdpau",            {description = "Enable vdpau library.", default = false, type = "boolean"})
@@ -87,13 +88,16 @@ package("ffmpeg")
     end)
 
     on_load(function (package)
-        local configdeps = {zlib    = "zlib",
-                            bzlib   = "bzip2",
-                            lzma    = "xz",
-                            libx264 = "x264",
-                            libx265 = "x265",
-                            iconv   = "libiconv",
-                            libdrm  = "libdrm"}
+        local configdeps = {
+            zlib        = "zlib",
+            bzlib       = "bzip2",
+            lzma        = "xz",
+            libx264     = "x264",
+            libx265     = "x265",
+            libopenh264 = "openh264",
+            iconv       = "libiconv",
+            libdrm      = "libdrm",
+        }
         for name, dep in pairs(configdeps) do
             if package:config(name) then
                 package:add("deps", dep)
