@@ -54,7 +54,11 @@ package("muslcc")
     end
 
     on_install("@windows", "@msys", "@linux", "@macosx", function (package)
-        os.tryrm("usr") -- remove soft link
+        -- remove soft link
+        os.tryrm("usr")
+        -- remove invalid path, it will break copy directory
+        -- arm-linux-musleabi/lib/ld-musl-arm.so.1 -> /lib/libc.so
+        os.tryrm("arm-linux-musleabi/lib/ld-musl-arm.so.1")
         -- fix missing libisl.22.dylib
         if is_host("macosx") then
             local function patchbin(bin_name)
