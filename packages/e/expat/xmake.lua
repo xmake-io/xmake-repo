@@ -28,6 +28,10 @@ package("expat")
     end)
 
     on_install(function (package)
+        if not package:config("shared") then
+            io.replace("cmake/expat-config.cmake.in", "@PACKAGE_INIT@", "add_compile_definitions(XML_STATIC)\n@PACKAGE_INIT@")
+        end
+
         local configs = {"-DEXPAT_BUILD_EXAMPLES=OFF", "-DEXPAT_BUILD_TESTS=OFF", "-DEXPAT_BUILD_DOCS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DEXPAT_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
