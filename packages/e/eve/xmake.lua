@@ -5,18 +5,27 @@ package("eve")
     set_license("BSL-1.0")
 
     add_urls("https://github.com/jfalcou/eve.git")
-    add_versions("v2025.08.27", "8613e5a042399f39934c6432c99750e6dac45b43")
+    add_versions("v2025.09.01", "b777741e9e9aa2902f91a2022d643db57b7d2de6")
 
     add_deps("cmake")
 
     if on_check then
-        on_check("android", function (package)
-            local ndk = package:toolchain("ndk"):config("ndkver")
-            assert(ndk and tonumber(ndk) > 22, "package(eve) require ndk version > 22")
-        end)
-        on_check("windows", function (package)
-            if package:has_tool("cxx", "cl") then
+        on_check(function (package)
+            if package:is_plat("windows") and package:has_tool("cxx", "cl") then
                 raise("package(eve) unsupported msvc toolchain now, you can use clang toolchain\nadd_requires(\"eve\", {configs = {toolchains = \"clang-cl\"}}))")
+            elseif package:is_plat("android") then
+                local ndk = package:toolchain("ndk"):config("ndkver")
+                assert(ndk and tonumber(ndk) > 22, "package(eve) require ndk version > 22")
+            end
+
+            if package:has_tool("cxx", "gcc") then
+                assert(package:check_cxxsnippets({test = [[
+                    #if defined(__GNUC__) && !defined(__clang__)
+                    #  if (__GNUC__ < 13)
+                    #      error "package(eve) require gcc >13"
+                    #  endif
+                    #endif
+                ]]}, {configs = {languages = "c++20"}}), "package(eve) require gcc >13")
             end
         end)
     end
