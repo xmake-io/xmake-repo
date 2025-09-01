@@ -50,5 +50,5 @@ package("sdl2webgpu")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("SDL_GetWGPUSurface", {includes = "sdl2webgpu.h"}))
+        assert(package:has_cfuncs("SDL_GetWGPUSurface", {includes = "sdl2webgpu.h", configs = {defines = "SDL_MAIN_HANDLED"}}))
     end)
