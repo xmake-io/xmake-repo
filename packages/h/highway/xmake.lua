@@ -42,5 +42,5 @@ package("highway")
                     hn::Store(x, d, x_array + i);
                 }
             }
-        ]]}, {configs = {languages = "c++11"}}))
+        ]]}, {configs = {languages = "c++14"}}))
     end)

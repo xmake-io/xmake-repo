@@ -6,7 +6,13 @@ package("poselib")
     add_urls("https://github.com/PoseLib/PoseLib/archive/refs/tags/$(version).tar.gz",
              "https://github.com/PoseLib/PoseLib.git")
 
+    add_versions("v2.0.5", "a9493e6725c58e6ae541fe416c0a6179185a60006880ff3ddf32737a43695668")
     add_versions("v2.0.4", "caa0c1c9b882f6e36b5ced6f781406ed97d4c1f0f61aa31345ebe54633d67c16")
+
+    -- https://github.com/PoseLib/PoseLib/issues/157
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     add_deps("cmake")
     add_deps("eigen")
