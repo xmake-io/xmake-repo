@@ -28,6 +28,7 @@ target("gtgraphics")
         remove_headerfiles("GTE/Graphics/DX11/**.h")
         add_files("GTE/Graphics/GL46/**.cpp")
         remove_files("GTE/Graphics/DX11/**.cpp")
+        remove_files("GTE/Graphics/GL46/WGL/**.cpp")
     end
 
     if is_plat("windows") and is_kind("shared") then

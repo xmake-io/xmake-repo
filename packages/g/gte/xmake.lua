@@ -22,6 +22,10 @@ package("gte")
         add_syslinks("GL")
     end
 
+    on_check(function (package)
+        assert(not (package:is_plat("mingw") and is_subhost("macosx")), "package(gte): does not support mingw@macosx.")
+    end)
+
     on_install("windows", "linux", "mingw", "msys", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         -- GCC15 requirement
