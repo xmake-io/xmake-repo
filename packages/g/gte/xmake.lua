@@ -7,6 +7,7 @@ package("gte")
     add_versions("2025.08.20", "1ed0582d307b8608eb1b741d067f657e09483a5e")
 
     add_includedirs("include", "include/GTE")
+    add_links("gtmathematicsgpu", "gtgraphics", "gtapplications")
 
     if not is_plat("windows", "mingw") then
         add_deps("khrplatform", "libpng", "libx11")
@@ -18,7 +19,7 @@ package("gte")
         add_syslinks("GL")
     end
 
-    on_install("windows", "mingw", "macosx", "linux", "bsd", "cross", function (package)
+    on_install(function (package) --"windows", "mingw", "macosx", "linux", "bsd", "cross", 
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         -- GCC15 requirement
         io.replace("GTE/Applications/Environment.h", "#include <cstdarg>", "#include <cstdarg>\n#include <cstdint>", {plain = true})
