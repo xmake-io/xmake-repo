@@ -13,11 +13,11 @@ package("gte")
         add_deps("egl-headers", "libpng", "libx11")
     end
 
-    if is_plat("windows", "mingw") then
+    if is_plat("linux") then
+        add_syslinks("GL", "EGL")
+    else
         add_syslinks("d3d11", "d3dcompiler", "dxguid", "dxgi", "windowscodecs")
         add_syslinks("opengl32", "user32", "ole32", "oleaut32", "gdi32")
-    elseif is_plat("linux") then
-        add_syslinks("GL", "EGL")
     end
 
     on_check(function (package)
