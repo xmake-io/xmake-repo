@@ -9,7 +9,7 @@ package("gte")
     add_includedirs("include", "include/GTE")
     add_links("gtgraphics", "gtapplications", "gtmathematicsgpu")
 
-    if not is_plat("windows", "mingw") then
+    if is_plat("linux") then
         add_deps("egl-headers", "libpng", "libx11")
     end
 
