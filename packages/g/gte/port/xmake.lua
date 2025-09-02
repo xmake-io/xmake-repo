@@ -22,10 +22,12 @@ target("gtgraphics")
         add_defines("GTE_USE_MSWINDOWS", "GTE_USE_ROW_MAJOR", "GTE_USE_MAT_VEC", "GTE_USE_DIRECTX")
         remove_headerfiles("GTE/Graphics/GL46/**.h")
         add_files("GTE/Graphics/DX11/**.cpp")
+        remove_files("GTE/Graphics/GL46/**.cpp")
     else
         add_defines("GTE_USE_LINUX", "GTE_USE_ROW_MAJOR", "GTE_USE_MAT_VEC", "GTE_USE_OPENGL", "GTE_DISABLE_PCH")
         remove_headerfiles("GTE/Graphics/DX11/**.h")
         add_files("GTE/Graphics/GL46/**.cpp")
+        remove_files("GTE/Graphics/DX11/**.cpp")
     end
 
     if is_plat("windows") and is_kind("shared") then
