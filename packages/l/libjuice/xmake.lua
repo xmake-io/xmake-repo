@@ -23,13 +23,16 @@ package("libjuice")
             package:add("deps", "nettle")
         end
 
-        if not package:config("shared") and package:is_plat("windows", "mingw") then
+        if not package:config("shared") then
             package:add("defines", "JUICE_STATIC")
         end
     end)
 
     on_install(function (package)
         io.replace("CMakeLists.txt", "set(CMAKE_POSITION_INDEPENDENT_CODE ON)", "", {plain = true})
+        if not package:config("shared") then
+            io.replace("cmake/LibJuiceConfig.cmake.in", "@PACKAGE_INIT@", "add_compile_definitions(JUICE_STATIC)\n@PACKAGE_INIT@")
+        end
 
         local configs = {
             "-DNO_TESTS=ON",
