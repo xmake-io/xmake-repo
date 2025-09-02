@@ -15,14 +15,14 @@ package("gte")
 
     if is_plat("windows", "mingw") then
         add_syslinks("d3d11", "d3dcompiler", "dxguid", "dxgi", "windowscodecs")
-        add_syslinks("opengl32", "ole32", "oleaut32")
+        add_syslinks("opengl32", "user32", "ole32", "oleaut32", "gdi32")
     elseif is_plat("macosx") then
         add_frameworks("OpenGL")
     elseif is_plat("linux") then
         add_syslinks("GL")
     end
 
-    on_install("windows", "mingw", "macosx", "linux", "bsd", "cross", function (package)
+    on_install("windows", "linux", "mingw", "msys", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         -- GCC15 requirement
         io.replace("GTE/Applications/Environment.h", "#include <cstdarg>", "#include <cstdarg>\n#include <cstdint>", {plain = true})

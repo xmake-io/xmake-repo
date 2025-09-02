@@ -15,6 +15,8 @@ target("gtgraphics")
     add_files("GTE/Graphics/*.cpp")
 
     if is_plat("windows", "mingw") then
+        add_syslinks("d3d11", "d3dcompiler", "dxguid", "dxgi", "windowscodecs")
+        add_syslinks("opengl32", "user32", "ole32", "oleaut32", "gdi32")
         add_defines("UNICODE", "_UNICODE", {public = true})
         set_pcxxheader("GTE/Graphics/GTGraphicsPCH.h")
         add_defines("GTE_USE_MSWINDOWS", "GTE_USE_ROW_MAJOR", "GTE_USE_MAT_VEC", "GTE_USE_DIRECTX")
@@ -39,6 +41,8 @@ target("gtapplications")
     add_files("GTE/Applications/*.cpp")
 
     if is_plat("windows", "mingw") then
+        add_syslinks("d3d11", "d3dcompiler", "dxguid", "dxgi", "windowscodecs")
+        add_syslinks("opengl32", "user32", "ole32", "oleaut32", "gdi32")
         add_defines("UNICODE", "_UNICODE", {public = true})
         set_pcxxheader("GTE/Applications/GTApplicationsPCH.h")
         add_defines("GTE_USE_MSWINDOWS", "GTE_USE_ROW_MAJOR", "GTE_USE_MAT_VEC", "GTE_USE_DIRECTX")
@@ -63,6 +67,8 @@ target("gtmathematicsgpu")
     add_files("GTE/MathematicsGPU/*.cpp")
 
     if is_plat("windows", "mingw") then
+        add_syslinks("d3d11", "d3dcompiler", "dxguid", "dxgi", "windowscodecs")
+        add_syslinks("opengl32", "user32", "ole32", "oleaut32", "gdi32")
         add_defines("UNICODE", "_UNICODE", {public = true})
         add_defines("GTE_USE_MSWINDOWS", "GTE_USE_ROW_MAJOR", "GTE_USE_MAT_VEC", "GTE_USE_DIRECTX")
         set_pcxxheader("GTE/MathematicsGPU/GTMathematicsGPUPCH.h")
