@@ -1,7 +1,7 @@
 add_rules("mode.debug", "mode.release")
 set_languages("c++14")
 
-if not is_plat("windows", "mingw") then
+if is_plat("linux") then
     add_requires("egl-headers", "libpng", "libx11")
     add_packages("egl-headers", "libpng", "libx11")
 end
@@ -14,7 +14,13 @@ target("gtgraphics")
     add_headerfiles("(GTE/Graphics/**.h)")
     add_files("GTE/Graphics/**.cpp")
 
-    if is_plat("windows", "mingw") then
+    if is_plat("linux") then
+        add_defines("GTE_USE_LINUX", "GTE_USE_ROW_MAJOR", "GTE_USE_MAT_VEC", "GTE_USE_OPENGL", "GTE_DISABLE_PCH")
+        remove_headerfiles("GTE/Graphics/DX11/**.h")
+        add_files("GTE/Graphics/GL46/**.cpp")
+        remove_files("GTE/Graphics/DX11/**.cpp")
+        remove_files("GTE/Graphics/GL46/WGL/**.cpp")
+    else
         add_syslinks("d3d11", "d3dcompiler", "dxguid", "dxgi", "windowscodecs")
         add_syslinks("opengl32", "user32", "ole32", "oleaut32", "gdi32")
         add_defines("UNICODE", "_UNICODE", {public = true})
@@ -23,12 +29,6 @@ target("gtgraphics")
         remove_headerfiles("GTE/Graphics/GL46/**.h")
         add_files("GTE/Graphics/DX11/**.cpp")
         remove_files("GTE/Graphics/GL46/**.cpp")
-    else
-        add_defines("GTE_USE_LINUX", "GTE_USE_ROW_MAJOR", "GTE_USE_MAT_VEC", "GTE_USE_OPENGL", "GTE_DISABLE_PCH")
-        remove_headerfiles("GTE/Graphics/DX11/**.h")
-        add_files("GTE/Graphics/GL46/**.cpp")
-        remove_files("GTE/Graphics/DX11/**.cpp")
-        remove_files("GTE/Graphics/GL46/WGL/**.cpp")
     end
 
     if is_plat("windows") and is_kind("shared") then
@@ -45,7 +45,12 @@ target("gtapplications")
     add_headerfiles("(GTE/Applications/**.h)")
     add_files("GTE/Applications/**.cpp")
 
-    if is_plat("windows", "mingw") then
+    if is_plat("linux") then
+        add_defines("GTE_USE_LINUX", "GTE_USE_ROW_MAJOR", "GTE_USE_MAT_VEC", "GTE_USE_OPENGL", "GTE_DISABLE_PCH")
+        remove_headerfiles("GTE/Applications/MSW/**.h")
+        add_files("GTE/Applications/GLX/**.cpp")
+        remove_files("GTE/Applications/MSW/**.cpp")
+    else
         add_syslinks("d3d11", "d3dcompiler", "dxguid", "dxgi", "windowscodecs")
         add_syslinks("opengl32", "user32", "ole32", "oleaut32", "gdi32")
         add_defines("UNICODE", "_UNICODE", {public = true})
@@ -54,11 +59,6 @@ target("gtapplications")
         remove_headerfiles("GTE/Applications/GLX/**.h")
         add_files("GTE/Applications/MSW/**.cpp")
         remove_files("GTE/Applications/GLX/**.cpp")
-    else
-        add_defines("GTE_USE_LINUX", "GTE_USE_ROW_MAJOR", "GTE_USE_MAT_VEC", "GTE_USE_OPENGL", "GTE_DISABLE_PCH")
-        remove_headerfiles("GTE/Applications/MSW/**.h")
-        add_files("GTE/Applications/GLX/**.cpp")
-        remove_files("GTE/Applications/MSW/**.cpp")
     end
 
     if is_plat("windows") and is_kind("shared") then
@@ -75,14 +75,14 @@ target("gtmathematicsgpu")
     add_headerfiles("(GTE/MathematicsGPU/**.h)")
     add_files("GTE/MathematicsGPU/**.cpp")
 
-    if is_plat("windows", "mingw") then
+    if is_plat("linux") then
+        add_defines("GTE_USE_LINUX", "GTE_USE_ROW_MAJOR", "GTE_USE_MAT_VEC", "GTE_USE_OPENGL", "GTE_DISABLE_PCH")
+    else
         add_syslinks("d3d11", "d3dcompiler", "dxguid", "dxgi", "windowscodecs")
         add_syslinks("opengl32", "user32", "ole32", "oleaut32", "gdi32")
         add_defines("UNICODE", "_UNICODE", {public = true})
         add_defines("GTE_USE_MSWINDOWS", "GTE_USE_ROW_MAJOR", "GTE_USE_MAT_VEC", "GTE_USE_DIRECTX")
         set_pcxxheader("GTE/MathematicsGPU/GTMathematicsGPUPCH.h")
-    else
-        add_defines("GTE_USE_LINUX", "GTE_USE_ROW_MAJOR", "GTE_USE_MAT_VEC", "GTE_USE_OPENGL", "GTE_DISABLE_PCH")
     end
 
     if is_plat("windows") and is_kind("shared") then
@@ -93,7 +93,7 @@ target("gtmathematics")
     add_rules("utils.install.cmake_importfiles")
     set_kind("headeronly")
 
-    if is_plat("windows", "mingw") then
+    if not is_plat("linux") then
         add_defines("UNICODE", "_UNICODE", {public = true})
     end
 
