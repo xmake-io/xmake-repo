@@ -27,7 +27,7 @@ package("libdatachannel")
     add_deps("plog", "usrsctp", "libjuice")
     add_deps("nlohmann_json", {configs = {cmake = true}})
 
-    on_check("wasm", function (target)
+    on_check("wasm", function (package)
         raise("package(libdatachannel) dep(usrsctp) unsupported wasm platform")
     end)
 
