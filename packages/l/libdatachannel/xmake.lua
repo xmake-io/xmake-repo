@@ -8,7 +8,7 @@ package("libdatachannel")
 
     add_versions("v0.23.1", "63e14d619ac4d9cc310a0c7620b80e6da88abf878f27ccc78cd099f95d47b121")
 
-    add_configs("gnutls", {description = "Use GnuTLS instead of OpenSSL", default = false, type = "boolean"})
+    add_configs("gnutls", {description = "Use GnuTLS instead of OpenSSL", default = false, type = "boolean", readonly = true})
     add_configs("mbedtls", {description = "Use Mbed TLS instead of OpenSSL", default = false, type = "boolean"})
     add_configs("nice", {description = "Use libnice instead of libjuice", default = false, type = "boolean", readonly = true})
     add_configs("websocket", {description = "Enable WebSocket support", default = false, type = "boolean"})
@@ -24,19 +24,35 @@ package("libdatachannel")
     end
 
     add_deps("cmake")
-    add_deps("plog", "usrsctp", "libjuice")
+    add_deps("plog", "usrsctp")
     add_deps("nlohmann_json", {configs = {cmake = true}})
 
-    on_check("wasm", function (package)
+    on_check("wasm", function (target)
         raise("package(libdatachannel) dep(usrsctp) unsupported wasm platform")
+    end)
+
+    on_check("android", function (package)
+        local ndk = package:toolchain("ndk")
+        local ndk_sdkver = ndk:config("ndk_sdkver")
+        assert(ndk_sdkver and tonumber(ndk_sdkver) > 23, "package(libdatachannel) dep(usrsctp) need ndk api level > 23")
     end)
 
     on_load(function (package)
         if package:config("mbedtls") then
+            raise("Unsupported now, build failed with `src/impl/dtlstransport.cpp:373:7: error: 'mbedtls_ssl_srtp_profile' does not name a type; did you mean 'mbedtls_x509_crt_profile'?`")
             package:add("deps", "mbedtls")
+        elseif package:config("gnutls") then
+            package:add("deps", "gnutls")
         else
             package:add("deps", "openssl3")
         end
+
+        if package:config("nice") then
+            package:add("deps", "libnice")
+        else
+            package:add("deps", "libjuice")
+        end
+
         if package:config("media") then
             package:add("deps", "srtp")
         else
@@ -54,14 +70,18 @@ package("libdatachannel")
         end 
     end)
 
-    on_install(function (package)
+    on_install("!mingw", function (package)
+        io.replace("CMakeLists.txt", "set(CMAKE_POSITION_INDEPENDENT_CODE ON)", "", {plain = true})
+        -- add -DJUICE_STATIC from config mode 
+        io.replace("CMakeLists.txt", "find_package(LibJuice REQUIRED)", "find_package(LibJuice CONFIG REQUIRED)", {plain = true})
+
         local configs = {
             "-DNO_EXAMPLES=ON",
             "-DNO_TESTS=ON",
             "-DWARNINGS_AS_ERRORS=OFF",
             "-DPREFER_SYSTEM_LIB=ON",
         }
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
         local openssl = package:dep("openssl3")
