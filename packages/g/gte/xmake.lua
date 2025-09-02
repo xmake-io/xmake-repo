@@ -19,7 +19,7 @@ package("gte")
         add_syslinks("GL")
     end
 
-    on_install(function (package) --"windows", "mingw", "macosx", "linux", "bsd", "cross", 
+    on_install("windows", "mingw", "macosx", "linux", "bsd", "cross", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         -- GCC15 requirement
         io.replace("GTE/Applications/Environment.h", "#include <cstdarg>", "#include <cstdarg>\n#include <cstdint>", {plain = true})
