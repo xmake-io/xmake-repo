@@ -53,6 +53,11 @@ package("muslcc")
         add_deps("libisl 0.22", {host = true, configs = {shared = true}})
     end
 
+    on_check(function (package)
+        local arch = os.arch()
+        assert(arch == "x86_64" or arch == "i386" or arch == "x86" or arch == "x64", "package(%s): only run on x86/x86_64 machine.", package:name())
+    end)
+
     on_install("@windows", "@msys", "@linux", "@macosx", function (package)
         -- remove soft link
         os.tryrm("usr")
