@@ -9,10 +9,10 @@ package("gte")
     add_includedirs("include", "include/GTE")
 
     if not is_plat("windows", "mingw") then
-        add_deps("khrplatform", "libpng")
+        add_deps("khrplatform", "libpng", "libx11")
     end
 
-    on_install(function (package)
+    on_install("windows", "mingw", "macosx", "linux", "bsd", "cross", function (package)
         io.replace("GTE/Applications/Environment.h", "#include <cstdarg>", "#include <cstdarg>\n#include <cstdint>", {plain = true})
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)
