@@ -40,7 +40,7 @@ target("gtapplications")
 
     add_includedirs("GTE", {public = true})
     add_headerfiles("(GTE/Applications/**.h)")
-    add_files("GTE/Applications/*.cpp")
+    add_files("GTE/Applications/**.cpp")
 
     if is_plat("windows", "mingw") then
         add_syslinks("d3d11", "d3dcompiler", "dxguid", "dxgi", "windowscodecs")
