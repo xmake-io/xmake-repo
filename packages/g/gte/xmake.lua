@@ -29,6 +29,7 @@ package("gte")
             io.replace("GTE/Graphics/GL46/GTGraphicsGL46.cpp", "#if defined(GTE_USE_MSWINDOWS)", "#if 0", {plain = true})
             io.replace("GTE/Graphics/DX11/GTGraphicsDX11.cpp", "#if defined(GTE_USE_MSWINDOWS)", "#if 0", {plain = true})
             io.replace("GTE/MathematicsGPU/GTMathematicsGPU.cpp", "#if defined(GTE_USE_MSWINDOWS)", "#if 0", {plain = true})
+            -- Supply missing DX11 implementation for MinGW
             os.cp(path.join(package:scriptdir(), "port", "d3d11-effects-mingw-supplements.h"), "GTE/Graphics/DX11/d3d11-effects-mingw-supplements.h")
             io.replace("GTE/Graphics/DX11/DX11.h", [[#if !defined(NOMINMAX)]], [[#include "d3d11-effects-mingw-supplements.h"
 #if !defined(NOMINMAX)]], {plain = true})
