@@ -7,7 +7,7 @@ package("gte")
     add_versions("2025.08.20", "1ed0582d307b8608eb1b741d067f657e09483a5e")
 
     add_includedirs("include", "include/GTE")
-    add_links("gtgraphics", "gtapplications", "gtmathematicsgpu")
+    add_links("gtmathematicsgpu", "gtapplications", "gtgraphics")
 
     if is_plat("linux") then
         add_deps("egl-headers", "libpng", "libx11")
