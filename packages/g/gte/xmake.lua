@@ -12,9 +12,27 @@ package("gte")
         add_deps("khrplatform", "libpng", "libx11")
     end
 
+    if is_plat("macosx") then
+        add_frameworks("OpenGL")
+    elseif is_plat("linux") then
+        add_syslinks("GL")
+    end
+
     on_install("windows", "mingw", "macosx", "linux", "bsd", "cross", function (package)
-        io.replace("GTE/Applications/Environment.h", "#include <cstdarg>", "#include <cstdarg>\n#include <cstdint>", {plain = true})
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        -- GCC15 requirement
+        io.replace("GTE/Applications/Environment.h", "#include <cstdarg>", "#include <cstdarg>\n#include <cstdint>", {plain = true})
+        if is_plat("mingw") then
+            -- MinGW cant behave as MSVC 2015+ and define MSC_VER
+            io.replace("GTE/Graphics/GTGraphics.cpp", "#if defined(GTE_USE_MSWINDOWS)", "#if 0", {plain = true})
+            io.replace("GTE/Applications/GTApplications.cpp", "#if defined(GTE_USE_MSWINDOWS)", "#if 0", {plain = true})
+            io.replace("GTE/Graphics/GL46/GTGraphicsGL46.cpp", "#if defined(GTE_USE_MSWINDOWS)", "#if 0", {plain = true})
+            io.replace("GTE/Graphics/DX11/GTGraphicsDX11.cpp", "#if defined(GTE_USE_MSWINDOWS)", "#if 0", {plain = true})
+            io.replace("GTE/MathematicsGPU/GTMathematicsGPU.cpp", "#if defined(GTE_USE_MSWINDOWS)", "#if 0", {plain = true})
+            os.cp(path.join(package:scriptdir(), "port", "d3d11-effects-mingw-supplements.h"), "GTE/Graphics/DX11/d3d11-effects-mingw-supplements.h")
+            io.replace("GTE/Graphics/DX11/DX11.h", [[#if !defined(NOMINMAX)]], [[#include "d3d11-effects-mingw-supplements.h"
+#if !defined(NOMINMAX)]], {plain = true})
+        end
         import("package.tools.xmake").install(package)
     end)
 
@@ -25,14 +43,7 @@ package("gte")
             void test() {
                 std::shared_ptr<gte::GraphicsEngine> engine;
                 std::shared_ptr<gte::ProgramFactory> factory;
-
-                int32_t xSize = 128;
-                int32_t ySize = 128;
-                float dt = 0.016f;
-                float densityViscosity = 0.001f;
-                float velocityViscosity = 0.001f;
-
-                gte::GPUFluid2 fluid(engine, factory, xSize, ySize, dt, densityViscosity, velocityViscosity);
+                gte::GPUFluid2 fluid(engine, factory, 128, 128, 0.016f, 0.001f, 0.001f);
                 fluid.Initialize();
             }
         ]]}, {configs = {languages = "c++14"}}))
