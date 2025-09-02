@@ -1,6 +1,11 @@
 add_rules("mode.debug", "mode.release")
 set_languages("c++14")
 
+if not is_plat("windows", "mingw") then
+    add_requires("khrplatform")
+    add_packages("khrplatform")
+end
+
 target("gtgraphics")
     add_rules("utils.install.cmake_importfiles")
     set_kind("$(kind)")
