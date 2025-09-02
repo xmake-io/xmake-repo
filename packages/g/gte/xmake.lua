@@ -10,7 +10,7 @@ package("gte")
     add_links("gtmathematicsgpu", "gtgraphics", "gtapplications")
 
     if not is_plat("windows", "mingw") then
-        add_deps("khrplatform", "libpng", "libx11")
+        add_deps("egl-headers", "libpng", "libx11")
     end
 
     if is_plat("windows", "mingw") then
