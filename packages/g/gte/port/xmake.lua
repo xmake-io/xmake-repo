@@ -38,6 +38,8 @@ target("gtapplications")
     add_rules("utils.install.cmake_importfiles")
     set_kind("$(kind)")
 
+    add_deps("gtgraphics", "gtmathematics")
+
     add_includedirs("GTE", {public = true})
     add_headerfiles("(GTE/Applications/**.h)")
     add_files("GTE/Applications/**.cpp")
@@ -65,6 +67,8 @@ target("gtapplications")
 target("gtmathematicsgpu")
     add_rules("utils.install.cmake_importfiles")
     set_kind("$(kind)")
+
+    add_deps("gtgraphics", "gtmathematics", "gtapplications")
 
     add_includedirs("GTE", {public = true})
     add_headerfiles("(GTE/MathematicsGPU/**.h)")
