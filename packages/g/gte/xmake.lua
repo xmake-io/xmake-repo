@@ -13,7 +13,9 @@ package("gte")
         add_deps("khrplatform", "libpng", "libx11")
     end
 
-    if is_plat("macosx") then
+    if is_plat("windows", "mingw") then
+        add_syslinks("opengl32", "ole32", "windowscodecs")
+    elseif is_plat("macosx") then
         add_frameworks("OpenGL")
     elseif is_plat("linux") then
         add_syslinks("GL")
