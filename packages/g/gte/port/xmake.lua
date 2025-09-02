@@ -2,8 +2,8 @@ add_rules("mode.debug", "mode.release")
 set_languages("c++14")
 
 if not is_plat("windows", "mingw") then
-    add_requires("khrplatform")
-    add_packages("khrplatform")
+    add_requires("khrplatform", "libpng")
+    add_packages("khrplatform", "libpng")
 end
 
 target("gtgraphics")
