@@ -75,6 +75,7 @@ target("gtmathematics")
 
     if is_plat("windows", "mingw") then
         add_defines("UNICODE", "_UNICODE", {public = true})
-    end    
+    end
+
     add_includedirs("GTE", {public = true})
     add_headerfiles("(GTE/Mathematics/*.h)")
