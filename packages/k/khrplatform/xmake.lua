@@ -9,8 +9,8 @@ package("khrplatform")
 
     on_install(function (package)
         os.mkdir(package:installdir("include/KHR"))
-        os.trycp("../khrplatform.h", package:installdir("include/KHR"))
-        os.trycp("khrplatform.h", package:installdir("include/KHR"))
+        os.cp(path.join(package:scriptdir(), "port", "khrplatform.h"), "khrplatform.h")
+        os.cp("khrplatform.h", package:installdir("include/KHR"))
     end)
 
     on_test(function (package)
