@@ -8,15 +8,15 @@ package("hiredis-vip")
 
     add_versions("0.3.0", "84e0f9367fa25089fc073b7a8a0725043c48cccec827acf4555a63da68f36be5")
 
-    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"})
+    add_deps("autotools")
 
-    on_install("linux", "macosx", function (package)
+    on_install("linux", "macosx", "cross", "bsd", "mingw", "wasm", "android", function (package)
         local configs = {}
         table.insert(configs, "PREFIX=" .. package:installdir())
-        if not package:config("debug") or package:is_mode("release") then
+        if not package:config("debug") then
             table.insert(configs, "DEBUG=")
         end
-        os.vrunv("make install ", configs)
+        import("package.tools.make").install(package, configs)
         os.cp(path.join(os.curdir(), "net.h"), package:installdir("include/hiredis-vip"))
     end)
 
