@@ -28,7 +28,7 @@ package("gte")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         -- GCC15 requirement
         io.replace("GTE/Applications/Environment.h", "#include <cstdarg>", "#include <cstdarg>\n#include <cstdint>", {plain = true})
-        if is_plat("mingw") then
+        if not is_plat("windows", "linux") then
             -- MinGW cant behave as MSVC 2015+ and define MSC_VER
             io.replace("GTE/Graphics/GTGraphics.cpp", "#if defined(GTE_USE_MSWINDOWS)", "#if 0", {plain = true})
             io.replace("GTE/Applications/GTApplications.cpp", "#if defined(GTE_USE_MSWINDOWS)", "#if 0", {plain = true})
