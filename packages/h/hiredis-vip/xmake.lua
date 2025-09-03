@@ -10,7 +10,7 @@ package("hiredis-vip")
 
     add_deps("autotools")
 
-    on_install("linux", "macosx", "cross", "bsd", "mingw", "wasm", "android", function (package)
+    on_install("linux", "macosx", "cross", "bsd", "wasm", "android", function (package)
         -- GCC15 workaround
         io.replace("command.c", [[#include "hiarray.h"]], [[#include "hiarray.h"
 #include <stdlib.h>]], {plain = true})
@@ -26,7 +26,7 @@ package("hiredis-vip")
         end
         local configs = {}
         if package:is_debug() then
-            table.insert(configs, "DEBUG=1")
+            table.insert(configs, "DEBUG=-g -ggdb")
         end
         import("package.tools.make").install(package, configs)
     end)
