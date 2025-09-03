@@ -14,13 +14,22 @@ package("hiredis-vip")
         -- GCC15 workaround
         io.replace("command.c", [[#include "hiarray.h"]], [[#include "hiarray.h"
 #include <stdlib.h>]], {plain = true})
+        -- Repair installation path
+        io.replace("Makefile", "PREFIX?=/usr/local", "PREFIX?=" .. package:installdir(), {plain = true})
+        -- Enforce installation only one type of library
+        if package:config("shared") then
+            io.replace("Makefile", [[$(INSTALL) $(STLIBNAME) $(INSTALL_LIBRARY_PATH)]], [[]], {plain = true})
+        else
+            io.replace("Makefile", [[
+	$(INSTALL) $(DYLIBNAME) $(INSTALL_LIBRARY_PATH)/$(DYLIB_MINOR_NAME)
+	cd $(INSTALL_LIBRARY_PATH) && ln -sf $(DYLIB_MINOR_NAME) $(DYLIB_MAJOR_NAME)
+	cd $(INSTALL_LIBRARY_PATH) && ln -sf $(DYLIB_MAJOR_NAME) $(DYLIBNAME)]], [[]], {plain = true})
+        end
         local configs = {}
-        table.insert(configs, "PREFIX=" .. package:installdir())
-        if not package:config("debug") then
-            table.insert(configs, "DEBUG=")
+        if package:is_debug() then
+            table.insert(configs, "DEBUG=1")
         end
         import("package.tools.make").install(package, configs)
-        os.cp(path.join(os.curdir(), "net.h"), package:installdir("include/hiredis-vip"))
     end)
 
     on_test(function (package)
