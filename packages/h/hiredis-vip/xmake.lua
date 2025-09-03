@@ -10,9 +10,9 @@ package("hiredis-vip")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"})
 
-    on_install(function (package)
+    on_install("linux", "macosx", function (package)
         local configs = {}
-        table.insert(configs, "PREFIX="..package:installdir())
+        table.insert(configs, "PREFIX=" .. package:installdir())
         if not package:config("debug") or package:is_mode("release") then
             table.insert(configs, "DEBUG=")
         end
@@ -21,5 +21,5 @@ package("hiredis-vip")
     end)
 
     on_test(function (package)
-          assert(package:has_cfuncs("redisCommand", {includes = "hiredis-vip/hiredis.h"}))
+        assert(package:has_cfuncs("redisCommand", {includes = "hiredis-vip/hiredis.h"}))
     end)
