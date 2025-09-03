@@ -11,6 +11,9 @@ package("hiredis-vip")
     add_deps("autotools")
 
     on_install("linux", "macosx", "cross", "bsd", "mingw", "wasm", "android", function (package)
+        -- GCC15 workaround
+        io.replace("command.c", [[#include "hiarray.h"]], [[#include "hiarray.h"
+#include <stdlib.h>]], {plain = true})
         local configs = {}
         table.insert(configs, "PREFIX=" .. package:installdir())
         if not package:config("debug") then
