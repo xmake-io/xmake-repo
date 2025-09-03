@@ -20,8 +20,7 @@ package("hiredis-vip")
         if package:config("shared") then
             io.replace("Makefile", [[$(INSTALL) $(STLIBNAME) $(INSTALL_LIBRARY_PATH)]], [[]], {plain = true})
         else
-            io.replace("Makefile", [[
-	$(INSTALL) $(DYLIBNAME) $(INSTALL_LIBRARY_PATH)/$(DYLIB_MINOR_NAME)
+            io.replace("Makefile", [[	$(INSTALL) $(DYLIBNAME) $(INSTALL_LIBRARY_PATH)/$(DYLIB_MINOR_NAME)
 	cd $(INSTALL_LIBRARY_PATH) && ln -sf $(DYLIB_MINOR_NAME) $(DYLIB_MAJOR_NAME)
 	cd $(INSTALL_LIBRARY_PATH) && ln -sf $(DYLIB_MAJOR_NAME) $(DYLIBNAME)]], [[]], {plain = true})
         end
