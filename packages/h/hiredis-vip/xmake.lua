@@ -1,6 +1,6 @@
 package("hiredis-vip")
     set_homepage("https://github.com/vipshop/hiredis-vip")
-    set_description("Support redis cluster.  Maintained and used at vipshop.")
+    set_description("Support redis cluster. Maintained and used at vipshop.")
     set_license("BSD-3-Clause")
 
     add_urls("https://github.com/vipshop/hiredis-vip/archive/refs/tags/$(version).tar.gz",
