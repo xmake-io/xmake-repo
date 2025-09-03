@@ -26,7 +26,7 @@ package("mnn")
 
     add_deps("cmake")
 
-    on_load("windows|!arm*", "linux", "macosx", "android", "iphoneos|!x86_64", function (package)
+    on_load("windows|x86_64", "linux", "macosx", "android", "iphoneos|!x86_64", function (package)
         local mnn_path = package:installdir("include")
         local mnn_lib_dir = string.sub(mnn_path, 1, string.len(mnn_path) - 7) .. "lib"
         if package:config("shared") then
