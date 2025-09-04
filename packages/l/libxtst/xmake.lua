@@ -17,7 +17,6 @@ package("libxtst")
     end
     if is_plat("linux") then
         add_deps("libxext")
-        add_syslinks("Xext")
     end
 
     on_install("macosx", "linux", function (package)
