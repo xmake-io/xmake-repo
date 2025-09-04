@@ -10,7 +10,7 @@ package("hiredis-vip")
 
     add_deps("cmake")
 
-    on_install("linux", "macosx", "iphoneos", "cross", "bsd", "wasm", "android", function (package)
+    on_install("!windows and !mingw", function (package)
         -- Repair FreeBSD
         io.replace("hiutil.c", [[#include <sys/types.h>]], [[#include <sys/types.h>
 #include <sys/socket.h>]], {plain = true})
