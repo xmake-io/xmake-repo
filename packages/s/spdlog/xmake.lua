@@ -96,7 +96,12 @@ package("spdlog")
         table.insert(configs, "-DSPDLOG_WCHAR_FILENAMES=" .. (package:config("wchar_filenames") and "ON" or "OFF"))
         table.insert(configs, "-DSPDLOG_UTF8_TO_WCHAR_CONSOLE=" .. (package:config("wchar_console") and "ON" or "OFF"))
         table.insert(configs, "-DSPDLOG_WCHAR_CONSOLE=" .. (package:config("wchar_console") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+
+        local opt = {}
+        if not package:config("noexcept") and package:has_tool("cxx", "clang_cl")  then
+            opt.cxflags = {"/EHsc"}
+        end
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
