@@ -17,7 +17,7 @@ package("hiredis-vip")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        os.cp(path.join(package:scriptdir(), "port", "CMakeLists.txt"), "CMakeLists.txt")
+        os.cp(path.join(package:scriptdir(), "port", "cmakelists.txt"), "CMakeLists.txt")
         os.cp(path.join(package:scriptdir(), "port", "hiredis_vip.pc.in"), "hiredis_vip.pc.in")
         import("package.tools.cmake").install(package, configs)
     end)
