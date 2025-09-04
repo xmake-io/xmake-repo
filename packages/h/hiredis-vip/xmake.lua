@@ -14,26 +14,12 @@ package("hiredis-vip")
         -- GCC15 workaround
         io.replace("command.c", [[#include "hiarray.h"]], [[#include "hiarray.h"
 #include <stdlib.h>]], {plain = true})
-        -- Repair installation path
-        io.replace("Makefile", "PREFIX?=/usr/local", "PREFIX?=" .. package:installdir(), {plain = true})
-        if package:is_plat("macosx", "iphoneos") then
-            io.replace("Makefile",
-                "-Wl,-install_name,$(DYLIB_MINOR_NAME)",
-                "-Wl,-install_name,@rpath/$(DYLIB_MINOR_NAME)", {plain = true})
-        end
-        -- Enforce installation only one type of library
-        if package:config("shared") then
-            io.replace("Makefile", [[$(INSTALL) $(STLIBNAME) $(INSTALL_LIBRARY_PATH)]], [[]], {plain = true})
-        else
-            io.replace("Makefile", [[	$(INSTALL) $(DYLIBNAME) $(INSTALL_LIBRARY_PATH)/$(DYLIB_MINOR_NAME)
-	cd $(INSTALL_LIBRARY_PATH) && ln -sf $(DYLIB_MINOR_NAME) $(DYLIB_MAJOR_NAME)
-	cd $(INSTALL_LIBRARY_PATH) && ln -sf $(DYLIB_MAJOR_NAME) $(DYLIBNAME)]], [[]], {plain = true})
-        end
         local configs = {}
-        if package:is_debug() then
-            table.insert(configs, "DEBUG=-g -ggdb")
-        end
-        import("package.tools.make").install(package, configs, {envs = {DESTDIR = "", PREFIX = package:installdir()}})
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        os.cp(path.join(package:scriptdir(), "port", "CMakeLists.txt"), "CMakeLists.txt")
+        os.cp(path.join(package:scriptdir(), "port", "hiredis_vip.pc.in"), "hiredis_vip.pc.in")
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
