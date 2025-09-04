@@ -15,7 +15,7 @@ target("gtgraphics")
     add_files("GTE/Graphics/**.cpp")
 
     if is_plat("linux") then
-        add_syslinks("GL", "GLX", "EGL", "X11", "Xext")
+        add_syslinks("GL", "GLX", "EGL", "X11")
         add_defines("GTE_USE_LINUX", "GTE_USE_ROW_MAJOR", "GTE_USE_MAT_VEC", "GTE_USE_OPENGL", "GTE_DISABLE_PCH")
         remove_headerfiles("GTE/Graphics/DX11/**.h")
         add_files("GTE/Graphics/GL46/**.cpp")
