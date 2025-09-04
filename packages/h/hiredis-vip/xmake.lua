@@ -11,6 +11,9 @@ package("hiredis-vip")
     add_deps("cmake")
 
     on_install("linux", "macosx", "iphoneos", "cross", "bsd", "wasm", "android", function (package)
+        -- Repair FreeBSD
+        io.replace("hiutil.c", [[#include <sys/types.h>]], [[#include <sys/types.h>
+#include <sys/socket.h>]], {plain = true})
         -- GCC15 workaround
         io.replace("command.c", [[#include "hiarray.h"]], [[#include "hiarray.h"
 #include <stdlib.h>]], {plain = true})
