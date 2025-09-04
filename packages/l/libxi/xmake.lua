@@ -16,6 +16,9 @@ package("libxi")
     if is_plat("macosx", "linux") then
         add_deps("pkg-config", "libx11", "libxext", "libxfixes", "xorgproto")
     end
+    if is_plat("linux") then
+        add_deps("libxext")
+    end
 
     on_install("macosx", "linux", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
