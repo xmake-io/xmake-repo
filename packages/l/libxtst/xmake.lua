@@ -15,6 +15,10 @@ package("libxtst")
     if is_plat("macosx", "linux") then
         add_deps("pkg-config", "util-macros", "libxi", "xorgproto")
     end
+    if is_plat("linux") then
+        add_deps("libxext")
+        add_syslinks("Xext")
+    end
 
     on_install("macosx", "linux", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
