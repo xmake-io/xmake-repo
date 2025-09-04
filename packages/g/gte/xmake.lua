@@ -14,7 +14,7 @@ package("gte")
     end
 
     if is_plat("linux") then
-        add_syslinks("GL", "GLX", "EGL", "X11", "Xext")
+        add_syslinks("GL", "GLX", "EGL", "X11")
     else
         add_syslinks("d3d11", "d3dcompiler", "dxguid", "dxgi", "windowscodecs")
         add_syslinks("opengl32", "user32", "ole32", "oleaut32", "gdi32")
