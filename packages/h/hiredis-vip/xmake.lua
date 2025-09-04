@@ -8,7 +8,7 @@ package("hiredis-vip")
 
     add_versions("0.3.0", "84e0f9367fa25089fc073b7a8a0725043c48cccec827acf4555a63da68f36be5")
 
-    add_deps("autotools")
+    add_deps("cmake")
 
     on_install("linux", "macosx", "iphoneos", "cross", "bsd", "wasm", "android", function (package)
         -- GCC15 workaround
