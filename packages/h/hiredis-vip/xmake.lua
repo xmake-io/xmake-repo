@@ -10,12 +10,17 @@ package("hiredis-vip")
 
     add_deps("autotools")
 
-    on_install("linux", "macosx", "cross", "bsd", "wasm", "android", function (package)
+    on_install("linux", "macosx", "iphoneos", "cross", "bsd", "wasm", "android", function (package)
         -- GCC15 workaround
         io.replace("command.c", [[#include "hiarray.h"]], [[#include "hiarray.h"
 #include <stdlib.h>]], {plain = true})
         -- Repair installation path
         io.replace("Makefile", "PREFIX?=/usr/local", "PREFIX?=" .. package:installdir(), {plain = true})
+        if package:is_plat("macosx", "iphoneos") then
+            io.replace("Makefile",
+                "-Wl,-install_name,$(DYLIB_MINOR_NAME)",
+                "-Wl,-install_name,@rpath/$(DYLIB_MINOR_NAME)", {plain = true})
+        end
         -- Enforce installation only one type of library
         if package:config("shared") then
             io.replace("Makefile", [[$(INSTALL) $(STLIBNAME) $(INSTALL_LIBRARY_PATH)]], [[]], {plain = true})
@@ -28,7 +33,7 @@ package("hiredis-vip")
         if package:is_debug() then
             table.insert(configs, "DEBUG=-g -ggdb")
         end
-        import("package.tools.make").install(package, configs)
+        import("package.tools.make").install(package, configs, {envs = {DESTDIR = "", PREFIX = package:installdir()}})
     end)
 
     on_test(function (package)
