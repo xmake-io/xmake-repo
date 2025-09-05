@@ -20,11 +20,7 @@ package("gte")
         add_syslinks("opengl32", "user32", "ole32", "oleaut32", "gdi32")
     end
 
-    on_check(function (package)
-        assert(not (package:is_plat("mingw") and is_subhost("macosx")), "package(gte): does not support mingw@macosx.")
-    end)
-
-    on_install("windows", "linux", "mingw", "msys", function (package)
+    on_install("windows", "linux", "mingw@!macosx", "msys", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         -- GCC15 requirement
         io.replace("GTE/Applications/Environment.h", "#include <cstdarg>", "#include <cstdarg>\n#include <cstdint>", {plain = true})
