@@ -8,7 +8,7 @@ package("aui")
 
     add_versions("v7.1.2", "a4cf965c50d75e20a319c9c8b231ad9c13c25a06ad303e1eb65d1ff141b1f85c")
 
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-audio.diff", "1707040d98dafac81883fac05b73b3c74e6b8cb957e6a5108565d5b49948daf9")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-audio.diff", "8505260d260109183ea1508efb1eecb0fe454aff1e6c0e9ea20030b4bb498bfb")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-build.diff", "92bfd68e28a703518c12cf51b898a6b75cacae1fec9384328562c47b003e9577")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-core.diff", "2ab1e7181d07b64bb059b8b7fdff69c295df84043560ecb337516c649ac28bbe")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-crypt.diff", "58045d168a8c7f2658554e0a3010579ec53b54e2c51f524a4fb61e5e4d6fc0a7")
