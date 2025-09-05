@@ -18,6 +18,7 @@ package("libxi")
     end
     if is_plat("linux") then
         add_deps("libxext")
+        add_links("X11", "Xext")
     end
 
     on_install("macosx", "linux", function (package)
