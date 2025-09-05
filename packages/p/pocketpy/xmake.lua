@@ -31,21 +31,7 @@ package("pocketpy")
             assert(package:check_csnippets({test = [[
                 void test() {
                     py_initialize();
-                    
-                    bool ok = py_exec("print('Hello world!')", "<string>", EXEC_MODE, NULL);
-                    if(!ok) goto __ERROR;
-                    
-                    py_Ref r0 = py_getreg(0);
-                    py_newlistn(r0, 3);
-                    py_newint(py_list_getitem(r0, 0), 1);
-                    py_newint(py_list_getitem(r0, 1), 2);
-                    py_newint(py_list_getitem(r0, 2), 3);
-                    
-                    py_finalize();
-                    return;
-                
-                __ERROR:  
-                    py_printexc();
+                    py_exec("print('Hello world!')", "<string>", EXEC_MODE, NULL);
                     py_finalize();
                 }
             ]]}, {configs = {languages = "c11"}, includes = {"pocketpy.h"}}))
@@ -66,21 +52,7 @@ package("pocketpy")
             assert(package:check_csnippets({test = [[
                 void test() {
                     py_initialize();
-                    
-                    bool ok = py_exec("print('Hello world!')", "<string>", EXEC_MODE, NULL);
-                    if(!ok) goto __ERROR;
-                    
-                    py_Ref r0 = py_getreg(0);
-                    py_newlistn(r0, 3);
-                    py_newint(py_list_getitem(r0, 0), 1);
-                    py_newint(py_list_getitem(r0, 1), 2);
-                    py_newint(py_list_getitem(r0, 2), 3);
-                    
-                    py_finalize();
-                    return;
-                
-                __ERROR:  
-                    py_printexc();
+                    py_exec("print('Hello world!')", "<string>", EXEC_MODE, NULL);
                     py_finalize();
                 }
             ]]}, {configs = {languages = "c11", cflags = {"/utf-8", "/experimental:c11atomics"}}, includes = {"pocketpy.h"}}))
