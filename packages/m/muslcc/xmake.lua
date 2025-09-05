@@ -53,8 +53,17 @@ package("muslcc")
         add_deps("libisl 0.22", {host = true, configs = {shared = true}})
     end
 
+    on_check(function (package)
+        local arch = os.arch()
+        assert(arch == "x86_64" or arch == "i386" or arch == "x86" or arch == "x64", "package(%s): only run on x86/x86_64 machine.", package:name())
+    end)
+
     on_install("@windows", "@msys", "@linux", "@macosx", function (package)
-        os.tryrm("usr") -- remove soft link
+        -- remove soft link
+        os.tryrm("usr")
+        -- remove invalid path, it will break copy directory
+        -- arm-linux-musleabi/lib/ld-musl-arm.so.1 -> /lib/libc.so
+        os.tryrm("arm-linux-musleabi/lib/ld-musl-arm.so.1")
         -- fix missing libisl.22.dylib
         if is_host("macosx") then
             local function patchbin(bin_name)

@@ -6,6 +6,7 @@ package("libcpuid")
     add_urls("https://github.com/anrieff/libcpuid/archive/refs/tags/$(version).tar.gz",
              "https://github.com/anrieff/libcpuid.git")
 
+    add_versions("v0.8.1", "81f2f40da5d66b8220476e116cb40bca4e6a62c0d22bdeeb8e3856cf14607007")
     add_versions("v0.8.0", "a5fe37d79bda121cbdf385ae3f6fa621da6a3102aa609400a718a4b8b82ed8aa")
     add_versions("v0.7.1", "c54879ea33b68a2e752c20fb0e3cd04439a9177eab23371f709f15a45df43644")
     add_versions("v0.7.0", "cfd9e6bcda5da3f602273e55f983bdd747cb93dde0b9ec06560e074939314210")

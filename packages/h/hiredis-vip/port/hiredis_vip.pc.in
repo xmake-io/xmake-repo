@@ -1,0 +1,10 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include/hiredis-vip
+
+Name: hiredis-vip
+Description: Minimalistic C client library for Redis and Redis Cluster.
+Version: @HIREDIS_VIP_MAJOR@.@HIREDIS_VIP_MINOR@.@HIREDIS_VIP_PATCH@
+Libs: -L${libdir} -lhiredis_vip
+Cflags: -I${includedir} -D_FILE_OFFSET_BITS=64
