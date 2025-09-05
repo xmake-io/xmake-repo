@@ -39,7 +39,7 @@ index 21e44153..18281f68 100644
 +    if (AUIB_DISABLE)
 +        find_package(PulseAudio REQUIRED)
 +        target_include_directories(aui.audio PUBLIC ${PULSEAUDIO_INCLUDE_DIRS})
-+        aui_link(aui.audio PUBLIC ${PULSEAUDIO_LIBRARY})
++        aui_link(aui.audio PUBLIC ${PULSEAUDIO_LIBRARIES})
 +    else ()
 +        aui_link(aui.audio PUBLIC pulse)
 +    endif ()
