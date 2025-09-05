@@ -8,7 +8,7 @@ package("aui")
 
     add_versions("v7.1.2", "a4cf965c50d75e20a319c9c8b231ad9c13c25a06ad303e1eb65d1ff141b1f85c")
 
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-audio.diff", "8505260d260109183ea1508efb1eecb0fe454aff1e6c0e9ea20030b4bb498bfb")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-audio.diff", "6082935cc034a8f471687938a01977701fe5285542fa8f0e623aafe3e808f3e3")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-build.diff", "92bfd68e28a703518c12cf51b898a6b75cacae1fec9384328562c47b003e9577")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-core.diff", "2ab1e7181d07b64bb059b8b7fdff69c295df84043560ecb337516c649ac28bbe")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-crypt.diff", "58045d168a8c7f2658554e0a3010579ec53b54e2c51f524a4fb61e5e4d6fc0a7")
@@ -22,7 +22,7 @@ package("aui")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-views.diff", "8194b46068c7a6a0c0a3991d1a462faeea6d8ac00c9f7b046d335312e2258e85")
     add_patches("v7.1.2", "patches/v7.1.2/fix-backport-lunasvg.diff", "daf24391b88e44bdb801b2c1ba36a695f95384d8157ccb23cfc635d5f30bea4a")
     add_patches("v7.1.2", "patches/v7.1.2/fix-msvc-pretty-function.diff", "268f66f42594f0188fe50d33f5783e66f66024087097ebfdfef60c9768e151fd")
-    add_patches("v7.1.2", "patches/v7.1.2/fix-osx-enforce-cpp-template.diff", "eef4147a8b037552887777cd497c190ecc22514bb11fb3a3d6ea433a78cce61b")
+    add_patches("v7.1.2", "patches/v7.1.2/fix-osx-enforce-cpp-template.diff", "fd8ec70a793940f9dd2000f8766552dc2238a460cad9b3d97159b642e8fbd186")
     add_patches("v7.1.2", "patches/v7.1.2/fixup-network.diff", "888c1ed0e96f21bd842de72f8f9fe933261c5f76c99be55cf8e83f424bd1f79e")
 
     add_deps("cmake")
