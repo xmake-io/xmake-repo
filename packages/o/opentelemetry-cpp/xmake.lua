@@ -25,6 +25,7 @@ package("opentelemetry-cpp")
     end
 
     add_deps("cmake")
+    add_deps("nlohmann_json", {configs = {cmake = true}})
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
@@ -80,6 +81,11 @@ package("opentelemetry-cpp")
         elseif package:config("abseil") then
             package:add("deps", "abseil")
         end
+
+        if package:config("otlp_http") then
+            package:add("deps", "libcurl")
+        end
+
         if package:config("shared") and package:is_plat("windows") then
             package:add("defines", "OPENTELEMETRY_BUILD_IMPORT_DLL")
         end
@@ -104,8 +110,17 @@ package("opentelemetry-cpp")
             "-DWITH_EXAMPLES=OFF",
             "-DWITH_BENCHMARK=OFF",
             "-DWITH_FUNC_TESTS=OFF",
-            "-DCMAKE_CXX_STANDARD=" .. package:config("cxx_standard")
         }
+
+        if package:dep("protobuf-cpp") then
+            local std = package:dep("abseil"):config("cxx_standard")
+            table.insert(configs, "-DCMAKE_CXX_STANDARD=" .. std)
+            package:data_set("cxx_standard", std)
+        else
+            table.insert(configs, "-DCMAKE_CXX_STANDARD=" .. package:config("cxx_standard"))
+            package:data_set("cxx_standard", package:config("cxx_standard"))
+        end
+
         if package:has_tool("cxx", "clang", "clangxx", "emcc", "emxx") then
             package:add("cxxflags", "-Wno-missing-template-arg-list-after-template-kw")
             table.insert(configs, "-DCMAKE_CXX_FLAGS=-Wno-missing-template-arg-list-after-template-kw")
@@ -149,6 +164,6 @@ package("opentelemetry-cpp")
         if package:config("api_only") then
             assert(package:has_cxxincludes("opentelemetry/version.h"))
         else
-            assert(package:has_cxxfuncs("opentelemetry::exporter::trace::OStreamSpanExporterFactory::Create()", {configs = {languages = "c++17"}, includes = "opentelemetry/exporters/ostream/span_exporter_factory.h"}))
+            assert(package:has_cxxfuncs("opentelemetry::exporter::trace::OStreamSpanExporterFactory::Create()", {configs = {languages = "c++" ..  package:data("cxx_standard")}, includes = "opentelemetry/exporters/ostream/span_exporter_factory.h"}))
         end
     end)
