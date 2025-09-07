@@ -20,6 +20,8 @@ package("itk")
     elseif is_plat("linux") then
         add_extsources("apt::libinsighttoolkit5-dev", "pacman::itk")
         add_syslinks("dl", "pthread")
+    elseif is_plat("bsd") then
+        add_syslinks("execinfo")
     elseif is_plat("macosx") then
         add_extsources("brew::itk")
     elseif is_plat("mingw") and is_subhost("msys") then
