@@ -1,20 +1,21 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index d39958a..c14c624 100644
+index d39958a..ba21f3c 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -117,8 +117,13 @@ if(BUILD_SHARED_LIBS AND WIN32 AND HTTPLIB_COMPILE)
+@@ -117,8 +117,14 @@ if(BUILD_SHARED_LIBS AND WIN32 AND HTTPLIB_COMPILE)
  	set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
  endif()
  
 -if(CMAKE_SYSTEM_NAME MATCHES "Windows" AND ${CMAKE_SYSTEM_VERSION} VERSION_LESS "10.0.0")
 -	message(SEND_ERROR "Windows ${CMAKE_SYSTEM_VERSION} or lower is not supported. Please use Windows 10 or later.")
-+message(STATUS "---------------\n///// CMAKE_SYSTEM_NAME = ==${CMAKE_SYSTEM_NAME}==")
-+message(STATUS "///// CMAKE_SYSTEM_VERSION = ==${CMAKE_SYSTEM_VERSION}==\n---------------")
-+
 +if(CMAKE_SYSTEM_NAME MATCHES "Windows")
-+	if(${CMAKE_SYSTEM_VERSION} VERSION_LESS "10.0.0")
-+		message(SEND_ERROR "Windows ${CMAKE_SYSTEM_VERSION} or lower is not supported. Please use Windows 10 or later.")
-+	endif()
++    if(CMAKE_SYSTEM_VERSION)
++        if(${CMAKE_SYSTEM_VERSION} VERSION_LESS "10.0.0")
++            message(SEND_ERROR "Windows ${CMAKE_SYSTEM_VERSION} or lower is not supported. Please use Windows 10 or later.")
++        endif()
++    else()
++        message(WARNING "Cross-compiling for Windows, but CMAKE_SYSTEM_VERSION is not specified. Assuming target is Windows 10 or later.")
++    endif()
  endif()
  if(CMAKE_SIZEOF_VOID_P LESS 8)
  	message(WARNING "Pointer size ${CMAKE_SIZEOF_VOID_P} is not supported. Please use a 64-bit compiler.")
