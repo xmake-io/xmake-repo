@@ -7,6 +7,7 @@ package("dylib")
     add_urls("https://github.com/martin-olivier/dylib/archive/refs/tags/$(version).tar.gz",
              "https://github.com/martin-olivier/dylib.git")
 
+    add_versions("v3.0.1", "dfef3f0aeccf4ad847a5cd02f0b0bff086b4fac6e764e33abd82d3c85cfb578c")
     add_versions("v2.2.1", "6af0d2a91860743dc9f564ba0ab7f036a9b37c904395610288791571d4dbea5b")
 
     add_deps("cmake")
