@@ -36,7 +36,7 @@ package("cpp-httplib")
     add_versions("v0.9.2", "bfef2587a2aa31c85fb361df71c720be97076f8083e4f3881da8572f6a58054f")
     add_versions("v0.8.5", "b353f3e7c124a08940d9425aeb7206183fa29857a8f720c162f8fd820cc18f0e")
 
-    add_patches("v0.26.0", "patches/v0.26.0/fix-mingw.diff", "f5ce12bb7ceb89917341c0b663d83bebbe7a1df9586b2afb0638ae4ead881468")
+    add_patches("v0.26.0", "patches/v0.26.0/fix-mingw.diff", "3929cc28f0067307f212b21cb6570822ccde8f6dcbf3f310a40200a08b7f79bb")
     add_patches("v0.23.1", "patches/v0.23.1/fix-mingw.diff", "d2d8a4c16de3a00d9872526a187257c7ad344eba2a9f109d10b58eadce1c4059")
 
     add_configs("ssl",  { description = "Requires OpenSSL", default = false, type = "boolean"})
