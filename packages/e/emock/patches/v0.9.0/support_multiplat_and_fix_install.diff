@@ -172,7 +172,7 @@ index fe643da..043c2e3 100644
                  }
              }
 diff --git a/src/Trampoline.cpp b/src/Trampoline.cpp
-index 52116da..51030ca 100644
+index 52116da..5db3f2d 100644
 --- a/src/Trampoline.cpp
 +++ b/src/Trampoline.cpp
 @@ -14,9 +14,9 @@
@@ -187,7 +187,7 @@ index 52116da..51030ca 100644
  	#include <cassert>
      #ifdef _WIN64 // [
          typedef unsigned __int64  uintptr_t;
-@@ -35,9 +35,10 @@
+@@ -35,13 +35,18 @@
          #include <limits.h>
          #include <mach/mach_vm.h>
          #include <mach/mach_init.h>
@@ -200,7 +200,15 @@ index 52116da..51030ca 100644
      #endif
  
  #endif
-@@ -62,7 +63,7 @@ static const size_t kMaxAllocationDelta = 0x80000000; // 2GB
+ 
++#ifndef MAP_NORESERVE
++#define MAP_NORESERVE 0
++#endif
++
+ EMOCK_NS_START
+ 
+ namespace {
+@@ -62,7 +67,7 @@ static const size_t kMaxAllocationDelta = 0x80000000; // 2GB
  static const size_t kAllocationSize     = EMOCK_PAGE_SIZE;  // 4KB
  static const size_t kAlignmentSize      = 64;         // 64
  
@@ -209,7 +217,7 @@ index 52116da..51030ca 100644
  
      #if BUILD_FOR_X64
          #define _ADDRESS_MAX_VALUE 0x80000000000
-@@ -105,7 +106,7 @@ static const size_t kAlignmentSize      = 64;         // 64
+@@ -105,7 +110,7 @@ static const size_t kAlignmentSize      = 64;         // 64
  
          if (allocated)
          {
@@ -218,7 +226,7 @@ index 52116da..51030ca 100644
              {
                  VirtualFree(allocated, 0, MEM_RELEASE);
                  return NULL;
-@@ -284,7 +285,7 @@ static const size_t kAlignmentSize      = 64;         // 64
+@@ -284,7 +289,7 @@ static const size_t kAlignmentSize      = 64;         // 64
      }
  
      void* Trampoline::get4MemFunc(const void* src, void* dst) {

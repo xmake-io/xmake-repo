@@ -8,7 +8,7 @@ package("emock")
 
     add_versions("v0.9.0", "376b3584e95642b10947da8244c9b592f62ac267c23949d875a0d5ffe5d32cf5")
 
-    add_patches("v0.9.0", "patches/v0.9.0/support_multiplat_and_fix_install.diff", "3b5b72612a4daf4b7042f97dfddf89f90f47aab888954b04f12172d5e3921187")
+    add_patches("v0.9.0", "patches/v0.9.0/support_multiplat_and_fix_install.diff", "ccbba2df280bc4791a1dc0c3fe71ce54b97a64d75a11e2df9ca20ac9504cf8c2")
 
     add_deps("cmake")
 
