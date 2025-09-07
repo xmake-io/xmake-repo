@@ -8,6 +8,8 @@ package("emock")
 
     add_versions("v0.9.0", "376b3584e95642b10947da8244c9b592f62ac267c23949d875a0d5ffe5d32cf5")
 
+    add_patches("v0.9.0", "patches/v0.9.0/fix_mingw_and_install.diff", "759212e3eec12bb2350efbc6b5eed9073b02b5043bd774220a48d8e0ae9227dd")
+
     add_deps("cmake")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
