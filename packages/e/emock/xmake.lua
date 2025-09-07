@@ -8,7 +8,7 @@ package("emock")
 
     add_versions("v0.9.0", "376b3584e95642b10947da8244c9b592f62ac267c23949d875a0d5ffe5d32cf5")
 
-    add_patches("v0.9.0", "patches/v0.9.0/fix_mingw_and_install.diff", "759212e3eec12bb2350efbc6b5eed9073b02b5043bd774220a48d8e0ae9227dd")
+    add_patches("v0.9.0", "patches/v0.9.0/support_multiplat_and_fix_install.diff", "3b5b72612a4daf4b7042f97dfddf89f90f47aab888954b04f12172d5e3921187")
 
     add_deps("cmake")
 
@@ -31,14 +31,12 @@ package("emock")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DEMOCK_NO_NAMESPACE=" .. (package:config("namespace") and "OFF" or "ON"))
-
         local test_framework = package:config("test_framework")
         table.insert(configs, "-DEMOCK_XUNIT=" .. test_framework)
         if test_framework ~= "STDEXCEPT" then
             local dir = package:dep(test_framework):installdir()
             table.insert(configs, "-DEMOCK_XUNIT_HOME=" .. dir)
         end
-
         import("package.tools.cmake").install(package, configs)
     end)
 

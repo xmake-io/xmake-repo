@@ -78,7 +78,7 @@ index 4a117ad..1858fe4 100644
     return oss.str();
  }
 diff --git a/src/SymbolRetriever.cpp b/src/SymbolRetriever.cpp
-index fe643da..631e3e3 100644
+index fe643da..043c2e3 100644
 --- a/src/SymbolRetriever.cpp
 +++ b/src/SymbolRetriever.cpp
 @@ -15,12 +15,17 @@
@@ -103,7 +103,30 @@ index fe643da..631e3e3 100644
  
      #ifdef _WIN64 // [
          typedef unsigned __int64  uintptr_t;
-@@ -94,7 +99,7 @@ EMOCK_NS_START
+@@ -37,17 +42,20 @@
+ 	#include <unistd.h>
+ 	#include <cassert>
+ 	#include <stdio.h>
++    #include <dlfcn.h>
+     #if __APPLE__
+         #include <mach-o/dyld.h>
+         #include <mach-o/dyld_images.h>
+         #include <mach-o/fat.h>
+         #include <mach-o/nlist.h>
+-        #include <dlfcn.h>
+         #include <ar.h>
+         #include <limits.h>
+-    #else
++    #elif __linux__
+ 	    #include <link.h>
+         #include <linux/limits.h>
++    #else
++	    #include <link.h>
++        #include <limits.h>
+     #endif
+ 
+ #endif
+@@ -94,7 +102,7 @@ EMOCK_NS_START
              return stringify.substr(start, stringify.find_last_not_of(')') - start + 1);
          }
  
@@ -112,7 +135,7 @@ index fe643da..631e3e3 100644
          static std::string extractMethodSignatureName(const char* pmf_info, std::string& symbolName, const std::string& stringify) {
  #else
          static std::string extractMethodSignatureName(const char* pmf_info, const std::string& stringify) {
-@@ -107,7 +112,7 @@ EMOCK_NS_START
+@@ -107,7 +115,7 @@ EMOCK_NS_START
                      std::string ret(from, pmf_info - from - 1);
                      ret += extractMethodName(stringify);
                      // extract symbol name
@@ -121,7 +144,7 @@ index fe643da..631e3e3 100644
                      symbolName = strchr(ret.c_str(), ' ') + 1;
  #endif
                      // extract arg list
-@@ -134,7 +139,7 @@ EMOCK_NS_START
+@@ -134,7 +142,7 @@ EMOCK_NS_START
          }
      }
  
@@ -130,7 +153,7 @@ index fe643da..631e3e3 100644
  
      std::map<std::pair<ULONG64, std::string>, std::map<int, std::string> > g_symbolCache;
      void SymbolRetriever::reset() {
-@@ -188,7 +193,16 @@ EMOCK_NS_START
+@@ -188,7 +196,16 @@ EMOCK_NS_START
                  }
                  else {
                      char filePath[MAX_PATH] = {0};
@@ -149,7 +172,7 @@ index fe643da..631e3e3 100644
                  }
              }
 diff --git a/src/Trampoline.cpp b/src/Trampoline.cpp
-index 52116da..ef1c5fb 100644
+index 52116da..51030ca 100644
 --- a/src/Trampoline.cpp
 +++ b/src/Trampoline.cpp
 @@ -14,9 +14,9 @@
@@ -164,7 +187,20 @@ index 52116da..ef1c5fb 100644
  	#include <cassert>
      #ifdef _WIN64 // [
          typedef unsigned __int64  uintptr_t;
-@@ -62,7 +62,7 @@ static const size_t kMaxAllocationDelta = 0x80000000; // 2GB
+@@ -35,9 +35,10 @@
+         #include <limits.h>
+         #include <mach/mach_vm.h>
+         #include <mach/mach_init.h>
+-    #else
++    #elif __linux__
+         #include <linux/limits.h>
+-
++    #else
++        #include <limits.h>
+     #endif
+ 
+ #endif
+@@ -62,7 +63,7 @@ static const size_t kMaxAllocationDelta = 0x80000000; // 2GB
  static const size_t kAllocationSize     = EMOCK_PAGE_SIZE;  // 4KB
  static const size_t kAlignmentSize      = 64;         // 64
  
@@ -173,7 +209,7 @@ index 52116da..ef1c5fb 100644
  
      #if BUILD_FOR_X64
          #define _ADDRESS_MAX_VALUE 0x80000000000
-@@ -105,7 +105,7 @@ static const size_t kAlignmentSize      = 64;         // 64
+@@ -105,7 +106,7 @@ static const size_t kAlignmentSize      = 64;         // 64
  
          if (allocated)
          {
@@ -182,7 +218,7 @@ index 52116da..ef1c5fb 100644
              {
                  VirtualFree(allocated, 0, MEM_RELEASE);
                  return NULL;
-@@ -284,7 +284,7 @@ static const size_t kAlignmentSize      = 64;         // 64
+@@ -284,7 +285,7 @@ static const size_t kAlignmentSize      = 64;         // 64
      }
  
      void* Trampoline::get4MemFunc(const void* src, void* dst) {
