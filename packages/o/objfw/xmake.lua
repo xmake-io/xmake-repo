@@ -32,6 +32,8 @@ package("objfw")
     add_versions("1.3",     "de9e8a84437c01dacb9e83d7de0e3f7add3152165707d51a4caec640e4f56ba6")
     add_versions("1.3.1",   "a3bdf28c2e166f97680601c29f204670a8c4c8e43d393321a7d1f64fe1d2f513")
     add_versions("1.3.2",   "8148df0d55d1a3218fe9965144b5c3ee2a7f4d8e43e430a6107e294043872cab")
+    add_versions("1.4.1",   "e223b1cae37453f02ea98f085c3c1f4b78dcf7c16b43d35b05d9ad4480e175b2")
+
 
     if is_host("linux", "macosx") then
         add_deps("autoconf", "automake", "libtool")
@@ -49,6 +51,8 @@ package("objfw")
     add_configs("unicode_tables", { description = "Enable Unicode tables.", default = true, type = "boolean" })
 
     add_configs("codepage_437", { description = "Enable codepage 437 support.", default = true, type = "boolean" })
+    
+
     add_configs("codepage_850", { description = "Enable codepage 850 support.", default = true, type = "boolean" })
     add_configs("codepage-858", { description = "Enable codepage 858 support.", default = true, type = "boolean" })
     add_configs("iso_8859_2", { description = "Enable ISO-8859-2 support.", default = true, type = "boolean" })
