@@ -8,10 +8,13 @@ package("itk")
     add_versions("5.2.1", "192d41bcdd258273d88069094f98c61c38693553fd751b54f8cda308439555db")
     add_versions("5.4.4", "d2092cd018a7b9d88e8c3dda04acb7f9345ab50619b79800688c7bc3afcca82a")
 
+    add_patches(">5.0", "patches/hdf5.patch", "47594e3f5885a11dc214768d6fd6e54c014e1f335d24c7209a837a43f4a22631")
+
     add_configs("opencv", {description = "Build ITKVideoBridgeOpenCV module.", default = false, type = "boolean"})
     add_configs("vtk", {description = "Build ITKVtkGlue module.", default = false, type = "boolean"})
 
     add_deps("cmake", "double-conversion", "eigen", "expat", "gdcm", "libjpeg", "libminc", "libpng", "libtiff", "vxl", "zlib")
+    add_deps("hdf5", {configs = {cpplib = true}})
     if is_plat("windows") then
         add_syslinks("shell32", "advapi32")
     elseif is_plat("linux") then
@@ -29,11 +32,6 @@ package("itk")
         local libs = { "ITKBiasCorrection", "ITKColormap", "ITKCommon", "ITKConvolution", "ITKDICOMParser", "ITKDeformableMesh", "ITKDenoising", "ITKDiffusionTensorImage", "ITKFFT", "ITKFastMarching", "ITKIOBMP", "ITKIOBioRad", "ITKIOBruker", "ITKIOCSV", "ITKIOGDCM", "ITKIOGE", "ITKIOGIPL", "ITKIOHDF5", "ITKIOIPL", "ITKIOImageBase", "ITKIOJPEG", "ITKIOJPEG2000", "ITKIOLSM", "ITKIOMINC", "ITKIOMRC", "ITKIOMeshBYU", "ITKIOMeshBase", "ITKIOMeshFreeSurfer", "ITKIOMeshGifti", "ITKIOMeshOBJ", "ITKIOMeshOFF", "ITKIOMeshVTK", "ITKIOMeta", "ITKIONIFTI", "ITKIONRRD", "ITKIOPNG", "ITKIOSiemens", "ITKIOSpatialObjects", "ITKIOStimulate", "ITKIOTIFF", "ITKIOTransformBase", "ITKIOTransformHDF5", "ITKIOTransformInsightLegacy", "ITKIOTransformMatlab", "ITKIOVTK", "ITKIOXML", "ITKImageFeature", "ITKImageIntensity", "ITKKLMRegionGrowing", "ITKLabelMap", "ITKMarkovRandomFieldsClassifiers", "ITKMathematicalMorphology", "ITKMesh", "ITKMetaIO", "ITKNrrdIO", "ITKOptimizers", "ITKOptimizersv4", "ITKPDEDeformableRegistration", "ITKPath", "ITKPolynomials", "ITKQuadEdgeMesh", "ITKQuadEdgeMeshFiltering", "ITKRegionGrowing", "ITKRegistrationMethodsv4", "ITKSmoothing", "ITKSpatialObjects", "ITKStatistics", "ITKTestKernel", "ITKTransform", "ITKTransformFactory", "ITKVNLInstantiation", "ITKVTK", "ITKVtkGlue", "ITKVideoCore", "ITKVideoIO", "ITKVideoBridgeOpenCV", "ITKWatersheds", "ITKgiftiio", "ITKniftiio", "ITKznz", "itkNetlibSlatec", "itklbfgs", "itkopenjpeg", "itksys" }
         for _, lib in ipairs(libs) do
             package:add("links", lib .. "-" .. ver)
-        end
-        if package:is_plat("windows", "macosx") and package:config("shared") then
-            package:add("deps", "hdf5", {configs = {shared = true, cpplib = true}})
-        else
-            package:add("deps", "hdf5", {configs = {cpplib = true}})
         end
         if package:config("opencv") then
             package:add("deps", "opencv")
