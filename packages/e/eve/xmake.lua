@@ -17,20 +17,10 @@ package("eve")
                 local ndk = package:toolchain("ndk"):config("ndkver")
                 assert(ndk and tonumber(ndk) > 22, "package(eve) require ndk version > 22")
             end
-
-            if package:has_tool("cxx", "gcc") then
-                assert(package:check_cxxsnippets({test = [[
-                    #if defined(__GNUC__) && !defined(__clang__)
-                    #  if (__GNUC__ < 13)
-                    #      error "package(eve) require gcc >13"
-                    #  endif
-                    #endif
-                ]]}, {configs = {languages = "c++20"}}), "package(eve) require gcc >13")
-            end
         end)
     end
 
-    on_install(function (package)
+    on_install("!mingw", function (package)
         io.replace("cmake/config/eve-install.cmake", [[set(MAIN_DEST     "${CMAKE_INSTALL_LIBDIR}/eve-${PROJECT_VERSION}")]], [[set(MAIN_DEST     "${CMAKE_INSTALL_LIBDIR}/eve")]], {plain = true})
         io.replace("cmake/config/eve-install.cmake", [[set(INSTALL_DEST  "${CMAKE_INSTALL_INCLUDEDIR}/eve-${PROJECT_VERSION}")]], [[set(INSTALL_DEST  "${CMAKE_INSTALL_INCLUDEDIR}")]], {plain = true})
         io.replace("cmake/config/eve-install.cmake", [[set(DOC_DEST      "${CMAKE_INSTALL_DOCDIR}-${PROJECT_VERSION}")]], [[set(DOC_DEST      "${CMAKE_INSTALL_DOCDIR}")]], {plain = true})
