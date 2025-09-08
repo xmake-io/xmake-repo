@@ -1,0 +1,102 @@
+diff --git a/aui.core/CMakeLists.txt b/aui.core/CMakeLists.txt
+index 6aa1b07..a2f5149 100644
+--- a/aui.core/CMakeLists.txt
++++ b/aui.core/CMakeLists.txt
+@@ -6,12 +6,18 @@ option(AUI_ENABLE_ASAN "Enable AddressSanitizer" OFF)
+ option(AUI_ENABLE_DEATH_TESTS "Enable GTest death tests" ON)
+ 
+ aui_module(aui.core EXPORT aui)
+-aui_enable_tests(aui.core)
++if (NOT AUIB_DISABLE)
++    aui_enable_tests(aui.core)
++endif ()
+ aui_enable_benchmarks(aui.core)
+ 
+ 
+ get_filename_component(SELF_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+-if (GLM_INCLUDE_DIR)
++if (AUIB_DISABLE)
++    include(FindPkgConfig)
++    pkg_check_modules(GLM REQUIRED glm)
++    message(STATUS "Using pkg-config GLM_INCLUDE_DIRS: ${GLM_INCLUDE_DIRS}")
++elseif (GLM_INCLUDE_DIR)
+     message(STATUS "Using custom GLM_INCLUDE_DIR: ${GLM_INCLUDE_DIR}")
+ else()
+     set(GLM_INCLUDE_DIR "${SELF_DIR}/3rdparty/glm")
+@@ -21,7 +27,7 @@ else()
+             DESTINATION "aui.core/include/"
+     )
+ endif()
+-target_include_directories(aui.core PUBLIC $<BUILD_INTERFACE:${GLM_INCLUDE_DIR}>)
++target_include_directories(aui.core PUBLIC $<BUILD_INTERFACE:${GLM_INCLUDE_DIRS}>)
+ 
+ target_compile_definitions(aui.core PRIVATE UNICODE=1)
+ target_compile_definitions(aui.core PUBLIC NOMINMAX=1)
+@@ -49,8 +55,12 @@ if (NOT WIN32)
+     endif()
+ 
+     if (AUI_PLATFORM_LINUX)
+-        auib_import(backtrace https://github.com/aui-framework/libbacktrace
+-                    VERSION a5a32e3cc8e22a9fc40689a884b032c52ee3f88e)
++        if (AUIB_DISABLE)
++            find_package(libbacktrace CONFIG REQUIRED)
++        else ()
++            auib_import(backtrace https://github.com/aui-framework/libbacktrace
++                        VERSION a5a32e3cc8e22a9fc40689a884b032c52ee3f88e)
++        endif ()
+         set(_use_backtrace TRUE)
+     else()
+ 
+@@ -84,13 +94,17 @@ endif()
+ 
+ if(_use_backtrace)
+     message(STATUS "Stacktrace backend: backtrace")
+-    aui_link(aui.core PRIVATE backtrace)
++    if (AUIB_DISABLE)
++        aui_link(aui.core PRIVATE libbacktrace::libbacktrace)
++    else ()
++        aui_link(aui.core PRIVATE backtrace)
++    endif ()
+     target_compile_definitions(aui.core PRIVATE AUI_USE_BACKTRACE=1)
+ elseif(_use_unwind)
+     message(STATUS "Stacktrace backend: unwind")
+     target_compile_definitions(aui.core PRIVATE AUI_USE_UNWIND=1)
+ elseif(WIN32)
+-    aui_link(aui.core PRIVATE dbghelp shlwapi.lib)
++    aui_link(aui.core PRIVATE dbghelp shell32 shlwapi.lib)
+     message(STATUS "Stacktrace backend: dbghelp")
+ else()
+     message(STATUS "Stacktrace backend: none")
+@@ -146,17 +160,23 @@ if (AUI_SHARED_PTR_FIND_INSTANCES)
+ endif()
+ 
+ 
+-# [auib_import examples]
+-auib_import(fmt https://github.com/fmtlib/fmt
+-            VERSION 9.1.0
+-            CMAKE_ARGS -DFMT_TEST=FALSE -DFMT_DOC=FALSE)
++if (AUIB_DISABLE)
++    find_package(fmt CONFIG REQUIRED)
++    find_package(range-v3 CONFIG REQUIRED)
++    aui_link(aui.core PUBLIC fmt::fmt range-v3::range-v3)
++else ()
++    # [auib_import examples]
++    auib_import(fmt https://github.com/fmtlib/fmt
++                VERSION 9.1.0
++                CMAKE_ARGS -DFMT_TEST=FALSE -DFMT_DOC=FALSE)
+ 
+-auib_import(range-v3 https://github.com/ericniebler/range-v3
+-        VERSION 0.12.0
+-        CMAKE_ARGS -DRANGE_V3_DOCS=OFF -DRANGE_V3_TESTS=OFF -DRANGE_V3_EXAMPLES=OFF -DRANGE_V3_PERF=OFF -DRANGE_V3_HEADER_CHECKS=OFF)
+-# [auib_import examples]
++    auib_import(range-v3 https://github.com/ericniebler/range-v3
++            VERSION 0.12.0
++            CMAKE_ARGS -DRANGE_V3_DOCS=OFF -DRANGE_V3_TESTS=OFF -DRANGE_V3_EXAMPLES=OFF -DRANGE_V3_PERF=OFF -DRANGE_V3_HEADER_CHECKS=OFF)
++    # [auib_import examples]
+ 
+-aui_link(aui.core PUBLIC fmt::fmt-header-only range-v3::range-v3)
++    aui_link(aui.core PUBLIC fmt::fmt-header-only range-v3::range-v3)
++endif ()
+ 
+ # segfault functionality
+ if (NOT MSVC AND AUI_CATCH_UNHANDLED)

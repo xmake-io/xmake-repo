@@ -6,6 +6,7 @@ package("highway")
     add_urls("https://github.com/google/highway/archive/refs/tags/$(version).tar.gz",
              "https://github.com/google/highway.git")
 
+    add_versions("1.3.0", "07b3c1ba2c1096878a85a31a5b9b3757427af963b1141ca904db2f9f4afe0bc2")
     add_versions("1.2.0", "7e0be78b8318e8bdbf6fa545d2ecb4c90f947df03f7aadc42c1967f019e63343")
     add_versions("1.1.0", "354a8b4539b588e70b98ec70844273e3f2741302c4c377bcc4e81b3d1866f7c9")
 
@@ -41,5 +42,5 @@ package("highway")
                     hn::Store(x, d, x_array + i);
                 }
             }
-        ]]}, {configs = {languages = "c++11"}}))
+        ]]}, {configs = {languages = "c++14"}}))
     end)

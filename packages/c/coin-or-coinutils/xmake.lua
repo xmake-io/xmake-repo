@@ -16,16 +16,23 @@ package("coin-or-coinutils")
         add_extsources("brew::coinutils")
     end
 
-    add_deps("bzip2", "zlib")
-    if is_plat("linux", "macosx", "bsd") then
-        add_deps("readline")
-    end
+    add_deps("bzip2", "zlib", "glpk")
 
-    if is_plat("macosx", "iphoneos") then
-        add_frameworks("Accelerate")
-    elseif is_plat("linux", "bsd") then
-        add_syslinks("m")
-    end
+    on_load(function (package)
+        package:add("defines", "COIN_HAS_ZLIB", "COIN_HAS_BZLIB", "COIN_HAS_GLPK")
+        if package:is_plat("linux", "macosx", "bsd") then
+            package:add("deps", "readline")
+            package:add("defines", "COIN_HAS_READLINE")
+        end
+        if package:is_plat("macosx", "iphoneos") then
+            package:add("frameworks", "Accelerate")
+        elseif package:is_plat("linux", "bsd") then
+            package:add("syslinks", "m")
+        end
+        if not package:is_debug() then
+            package:add("defines", "NDEBUG")
+        end
+    end)
 
     add_includedirs("include", "include/coin")
 

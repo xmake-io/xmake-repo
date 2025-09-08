@@ -6,6 +6,7 @@ package("ppqsort")
     add_urls("https://github.com/GabTux/PPQSort/archive/refs/tags/$(version).tar.gz",
              "https://github.com/GabTux/PPQSort.git")
 
+    add_versions("v1.0.6", "12d9c05363fa3d36f4916a78f1c7e237748dfe111ef44b8b7a7ca0f3edad44da")
     add_versions("v1.0.5", "39a973a680eb0af3bd0bdd5f4e9fa81d484915f3141e3a4568930647a328ba12")
 
     on_check(function (package)

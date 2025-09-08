@@ -16,9 +16,17 @@ package("dylib")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            void test() {
-                dylib lib("foo");
-            }
-        ]]}, {configs = {languages = "c++11"}, includes = "dylib.hpp"}))
+        if package:version() and package:version():ge("3.0.0") then
+            assert(package:check_cxxsnippets({test = [[
+                void test() {
+                    dylib::library lib("./plugins/foo", dylib::decorations::os_default());
+                }
+            ]]}, {configs = {languages = "c++11"}, includes = "dylib.hpp"}))
+        else
+            assert(package:check_cxxsnippets({test = [[
+                void test() {
+                    dylib lib("foo");
+                }
+            ]]}, {configs = {languages = "c++11"}, includes = "dylib.hpp"}))
+        end
     end)

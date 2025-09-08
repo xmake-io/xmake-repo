@@ -7,6 +7,7 @@ package("aurora-au")
     set_urls("https://github.com/aurora-opensource/au/archive/refs/tags/$(version).tar.gz",
              "https://github.com/aurora-opensource/au.git")
 
+    add_versions("0.5.0", "69d3510df7880dc5a109d751b8afc38b2adbf4af2e829b569b19cbdd970fee5e")
     add_versions("0.4.1", "5e88a0ffcb0a0843f4bd4d4ea4429c793f85dfcb8c1e7f7978de6fecab739b84")
 
     add_deps("cmake")

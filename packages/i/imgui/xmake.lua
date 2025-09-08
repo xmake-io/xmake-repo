@@ -7,6 +7,7 @@ package("imgui")
     add_urls("https://github.com/ocornut/imgui.git", {alias = "git"})
 
     -- don't forget to add the docking versions as well
+    add_versions("v1.92.1", "32c237c2abf67a2ffccaac17192f711d4a787554b4133187a153d49057d6109c")
     add_versions("v1.92.0", "42250c45df2736bcef867ae4ff404d138e5135cd36466c63143b1ea3b1c81091")
     add_versions("v1.91.9", "3872a5f90df78fced023c1945f4466b654fd74573370b77b17742149763a7a7c")
     add_versions("v1.91.8", "db3a2e02bfd6c269adf0968950573053d002f40bdfb9ef2e4a90bce804b0f286")
@@ -52,6 +53,7 @@ package("imgui")
     add_versions("v1.76",   "e482dda81330d38c87bd81597cacaa89f05e20ed2c4c4a93a64322e97565f6dc")
     add_versions("v1.75",   "1023227fae4cf9c8032f56afcaea8902e9bfaad6d9094d6e48fb8f3903c7b866")
 
+    add_versions("git:v1.92.1-docking", "v1.92.1-docking")
     add_versions("git:v1.92.0-docking", "v1.92.0-docking")
     add_versions("git:v1.91.9-docking", "v1.91.9-docking")
     add_versions("git:v1.91.8-docking", "v1.91.8-docking")
@@ -104,12 +106,15 @@ package("imgui")
     add_configs("sdl3_renderer",    {description = "Enable the sdl3 renderer backend", default = false, type = "boolean"})
     add_configs("sdl3_gpu",         {description = "Enable the sdl3 gpu backend", default = false, type = "boolean"})
     add_configs("vulkan",           {description = "Enable the vulkan backend", default = false, type = "boolean"})
+    add_configs("volk",             {description = "Enable the vulkan backend, and use volk to load Vulkan functions", default = false, type = "boolean"})
     add_configs("win32",            {description = "Enable the win32 backend", default = false, type = "boolean"})
     add_configs("osx",              {description = "Enable the OS X backend", default = false, type = "boolean"})
     add_configs("wgpu",             {description = "Enable the wgpu backend", default = false, type = "boolean"})
+    add_configs("wgpu_backend",     {description = "Use specific wgpu backend", default = "wgpu", type = "string", values = {"wgpu", "dawn"}})
     add_configs("freetype",         {description = "Use FreeType to build and rasterize the font atlas", default = false, type = "boolean"})
     add_configs("user_config",      {description = "Use user config (disables test!)", default = nil, type = "string"})
     add_configs("wchar32",          {description = "Use 32-bit for ImWchar (default is 16-bit)", default = false, type = "boolean"})
+
 
     -- deprecated configs (kept for backwards compatibility)
     add_configs("sdlrenderer",  {description = "(deprecated)", default = false, type = "boolean"})
@@ -165,8 +170,14 @@ package("imgui")
         if package:config("vulkan") then
             package:add("deps", "vulkan-headers")
         end
+        if package:config("volk") then
+            package:add("deps", "volk")
+        end
         if package:config("wgpu") then
             package:add("deps", "wgpu-native")
+            if package:config("wgpu_backend") then
+                package:add("defines", "IMGUI_IMPL_WEBGPU_BACKEND_" .. string.upper(package:config("wgpu_backend")))
+            end
         end
         if package:config("freetype") then
             package:add("deps", "freetype")
@@ -192,6 +203,7 @@ package("imgui")
             sdl3_renderer    = package:config("sdl3_renderer"),
             sdl3_gpu         = package:config("sdl3_gpu"),
             vulkan           = package:config("vulkan"),
+            volk             = package:config("volk"),
             win32            = package:config("win32"),
             osx              = package:config("osx"),
             wgpu             = package:config("wgpu"),

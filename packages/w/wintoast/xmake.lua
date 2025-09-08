@@ -6,6 +6,7 @@ package("wintoast")
     add_urls("https://github.com/mohabouje/WinToast/archive/refs/tags/$(version).tar.gz",
              "https://github.com/mohabouje/WinToast.git")
 
+    add_versions("v1.3.2", "dc86beed1dd9b0e7a8524b434e46a9a53c414303aa5276a7fbaf3d0392735647")
     add_versions("v1.3.1", "3e060d3376fdfd9cd092e324f5d50dde9632e9f544295f4613c8e22078653ff0")
     add_versions("v1.3.0", "998bd82fb2f49ee4b0df98774424d72c2bc18225188f251a9242af28bb80e6d4")
 

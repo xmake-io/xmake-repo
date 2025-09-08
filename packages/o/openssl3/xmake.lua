@@ -5,8 +5,14 @@ package("openssl3")
 
     add_urls("https://github.com/openssl/openssl/archive/refs/tags/openssl-$(version).zip")
 
+    add_versions("3.5.1", "9a1472b5e2a019f69da7527f381b873e3287348f3ad91783f83fff4e091ea4a8")
+    add_versions("3.4.2", "d313ac2ee07ad0d9c6e9203c56a485b3ecacac61c18fe450fe3c1d4db540ad71")
+    add_versions("3.3.4", "88c892a670df8924889f3bfd2f2dde822e1573a23dc4176556cb5170b40693ea")
     add_versions("3.3.2", "4cda357946f9dd5541b565dba35348d614288e88aeb499045018970c789c9d61")
     add_versions("3.3.1", "307284f39bfb7061229c57e263e707655aa80aa9950bf6def28ed63fec91a726")
+    add_versions("3.2.5", "08a3fe150bd69a83ac64e222bdccf0698c493a94e161e4d080c82d1f308dc4e1")
+    add_versions("3.1.8", "bbd5cbd8cc8ea852d31c001a9b767eadef0548b098e132b580a1f0c80d1778b7")
+    add_versions("3.0.17", "1129500758754ce4ff7eba7e46403dd56d5aa0a4e517a8fff7dac6fe120d0461")
     add_versions("3.0.14", "9590b9ae18c4de183be74dfc9da5be1f1e8f85dd631a78bc74c0ebc3d7e27a93")
     add_versions("3.0.7", "fcb37203c6bf7376cfd3aeb0be057937b7611e998b6c0d664abde928c8af3eb7")
     add_versions("3.0.6", "9b45be41df0d6e9cf9e340a64525177662f22808ac69aee6bfb29c511284dae4")
@@ -28,6 +34,11 @@ package("openssl3")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
+    -- @see https://github.com/xmake-io/xmake-repo/pull/7797#issuecomment-3153471643
+    if is_plat("windows") then
+        add_configs("jom", {description = "Try using jom to compile in parallel.", default = true, type = "boolean"})
+    end
+
     on_load(function (package)
         if not package:is_precompiled() then
             if package:is_plat("windows") then
@@ -35,10 +46,12 @@ package("openssl3")
                 -- the perl executable found in GitForWindows will fail to build OpenSSL
                 -- see https://github.com/openssl/openssl/blob/master/NOTES-PERL.md#perl-on-windows
                 package:add("deps", "strawberry-perl", {system = false})
-                -- check xmake tool jom
-                import("package.tools.jom", {try = true})
-                if jom then
-                    package:add("deps", "jom", {private = true})
+                if package:config("jom") then
+                    -- check xmake tool jom
+                    import("package.tools.jom", {try = true})
+                    if jom then
+                        package:add("deps", "jom", {private = true})
+                    end
                 end
             elseif package:is_plat("android", "wasm") and is_subhost("windows") and os.arch() == "x64" then
                 -- when building for android on windows, use msys2 perl instead of strawberry-perl to avoid configure issue
@@ -52,12 +65,12 @@ package("openssl3")
         else
             package:add("links", "ssl", "crypto")
         end
-        if package:is_plat("windows", "mingw") then
+        if package:is_plat("windows", "mingw", "msys") then
             package:add("syslinks", "ws2_32", "user32", "crypt32", "advapi32")
         elseif package:is_plat("linux", "bsd", "cross") then
             package:add("syslinks", "pthread", "dl")
         end
-        if package:is_plat("linux", "mingw") and package:is_arch("x86_64") then
+        if package:is_plat("linux", "mingw", "msys") and package:is_arch("x86_64") then
             package:add("linkdirs", "lib64")
         end
         if package:is_plat("linux") then
@@ -88,13 +101,25 @@ package("openssl3")
             table.insert(configs, "enable-md2")
         end
 
-        if jom then
+        if package:config("jom") and jom then
             table.insert(configs, "no-makedepend")
-            table.insert(configs, "/FS")
         end
+
+        if package:is_debug() then
+            table.insert(configs, "/FS")
+        else
+            io.replace("Configurations/10-main.conf", "/debug", "", {plain = true})
+            io.replace("Configurations/10-main.conf", "/Zi", "", {plain = true})
+            io.replace("Configurations/50-masm.conf", "/Zi", "", {plain = true})
+            if package:version():gt("3.0.17") then
+                io.replace("Configurations/50-win-clang-cl.conf", "/Zi", "", {plain = true})
+            end
+            io.replace("util/copy.pl", "if (-d $dest)", "if (! -e $_) { next; }\n\tif (-d $dest)", {plain = true})
+        end
+
         os.vrunv("perl", configs)
 
-        if jom then
+        if package:config("jom") and jom then
             jom.build(package)
             jom.make(package, {"install_sw"})
         else
@@ -103,7 +128,7 @@ package("openssl3")
         end
     end)
 
-    on_install("mingw", function (package)
+    on_install("mingw", "msys", function (package)
         local configs = {"Configure", "no-tests"}
         table.insert(configs, package:is_arch("i386", "x86") and "mingw" or "mingw64")
         table.insert(configs, package:config("shared") and "shared" or "no-shared")
@@ -135,6 +160,9 @@ package("openssl3")
         os.vrunv("perl", configs, {envs = buildenvs})
         import("package.tools.make").build(package)
         import("package.tools.make").make(package, {"install_sw"})
+        if os.isdir(package:installdir("lib64")) and package:is_arch("x86_64") then
+            os.trycp(path.join(package:installdir("lib64"), "*"), package:installdir("lib"))
+        end
     end)
 
     on_install("linux", "macosx", "bsd", function (package)
@@ -157,6 +185,9 @@ package("openssl3")
         import("package.tools.make").make(package, {"install_sw"})
         if package:config("shared") then
             os.tryrm(path.join(package:installdir("lib"), "*.a"), path.join(package:installdir("lib64"), "*.a"))
+        end
+        if package:is_plat("linux") and os.isdir(package:installdir("lib64")) and package:is_arch("x86_64") then
+            os.trycp(path.join(package:installdir("lib64"), "*"), package:installdir("lib"))
         end
     end)
 

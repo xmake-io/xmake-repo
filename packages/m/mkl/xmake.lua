@@ -181,7 +181,7 @@ package("mkl")
             -- Get version components for filename construction
             local mv = package:version():split("%+")
             local lib_filename = format("mkl-static-%s-intel_%s", mv[1], mv[2])
-            local inc_filename = format("mkl-include-%s-intel_%s", mv[1], mv[2])            
+            local inc_filename = format("mkl-include-%s-intel_%s", mv[1], mv[2])
             -- Find required tools
             local z7 = assert(find_tool("7z"), "7z tool not found!")
             local zstd = assert(find_tool("zstd"), "zstd tool not found!")
@@ -199,8 +199,10 @@ package("mkl")
                 os.tryrm(temp_tar)
                 os.tryrm(archivefile)
             end
+            -- support for xmake 3.0.2
+            os.trycp("../" .. package:name() .. "-" .. package:version_str(), "../" .. lib_filename .. ".conda")
             -- Process library files
-            extract_conda("../" .. lib_filename .. ".conda")            
+            extract_conda("../" .. lib_filename .. ".conda")
             -- Process header files
             extract_conda(path.join(headerdir, "../" .. inc_filename .. ".conda"))
             -- Move headers to the correct location

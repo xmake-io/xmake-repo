@@ -7,6 +7,7 @@ package("rapidcsv")
     add_urls("https://github.com/d99kris/rapidcsv/archive/refs/tags/$(version).zip",
              "https://github.com/d99kris/rapidcsv.git")
 
+    add_versions("v8.88", "14cc4a773c4c045daafac5d21e1f9f83d874be12e9263bb0fde3ee478bb88c5e")
     add_versions("v8.87", "8114915a557cb5c972a27767dc92874ceae7f749def82fb522c118130602ced5")
     add_versions("v8.85", "c53bd40846068ad8843eaa0d089934be92014d77e7fd0a0ae3b0a0893c76e74f")
     add_versions("v8.84", "6226df921e392eb5fa88dd1efaf26a1a7cfdc23bc00c08a7337fc0314bf8b5a8")

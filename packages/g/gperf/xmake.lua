@@ -8,6 +8,7 @@ package("gperf")
              "https://ftp.gnu.org/gnu/gperf/gperf-$(version).tar.gz")
 
     add_versions("3.1", "588546b945bba4b70b6a3a616e80b4ab466e3f33024a352fc2198112cdbb3ae2")
+    add_versions("3.2.1", "ed5ad317858e0a9badbbada70df40194002e16e8834ac24491307c88f96f9702")
 
     if is_host("linux") then
         add_extsources("apt::gperf", "pacman::gperf")
@@ -27,7 +28,10 @@ package("gperf")
 
     on_install("@macosx", "@linux", "@bsd", "@msys", function (package)
         io.replace("lib/getline.cc", "register", "", {plain = true})
+        io.replace("lib/getopt.h", "#ifdef __GNU_LIBRARY__", "#if 1", {plain = true})
         io.replace("lib/getopt.c", "register", "", {plain = true})
+        io.replace("lib/getopt.c", "extern char *getenv ();", "#include <stdlib.h>", {plain = true})
+        io.replace("lib/getopt.c", "extern int strncmp ();", "#include <string.h>", {plain = true})
         import("package.tools.autoconf").install(package)
     end)
 

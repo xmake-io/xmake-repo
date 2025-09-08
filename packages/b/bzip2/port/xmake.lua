@@ -33,7 +33,7 @@ target("bzip2")
 
     after_install(function (target)
         -- copy/link additional executables/scripts (behavior is altered by checking the program name)
-        if target:is_plat("windows", "mingw") then
+        if target:is_plat("windows", "mingw", "msys", "cygwin") then
             local binarydir = path.join(target:installdir(), "bin")
             os.vcp(path.join(binarydir, "bzip2.exe"), path.join(binarydir, "bzcat.exe"))
             os.vcp(path.join(binarydir, "bzip2.exe"), path.join(binarydir, "bunzip2.exe"))

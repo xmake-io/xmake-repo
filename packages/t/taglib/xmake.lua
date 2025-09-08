@@ -6,6 +6,7 @@ package("taglib")
     add_urls("https://github.com/taglib/taglib/archive/refs/tags/$(version).tar.gz",
              "https://github.com/taglib/taglib.git", {submodules = false})
 
+    add_versions("v2.1.1", "bd57924496a272322d6f9252502da4e620b6ab9777992e8934779ebd64babd6e")
     add_versions("v2.1", "95b788b39eaebab41f7e6d1c1d05ceee01a5d1225e4b6d11ed8976e96ba90b0c")
 
     add_patches("v2.1", "https://github.com/taglib/taglib/pull/1275/commits/8446c9332994071f6ee18a545bbe91f44aafb077.diff", "7d5dc3a8fa0f62d8f6e3560c6c5dac6ff7bcc5a18df62b2aa5f24a734ba2f55e")

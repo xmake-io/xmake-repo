@@ -4,6 +4,7 @@ package("spirv-headers")
     set_description("SPIR-V Headers")
     set_license("MIT")
 
+    add_urls("https://github.com/KhronosGroup/SPIRV-Headers.git")
     add_urls("https://github.com/KhronosGroup/SPIRV-Headers/archive/refs/tags/$(version).tar.gz", {version = function (version)
         local prefix = "sdk-"
         if version:gt("1.3.261+1") then

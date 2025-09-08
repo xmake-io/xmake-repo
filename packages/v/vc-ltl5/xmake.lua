@@ -10,6 +10,7 @@ package("vc-ltl5")
             return "v" .. version .. "/VC-LTL-" .. version .. "-Binary.7z"
         end
     end})
+    add_versions("5.2.2", "04aa46a7d2af655bcf42c4937504525eb7e66a75910ed42fd25a1cdcec587df0")
     add_versions("5.2.1", "0b0b17b7a4ed993701208b2eaeba91f3acf2f1b5402430b52ac7bfbca2519464")
     add_versions("5.1.1", "71eb81ad7d5270cb2a247d6b1c5c01b8efb8f2c869d2e5222be8aafab2fc07de")
     add_versions("5.0.6", "e406f829f75d59c34ee1e34cb6e994eb7db0810123ae7196499f26df88bc0a6f")

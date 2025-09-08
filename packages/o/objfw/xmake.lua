@@ -1,6 +1,7 @@
 package("objfw")
     set_homepage("https://objfw.nil.im")
     set_description("Portable framework for the Objective-C language.")
+    set_license("LGPL-3.0")
 
     add_urls("https://objfw.nil.im/downloads/objfw-$(version).tar.gz")
     add_versions("1.0.0",   "a6aa3bf590c6a7ae21cf13dbaa94a72926e67af5c7d5aef4a2b172543d1f26a3")
@@ -23,7 +24,7 @@ package("objfw")
     add_versions("1.1.4",   "f6bfdbab22008aae3e4b48d77ced1a04c5153961c6f7e5492891f90ae5131a78")
     add_versions("1.1.5",   "9d45d2009a0bb9b1a0918918e454b47b8161670df8016b5f3a85eccea91d8988")
     add_versions("1.1.6",   "c19a97a011e14780fb32cfbdbbd6a699a955b57124e4e079768cb8aad4430e1d")
-	add_versions("1.1.7",   "5107d8a0627e2270d211abf1b4f6c50fd89c8d672d2179b50daa7d3b66d68a70")
+	  add_versions("1.1.7",   "5107d8a0627e2270d211abf1b4f6c50fd89c8d672d2179b50daa7d3b66d68a70")
     add_versions("1.2.0",   "f1d92b64f524a1aaf8e8b572a0edf5817d589c3d3c60cab9bb182ccbac3ee405")
     add_versions("1.2.1",   "637fdeccae149cec236e62c5289450afad542fe930343918856e76594ab3fcfd")
     add_versions("1.2.2",   "4fe0bed1ec21561a184d804aa577ff630f1e3d20b1c3b973073e23ce829294a1")
@@ -33,7 +34,6 @@ package("objfw")
     add_versions("1.3.1",   "a3bdf28c2e166f97680601c29f204670a8c4c8e43d393321a7d1f64fe1d2f513")
     add_versions("1.3.2",   "8148df0d55d1a3218fe9965144b5c3ee2a7f4d8e43e430a6107e294043872cab")
     add_versions("1.4.1",   "e223b1cae37453f02ea98f085c3c1f4b78dcf7c16b43d35b05d9ad4480e175b2")
-
 
     if is_host("linux", "macosx") then
         add_deps("autoconf", "automake", "libtool")

@@ -6,6 +6,7 @@ package("qdldl")
     add_urls("https://github.com/osqp/qdldl/archive/refs/tags/$(version).tar.gz",
              "https://github.com/osqp/qdldl.git")
 
+    add_versions("v0.1.9", "7d1285b2db15cf2730dc83b3d16ed28412f558591108cca4f28d4438bf72ceed")
     add_versions("v0.1.8", "ecf113fd6ad8714f16289eb4d5f4d8b27842b6775b978c39def5913f983f6daa")
     add_versions("v0.1.7", "631ae65f367859fa1efade1656e4ba22b7da789c06e010cceb8b29656bf65757")
 

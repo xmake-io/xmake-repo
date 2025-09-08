@@ -16,9 +16,11 @@ package("re2")
     add_versions("2024.04.01", "3f6690c3393a613c3a0b566309cf04dc381d61470079b653afc47c67fb898198")
     add_versions("2024.06.01", "7326c74cddaa90b12090fcfc915fe7b4655723893c960ee3c2c66e85c5504b6c")
     add_versions("2024.07.02", "eb2df807c781601c14a260a507a5bb4509be1ee626024cb45acbd57cb9d4032b")
-    add_versions("2025.06.26", "6090fc23a189e1a04a0e751b4f285922a794a39b6ecc6670b6141af74c82fe08")
+    add_versions("2025.07.17", "41bea2a95289d112e7c2ccceeb60ee03d54269e7fe53e3a82bab40babdfa51ef")
+    add_versions("2025.08.12", "2f3bec634c3e51ea1faf0d441e0a8718b73ef758d7020175ed7e352df3f6ae12")
 
-    add_versions("git:2025.06.26", "2025-06-26")
+    add_versions("git:2025.07.17", "2025-07-17")
+    add_versions("git:2025.08.12", "2025-08-12")
 
     add_deps("cmake", "abseil")
 
@@ -29,14 +31,14 @@ package("re2")
     on_load(function (package)
         local version = package:version()
         if version and version:ge("2024.06.01") and package:is_plat("mingw") then
-            package:add("syslinks", "Dbghelp")
+            package:add("syslinks", "dbghelp")
         end
     end)
 
     on_install(function (package)
         local configs = {
             "-DRE2_BUILD_TESTING=OFF",
-            "-DCMAKE_CXX_STANDARD=17",
+            "-DCMAKE_CXX_STANDARD=" .. package:dep("abseil"):config("cxx_standard"),
         }
 
         local absl_dir = ""
@@ -52,10 +54,14 @@ package("re2")
         end
         table.insert(configs, "-Dabsl_DIR=" .. absl_dir)
 
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"abseil"}})
+
+        local opt = {packagedeps = {"abseil"}}
+        if package:has_tool("cxx", "cl", "clang_cl") then
+            opt.cxflags = {"/EHsc"}
+        end
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)

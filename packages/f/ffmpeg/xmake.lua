@@ -43,6 +43,7 @@ package("ffmpeg")
     add_configs("bzlib",            {description = "Enable bzlib compression library.", default = false, type = "boolean"})
     add_configs("libx264",          {description = "Enable libx264 encoder.", default = false, type = "boolean"})
     add_configs("libx265",          {description = "Enable libx265 encoder.", default = false, type = "boolean"})
+    add_configs("libopenh264",      {description = "Enable openh264 encoder.", default = false, type = "boolean"})
     add_configs("iconv",            {description = "Enable libiconv library.", default = false, type = "boolean"})
     add_configs("vaapi",            {description = "Enable vaapi library.", default = false, type = "boolean"})
     add_configs("vdpau",            {description = "Enable vdpau library.", default = false, type = "boolean"})
@@ -70,6 +71,14 @@ package("ffmpeg")
         add_deps("pkg-config")
     end
 
+    if on_check then
+        on_check("windows|arm64", function (package)
+            if not package:is_cross() then
+                raise("package(ffmpeg) unsupported windows arm64 native build, because it require arm64 msys2")
+            end
+        end)
+    end
+
     on_fetch("mingw", "linux", "macosx", function (package, opt)
         if opt.system then
             local result
@@ -87,13 +96,16 @@ package("ffmpeg")
     end)
 
     on_load(function (package)
-        local configdeps = {zlib    = "zlib",
-                            bzlib   = "bzip2",
-                            lzma    = "xz",
-                            libx264 = "x264",
-                            libx265 = "x265",
-                            iconv   = "libiconv",
-                            libdrm  = "libdrm"}
+        local configdeps = {
+            zlib        = "zlib",
+            bzlib       = "bzip2",
+            lzma        = "xz",
+            libx264     = "x264",
+            libx265     = "x265",
+            libopenh264 = "openh264",
+            iconv       = "libiconv",
+            libdrm      = "libdrm",
+        }
         for name, dep in pairs(configdeps) do
             if package:config(name) then
                 package:add("deps", dep)
@@ -141,6 +153,26 @@ package("ffmpeg")
                 end
             end
         end
+
+        -- check_lib dep only find from cxflags and ldflags
+        for _, i in ipairs({"zlib", "xz", "bzip2"}) do
+            local dep = package:dep(i)
+            if dep then
+                local linkdirs = path.unix(dep:installdir("lib"))
+                if package:has_tool("cc", "cl") then
+                    table.insert(configs, "--extra-ldflags=-LIBPATH:" .. linkdirs)
+                else
+                    table.insert(configs, "--extra-ldflags=-L" .. linkdirs)
+                end
+
+                local defines = table.wrap(dep:get("defines"))
+                for _, j in ipairs(defines) do
+                    table.insert(configs, "--extra-cflags=-D" .. j)
+                end
+                table.insert(configs, "--extra-cflags=-I" .. path.unix(dep:installdir("include")))
+            end
+        end
+
         if package:config("shared") then
             table.insert(configs, "--enable-shared")
             table.insert(configs, "--disable-static")
