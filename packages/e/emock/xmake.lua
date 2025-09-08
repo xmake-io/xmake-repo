@@ -1,6 +1,6 @@
 package("emock")
     set_homepage("https://github.com/ez8-co/emock")
-    set_description("🐞 下一代C/C++跨平台mock库 (Next generation cross-platform mock library for C/C++)")
+    set_description("Next generation cross-platform mock library for C/C++")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/ez8-co/emock/archive/refs/tags/$(version).tar.gz",
@@ -10,14 +10,18 @@ package("emock")
 
     add_patches("v0.9.0", "patches/v0.9.0/support_multiplat_and_fix_install.diff", "ccbba2df280bc4791a1dc0c3fe71ce54b97a64d75a11e2df9ca20ac9504cf8c2")
 
-    add_deps("cmake")
-
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     add_configs("namespace", {description = "Build with the `emock::` namespace.", default = true, type = "boolean"})
     add_configs("test_framework", {description = "Choose the unit test framework for failure reporting", default = "STDEXCEPT", type = "string", values = {"STDEXCEPT", "gtest", "cpputest", "cppunit"}})
 
+    if is_plat("mingw") then
+        add_syslinks("dbghelp")
+    end
+
+    add_deps("cmake")
+
     on_load(function (package)
-        test_framework = package:config("test_framework")
+        local test_framework = package:config("test_framework")
         if test_framework == "gtest" then
             package:add("deps", "gtest")
         elseif test_framework == "cpputest" then
@@ -28,9 +32,16 @@ package("emock")
     end)
 
     on_install("!iphoneos", function (package)
-        local configs = {}
+        io.replace("src/CMakeLists.txt", "-fPIC", "", {plain = true})
+        -- let xmake copy pdb
+        io.replace("src/CMakeLists.txt", "IF(MSVC)\nINSTALL", "if(0)\nINSTALL", {plain = true})
+        io.replace("src/CMakeLists.txt", "IF(MSVC OR MINGW)\nINSTALL", "if(0)\nINSTALL", {plain = true})
+
+        -- gtest require c++17
+        local configs = {"-DCMAKE_CXX_STANDARD=17"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DEMOCK_NO_NAMESPACE=" .. (package:config("namespace") and "OFF" or "ON"))
+
         local test_framework = package:config("test_framework")
         table.insert(configs, "-DEMOCK_XUNIT=" .. test_framework)
         if test_framework ~= "STDEXCEPT" then
@@ -41,5 +52,18 @@ package("emock")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxincludes("emock/emock.hpp"))
+        assert(package:check_cxxsnippets({test = [[
+            int foobar(int x) {
+                return x;
+            }
+
+            void test() {
+                EMOCK(foobar)
+                    .stubs()
+                    .with(any())
+                    .will(returnValue(1));
+
+                // ASSERT_EQ(foobar(0), 1);
+            }
+        ]]}, {configs = {languages = "c++11"}, includes = "emock/emock.hpp"}))
     end)
