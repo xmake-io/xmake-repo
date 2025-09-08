@@ -27,7 +27,7 @@ package("emock")
         end
     end)
 
-    on_install(function (package)
+    on_install("!iphoneos", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DEMOCK_NO_NAMESPACE=" .. (package:config("namespace") and "OFF" or "ON"))
