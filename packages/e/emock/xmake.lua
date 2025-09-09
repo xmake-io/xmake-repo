@@ -8,7 +8,7 @@ package("emock")
 
     add_versions("v0.9.0", "376b3584e95642b10947da8244c9b592f62ac267c23949d875a0d5ffe5d32cf5")
 
-    add_patches("v0.9.0", "patches/v0.9.0/support_multiplat_and_fix_install.diff", "d18316d7145ebfee3899c0165cc6906e2cff4da3fe86aa5047a40a8c1e4cef4f")
+    add_patches("v0.9.0", "patches/v0.9.0/support_multiplat_and_fix_install.diff", "18af7bccff9849958cfc90f3210bfa73259ad2ebf462c41515ccce4478dbdb98")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     add_configs("namespace", {description = "Build with the `emock::` namespace.", default = true, type = "boolean"})

@@ -1,5 +1,5 @@
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index 42ee9d1..2346159 100644
+index 42ee9d1..6678504 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
 @@ -180,17 +180,17 @@ ELSE()
@@ -24,17 +24,7 @@ index 42ee9d1..2346159 100644
  ######################################################
  SET(EMOCK_HEADERS_PATH ${EMOCK_SRC_ROOT}/include/emock)
  
-@@ -199,14 +199,18 @@ LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/src ${CMAKE_BINARY_DIR}/tests/3rdparty/test
- 
- ADD_LIBRARY(emock STATIC ${EMOCK_SRCS})
- 
-+IF(MINGW)
-+   TARGET_LINK_LIBRARIES(emock Dbghelp)
-+ENDIF()
-+
- INCLUDE_DIRECTORIES(BEFORE ${EMOCK_SRC_ROOT}/include)
- 
- INSTALL(
+@@ -205,8 +205,8 @@ INSTALL(
     TARGETS emock
     ARCHIVE DESTINATION lib)
  
