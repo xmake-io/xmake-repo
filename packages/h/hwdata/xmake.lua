@@ -7,6 +7,7 @@ package("hwdata")
     add_urls("https://github.com/vcrhonek/hwdata/archive/refs/tags/$(version).tar.gz",
              "https://github.com/vcrhonek/hwdata.git")
 
+    add_versions("v0.399", "74872355e14d5ddc48a0f63036227ffb5f7796a3012c6377ac1fc7432ffe2b41")
     add_versions("v0.397", "09eee39e73a63ab27af651ab6afdd13d6e5c3485872f2cd406b35e4d80ffdb0b")
 
     if is_plat("bsd") then
