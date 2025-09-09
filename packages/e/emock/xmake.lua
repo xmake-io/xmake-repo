@@ -8,13 +8,13 @@ package("emock")
 
     add_versions("v0.9.0", "376b3584e95642b10947da8244c9b592f62ac267c23949d875a0d5ffe5d32cf5")
 
-    add_patches("v0.9.0", "patches/v0.9.0/support_multiplat_and_fix_install.diff", "ccbba2df280bc4791a1dc0c3fe71ce54b97a64d75a11e2df9ca20ac9504cf8c2")
+    add_patches("v0.9.0", "patches/v0.9.0/support_multiplat_and_fix_install.diff", "d18316d7145ebfee3899c0165cc6906e2cff4da3fe86aa5047a40a8c1e4cef4f")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     add_configs("namespace", {description = "Build with the `emock::` namespace.", default = true, type = "boolean"})
     add_configs("test_framework", {description = "Choose the unit test framework for failure reporting", default = "STDEXCEPT", type = "string", values = {"STDEXCEPT", "gtest", "cpputest", "cppunit"}})
 
-    if is_plat("mingw") then
+    if is_plat("mingw", "windows") then
         add_syslinks("dbghelp")
     end
 
@@ -33,8 +33,6 @@ package("emock")
 
     on_install("!iphoneos", function (package)
         io.replace("src/CMakeLists.txt", "-fPIC", "", {plain = true})
-        -- let xmake copy pdb
-        io.replace("src/CMakeLists.txt", "IF(MSVC)\nINSTALL", "if(0)\nINSTALL", {plain = true})
         io.replace("src/CMakeLists.txt", "IF(MSVC OR MINGW)\nINSTALL", "if(0)\nINSTALL", {plain = true})
 
         -- gtest require c++17
@@ -62,8 +60,6 @@ package("emock")
                     .stubs()
                     .with(any())
                     .will(returnValue(1));
-
-                // ASSERT_EQ(foobar(0), 1);
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "emock/emock.hpp"}))
+        ]]}, {configs = {languages = "c++17"}, includes = "emock/emock.hpp"}))
     end)

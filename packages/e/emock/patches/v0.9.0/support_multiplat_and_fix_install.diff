@@ -1,5 +1,5 @@
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index 42ee9d1..7ee502f 100644
+index 42ee9d1..2346159 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
 @@ -180,17 +180,17 @@ ELSE()
@@ -7,7 +7,7 @@ index 42ee9d1..7ee502f 100644
  ENDIF()
  
 -IF(MSVC)
-+IF(MSVC OR MINGW)
++IF(WIN32)
     SET(EMOCK_SRCS 
         ${EMOCK_SRCS} 
         WinCodeModifier.cpp
@@ -24,7 +24,7 @@ index 42ee9d1..7ee502f 100644
  ######################################################
  SET(EMOCK_HEADERS_PATH ${EMOCK_SRC_ROOT}/include/emock)
  
-@@ -199,14 +199,19 @@ LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/src ${CMAKE_BINARY_DIR}/tests/3rdparty/test
+@@ -199,14 +199,18 @@ LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/src ${CMAKE_BINARY_DIR}/tests/3rdparty/test
  
  ADD_LIBRARY(emock STATIC ${EMOCK_SRCS})
  
@@ -39,13 +39,11 @@ index 42ee9d1..7ee502f 100644
     ARCHIVE DESTINATION lib)
  
 -IF(MSVC)
-+IF(MSVC OR MINGW)
++IF(0)
  INSTALL(
     FILES ${CMAKE_BINARY_DIR}/src/Debug/emock.pdb
--   DESTINATION lib)
+    DESTINATION lib)
 -ENDIF(MSVC)
-+   DESTINATION lib
-+   OPTIONAL)
 +ENDIF()
 diff --git a/src/Formatter.cpp b/src/Formatter.cpp
 index 4a117ad..1858fe4 100644
@@ -78,32 +76,24 @@ index 4a117ad..1858fe4 100644
     return oss.str();
  }
 diff --git a/src/SymbolRetriever.cpp b/src/SymbolRetriever.cpp
-index fe643da..043c2e3 100644
+index fe643da..1c38eea 100644
 --- a/src/SymbolRetriever.cpp
 +++ b/src/SymbolRetriever.cpp
-@@ -15,12 +15,17 @@
+@@ -15,12 +15,11 @@
  #include <emock/TypeString.h>
  #include <emock/ReportFailure.h>
  
 -#ifdef _MSC_VER
-+#if (_MSC_VER) ||  (__MINGW32__)
++#if defined(_MSC_VER) ||  defined(__MINGW32__)
  
--	#include <windows.h>
--	#include <dbghelp.h>
-+	#include <Windows.h>
-+	#include <DbgHelp.h>
+ 	#include <windows.h>
+ 	#include <dbghelp.h>
      #include <vector>
 -	#pragma comment(lib, "Dbghelp.lib")
-+
-+    #pragma message("111111") 
-+
-+    #ifdef _MSC_VER
-+	    #pragma comment(lib, "Dbghelp.lib")
-+    #endif
  
      #ifdef _WIN64 // [
          typedef unsigned __int64  uintptr_t;
-@@ -37,17 +42,20 @@
+@@ -37,17 +36,20 @@
  	#include <unistd.h>
  	#include <cassert>
  	#include <stdio.h>
@@ -117,43 +107,44 @@ index fe643da..043c2e3 100644
          #include <ar.h>
          #include <limits.h>
 -    #else
-+    #elif __linux__
- 	    #include <link.h>
+-	    #include <link.h>
++    #elif defined(__linux__)
++        #include <link.h>
          #include <linux/limits.h>
 +    #else
-+	    #include <link.h>
++        #include <link.h>
 +        #include <limits.h>
      #endif
  
  #endif
-@@ -94,7 +102,7 @@ EMOCK_NS_START
+@@ -94,7 +96,7 @@ EMOCK_NS_START
              return stringify.substr(start, stringify.find_last_not_of(')') - start + 1);
          }
  
 -#ifdef _MSC_VER
-+#if (_MSC_VER) ||  (__MINGW32__)
++#if defined(_MSC_VER) ||  defined(__MINGW32__)
          static std::string extractMethodSignatureName(const char* pmf_info, std::string& symbolName, const std::string& stringify) {
  #else
          static std::string extractMethodSignatureName(const char* pmf_info, const std::string& stringify) {
-@@ -107,7 +115,7 @@ EMOCK_NS_START
+@@ -107,7 +109,7 @@ EMOCK_NS_START
                      std::string ret(from, pmf_info - from - 1);
                      ret += extractMethodName(stringify);
                      // extract symbol name
 -#ifdef _MSC_VER
-+#if (_MSC_VER) ||  (__MINGW32__)
++#if defined(_MSC_VER) ||  defined(__MINGW32__)
                      symbolName = strchr(ret.c_str(), ' ') + 1;
  #endif
                      // extract arg list
-@@ -134,7 +142,7 @@ EMOCK_NS_START
+@@ -134,7 +136,7 @@ EMOCK_NS_START
          }
      }
  
 -#ifdef _MSC_VER
-+#if (_MSC_VER) ||  (__MINGW32__)
++#if defined(_MSC_VER) ||  defined(__MINGW32__)
  
      std::map<std::pair<ULONG64, std::string>, std::map<int, std::string> > g_symbolCache;
      void SymbolRetriever::reset() {
-@@ -188,7 +196,16 @@ EMOCK_NS_START
+@@ -188,7 +190,16 @@ EMOCK_NS_START
                  }
                  else {
                      char filePath[MAX_PATH] = {0};
@@ -167,36 +158,33 @@ index fe643da..043c2e3 100644
 +                        sfMax
 +                    } IMAGEHLP_SF_TYPE;
 +                    */
-+                    if(SymGetSymbolFile(GetCurrentProcess(), NULL, moduleInfo.ImageName, 2/*sfDbg*/, filePath, MAX_PATH, filePath, MAX_PATH))
++                    if(SymGetSymbolFile(GetCurrentProcess(), NULL, moduleInfo.ImageName, 2/*sfPdb*/, filePath, MAX_PATH, filePath, MAX_PATH))
                          return filePath;
                  }
              }
 diff --git a/src/Trampoline.cpp b/src/Trampoline.cpp
-index 52116da..5db3f2d 100644
+index 52116da..d378ffb 100644
 --- a/src/Trampoline.cpp
 +++ b/src/Trampoline.cpp
-@@ -14,9 +14,9 @@
+@@ -14,7 +14,7 @@
  #include <emock/ReportFailure.h>
  #include <emock/ArgumentsMacroHelpers.h>
  
 -#ifdef _MSC_VER
-+#if (_MSC_VER) ||  (__MINGW32__)
++#if defined(_MSC_VER) ||  defined(__MINGW32__)
  
--    #include <windows.h>
-+    #include <Windows.h>
+     #include <windows.h>
  	#include <cassert>
-     #ifdef _WIN64 // [
-         typedef unsigned __int64  uintptr_t;
-@@ -35,13 +35,18 @@
+@@ -35,13 +35,19 @@
          #include <limits.h>
          #include <mach/mach_vm.h>
          #include <mach/mach_init.h>
 -    #else
-+    #elif __linux__
++    #elif defined(__linux__)
          #include <linux/limits.h>
--
 +    #else
 +        #include <limits.h>
+ 
      #endif
  
  #endif
@@ -208,16 +196,16 @@ index 52116da..5db3f2d 100644
  EMOCK_NS_START
  
  namespace {
-@@ -62,7 +67,7 @@ static const size_t kMaxAllocationDelta = 0x80000000; // 2GB
+@@ -62,7 +68,7 @@ static const size_t kMaxAllocationDelta = 0x80000000; // 2GB
  static const size_t kAllocationSize     = EMOCK_PAGE_SIZE;  // 4KB
  static const size_t kAlignmentSize      = 64;         // 64
  
 -#ifdef _MSC_VER
-+#if (_MSC_VER) ||  (__MINGW32__)
++#if defined(_MSC_VER) ||  defined(__MINGW32__)
  
      #if BUILD_FOR_X64
          #define _ADDRESS_MAX_VALUE 0x80000000000
-@@ -105,7 +110,7 @@ static const size_t kAlignmentSize      = 64;         // 64
+@@ -105,7 +111,7 @@ static const size_t kAlignmentSize      = 64;         // 64
  
          if (allocated)
          {
@@ -226,12 +214,12 @@ index 52116da..5db3f2d 100644
              {
                  VirtualFree(allocated, 0, MEM_RELEASE);
                  return NULL;
-@@ -284,7 +289,7 @@ static const size_t kAlignmentSize      = 64;         // 64
+@@ -284,7 +290,7 @@ static const size_t kAlignmentSize      = 64;         // 64
      }
  
      void* Trampoline::get4MemFunc(const void* src, void* dst) {
 -#ifdef _MSC_VER
-+#if (_MSC_VER) ||  (__MINGW32__)
++#if defined(_MSC_VER) ||  defined(__MINGW32__)
          static const unsigned char ecxToArgList[] = { 0x58, 0x51, 0x50 };
          // apply trampoline and push ecx
      #if BUILD_FOR_X64
