@@ -12,7 +12,7 @@ package("dylib")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("!android and !bsd", function (package)
         import("package.tools.cmake").install(package)
     end)
 
