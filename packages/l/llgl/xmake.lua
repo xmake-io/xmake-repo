@@ -69,6 +69,24 @@ package("llgl")
     end)
 
     on_install(function (package)
+        -- Help CMakeLists.txt to acquire UNIX-like path
+        io.replace("CMakeLists.txt", [[if(LLGL_ANDROID_PLATFORM)
+    set(ANDROID_APP_GLUE_DIR "$ENV{ANDROID_NDK_ROOT}/sources/android/native_app_glue")
+    set(
+        FilesAndroidNativeAppGlue
+        "${ANDROID_APP_GLUE_DIR}/android_native_app_glue.c"
+        "${ANDROID_APP_GLUE_DIR}/android_native_app_glue.h"
+    )
+endif()]], [[if(LLGL_ANDROID_PLATFORM)
+    file(TO_CMAKE_PATH "$ENV{ANDROID_NDK_ROOT}" ANDROID_NDK_ROOT_CMAKE)
+    set(ANDROID_APP_GLUE_DIR "${ANDROID_NDK_ROOT_CMAKE}/sources/android/native_app_glue")
+
+    set(FilesAndroidNativeAppGlue
+        "${ANDROID_APP_GLUE_DIR}/android_native_app_glue.c"
+        "${ANDROID_APP_GLUE_DIR}/android_native_app_glue.h"
+    )
+endif()
+]], {plain = true})
         -- Help MinGW acquire std::uint32_t
         io.replace("sources/Renderer/Direct3D12/Buffer/D3D12BufferConstantsPool.h", [[#include <d3d12.h>]], [[#include <d3d12.h>
 #include <cstdint>]], {plain = true})
@@ -102,3 +120,4 @@ package("llgl")
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
+
