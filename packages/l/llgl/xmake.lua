@@ -138,8 +138,6 @@ endif()
         local opt = {}
         if package:is_plat("linux") then
             opt.packagedeps = {"wayland", "libxrandr", "libxrender"}
-        elseif package:is_plat("bsd", "cross") then
-            opt.packagedeps = {"libx11", "xorgproto"}
         end
         import("package.tools.cmake").install(package, configs, opt)
         if package:is_plat("android") then
@@ -158,3 +156,4 @@ endif()
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
+
