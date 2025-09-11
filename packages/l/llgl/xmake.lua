@@ -32,7 +32,14 @@ package("llgl")
     add_deps("gaussianlib")
 
     on_load(function (package)
-        if package:is_plat("iphoneos") then
+        if package:is_plat("android") then
+            -- Workaround NDK bug
+            local ndk = package:toolchain("ndk")
+            local ndk_path = ndk:config("ndk")
+            os.cp(path.join(ndk_path, "sources", "android", "native_app_glue", "android_native_app_glue.h"), path.join(package:installdir("include"), "android_native_app_glue.h"))
+            print(path.join(ndk_path, "sources", "android", "native_app_glue", "android_native_app_glue.h"))
+            package:add("links", "android_native_app_glue")
+        elseif package:is_plat("iphoneos") then
             package:add("frameworks", "Foundation", "UIKit")
         elseif package:is_plat("windows", "mingw") then
             package:add("defines", "NOMINMAX", "WIN32_LEAN_AND_MEAN", "UNICODE", "_UNICODE")
@@ -135,6 +142,7 @@ endif()
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
+
 
 
 
