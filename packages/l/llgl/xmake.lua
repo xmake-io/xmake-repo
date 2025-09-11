@@ -12,13 +12,17 @@ package("llgl")
     add_configs("vulkan", {description = "Enable Vulkan Renderer", default = false, type = "boolean"})
     add_configs("null", {description = "Enable Null Renderer", default = true, type = "boolean"})
 
-    if is_plat("windows", "mingw") then
+    if is_plat("windows", "mingw") and not (package:is_plat("mingw") and is_subhost("macosx") and package:is_arch("x86", "i386", "i686")) then
         add_configs("d3d11", {description = "Enable D3D11 Renderer", default = true, type = "boolean"})
         add_configs("d3d12", {description = "Enable D3D12 Renderer", default = true, type = "boolean"})
         add_syslinks("dxgi", "d3d11", "d3d12", "d3dcompiler", "comdlg32", "user32", "gdi32", "opengl32", "shell32")
     elseif is_plat("linux") then
         add_configs("wayland", {description = "Enable Wayland", default = true, type = "boolean"})
         add_deps("wayland", "libxrandr", "libxrender")
+    elseif is_plat("macosx") then
+        add_frameworks("OpenGL")
+    elseif is_plat("iphoneos") then
+        add_frameworks("OpenGLES")
     end
 
     add_deps("cmake")
@@ -77,7 +81,7 @@ package("llgl")
         table.insert(configs, "-DGaussLib_INCLUDE_DIR=" .. includedir)
         local opt = {}
         if package:is_plat("linux") then
-            opt.packagedeps = {"libxrandr", "libxrender"}
+            opt.packagedeps = {"wayland", "libxrandr", "libxrender"}
         end
         import("package.tools.cmake").install(package, configs, opt)
     end)
@@ -90,5 +94,6 @@ package("llgl")
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
+
 
 
