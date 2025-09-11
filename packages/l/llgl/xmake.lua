@@ -8,7 +8,7 @@ package("llgl")
 
     add_versions("v0.04", "fdeda39bd31522bced0d889655b290e06688975d58ab20756c3eda9a5f21391f")
 
-    if not is_plat("android", "iphoneos", "wasm") then
+    if not is_plat("android", "iphoneos", "wasm", "bsd", "cross") then
         add_configs("opengl", {description = "Enable OpenGL Renderer", default = true, type = "boolean"})
     end
     if is_plat("android", "iphoneos") then
@@ -30,6 +30,13 @@ package("llgl")
 
     add_deps("cmake")
     add_deps("gaussianlib")
+
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk"):config("ndkver")
+            assert(ndk and tonumber(ndk) < 27, "package(LLGL): requires NDK version earlier than r27.")
+        end)
+    end
 
     on_load(function (package)
         if package:is_plat("android") then
@@ -145,6 +152,7 @@ endif()
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
+
 
 
 
