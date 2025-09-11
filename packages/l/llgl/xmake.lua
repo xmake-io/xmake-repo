@@ -23,13 +23,18 @@ package("llgl")
     elseif is_plat("linux") then
         add_configs("wayland", {description = "Enable Wayland", default = true, type = "boolean"})
         add_deps("wayland", "libxrandr", "libxrender")
+    elseif is_plat("macosx", "iphoneos") then
+        add_configs("metal", {description = "Enable Metal Renderer", default = true, type = "boolean"})
     end
 
     add_deps("cmake")
     add_deps("gaussianlib")
 
     on_load(function (package)
-        if package:is_plat("windows", "mingw") then 
+        if package:is_plat("iphoneos") then
+            package:add("frameworks", "Foundation", "UIKit")
+        end
+        if package:is_plat("windows", "mingw") then
             package:add("defines", "NOMINMAX", "WIN32_LEAN_AND_MEAN", "UNICODE", "_UNICODE")
 
             if package:config("d3d11") or package:config("d3d12") then 
@@ -45,16 +50,30 @@ package("llgl")
             end
         end
 
+        if package:is_plat("windows", "mingw") then
+            package:add("frameworks", "OpenGL")
+        end
+
         package:add("links", "LLGL")
 
         if package:config("opengl") then
             package:add("links", "LLGL_OpenGL")
             if package:is_plat("macosx") then
                 package:add("frameworks", "OpenGL")
-            elseif package:is_plat("iphoneos") then
-                package:add("frameworks", "OpenGLES")
             elseif package:is_plat("android") then
                 package:add("syslinks", "GLESv2")
+            end
+        end
+        if package:config("opengles") then
+            if package:is_plat("macosx", "iphoneos") then
+                package:add("frameworks", "Foundation", "UIKit", "QuartzCore", "OpenGLES", "GLKit")
+            end
+        end
+        if package:config("metal") then
+            if package:is_plat("macosx") then
+                package:add("frameworks", "Metal", "MetalKit")
+            elseif package:is_plat("iphoneos") then
+                package:add("frameworks", "Foundation", "UIKit", "QuartzCore", "Metal", "MetalKit")
             end
         end
 
@@ -104,6 +123,7 @@ endif()
         table.insert(configs, "-DLLGL_BUILD_RENDERER_VULKAN=" .. (package:config("vulkan") and "ON" or "OFF"))
         table.insert(configs, "-DLLGL_BUILD_RENDERER_NULL=" .. (package:config("null") and "ON" or "OFF"))
 	    table.insert(configs, "-DLLGL_LINUX_ENABLE_WAYLAND=" .. (package:config("wayland") and "ON" or "OFF"))
+        table.insert(configs, "-DLLGL_BUILD_RENDERER_METAL=" .. (package:config("metal") and "ON" or "OFF"))
         table.insert(configs, "-DGaussLib_INCLUDE_DIR=" .. includedir)
         local opt = {}
         if package:is_plat("linux") then
@@ -120,5 +140,3 @@ endif()
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
-
-
