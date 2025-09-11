@@ -8,7 +8,11 @@ package("llgl")
 
     add_versions("v0.04", "fdeda39bd31522bced0d889655b290e06688975d58ab20756c3eda9a5f21391f")
 
-    add_configs("opengl", {description = "Enable OpenGL Renderer", default = true, type = "boolean"})
+    if not is_plat("android", "iphoneos") then
+        add_configs("opengl", {description = "Enable OpenGL Renderer", default = true, type = "boolean"})
+    else
+        add_configs("opengles", {description = "Enable OpenGLES Renderer", default = true, type = "boolean"})
+    end
     add_configs("vulkan", {description = "Enable Vulkan Renderer", default = false, type = "boolean"})
     add_configs("null", {description = "Enable Null Renderer", default = true, type = "boolean"})
 
@@ -45,8 +49,12 @@ package("llgl")
 
         if package:config("opengl") then
             package:add("links", "LLGL_OpenGL")
-            if package:is_plat("macosx", "iphoneos") then
+            if package:is_plat("macosx") then
                 package:add("frameworks", "OpenGL")
+            elseif package:is_plat("iphoneos") then
+                package:add("frameworks", "OpenGLES")
+            elseif package:is_plat("android") then
+                package:add("syslinks", "GLESv2")
             end
         end
 
@@ -72,6 +80,7 @@ package("llgl")
         local configs = {"-DLLGL_BUILD_TESTS=OFF", "-DLLGL_BUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DLLGL_BUILD_STATIC_LIB=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DLLGL_BUILD_RENDERER_OPENGL=" .. (package:config("opengl") and "ON" or "OFF"))
+        table.insert(configs, "-DLLGL_BUILD_RENDERER_OPENGLES3=" .. (package:config("opengles") and "ON" or "OFF"))
         table.insert(configs, "-DLLGL_BUILD_RENDERER_DIRECT3D11=" .. (package:config("d3d11") and "ON" or "OFF"))
         table.insert(configs, "-DLLGL_BUILD_RENDERER_DIRECT3D12=" .. (package:config("d3d12") and "ON" or "OFF"))
         table.insert(configs, "-DLLGL_BUILD_RENDERER_VULKAN=" .. (package:config("vulkan") and "ON" or "OFF"))
@@ -93,5 +102,6 @@ package("llgl")
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
+
 
 
