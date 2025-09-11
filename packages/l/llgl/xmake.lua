@@ -45,10 +45,8 @@ package("llgl")
 
         if package:config("opengl") then
             package:add("links", "LLGL_OpenGL")
-            if package:is_plat("macosx") then
+            if package:is_plat("macosx", "iphoneos") then
                 package:add("frameworks", "OpenGL")
-            elseif package:is_plat("iphoneos") then
-                package:add("frameworks", "OpenGLES")
             end
         end
 
@@ -95,4 +93,5 @@ package("llgl")
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
+
 
