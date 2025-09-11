@@ -10,7 +10,7 @@ package("llgl")
 
     if not is_plat("android", "iphoneos") then
         add_configs("opengl", {description = "Enable OpenGL Renderer", default = true, type = "boolean"})
-    else
+    elseif not is_plat("wasm") then
         add_configs("opengles", {description = "Enable OpenGLES Renderer", default = true, type = "boolean"})
     end
     add_configs("vulkan", {description = "Enable Vulkan Renderer", default = false, type = "boolean"})
@@ -102,6 +102,7 @@ package("llgl")
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
+
 
 
 
