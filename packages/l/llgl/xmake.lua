@@ -40,20 +40,20 @@ package("llgl")
         elseif package:is_plat("windows", "mingw") then
             package:add("defines", "NOMINMAX", "WIN32_LEAN_AND_MEAN", "UNICODE", "_UNICODE")
             if package:config("d3d11") or package:config("d3d12") then 
-                package:add("links", "LLGL_DXCommon")
+                package:add("links", "LLGL_DXCommon" .. (package:config("debug") and "D" or ""))
             end
             if package:config("d3d11") then
-                package:add("links", "LLGL_Direct3D11")
+                package:add("links", "LLGL_Direct3D11" .. (package:config("debug") and "D" or ""))
             end
             if package:config("d3d12") then
-                package:add("links", "LLGL_Direct3D12")
+                package:add("links", "LLGL_Direct3D12" .. (package:config("debug") and "D" or ""))
             end
         end
 
-        package:add("links", "LLGL")
+        package:add("links", "LLGL" .. (package:config("debug") and "D" or ""))
 
         if package:config("opengl") then
-            package:add("links", "LLGL_OpenGL")
+            package:add("links", "LLGL_OpenGL" .. (package:config("debug") and "D" or ""))
             if package:is_plat("macosx") then
                 package:add("frameworks", "OpenGL")
             elseif package:is_plat("android") then
@@ -62,26 +62,26 @@ package("llgl")
         end
 
         if package:config("opengles") then
-            package:add("links", "LLGL_OpenGLES3")
+            package:add("links", "LLGL_OpenGLES3" .. (package:config("debug") and "D" or ""))
             if package:is_plat("macosx", "iphoneos") then
                 package:add("frameworks", "Foundation", "UIKit", "QuartzCore", "OpenGLES", "GLKit")
             end
         end
 
         if package:config("metal") then
-            package:add("links", "LLGL_Metal")
+            package:add("links", "LLGL_Metal" .. (package:config("debug") and "D" or ""))
             if package:is_plat("macosx") then
                 package:add("frameworks", "Metal", "MetalKit")
             end
         end
 
         if package:config("vulkan") then
-            package:add("links", "LLGL_Vulkan")
+            package:add("links", "LLGL_Vulkan" .. (package:config("debug") and "D" or ""))
             package:add("deps", "vulkansdk")
         end
 
         if package:config("null") then
-            package:add("links", "LLGL_Null")
+            package:add("links", "LLGL_Null" .. (package:config("debug") and "D" or ""))
         end
     end)
 
@@ -145,6 +145,7 @@ endif()
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
+
 
 
 
