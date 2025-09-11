@@ -24,7 +24,7 @@ package("llgl")
     elseif is_plat("linux") then
         add_configs("wayland", {description = "Enable Wayland", default = true, type = "boolean"})
         add_deps("wayland", "libxrandr", "libxrender")
-    elseif is_plat("macosx", "iphoneos") then
+    elseif is_plat("macosx") then
         add_configs("metal", {description = "Enable Metal Renderer", default = true, type = "boolean"})
     end
 
@@ -65,9 +65,7 @@ package("llgl")
         end
 
         if package:config("metal") then
-            if package:is_plat("macosx") then
-                package:add("frameworks", "Metal", "MetalKit")
-            elseif package:is_plat("iphoneos") then
+            if package:is_plat("macosx", "iphoneos") then
                 package:add("frameworks", "Foundation", "UIKit", "QuartzCore", "Metal", "MetalKit")
             end
         end
@@ -135,5 +133,6 @@ endif()
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
+
 
 
