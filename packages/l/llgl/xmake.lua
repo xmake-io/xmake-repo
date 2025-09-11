@@ -59,14 +59,16 @@ package("llgl")
         end
 
         if package:config("opengles") then
+            package:add("links", "LLGL_OpenGLES3")
             if package:is_plat("macosx", "iphoneos") then
                 package:add("frameworks", "Foundation", "UIKit", "QuartzCore", "OpenGLES", "GLKit")
             end
         end
 
         if package:config("metal") then
-            if package:is_plat("macosx", "iphoneos") then
-                package:add("frameworks", "Foundation", "UIKit", "QuartzCore", "Metal", "MetalKit")
+            package:add("links", "LLGL_Metal")
+            if package:is_plat("macosx") then
+                package:add("frameworks", "Metal", "MetalKit")
             end
         end
 
@@ -133,6 +135,7 @@ endif()
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
+
 
 
 
