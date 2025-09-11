@@ -295,7 +295,6 @@ function _lock_packages(packages)
         "libxcrypt",
         "libselinux",
         "libxls",
-        "openssh",
         "hashcat"
     }
     for _, package in ipairs(packages) do
