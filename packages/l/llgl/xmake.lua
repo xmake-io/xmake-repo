@@ -18,7 +18,7 @@ package("llgl")
         add_syslinks("dxgi", "d3d11", "d3d12", "d3dcompiler", "comdlg32", "user32", "gdi32", "opengl32", "shell32")
     elseif is_plat("linux") then
         add_configs("wayland", {description = "Enable Wayland", default = true, type = "boolean"})
-        add_deps("wayland", "libxrandr")
+        add_deps("wayland", "libx11")
     end
 
     add_deps("cmake")
@@ -58,6 +58,9 @@ package("llgl")
     end)
 
     on_install(function (package)
+        -- Help MinGW acquire std::uint32_t
+        io.replace("sources/Renderer/Direct3D12/Buffer/D3D12BufferConstantsPool.h", [[#include <d3d12.h>]], [[#include <d3d12.h>
+#include <cstdint>]], {plain = true})
         local includedir = ""
         local fetchinfo = package:dep("gaussianlib"):fetch()
         if fetchinfo then
@@ -83,3 +86,4 @@ package("llgl")
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
+
