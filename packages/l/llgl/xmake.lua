@@ -34,10 +34,6 @@ package("llgl")
     on_load(function (package)
         if package:is_plat("android") then
             -- Workaround NDK bug
-            local ndk = package:toolchain("ndk")
-            local ndk_path = ndk:config("ndk")
-            os.cp(path.join(ndk_path, "sources", "android", "native_app_glue", "android_native_app_glue.h"), path.join(package:installdir("include"), "android_native_app_glue.h"))
-            print(path.join(ndk_path, "sources", "android", "native_app_glue", "android_native_app_glue.h"))
             package:add("links", "android_native_app_glue")
         elseif package:is_plat("iphoneos") then
             package:add("frameworks", "Foundation", "UIKit")
@@ -132,6 +128,13 @@ endif()
             opt.packagedeps = {"wayland", "libxrandr", "libxrender"}
         end
         import("package.tools.cmake").install(package, configs, opt)
+        if package:is_plat("android") then
+            -- Workaround NDK bug
+            local ndk = package:toolchain("ndk")
+            local ndk_path = ndk:config("ndk")
+            os.cp(path.join(ndk_path, "sources", "android", "native_app_glue", "android_native_app_glue.h"), path.join(package:installdir("include"), "android_native_app_glue.h"))
+            print(path.join(ndk_path, "sources", "android", "native_app_glue", "android_native_app_glue.h"))
+        end
     end)
 
     on_test(function (package)
@@ -142,6 +145,7 @@ endif()
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
+
 
 
 
