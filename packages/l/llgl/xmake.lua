@@ -16,7 +16,7 @@ package("llgl")
     add_configs("vulkan", {description = "Enable Vulkan Renderer", default = false, type = "boolean"})
     add_configs("null", {description = "Enable Null Renderer", default = true, type = "boolean"})
 
-    if is_plat("windows", "mingw") and not (is_plat("mingw") and is_subhost("macosx") and is_arch("x86", "i386", "i686")) then
+    if is_plat("windows", "mingw") and not (is_plat("mingw") and is_subhost("macosx")) then
         add_configs("d3d11", {description = "Enable D3D11 Renderer", default = true, type = "boolean"})
         add_configs("d3d12", {description = "Enable D3D12 Renderer", default = true, type = "boolean"})
         add_syslinks("dxgi", "d3d11", "d3d12", "d3dcompiler", "comdlg32", "user32", "gdi32", "opengl32", "shell32")
@@ -120,4 +120,5 @@ endif()
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
+
 
