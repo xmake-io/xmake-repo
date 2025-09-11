@@ -144,7 +144,6 @@ endif()
             local ndk = package:toolchain("ndk")
             local ndk_path = ndk:config("ndk")
             os.cp(path.join(ndk_path, "sources", "android", "native_app_glue", "android_native_app_glue.h"), path.join(package:installdir("include"), "android_native_app_glue.h"))
-            print(path.join(ndk_path, "sources", "android", "native_app_glue", "android_native_app_glue.h"))
         end
     end)
 
@@ -156,6 +155,3 @@ endif()
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
-
-
-
