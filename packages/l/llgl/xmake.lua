@@ -102,8 +102,3 @@ package("llgl")
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
-
-
-
-
-
