@@ -8,7 +8,7 @@ package("llgl")
 
     add_versions("v0.04", "fdeda39bd31522bced0d889655b290e06688975d58ab20756c3eda9a5f21391f")
 
-    if not is_plat("android", "iphoneos") then
+    if not is_plat("android", "iphoneos", "wasm") then
         add_configs("opengl", {description = "Enable OpenGL Renderer", default = true, type = "boolean"})
     elseif not is_plat("wasm") then
         add_configs("opengles", {description = "Enable OpenGLES Renderer", default = true, type = "boolean"})
@@ -102,6 +102,7 @@ package("llgl")
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
+
 
 
 
