@@ -34,25 +34,17 @@ package("llgl")
     on_load(function (package)
         if package:is_plat("iphoneos") then
             package:add("frameworks", "Foundation", "UIKit")
-        end
-        if package:is_plat("windows", "mingw") then
+        elseif package:is_plat("windows", "mingw") then
             package:add("defines", "NOMINMAX", "WIN32_LEAN_AND_MEAN", "UNICODE", "_UNICODE")
-
             if package:config("d3d11") or package:config("d3d12") then 
                 package:add("links", "LLGL_DXCommon")
             end
-
             if package:config("d3d11") then
                 package:add("links", "LLGL_Direct3D11")
             end
-
             if package:config("d3d12") then
                 package:add("links", "LLGL_Direct3D12")
             end
-        end
-
-        if package:is_plat("windows", "mingw") then
-            package:add("frameworks", "OpenGL")
         end
 
         package:add("links", "LLGL")
@@ -65,11 +57,13 @@ package("llgl")
                 package:add("syslinks", "GLESv2")
             end
         end
+
         if package:config("opengles") then
             if package:is_plat("macosx", "iphoneos") then
                 package:add("frameworks", "Foundation", "UIKit", "QuartzCore", "OpenGLES", "GLKit")
             end
         end
+
         if package:config("metal") then
             if package:is_plat("macosx") then
                 package:add("frameworks", "Metal", "MetalKit")
@@ -141,4 +135,5 @@ endif()
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
+
 
