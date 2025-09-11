@@ -27,7 +27,7 @@ package("llgl")
     elseif is_plat("macosx") then
         add_configs("metal", {description = "Enable Metal Renderer", default = true, type = "boolean"})
     elseif is_plat("bsd", "cross") then
-        add_deps("libx11")
+        add_deps("libx11", "xorgproto")
     end
 
     add_deps("cmake")
@@ -141,7 +141,7 @@ endif()
         if package:is_plat("linux") then
             opt.packagedeps = {"wayland", "libxrandr", "libxrender"}
         elseif package:is_plat("bsd", "cross") then
-            opt.packagedeps = {"libx11"}
+            opt.packagedeps = {"libx11", "xorgproto"}
         end
         import("package.tools.cmake").install(package, configs, opt)
         if package:is_plat("android") then
@@ -160,4 +160,5 @@ endif()
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
+
 
