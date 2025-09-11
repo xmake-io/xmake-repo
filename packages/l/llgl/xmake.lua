@@ -18,7 +18,7 @@ package("llgl")
         add_syslinks("dxgi", "d3d11", "d3d12", "d3dcompiler", "comdlg32", "user32", "gdi32", "opengl32", "shell32")
     elseif is_plat("linux") then
         add_configs("wayland", {description = "Enable Wayland", default = true, type = "boolean"})
-        add_deps("wayland", "libx11")
+        add_deps("wayland", "libxrandr", "libxrender")
     end
 
     add_deps("cmake")
@@ -75,7 +75,11 @@ package("llgl")
         table.insert(configs, "-DLLGL_BUILD_RENDERER_NULL=" .. (package:config("null") and "ON" or "OFF"))
 	    table.insert(configs, "-DLLGL_LINUX_ENABLE_WAYLAND=" .. (package:config("wayland") and "ON" or "OFF"))
         table.insert(configs, "-DGaussLib_INCLUDE_DIR=" .. includedir)
-        import("package.tools.cmake").install(package, configs) 
+        local opt = {}
+        if package:is_plat("linux") then
+            opt.packagedeps = {"libxrandr", "libxrender"}
+        end
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
@@ -86,4 +90,5 @@ package("llgl")
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
+
 
