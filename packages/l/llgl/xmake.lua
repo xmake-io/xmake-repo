@@ -95,6 +95,11 @@ package("llgl")
     end)
 
     on_install(function (package)
+        -- Help MinGW linkage issues
+        io.replace("sources/Renderer/DXCommon/CMakeLists.txt",
+            [[add_library(LLGL_DXCommon STATIC "${FilesDXCommon}")]],
+            [[add_library(LLGL_DXCommon STATIC "${FilesDXCommon}")
+            target_link_libraries(LLGL_DXCommon PRIVATE LLGL)]], {plain = true})
         -- Help CMakeLists.txt to acquire UNIX-like path
         io.replace("CMakeLists.txt", [[if(LLGL_ANDROID_PLATFORM)
     set(ANDROID_APP_GLUE_DIR "$ENV{ANDROID_NDK_ROOT}/sources/android/native_app_glue")
@@ -155,3 +160,4 @@ endif()
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
+
