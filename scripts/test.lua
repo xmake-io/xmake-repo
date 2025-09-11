@@ -294,7 +294,6 @@ function _lock_packages(packages)
         "systemd",
         "libxcrypt",
         "libselinux",
-        "libxls",
         "openssh",
         "hashcat"
     }
