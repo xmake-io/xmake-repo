@@ -19,10 +19,6 @@ package("llgl")
     elseif is_plat("linux") then
         add_configs("wayland", {description = "Enable Wayland", default = true, type = "boolean"})
         add_deps("wayland", "libxrandr", "libxrender")
-    elseif is_plat("macosx") then
-        add_frameworks("OpenGL")
-    elseif is_plat("iphoneos") then
-        add_frameworks("OpenGLES")
     end
 
     add_deps("cmake")
@@ -49,6 +45,11 @@ package("llgl")
 
         if package:config("opengl") then
             package:add("links", "LLGL_OpenGL")
+            if package:is_plat("macosx") then
+                add_frameworks("OpenGL")
+            elseif package:is_plat("iphoneos") then
+                add_frameworks("OpenGLES")
+            end
         end
 
         if package:config("vulkan") then
@@ -94,7 +95,3 @@ package("llgl")
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
-
-
-
-
