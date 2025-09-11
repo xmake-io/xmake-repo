@@ -26,6 +26,8 @@ package("llgl")
         add_deps("wayland", "libxrandr", "libxrender")
     elseif is_plat("macosx") then
         add_configs("metal", {description = "Enable Metal Renderer", default = true, type = "boolean"})
+    elseif is_plat("bsd", "cross") then
+        add_deps("libx11")
     end
 
     add_deps("cmake")
@@ -152,6 +154,7 @@ endif()
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
+
 
 
 
