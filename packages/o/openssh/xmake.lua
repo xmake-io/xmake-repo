@@ -82,7 +82,9 @@ package("openssh")
         end
     end)
 
-    on_install("linux", "bsd", "macosx", "msys", "cygwin", function (package)
+    -- about msys2 support:
+    -- @see https://github.com/xmake-io/xmake-repo/pull/8092#discussion_r2342822821
+    on_install("@linux", "@bsd", "@macosx", "@cygwin", function (package)
         import("package.tools.autoconf")
 
         local configs = {}
