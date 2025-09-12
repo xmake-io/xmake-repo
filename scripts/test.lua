@@ -294,7 +294,6 @@ function _lock_packages(packages)
         "systemd",
         "libxcrypt",
         "libselinux",
-        "libxls",
         "openssh",
     }
     for _, package in ipairs(packages) do
