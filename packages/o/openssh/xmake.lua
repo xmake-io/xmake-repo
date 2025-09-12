@@ -56,7 +56,7 @@ package("openssh")
     add_configs("lastlog_dir",             {description = "Specify lastlog location common locations.", type = "string", default = nil})
 
     -- patches from: https://github.com/msys2/MSYS2-packages/tree/master/openssh
-    if is_plat("msys", "mingw") then
+    if is_plat("msys") then
         add_deps("autotools")
         add_patches("*", "patches/8.9p1/msys2-drive-name-in-path.patch", "903b3eee51e492a125cab9c724ad967450307d53e457f025e4432b81cb145af5")
         add_patches("*", "patches/8.9p1/msys2-setkey.patch", "24dacf56b359f9fef584fbf50e7d7993e73bac52dbe8a0ff5e5f13071a22bb42")
