@@ -22,6 +22,8 @@ package("hdf5")
     add_versions("github:1.14.4-3", "019ac451d9e1cf89c0482ba2a06f07a46166caf23f60fea5ef3c37724a318e03")
     add_versions("github:1.14.6", "e4defbac30f50d64e1556374aa49e574417c9e72c6b1de7a4ff88c4b1bea6e9b")
 
+    add_patches(">1.10", "patch/cmake.patch", "883168e1ba250791ee9b739e91f1e12d9abe4c69af132c9aad472f7f64910b7c")
+
     add_configs("zlib", {description = "Enable Zlib Filters", default = false, type = "boolean"})
     add_configs("szip", {description = "Enable Szip Filters", default = false, type = "boolean"})
     add_configs("cpplib", {description = "Build HDF5 C++ Library", default = false, type = "boolean"})
