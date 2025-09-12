@@ -6,7 +6,7 @@ index 64209c6..062af7b 100644
   */
  
  #pragma once
-+#if !AUI_PLATFORM_MACOS
++#ifndef __cplusplus
  extern "C" {
 +#endif
  #if AUI_PLATFORM_ANDROID
@@ -16,6 +16,6 @@ index 64209c6..062af7b 100644
  #include <GL/glew.h>
  #include <GL/gl.h>
  #endif
-+#if !AUI_PLATFORM_MACOS
++#ifndef __cplusplus
  }
 +#endif
