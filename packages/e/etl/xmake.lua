@@ -7,6 +7,7 @@ package("etl")
     add_urls("https://github.com/ETLCPP/etl/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ETLCPP/etl.git")
 
+    add_versions("20.43.3", "44dac7303957b9b86f0970c7b6842e66f0f7546064ae48a9d6f016a0ab8a5c72")
     add_versions("20.43.2", "92eef0153c794c2e49df534123e95447f51cda432051012e452c08205273c012")
     add_versions("20.43.1", "d95821298a41e803134a9753716e55034711f7f4b91d0993c15325be18c6eaef")
     add_versions("20.43.0", "98106a7bc3a858035251868fa8ed036b1a9e3095714bf0b4cbf8c8e51c4d4234")
