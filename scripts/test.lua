@@ -294,7 +294,8 @@ function _lock_packages(packages)
         "systemd",
         "libxcrypt",
         "libselinux",
-        "openssh",
+        "libxls",
+        "hashcat"
     }
     for _, package in ipairs(packages) do
         if table.contains(locked_packages, package) then
