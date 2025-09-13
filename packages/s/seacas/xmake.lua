@@ -8,7 +8,8 @@ package("seacas")
 
     add_versions("v2025-08-28", "29125a84859c78b6bb0b5909ce7443aa2774235f0fc75dedf467a223603e0ffd")
 
-    add_deps("cmake", "fmt", "hdf5", "netcdf-c")
+    add_deps("cmake")
+    add_deps("fmt", "hdf5", "netcdf-c")
 
     on_install("windows", "linux", "bsd", "macosx", function (package)
         io.replace("cmake/tribits/common_tpls/FindTPLNetcdf.cmake", "netCDF_FOUND", "1", {plain = true})
