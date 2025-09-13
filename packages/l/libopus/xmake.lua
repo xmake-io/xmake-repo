@@ -48,7 +48,7 @@ package("libopus")
                 return
             end
 
-            if package:is_plat("linux", "cross") and package:is_arch("arm*") then
+            if package:is_plat("linux", "cross") and package:is_arch("arm.*") then
                 if version:le("1.4") then
                     raise("package(libopus 1.4) unsupported arch")
                 end
