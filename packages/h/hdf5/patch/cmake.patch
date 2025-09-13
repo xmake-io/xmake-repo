@@ -2,15 +2,17 @@ diff --git a/config/cmake/hdf5-config.cmake.in b/config/cmake/hdf5-config.cmake.
 index 6780101..fe5e23d 100644
 --- a/config/cmake/hdf5-config.cmake.in
 +++ b/config/cmake/hdf5-config.cmake.in
-@@ -97,6 +97,14 @@ if (${HDF5_PACKAGE_NAME}_ENABLE_THREADSAFE OR ${HDF5_PACKAGE_NAME}_ENABLE_SUBFIL
+@@ -97,6 +97,16 @@ if (${HDF5_PACKAGE_NAME}_ENABLE_THREADSAFE OR ${HDF5_PACKAGE_NAME}_ENABLE_SUBFIL
    find_package(Threads QUIET REQUIRED)
  endif ()
  
-+if (${HDF5_PACKAGE_NAME}_ENABLE_Z_LIB_SUPPORT) AND NOT ${HDF5_PACKAGE_NAME}_PACKAGE_EXTLIBS
++if (${HDF5_PACKAGE_NAME}_ENABLE_Z_LIB_SUPPORT AND NOT ${HDF5_PACKAGE_NAME}_PACKAGE_EXTLIBS)
++  include(CMakeFindDependencyMacro)
 +  find_dependency(ZLIB)
 +endif ()
 +
-+if (${HDF5_PACKAGE_NAME}_ENABLE_SZIP_SUPPORT) AND NOT ${HDF5_PACKAGE_NAME}_PACKAGE_EXTLIBS
++if (${HDF5_PACKAGE_NAME}_ENABLE_SZIP_SUPPORT AND NOT ${HDF5_PACKAGE_NAME}_PACKAGE_EXTLIBS)
++  include(CMakeFindDependencyMacro)
 +  find_dependency(libaec)
 +endif ()
 +
