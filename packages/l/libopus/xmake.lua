@@ -41,6 +41,27 @@ package("libopus")
 
     add_deps("cmake")
 
+    if on_check then
+        on_check(function (package)
+            local version = package:version()
+            if not version then
+                return
+            end
+
+            if package:is_plat("linux", "cross") and package:is_arch("arm*") then
+                if version:le("1.4") then
+                    raise("package(libopus 1.4) unsupported arch")
+                end
+            end
+
+            if (package:is_plat("android") and package:is_arch("armeabi-v7a")) or package:is_plat("wasm") then
+                if version:eq("1.3.1") then
+                    raise("package(libopus 1.3.1) unsupported platform")
+                end
+            end
+        end)
+    end
+
     on_install(function (package)
         io.replace("CMakeLists.txt", [[set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")]], "", {plain = true})
         io.replace("CMakeLists.txt", [[set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")]], "", {plain = true})
