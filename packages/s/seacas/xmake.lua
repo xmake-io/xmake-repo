@@ -8,7 +8,7 @@ package("seacas")
 
     add_versions("v2025-08-28", "29125a84859c78b6bb0b5909ce7443aa2774235f0fc75dedf467a223603e0ffd")
 
-    add_deps("cmake", "cereal", "fmt", "hdf5", "metis", "netcdf-c", "zlib")
+    add_deps("cmake", "fmt", "hdf5", "netcdf-c")
 
     on_install("windows", "linux", "bsd", "macosx", function (package)
         io.replace("cmake/tribits/common_tpls/FindTPLNetcdf.cmake", "netCDF_FOUND", "1", {plain = true})
@@ -16,7 +16,6 @@ package("seacas")
             "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
             "-DLIBMINC_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"),
             "-DBUILD_TESTING=OFF",
-            "-DTPL_ENABLE_DLlib=" .. (package:is_plat("windows") and "OFF" or "ON"),
             "-DSeacas_ENABLE_SEACAS=ON",
             "-DSeacas_ENABLE_Zoltan=OFF",
             "-DNetcdf_FORCE_MODERN=ON",
