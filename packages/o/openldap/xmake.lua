@@ -1,10 +1,9 @@
 package("openldap")
-
     set_homepage("https://www.openldap.org/")
     set_description("OpenLDAP Software is an open source implementation of the Lightweight Directory Access Protocol.")
 
     add_urls("https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-$(version).tgz")
-    add_versions("2.5.7", "ea9757001bc36295037f0030ede16810a1bb7438bbe8f871a35cc2a2b439d9ab")
+    add_versions("2.6.9", "2cb7dc73e9c8340dff0d99357fbaa578abf30cc6619f0521972c555681e6b2ff")
 
     add_configs("tls", {description = "Set TLS/SSL support library.", default = "openssl", type = "string", values = {"openssl", "gnutls"}})
     add_configs("sasl", {description = "Enable Cyrus SASL support.", default = false, type = "boolean"})
@@ -13,6 +12,7 @@ package("openldap")
         add_syslinks("pthread")
     end
     on_load("linux", "macosx", function (package)
+        package:add("links", "ldap", "lber")
         package:add("deps", package:config("tls"))
         if package:config("sasl") then
             package:add("deps", "cyrus-sasl")
@@ -20,14 +20,13 @@ package("openldap")
     end)
 
     on_install("linux", "macosx", function (package)
-        local configs = {}
-        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
-        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        local configs = {
+            "--without-systemd"
+        }
+
         table.insert(configs, "--with-tls=" .. package:config("tls"))
         table.insert(configs, "--with-cyrus-sasl=" .. (package:config("sasl") and "yes" or "no"))
-        if package:config("pic") ~= false then
-            table.insert(configs, "--with-pic")
-        end
+
         local cppflags = {}
         local ldflags = {}
         for _, dep in ipairs(package:orderdeps()) do
@@ -44,6 +43,9 @@ package("openldap")
                 end
             end
         end
+
+        io.replace("Makefile.in", "tests doc", "", {plain = true})
+
         import("package.tools.autoconf").install(package, configs, {cppflags = cppflags, ldflags = ldflags})
     end)
 
