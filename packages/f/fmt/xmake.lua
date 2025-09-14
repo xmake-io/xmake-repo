@@ -34,6 +34,7 @@ package("fmt")
 
     add_configs("header_only", {description = "Use header only version.", default = false, type = "boolean"})
     add_configs("unicode", {description = "Enable Unicode support.", default = true, type = "boolean"})
+    add_configs("exceptions", {description = "Enable exception", default = true, type = "boolean"})
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::fmt")
@@ -76,7 +77,18 @@ package("fmt")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DFMT_UNICODE=" .. (package:config("unicode") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+
+        local opt = {}
+        if package:config("exceptions") then
+            opt.cxflags = {
+                "-DFMT_USE_EXCEPTIONS", -- renamed in 11.1
+                "-DFMT_EXCEPTIONS",
+            }
+            if package:has_tool("cxx", "clang_cl") then
+                table.insert(opt.cxflags, "/EHsc")
+            end
+        end
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
