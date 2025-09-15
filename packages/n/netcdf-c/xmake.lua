@@ -6,7 +6,7 @@ package("netcdf-c")
     add_urls("https://github.com/Unidata/netcdf-c/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Unidata/netcdf-c.git")
     add_versions("v4.9.3", "990f46d49525d6ab5dc4249f8684c6deeaf54de6fec63a187e9fb382cc0ffdff")
-    add_patches("v4.9.3", "patches/v4.9.3/deps.patch", "a133eba3f888902cc12e2cf65dc7d463ce1f466bea4d09ad09a3d448ef952ed8")
+    add_patches("v4.9.3", "patches/v4.9.3/deps.patch", "b66fdf04a6d0d220ef14e078ca17ca09d33491f19ef408dc971c5c1fac6e7d6d")
 
     add_deps("cmake", "libcurl", "libxml2", "libzip", "zlib")
     add_deps("hdf5", {configs = {zlib = true}})

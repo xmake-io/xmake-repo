@@ -94,6 +94,26 @@ index 12132a7..7da27d5 100644
  #include <libxml/tree.h>
  #include "ncxml.h"
  
+diff --git a/netCDFConfig.cmake.in b/netCDFConfig.cmake.in
+index 987b2ad..32eba6d 100644
+--- a/netCDFConfig.cmake.in
++++ b/netCDFConfig.cmake.in
+@@ -40,9 +40,14 @@ set(netCDF_HAS_DAP2 @HAS_DAP2@)
+ set(netCDF_HAS_DAP4 @HAS_DAP4@)
+ set(netCDF_HAS_DISKLESS @HAS_DISKLESS@)
+ set(netCDF_HAS_MMAP @HAS_MMAP@)
++
++
++include(CMakeFindDependencyMacro)
++find_dependency(CURL)
++
+ if (netCDF_HAS_HDF4 OR netCDF_HAS_HDF5)
+   include(CMakeFindDependencyMacro)
+-  find_dependency(HDF5)
++  find_dependency(HDF5 CONFIG)
+ endif ()
+ 
+ if (@HAS_PARALLEL@)
 diff --git a/plugins/CMakeLists.txt b/plugins/CMakeLists.txt
 index fbaeb21..740bdb1 100644
 --- a/plugins/CMakeLists.txt

@@ -1,0 +1,214 @@
+diff --git a/packages/seacas/applications/nem_slice/elb_loadbal.C b/packages/seacas/applications/nem_slice/elb_loadbal.C
+index 4a36b90..54d7d69 100644
+--- a/packages/seacas/applications/nem_slice/elb_loadbal.C
++++ b/packages/seacas/applications/nem_slice/elb_loadbal.C
+@@ -114,11 +114,11 @@ template int generate_loadbal(Machine_Description *machine, Problem_Description
+                               char *argv[]);
+ 
+ /* Variables used in Chaco */
+-extern "C" {
+-extern int FREE_GRAPH;
+-extern int CONNECTED_DOMAINS;
+-extern int OUTPUT_ASSIGN;
+-}
++// extern "C" {
++// extern int FREE_GRAPH;
++// extern int CONNECTED_DOMAINS;
++// extern int OUTPUT_ASSIGN;
++// }
+ 
+ template <typename INT>
+ int generate_loadbal(Machine_Description *machine, Problem_Description *problem,
+diff --git a/packages/seacas/libraries/aprepro_lib/CMakeLists.txt b/packages/seacas/libraries/aprepro_lib/CMakeLists.txt
+index 1efc331..f6ad189 100644
+--- a/packages/seacas/libraries/aprepro_lib/CMakeLists.txt
++++ b/packages/seacas/libraries/aprepro_lib/CMakeLists.txt
+@@ -96,6 +96,10 @@ if(USE_TRIBITS)
+     SOURCES ${SOURCES}
+   )
+ 
++IF (WIN32 AND BUILD_SHARED_LIBS)
++  set_target_properties(aprepro_lib PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
++endif()
++
+ if (${CMAKE_PROJECT_NAME} STREQUAL "Seacas")
+    # add a target to generate API documentation with Doxygen
+    if(Seacas_ENABLE_DOXYGEN)
+diff --git a/packages/seacas/libraries/chaco/CMakeLists.txt b/packages/seacas/libraries/chaco/CMakeLists.txt
+index 576abc8..b5c98fa 100644
+--- a/packages/seacas/libraries/chaco/CMakeLists.txt
++++ b/packages/seacas/libraries/chaco/CMakeLists.txt
+@@ -56,5 +56,10 @@ TRIBITS_ADD_LIBRARY(
+   HEADERS ${HEADERS}
+   SOURCES ${SOURCES}
+   )
++
++IF (WIN32 AND BUILD_SHARED_LIBS)
++  TARGET_COMPILE_DEFINITIONS(chaco PRIVATE chaco_shared_EXPORTS)
++  set_target_properties(chaco PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
++ENDIF()
+ 
+ TRIBITS_SUBPACKAGE_POSTPROCESS()
+diff --git a/packages/seacas/libraries/chaco/main/chaco.h b/packages/seacas/libraries/chaco/main/chaco.h
+index 2e08d02..9d7f64c 100644
+--- a/packages/seacas/libraries/chaco/main/chaco.h
++++ b/packages/seacas/libraries/chaco/main/chaco.h
+@@ -168,6 +168,17 @@ extern "C" {
+ #define INTER_FACE interface
+ #endif
+ 
++
++#if defined(_WIN32)
++  #if defined(chaco_shared_EXPORTS)
++    #define CHACO_EXPORT __declspec(dllexport)
++  #else
++    #define CHACO_EXPORT __declspec(dllimport)
++  #endif
++#else
++#define CHACO_EXPORT
++#endif
++
+ extern int INTER_FACE(int    nvtxs,                 /**< number of vertices in full graph */
+                       int   *start,                 /**< start of edge list for each vertex */
+                       int   *adjacency,             /**< edge list data */
+@@ -196,6 +207,10 @@ extern int input_assign(FILE *, char *, int, int *);
+ #define CHACO_VERSION_MINOR 0
+ #define CHACO_VERSION_PATCH 0
+ 
++CHACO_EXPORT extern int FREE_GRAPH;
++CHACO_EXPORT extern int CONNECTED_DOMAINS;
++CHACO_EXPORT extern int OUTPUT_ASSIGN;
++
+ #ifdef __cplusplus
+ } /* close brackets on extern "C" declaration */
+ #endif
+diff --git a/packages/seacas/libraries/exodus/CMakeLists.txt b/packages/seacas/libraries/exodus/CMakeLists.txt
+index ed8fe76..172773f 100644
+--- a/packages/seacas/libraries/exodus/CMakeLists.txt
++++ b/packages/seacas/libraries/exodus/CMakeLists.txt
+@@ -33,6 +33,11 @@ TRIBITS_ADD_LIBRARY(
+   SOURCES ${SOURCES} ${DEP_SOURCES}
+ )
+ 
++IF (WIN32 AND BUILD_SHARED_LIBS)
++  target_compile_definitions(exodus PRIVATE exodus_shared_EXPORTS)
++  target_compile_definitions(exodus PRIVATE exoIIc_EXPORTS)
++endif()
++
+ set_property(TARGET exodus PROPERTY C_STANDARD 99)
+ set_property(TARGET exodus PROPERTY C_EXTENSIONS ON)
+ 
+diff --git a/packages/seacas/libraries/exodus/include/exodusII.h b/packages/seacas/libraries/exodus/include/exodusII.h
+index 5c5149e..c694e88 100644
+--- a/packages/seacas/libraries/exodus/include/exodusII.h
++++ b/packages/seacas/libraries/exodus/include/exodusII.h
+@@ -569,8 +569,12 @@ typedef struct ex_var_params
+ /** @} */
+ 
+ #ifndef EXODUS_EXPORT
+-#if defined(_WIN32) && defined(exodus_shared_EXPORTS)
++#if defined(_WIN32)
++#if defined(exodus_shared_EXPORTS)
+ #define EXODUS_EXPORT __declspec(dllexport)
++#else
++#define EXODUS_EXPORT __declspec(dllimport)
++#endif
+ #endif
+ #endif /* EXODUS_EXPORT */
+ 
+@@ -828,7 +832,7 @@ ex_put_loadbal_param_cc(int             exoid,          /* NetCDF/Exodus file ID
+ );
+ 
+ /* Utility function to replace strncpy, strcpy -- guarantee null termination */
+-char *ex_copy_string(char *dest, char const *source, size_t elements);
++EXODUS_EXPORT char *ex_copy_string(char *dest, char const *source, size_t elements);
+ 
+ /*!
+  * \addtogroup ModelDescription
+diff --git a/packages/seacas/libraries/ioss/src/text_mesh/Iotm_TextMesh.C b/packages/seacas/libraries/ioss/src/text_mesh/Iotm_TextMesh.C
+index 6393bf3..33ba1ad 100644
+--- a/packages/seacas/libraries/ioss/src/text_mesh/Iotm_TextMesh.C
++++ b/packages/seacas/libraries/ioss/src/text_mesh/Iotm_TextMesh.C
+@@ -124,11 +124,13 @@ namespace Iotm {
+     initialize();
+   }
+ 
++  /*
+   TextMesh::TextMesh()
+   {
+     m_errorHandler = [](const std::ostringstream &errmsg) { error_handler(errmsg); };
+     initialize();
+   }
++  */
+ 
+   unsigned TextMesh::spatial_dimension() const { return m_data.spatialDim; }
+ 
+diff --git a/packages/seacas/libraries/ioss/src/text_mesh/Iotm_TextMesh.h b/packages/seacas/libraries/ioss/src/text_mesh/Iotm_TextMesh.h
+index 7de4793..2d0570d 100644
+--- a/packages/seacas/libraries/ioss/src/text_mesh/Iotm_TextMesh.h
++++ b/packages/seacas/libraries/ioss/src/text_mesh/Iotm_TextMesh.h
+@@ -66,7 +66,6 @@ namespace Iotm {
+     explicit TextMesh(const std::string &parameters, IOSS_MAYBE_UNUSED int proc_count = 1,
+                       int my_proc = 0);
+     explicit TextMesh(int proc_count = 1, int my_proc = 0);
+-    TextMesh();
+     TextMesh(const TextMesh &)            = delete;
+     TextMesh &operator=(const TextMesh &) = delete;
+ 
+diff --git a/packages/seacas/libraries/suplib_c/CMakeLists.txt b/packages/seacas/libraries/suplib_c/CMakeLists.txt
+index 52f7c57..97e5adf 100644
+--- a/packages/seacas/libraries/suplib_c/CMakeLists.txt
++++ b/packages/seacas/libraries/suplib_c/CMakeLists.txt
+@@ -30,4 +30,8 @@ TRIBITS_ADD_LIBRARY(
+   SOURCES ${SOURCES}
+   )
+ 
++IF (WIN32 AND BUILD_SHARED_LIBS)
++  target_compile_definitions(suplib_c PRIVATE suplib_c_shared_EXPORTS)
++  set_target_properties(suplib_c PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
++endif()
+ TRIBITS_SUBPACKAGE_POSTPROCESS()
+diff --git a/packages/seacas/libraries/suplib_c/XGetopt.h b/packages/seacas/libraries/suplib_c/XGetopt.h
+index eb33d8b..c2446a5 100644
+--- a/packages/seacas/libraries/suplib_c/XGetopt.h
++++ b/packages/seacas/libraries/suplib_c/XGetopt.h
+@@ -13,13 +13,23 @@
+ ///////////////////////////////////////////////////////////////////////////////
+ #pragma once
+ 
++#if defined(_WIN32)
++  #if defined(suplib_c_shared_EXPORTS)
++    #define SUPLIBC_EXPORT __declspec(dllexport)
++  #else
++    #define SUPLIBC_EXPORT __declspec(dllimport)
++  #endif
++#else
++  #define SUPLIBC_EXPORT
++#endif
++
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
+-extern int   optind;
+-extern int   optopt;
+-extern int   opterr;
+-extern char *optarg;
++SUPLIBC_EXPORT extern int   optind;
++SUPLIBC_EXPORT extern int   optopt;
++SUPLIBC_EXPORT extern int   opterr;
++SUPLIBC_EXPORT extern char *optarg;
+ 
+ int getopt(int argc, char *const argv[], const char *optstring);
+ #ifdef __cplusplus
+diff --git a/packages/seacas/libraries/suplib_cpp/CMakeLists.txt b/packages/seacas/libraries/suplib_cpp/CMakeLists.txt
+index 47c7b0d..b931a47 100644
+--- a/packages/seacas/libraries/suplib_cpp/CMakeLists.txt
++++ b/packages/seacas/libraries/suplib_cpp/CMakeLists.txt
+@@ -32,4 +32,7 @@ TRIBITS_ADD_LIBRARY(
+   SOURCES ${SOURCES}
+   )
+ 
++IF (WIN32 AND BUILD_SHARED_LIBS)
++  set_target_properties(suplib_cpp PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
++endif()
+ TRIBITS_SUBPACKAGE_POSTPROCESS()

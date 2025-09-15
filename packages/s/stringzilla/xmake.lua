@@ -1,14 +1,16 @@
 package("stringzilla")
     set_kind("library", {headeronly = true})
     set_homepage("https://ashvardanian.com/posts/stringzilla/")
-    set_description("Up to 10x faster strings for C, C++, Python, Rust, and Swift, leveraging NEON, AVX2, AVX-512, and SWAR to accelerate search, sort, edit distances, alignment scores, etc 🦖")
+    set_description("Up to 10x faster strings for C, C++, Python, Rust, Swift & Go, leveraging NEON, AVX2, AVX-512, SVE, & SWAR to accelerate search, hashing, sort, edit distances, and memory ops 🦖")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/ashvardanian/StringZilla/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ashvardanian/StringZilla.git")
 
     add_configs("cpp", {description = "Enable C++ support.", default = true, type = "boolean"})
+    add_configs("stringzillas", {description = "Enable advanced API support.", default = false, type = "boolean"})
 
+    add_versions("v4.0.0", "17589e9c4b1e21caaec02305a68b03f11c4aec8d3edeb300808f6b4b4b3d725b")
     add_versions("v3.12.6", "1255cac3aced48b4b73e045829a80e3122c54eca5621274073839c9036f48fe8")
     add_versions("v3.12.5", "52d107322b59c15b653d1eab3732c575b82eb44a9d5e3ff752b1f2902b71e8ee")
     add_versions("v3.12.4", "f5ae5ccc713e96e80dee92bc67efdc22b50cd7a1ba5d535191628606e0e2610b")
@@ -62,7 +64,17 @@ package("stringzilla")
     add_versions("v1.2.2", "2e17c49965841647a1c371247f53b2f576e5fb32fe4b84a080d425b12f17703c")
 
     on_install("android|!armeabi-v7a or (!android and !cross)", function (package)
-        if package:version():gt("3.0.0") then
+        if package:version():ge("4.0.0") then
+            os.cp("include/stringzilla/*.h", package:installdir("include/stringzilla"))
+            if package:config("cpp") then
+                os.cp("include/stringzilla/*.hpp", package:installdir("include/stringzilla"))
+                os.cp("include/stringzilla/module.modulemap", package:installdir("include/stringzilla"))
+            end
+            if not package:is_plat("android", "iphoneos", "wasm") and package:config("stringzillas") then
+                os.cp("include/stringzillas", package:installdir("include/stringzillas"))
+            end
+            return
+        elseif package:version():gt("3.0.0") then
             if package:version():gt("3.9.0") then
                 os.cp("include/stringzilla/drafts.h", package:installdir("include/stringzilla"))
             else
@@ -71,9 +83,7 @@ package("stringzilla")
             if package:config("cpp") then
                 os.cp("include/stringzilla/stringzilla.hpp", package:installdir("include/stringzilla"))
             end
-        end
-
-        if package:version():gt("2.0.4") then
+        elseif package:version():gt("2.0.4") then
             os.cp("include/stringzilla/stringzilla.h", package:installdir("include/stringzilla"))
         else
             os.cp("stringzilla/stringzilla.h", package:installdir("include/stringzilla"))
@@ -90,7 +100,11 @@ package("stringzilla")
                         assert(s == "hello");
                     }
                 ]]}, {configs = {languages = "c++11"}, includes = "stringzilla/stringzilla.hpp"}))
-                assert(package:has_cfuncs("sz_sort", {includes = "stringzilla/stringzilla.h"}))
+                if package:version():ge("4.0.0") then
+                    assert(package:has_cfuncs("sz_sequence_argsort", {includes = "stringzilla/sort.h"}))
+                else
+                    assert(package:has_cfuncs("sz_sort", {includes = "stringzilla/stringzilla.h"}))
+                end
             end
         elseif package:version():gt("2.0.0") then
             assert(package:has_cfuncs("sz_sort", {includes = "stringzilla/stringzilla.h"}))
