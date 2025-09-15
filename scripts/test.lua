@@ -292,7 +292,6 @@ function _lock_packages(packages)
     local locked_packages = {
         "flashlight",
         "systemd",
-        "libxcrypt",
         "libselinux",
     }
     for _, package in ipairs(packages) do
