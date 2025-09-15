@@ -6,8 +6,6 @@ package("marl")
     add_urls("https://github.com/google/marl.git", {submodules = false})
 
     add_versions("2025.02.23", "23bbc9bf0017ba75844d5be5b12b15c0134ca276")
-    add_versions("2022.03.02", "9929747c9ba6354691dbacaf14f9b35433871e5b")
-    add_versions("2021.08.18", "49602432d97222eec1e6c8e4f70723c3864c49c1")
 
     add_deps("cmake")
     if is_plat("linux", "bsd") then
@@ -20,6 +18,8 @@ package("marl")
         end
 
         io.replace("CMakeLists.txt", "POSITION_INDEPENDENT_CODE 1", "", {plain = true})
+        -- https://github.com/google/marl/pull/234
+        io.replace("src/scheduler.cpp", "#if defined(_WIN32)", "#if defined(_MSC_VER)", {plain = true})
 
         local configs = {"-DMARL_INSTALL=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
