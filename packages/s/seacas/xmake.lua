@@ -28,6 +28,9 @@ package("seacas")
             "-DSeacas_ENABLE_Zoltan=OFF",
             "-DNetcdf_FORCE_MODERN=ON",
         }
+        if is_plat("bsd") then
+            table.insert(configs, "-DSeacas_ENABLE_Fortran=OFF")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
