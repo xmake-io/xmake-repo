@@ -39,6 +39,7 @@ package("objfw")
 
     if is_host("linux", "macosx") then
         add_deps("autoconf", "automake", "libtool")
+        add_syslinks("pthread")
     end
 
     if is_plat("macosx") then
