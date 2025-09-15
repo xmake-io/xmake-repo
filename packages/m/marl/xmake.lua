@@ -12,7 +12,7 @@ package("marl")
         add_syslinks("pthread")
     end
 
-    on_install(function (package)
+    on_install("!mingw or mingw|!i686", function (package)
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "MARL_DLL=1")
         end
