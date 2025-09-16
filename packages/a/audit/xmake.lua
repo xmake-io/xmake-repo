@@ -51,26 +51,12 @@ package("audit")
         table.insert(configs, "--with-apparmor=" .. (package:config("apparmor") and "yes" or "no"))
         table.insert(configs, "--with-io_uring=" .. (package:config("io_uring") and "yes" or "no"))
         table.insert(configs, "--with-nftables=" .. (package:config("nftables") and "yes" or "no"))
-        table.insert(configs, "--with-libcap-ng" .. (package:config("libcap_ng") and "yes" or "no"))
-
-        local cflags = {}
-        local ldflags = {}
-        for _, dep in ipairs(package:orderdeps()) do
-            local fetchinfo = dep:fetch()
-            if fetchinfo then
-                for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
-                    table.insert(cflags, "-I" .. includedir)
-                end
-                for _, linkdir in ipairs(fetchinfo.linkdirs) do
-                    table.insert(ldflags, "-L" .. linkdir)
-                end
-            end
-        end
+        table.insert(configs, "--with-libcap-ng=" .. (package:config("libcap_ng") and "yes" or "no"))
 
         io.replace("src/Makefile.am", "SUBDIRS = test", "SUBDIRS = ", {plain = true})
         io.replace("auparse/Makefile.am", "SUBDIRS = . test", "SUBDIRS = .", {plain = true})
 
-        import("package.tools.autoconf").install(package, configs, {cflags = cflags, ldflags = ldflags})
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)

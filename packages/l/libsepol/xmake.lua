@@ -18,10 +18,7 @@ package("libsepol")
     on_install("linux", function (package)
         import("package.tools.make")
 
-        local configs = {
-            "PREFIX="
-        }
-
+        local configs = {"PREFIX="}
         table.insert(configs, "DEBUG=" .. (package:is_debug() and "1" or "0"))
         table.insert(configs, "DESTDIR=" .. package:installdir())
 

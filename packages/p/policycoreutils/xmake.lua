@@ -6,7 +6,7 @@ package("policycoreutils")
     add_urls("https://github.com/SELinuxProject/selinux/releases/download/$(version)/policycoreutils-$(version).tar.gz")
     add_versions("3.9", "44a294139876cf4c7969cb6a75d1932cb42543d74a7661760ded44a20bf7ebe8")
 
-    add_deps("gettext") -- msgfmt
+    add_deps("gettext")
     on_load(function (package)
         package:add("deps", "libsemanage >=" .. package:version_str())
     end)
@@ -14,10 +14,7 @@ package("policycoreutils")
     on_install("linux", function (package)
         import("package.tools.make")
 
-        local configs = {
-            "PREFIX="
-        }
-
+        local configs = {"PREFIX="}
         table.insert(configs, "DEBUG=" .. (package:is_debug() and "1" or "0"))
         table.insert(configs, "DESTDIR=" .. package:installdir())
 
@@ -60,5 +57,5 @@ package("policycoreutils")
     end)
 
     on_test(function (package)
-        -- assert(os.isexec(package:installdir("bin/secilc")), "secilc executable not found!")
+        assert(os.isexec(package:installdir("bin/sestatus")), "policycoreutils executable not found!")
     end)

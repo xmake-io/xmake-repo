@@ -25,9 +25,7 @@ package("libselinux")
     on_install("linux", function (package)
         import("package.tools.make")
 
-        local configs = {
-            "PREFIX="
-        }
+        local configs = {"PREFIX="}
 
         table.insert(configs, "DEBUG=" .. (package:is_debug() and "1" or "0"))
         table.insert(configs, "DESTDIR=" .. package:installdir())
@@ -40,10 +38,7 @@ package("libselinux")
         table.insert(configs, "USE_PCRE2=" .. (package:config("pcre2") and "y" or "n"))
         table.insert(configs, "USE_LFS=" .. (package:config("lfs") and "y" or "n"))
 
-        local subdirs = {
-            "include",
-            "src"
-        }
+        local subdirs = {"include", "src"}
         if package:config("utils") then
             table.insert(subdirs, "utils")
         end
