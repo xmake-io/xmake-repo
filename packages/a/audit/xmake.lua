@@ -8,7 +8,7 @@ package("audit")
     add_configs("listener",       {description = "Enable auditd network listener support.", default = true, type = "boolean"})
     add_configs("zos_remote",     {description = "Enable audisp zos remote plugin.", default = true, type = "boolean"})
     add_configs("legacy_actions", {description = "Enable legacy actions.", default = true, type = "boolean"})
-    add_configs("gssapi_krb5",    {description = "Enable gssapi kerberos 5 support.", default = false, type = "boolean"})
+    add_configs("gssapi_krb5",    {description = "Enable gssapi kerberos 5 support.", default = true, type = "boolean"})
     add_configs("experimental",   {description = "Enable experimental audit components.", default = false, type = "boolean"})
 
     add_configs("arm",       {description = "Enable armeabi processor support.", default = false, type = "boolean"})
@@ -56,7 +56,12 @@ package("audit")
         io.replace("src/Makefile.am", "SUBDIRS = test", "SUBDIRS = ", {plain = true})
         io.replace("auparse/Makefile.am", "SUBDIRS = . test", "SUBDIRS = .", {plain = true})
 
-        import("package.tools.autoconf").install(package, configs, {packagedeps = package:orderdeps()})
+        local packagedeps = {}
+        if package:config("zos_remote") then
+            table.insert(packagedeps, "openldap")
+        end
+
+        import("package.tools.autoconf").install(package, configs, {packagedeps = packagedeps})
     end)
 
     on_test(function (package)
