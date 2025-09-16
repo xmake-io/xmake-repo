@@ -15,7 +15,7 @@ package("seacas")
     add_deps("cmake")
     add_deps("fmt", "hdf5", "netcdf-c")
 
-    add_links("Ioex", "Iogn", "Iogs", "Iohb", "Ionit", "Ionull", "Ioss", "Iotm", "Iotr", "Iovs", "aprepro_lib", "chaco", "exoIIv2for", "exoIIv2for32", "exodus", "exodus_for", "io_info_lib", "mapvarlib", "nemesis", "supes", "suplib", "suplib_c", "suplib_cpp")
+    add_links("Ioex", "Iogn", "Iogs", "Iohb", "Ionit", "Ionull", "Ioss", "Iotm", "Iotr", "Iovs", "aprepro_lib", "chaco", "exoIIv2for", "exoIIv2for32", "exodus", "exodus_for", "io_info_lib", "mapvarlib", "nemesis", "simpi", "supes", "suplib", "suplib_c", "suplib_cpp", "zoltan")
 
     on_load(function (package)
         if package:is_plat("windows") and package:config("shared") then
