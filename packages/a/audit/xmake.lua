@@ -56,7 +56,7 @@ package("audit")
         io.replace("src/Makefile.am", "SUBDIRS = test", "SUBDIRS = ", {plain = true})
         io.replace("auparse/Makefile.am", "SUBDIRS = . test", "SUBDIRS = .", {plain = true})
 
-        import("package.tools.autoconf").install(package, configs)
+        import("package.tools.autoconf").install(package, configs, {packagedeps = package:orderdeps()})
     end)
 
     on_test(function (package)
