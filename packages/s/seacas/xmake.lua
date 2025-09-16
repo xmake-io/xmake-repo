@@ -9,6 +9,9 @@ package("seacas")
     end})
     add_versions("2025.08.28", "29125a84859c78b6bb0b5909ce7443aa2774235f0fc75dedf467a223603e0ffd")
 
+    add_configs("zoltan",  {description = "Enable Zoltan.", default = false, type = "boolean"})
+    add_configs("fortran", {description = "Enable Fortran support.", default = false, type = "boolean"})
+
     add_deps("cmake")
     add_deps("fmt", "hdf5", "netcdf-c")
 
@@ -27,12 +30,10 @@ package("seacas")
             "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"),
             "-DBUILD_TESTING=OFF",
             "-DSeacas_ENABLE_SEACAS=ON",
-            "-DSeacas_ENABLE_Zoltan=OFF",
+            "-DSeacas_ENABLE_Zoltan=" .. (package:config("zoltan") and "ON" or "OFF"),
+            "-DSeacas_ENABLE_Fortran=" .. (package:config("fortran") and "ON" or "OFF"),
             "-DNetcdf_FORCE_MODERN=ON",
         }
-        if is_plat("bsd") then
-            table.insert(configs, "-DSeacas_ENABLE_Fortran=OFF")
-        end
         import("package.tools.cmake").install(package, configs)
     end)
 
