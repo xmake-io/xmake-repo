@@ -1,11 +1,14 @@
 package("pango")
-
     set_homepage("https://www.pango.org/")
     set_description("Framework for layout and rendering of i18n text")
     set_license("LGPL-2.0")
 
-    add_urls("https://gitlab.gnome.org/GNOME/pango/-/archive/$(version)/pango-$(version).tar.gz")
-    add_urls("https://gitlab.gnome.org/GNOME/pango.git")
+    add_urls("https://github.com/GNOME/pango/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/GNOME/pango.git")
+    add_urls("https://gitlab.gnome.org/GNOME/pango/-/archive/$(version)/pango-$(version).tar.gz",
+             "https://gitlab.gnome.org/GNOME/pango.git")
+
+    add_versions("1.57.0", "1b2e2f683dfb5adec3faf17087ade8c648f10a5d3d0e17e421e0ac1a39e6740e")
     add_versions("1.51.1", "ea92cd570cdba62ca52cc0a7c9ea3cd311b6da3f0328a5aa8a4a81b0a74944a5")
     add_versions("1.50.3", "4a8b0cf33d5f9ecaa9cd99dd72703d5c4c53bc58df64dd9538493bb4356ab691")
 
