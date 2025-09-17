@@ -12,7 +12,7 @@ package("luisa-compute")
     add_configs("gui", {description = "Enable GUI support", default = false, type = "boolean"})
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
-    if is_host("widnows") then
+    if is_host("windows") then
         set_policy("platform.longpaths", true)
     end
 
