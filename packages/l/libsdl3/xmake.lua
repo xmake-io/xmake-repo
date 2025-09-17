@@ -100,6 +100,7 @@ package("libsdl3")
 
         if package:is_plat("linux", "bsd", "cross") then
             table.insert(packagedeps, "libxext")
+            table.insert(packagedeps, "libxcb")
             table.insert(packagedeps, "libx11")
             table.insert(packagedeps, "xorgproto")
             table.insert(packagedeps, "wayland")
