@@ -1,61 +1,86 @@
 diff --git a/aui.audio/CMakeLists.txt b/aui.audio/CMakeLists.txt
-index 21e44153..690f0f34 100644
+index 21e44153..480669ed 100644
 --- a/aui.audio/CMakeLists.txt
 +++ b/aui.audio/CMakeLists.txt
-@@ -5,6 +5,10 @@ add_subdirectory(3rdparty/ogg)
+@@ -5,26 +5,45 @@ add_subdirectory(3rdparty/ogg)
  aui_link(aui.audio PUBLIC aui::core)
  
  if (AUI_PLATFORM_ANDROID)
+-    auib_import(oboe https://github.com/google/oboe ADD_SUBDIRECTORY VERSION main)
+-    aui_link(aui.audio PUBLIC oboe $<LINK_ONLY:log> $<LINK_ONLY:OpenSLES>)
 +    if (AUIB_DISABLE)
-+    find_package(oboe CONFIG REQUIRED)
-+    aui_link(aui.audio PUBLIC oboe::oboe $<LINK_ONLY:log> $<LINK_ONLY:OpenSLES>)
++        find_package(oboe CONFIG REQUIRED)
++        aui_link(aui.audio PUBLIC oboe::oboe $<LINK_ONLY:log> $<LINK_ONLY:OpenSLES>)
 +    else ()
-     auib_import(oboe https://github.com/google/oboe ADD_SUBDIRECTORY VERSION main)
-     aui_link(aui.audio PUBLIC oboe $<LINK_ONLY:log> $<LINK_ONLY:OpenSLES>)
++        auib_import(oboe https://github.com/google/oboe ADD_SUBDIRECTORY VERSION main)
++        aui_link(aui.audio PUBLIC oboe $<LINK_ONLY:log> $<LINK_ONLY:OpenSLES>)
  
-@@ -17,14 +21,28 @@ if (AUI_PLATFORM_ANDROID)
-             PUBLIC_HEADER DESTINATION "aui.audio/include"
-             INCLUDES      DESTINATION "aui.audio/include"
-     )
+-    install(
+-            TARGETS oboe
+-            EXPORT aui
+-            ARCHIVE       DESTINATION "aui.audio/lib"
+-            LIBRARY       DESTINATION "aui.audio/lib"
+-            RUNTIME       DESTINATION "aui.audio/bin"
+-            PUBLIC_HEADER DESTINATION "aui.audio/include"
+-            INCLUDES      DESTINATION "aui.audio/include"
+-    )
++        install(
++                TARGETS oboe
++                EXPORT aui
++                ARCHIVE       DESTINATION "aui.audio/lib"
++                LIBRARY       DESTINATION "aui.audio/lib"
++                RUNTIME       DESTINATION "aui.audio/bin"
++                PUBLIC_HEADER DESTINATION "aui.audio/include"
++                INCLUDES      DESTINATION "aui.audio/include"
++        )
 +    endif ()
  elseif (AUI_PLATFORM_LINUX)
+-    aui_link(aui.audio PUBLIC pulse)
 +    if (AUIB_DISABLE)
-+    include(FindPkgConfig)
-+    pkg_check_modules(PULSEAUDIO libpulse)
-+    pkg_check_modules(PULSEAUDIOSIMPLE libpulse-simple)
-+    target_include_directories(aui.audio PUBLIC ${PULSEAUDIO_INCLUDE_DIRS} ${PULSEAUDIOSIMPLE_INCLUDE_DIRS})
-+    aui_link(aui.audio PUBLIC ${PULSEAUDIO_LIBRARIES} ${PULSEAUDIOSIMPLE_LIBRARIES})
++        include(FindPkgConfig)
++        pkg_search_module(PulseAudio IMPORTED_TARGET libpulse)
++        pkg_search_module(PulseAudioSimple IMPORTED_TARGET libpulse-simple)
++        add_library(PulseAudio::PulseAudio ALIAS PkgConfig::PulseAudio)
++        add_library(PulseAudio::PulseAudioSimple ALIAS PkgConfig::PulseAudioSimple)
++        aui_link(aui.audio PRIVATE PulseAudio::PulseAudio PulseAudio::PulseAudioSimple)
 +    else ()
-     aui_link(aui.audio PUBLIC pulse)
++        aui_link(aui.audio PUBLIC pulse)
 +    endif ()
  elseif (AUI_PLATFORM_WIN)
 -    aui_link(aui.audio PUBLIC Winmm dsound.lib dxguid.lib)
 +    aui_link(aui.audio PUBLIC Winmm dsound dxguid)
  endif()
  
+-auib_import(Opus https://github.com/xiph/opus.git VERSION v1.4)
+-aui_link(aui.audio PRIVATE Opus::opus)
 +if (AUIB_DISABLE)
-+find_package(Opus CONFIG REQUIRED)
-+aui_link(aui.audio PRIVATE Opus::opus)
++    find_package(Opus CONFIG REQUIRED)
++    aui_link(aui.audio PRIVATE Opus::opus)
 +else ()
- auib_import(Opus https://github.com/xiph/opus.git VERSION v1.4)
- aui_link(aui.audio PRIVATE Opus::opus)
++    auib_import(Opus https://github.com/xiph/opus.git VERSION v1.4)
++    aui_link(aui.audio PRIVATE Opus::opus)
 +endif ()
  
  if (AUI_PLATFORM_IOS OR AUI_PLATFORM_MACOS)
      auib_use_system_libs_begin()
-@@ -42,9 +60,15 @@ if (AUI_PLATFORM_MACOS)
+@@ -42,9 +61,15 @@ if (AUI_PLATFORM_MACOS)
  					   "-framework QuartzCore")
  endif()
  
+-auib_import(soxr https://github.com/aui-framework/soxr
+-            ADD_SUBDIRECTORY
+-            VERSION adacc686124ac3568432f3dca388878963a005ee
+-            )
 +if (AUIB_DISABLE)
 +    include(FindPkgConfig)
 +    pkg_check_modules(soxr REQUIRED IMPORTED_TARGET soxr)
 +    aui_link(aui.audio PRIVATE PkgConfig::soxr)
 +else ()
- auib_import(soxr https://github.com/aui-framework/soxr
-             ADD_SUBDIRECTORY
-             VERSION adacc686124ac3568432f3dca388878963a005ee
-             )
++    auib_import(soxr https://github.com/aui-framework/soxr
++                ADD_SUBDIRECTORY
++                VERSION adacc686124ac3568432f3dca388878963a005ee
++                )
  
- aui_link(aui.audio PRIVATE soxr)
+-aui_link(aui.audio PRIVATE soxr)
++    aui_link(aui.audio PRIVATE soxr)
 +endif ()
