@@ -5,6 +5,7 @@ package("dr_flac")
     set_license("MIT")
 
     set_urls("https://github.com/mackron/dr_libs.git", {submodules = false})
+    add_versions("0.13.1", "ab53fba4fcebe79643da3a40d2e7507839122e84")
     add_versions("0.12.43", "a1dd66cb680522a753bac7dff306b4a1cfd75e26")
     add_versions("0.12.42", "39ce69188eab79a913aa23423eef9da5f3dcd142")
     add_versions("0.12.41", "056b6f5e1f7cc5046aac33e6331551b6b2813292")
