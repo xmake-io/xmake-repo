@@ -57,8 +57,8 @@ package("audit")
         io.replace("auparse/Makefile.am", "SUBDIRS = . test", "SUBDIRS = .", {plain = true})
 
         local packagedeps = {}
-        if package:config("zos_remote") then
-            table.insert(packagedeps, "openldap")
+        for _, dep in package:librarydeps() do
+            table.insert(packagedeps, dep:name())
         end
 
         import("package.tools.autoconf").install(package, configs, {packagedeps = packagedeps})
