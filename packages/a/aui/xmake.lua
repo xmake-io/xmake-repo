@@ -279,8 +279,8 @@ package("aui")
             "-DAUIB_DISABLE=ON"
         }
         local opt = {}
-        -- if package:is_plat("linux") then
-            -- opt.packagedeps = {"pulseaudio"}
+        if package:is_plat("linux") then
+            opt.packagedeps = {"pulseaudio"}
         if package:is_plat("macosx") then
             if package:config("shared") then
                 opt.packagedeps = {"gtest"}
