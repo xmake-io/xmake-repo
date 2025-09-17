@@ -17,7 +17,7 @@ package("fontconfig")
 
     add_configs("nls", {description = "Enable Native Language Support (NLS)", default = true, type = "boolean"})
 
-    add_deps("meson", "ninja", "freetype", "expat", "gperf", "gettext")
+    add_deps("meson", "ninja", "freetype", "expat", "gperf")
     add_deps("python 3.x", {kind = "binary"})
     if is_plat("linux") then
         add_deps("pkg-config")
@@ -26,6 +26,9 @@ package("fontconfig")
     on_load("windows", "linux", "macosx", function (package)
         if package:config("nls") and not package:is_plat("linux") then
             package:add("deps", "libintl")
+        end
+        if package:config("nls") and package:is_plat("macosx") then
+            package:add("deps", "gettext")
         end
         if package:is_plat("linux") and package:version():lt("2.13.91") then
             package:add("deps", "util-linux", {configs = {libuuid = true}})
