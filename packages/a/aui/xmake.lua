@@ -33,6 +33,19 @@ package("aui")
     end
     add_deps("zlib")
 
+    add_links(
+        "aui.uitests",
+        "aui.audio",
+        "aui.json",
+        "aui.views",
+        "aui.xml",
+        "aui.image",
+        "aui.curl",
+        "aui.crypt",
+        "aui.network",
+        "aui.core"
+    )
+
     -- aui.audio
     on_component("audio", function (package, component)
         package:add("includedirs", "aui.audio/include")
@@ -59,7 +72,7 @@ package("aui")
         package:add("deps", "fmt 9.1.0", "range-v3", "glm")
         if package:is_plat("linux") then
             package:add("deps", "libbacktrace")
-            component:add("syslinks", "threads", "dl")
+            component:add("syslinks", "pthread", "dl")
         elseif package:is_plat("windows", "mingw") then
             component:add("syslinks", "dbghelp", "shell32", "shlwapi", "kernel32", "psapi")
         elseif package:is_plat("android") then

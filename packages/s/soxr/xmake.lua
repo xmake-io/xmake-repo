@@ -15,6 +15,8 @@ package("soxr")
         add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
     end
 
+    add_links("soxr-lsr", "soxr")
+
     add_deps("cmake")
 
     if is_plat("linux", "bsd") then
