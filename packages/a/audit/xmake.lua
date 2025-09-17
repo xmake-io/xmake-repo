@@ -57,7 +57,7 @@ package("audit")
         io.replace("auparse/Makefile.am", "SUBDIRS = . test", "SUBDIRS = .", {plain = true})
 
         local packagedeps = {}
-        for _, dep in package:librarydeps() do
+        for _, dep in ipairs(package:librarydeps()) do
             table.insert(packagedeps, dep:name())
         end
 
