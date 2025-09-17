@@ -17,7 +17,7 @@ package("fontconfig")
 
     add_configs("nls", {description = "Enable Native Language Support (NLS)", default = true, type = "boolean"})
 
-    add_deps("meson", "ninja", "freetype", "expat", "gperf")
+    add_deps("meson", "ninja", "freetype", "expat", "gperf", "gettext")
     add_deps("python 3.x", {kind = "binary"})
     if is_plat("linux") then
         add_deps("pkg-config")
