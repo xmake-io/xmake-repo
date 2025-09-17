@@ -31,7 +31,7 @@ package("pango")
     add_includedirs("include", "include/pango-1.0")
 
     on_install("windows|x64", "windows|x86", "macosx", "linux", function (package)
-        import("package.tools.meson")
+        os.rm("subprojects")
         local configs = {"-Dintrospection=disabled", "-Dgtk_doc=false", "-Dfontconfig=enabled"}
 
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
@@ -51,10 +51,10 @@ package("pango")
         -- fix unexpected -Werror=array-bounds errors, see https://gitlab.gnome.org/GNOME/pango/-/issues/740
         io.replace("meson.build", "'-Werror=array-bounds',", "", {plain = true})
 
-        local envs = meson.buildenvs(package, {packagedeps = {"fontconfig", "freetype", "harfbuzz", "fribidi", "cairo", "glib", "pcre2", "libintl", "libiconv", "libthai", "libdatrie"}})
+        local envs = import("package.tools.meson").buildenvs(package, {packagedeps = {"fontconfig", "freetype", "harfbuzz", "fribidi", "cairo", "glib", "pcre2", "libintl", "libiconv", "libthai", "libdatrie"}})
         -- workaround for https://github.com/xmake-io/xmake/issues/4412
         envs.LDFLAGS = string.gsub(envs.LDFLAGS, "%-libpath:", "/libpath:")
-        meson.install(package, configs, {envs = envs})
+        import("package.tools.meson").install(package, configs, {envs = envs})
     end)
 
     on_test(function (package)
