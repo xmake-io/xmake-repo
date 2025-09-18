@@ -6,6 +6,7 @@ package("p11-kit")
     add_urls("https://github.com/p11-glue/p11-kit/releases/download/$(version)/p11-kit-$(version).tar.xz",
              "https://github.com/p11-glue/p11-kit.git")
 
+    add_versions("0.25.8", "2fd4073ee2a47edafaae2c8affa2bcca64e0697f8881f68f580801ef43cab0ce")
     add_versions("0.25.5", "04d0a86450cdb1be018f26af6699857171a188ac6d5b8c90786a60854e1198e5")
 
     if is_plat("mingw") and is_subhost("msys") then
