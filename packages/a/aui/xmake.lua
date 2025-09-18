@@ -281,7 +281,7 @@ package("aui")
         local opt = {}
         if package:is_plat("linux") then
             opt.packagedeps = {"pulseaudio"}
-        if package:is_plat("macosx") then
+        elseif package:is_plat("macosx") then
             if package:config("shared") then
                 opt.packagedeps = {"gtest"}
             end
