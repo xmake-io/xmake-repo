@@ -1,8 +1,8 @@
 diff --git a/aui.audio/CMakeLists.txt b/aui.audio/CMakeLists.txt
-index 21e44153..480669ed 100644
+index 21e44153..05c15eaa 100644
 --- a/aui.audio/CMakeLists.txt
 +++ b/aui.audio/CMakeLists.txt
-@@ -5,26 +5,45 @@ add_subdirectory(3rdparty/ogg)
+@@ -5,26 +5,41 @@ add_subdirectory(3rdparty/ogg)
  aui_link(aui.audio PUBLIC aui::core)
  
  if (AUI_PLATFORM_ANDROID)
@@ -37,11 +37,7 @@ index 21e44153..480669ed 100644
  elseif (AUI_PLATFORM_LINUX)
 -    aui_link(aui.audio PUBLIC pulse)
 +    if (AUIB_DISABLE)
-+        include(FindPkgConfig)
-+        pkg_search_module(PulseAudio IMPORTED_TARGET libpulse)
-+        pkg_search_module(PulseAudioSimple IMPORTED_TARGET libpulse-simple)
-+        add_library(PulseAudio::PulseAudio ALIAS PkgConfig::PulseAudio)
-+        add_library(PulseAudio::PulseAudioSimple ALIAS PkgConfig::PulseAudioSimple)
++        find_package(PulseAudio CONFIG REQUIRED)
 +        aui_link(aui.audio PRIVATE PulseAudio::PulseAudio PulseAudio::PulseAudioSimple)
 +    else ()
 +        aui_link(aui.audio PUBLIC pulse)
@@ -63,7 +59,7 @@ index 21e44153..480669ed 100644
  
  if (AUI_PLATFORM_IOS OR AUI_PLATFORM_MACOS)
      auib_use_system_libs_begin()
-@@ -42,9 +61,15 @@ if (AUI_PLATFORM_MACOS)
+@@ -42,9 +57,15 @@ if (AUI_PLATFORM_MACOS)
  					   "-framework QuartzCore")
  endif()
  
