@@ -283,15 +283,7 @@ package("aui")
             if pulseaudio and not pulseaudio:is_system() then
                 local fetchinfo = pulseaudio:fetch({external = false})
                 if fetchinfo then
-                    table.insert(configs, "-DPulseAudio_DIR=" .. path.join(pulseaudio:installdir("lib"), "cmake"))
-                    local includedirs = fetchinfo.includedirs or fetchinfo.sysincludedirs
-                    if includedirs and #includedirs > 0 then
-                        table.insert(configs, "-DPulseAudio_INCLUDE_DIR=" .. table.concat(includedirs, " "))
-                    end
-                    local libfiles = fetchinfo.libfiles
-                    if libfiles then
-                        table.insert(configs, "-DPulseAudio_LIBRARY=" .. table.concat(libfiles, " "))
-                    end
+                    table.insert(configs, "-DPulseAudio_DIR=" .. pulseaudio:installdir("lib"))
                 end
             end
         end
