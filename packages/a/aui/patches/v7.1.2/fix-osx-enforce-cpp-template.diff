@@ -7,7 +7,7 @@ index 64209c64..e82d0ed7 100644
  
  #pragma once
 +
-+#elif AUI_PLATFORM_MACOS
++#if AUI_PLATFORM_MACOS
 +#include <GL/glew.h>
 +#endif
 +
