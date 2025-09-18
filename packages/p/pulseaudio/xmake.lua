@@ -139,6 +139,8 @@ if(PULSEAUDIO_SIMPLE_LIBRARY AND NOT TARGET PulseAudio::PulseAudioSimple)
     target_link_libraries(PulseAudio::PulseAudioSimple INTERFACE PulseAudio::PulseAudio)
 endif()
         ]])
+        os.mv(path.join(package:installdir("lib"), "cmake", "PulseAudio", "PulseAudioConfig.cmake"), path.join(package:installdir("lib"), "cmake", "PulseAudioConfig.cmake"))
+        os.mv(path.join(package:installdir("lib"), "cmake", "PulseAudio", "PulseAudioConfigVersion.cmake"), path.join(package:installdir("lib"), "cmake", "PulseAudioConfigVersion.cmake"))
     end)
 
     on_test(function (package)
