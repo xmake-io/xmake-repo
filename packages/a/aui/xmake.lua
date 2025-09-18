@@ -235,7 +235,7 @@ package("aui")
         local compiler_map = {
             clang = { tools = {"clang", "clangxx", "clang++"}, flags = { AUI_COMPILER_CLANG = 1 } },
             gcc   = { tools = {"gcc",   "gxx",      "g++"   }, flags = { AUI_COMPILER_GCC   = 1 } },
-            msvc  = { tools = {"cl"                         }, flags = { AUI_COMPILER_MSVC  = 1 } },
+            msvc  = { tools = {"cl",    "clang-cl"          }, flags = { AUI_COMPILER_MSVC  = 1 } },
         }
 
         for _, info in pairs(compiler_map) do
@@ -283,7 +283,7 @@ package("aui")
             if pulseaudio and not pulseaudio:is_system() then
                 local fetchinfo = pulseaudio:fetch({external = false})
                 if fetchinfo then
-                    table.insert(configs, "-DPulseAudio_DIR=" .. pulseaudio:installdir())
+                    table.insert(configs, "-DPulseAudio_DIR=" .. path.join(pulseaudio:installdir("lib"), "cmake"))
                     local includedirs = fetchinfo.includedirs or fetchinfo.sysincludedirs
                     if includedirs and #includedirs > 0 then
                         table.insert(configs, "-DPulseAudio_INCLUDE_DIR=" .. table.concat(includedirs, " "))
