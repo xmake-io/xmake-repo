@@ -33,6 +33,14 @@ package("plutovg")
     end)
 
     on_install(function (package)
+        io.writefile("cmake/plutovgConfig.cmake.in", [[
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+find_dependency(Threads)
+
+include("${CMAKE_CURRENT_LIST_DIR}/plutovgTargets.cmake")
+]])
         local configs = {"-DPLUTOVG_BUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
