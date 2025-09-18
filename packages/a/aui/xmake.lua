@@ -273,27 +273,28 @@ package("aui")
     end)
 
     on_install("windows", "macosx", "linux", "android", "iphoneos", "mingw", "msys", function (package)
-        if package:is_plat("linux") then
-            local pulseaudio = package:dep("pulseaudio")
-            if pulseaudio and not pulseaudio:is_system() then
-                local fetchinfo = pulseaudio:fetch({external = false})
-                if fetchinfo then
-                    local includedirs = fetchinfo.includedirs or fetchinfo.sysincludedirs
-                    if includedirs and #includedirs > 0 then
-                        table.insert(configs, "-DPULSEAUDIO_INCLUDE_DIR=" .. table.concat(includedirs, " "))
-                    end
-                    local libfiles = fetchinfo.libfiles
-                    if libfiles then
-                        table.insert(configs, "-DPULSEAUDIO_LIBRARY=" .. table.concat(libfiles, " "))
-                    end
-                end
-            end
-        end
         local configs = {
             "-DAUI_INSTALL_RUNTIME_DEPENDENCIES=OFF",
             "-DAUIB_NO_PRECOMPILED=TRUE",
             "-DAUIB_DISABLE=ON"
         }
+        if package:is_plat("linux") then
+            local pulseaudio = package:dep("pulseaudio")
+            if pulseaudio and not pulseaudio:is_system() then
+                local fetchinfo = pulseaudio:fetch({external = false})
+                if fetchinfo then
+                    table.insert(configs, "-DPulseAudio_DIR=" .. pulseaudio:installdir())
+                    local includedirs = fetchinfo.includedirs or fetchinfo.sysincludedirs
+                    if includedirs and #includedirs > 0 then
+                        table.insert(configs, "-DPulseAudio_INCLUDE_DIR=" .. table.concat(includedirs, " "))
+                    end
+                    local libfiles = fetchinfo.libfiles
+                    if libfiles then
+                        table.insert(configs, "-DPulseAudio_LIBRARY=" .. table.concat(libfiles, " "))
+                    end
+                end
+            end
+        end
         local opt = {}
         if package:is_plat("macosx") then
             if package:config("shared") then
