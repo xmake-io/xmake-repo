@@ -22,7 +22,7 @@ package("aui")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-views.diff", "8194b46068c7a6a0c0a3991d1a462faeea6d8ac00c9f7b046d335312e2258e85")
     add_patches("v7.1.2", "patches/v7.1.2/fix-backport-lunasvg.diff", "daf24391b88e44bdb801b2c1ba36a695f95384d8157ccb23cfc635d5f30bea4a")
     add_patches("v7.1.2", "patches/v7.1.2/fix-msvc-pretty-function.diff", "268f66f42594f0188fe50d33f5783e66f66024087097ebfdfef60c9768e151fd")
-    add_patches("v7.1.2", "patches/v7.1.2/fix-osx-enforce-cpp-template.diff", "fd8ec70a793940f9dd2000f8766552dc2238a460cad9b3d97159b642e8fbd186")
+    add_patches("v7.1.2", "patches/v7.1.2/fix-osx-enforce-cpp-template.diff", "a58e3209689846f4bedd631fad824131fa6e1e112cc8d40481bc6c42c7dc733a")
     add_patches("v7.1.2", "patches/v7.1.2/fixup-network.diff", "888c1ed0e96f21bd842de72f8f9fe933261c5f76c99be55cf8e83f424bd1f79e")
 
     add_deps("cmake")
