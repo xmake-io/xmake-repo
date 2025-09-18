@@ -283,7 +283,7 @@ package("aui")
             if pulseaudio and not pulseaudio:is_system() then
                 local fetchinfo = pulseaudio:fetch({external = false})
                 if fetchinfo then
-                    table.insert(configs, "-DPulseAudio_DIR=" .. pulseaudio:installdir("lib"))
+                    table.insert(configs, "-DPulseAudio_DIR=" .. pulseaudio:installdir())
                 end
             end
         end
