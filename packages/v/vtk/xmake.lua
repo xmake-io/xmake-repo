@@ -23,7 +23,7 @@ package("vtk")
     add_configs("external_deps", {description = "Build VTK with external dependencies.", default = true, type = "boolean"})
     add_configs("cuda",          {description = "Enable CUDA support.", default = false, type = "boolean"})
 
-    add_configs("imaging",    {description = "Enable Imageing modules.",   default = "YES", type = "string", values = {"YES", "NO", "WANT", "DONT_WANT", "DEFAULT"}})
+    add_configs("imaging",    {description = "Enable Imaging modules.",    default = "YES", type = "string", values = {"YES", "NO", "WANT", "DONT_WANT", "DEFAULT"}})
     add_configs("rendering",  {description = "Enable Rendering modules.",  default = "YES", type = "string", values = {"YES", "NO", "WANT", "DONT_WANT", "DEFAULT"}})
     add_configs("standalone", {description = "Enable StandAlone modules.", default = "YES", type = "string", values = {"YES", "NO", "WANT", "DONT_WANT", "DEFAULT"}})
     add_configs("views",      {description = "Enable Views modules.",      default = "YES", type = "string", values = {"YES", "NO", "WANT", "DONT_WANT", "DEFAULT"}})
@@ -73,7 +73,7 @@ package("vtk")
             package:add("deps", "double-conversion", "eigen", "expat", "exprtk", "fast_float", "fmt", "freetype", "gl2ps", "glew", "jsoncpp", "libharu", "libjpeg-turbo", "libpng", "libtiff", "libxml2", "lz4", "netcdf-c", "pegtl <3.0", "proj", "pugixml", "seacas", "sqlite3", "theora", "token", "utfcpp", "verdict", "xz", "zlib", {configs = {shared = package:config("shared")}})
             package:add("deps", "cgns", {configs = {hdf5 = true, shared = package:config("shared")}})
             package:add("deps", "hdf5", {configs = {zlib = true, shared = package:config("shared")}})
-            package:add("deps", "nlohmann_json", {configs = {cmake = true, shared = package:config("shared")}})
+            package:add("deps", "nlohmann_json", {configs = {cmake = true}})
         end
     end)
 
