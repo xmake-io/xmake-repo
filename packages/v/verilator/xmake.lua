@@ -7,6 +7,7 @@ package("verilator")
     add_urls("https://github.com/verilator/verilator/archive/refs/tags/$(version).tar.gz",
              "https://github.com/verilator/verilator.git")
 
+    add_versions("v5.040", "56c7c46314adfad06dd093b77823bfd9b49ebef72342549f790718199c3e8223")
     add_versions("v5.038", "f8c03105224fa034095ba6c8a06443f61f6f59e1d72f76b718f89060e905a0d4")
     add_versions("v5.036", "4199964882d56cf6a19ce80c6a297ebe3b0c35ea81106cd4f722342594337c47")
     add_versions("v5.034", "002da98e316ca6eee40407f5deb7d7c43a0788847d39c90d4d31ddbbc03020e8")
