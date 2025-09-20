@@ -36,7 +36,8 @@ package("p11-kit")
             "-Dbash_completion=disabled",
             "-Dman=false",
             "-Dnls=false",
-            "-Dtest=false"}
+            "-Dtest=false"
+        }
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         import("package.tools.meson").install(package, configs)
     end)
