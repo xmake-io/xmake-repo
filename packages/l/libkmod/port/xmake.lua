@@ -5,20 +5,12 @@ option("zstd", {type = "boolean", default = false})
 option("xz",   {type = "boolean", default = false})
 option("ver",  {type = "number"})
 
-if has_config("zlib") then
-    add_requires("zlib")
-    add_packages("zlib")
-    add_defines("ENABLE_ZLIB")
-end
-if has_config("zstd") then
-    add_requires("zstd")
-    add_packages("zstd")
-    add_defines("ENABLE_ZSTD")
-end
-if has_config("xz") then
-    add_requires("xz")
-    add_packages("xz")
-    add_defines("ENABLE_XZ")
+for _, lib in ipairs({"zlib", "zstd", "xz"}) do
+    if has_config(lib) then
+        add_requires(lib)
+        add_packages(lib)
+        add_defines("ENABLE_" .. lib:upper())
+    end
 end
 
 add_defines("ENABLE_DEBUG=" .. (is_mode("debug") and "1" or "0"))
@@ -43,14 +35,10 @@ target("kmod")
     add_files("libkmod/*.c", "shared/*.c")
     add_options("zlib", "zstd", "xz", "ver")
 
-    if not has_config("zlib") then
-        remove_files("libkmod/libkmod-file-zlib.c")
-    end
-    if not has_config("zstd") then
-        remove_files("libkmod/libkmod-file-zstd.c")
-    end
-    if not has_config("xz") then
-        remove_files("libkmod/libkmod-file-xz.c")
+    for _, lib in ipairs({"zlib", "zstd", "xz"}) do
+        if not has_config(lib) then
+            remove_files("libkmod/libkmod-file-" .. lib .. ".c")
+        end
     end
 
     on_config(function(target)
