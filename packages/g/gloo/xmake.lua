@@ -7,27 +7,21 @@ package("gloo")
 
     add_versions("2025.07.29", "1dbd7e931568a5e3d6da16c0f2058f0606039640")
 
-    add_configs("mpi", {description = "Build mpi transport.", default = false, type = "boolean"})
-    if not is_plat("windows") then
-        add_configs("redis", {description = "Support using Redis for rendezvous.", default = false, type = "boolean"})
-        add_configs("libuv", {description = "Build libuv transport.", default = false, type = "boolean"})
-    end
-    if is_plat("linux") then
-        add_configs("openssl_dynlink", {description = "Build TCP-TLS transport with OpenSSL.", default = false, type = "boolean"})
-        add_configs("openssl_dynload", {description = "Build TCP-TLS transport with OpenSSL.", default = false, type = "boolean"})
-    end
+    add_configs("mpi",   {description = "Build mpi transport.", default = false, type = "boolean"})
+    add_configs("redis", {description = "Support using Redis for rendezvous.", default = false, type = "boolean"})
+    add_configs("libuv", {description = "Build libuv transport.", default = false, type = "boolean"})
 
-    add_deps("cmake")
+    if is_plat("linux") then
+        add_configs("openssl", {description = "Build TCP-TLS transport with OpenSSL.", default = false, values = {false, "dynlink", "dynload"}})
+    end
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
-    -- if is_plat("windows", "mingw", "msys", "cygwin") then
-    --     add_syslinks("ws2_32")
-    -- end
 
+    add_deps("cmake")
     on_check(function (package)
-        assert(package:is_arch("x86_64", "x64", "arm64", "arm64-v8a"), "Gloo can only be built on 64-bit systems.")
+        assert(package:is_arch64(), "Gloo can only be built on 64-bit systems.")
     end)
 
     on_load(function (package)
@@ -37,7 +31,7 @@ package("gloo")
         if package:config("libuv") then
             package:add("deps", "libuv")
         end
-        if package:config("openssl_dynlink") or package:config("openssl_dynload") then
+        if package:config("openssl") then
             package:add("deps", "openssl")
         end
         if package:config("mpi") then
@@ -52,14 +46,14 @@ package("gloo")
         table.insert(configs, "-DUSE_REDIS=" .. (package:config("redis") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_LIBUV=" .. (package:config("libuv") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_MPI=" .. (package:config("mpi") and "ON" or "OFF"))
-        if package:config("openssl_dynlink") then
+        local openssl = package:config("openssl")
+        if openssl == "dynlink" then
             table.insert(configs, "-DUSE_TCP_OPENSSL_LINK=ON")
-        elseif package:config("openssl_dynload") then
+        elseif openssl == "dynload" then
             table.insert(configs, "-DUSE_TCP_OPENSSL_LOAD=ON")
         end
 
         io.replace("gloo/types.h", "#include <iostream>", "#include <iostream>\n#include <cstdint>", {plain = true})
-        io.replace("gloo/rendezvous/file_store.cc", "#if defined(_MSC_VER)", "#if defined(_WIN32)", {plain = true})
 
         import("package.tools.cmake").install(package, configs)
     end)
