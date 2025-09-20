@@ -33,7 +33,7 @@ package("libsemanage")
         io.replace("Makefile", "$(MAKE) -C man install", "", {plain = true})
 
         -- fix pkg-config
-        io.replace("src/Makefile", ":@prefix@:$(PREFIX):", ":@prefix@:$(DESTDIR):", {plain = true})
+        io.replace("src/Makefile", "s:@prefix@:$(PREFIX):; s:@libdir@:$(LIBDIR):; s:@includedir@:$(INCLUDEDIR):", "s:@prefix@:$(DESTDIR):; s:@libdir@:$(DESTDIR)$(LIBDIR):; s:@includedir@:$(DESTDIR)$(INCLUDEDIR):", {plain = true})
 
         local envs = make.buildenvs(package)
         local cflags = {}
