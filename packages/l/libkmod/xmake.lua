@@ -19,13 +19,11 @@ package("libkmod")
 
     add_includedirs("include", "include/libkmod")
     on_load(function (package)
-    on_load(function (package)
         for _, lib in ipairs({"zstd", "zlib", "xz"}) do
             if package:config(lib) then
                 package:add("deps", lib)
             end
         end
-    end)
     end)
 
     on_install("linux", "android", function (package)
