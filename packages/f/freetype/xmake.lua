@@ -70,7 +70,7 @@ package("freetype")
     end)
 
     on_install(function (package)
-        io.replace("CMakeLists.txt", "cmake_minimum_required(VERSION 3.12", "cmake_minimum_required(VERSION 3.25", {plain = true})
+        io.replace("builds/cmake/FindBrotliDec.cmake", "${PC_BROTLIDEC_LIBRARY_DIRS})", "${PC_BROTLIDEC_LIBRARY_DIRS})\nfind_library(BROTLICOMMON_LIB NAMES brotlicommon HINTS ${PC_BROTLIDEC_LIBDIR})\nlist(APPEND BROTLIDEC_LIBRARIES ${BROTLICOMMON_LIB})", {plain = true})
         local configs = {"-DCMAKE_INSTALL_LIBDIR=lib"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -83,15 +83,6 @@ package("freetype")
                 end
 
                 local lib = package:dep(opt.pkg or opt.conf)
-                if lib and not lib:is_system() then
-                    local includeconf = opt.cmakeinclude or (opt.cmakewith .. "_INCLUDE_DIRS")
-                    local libconf = opt.cmakelib or (opt.cmakewith .. "_LIBRARIES")
-                    local fetchinfo = lib:fetch()
-                    if fetchinfo then
-                        table.insert(configs, "-D" .. includeconf .. "=" .. table.concat(fetchinfo.includedirs or fetchinfo.sysincludedirs, ";"))
-                        table.insert(configs, "-D" .. libconf .. "=" .. table.concat(fetchinfo.libfiles, ";"))
-                    end
-                end
             else
                 if package:version():ge("2.11.1") then
                     table.insert(configs, "-DFT_DISABLE_" .. opt.cmakewith .. "=ON")
@@ -100,11 +91,11 @@ package("freetype")
                 end
             end
         end
-        add_dep({conf = "bzip2", cmakewith = "BZIP2", cmakedisable = "BZip2", cmakeinclude = "BZIP2_INCLUDE_DIR"})
-        add_dep({conf = "png", pkg = "libpng", cmakewith = "PNG", cmakeinclude = "PNG_PNG_INCLUDE_DIR", cmakelib = "PNG_LIBRARY"})
-        add_dep({conf = "woff2", pkg = "brotli", cmakewith = "BROTLI", cmakedisable = "BrotliDec", cmakeinclude = "BROTLIDEC_INCLUDE_DIRS", cmakelib = "BROTLIDEC_LIBRARIES"})
-        add_dep({conf = "zlib", cmakewith = "ZLIB", cmakeinclude = "ZLIB_INCLUDE_DIR", cmakelib = "ZLIB_LIBRARY"})
-        add_dep({conf = "harfbuzz", pkg = "harfbuzz", cmakewith = "HARFBUZZ", cmakedisable = "HarfBuzz", cmakeinclude = "HarfBuzz_INCLUDE_DIR", cmakelib = "HarfBuzz_LIBRARY"})
+        add_dep({conf = "bzip2", cmakewith = "BZIP2", cmakedisable = "BZip2"})
+        add_dep({conf = "png", pkg = "libpng", cmakewith = "PNG"})
+        add_dep({conf = "woff2", pkg = "brotli", cmakewith = "BROTLI", cmakedisable = "BrotliDec"})
+        add_dep({conf = "zlib", cmakewith = "ZLIB"})
+        add_dep({conf = "harfbuzz", pkg = "harfbuzz", cmakewith = "HARFBUZZ", cmakedisable = "HarfBuzz"})
 
         import("package.tools.cmake").install(package, configs)
     end)
