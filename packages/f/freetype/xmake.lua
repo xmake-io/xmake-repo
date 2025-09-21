@@ -90,8 +90,8 @@ package("freetype")
                     local libconf = opt.cmakelib or (opt.cmakewith .. "_LIBRARIES")
                     local fetchinfo = lib:fetch()
                     if fetchinfo then
-                        local includedirs = fetchinfo.includedirs or fetchinfo.sysincludedirs or {}
-                        if #includedirs > 0 then
+                        local includedirs = fetchinfo.includedirs or fetchinfo.sysincludedirs
+                        if includedirs and #includedirs > 0 then
                             table.insert(configs, "-D" .. includeconf .. "=" .. table.concat(fetchinfo.includedirs or fetchinfo.sysincludedirs, ";"))
                         end
                         -- libfiles may include .dll (https://github.com/xmake-io/xmake-repo/pull/8155)
