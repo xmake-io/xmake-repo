@@ -15,10 +15,6 @@ end
 
 add_defines("ENABLE_DEBUG=" .. (is_mode("debug") and "1" or "0"))
 
--- if is_config("ver", 34) then
---     add_defines("ENABLE_ELFDBG=" .. (is_mode("debug") and "1" or "0"))
--- end
-
 target("kmod")
     set_kind("$(kind)")
     set_languages("gnu99")
