@@ -12,18 +12,31 @@ package("libdispatch")
 
     add_links("dispatch", "BlocksRuntime")
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("shlwapi", "ws2_32", "winmm", "synchronization")
     elseif is_plat("linux", "bsd") then
         add_syslinks("pthread", "rt")
     end
 
     add_deps("cmake")
+    
+    on_check(function (package)
+        if package:is_plat("windows") then
+            if not package:has_tool("cxx", "clang_cl") then
+                raise("package(libdispatch) unsupported msvc && clang toolchain, you can use clang-cl toolchain\nadd_requires(\"libdispatch\", {configs = {toolchains = \"clang-cl\"}}))")
+            end
+        else
+            if not package:has_tool("cxx", "clang", "clangxx") then
+                raise("package(libdispatch) unsupported gcc toolchain, you can use clang toolchain\nadd_requires(\"libdispatch\", {configs = {toolchains = \"clang\"}}))")
+            end
+        end
+    end)
 
     on_install(function (package)
+        io.replace("CMakeLists.txt", "set(CMAKE_POSITION_INDEPENDENT_CODE YES)", "", {plain = true})
         io.replace("cmake/modules/DispatchCompilerWarnings.cmake", "-Werror", "", {plain = true})
 
-        local configs = {}
+        local configs = {"-DBUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
