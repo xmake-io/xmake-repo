@@ -68,7 +68,7 @@ package("freetype")
         add_dep("zlib")
         add_dep("png", "libpng")
         add_dep("woff2", "brotli")
-        add_dep("harfbuzz", nil, {freetype = false}) -- otherwise it creates a circular dependency
+        add_dep("harfbuzz", nil, {coonfigs = {freetype = false}}) -- otherwise it creates a circular dependency
     end)
 
     on_install(function (package)
