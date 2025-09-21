@@ -40,4 +40,4 @@ jobs:
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D --toolchain=clang-20 -k ${{ matrix.kind }}
+          xmake l ./scripts/test.lua -vD --toolchain=clang-20 -k ${{ matrix.kind }}

@@ -33,4 +33,4 @@ jobs:
           sudo ln -s /opt/homebrew/bin/gfortran-14 /opt/homebrew/bin/gfortran
           export LIBRARY_PATH="$LIBRARY_PATH:/opt/homebrew/lib/gcc/14/"
           export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/homebrew/lib/gcc/14/"
-          xmake l ./scripts/test.lua -D -a ${{ matrix.arch }} -k ${{ matrix.kind }}
+          xmake l ./scripts/test.lua -vD -a ${{ matrix.arch }} -k ${{ matrix.kind }}

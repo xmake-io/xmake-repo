@@ -49,7 +49,7 @@ jobs:
           ANDROID_NDK_HOME: ""
         run: |
           if ("${{ matrix.ndk }}" -eq "r27") {
-            xrepo env -y -b "ndk 27" xmake l ./scripts/test.lua -D -p android -a ${{ matrix.arch }} --ndk_sdkver=${{ matrix.ndk_sdkver }} 
+            xrepo env -y -b "ndk 27" xmake l ./scripts/test.lua -vD -p android -a ${{ matrix.arch }} --ndk_sdkver=${{ matrix.ndk_sdkver }} 
           } else {
-            xrepo env -y -b "ndk 22" xmake l ./scripts/test.lua -D -p android -a ${{ matrix.arch }} --ndk_sdkver=${{ matrix.ndk_sdkver }} 
+            xrepo env -y -b "ndk 22" xmake l ./scripts/test.lua -vD -p android -a ${{ matrix.arch }} --ndk_sdkver=${{ matrix.ndk_sdkver }} 
           }
