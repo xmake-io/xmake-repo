@@ -58,17 +58,17 @@ package("freetype")
     add_includedirs("include/freetype2")
 
     on_load(function (package)
-        local function add_dep(conf, pkg, config)
+        local function add_configdep(conf, pkg, depconf)
             if package:config(conf) then
-                package:add("deps", pkg or conf, config)
+                package:add("deps", pkg or conf, depconf)
             end
         end
 
-        add_dep("bzip2")
-        add_dep("zlib")
-        add_dep("png", "libpng")
-        add_dep("woff2", "brotli")
-        add_dep("harfbuzz", nil, {coonfigs = {freetype = false}}) -- otherwise it creates a circular dependency
+        add_configdep("bzip2")
+        add_configdep("zlib")
+        add_configdep("png", "libpng")
+        add_configdep("woff2", "brotli")
+        add_configdep("harfbuzz", nil, {configs = {freetype = false}}) -- we have to disable freetype in harfbuzz to prevent a circular dependency
     end)
 
     on_install(function (package)
