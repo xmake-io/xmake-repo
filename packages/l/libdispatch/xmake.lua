@@ -30,11 +30,26 @@ package("libdispatch")
                 raise("package(libdispatch) unsupported gcc toolchain, you can use clang toolchain\nadd_requires(\"libdispatch\", {configs = {toolchains = \"clang\"}}))")
             end
         end
+
+        if package:is_plat("android") then
+            local ndk = package:toolchain("ndk"):config("ndkver")
+            assert(ndk and tonumber(ndk) > 22, "package(libdispatch) require ndk version > 22")
+        end
     end)
 
-    on_install(function (package)
+    on_install("!bsd and !iphoneos", function (package)
+        if not package:config("shared") then
+            package:add("defines", "dispatch_STATIC")
+            if not package:is_plat("macosx") then
+                package:add("defines", "BlocksRuntime_STATIC")
+            end
+        end
+
         io.replace("CMakeLists.txt", "set(CMAKE_POSITION_INDEPENDENT_CODE YES)", "", {plain = true})
         io.replace("cmake/modules/DispatchCompilerWarnings.cmake", "-Werror", "", {plain = true})
+        if not package:is_plat("macosx") then
+            io.replace("src/CMakeLists.txt", "BlocksRuntime::BlocksRuntime", "", {plain = true})
+        end
 
         local configs = {"-DBUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
