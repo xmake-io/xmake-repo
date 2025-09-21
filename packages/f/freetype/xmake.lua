@@ -8,6 +8,7 @@ package("freetype")
     add_urls("https://gitlab.freedesktop.org/freetype/freetype.git",
              "https://github.com/freetype/freetype.git", {alias = "git"})
 
+    add_versions("archive:2.14.1", "174d9e53402e1bf9ec7277e22ec199ba3e55a6be2c0740cb18c0ee9850fc8c34")
     add_versions("archive:2.13.3", "5c3a8e78f7b24c20b25b54ee575d6daa40007a5f4eea2845861c3409b3021747")
     add_versions("archive:2.13.1", "0b109c59914f25b4411a8de2a506fdd18fa8457eb86eca6c7b15c19110a92fa5")
     add_versions("archive:2.13.0", "a7aca0e532a276ea8d85bd31149f0a74c33d19c8d287116ef8f5f8357b4f1f80")
@@ -16,6 +17,7 @@ package("freetype")
     add_versions("archive:2.11.0", "a45c6b403413abd5706f3582f04c8339d26397c4304b78fa552f2215df64101f")
     add_versions("archive:2.10.4", "5eab795ebb23ac77001cfb68b7d4d50b5d6c7469247b0b01b2c953269f658dac")
     add_versions("archive:2.9.1",  "ec391504e55498adceb30baceebd147a6e963f636eb617424bcfc47a169898ce")
+    add_versions("git:2.14.1", "VER-2-14-1")
     add_versions("git:2.13.3", "VER-2-13-3")
     add_versions("git:2.13.1", "VER-2-13-1")
     add_versions("git:2.13.0", "VER-2-13-0")
@@ -89,7 +91,9 @@ package("freetype")
                     local fetchinfo = lib:fetch()
                     if fetchinfo then
                         table.insert(configs, "-D" .. includeconf .. "=" .. table.concat(fetchinfo.includedirs or fetchinfo.sysincludedirs, ";"))
-                        table.insert(configs, "-D" .. libconf .. "=" .. table.concat(fetchinfo.libfiles, ";"))
+                        -- libfiles may include .dll (https://github.com/xmake-io/xmake-repo/pull/8155)
+                        local libfiles = table.remove_if(table.copy(fetchinfo.libfiles), function (file) return path.extension(file) == ".dll" end)
+                        table.insert(configs, "-D" .. libconf .. "=" .. table.concat(libfiles, ";"))
                     end
                 end
             else
