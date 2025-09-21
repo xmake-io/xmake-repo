@@ -86,18 +86,22 @@ package("freetype")
 
                 local lib = package:dep(opt.pkg or opt.conf)
                 if lib and not lib:is_system() then
-                    local includeconf = opt.cmakeinclude or (opt.cmakewith .. "_INCLUDE_DIRS")
-                    local libconf = opt.cmakelib or (opt.cmakewith .. "_LIBRARIES")
                     local fetchinfo = lib:fetch()
                     if fetchinfo then
                         local includedirs = fetchinfo.includedirs or fetchinfo.sysincludedirs
                         if includedirs and #includedirs > 0 then
-                            table.insert(configs, "-D" .. includeconf .. "=" .. table.concat(fetchinfo.includedirs or fetchinfo.sysincludedirs, ";"))
+                            local includeconfs = opt.cmakeinclude and table.wrap(opt.cmakeinclude) or {opt.cmakewith .. "_INCLUDE_DIRS"}
+                            for _, includeconf in ipairs(includeconfs) do
+                                table.insert(configs, "-D" .. includeconf .. "=" .. table.concat(fetchinfo.includedirs or fetchinfo.sysincludedirs, ";"))
+                            end
                         end
                         -- libfiles may include .dll (https://github.com/xmake-io/xmake-repo/pull/8155)
                         local libfiles = table.remove_if(table.clone(fetchinfo.libfiles or {}), function (file) return path.extension(file) == ".dll" end)
                         if #libfiles > 0 then
-                            table.insert(configs, "-D" .. libconf .. "=" .. table.concat(libfiles, ";"))
+                            local libconfs = opt.cmakelib and table.wrap(opt.cmakelib) or {opt.cmakewith .. "_LIBRARIES"}
+                            for _, libconf in ipairs(libconfs) do
+                                table.insert(configs, "-D" .. libconf .. "=" .. table.concat(libfiles, ";"))
+                            end
                         end
                     end
                 end
@@ -109,7 +113,7 @@ package("freetype")
                 end
             end
         end
-        add_dep({conf = "bzip2", cmakewith = "BZIP2", cmakedisable = "BZip2", cmakeinclude = "BZIP2_INCLUDE_DIR"})
+        add_dep({conf = "bzip2", cmakewith = "BZIP2", cmakedisable = "BZip2", cmakeinclude = "BZIP2_INCLUDE_DIR", cmakelib = {"BZIP2_LIBRARIES", "BZIP2_LIBRARY"}}) -- there seem to be an error in FindBZip2.cmake
         add_dep({conf = "png", pkg = "libpng", cmakewith = "PNG", cmakeinclude = "PNG_PNG_INCLUDE_DIR", cmakelib = "PNG_LIBRARY"})
         add_dep({conf = "woff2", pkg = "brotli", cmakewith = "BROTLI", cmakedisable = "BrotliDec", cmakeinclude = "BROTLIDEC_INCLUDE_DIRS", cmakelib = "BROTLIDEC_LIBRARIES"})
         add_dep({conf = "zlib", cmakewith = "ZLIB", cmakeinclude = "ZLIB_INCLUDE_DIR", cmakelib = "ZLIB_LIBRARY"})
