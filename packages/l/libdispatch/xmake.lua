@@ -3,7 +3,7 @@ package("libdispatch")
     set_description("The libdispatch Project, (a.k.a. Grand Central Dispatch), for concurrency on multicore hardware")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/swiftlang/swift-corelibs-libdispatch/archive/refs/tags/$(version).tar.gz")
+    add_urls("https://github.com/swiftlang/swift-corelibs-libdispatch/archive/refs/tags/swift-$(version)-RELEASE.tar.gz")
     add_urls("https://github.com/swiftlang/swift-corelibs-libdispatch.git", {alias = "git"})
 
     add_versions("6.1.1", "6fc6f8b1767a1348e1d960647b2bfbc52fd7074b7aeab97bd0f4b21af58baa47")
