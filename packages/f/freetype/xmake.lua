@@ -58,9 +58,9 @@ package("freetype")
     add_includedirs("include/freetype2")
 
     on_load(function (package)
-        local function add_dep(conf, pkg)
+        local function add_dep(conf, pkg, config)
             if package:config(conf) then
-                package:add("deps", pkg or conf)
+                package:add("deps", pkg or conf, config)
             end
         end
 
@@ -68,7 +68,7 @@ package("freetype")
         add_dep("zlib")
         add_dep("png", "libpng")
         add_dep("woff2", "brotli")
-        add_dep("harfbuzz")
+        add_dep("harfbuzz", nil, {freetype = false}) -- otherwise it creates a circular dependency
     end)
 
     on_install(function (package)
