@@ -47,7 +47,7 @@ package("libdispatch")
 
         io.replace("CMakeLists.txt", "set(CMAKE_POSITION_INDEPENDENT_CODE YES)", "", {plain = true})
         io.replace("cmake/modules/DispatchCompilerWarnings.cmake", "-Werror", "", {plain = true})
-        if not package:is_plat("macosx") then
+        if package:is_plat("macosx") then
             io.replace("src/CMakeLists.txt", "BlocksRuntime::BlocksRuntime", "", {plain = true})
         end
 
