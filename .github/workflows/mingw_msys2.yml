@@ -52,3 +52,11 @@ jobs:
             xmake l ./scripts/test.lua -vD -p mingw -a i386 -k ${{ matrix.kind }}
           fi
 
+      - name: Upload xmake home
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xmake-home-${{ matrix.arch }}-${{ matrix.kind }}
+          include-hidden-files: true
+          retention-days: 1
+          path: ~/AppData/Local/.xmake
