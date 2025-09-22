@@ -48,7 +48,7 @@ package("fadec")
                     // xor eax, eax
                     failed |= fe_enc64(&cur, FE_XOR32rr, FE_AX, FE_AX);
                 }
-            ]]}, {includes = "fadec-enc.h"}))
+            ]]}, {configs = {languages = "c11"}, includes = "fadec-enc.h"}))
         end
         if package:config("encode2") then
             assert(package:has_cfuncs("fe64_XOR32rr", {includes = "fadec-enc2.h"}))
