@@ -17,7 +17,7 @@ package("fadec")
 
     on_install(function (package)
         assert(package:config("decode") or package:config("encode") or package:config("encode2"),
-            "decode, encode, encode2 should enable one")
+            "at least one of 'decode', 'encode' or 'encode2' must be enabled")
 
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
