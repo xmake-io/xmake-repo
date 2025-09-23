@@ -12,6 +12,9 @@ package("clip")
     add_configs("list_format", {description = "Compile with support to list clipboard formats", default = false, type = "boolean"})
     add_configs("xp", {description = "Enable Windows XP support", default = false, type = "boolean"})
     add_configs("x11_png", {description = "Compile with libpng to support copy/paste image in png format", default = true, type = "boolean"})
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     add_deps("cmake")
     if is_plat("linux") then
@@ -20,6 +23,8 @@ package("clip")
 
     if is_plat("windows", "mingw") then
         add_syslinks("advapi32", "shlwapi", "ole32", "user32", "windowscodecs", "uuid")
+    elseif is_plat("macosx") then
+        add_frameworks("Foundation", "AppKit", "CoreGraphics")
     end
 
     on_load(function(package)
@@ -35,7 +40,8 @@ package("clip")
         end
     end)
 
-    on_install(function(package)
+    on_install("!android and !iphoneos and !bsd and !cross", function(package)
+        io.replace("CMakeLists.txt", "ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}", "ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}\nRUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}", {plain = true})
         io.replace("CMakeLists.txt", "if(CLIP_WINDOWSCODECS_LIBRARY)", "if(1)", {plain = true})
         io.replace("CMakeLists.txt", "target_link_libraries(clip ${CLIP_WINDOWSCODECS_LIBRARY})", "target_link_libraries(clip windowscodecs)", {plain = true})
 
