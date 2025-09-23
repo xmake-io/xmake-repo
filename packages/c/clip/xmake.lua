@@ -58,5 +58,5 @@ package("clip")
             void test() {
                 clip::set_text("foo");
             }
-        ]]}, {configs = {languages = "c++11"}, includes = {"clip/clip.h"}}))
+        ]]}, {configs = {languages = "c++14"}, includes = {"clip/clip.h"}}))
     end)
