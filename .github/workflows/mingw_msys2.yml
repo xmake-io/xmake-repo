@@ -51,9 +51,3 @@ jobs:
           else
             xmake l ./scripts/test.lua -vD -p mingw -a i386 -k ${{ matrix.kind }}
           fi
-
-      - name: Upload xmake home
-        if: failure()
-        shell: msys2 {0}
-        run: |
-          echo | i686-w64-mingw32-g++ -dM -E - | grep WIN32
