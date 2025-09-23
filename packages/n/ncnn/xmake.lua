@@ -9,10 +9,9 @@ package("ncnn")
     add_versions("20250503", "3afea4cf092ce97d06305b72c6affbcfb3530f536ae8e81a4f22007d82b729e9")
 
     add_configs("vulkan", {description = "Enable Vulkan support", default = false, type = "boolean"})
-    add_configs("simpleocv", {description = "Enable SimpleOpenCV", default = true, type = "boolean"})
+    add_configs("c_api", {description = "Build ncnn with C api", default = false, type = "boolean"})
 
     add_deps("cmake")
-    add_deps("protobuf-cpp 3.11.2", "glslang")
 
     if is_plat("android") then
         add_syslinks("android")
@@ -27,6 +26,9 @@ package("ncnn")
     end
 
     on_load(function (package)
+        if package:config("vulkan") then
+            package:add("deps", "glslang")
+        end
         if package:is_plat("windows") then
             if package:config("vulkan") then
                 package:add("deps", "vulkansdk")
@@ -46,6 +48,7 @@ package("ncnn")
         local configs = {
             "-DNCNN_BUILD_EXAMPLES=OFF",
             "-DNCNN_BUILD_TOOLS=OFF",
+            "-DNCNN_SIMPLEOCV=OFF",
             "-DNCNN_BUILD_BENCHMARK=OFF",
             "-DNCNN_BUILD_TESTS=OFF",
             "-DNCNN_PYTHON=OFF",
@@ -54,16 +57,25 @@ package("ncnn")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DNCNN_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DNCNN_VULKAN=" .. (package:config("vulkan") and "ON" or "OFF"))
-        table.insert(configs, "-DNCNN_SIMPLEOCV=" .. (package:config("simpleocv") and "ON" or "OFF"))
+        table.insert(configs, "-DNCNN_C_API=" .. (package:config("c_api") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            #include <ncnn/net.h>
-            void test() {
-                ncnn::Net net;
-                net.load_param("model.param");
-            }
-        ]]}, {configs = {languages = "c++11"}}))
+        if not package:config("c_api") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <ncnn/net.h>
+                void test() {
+                    ncnn::Net net;
+                    net.load_param("model.param");
+                }
+            ]]}, {configs = {languages = "c++11"}}))
+        else
+            assert(package:check_csnippets({test = [[
+                #include <ncnn/c_api.h>
+                void test() {
+                    const char* ver = ncnn_version();
+                }
+            ]]}))
+        end
     end)
