@@ -7,6 +7,8 @@ package("seqan3")
     add_urls("https://github.com/seqan/seqan3/archive/refs/tags/$(version).tar.gz",
              "https://github.com/seqan/seqan3.git")
 
+    add_versions("3.4.0", "8e000e6788f1e2ada071b36f64231d56f18e2d687ab4122d86cd3aefc6c87743")
+    add_versions("3.3.0", "96975406445c8a5974803eefa146ee2f85206f6d2c2bccf45171ee0b1a653fb8")
     add_versions("3.2.0", "80d41dd035407cfec83eb3a4466d0421adc27129af684290c0c4da31421e7276")
 
     add_configs("cereal", {description = "required for serialisation and CTD support", default = false, type = "boolean"})
@@ -35,6 +37,63 @@ package("seqan3")
         end
     end)
 
+    if on_check then
+        on_check(function (package)
+            if package:is_plat("android") then
+                local ndk = package:toolchain("ndk"):config("ndkver")
+                assert(ndk and tonumber(ndk) >= 27, "package(seqan3) require ndk version >= 27")
+            end
+
+            local check_map = {
+                ["3.2.0"] = {
+                    ["gcc"] = {
+                        version_range = ">=10.0",
+                        message = "package(seqan3): v3.2.0 needs gcc >= 10",
+                    },
+                    ["clang"] = {
+                        version_range = "<=0.0",
+                        message = "package(seqan3): v3.2.0 does not support clang",
+                    }
+                },
+                ["3.3.0"] = {
+                    ["gcc"] = {
+                        version_range = ">=11.0",
+                        message = "package(seqan3): v3.3.0 needs gcc >= 11",
+                    },
+                    ["clang"] = {
+                        version_range = "<=0.0",
+                        message = "package(seqan3): v3.3.0 does not support clang",
+                    }
+                },
+                ["3.4.0"] = {
+                    ["gcc"] = {
+                        version_range = ">=12.0",
+                        message = "package(seqan3): v3.4.0 needs gcc >= 12",
+                    },
+                    ["clang"] = {
+                        version_range = ">=17.0",
+                        message = "package(seqan3): v3.4.0 needs clang >= 17",
+                    }
+                },
+            }
+
+            import("core.base.semver")
+            import("lib.detect.find_tool")
+            local info
+            if package:has_tool("cc", "gcc", "gxx") then
+                info = find_tool("gcc", {version = true})
+            elseif package:has_tool("cc", "clang", "clangxx") then
+                info = find_tool("clang", {version = true})
+            end
+            local check = check_map[package:version():rawstr()]
+            if info == nil or check == nil or check[info.name] == nil then
+                return
+            end
+
+            assert(semver.satisfies(info.version, check[info.name].version_range), check[info.name].message)
+        end)
+    end
+
     on_install("linux", "macosx", "bsd", "android", "iphoneos", "cross", function (package)
         os.cp("include", package:installdir())
     end)
@@ -45,5 +104,5 @@ package("seqan3")
             void test() {
                 seqan3::debug_stream << "Hello World!\n";
             }
-        ]]}, {configs = {languages = "c++20"}}))
+        ]]}, {configs = {languages = package:version():ge("3.4.0") and "c++23" or "c++20"}}))
     end)
