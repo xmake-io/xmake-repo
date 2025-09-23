@@ -25,7 +25,7 @@ package("gtest")
 
     add_configs("main",  {description = "Link to the gtest_main entry point.", default = false, type = "boolean"})
     add_configs("gmock", {description = "Link to the googlemock library.", default = true, type = "boolean"})
-    add_configs("cmake", {description = "Use cmake build system", default = true, type = "boolean"})
+    add_configs("cmake", {description = "Use cmake build system", default = false, type = "boolean"})
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
