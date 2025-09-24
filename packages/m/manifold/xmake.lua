@@ -24,7 +24,7 @@ package("manifold")
     add_configs("tracy", {description = "Enable profiling", default = false, type = "boolean"}) --for profiling,should be disabled by default
     
     add_deps("cmake") --necessary for cmake project
-    add_deps("gtest")
+
 
     on_install("linux", "macosx","windows", function (package)
         local configs = {}
@@ -33,7 +33,7 @@ package("manifold")
         
         
         if package:config("cmake_args") then
-            table.join2(configs, package:config("cmake_args"))
+            table.join(configs, package:config("cmake_args"))
         end --this allows user to add more option
             
         table.insert(configs,"-DMANIFOLD_JSBIND=" .. (package:config("jsbind") and "ON" or "OFF"))
@@ -50,6 +50,11 @@ package("manifold")
         
         table.insert(configs,"-DMANIFOLD_TEST=" .. (package:config("test") and "ON" or "OFF"))
         table.insert(configs,"-DTRACY_ENABLE=" .. (package:config("tracy") and "ON" or "OFF"))
+        if(package:config("test"))
+            then
+                package:add("deps", "gtest")
+            end
+        
         
         if(os.host() == "windows")
             then
