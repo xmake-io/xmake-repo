@@ -53,7 +53,7 @@ package("manifold")
         
         if(os.host() == "windows")
             then
-                table.insert(configs,"--DBUILD_SHARED_LIBS=OFF")   --according to author,shared lib may cause problem on windows platform 
+                table.insert(configs,"-DBUILD_SHARED_LIBS=OFF")   --according to author,shared lib may cause problem on windows platform 
             end
             
             
