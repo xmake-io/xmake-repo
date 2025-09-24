@@ -49,7 +49,8 @@ package("libkmod")
 
     on_install("linux", "android", function (package)
         if package:is_plat("android") then
-            if package:version():lt("v34") then
+            local ndk_sdkver = package:toolchain("ndk"):config("ndk_sdkver")
+            if tonumber(ndk_sdkver) < 23 then
                 io.replace("shared/util.h", "#include <time.h>", "#include <time.h>\n#include <libgen.h>", {plain = true})
             end
             io.replace("shared/util.h", "#include <time.h>", [[
