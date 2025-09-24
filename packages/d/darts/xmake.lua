@@ -12,6 +12,10 @@ package("darts")
     add_versions("git:0.32", "87b71afd6cf784953e3c08f24c64203397f3b724")
 
     on_install(function (package)
+        if os.isfile("darts.h") then
+            io.replace("darts.h", "register", "", {plain = true})
+        end
+
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             target("darts")
