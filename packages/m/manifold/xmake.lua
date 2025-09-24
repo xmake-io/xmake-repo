@@ -74,7 +74,7 @@ end)
 on_test(function(package)
     assert(package:check_cxxsnippets({
         test = [[
-            #include <manifold.h>
+            #include <manifold/manifold.h>
             void test() {
                 manifold::Manifold cube = manifold::Manifold::Cube({1, 1, 1});
                 (void)cube;
