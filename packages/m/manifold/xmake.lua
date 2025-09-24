@@ -34,6 +34,7 @@ end
         if package:config("cmake_args") then
             table.join(configs, package:config("cmake_args"))
         end --this allows user to add more option
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs,"-DMANIFOLD_JSBIND=" .. (package:config("jsbind") and "ON" or "OFF"))
         table.insert(configs,"-DMANIFOLD_CBIND=" .. (package:config("cbind") and "ON" or "OFF"))
         table.insert(configs,"-DMANIFOLD_PYBIND=" .. (package:config("pybind") and "ON" or "OFF"))
