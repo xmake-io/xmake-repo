@@ -10,14 +10,15 @@ package("manifold")
     add_configs("jsbind", {description = "Enable js binding", default = false, type = "boolean"})
     add_configs("cbind", {description = "Enable c binding", default = true, type = "boolean"})
     add_configs("pybind", {description = "Enable python binding", default = false, type = "boolean"})
-    add_configs("parellel", {description = "Enable js binding", default = true, type = "boolean"}) --不开启的话你为什么不去用libigl呢 ：)
     
-    add_configs("exporter", {description = "Enable js binding", default = true, type = "boolean"})
+    add_configs("parellel", {description = "Enable parellel processing", default = true, type = "boolean"}) --不开启的话你为什么不去用libigl呢 ：)
+    add_configs("clipper2_feature", {description = "Enable 2d simple operation", default = true, type = "boolean"})
+    add_configs("exporter", {description = "Enable exporting models", default = true, type = "boolean"})
     
     add_configs("assert", {description = "Enable js binding", default = false, type = "boolean"}) --只能和DEBUG一起开！！
     
-    add_configs("test", {description = "Enable js binding", default = false, type = "boolean"})
-    add_configs("tracy", {description = "Enable js binding", default = false, type = "boolean"})
+    add_configs("test", {description = "Enable test", default = false, type = "boolean"})
+    add_configs("tracy", {description = "Enable profiling", default = false, type = "boolean"})
     
     add_deps("cmake") --necessary for cmake project
     
