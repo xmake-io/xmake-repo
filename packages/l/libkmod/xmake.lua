@@ -15,19 +15,21 @@ package("libkmod")
     -- "--enable-static" is not supported by kmod
     add_configs("shared",  {description = "Build shared library", default = true, type = "boolean", readonly = true})
 
-    add_configs("tools",   {description = "Build tools.", default = false, type = "boolean"})
     add_configs("logging", {description = "Enable system logging.", default = true, type = "boolean"})
-
     add_configs("zstd",    {description = "Enable Zstandard-compressed modules support.", default = true, type = "boolean"})
     add_configs("zlib",    {description = "Enable gzipped modules support.", default = true, type = "boolean"})
     add_configs("xz",      {description = "Enable Xz-compressed modules support.", default = true, type = "boolean"})
     add_configs("openssl", {description = "Enable PKCS7 signatures support", default = "openssl3", values = {false, "openssl", "openssl3"}})
 
-    on_load(function (package)
-        if package:is_plat("android") then
-            package:add("patches", ">=v30 <v33", "patches/30/basename.patch", "83d07e169882cc91f3af162912ae97cd4b62ff48876ca83b0317c40a388773ad")
+    on_check("android", function (package)
+        -- bionic, fread_unlocked
+        if package:version():ge("v34") then
+            local ndk_sdkver = package:toolchain("ndk"):config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 28, "package(libkmod): require ndk api level >= 28")
         end
+    end)
 
+    on_load(function (package)
         if package:version():lt("v34") then
             package:add("deps", "autotools")
         else
@@ -46,40 +48,63 @@ package("libkmod")
     end)
 
     on_install("linux", "android", function (package)
+        if package:is_plat("android") then
+            if package:version():lt("v34") then
+                io.replace("shared/util.h", "#include <time.h>", "#include <time.h>\n#include <libgen.h>", {plain = true})
+            end
+            io.replace("shared/util.h", "#include <time.h>", [[
+                #include <time.h>
+                #include <unistd.h>
+
+                // from https://android.googlesource.com/kernel/common/+/03c04a7cba972/tools/perf/util/get_current_dir_name.c
+                static inline char *get_current_dir_name(void)
+                {
+                    char pwd[PATH_MAX];
+                    return getcwd(pwd, sizeof(pwd)) == NULL ? NULL : strdup(pwd);
+                }
+            ]], {plain = true})
+        end
+
         if package:version():lt("v34") then
             local configs = {
                 "--disable-dependency-tracking",
                 "--disable-manpages",
-                "--disable-test-modules"
+                "--disable-test-modules",
+                "--disable-tools"
             }
 
-            table.insert(configs, "--enable-tools=" .. (package:config("tools") and "yes" or "no"))
             table.insert(configs, "--enable-logging=" .. (package:config("logging") and "yes" or "no"))
+            table.insert(configs, "--with-zstd=" .. (package:config("zstd") and "yes" or "no"))
+            table.insert(configs, "--with-zlib=" .. (package:config("zlib") and "yes" or "no"))
+            table.insert(configs, "--with-xz=" .. (package:config("xz") and "yes" or "no"))
+            table.insert(configs, "--with-openssl=" .. (package:config("openssl") and "yes" or "no"))
 
-            table.insert(configs, "--with-zstd=" .. (package:config("logging") and "yes" or "no"))
-            table.insert(configs, "--with-zlib=" .. (package:config("logging") and "yes" or "no"))
-            table.insert(configs, "--with-xz=" .. (package:config("logging") and "yes" or "no"))
-            table.insert(configs, "--with-openssl=" .. (package:config("logging") and "yes" or "no"))
+            local packagedeps = {}
+            for _, dep in ipairs(package:librarydeps()) do
+                table.insert(packagedeps, dep:name())
+            end
 
             io.replace("Makefile.am", [[dist_bashcompletion_DATA = \
 	shell-completion/bash/kmod]], "", {plain = true})
 
-            import("package.tools.autoconf").install(package, configs)
+            import("package.tools.autoconf").install(package, configs, {packagedeps = packagedeps, makeconfigs = {LIBTOOLFLAGS = "--verbose"}})
         else
             local configs = {
                 "-Dbashcompletiondir=no",
                 "-Dfishcompletiondir=no",
                 "-Dzshcompletiondir=no",
-                "-Dmanpages=false"
+                "-Dmanpages=false",
+                "-Dtools=false"
             }
 
-            table.insert(configs, "-Dtools=" .. (package:config("tools") and "true" or "false"))
             table.insert(configs, "-Dlogging=" .. (package:config("logging") and "true" or "false"))
 
-            table.insert(configs, "-Dzstd=" .. (package:config("logging") and "enabled" or "disabled"))
-            table.insert(configs, "-Dzlib=" .. (package:config("logging") and "enabled" or "disabled"))
-            table.insert(configs, "-Dxz=" .. (package:config("logging") and "enabled" or "disabled"))
-            table.insert(configs, "-Dopenssl=" .. (package:config("logging") and "enabled" or "disabled"))
+            table.insert(configs, "-Dzstd=" .. (package:config("zstd") and "enabled" or "disabled"))
+            table.insert(configs, "-Dzlib=" .. (package:config("zlib") and "enabled" or "disabled"))
+            table.insert(configs, "-Dxz=" .. (package:config("xz") and "enabled" or "disabled"))
+            table.insert(configs, "-Dopenssl=" .. (package:config("openssl") and "enabled" or "disabled"))
+
+            io.replace("meson.build", "_tools = %[(.-)%]", "_tools = []")
 
             import("package.tools.meson").install(package, configs)
         end
