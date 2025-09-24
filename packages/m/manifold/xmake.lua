@@ -16,7 +16,7 @@ package("manifold")
     end
     add_configs("cbind", { description = "Enable c binding", default = true, type = "boolean" }) --requires no deps
     add_configs("pybind", { description = "Enable python binding", default = false, type = "boolean" })
-    add_configs("clipper2_feature", { description = "Enable 2d simple operation", default = true, type = "boolean" })
+    add_configs("cross_section", { description = "Enable 2d simple operation", default = true, type = "boolean" })
     add_configs("exporter", { description = "Enable exporting models", default = true, type = "boolean" })
     add_configs("cmake_args", {description = "CMake args.", default = {}, type = "table"})
     if is_plat("windows") then
