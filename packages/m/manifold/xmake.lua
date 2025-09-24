@@ -10,81 +10,48 @@ package("manifold")
     add_configs("jsbind", {description = "Enable js binding", default = false, type = "boolean"})
     add_configs("cbind", {description = "Enable c binding", default = true, type = "boolean"}) --requires no deps
     add_configs("pybind", {description = "Enable python binding", default = false, type = "boolean"})
-    
     add_configs("parallel", {description = "Enable parallel processing", default = true, type = "boolean"}) -- disable it if you don't have the cpu/soc that support simd
     add_configs("clipper2_feature", {description = "Enable 2d simple operation", default = true, type = "boolean"})
-    
-    
     add_configs("exporter", {description = "Enable exporting models", default = true, type = "boolean"})
-    
-
 if is_plat("windows") then
-    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true}) --author said it may be tricky if you chose to build shared library
 end
-    
     add_configs("test", {description = "Enable test", default = false, type = "boolean"})
     add_configs("tracy", {description = "Enable profiling", default = false, type = "boolean"}) --for profiling,should be disabled by default
     
     add_deps("cmake") --necessary for cmake project
 
-
     on_install("linux", "macosx","windows", function (package)
         local configs = {}
-
-        table.insert(configs," -DCMAKE_INSTALL_PREFIX=" .. package:installdir())
-        
-        
+        table.insert(configs," -DCMAKE_INSTALL_PREFIX=" .. package:installdir()) --set install prefix
         if package:config("cmake_args") then
             table.join(configs, package:config("cmake_args"))
         end --this allows user to add more option
-            
         table.insert(configs,"-DMANIFOLD_JSBIND=" .. (package:config("jsbind") and "ON" or "OFF"))
         table.insert(configs,"-DMANIFOLD_CBIND=" .. (package:config("cbind") and "ON" or "OFF"))
         table.insert(configs,"-DMANIFOLD_PYBIND=" .. (package:config("pybind") and "ON" or "OFF"))
         table.insert(configs,"-DMANIFOLD_PAR=" .. (package:config("parallel") and "ON" or "OFF"))
         table.insert(configs,"-DMANIFOLD_CROSS_SECTION=" .. (package:config("clipper2_feature") and "ON" or "OFF"))
         table.insert(configs,"-DMANIFOLD_EXPORT=" .. (package:config("exporter") and "ON" or "OFF"))
-        
-        
-        
-
-        
-        
         table.insert(configs,"-DMANIFOLD_TEST=" .. (package:config("test") and "ON" or "OFF"))
         table.insert(configs,"-DTRACY_ENABLE=" .. (package:config("tracy") and "ON" or "OFF"))
         if(package:config("test"))
             then
                 package:add("deps", "gtest")
             end
-        
-        
- table.insert(configs,"-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF")
-            
-            
+        table.insert(configs,"-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF")
         table.insert(configs,"-DMANIFOLD_DEBUG=" .. (package:is_debug() and "ON" or "OFF"))
-
-            
-        
         if(package:is_debug() == true)  --according to author,assertion may only be enabled when debug is enabled
             then
                 table.insert(configs,"-DMANIFOLD_ASSERT=ON")
             else
                 table.insert(configs,"-DMANIFOLD_ASSERT=OFF")
             end
-        
         --this requires network connections
         table.insert(configs,"-DMANIFOLD_USE_BUILTIN_TBB=ON")
         table.insert(configs,"-DMANIFOLD_USE_BUILTIN_CLIPPER2=ON")
         table.insert(configs,"-DMANIFOLD_USE_BUILTIN_NANOBIND=ON")
-        
-        
-        
-        
-        
-        
         import("package.tools.cmake").install(package, configs)
-
-
     end)
 
     on_test(function (package)
