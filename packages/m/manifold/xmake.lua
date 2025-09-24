@@ -21,6 +21,13 @@ end
     
     add_deps("cmake") --necessary for cmake project
 
+    on_load("linux","macosx","windows",function(package)
+                if(package:config("test"))
+            then
+                package:add("deps", "gtest")
+            end
+    end)
+    
     on_install("linux", "macosx","windows", function (package)
         local configs = {}
         table.insert(configs," -DCMAKE_INSTALL_PREFIX=" .. package:installdir()) --set install prefix
@@ -35,10 +42,6 @@ end
         table.insert(configs,"-DMANIFOLD_EXPORT=" .. (package:config("exporter") and "ON" or "OFF"))
         table.insert(configs,"-DMANIFOLD_TEST=" .. (package:config("test") and "ON" or "OFF"))
         table.insert(configs,"-DTRACY_ENABLE=" .. (package:config("tracy") and "ON" or "OFF"))
-        if(package:config("test"))
-            then
-                package:add("deps", "gtest")
-            end
         table.insert(configs,"-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF")
         table.insert(configs,"-DMANIFOLD_DEBUG=" .. (package:is_debug() and "ON" or "OFF"))
         if(package:is_debug() == true)  --according to author,assertion may only be enabled when debug is enabled
