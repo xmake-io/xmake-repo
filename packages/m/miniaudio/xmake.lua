@@ -87,11 +87,10 @@ target("miniaudio")
 ]])
 
             if package:config("extra_nodes") then
-                xmakefile:write([[    add_includedirs("extras/miniaudio_split")
-]])
-                xmakefile:write([[    add_headerfiles("extras/(nodes/**.h)")
-]])
-                xmakefile:write([[    add_files("extras/nodes/**.c|**_example.c")
+                xmakefile:write([[
+    add_includedirs("extras/miniaudio_split")
+    add_headerfiles("extras/(nodes/**.h)")
+    add_files("extras/nodes/**.c|**_example.c")
 ]])
             end
 
