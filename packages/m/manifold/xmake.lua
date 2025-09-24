@@ -56,10 +56,7 @@ package("manifold")
             end
         
         
-        if(os.host() == "windows")
-            then
-                table.insert(configs,"-DBUILD_SHARED_LIBS=OFF")   --according to author,shared lib may cause problem on windows platform 
-            end
+ table.insert(configs,"-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF")
             
             
         table.insert(configs,"-DMANIFOLD_DEBUG=" .. (package:is_debug() and "ON" or "OFF"))
