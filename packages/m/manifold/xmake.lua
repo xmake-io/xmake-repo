@@ -32,7 +32,7 @@ package("manifold")
             package:add("deps", "gtest")
         end
 
-        if (package:config("exporter")) then
+        if package:config("exporter") then
             package:add("deps", "assimp")
         end
 
