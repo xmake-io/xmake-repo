@@ -11,7 +11,7 @@ if is_plat("wasm") then
     add_configs("jsbind", { description = "Enable js binding", default = true, type = "boolean",readonly=true })
     add_configs("parallel", { description = "Enable parallel processing", default = false, type = "boolean",readonly=true}) --it's reported that in recent emscripten version,it will broke because of memory corruption
 else
-    add_configs("jsbind", { description = "Enable js binding", default = false, type = "boolean" })
+    add_configs("jsbind", { description = "Enable js binding", default = false, type = "boolean",readonly=true})
     add_configs("parallel", { description = "Enable parallel processing", default = true, type = "boolean" })
 end
 add_configs("cbind", { description = "Enable c binding", default = true, type = "boolean" })              --requires no deps
