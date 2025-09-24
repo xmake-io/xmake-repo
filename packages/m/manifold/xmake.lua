@@ -43,7 +43,7 @@ end
         table.insert(configs,"-DMANIFOLD_EXPORT=" .. (package:config("exporter") and "ON" or "OFF"))
         table.insert(configs,"-DMANIFOLD_TEST=" .. (package:config("test") and "ON" or "OFF"))
         table.insert(configs,"-DTRACY_ENABLE=" .. (package:config("tracy") and "ON" or "OFF"))
-        table.insert(configs,"-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF")
+        table.insert(configs,"-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs,"-DMANIFOLD_DEBUG=" .. (package:is_debug() and "ON" or "OFF"))
         if(package:is_debug() == true)  --according to author,assertion may only be enabled when debug is enabled
             then
