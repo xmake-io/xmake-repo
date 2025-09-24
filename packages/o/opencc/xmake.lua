@@ -11,13 +11,12 @@ package("opencc")
     add_versions("git:1.1.9", "ver.1.1.9")
 
     add_configs("darts", {description = "Build DartsDict (ocd format)", default = true, type = "boolean"})
-    if is_plat("wasm") then
-        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-    end
 
     add_deps("cmake", "python 3.x", {kind = "binary"})
     if is_subhost("windows") then
         add_deps("pkgconf")
+    else
+        add_deps("pkg-config")
     end
     add_deps("marisa v0.2.6", "rapidjson", "tclap")
 
@@ -26,12 +25,20 @@ package("opencc")
             package:add("deps", "darts")
             package:add("defines", "ENABLE_DARTS")
         end
+        if package:is_cross() then
+            -- use host opencc_dict for cross build
+            package:add("deps", "opencc~host", {kind = "binary", host = true})
+        else
+            package:addenv("PATH", "bin")
+        end
         if not package:config("shared") then
             package:add("defines", "Opencc_BUILT_AS_STATIC")
         end
     end)
 
     on_install(function (package)
+        io.replace("src/SerializedValues.hpp", "#pragma once", "#pragma once\n#include <cstdint>", {plain = true}) -- fix gcc15
+        io.replace("CMakeLists.txt", "-pthread", "", {plain = true}) -- break opencc tool on wasm
         io.replace("src/CMakeLists.txt", "set_target_properties(libopencc PROPERTIES POSITION_INDEPENDENT_CODE ON)", "", {plain = true})
         io.replace("src/CMakeLists.txt", "target_link_libraries(libopencc marisa)", "", {plain = true})
         local file = io.open("src/CMakeLists.txt", "a")
@@ -77,10 +84,15 @@ package("opencc")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("opencc_open", {includes = "opencc/opencc.h"}))
-        assert(package:check_cxxsnippets({test = [[
-            void test() {
-                opencc::Config config;
-            }
-        ]]}, {includes = {"opencc/Config.hpp"}}))
+        if not package:is_cross() then
+            os.vrun("opencc_dict --version")
+        end
+        if package:is_library() then
+            assert(package:has_cfuncs("opencc_open", {includes = "opencc/opencc.h"}))
+            assert(package:check_cxxsnippets({test = [[
+                void test() {
+                    opencc::Config config;
+                }
+            ]]}, {includes = {"opencc/Config.hpp"}}))
+        end
     end)
