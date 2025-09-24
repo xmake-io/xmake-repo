@@ -18,7 +18,9 @@ package("manifold")
     add_configs("exporter", {description = "Enable exporting models", default = true, type = "boolean"})
     
 
-   
+if is_plat("windows") then
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+end
     
     add_configs("test", {description = "Enable test", default = false, type = "boolean"})
     add_configs("tracy", {description = "Enable profiling", default = false, type = "boolean"}) --for profiling,should be disabled by default
