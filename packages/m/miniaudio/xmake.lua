@@ -55,8 +55,11 @@ package("miniaudio")
     end)
 
     on_install(function (package)
-        for _, nodeheader in ipairs(os.files("extras/nodes/**.h")) do
-            io.replace(nodeheader, [[#include "../../../miniaudio.h"]], [[#include "miniaudio.h"]], {plain = true})
+        if package:config("extra_nodes") then
+        -- fix extra nodes includes since we are changing path
+            for _, nodeheader in ipairs(os.files("extras/nodes/**.h")) do
+                io.replace(nodeheader, [[#include "../../../miniaudio.h"]], [[#include "miniaudio.h"]], {plain = true})
+            end
         end
         if package:config("headeronly") then
             os.cp("miniaudio.h", package:installdir("include"))
@@ -74,7 +77,6 @@ add_rules("mode.debug", "mode.release")
 target("miniaudio")
     set_kind("$(kind)")
     add_headerfiles("extras/miniaudio_split/(miniaudio.h)")
-    add_includedirs("extras/miniaudio_split")
     if is_plat("macosx", "iphoneos") then
         add_files("extras/miniaudio_split/miniaudio.m")
     else
@@ -85,8 +87,12 @@ target("miniaudio")
 ]])
 
             if package:config("extra_nodes") then
-                xmakefile:write([[    add_headerfiles("extras/(nodes/**.h)")]])
-                xmakefile:write([[    add_files("extras/nodes/**.c|**_example.c")]])
+                xmakefile:write([[    add_includedirs("extras/miniaudio_split")
+]])
+                xmakefile:write([[    add_headerfiles("extras/(nodes/**.h)")
+]])
+                xmakefile:write([[    add_files("extras/nodes/**.c|**_example.c")
+]])
             end
 
             local defines = import("build_defines")(package)
