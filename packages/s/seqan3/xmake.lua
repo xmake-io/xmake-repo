@@ -45,36 +45,9 @@ package("seqan3")
             end
 
             local check_map = {
-                ["3.2.0"] = {
-                    ["gcc"] = {
-                        version_range = ">=10.0",
-                        message = "package(seqan3): v3.2.0 needs gcc >= 10",
-                    },
-                    ["clang"] = {
-                        version_range = "<=0.0",
-                        message = "package(seqan3): v3.2.0 does not support clang",
-                    }
-                },
-                ["3.3.0"] = {
-                    ["gcc"] = {
-                        version_range = ">=11.0",
-                        message = "package(seqan3): v3.3.0 needs gcc >= 11",
-                    },
-                    ["clang"] = {
-                        version_range = "<=0.0",
-                        message = "package(seqan3): v3.3.0 does not support clang",
-                    }
-                },
-                ["3.4.0"] = {
-                    ["gcc"] = {
-                        version_range = ">=12.0",
-                        message = "package(seqan3): v3.4.0 needs gcc >= 12",
-                    },
-                    ["clang"] = {
-                        version_range = ">=17.0",
-                        message = "package(seqan3): v3.4.0 needs clang >= 17",
-                    }
-                },
+                ["3.2.0"] = { gcc = ">=10.0", clang = "unsupported" },
+                ["3.3.0"] = { gcc = ">=11.0", clang = "unsupported" },
+                ["3.4.0"] = { gcc = ">=12.0", clang = ">=17.0" },
             }
 
             import("core.base.semver")
@@ -90,7 +63,7 @@ package("seqan3")
                 return
             end
 
-            assert(semver.satisfies(info.version, check[info.name].version_range), check[info.name].message)
+            assert(semver.satisfies(info.version, check[info.name]), "package(seqan3): unsupported compiler")
         end)
     end
 
