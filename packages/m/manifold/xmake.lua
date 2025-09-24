@@ -41,7 +41,7 @@ package("manifold")
             package:add("deps", "tbb")
         end
 
-        if package:config("clipper2_feature") then
+        if package:config("cross_section") then
             package:add("deps", "clipper2")
         end
 
