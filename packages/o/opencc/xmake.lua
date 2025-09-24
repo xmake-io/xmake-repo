@@ -11,8 +11,11 @@ package("opencc")
     add_versions("git:1.1.9", "ver.1.1.9")
 
     add_configs("darts", {description = "Build DartsDict (ocd format)", default = true, type = "boolean"})
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
-    add_deps("cmake")
+    add_deps("cmake", "python 3.x", {kind = "binary"})
     if is_subhost("windows") then
         add_deps("pkgconf")
     end
