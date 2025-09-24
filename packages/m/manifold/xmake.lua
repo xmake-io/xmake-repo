@@ -48,16 +48,6 @@ package("manifold")
         table.insert(configs,"-DMANIFOLD_USE_BUILTIN_CLIPPER2=ON")  --clipper2需要依赖他的版本 :( 不然不方便
         table.insert(configs,"-DMANIFOLD_USE_BUILTIN_NANOBIND=ON") 
         import("package.tools.cmake").install(package, configs)
-        
-
-
-
-
-
-
-        import("package.tools.cmake").install(package, configs)
-
-        
     end)
 
 
