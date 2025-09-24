@@ -56,7 +56,7 @@ package("miniaudio")
 
     on_install(function (package)
         if package:config("extra_nodes") then
-        -- fix extra nodes includes since we are changing path
+            -- fix extra nodes includes since we are changing path
             for _, nodeheader in ipairs(os.files("extras/nodes/**.h")) do
                 io.replace(nodeheader, [[#include "../../../miniaudio.h"]], [[#include "miniaudio.h"]], {plain = true})
             end
