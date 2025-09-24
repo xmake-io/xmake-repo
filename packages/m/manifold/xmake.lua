@@ -34,6 +34,18 @@ on_load("linux", "macosx", "windows", function(package)
     if (package:config("exporter")) then
         package:add("deps", "assimp")
     end
+
+    if package:config("parallel") then
+        package:add("deps","tbb")
+    end
+
+    if package:config("clipper2_feature") then
+        package:add("deps","clipper2")
+    end
+
+    if package:config("pybind") then
+        package:add("deps","nanobind")
+    end
 end)
 
 on_install("linux", "macosx", "windows","wasm", function(package)
@@ -55,10 +67,6 @@ on_install("linux", "macosx", "windows","wasm", function(package)
     table.insert(configs, "-DMANIFOLD_DEBUG=" .. (package:is_debug() and "ON" or "OFF"))
     table.insert(configs, "-DMANIFOLD_ASSERT=" .. (package:is_debug() and "ON" or "OFF"))
 
-    --this requires network connections
-    table.insert(configs, "-DMANIFOLD_USE_BUILTIN_TBB=ON")
-    table.insert(configs, "-DMANIFOLD_USE_BUILTIN_CLIPPER2=ON")
-    table.insert(configs, "-DMANIFOLD_USE_BUILTIN_NANOBIND=ON")
     import("package.tools.cmake").install(package, configs)
 end)
 
