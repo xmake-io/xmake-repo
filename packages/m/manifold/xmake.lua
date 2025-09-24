@@ -54,7 +54,7 @@ package("manifold")
         local configs = {}
         table.insert(configs, "-DCMAKE_INSTALL_PREFIX=" .. package:installdir())
         if package:config("cmake_args") then
-            table.join(configs, package:config("cmake_args"))
+            table.join2(configs, package:config("cmake_args"))
         end --this allows user to add more option
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DMANIFOLD_JSBIND=" .. (package:config("jsbind") and "ON" or "OFF"))
