@@ -37,6 +37,12 @@ package("opencc")
     end)
 
     on_install(function (package)
+        -- If system have node, cmake will use node to run opencc_dict.js and failed to build
+        if package:is_cross() then
+            io.replace("data/CMakeLists.txt",
+                "COMMAND\n      ${OPENCC_DICT_BIN}",
+                format("COMMAND\n      %s/bin/opencc_dict", path.unix(package:dep("opencc"):installdir())), {plain = true})
+        end
         io.replace("src/SerializedValues.hpp", "#pragma once", "#pragma once\n#include <cstdint>", {plain = true}) -- fix gcc15
         io.replace("CMakeLists.txt", "-pthread", "", {plain = true}) -- break opencc tool on wasm
         io.replace("src/CMakeLists.txt", "set_target_properties(libopencc PROPERTIES POSITION_INDEPENDENT_CODE ON)", "", {plain = true})
