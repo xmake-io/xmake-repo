@@ -19,7 +19,7 @@ package("manifold")
     add_configs("cross_section", { description = "Enable 2d simple operation", default = true, type = "boolean" })
     add_configs("exporter", { description = "Enable exporting models", default = true, type = "boolean" })
     add_configs("cmake_args", {description = "CMake args.", default = {}, type = "table"})
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_configs("shared",
             { description = "Build shared library.", default = false, type = "boolean", readonly = true })               --author said it may be tricky if you chose to build shared library
     end
