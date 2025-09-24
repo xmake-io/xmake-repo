@@ -28,7 +28,7 @@ package("manifold")
     add_deps("cmake")                                                                         --necessary for cmake project
 
     on_load("linux", "macosx", "windows","freebsd","openbsd","mingw","wasm", function(package)
-        if (package:config("test")) then
+        if package:config("test") then
             package:add("deps", "gtest")
         end
 
