@@ -49,7 +49,7 @@ package("manifold")
         end
     end)
 
-    on_install("linux", "macosx", "windows", "wasm", function(package)
+    on_install("linux", "macosx", "windows","freebsd","openbsd","mingw", "wasm", function(package)
         local configs = {}
         table.insert(configs, " -DCMAKE_INSTALL_PREFIX=" .. package:installdir()) --set install prefix
         if package:config("cmake_args") then
