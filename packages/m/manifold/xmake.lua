@@ -7,37 +7,41 @@ set_urls("https://github.com/elalish/manifold/releases/download/v$(version)/mani
 
 add_versions("3.2.1", "67c4e0cb836f9d6dfcb7169e9d19a7bb922c4d4bfa1a9de9ecbc5d414018d6ad")
 
-add_configs("jsbind", { description = "Enable js binding", default = false, type = "boolean" })
-add_configs("cbind", { description = "Enable c binding", default = true, type = "boolean" })                --requires no deps
+if is_plat("wasm") then
+    add_configs("jsbind", { description = "Enable js binding", default = true, type = "boolean",readonly=true })
+    add_configs("parallel", { description = "Enable parallel processing", default = false, type = "boolean",readonly=true}) --it's reported that in recent emscripten version,it will broke because of memory corruption
+else
+    add_configs("jsbind", { description = "Enable js binding", default = false, type = "boolean" })
+    add_configs("parallel", { description = "Enable parallel processing", default = true, type = "boolean" })
+end
+add_configs("cbind", { description = "Enable c binding", default = true, type = "boolean" })              --requires no deps
 add_configs("pybind", { description = "Enable python binding", default = false, type = "boolean" })
-add_configs("parallel", { description = "Enable parallel processing", default = true, type = "boolean" })   -- disable it if you don't have the cpu/soc that support simd
 add_configs("clipper2_feature", { description = "Enable 2d simple operation", default = true, type = "boolean" })
 add_configs("exporter", { description = "Enable exporting models", default = true, type = "boolean" })
 if is_plat("windows") then
     add_configs("shared", { description = "Build shared library.", default = false, type = "boolean", readonly = true }) --author said it may be tricky if you chose to build shared library
 end
 add_configs("test", { description = "Enable test", default = false, type = "boolean" })
-add_configs("tracy", { description = "Enable profiling", default = false, type = "boolean" })   --for profiling,should be disabled by default
+add_configs("tracy", { description = "Enable profiling", default = false, type = "boolean" }) --for profiling,should be disabled by default
 
-add_deps("cmake")                                                                               --necessary for cmake project
+add_deps("cmake")                                                                             --necessary for cmake project
 
 on_load("linux", "macosx", "windows", function(package)
-    if (package:config("test"))
-    then
+    if (package:config("test")) then
         package:add("deps", "gtest")
     end
 
     if (package:config("exporter")) then
-        package:add("deps","assimp")
+        package:add("deps", "assimp")
     end
 end)
 
-on_install("linux", "macosx", "windows", function(package)
+on_install("linux", "macosx", "windows","wasm", function(package)
     local configs = {}
-    table.insert(configs, " -DCMAKE_INSTALL_PREFIX=" .. package:installdir())    --set install prefix
+    table.insert(configs, " -DCMAKE_INSTALL_PREFIX=" .. package:installdir()) --set install prefix
     if package:config("cmake_args") then
         table.join(configs, package:config("cmake_args"))
-    end     --this allows user to add more option
+    end --this allows user to add more option
     table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
     table.insert(configs, "-DMANIFOLD_JSBIND=" .. (package:config("jsbind") and "ON" or "OFF"))
     table.insert(configs, "-DMANIFOLD_CBIND=" .. (package:config("cbind") and "ON" or "OFF"))
