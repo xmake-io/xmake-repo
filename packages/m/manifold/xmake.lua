@@ -8,13 +8,14 @@ set_urls("https://github.com/elalish/manifold/releases/download/v$(version)/mani
 add_versions("3.2.1", "67c4e0cb836f9d6dfcb7169e9d19a7bb922c4d4bfa1a9de9ecbc5d414018d6ad")
 
 if is_plat("wasm") then
-    add_configs("jsbind", { description = "Enable js binding", default = true, type = "boolean",readonly=true })
-    add_configs("parallel", { description = "Enable parallel processing", default = false, type = "boolean",readonly=true}) --it's reported that in recent emscripten version,it will broke because of memory corruption
+    add_configs("jsbind", { description = "Enable js binding", default = true, type = "boolean", readonly = true })
+    add_configs("parallel",
+        { description = "Enable parallel processing", default = false, type = "boolean", readonly = true })                 --it's reported that in recent emscripten version,it will broke because of memory corruption
 else
-    add_configs("jsbind", { description = "Enable js binding", default = false, type = "boolean",readonly=true})
+    add_configs("jsbind", { description = "Enable js binding", default = false, type = "boolean", readonly = true })
     add_configs("parallel", { description = "Enable parallel processing", default = true, type = "boolean" })
 end
-add_configs("cbind", { description = "Enable c binding", default = true, type = "boolean" })              --requires no deps
+add_configs("cbind", { description = "Enable c binding", default = true, type = "boolean" }) --requires no deps
 add_configs("pybind", { description = "Enable python binding", default = false, type = "boolean" })
 add_configs("clipper2_feature", { description = "Enable 2d simple operation", default = true, type = "boolean" })
 add_configs("exporter", { description = "Enable exporting models", default = true, type = "boolean" })
@@ -36,19 +37,19 @@ on_load("linux", "macosx", "windows", function(package)
     end
 
     if package:config("parallel") then
-        package:add("deps","tbb")
+        package:add("deps", "tbb")
     end
 
     if package:config("clipper2_feature") then
-        package:add("deps","clipper2")
+        package:add("deps", "clipper2")
     end
 
     if package:config("pybind") then
-        package:add("deps","nanobind")
+        package:add("deps", "nanobind")
     end
 end)
 
-on_install("linux", "macosx", "windows","wasm", function(package)
+on_install("linux", "macosx", "windows", "wasm", function(package)
     local configs = {}
     table.insert(configs, " -DCMAKE_INSTALL_PREFIX=" .. package:installdir()) --set install prefix
     if package:config("cmake_args") then
@@ -73,7 +74,7 @@ end)
 on_test(function(package)
     assert(package:check_cxxsnippets({
         test = [[
-            #include "manifold.h"
+            #include <manifold.h>
             void test() {
                 manifold::Manifold cube = manifold::Manifold::Cube({1, 1, 1});
                 (void)cube;
