@@ -15,7 +15,8 @@ package("manifold")
     add_configs("clipper2_feature", {description = "Enable 2d simple operation", default = true, type = "boolean"})
     add_configs("exporter", {description = "Enable exporting models", default = true, type = "boolean"})
     
-    add_configs("assert", {description = "Enable js binding", default = false, type = "boolean"}) --只能和DEBUG一起开！！
+    add_configs("debug", {description = "Enable debug", default = false, type = "boolean"})
+    add_configs("assert", {description = "Enable debug assert", default = false, type = "boolean"}) --只能和DEBUG一起开！！
     
     add_configs("test", {description = "Enable test", default = false, type = "boolean"})
     add_configs("tracy", {description = "Enable profiling", default = false, type = "boolean"})
