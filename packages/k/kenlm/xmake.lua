@@ -23,9 +23,6 @@ package("kenlm")
     add_includedirs("include/kenlm")
 
     on_load(function (package)
-        if package:is_plat("msys", "mingw", "cygwin") and package:is_arch("i386") then
-            package:add("defines", "WINAPI=__stdcall")
-        end
         package:add("defines", "KENLM_MAX_ORDER=" .. tostring(package:config("max_order")))
         package:add("links", "kenlm_builder", "kenlm", "kenlm_filter", "kenlm_util")
     end)
@@ -50,6 +47,9 @@ package("kenlm")
         if not package:dep("xz"):config("shared") then
             table.insert(opt.cxflags, "-DLZMA_API_STATIC")
         end
+
+        opt.packagedeps = {"zlib", "bzip2", "xz"}
+
         import("package.tools.cmake").install(package, configs, opt)
     end)
 
