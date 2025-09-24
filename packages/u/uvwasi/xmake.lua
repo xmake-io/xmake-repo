@@ -36,12 +36,17 @@ package("uvwasi")
             os.cp("include", package:installdir())
             local dir = package.builddir and package:builddir() or package:buildir()
             if package:config("shared") then
-                os.trycp(path.join(dir, "*.dll"), package:installdir("bin"))
+                os.trycp(path.join(dir, "**.dll"), package:installdir("bin"))
+                os.trycp(path.join(dir, "*.lib"), package:installdir("lib"))
                 os.trycp(path.join(dir, "*.so"), package:installdir("lib"))
                 os.trycp(path.join(dir, "*.dylib"), package:installdir("lib"))
             else
                 os.trycp(path.join(dir, "*.a"), package:installdir("lib"))
                 os.trycp(path.join(dir, "*.lib"), package:installdir("lib"))
+            end
+            if package:is_plat("windows") then
+                package:add("linkdirs", "lib")
+                package:add("links", "uvwasi_a")
             end
         end
     end)
