@@ -3,13 +3,18 @@ package("darts")
     set_description("C++ Template Library for implementation of Double-Array")
     set_license("BSD")
 
-    add_urls("http://chasen.org/~taku/software/darts/src/darts-$(version).tar.gz")
+    -- arch use darts
     -- vcpkg use darts-clone
+    add_urls("http://chasen.org/~taku/software/darts/src/darts-$(version).tar.gz")
     add_urls("https://github.com/s-yata/darts-clone.git", {alias = "git", includes = {"src", "include"}})
 
     add_versions("0.32", "0dfc0b82f0a05d93b92acf849368e54bf93f1de8ffb31ba0a21e45ab9e269285")
 
     add_versions("git:0.32", "87b71afd6cf784953e3c08f24c64203397f3b724")
+
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     on_install(function (package)
         if os.isfile("darts.h") then
