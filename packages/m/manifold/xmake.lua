@@ -2,7 +2,7 @@ package("manifold")
     set_homepage("https://github.com/elalish/manifold")
     set_description("A Geometry library for topological robustness")
 
-    set_urls("https://github.com/elalish/manifold/releases/download/v$(version)/manifold-$(version).tar.gz")
+    set_urls("https://github.com/elalish/manifold/releases/download/v$(version)/manifold-$(version).tar.gz","https://github.com/elalish/manifold.git")
 
     add_versions("3.2.1", "67c4e0cb836f9d6dfcb7169e9d19a7bb922c4d4bfa1a9de9ecbc5d414018d6ad")
     add_configs("jsbind", { description = "Enable js binding", default = is_plat("wasm"), type = "boolean", readonly = true })
