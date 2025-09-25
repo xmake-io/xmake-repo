@@ -3,8 +3,8 @@ package("vectorscan")
     set_description("A portable fork of the high-performance regular expression matching library")
     set_license("BSD-3")
 
-    add_urls("https://github.com/VectorCamp/vectorscan/archive/refs/tags/vectorscan/$(version).tar.gz", {alias="archive"})
-    add_urls("https://github.com/VectorCamp/vectorscan.git", {alias="github"})
+    add_urls("https://github.com/VectorCamp/vectorscan/archive/refs/tags/vectorscan/$(version).tar.gz", {alias = "archive"})
+    add_urls("https://github.com/VectorCamp/vectorscan.git", {alias = "github"})
 
     add_versions("github:5.4.12", "vectorscan/5.4.12")
     add_versions("archive:5.4.12", "1ac4f3c038ac163973f107ac4423a6b246b181ffd97fdd371696b2517ec9b3ed")
