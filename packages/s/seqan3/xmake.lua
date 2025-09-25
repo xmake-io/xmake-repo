@@ -39,6 +39,9 @@ package("seqan3")
 
     if on_check then
         on_check(function (package)
+            import("core.base.semver")
+            import("lib.detect.find_tool")
+            
             if package:is_plat("android") then
                 local ndk = package:toolchain("ndk"):config("ndkver")
                 assert(ndk and tonumber(ndk) >= 27, "package(seqan3) require ndk version >= 27")
@@ -50,8 +53,6 @@ package("seqan3")
                 ["3.4.0"] = { gcc = ">=12.0", clang = ">=17.0" },
             }
 
-            import("core.base.semver")
-            import("lib.detect.find_tool")
             local info
             if package:has_tool("cc", "gcc", "gxx") then
                 info = find_tool("gcc", {version = true})
