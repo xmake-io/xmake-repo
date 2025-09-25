@@ -8,7 +8,7 @@ package("manifold")
     add_configs("jsbind", { description = "Enable js binding", default = is_plat("wasm"), type = "boolean", readonly = true })
 
     if (is_plat("cross") and is_arch("arm64")) or is_plat("wasm") or is_plat("bsd") then
-         add_configs("parallel",
+        add_configs("parallel",
             { description = "Enable parallel processing", default = false, type = "boolean", readonly = true }) --tbb not support arm64 cross build
     else
         add_configs("parallel",
@@ -50,7 +50,7 @@ package("manifold")
         table.insert(configs, "-DCMAKE_INSTALL_PREFIX=" .. package:installdir())
         if package:config("cmake_args") then
             table.join2(configs, package:config("cmake_args"))
-        end --this allows user to add more option
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DMANIFOLD_JSBIND=" .. (package:config("jsbind") and "ON" or "OFF"))
         table.insert(configs, "-DMANIFOLD_CBIND=" .. (package:config("cbind") and "ON" or "OFF"))
