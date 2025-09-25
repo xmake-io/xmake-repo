@@ -7,7 +7,7 @@ package("manifold")
     add_versions("3.2.1", "67c4e0cb836f9d6dfcb7169e9d19a7bb922c4d4bfa1a9de9ecbc5d414018d6ad")
     add_configs("jsbind", { description = "Enable js binding", default = is_plat("wasm"), type = "boolean", readonly = true })
 
-    if (is_plat("cross") and is_arch("arm64")) or is_plat("wasm") or is_plat("bsd") then
+    if (is_plat("cross") and is_arch("arm*")) or is_plat("iphoneos") or is_plat("wasm") or is_plat("bsd") or is_plat("macosx","mingw") then
         add_configs("parallel",
             { description = "Enable parallel processing", default = false, type = "boolean", readonly = true }) --tbb not support arm64 cross build
     else
