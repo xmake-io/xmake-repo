@@ -12,7 +12,13 @@ package("manifold")
             { description = "Enable parallel processing", default = false, type = "boolean", readonly = true }) --it's reported that in recent emscripten version,it will broke because of memory corruption
     else
         add_configs("jsbind", { description = "Enable js binding", default = false, type = "boolean", readonly = true })
-        add_configs("parallel", { description = "Enable parallel processing", default = true, type = "boolean" })
+    end
+    if is_plat("cross | arm64") then
+         add_configs("parallel",
+            { description = "Enable parallel processing", default = false, type = "boolean", readonly = true }) --tbb not support arm64 cross build
+    else
+        add_configs("parallel",
+            { description = "Enable parallel processing", default = true, type = "boolean"})
     end
     add_configs("cbind", { description = "Enable c binding", default = true, type = "boolean" }) --requires no deps
     add_configs("pybind", { description = "Enable python binding", default = false, type = "boolean" })
