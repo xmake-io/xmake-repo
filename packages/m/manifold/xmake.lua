@@ -46,6 +46,7 @@ package("manifold")
     end)
 
     on_install("!bsd and !iphoneos and !cross", function(package)
+        io.replace("src/disjoint_sets.h", "for (size_t", "for (std::size_t", {plain = true})
         local configs = {}
         table.insert(configs, "-DCMAKE_INSTALL_PREFIX=" .. package:installdir())
         if package:config("cmake_args") then
