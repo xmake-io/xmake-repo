@@ -13,6 +13,8 @@ package("cereal")
 
     add_configs("thread_safe", {description = "Use mutexes to ensure thread safety", default = false, type = "boolean"})
 
+    add_patches("*", "patches/fix-tuple-hpp-after-clang-19.patch", "ac46579974554be92fdb1f7f753542f5039264d6ae34d305e05ed1b952b0f5c6")
+
     on_load(function (package)
         if package:version() and package:version():ge("1.3.1") then
             package:add("deps", "cmake")

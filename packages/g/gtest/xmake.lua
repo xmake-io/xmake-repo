@@ -25,53 +25,66 @@ package("gtest")
 
     add_configs("main",  {description = "Link to the gtest_main entry point.", default = false, type = "boolean"})
     add_configs("gmock", {description = "Link to the googlemock library.", default = true, type = "boolean"})
+    add_configs("cmake", {description = "Use cmake build system", default = true, type = "boolean"})
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
 
     on_load(function (package)
+        if package:config("cmake") then
+            package:add("deps", "cmake")
+        end
+
         if package:config("shared") and package:is_plat("windows") then
             package:add("defines", "GTEST_LINKED_AS_SHARED_LIBRARY=1")
         end
     end)
 
     on_install(function (package)
-        local std = "cxx14"
-        if package:version() and package:version():gt("1.16.0") then
-            std = "cxx17"
+        if package:config("cmake") then
+            local configs = {}
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+            table.insert(configs, "-DBUILD_GMOCK=" .. (package:config("gmock") and "ON" or "OFF"))
+            import("package.tools.cmake").install(package, configs)
+        else
+            local std = "cxx14"
+            if package:version() and package:version():gt("1.16.0") then
+                std = "cxx17"
+            end
+            io.writefile("xmake.lua", format([[
+                add_rules("utils.install.cmake_importfiles")
+                set_languages("%s")
+                target("gtest")
+                    set_kind("$(kind)")
+                    add_files("googletest/src/gtest-all.cc")
+                    add_includedirs("googletest/include", "googletest")
+                    add_headerfiles("googletest/include/(**.h)")
+                    if is_kind("shared") and is_plat("windows") then
+                        add_defines("GTEST_CREATE_SHARED_LIBRARY=1")
+                    end
+
+                target("gtest_main")
+                    set_kind("$(kind)")
+                    set_default(]] .. tostring(package:config("main")) .. [[)
+                    add_files("googletest/src/gtest_main.cc")
+                    add_includedirs("googletest/include", "googletest")
+                    add_deps("gtest")
+
+                target("gmock")
+                    set_kind("$(kind)")
+                    set_default(]] .. tostring(package:config("gmock")) .. [[)
+                    add_files("googlemock/src/gmock-all.cc")
+                    add_includedirs("googlemock/include", "googlemock", "googletest/include", "googletest")
+                    add_headerfiles("googlemock/include/(**.h)")
+                    if is_kind("shared") and is_plat("windows") then
+                        add_defines("GTEST_CREATE_SHARED_LIBRARY=1")
+                    end
+                    add_deps("gtest")
+            ]], std))
+            import("package.tools.xmake").install(package)
         end
-        io.writefile("xmake.lua", format([[
-            add_rules("utils.install.cmake_importfiles")
-            set_languages("%s")
-            target("gtest")
-                set_kind("$(kind)")
-                add_files("googletest/src/gtest-all.cc")
-                add_includedirs("googletest/include", "googletest")
-                add_headerfiles("googletest/include/(**.h)")
-                if is_kind("shared") and is_plat("windows") then
-                    add_defines("GTEST_CREATE_SHARED_LIBRARY=1")
-                end
-
-            target("gtest_main")
-                set_kind("$(kind)")
-                set_default(]] .. tostring(package:config("main")) .. [[)
-                add_files("googletest/src/gtest_main.cc")
-                add_includedirs("googletest/include", "googletest")
-                add_deps("gtest")
-
-            target("gmock")
-                set_kind("$(kind)")
-                set_default(]] .. tostring(package:config("gmock")) .. [[)
-                add_files("googlemock/src/gmock-all.cc")
-                add_includedirs("googlemock/include", "googlemock", "googletest/include", "googletest")
-                add_headerfiles("googlemock/include/(**.h)")
-                if is_kind("shared") and is_plat("windows") then
-                    add_defines("GTEST_CREATE_SHARED_LIBRARY=1")
-                end
-                add_deps("gtest")
-        ]], std))
-        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)

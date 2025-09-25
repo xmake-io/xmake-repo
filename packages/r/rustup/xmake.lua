@@ -5,20 +5,20 @@ package("rustup")
 
     if is_host("windows") then
         if os.arch() == "x64" then
-            add_urls("https://static.rust-lang.org/rustup/archive/$(version)/x86_64-pc-windows-msvc/rustup-init.exe")
+            add_urls("https://static.rust-lang.org/rustup/archive/$(version)/x86_64-pc-windows-msvc/rustup-init.exe", {filename = "rustup-init.exe"})
 
             add_versions("1.28.1", "7b83039a1b9305b0c50f23b2e2f03319b8d7859b28106e49ba82c06d81289df6")
         elseif os.arch() == "x86" then
-            add_urls("https://static.rust-lang.org/rustup/archive/$(version)/i686-pc-windows-msvc/rustup-init.exe")
+            add_urls("https://static.rust-lang.org/rustup/archive/$(version)/i686-pc-windows-msvc/rustup-init.exe", {filename = "rustup-init.exe"})
 
             add_versions("1.28.1", "494bbeb52bd102891be4e7e5adc74eeb1c532adfdc33d51ae1aa9fd2ff5f1048")
         elseif os.arch() == "arm64" then
-            add_urls("https://static.rust-lang.org/rustup/archive/$(version)/aarch64-pc-windows-msvc/rustup-init.exe")
+            add_urls("https://static.rust-lang.org/rustup/archive/$(version)/aarch64-pc-windows-msvc/rustup-init.exe", {filename = "rustup-init.exe"})
 
             add_versions("1.28.1", "9054ad509637940709107920176f14cee334bc5cfe50bc0a24a3dc59b6f4d458")
         end
     else
-        add_urls("https://raw.githubusercontent.com/rust-lang/rustup/refs/tags/$(version)/rustup-init.sh")
+        add_urls("https://raw.githubusercontent.com/rust-lang/rustup/refs/tags/$(version)/rustup-init.sh", {filename = "rustup-init.sh"})
 
         add_versions("1.28.1", "b25b33de9e5678e976905db7f21b42a58fb124dd098b35a962f963734b790a9b")
     end
