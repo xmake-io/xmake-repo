@@ -47,11 +47,21 @@ package("libkmod")
         end
     end)
 
-    on_install("linux", "android", function (package)
+    on_install("linux", "android@linux,macosx", function (package)
         if package:is_plat("android") then
             local ndk_sdkver = package:toolchain("ndk"):config("ndk_sdkver")
-            if tonumber(ndk_sdkver) < 23 then
-                io.replace("shared/util.h", "#include <time.h>", "#include <time.h>\n#include <libgen.h>", {plain = true})
+            if package:version():lt("v33") and tonumber(ndk_sdkver) <= 23 then
+                io.replace("shared/util.h", "#include <time.h>", [[
+                    #include <time.h>
+                    #include <string.h>
+
+                    // from libkmod v33
+                    static inline const char *basename(const char *s)
+                    {
+                        const char *p = strrchr(s, '/');
+                        return p ? p + 1 : s;
+                    }
+                ]], {plain = true})
             end
             io.replace("shared/util.h", "#include <time.h>", [[
                 #include <time.h>
