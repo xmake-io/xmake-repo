@@ -65,7 +65,7 @@ package("freetype")
         end
 
         add_configdep("bzip2")
-        add_configdep("zlib", nil, {configs = {shared = package:config("shared")}})
+        add_configdep("zlib")
         add_configdep("png", "libpng")
         add_configdep("woff2", "brotli")
         add_configdep("harfbuzz", nil, {configs = {freetype = false}}) -- we have to disable freetype in harfbuzz to prevent a circular dependency
@@ -95,9 +95,7 @@ package("freetype")
                             end
                         end
                         -- libfiles may include .dll (https://github.com/xmake-io/xmake-repo/pull/8155)
-                        print(lib:name(), fetchinfo)
-                        local libfiles = table.remove_if(table.clone(fetchinfo.libfiles or {}), function (i, file) print(" remove pred", file, path.extension(file)) return path.extension(file) == ".dll" end)
-                        print(libfiles)
+                        local libfiles = table.remove_if(table.clone(fetchinfo.libfiles or {}), function (file) return path.extension(file) == ".dll" end)
                         if #libfiles > 0 then
                             local libconfs = opt.cmakelib and table.wrap(opt.cmakelib) or {opt.cmakewith .. "_LIBRARIES"}
                             for _, libconf in ipairs(libconfs) do
