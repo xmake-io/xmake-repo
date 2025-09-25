@@ -65,7 +65,7 @@ package("freetype")
         end
 
         add_configdep("bzip2")
-        add_configdep("zlib")
+        add_configdep("zlib", nil, {configs = {shared = package:config("shared")}})
         add_configdep("png", "libpng")
         add_configdep("woff2", "brotli")
         add_configdep("harfbuzz", nil, {configs = {freetype = false}}) -- we have to disable freetype in harfbuzz to prevent a circular dependency
