@@ -45,7 +45,7 @@ package("manifold")
         end
     end)
 
-    on_install(function(package)
+    on_install("!bsd and !iphoneos and !cross", function(package)
         local configs = {}
         table.insert(configs, "-DCMAKE_INSTALL_PREFIX=" .. package:installdir())
         if package:config("cmake_args") then
