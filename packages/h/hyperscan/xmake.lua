@@ -7,7 +7,13 @@ package("hyperscan")
              "https://github.com/intel/hyperscan.git")
     add_versions("v5.4.2", "32b0f24b3113bbc46b6bfaa05cf7cf45840b6b59333d078cc1f624e4c40b2b99")
 
-    add_deps("cmake", "boost", "ragel", "python")
+    add_deps("cmake", "ragel", "python")
+    add_deps("boost", {configs = {
+        exception = true,
+        container = true,
+        thread = true,
+        graph = true
+    }})
 
     on_install("linux", "windows|!arm*", function (package)
         local configs = {}
