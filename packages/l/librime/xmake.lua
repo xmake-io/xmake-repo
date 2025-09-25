@@ -53,11 +53,10 @@ package("librime")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_ASAN=" .. (package:config("asan") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
-        -- msvc can't build extern "C" { extern "C" __declspec(dllimport) xxx(); }
-        -- include\rime_api.h(253): error C2059: syntax error: 'string'
-        -- if package:config("shared") then
-        --     io.replace(path.join(package:installdir("include"), "rime_api.h"), [[extern "C" RIME_DLL]], "RIME_DLL", {plain = true})
-        -- end
+        -- Can't use `extern "C"` in c code
+        if package:config("shared") then
+            io.replace(path.join(package:installdir("include"), "rime_api.h"), [[extern "C" RIME_DLL]], "RIME_DLL", {plain = true})
+        end
     end)
 
     on_test(function (package)
