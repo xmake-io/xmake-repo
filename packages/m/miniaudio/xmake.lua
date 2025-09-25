@@ -22,6 +22,7 @@ package("miniaudio")
     add_configs("encoding", {description = "Enable encoding APIs", default = true, type = "boolean"})
     add_configs("enabled_backends", {description = "Enabled backends (all if empty)", default = {}, type = "table"})
     add_configs("engine", {description = "Enable the engine API", default = true, type = "boolean"})
+    add_configs("extra_nodes", {description = "Enable extra nodes", default = true, type = "boolean"})
     add_configs("flac", {description = "Enable the builtin FLAC decoder", default = true, type = "boolean"})
     add_configs("generation", {description = "Enable the generation APIs", default = true, type = "boolean"})
     add_configs("mp3", {description = "Enable the builtin MP3 decoder", default = true, type = "boolean"})
@@ -54,15 +55,23 @@ package("miniaudio")
     end)
 
     on_install(function (package)
+        if package:config("extra_nodes") then
+            -- fix extra nodes includes since we are changing path
+            for _, nodeheader in ipairs(os.files("extras/nodes/**.h")) do
+                io.replace(nodeheader, [[#include "../../../miniaudio.h"]], [[#include "miniaudio.h"]], {plain = true})
+            end
+        end
         if package:config("headeronly") then
             os.cp("miniaudio.h", package:installdir("include"))
+            if package:config("extra_nodes") then
+                os.cp("extras/nodes", package:installdir("include"))
+            end
         else
-           local defines = import("build_defines")(package)
             if package:is_plat("macosx", "iphoneos") then
                 io.writefile("extras/miniaudio_split/miniaudio.m", "#include \"miniaudio.c\"")
             end
-            local definelist = table.concat(table.imap(defines, function (_, d) return "    add_defines(\"" .. d .. "\")" end), "\n")
-            io.writefile("xmake.lua", [[
+            local xmakefile = io.open("xmake.lua", "w")
+            xmakefile:write([[
 add_rules("mode.debug", "mode.release")
 
 target("miniaudio")
@@ -75,10 +84,23 @@ target("miniaudio")
     end
 
     add_defines("MINIAUDIO_IMPLEMENTATION")
-            ]] .. definelist)
+]])
+
+            if package:config("extra_nodes") then
+                xmakefile:write([[
+    add_includedirs("extras/miniaudio_split")
+    add_headerfiles("extras/(nodes/**.h)")
+    add_files("extras/nodes/**.c|**_example.c")
+]])
+            end
+
+            local defines = import("build_defines")(package)
+            for _, define in ipairs(defines) do
+                xmakefile:write("    add_defines(\"" .. define .. "\")\n")
+            end
+            xmakefile:close()
             import("package.tools.xmake").install(package)
         end
-        os.cp("extras/nodes", package:installdir("include"))
     end)
 
     on_test(function (package)
