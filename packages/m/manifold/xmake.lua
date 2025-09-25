@@ -58,12 +58,12 @@ end
     end)
 
     on_install("!bsd and !iphoneos and !cross and !wasm", function(package)
-    io.replace("src/quickhull.cpp", [[#include <limits>]], [[#include <limits>
+        io.replace("src/quickhull.cpp", [[#include <limits>]], [[#include <limits>
 #include <unordered_map>
 #include <cstddef>]], {plain = true})
-    io.replace("src/smoothing.cpp", [[#include "parallel.h"]], [[#include "parallel.h"
+        io.replace("src/smoothing.cpp", [[#include "parallel.h"]], [[#include "parallel.h"
 #include <unordered_map>]], {plain = true})
-    io.replace("src/subdivision.cpp", [[#include "parallel.h"]], [[#include "parallel.h"
+        io.replace("src/subdivision.cpp", [[#include "parallel.h"]], [[#include "parallel.h"
 #include <unordered_map>]], {plain = true})
         io.replace("src/disjoint_sets.h", "for (size_t", "for (std::size_t", {plain = true})
         local configs = {"-DMANIFOLD_TEST=OFF"}
