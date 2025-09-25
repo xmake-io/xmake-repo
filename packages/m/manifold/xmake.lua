@@ -29,16 +29,11 @@ package("manifold")
         add_configs("shared",
             { description = "Build shared library.", default = false, type = "boolean", readonly = true })               --author said it may be tricky if you chose to build shared library
     end
-    add_configs("test", { description = "Enable test", default = false, type = "boolean" })
     add_configs("tracy", { description = "Enable profiling", default = false, type = "boolean" }) --for profiling,should be disabled by default
 
     add_deps("cmake")                                                                         --necessary for cmake project
 
     on_load(function(package)
-        if package:config("test") then
-            package:add("deps", "gtest")
-        end
-
         if package:config("exporter") then
             package:add("deps", "assimp")
         end
@@ -69,7 +64,7 @@ package("manifold")
         table.insert(configs, "-DMANIFOLD_PAR=" .. (package:config("parallel") and "ON" or "OFF"))
         table.insert(configs, "-DMANIFOLD_CROSS_SECTION=" .. (package:config("cross_section") and "ON" or "OFF"))
         table.insert(configs, "-DMANIFOLD_EXPORT=" .. (package:config("exporter") and "ON" or "OFF"))
-        table.insert(configs, "-DMANIFOLD_TEST=" .. (package:config("test") and "ON" or "OFF"))
+        
         table.insert(configs, "-DTRACY_ENABLE=" .. (package:config("tracy") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DMANIFOLD_DEBUG=" .. (package:is_debug() and "ON" or "OFF"))
