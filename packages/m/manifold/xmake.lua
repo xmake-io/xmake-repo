@@ -5,15 +5,8 @@ package("manifold")
     set_urls("https://github.com/elalish/manifold/releases/download/v$(version)/manifold-$(version).tar.gz")
 
     add_versions("3.2.1", "67c4e0cb836f9d6dfcb7169e9d19a7bb922c4d4bfa1a9de9ecbc5d414018d6ad")
-
-    if is_plat("wasm") then
-        add_configs("jsbind", { description = "Enable js binding", default = true, type = "boolean", readonly = true })
-        add_configs("parallel",
-            { description = "Enable parallel processing", default = false, type = "boolean", readonly = true }) --it's reported that in recent emscripten version,it will broke because of memory corruption
-    else
-        add_configs("jsbind", { description = "Enable js binding", default = false, type = "boolean", readonly = true })
-    end
-    if is_plat("cross | arm64") then
+    add_configs("jsbind", { description = "Enable js binding", default = is_plat("wasm"), type = "boolean", readonly = true })
+    if is_plat("cross | arm64") or is_plat("wasm") or is_plat("bsd") then
          add_configs("parallel",
             { description = "Enable parallel processing", default = false, type = "boolean", readonly = true }) --tbb not support arm64 cross build
     else
@@ -31,7 +24,7 @@ package("manifold")
     end
     add_configs("tracy", { description = "Enable profiling", default = false, type = "boolean" }) --for profiling,should be disabled by default
 
-    add_deps("cmake")                                                                         --necessary for cmake project
+    add_deps("cmake")
 
     on_load(function(package)
         if package:config("exporter") then
@@ -51,7 +44,7 @@ package("manifold")
         end
     end)
 
-    on_install("!bsd", function(package)
+    on_install(function(package)
         local configs = {}
         table.insert(configs, "-DCMAKE_INSTALL_PREFIX=" .. package:installdir())
         if package:config("cmake_args") then
