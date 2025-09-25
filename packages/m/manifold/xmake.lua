@@ -27,6 +27,16 @@ package("manifold")
 
     add_deps("cmake")
 
+
+    if on_check then
+        on_check("android", function (package)
+            import("core.tool.toolchain")
+            local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 26, "package(manifold): need ndk api level >= 26 for android")
+        end)
+    end
+
     on_load(function(package)
         if package:config("exporter") then
             package:add("deps", "assimp")
