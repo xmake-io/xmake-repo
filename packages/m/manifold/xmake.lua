@@ -27,6 +27,16 @@ package("manifold")
 
     add_deps("cmake")
 
+
+    if on_check then
+        on_check("android", function (package)
+            import("core.tool.toolchain")
+            local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 26, "package(manifold): need ndk api level >= 26 for android")
+        end)
+    end
+
     on_load(function(package)
         if package:config("exporter") then
             package:add("deps", "assimp")
@@ -45,8 +55,9 @@ package("manifold")
         end
     end)
 
-    on_install(function(package)
-        local configs = {}
+    on_install("!bsd and !iphoneos and !cross", function(package)
+        io.replace("src/disjoint_sets.h", "for (size_t", "for (std::size_t", {plain = true})
+        local configs = {"-DMANIFOLD_TEST=OFF"}
         table.insert(configs, "-DCMAKE_INSTALL_PREFIX=" .. package:installdir())
         if package:config("cmake_args") then
             table.join2(configs, package:config("cmake_args"))
