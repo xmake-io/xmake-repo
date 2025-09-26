@@ -64,6 +64,8 @@ package("stringzilla")
     add_versions("v2.0.3", "6b52a7b4eb8383cbcf83608eaa08e5ba588a378449439b73584713a16d8920e3")
     add_versions("v1.2.2", "2e17c49965841647a1c371247f53b2f576e5fb32fe4b84a080d425b12f17703c")
 
+    add_patches("4.0.0", path.join(os.scriptdir(), "patches", "fix_odr_violation_for_raise.patch"), "f8add457114b63ed846ee9ca7568d623eb70af5461a7b62a6f2c6a9c62488dc8")
+
     on_install("android|!armeabi-v7a or (!android and !cross)", function (package)
         if package:version():ge("4.0.0") then
             os.cp("include/stringzilla/*.h", package:installdir("include/stringzilla"))
