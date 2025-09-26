@@ -57,7 +57,7 @@ end
         end
     end)
 
-    on_install("!bsd and !iphoneos and !cross and !wasm", function(package)
+    on_install("windows", "macosx", "linux", "android", "mingw@windows,msys", function (package)
         io.replace("src/quickhull.cpp", [[#include <limits>]], [[#include <limits>
 #include <unordered_map>
 #include <cstddef>]], {plain = true})
