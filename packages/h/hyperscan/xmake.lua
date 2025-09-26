@@ -12,12 +12,14 @@ package("hyperscan")
     add_deps("boost", {configs = {thread = true, graph = true}})
 
     on_check(function (package)
-        if not package:is_arch("x64", "x86", "x86_64") then
+        if not package:is_arch("x64", "x86", "x86_64", "i386") then
             raise("package(hyperscan) only support x86 arch")
         end
     end)
 
-    on_install(function (package)
+    -- mingw require this patch: https://github.com/intel/hyperscan/pull/36
+    on_install("!mingw", function (package)
+        io.replace("CMakeLists.txt", "add_subdirectory(tools)", "", {plain = true})
         if not package:config("pic") then
             io.replace("CMakeLists.txt", "POSITION_INDEPENDENT_CODE TRUE", "POSITION_INDEPENDENT_CODE FALSE", {plain = true})
         end
