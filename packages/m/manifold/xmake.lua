@@ -26,9 +26,9 @@ package("manifold")
     add_configs("tracy", { description = "Enable profiling", default = false, type = "boolean" })
 
     add_deps("cmake")
-if is_plat("linux", "bsd") then
-    add_syslinks("m")
-end
+    if is_plat("linux", "bsd") then
+        add_syslinks("m")
+    end
 
     if on_check then
         on_check("android", function (package)
