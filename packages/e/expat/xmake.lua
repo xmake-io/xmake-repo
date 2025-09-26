@@ -4,6 +4,7 @@ package("expat")
     set_license("MIT")
 
     set_urls("https://github.com/libexpat/libexpat/releases/download/R_$(version).tar.bz2", {version = function (version) return version:gsub("%.", "_") .. "/expat-" .. version end})
+    add_versions("2.7.3", "59c31441fec9a66205307749eccfee551055f2d792f329f18d97099e919a3b2f")
     add_versions("2.7.1", "45c98ae1e9b5127325d25186cf8c511fa814078e9efeae7987a574b482b79b3d")
     add_versions("2.6.4", "8dc480b796163d4436e6f1352e71800a774f73dbae213f1860b60607d2a83ada")
     add_versions("2.6.3", "b8baef92f328eebcf731f4d18103951c61fa8c8ec21d5ff4202fb6f2198aeb2d")
