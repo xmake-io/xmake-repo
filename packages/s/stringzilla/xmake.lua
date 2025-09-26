@@ -10,7 +10,7 @@ package("stringzilla")
     add_configs("cpp", {description = "Enable C++ support.", default = true, type = "boolean"})
     add_configs("stringzillas", {description = "Enable advanced API support.", default = false, type = "boolean"})
 
-    add_versions("v4.0.14", "a8485e26057725910dded847a2f21f64397dcd7a2b25df79a42759e304bdcf22 ")
+    add_versions("v4.0.14", "a8485e26057725910dded847a2f21f64397dcd7a2b25df79a42759e304bdcf22")
     add_versions("v4.0.0", "17589e9c4b1e21caaec02305a68b03f11c4aec8d3edeb300808f6b4b4b3d725b")
     add_versions("v3.12.6", "1255cac3aced48b4b73e045829a80e3122c54eca5621274073839c9036f48fe8")
     add_versions("v3.12.5", "52d107322b59c15b653d1eab3732c575b82eb44a9d5e3ff752b1f2902b71e8ee")
@@ -64,7 +64,7 @@ package("stringzilla")
     add_versions("v2.0.3", "6b52a7b4eb8383cbcf83608eaa08e5ba588a378449439b73584713a16d8920e3")
     add_versions("v1.2.2", "2e17c49965841647a1c371247f53b2f576e5fb32fe4b84a080d425b12f17703c")
 
-    add_patches("4.0.0", path.join(os.scriptdir(), "patches", "fix_odr_violation_for_raise.patch"), "f8add457114b63ed846ee9ca7568d623eb70af5461a7b62a6f2c6a9c62488dc8")
+    add_patches("v4.0.0", path.join(os.scriptdir(), "patches", "4.0.0", "fix_odr_violation_for_raise.patch"), "f8add457114b63ed846ee9ca7568d623eb70af5461a7b62a6f2c6a9c62488dc8")
 
     on_install("android|!armeabi-v7a or (!android and !cross)", function (package)
         if package:version():ge("4.0.0") then
