@@ -2,17 +2,17 @@ package("nanovdb")
     set_kind("library", {headeronly = true})
     set_homepage("https://developer.nvidia.com/nanovdb")
     set_description("Developed by NVIDIA, NanoVDB adds real-time rendering GPU support for OpenVDB.")
-
     set_license("Apache-2.0")
+
     add_urls("https://github.com/AcademySoftwareFoundation/openvdb/archive/refs/tags/$(version).tar.gz",
              "https://github.com/AcademySoftwareFoundation/openvdb.git")
 
     add_versions("v12.1.0", "ebb9652ad1d67274e2c85e6736cced5f04e313c5671ae1ae548f174cc76e9e64")
 
     add_configs("openvdb", {description = "Build with OpenVDB support", default = false, type = "boolean"})
-    add_configs("blosc", {description = "Build with BLOSC support", default = true, type = "boolean"})
-    add_configs("zlib", {description = "Build with ZLIB support", default = true, type = "boolean"})
-    add_configs("tbb", {description = "Build with TBB support", default = true, type = "boolean"})
+    add_configs("blosc", {description = "Build with BLOSC support", default = false, type = "boolean"})
+    add_configs("zlib", {description = "Build with ZLIB support", default = false, type = "boolean"})
+    add_configs("tbb", {description = "Build with TBB support", default = false, type = "boolean"})
     add_configs("magicaVoxel", {description = "Build with MagicaVoxel support", default = false, type = "boolean"})
     add_configs("cuda", {description = "Build with CUDA support", default = false, type = "boolean"})
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
