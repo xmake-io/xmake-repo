@@ -26,7 +26,9 @@ package("manifold")
     add_configs("tracy", { description = "Enable profiling", default = false, type = "boolean" })
 
     add_deps("cmake")
-
+if is_plat("linux", "bsd") then
+    add_syslinks("m")
+end
 
     if on_check then
         on_check("android", function (package)
@@ -55,7 +57,14 @@ package("manifold")
         end
     end)
 
-    on_install("!bsd and !iphoneos and !cross", function(package)
+    on_install("!bsd and !iphoneos and !cross and !wasm", function(package)
+        io.replace("src/quickhull.cpp", [[#include <limits>]], [[#include <limits>
+#include <unordered_map>
+#include <cstddef>]], {plain = true})
+        io.replace("src/smoothing.cpp", [[#include "parallel.h"]], [[#include "parallel.h"
+#include <unordered_map>]], {plain = true})
+        io.replace("src/subdivision.cpp", [[#include "parallel.h"]], [[#include "parallel.h"
+#include <unordered_map>]], {plain = true})
         io.replace("src/disjoint_sets.h", "for (size_t", "for (std::size_t", {plain = true})
         local configs = {"-DMANIFOLD_TEST=OFF"}
         table.insert(configs, "-DCMAKE_INSTALL_PREFIX=" .. package:installdir())
