@@ -95,7 +95,7 @@ package("freetype")
                             end
                         end
                         -- libfiles may include .dll (https://github.com/xmake-io/xmake-repo/pull/8155)
-                        local libfiles = table.remove_if(table.clone(fetchinfo.libfiles or {}), function (file) return path.extension(file) == ".dll" end)
+                        local libfiles = table.remove_if(table.clone(fetchinfo.libfiles or {}), function (i, file) return path.extension(file):lower() == ".dll" end)
                         if #libfiles > 0 then
                             local libconfs = opt.cmakelib and table.wrap(opt.cmakelib) or {opt.cmakewith .. "_LIBRARIES"}
                             for _, libconf in ipairs(libconfs) do
