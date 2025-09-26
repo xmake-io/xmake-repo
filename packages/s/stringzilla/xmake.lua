@@ -74,7 +74,9 @@ package("stringzilla")
                 os.cp("include/stringzillas", package:installdir("include/stringzillas"))
             end
             return
-        elseif package:version():gt("3.0.0") then
+        end
+
+        if package:version():gt("3.0.0") then
             if package:version():gt("3.9.0") then
                 os.cp("include/stringzilla/drafts.h", package:installdir("include/stringzilla"))
             else
@@ -83,7 +85,9 @@ package("stringzilla")
             if package:config("cpp") then
                 os.cp("include/stringzilla/stringzilla.hpp", package:installdir("include/stringzilla"))
             end
-        elseif package:version():gt("2.0.4") then
+        end
+
+        if package:version():gt("2.0.4") then
             os.cp("include/stringzilla/stringzilla.h", package:installdir("include/stringzilla"))
         else
             os.cp("stringzilla/stringzilla.h", package:installdir("include/stringzilla"))
