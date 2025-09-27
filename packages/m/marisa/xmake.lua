@@ -1,6 +1,7 @@
 package("marisa")
     set_homepage("https://github.com/s-yata/marisa-trie")
     set_description("Matching Algorithm with Recursively Implemented StorAge.")
+    set_license("BSD-2-Clause")
 
     add_urls("https://github.com/s-yata/marisa-trie/archive/refs/tags/$(version).tar.gz",
              "https://github.com/s-yata/marisa-trie.git")
@@ -36,6 +37,10 @@ package("marisa")
         table.insert(configs, "-DENABLE_ASAN=" .. (package:config("asan") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
+
+        if package:version() and package:version():lt("v0.3.0") then
+            os.tryrm(package:installdir("lib/pkgconfig/marisa.pc"))
+        end
     end)
 
     on_test(function (package)
@@ -45,5 +50,5 @@ package("marisa")
                 int x = 1, y = 2;
                 marisa::swap(x, y);
             }
-        ]]}, {configs = {languages = "c++17"}}), "package(marisa) require >= c++17")
+        ]]}, {configs = {languages = "c++17"}}))
     end)

@@ -91,7 +91,7 @@ Write a xmake.lua of new package in `packages/x/xxx/xmake.lua` and push a pull-r
 
 For example, [packages/z/zlib/xmake.lua](https://github.com/xmake-io/xmake-repo/blob/dev/packages/z/zlib/xmake.lua):
 
-If you want to known more, please see: [Create and Submit packages to the official repository](https://xmake.io/#/package/remote_package?id=submit-packages-to-the-official-repository)
+If you want to know more, please see: [Create and Submit packages to the official repository](https://xmake.io/guide/package-management/package-distribution.html#submit-package-to-the-official-repository)
 
 ## Create a package template from Github
 

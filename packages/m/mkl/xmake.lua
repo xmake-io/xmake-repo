@@ -200,6 +200,10 @@ package("mkl")
                 os.tryrm(archivefile)
             end
             -- support for xmake 3.0.2
+            os.trycp(
+                format("../%s-%s.conda", package:name(), package:version_str()),
+                format("../%s.conda", lib_filename)
+            )
             os.trycp("../" .. package:name() .. "-" .. package:version_str(), "../" .. lib_filename .. ".conda")
             -- Process library files
             extract_conda("../" .. lib_filename .. ".conda")

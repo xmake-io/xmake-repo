@@ -5,6 +5,7 @@ package("glgpuselect")
 
     add_urls("https://github.com/ArthurVasseur/GLGpuSelect/archive/refs/tags/$(version).zip",
              "https://github.com/ArthurVasseur/GLGpuSelect.git")
+    add_versions("0.1.2", "9c5ab5333f8b6acbcd1022943d6f2edd41727429ea063c8187137b3c6524aae7")
     add_versions("0.1.1", "29c9f2a0e879605abdf69e72ff008716dbba18865974761df5c887647b0ad774")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})

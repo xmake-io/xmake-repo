@@ -73,18 +73,7 @@ package("libzip")
         for config, dep in pairs(configdeps) do
             table.insert(configs, "-DENABLE_" .. config:upper() .. "=" .. (package:config(config) and "ON" or "OFF"))
         end
-
-        if package:is_plat("windows") then
-            os.mkdir(path.join(package:buildir(), "src/pdb"))
-            os.mkdir(path.join(package:buildir(), "lib/pdb"))
-        end
         import("package.tools.cmake").install(package, configs)
-
-        if package:is_plat("windows") and package:is_debug() then
-            local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.vcp(path.join(package:buildir(), "src/*.pdb"), dir)
-            os.vcp(path.join(package:buildir(), "lib/*.pdb"), dir)
-        end
     end)
 
     on_test(function (package)
