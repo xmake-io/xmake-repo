@@ -278,7 +278,9 @@ package("aui")
             "-DAUIB_NO_PRECOMPILED=TRUE",
             "-DAUIB_DISABLE=ON",
         }
-        table.insert(configs, "-DGLEW_USE_STATIC_LIBS=" .. (not package:dep("glew"):config("shared") and "ON" or "OFF"))
+        if package:dep("glew") then
+            table.insert(configs, "-DGLEW_USE_STATIC_LIBS=" .. (not package:dep("glew"):config("shared") and "ON" or "OFF"))
+        end
         local opt = {}
         if package:is_plat("macosx") then
             if package:config("shared") then
