@@ -83,64 +83,6 @@ package("pulseaudio")
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         
         import("package.tools.meson").install(package, configs, {packagedeps = {"libiconv", "libflac", "libopus", "libvorbis", "libogg"}})
-        io.writefile(path.join(package:installdir("lib"), "cmake", "PulseAudio", "PulseAudioConfig.cmake"), [[
-set(PULSEAUDIO_FOUND TRUE)
-set(PULSEAUDIO_VERSION_MAJOR 17)
-set(PULSEAUDIO_VERSION_MINOR 0)
-set(PULSEAUDIO_VERSION 17.0)
-set(PULSEAUDIO_VERSION_STRING "17.0")
-
-find_path(PULSEAUDIO_INCLUDE_DIR
-    NAMES pulse/pulseaudio.h
-    HINTS "${CMAKE_CURRENT_LIST_DIR}/../../../include"
-)
-
-find_library(PULSEAUDIO_LIBRARY
-    NAMES pulse libpulse
-    HINTS "${CMAKE_CURRENT_LIST_DIR}/../../../lib"
-)
-
-find_library(PULSEAUDIO_MAINLOOP_LIBRARY
-    NAMES pulse-mainloop-glib libpulse-mainloop-glib
-    HINTS "${CMAKE_CURRENT_LIST_DIR}/../../../lib"
-)
-
-find_library(PULSEAUDIO_SIMPLE_LIBRARY
-    NAMES pulse-simple libpulse-simple
-    HINTS "${CMAKE_CURRENT_LIST_DIR}/../../../lib"
-)
-
-if(NOT TARGET PulseAudio::PulseAudio)
-    add_library(PulseAudio::PulseAudio UNKNOWN IMPORTED)
-    set_target_properties(PulseAudio::PulseAudio PROPERTIES
-        IMPORTED_LOCATION "${PULSEAUDIO_LIBRARY}"
-        INTERFACE_INCLUDE_DIRECTORIES "${PULSEAUDIO_INCLUDE_DIR}"
-        INTERFACE_COMPILE_DEFINITIONS "_REENTRANT"
-    )
-endif()
-
-if(PULSEAUDIO_MAINLOOP_LIBRARY AND NOT TARGET PulseAudio::MainloopGLib)
-    add_library(PulseAudio::MainloopGLib UNKNOWN IMPORTED)
-    set_target_properties(PulseAudio::MainloopGLib PROPERTIES
-        IMPORTED_LOCATION "${PULSEAUDIO_MAINLOOP_LIBRARY}"
-        INTERFACE_INCLUDE_DIRECTORIES "${PULSEAUDIO_INCLUDE_DIR}"
-        INTERFACE_COMPILE_DEFINITIONS "_REENTRANT"
-    )
-    target_link_libraries(PulseAudio::MainloopGLib INTERFACE PulseAudio::PulseAudio)
-endif()
-
-if(PULSEAUDIO_SIMPLE_LIBRARY AND NOT TARGET PulseAudio::PulseAudioSimple)
-    add_library(PulseAudio::PulseAudioSimple UNKNOWN IMPORTED)
-    set_target_properties(PulseAudio::PulseAudioSimple PROPERTIES
-        IMPORTED_LOCATION "${PULSEAUDIO_SIMPLE_LIBRARY}"
-        INTERFACE_INCLUDE_DIRECTORIES "${PULSEAUDIO_INCLUDE_DIR}"
-        INTERFACE_COMPILE_DEFINITIONS "_REENTRANT"
-    )
-    target_link_libraries(PulseAudio::PulseAudioSimple INTERFACE PulseAudio::PulseAudio)
-endif()
-        ]])
-        os.mv(path.join(package:installdir("lib"), "cmake", "PulseAudio", "PulseAudioConfig.cmake"), path.join(package:installdir("lib"), "cmake", "PulseAudioConfig.cmake"))
-        os.mv(path.join(package:installdir("lib"), "cmake", "PulseAudio", "PulseAudioConfigVersion.cmake"), path.join(package:installdir("lib"), "cmake", "PulseAudioConfigVersion.cmake"))
     end)
 
     on_test(function (package)
