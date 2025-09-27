@@ -29,7 +29,7 @@ index dfe6b18b..0bb0c64d 100644
 -                CMAKE_WORKING_DIR "build/cmake"
 -                VERSION a80a1dc)
 +        if (AUIB_DISABLE)
-+            find_package(GLEW CONFIG REQUIRED)
++            find_package(glew CONFIG REQUIRED)
 +        else ()
 +            auib_import(GLEW https://github.com/aui-framework/glew-cmake
 +                    CMAKE_WORKING_DIR "build/cmake"
