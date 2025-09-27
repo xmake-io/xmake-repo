@@ -18,15 +18,15 @@ index 90c53d45..f980b2a3 100644
 +macro(_aui_import_gtest AUIB_DISABLE)
 +    if (AUIB_DISABLE)
 +        find_package(GTest CONFIG REQUIRED)
-+        get_target_property(GTEST_TARGET_IMPORTED_GLOBAL GTest::gtest IMPORTED_GLOBAL)
-+        if (NOT GTEST_TARGET_IMPORTED_GLOBAL)
-+            set_target_properties(GTest::gtest PROPERTIES IMPORTED_GLOBAL TRUE)
-+        endif ()
 +
-+        get_target_property(GMOCK_TARGET_IMPORTED_GLOBAL GTest::gmock IMPORTED_GLOBAL)
-+        if (NOT GMOCK_TARGET_IMPORTED_GLOBAL)
-+            set_target_properties(GTest::gmock PROPERTIES IMPORTED_GLOBAL TRUE)
-+        endif ()
++
++
++
++
++
++
++
++
 +    else ()
 +        if (NOT TARGET GTest::gtest)
 +            auib_import(GTest https://github.com/google/googletest
@@ -55,7 +55,7 @@ index 90c53d45..f980b2a3 100644
              target_include_directories(${TESTS_MODULE_NAME} PUBLIC tests)
 -            target_link_libraries(${TESTS_MODULE_NAME} PUBLIC GTest::gmock)
 +            if (AUIB_DISABLE)
-+                target_link_libraries(${TESTS_MODULE_NAME} PUBLIC gmock::gmock)
++                target_link_libraries(${TESTS_MODULE_NAME} PUBLIC GTest::gmock)
 +            else ()
 +                target_link_libraries(${TESTS_MODULE_NAME} PUBLIC GTest::gmock)
 +            endif ()
