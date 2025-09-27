@@ -1,0 +1,26 @@
+diff --git a/Filters/HyperTree/vtkHyperTreeGridThreshold.cxx b/Filters/HyperTree/vtkHyperTreeGridThreshold.cxx
+index 6b401bfd..85add9f8 100644
+--- a/Filters/HyperTree/vtkHyperTreeGridThreshold.cxx
++++ b/Filters/HyperTree/vtkHyperTreeGridThreshold.cxx
+@@ -307,7 +307,7 @@ int vtkHyperTreeGridThreshold::ProcessTrees(vtkHyperTreeGrid* input, vtkDataObje
+         break;
+       }
+ 
+-      queue.Push(static_cast<int>(outIndex));
++      queue.Push(std::move(static_cast<int>(outIndex)));
+     }
+ 
+     queue.Flush();
+diff --git a/Rendering/UI/vtkWin32RenderWindowInteractor.cxx b/Rendering/UI/vtkWin32RenderWindowInteractor.cxx
+index f00daf39..00707611 100644
+--- a/Rendering/UI/vtkWin32RenderWindowInteractor.cxx
++++ b/Rendering/UI/vtkWin32RenderWindowInteractor.cxx
+@@ -217,7 +217,7 @@ public:
+   std::map<int, std::unique_ptr<TimerContext>> TimerContextMap;
+   bool IsRunning = false;
+ 
+-  static void OnTimerFired(PVOID lpParameter, BOOLEAN)
++  static void WINAPI OnTimerFired(PVOID lpParameter, BOOLEAN)
+   {
+     auto* timerContext = static_cast<TimerContext*>(lpParameter);
+     // Do not post another message for the same timer if already posted
