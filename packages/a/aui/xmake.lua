@@ -8,10 +8,10 @@ package("aui")
 
     add_versions("v7.1.2", "a4cf965c50d75e20a319c9c8b231ad9c13c25a06ad303e1eb65d1ff141b1f85c")
 
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-audio.diff", "505e5d68080149508e71af85209f322240a89ad8f861f2b44e35ea0b09c1a3ba")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-audio.diff", "a51f9b89b0ec4895b6d1f10c1259e0c620c8a0480817598de977210c0ad78e46")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-build.diff", "92bfd68e28a703518c12cf51b898a6b75cacae1fec9384328562c47b003e9577")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-core.diff", "2ab1e7181d07b64bb059b8b7fdff69c295df84043560ecb337516c649ac28bbe")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-crypt.diff", "58045d168a8c7f2658554e0a3010579ec53b54e2c51f524a4fb61e5e4d6fc0a7")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-crypt.diff", "623b7ad65053aa70576409660d4522e7192b2d3fa53c77cec4b3705b1959d78f")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-curl.diff", "937280a828ce0bc30a590606e7d65de55c9421d0650897c2d775e3731405a4b0")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-image.diff", "44bb7e78eab9629c92ef953ec1e0aca9e80712fe2488d6ffa804924d418ebf05")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-json-network.diff", "6d7d8da64cf85212e14757f7d24ac5ac6501dfd0ff3a4fcbe973c7c58c4f213c")
@@ -19,7 +19,7 @@ package("aui")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-sqlite.diff", "1728a4b9afc473acc81b16c544239e6f70a147c0623d894d59dd124e27c94311")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-toolbox.diff", "1ec1abf993eb7e583d32602e1ae8ee4d3358d156e9fac185c0d19ed85660bd3b")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-uitests.diff", "7322437c891b73f1a9184a3e751d99ed2a90f5bac96831cd07f67a41f4f1e81f")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-views.diff", "8194b46068c7a6a0c0a3991d1a462faeea6d8ac00c9f7b046d335312e2258e85")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-views.diff", "f1a87b339671e92aa5d07320bade979f6e24311b8cb330fa12788b538b8cd86c")
     add_patches("v7.1.2", "patches/v7.1.2/fix-backport-lunasvg.diff", "daf24391b88e44bdb801b2c1ba36a695f95384d8157ccb23cfc635d5f30bea4a")
     add_patches("v7.1.2", "patches/v7.1.2/fix-msvc-pretty-function.diff", "268f66f42594f0188fe50d33f5783e66f66024087097ebfdfef60c9768e151fd")
     add_patches("v7.1.2", "patches/v7.1.2/fix-osx-enforce-cpp-template.diff", "599e1e9ec9beec581258db67af8c9fe9dd2351eb169a538890c65422b5052659")
@@ -52,7 +52,7 @@ package("aui")
         component:add("links", "aui.audio")
         package:add("deps", "libopus", "soxr")
         if package:is_plat("linux") then
-            component:add("deps", "pulseaudio")
+            package:add("deps", "pulseaudio")
         elseif package:is_plat("android") then
             package:add("deps", "oboe")
         elseif package:is_plat("windows", "mingw") then
@@ -276,24 +276,16 @@ package("aui")
         local configs = {
             "-DAUI_INSTALL_RUNTIME_DEPENDENCIES=OFF",
             "-DAUIB_NO_PRECOMPILED=TRUE",
-            "-DAUIB_DISABLE=ON"
+            "-DAUIB_DISABLE=ON",
         }
-        if package:is_plat("linux") then
-            local pulseaudio = package:dep("pulseaudio")
-            if pulseaudio and not pulseaudio:is_system() then
-                local fetchinfo = pulseaudio:fetch({external = false})
-                if fetchinfo then
-                    table.insert(configs, "-DPulseAudio_DIR=" .. pulseaudio:installdir())
-                end
-            end
-        end
+        table.insert(configs, "-DGLEW_USE_STATIC_LIBS=" .. (not package:dep("glew"):config("shared") and "ON" or "OFF"))
         local opt = {}
         if package:is_plat("macosx") then
             if package:config("shared") then
                 opt.packagedeps = {"gtest"}
             end
         elseif package:is_plat("windows", "mingw") then
-            opt.packagedeps = {"glew", "gtest"}
+            opt.packagedeps = {"gtest"}
             if package:has_tool("cxx", "cl", "clang_cl") then
                 opt.cxflags = {"/EHsc"}
             end

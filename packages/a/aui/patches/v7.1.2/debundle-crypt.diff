@@ -8,7 +8,7 @@ index c5354f2e..9c194be4 100644
  unset(OPENSSL_SSL_LIBRARY CACHE)
 -auib_import(OpenSSL https://github.com/aui-framework/openssl-cmake/archive/56ee19b7e11b418e0f29825414abdca96ff6b83e.zip ARCHIVE)
 +if (AUIB_DISABLE)
-+    find_package(OpenSSL CONFIG REQUIRED)
++    find_package(OpenSSL REQUIRED)
 +else ()
 +    auib_import(OpenSSL https://github.com/aui-framework/openssl-cmake/archive/56ee19b7e11b418e0f29825414abdca96ff6b83e.zip ARCHIVE)
 +endif ()
