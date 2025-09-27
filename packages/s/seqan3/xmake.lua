@@ -7,6 +7,7 @@ package("seqan3")
     add_urls("https://github.com/seqan/seqan3/archive/refs/tags/$(version).tar.gz",
              "https://github.com/seqan/seqan3.git")
 
+    add_versions("3.4.0", "8e000e6788f1e2ada071b36f64231d56f18e2d687ab4122d86cd3aefc6c87743")
     add_versions("3.2.0", "80d41dd035407cfec83eb3a4466d0421adc27129af684290c0c4da31421e7276")
 
     add_configs("cereal", {description = "required for serialisation and CTD support", default = false, type = "boolean"})
