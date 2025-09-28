@@ -16,12 +16,14 @@ package("fftw")
         quad = {}
     }
 
+    add_configs("tools", {description = "Build tools.", default = false, type = "boolean"})
+
     -- for backward compatibility
     add_configs("precision", {description = "Float number precision. (deprecated)", default = nil, type = "string", values = {"float", "double", "quad", "long"}})
     add_configs("simd", {description = "SIMD instruction sets used. (deprecated)", default = nil, type = "string", values = {"none", "sse", "sse2", "avx", "avx2", "avx512", "avx-128-fma", "kcvi", "altivec", "vsx", "neon", "generic-simd128", "generic-simd256"}})
 
     add_configs("precisions", {description = "The floating point precision to enable. (float|double|quad|long)", default = {"float", "double"}, type = "table"})
-    add_configs("optimizations", {description = "Optimization options enabled for each precision target. ()", default = default_optimizations, type = "table"})
+    add_configs("optimizations", {description = "Optimization options enabled for each precision target.", default = default_optimizations, type = "table"})
 
     add_configs("thread", {description = "Thread model used.", default = "fftw", type = "string", values = {"none", "fftw", "openmp"}})
     add_configs("enable_mpi", {description = "Enable MPI support.", default = false, type = "boolean"})
@@ -125,24 +127,11 @@ package("fftw")
     on_install("linux", function (package)
         import("lib.detect.find_tool")
 
-        os.mkdir(".my_source")
-        for _, filedir in ipairs(os.filedirs("*")) do
-            if filedir ~= ".my_source" then
-                os.mv(filedir, ".my_source")
-            end
-        end
-
         for _, prec in ipairs(package:config("precisions")) do
-            os.cp(".my_source", prec)
-            os.cd(prec)
-
             local configs = {
                 "--disable-dependency-tracking",
                 "--disable-doc"
             }
-            if package:config("shared") then
-                table.insert(configs, "--enable-shared")
-            end
 
             if package:config("thread") == "fftw" then
                 table.insert(configs, "--enable-threads")
@@ -181,9 +170,14 @@ package("fftw")
                 end
             end
 
+            if not package:config("tools") then
+                io.replace("Makefile.in", "tools ", "", {plain = true})
+            end
+            io.replace("Makefile.in", "tests ", "", {plain = true})
+
             import("package.tools.autoconf").install(package, configs)
 
-            os.cd("..")
+            os.vrunv("make distclean")
         end
     end)
 
