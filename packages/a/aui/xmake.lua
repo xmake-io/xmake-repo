@@ -19,7 +19,7 @@ package("aui")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-sqlite.diff", "1728a4b9afc473acc81b16c544239e6f70a147c0623d894d59dd124e27c94311")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-toolbox.diff", "1ec1abf993eb7e583d32602e1ae8ee4d3358d156e9fac185c0d19ed85660bd3b")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-uitests.diff", "b7ad0900fbe2d8b50698f3439fe2fe6c182c925e94d72420ebb5104ba0f2f633")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-views.diff", "57d45560b0d6c12c65d07e2ef7aee8a5fbcd341b491fb27a6b508cccab461db6")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-views.diff", "d889bbbd1808f12937219e5ca40b835cb972e6d764d021e4ec5444132a68a8a3")
     add_patches("v7.1.2", "patches/v7.1.2/fix-backport-lunasvg.diff", "daf24391b88e44bdb801b2c1ba36a695f95384d8157ccb23cfc635d5f30bea4a")
     add_patches("v7.1.2", "patches/v7.1.2/fix-msvc-pretty-function.diff", "268f66f42594f0188fe50d33f5783e66f66024087097ebfdfef60c9768e151fd")
     add_patches("v7.1.2", "patches/v7.1.2/fix-osx-enforce-cpp-template.diff", "599e1e9ec9beec581258db67af8c9fe9dd2351eb169a538890c65422b5052659")
@@ -278,16 +278,10 @@ package("aui")
             "-DAUIB_NO_PRECOMPILED=TRUE",
             "-DAUIB_DISABLE=ON",
         }
-        if package:dep("glew") then
-            table.insert(configs, "-DGLEW_USE_STATIC_LIBS=" .. (not package:dep("glew"):config("shared") and "ON" or "OFF"))
-        end
         local opt = {}
         if package:is_plat("windows", "mingw") then
             if package:has_tool("cxx", "cl", "clang_cl") then
                 opt.cxflags = {"/EHsc"}
-            end
-            if not package:dep("glew"):config("shared") then
-                table.insert(opt.cxflags, "-DGLEW_STATIC")
             end
             if package:targetarch():startswith("arm") then
                 io.replace("cmake/aui.build.cmake", [[if (CMAKE_GENERATOR_PLATFORM MATCHES "(arm64)|(ARM64)" OR CMAKE_SYSTEM_PROCESSOR MATCHES "(aarch64|arm64)")]], [[if (1)]], {plain = true})
