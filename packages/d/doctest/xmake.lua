@@ -35,5 +35,5 @@ package("doctest")
                 CHECK(factorial(3) == 6);
                 CHECK(factorial(10) == 3628800);
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "doctest/doctest.h", defines = "DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN"}))
+        ]]}, {configs = {languages = "c++11"}, includes = "doctest.h", defines = "DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN"}))
     end)
