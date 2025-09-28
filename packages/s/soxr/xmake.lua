@@ -15,8 +15,6 @@ package("soxr")
         add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
     end
 
-    add_links("soxr-lsr", "soxr")
-
     add_deps("cmake")
 
     if is_plat("linux", "bsd") then
@@ -24,6 +22,9 @@ package("soxr")
     end
 
     on_load(function (package)
+        if package:config("lsr") then
+            package:add("links", "soxr-lsr", "soxr")
+        end
         if package:config("openmp") then
             package:add("deps", "openmp")
         end
