@@ -67,21 +67,9 @@ package("fftw")
     end)
 
     on_install(function (package)
-        os.mkdir(".my_source")
-        for _, filedir in ipairs(os.filedirs("*")) do
-            if filedir ~= ".my_source" then
-                os.mv(filedir, ".my_source")
-            end
-        end
-
         for _, prec in ipairs(package:config("precisions")) do
-            os.cp(".my_source", prec)
-            os.cd(prec)
-
             local configs = {"-DBUILD_TESTS=OFF", "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
 
-            table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
             table.insert(configs, "-DWITH_COMBINED_THREADS=" .. (package:config("shared") and "ON" or "OFF"))
 
             if package:config("thread") == "fftw" then
@@ -90,7 +78,7 @@ package("fftw")
                 table.insert(configs, "-DENABLE_OPENMP=ON")
             end
 
-            local opt = {}
+            local opt = { builddir = "build" }
             if package:is_plat("mingw") then
                 opt.cxflags = "-DWITH_OUR_MALLOC"
             end
@@ -120,7 +108,7 @@ package("fftw")
                 os.trycp(path.join(package:buildir(), "fftw3q.pdb"), dir)
             end
 
-            os.cd("..")
+            os.rmdir("build")
         end
     end)
 
