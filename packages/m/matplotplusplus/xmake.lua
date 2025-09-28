@@ -21,7 +21,7 @@ package("matplotplusplus")
     for config, dep in pairs(configdeps) do
         add_configs(config, {description = "Enable " .. config .. " support.", default = (config == "zlib"), type = "boolean"})
     end
-    if is_plat("windows", "mingw") then
+    if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
