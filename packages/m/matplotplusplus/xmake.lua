@@ -26,6 +26,7 @@ package("matplotplusplus")
     end
 
     add_deps("cmake")
+    add_deps("nodesoup", "cimg")
 
     if is_plat("windows", "mingw") then
         add_syslinks("user32", "shell32", "gdi32")
