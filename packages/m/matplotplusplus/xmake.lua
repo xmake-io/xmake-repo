@@ -21,14 +21,13 @@ package("matplotplusplus")
     for config, dep in pairs(configdeps) do
         add_configs(config, {description = "Enable " .. config .. " support.", default = (config == "zlib"), type = "boolean"})
     end
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
     add_deps("cmake")
-    add_deps("nodesoup", "cimg")
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("user32", "shell32", "gdi32")
     end
 
@@ -50,7 +49,7 @@ package("matplotplusplus")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows", "mingw", "macosx", "linux", function (package)
         if package:is_plat("windows") then
             local vs = import("core.tool.toolchain").load("msvc"):config("vs")
             if tonumber(vs) < 2019 then
