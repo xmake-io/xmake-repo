@@ -6,6 +6,7 @@ package("cjson")
     set_urls("https://github.com/DaveGamble/cJSON/archive/refs/tags/$(version).tar.gz",
              "https://github.com/DaveGamble/cJSON.git")
 
+    add_versions("v1.7.19", "7fa616e3046edfa7a28a32d5f9eacfd23f92900fe1f8ccd988c1662f30454562")
     add_versions("v1.7.18", "3aa806844a03442c00769b83e99970be70fbef03735ff898f4811dd03b9f5ee5")
     add_versions("v1.7.15", "5308fd4bd90cef7aa060558514de6a1a4a0819974a26e6ed13973c5f624c24b2")
 
