@@ -18,10 +18,11 @@ package("doctest")
     add_versions("2.3.6", "f63c3c01021ba3fb35a0702127abfaa6fc44aaefd309e2c246e62a083deffa1f")
     add_versions("2.3.1", "b3d3c6133874e3a8c8e319cab33167156b6b1d2ed1ddde08c2655193cdeb58a0")
 
+    -- some packages like `FakeIt` use <doctest.h>, so we need to prepend include dir
+    add_includedirs("include", "include/doctest")
+
     on_install(function (package)
         os.cp("doctest", package:installdir("include"))
-        -- some packages like `FakeIt` use <doctest.h>, so we need a copy of header files in the include dir
-        os.cp("doctest/*", package:installdir("include"))
     end)
 
     on_test(function (package)
