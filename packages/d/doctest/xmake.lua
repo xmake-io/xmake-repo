@@ -20,6 +20,8 @@ package("doctest")
 
     on_install(function (package)
         os.cp("doctest", package:installdir("include"))
+        -- some packages like `FakeIt` use <doctest.h>, so we need a copy of header files in the include dir
+        os.cp("doctest/*", package:installdir("include"))
     end)
 
     on_test(function (package)
