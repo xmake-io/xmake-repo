@@ -69,7 +69,7 @@ package("fftw")
             local configs = {
                 "-DBUILD_TESTS=OFF",
                 "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
-                "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
+                "--fresh"
             }
 
             table.insert(configs, "-DWITH_COMBINED_THREADS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -109,8 +109,6 @@ package("fftw")
                 os.trycp(path.join(package:buildir(), "fftw3l.pdb"), dir)
                 os.trycp(path.join(package:buildir(), "fftw3q.pdb"), dir)
             end
-
-            os.vrunv("cmake --fresh")
         end
     end)
 
