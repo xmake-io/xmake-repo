@@ -28,7 +28,7 @@ package("matplotplusplus")
     add_deps("cmake")
     add_deps("nodesoup", "cimg")
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("user32", "shell32", "gdi32")
     end
 
@@ -38,6 +38,11 @@ package("matplotplusplus")
                 if package:is_debug() then
                     raise("package(matplotplusplus 1.2.2) unsupported debug build type")
                 end
+            end
+        end)
+        on_check("mingw", function (package)
+            if package:version() and package:version():lt("1.2.0") then
+                assert(false, "package(matplotplusplus <1.2.0) unsupported version on mingw")
             end
         end)
     end
@@ -50,7 +55,7 @@ package("matplotplusplus")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows", "mingw", "macosx", "linux", function (package)
         if package:is_plat("windows") then
             local vs = import("core.tool.toolchain").load("msvc"):config("vs")
             if tonumber(vs) < 2019 then
