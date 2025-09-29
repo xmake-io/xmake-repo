@@ -37,8 +37,6 @@ package("fftw")
     end
 
     on_load(function (package)
-        import("core.base.hashset")
-
         if package:config("thread") == "openmp" then
             package:add("deps", "openmp")
         end
@@ -108,7 +106,7 @@ package("fftw")
                 os.trycp(path.join(package:buildir(), "fftw3q.pdb"), dir)
             end
 
-            os.rmdir("build")
+            os.vrunv("cmake --fresh")
         end
     end)
 
