@@ -66,7 +66,11 @@ package("fftw")
 
     on_install(function (package)
         for _, prec in ipairs(package:config("precisions")) do
-            local configs = {"-DBUILD_TESTS=OFF", "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
+            local configs = {
+                "-DBUILD_TESTS=OFF",
+                "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
+                "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
+            }
 
             table.insert(configs, "-DWITH_COMBINED_THREADS=" .. (package:config("shared") and "ON" or "OFF"))
 
