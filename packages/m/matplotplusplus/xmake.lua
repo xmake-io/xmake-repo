@@ -40,6 +40,11 @@ package("matplotplusplus")
                 end
             end
         end)
+        on_check("mingw", function (package)
+            if package:version() and package:version():lt("1.2.0") then
+                assert(false, "package(matplotplusplus <1.2.0) unsupported version on mingw")
+            end
+        end)
     end
 
     on_load(function (package)
