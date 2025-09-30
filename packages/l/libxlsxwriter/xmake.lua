@@ -52,6 +52,7 @@ package("libxlsxwriter")
         }
 
         io.replace("src/packager.c", "minizip/iowin32.h", "iowin32.h", {plain = true})
+		os.tryrm("cmake/Findminizip.cmake")
 
         if package:is_plat("windows") then
             if package:is_debug() then
@@ -61,34 +62,26 @@ package("libxlsxwriter")
             end
         end
 
-        local rm_lines
         if package:version():eq("1.1.5") then
-            rm_lines={
-                -- zlib
-                [[find_package(ZLIB REQUIRED "1.0")]],
-                -- minizip
-                [[find_package(MINIZIP REQUIRED "1.0")]],
-            }
+			-- remove fixed version, fix name
+			io.replace("CMakeLists.txt", [[find_package(ZLIB REQUIRED "1.0")]], [[find_package(ZLIB REQUIRED)]], {plain = true})
+			io.replace("CMakeLists.txt", [[find_package(MINIZIP REQUIRED "1.0")]], [[find_package(minizip REQUIRED)]], {plain = true})
+			-- NOTICE: link order for gcc
+			io.replace("CMakeLists.txt", [[${ZLIB_LIBRARIES} ${MINIZIP_LIBRARIES}]], [[minizip::minizip ZLIB::ZLIB]], {plain = true})
         elseif package:version():ge("1.2.3") then
-            rm_lines={
-                -- zlib
-                [[find_package(ZLIB "1.2.8" REQUIRED)]],
-                [[target_link_libraries(${PROJECT_NAME} PRIVATE ZLIB::ZLIB)]],
-                -- minizip: msvc
-                [[find_package(MINIZIP NAMES unofficial-minizip REQUIRED)]],
-                [[set(MINIZIP_LIBRARIES unofficial::minizip::minizip)]],
-                -- minizip: other
-                [[find_package(PkgConfig REQUIRED)]],
-                [[pkg_check_modules(MINIZIP minizip)]],
-                [[list(APPEND LXW_PRIVATE_INCLUDE_DIRS ${MINIZIP_INCLUDE_DIRS}/..)]],
-            }
+			if package:is_plat("windows") then
+				-- fix name
+				io.replace("CMakeLists.txt", "unofficial-minizip", "minizip", {plain = true})
+				io.replace("CMakeLists.txt", "unofficial::minizip", "minizip", {plain = true})
+			else
+				io.replace("CMakeLists.txt", [[find_package(PkgConfig REQUIRED)]], [[find_package(minizip REQUIRED)]], {plain = true})
+				io.replace("CMakeLists.txt", [[pkg_check_modules(MINIZIP minizip)]], "", {plain = true})
+				-- NOTICE: link order for gcc
+				io.replace("CMakeLists.txt", [[ZLIB::ZLIB]], [[minizip::minizip ZLIB::ZLIB]], {plain = true})
+			end
         end
 
-        for _,l in ipairs(rm_lines) do
-            io.replace("CMakeLists.txt", l, "", {plain = true})
-        end
-
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"minizip", "zlib"}})
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
