@@ -8,7 +8,7 @@ package("omath")
 
     add_versions("v3.8.1", "aaea99570c382478f825af759a2b0a214b429c74a9a5492ddd2866c836e85f4e")
 
-    add_patches("v3.8.1", "patches/v3.8.1/fix-build.patch", "4ad392f63b432ba7a713fc79926d90efed0f9841186bd3df433d5610ff2b221f")
+    add_patches("v3.8.1", "patches/v3.8.1/fix-build.patch", "c1554cf0cdd027d6386544871d6248c868f8f95add343660334888da52119ae9")
 
     if not is_arch("arm.*") then
         add_configs("avx2",  {description = "Enable AVX2", default = true, type = "boolean"})

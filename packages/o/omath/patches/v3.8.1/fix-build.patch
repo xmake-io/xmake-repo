@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 18c1b45..3b289e9 100644
+index 18c1b45..e46eb56 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -3,19 +3,29 @@ cmake_minimum_required(VERSION 3.26)
@@ -42,11 +42,11 @@ index 18c1b45..3b289e9 100644
 -endif ()
 +if (OMATH_USE_AVX2)
 +    if (MSVC)
-+        target_compile_options(${PROJECT_NAME} PUBLIC /ARCH:AVX /ARCH:AVX2)
++        target_compile_options(${PROJECT_NAME} PUBLIC /ARCH:AVX2)
 +    elseif (EMSCRIPTEN)
-+        target_compile_options(${PROJECT_NAME} PUBLIC -msimd128 -mavx -mavx2)
++        target_compile_options(${PROJECT_NAME} PUBLIC -msimd128 -mavx2)
 +    elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
-+        target_compile_options(${PROJECT_NAME} PUBLIC -mfma -mavx -mavx2)
++        target_compile_options(${PROJECT_NAME} PUBLIC -mfma -mavx2)
 +    endif()
 +endif()
  
