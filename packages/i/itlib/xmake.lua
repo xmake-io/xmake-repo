@@ -7,6 +7,7 @@ package("itlib")
     add_urls("https://github.com/iboB/itlib/archive/refs/tags/$(version).tar.gz",
              "https://github.com/iboB/itlib.git")
 
+    add_versions("v1.11.8", "a9824567d11e8b66aaffda3efa8cf52a158ee642dc6e9446db8ac2ea1e28ad87")
     add_versions("v1.11.7", "6bb8deaa3ae1129cf8924b8e1572275832ff5d878638d7be13ab8f563ee1bf96")
     add_versions("v1.11.5", "bc78b8f514dbeff2cb5a7d50dff5bc30c148ca23095838d54e6431828341fd5d")
     add_versions("v1.11.4", "09b155afcb9766fe36d0156294f6656956189235612eb7711903ebc22079c37e")

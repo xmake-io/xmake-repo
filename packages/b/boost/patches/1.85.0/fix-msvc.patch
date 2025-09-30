@@ -7,7 +7,7 @@ index 54a6ced..bac3932 100644
          else
          {
 -            if [ MATCH "(14.3)" : $(version) ]
-+            if [ MATCH "(14.[34])" : $(version) ]
++            if [ MATCH "(14.[345])" : $(version) ]
              {
                  if $(.debug-configuration)
                  {
@@ -16,7 +16,7 @@ index 54a6ced..bac3932 100644
              # FIXME: We currently detect both Microsoft Visual Studio 9.0 and
              # 9.0express as 9.0 here.
 -            if [ MATCH "(MSVC\\\\14.3)" : $(command) ]
-+            if [ MATCH "(MSVC\\\\14.[34])" : $(command) ]
++            if [ MATCH "(MSVC\\\\14.[345])" : $(command) ]
              {
                  version = 14.3 ;
              }
