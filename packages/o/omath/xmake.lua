@@ -10,7 +10,7 @@ package("omath")
 
     add_patches("v3.8.1", "patches/v3.8.1/fix-build.patch", "c1554cf0cdd027d6386544871d6248c868f8f95add343660334888da52119ae9")
 
-    if not is_arch("arm.*") then
+    if is_arch("x86", "i386", "x64", "x86_64") then
         add_configs("avx2",  {description = "Enable AVX2", default = true, type = "boolean"})
     end
     add_configs("imgui", {description = "Define method to convert omath types to imgui types", default = true, type = "boolean"})
