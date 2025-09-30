@@ -1,8 +1,8 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 18c1b45..deccffb 100644
+index 18c1b45..3b289e9 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -3,19 +3,31 @@ cmake_minimum_required(VERSION 3.26)
+@@ -3,19 +3,29 @@ cmake_minimum_required(VERSION 3.26)
  project(omath VERSION 3.5.0 LANGUAGES CXX)
  
  include(CMakePackageConfigHelpers)
@@ -26,8 +26,6 @@ index 18c1b45..deccffb 100644
  option(OMATH_SUPRESS_SAFETY_CHECKS "Supress some safety checks in release build to improve general performance" ON)
  option(OMATH_USE_UNITY_BUILD "Will enable unity build to speed up compilation" OFF)
  option(OMATH_ENABLE_LEGACY "Will enable legacy classes that MUST be used ONLY for backward compatibility" OFF)
-+option(OMATH_SYSTEM_EXTLIBS "Omath will define method to convert omath types to imgui types" OFF)
-+
 +if (OMATH_USE_AVX2 AND NOT COMPILER_SUPPORTS_AVX2)
 +    message(WARNING "OMATH_USE_AVX2 requested, but compiler/target does not support AVX2. Disabling.")
 +    set(OMATH_USE_AVX2 OFF CACHE BOOL "Omath will use AVX2 to boost performance" FORCE)
@@ -35,7 +33,7 @@ index 18c1b45..deccffb 100644
  
  message(STATUS "[${PROJECT_NAME}]: Building on ${CMAKE_HOST_SYSTEM_NAME}, compiler ${CMAKE_CXX_COMPILER_ID}")
  message(STATUS "[${PROJECT_NAME}]: Warnings as errors ${OMATH_THREAT_WARNING_AS_ERROR}")
-@@ -93,13 +105,18 @@ if (OMATH_STATIC_MSVC_RUNTIME_LIBRARY)
+@@ -93,13 +103,18 @@ if (OMATH_STATIC_MSVC_RUNTIME_LIBRARY)
      )
  endif ()
  
