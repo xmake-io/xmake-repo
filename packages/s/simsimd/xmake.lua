@@ -7,6 +7,7 @@ package("simsimd")
     add_urls("https://github.com/ashvardanian/SimSIMD/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ashvardanian/SimSIMD.git")
 
+    add_versions("v6.5.3", "fa52807be74455d6f99d073262710ce82f7aee4cf0e883d2610b4e74cd440f9c")
     add_versions("v6.5.0", "c9afe4fe80c233d43473a8438af063e01c0ca7bc55b744fde53f301e420ae8c9")
     add_versions("v6.4.3", "1125551b98d41839d59cdaa9f00630b4391002567889d64aefd50c8fa3212549")
     add_versions("v6.4.1", "dab384a1fc310687f7ae5d43bc13f814089835d60a3b83a8cb01659e5f3cb1ab")
