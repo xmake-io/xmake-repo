@@ -61,11 +61,6 @@ package("libgit2")
             package:add("deps", https)
         end
 
-        -- Fix OpenSSL 3.0+ compatibility on Linux
-        if package:is_plat("linux") and https == "openssl3" then
-            package:add("defines", "OPENSSL_API_COMPAT=0x10100000L")
-        end
-
         if package:config("ssh") then
             local backend
             if https == "winhttp" then
@@ -134,6 +129,12 @@ package("libgit2")
         table.insert(configs, "-DBUILD_CLI=" .. (package:config("tools") and "ON" or "OFF"))
         local opt = {}
         opt.packagedeps = {"pcre2"}
+
+        -- Fix OpenSSL 3.0+ compatibility on Linux
+        if package:is_plat("linux") and package:config("https") == "openssl3" then
+            opt.cxflags = {"-DOPENSSL_API_COMPAT=0x10100000L"}
+        end
+
         if package:is_plat("mingw") then
             local mingw = import("detect.sdks.find_mingw")()
             local dlltool = assert(os.files(path.join(mingw.bindir, "*dlltool*"))[1], "dlltool not found!")
