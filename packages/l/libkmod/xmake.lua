@@ -98,7 +98,16 @@ package("libkmod")
             io.replace("Makefile.am", [[dist_bashcompletion_DATA = \
 	shell-completion/bash/kmod]], "", {plain = true})
 
-            import("package.tools.autoconf").install(package, configs, {packagedeps = packagedeps, makeconfigs = {LIBTOOLFLAGS = "--verbose"}})
+            import("package.tools.autoconf").configure(package, configs, {packagedeps = packagedeps})
+
+            io.replace("libtool", "      -all-static)", [[      --target=* )
+        func_append compiler_flags " $arg"
+        func_append linker_flags " $arg"
+        ;;
+      -all-static)]], {plain = true})
+
+            os.vrunv("make")
+            os.vrunv("make install")
         else
             local configs = {
                 "-Dbashcompletiondir=no",
