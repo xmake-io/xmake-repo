@@ -24,6 +24,17 @@ package("omath")
     end)
 
     on_install("!macosx and !iphoneos and !android and !bsd", function (package)
+        if package:config("imgui") then
+            local imgui = package:dep("imgui")
+            if imgui and not imgui:is_system() then
+                local imgui_fetch = imgui:fetch()
+                if imgui_fetch then
+                    for _, inc in ipairs(imgui_fetch.includedirs or imgui_fetch.sysincludedirs) do
+                        os.mkdir(inc)
+                    end
+                end
+            end
+        end
         local configs = {
             "-DOMATH_BUILD_TESTS=OFF",
             "-DOMATH_BUILD_BENCHMARK=OFF",
