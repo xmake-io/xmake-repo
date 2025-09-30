@@ -1,9 +1,10 @@
 package("openjph")
     set_homepage("https://github.com/aous72/OpenJPH")
     set_description("Open-source implementation of JPEG2000 Part-15 (or JPH or HTJ2K) ")
-    set_license("BSD-2")
+    set_license("BSD-2-Clause")
     
-    add_urls("https://github.com/aous72/OpenJPH/archive/refs/tags/$(version).zip","https://github.com/aous72/OpenJPH.git")
+    add_urls("https://github.com/aous72/OpenJPH/archive/refs/tags/$(version).zip"
+        ,"https://github.com/aous72/OpenJPH.git")
     add_versions("0.24.1","c9914d98c40262fb10941ff5d263bd671d133cd3572ec8d4c62151700ffa580e")
     add_deps("cmake")
     on_install(function (package)
@@ -17,5 +18,5 @@ package("openjph")
                 ojph::point x;
                 x.x;
             }
-        ]]}, {includes = {"openjph/ojph_base.h"}}))
+        ]]}, {languages = "c++11",includes = {"openjph/ojph_base.h"}}))
     end)
