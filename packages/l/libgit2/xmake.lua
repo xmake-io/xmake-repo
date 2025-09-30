@@ -106,7 +106,7 @@ package("libgit2")
                 if package:is_plat("windows", "mingw", "msys") then
                     table.join2(links, {"ws2_32", "advapi32", "bcrypt"})
                 end
-    
+
                 io.replace("cmake/FindmbedTLS.cmake",
                     [["-L${MBEDTLS_LIBRARY_DIR} -l${MBEDTLS_LIBRARY_FILE} -l${MBEDX509_LIBRARY_FILE} -l${MBEDCRYPTO_LIBRARY_FILE}"]],
                     table.concat(links, " "), {plain = true})
@@ -122,6 +122,13 @@ package("libgit2")
             "-DUSE_HTTP_PARSER=llhttp",
             "-DUSE_GSSAPI=OFF"
         }
+
+        -- Fix OpenSSL 3.0+ compatibility on Linux
+        if package:is_plat("linux") and https == "openssl3" then
+            table.insert(configs, "-DCMAKE_C_FLAGS=-DOPENSSL_API_COMPAT=0x10100000L")
+            table.insert(configs, "-DCMAKE_CXX_FLAGS=-DOPENSSL_API_COMPAT=0x10100000L")
+        end
+
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_SSH=" .. (package:config("ssh") and "ON" or "OFF"))
@@ -135,7 +142,7 @@ package("libgit2")
         end
         import("package.tools.cmake").install(package, configs, opt)
         if package:is_plat("linux") and linuxos.name() == "fedora" then
-            io.replace(path.join(package:installdir("lib/pkgconfig"), "libgit2.pc"), 
+            io.replace(path.join(package:installdir("lib/pkgconfig"), "libgit2.pc"),
                 "Requires.private: openssl ", "Requires.private: openssl3 ", {plain = true})
         end
     end)
