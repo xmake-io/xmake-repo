@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 18c1b45..fa66ea5 100644
+index 18c1b45..3c97e73 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -3,13 +3,19 @@ cmake_minimum_required(VERSION 3.26)
@@ -35,23 +35,22 @@ index 18c1b45..fa66ea5 100644
  message(STATUS "[${PROJECT_NAME}]: Building on ${CMAKE_HOST_SYSTEM_NAME}, compiler ${CMAKE_CXX_COMPILER_ID}")
  message(STATUS "[${PROJECT_NAME}]: Warnings as errors ${OMATH_THREAT_WARNING_AS_ERROR}")
  message(STATUS "[${PROJECT_NAME}]: Build unit tests ${OMATH_BUILD_TESTS}")
-@@ -93,13 +104,20 @@ if (OMATH_STATIC_MSVC_RUNTIME_LIBRARY)
+@@ -93,13 +104,18 @@ if (OMATH_STATIC_MSVC_RUNTIME_LIBRARY)
      )
  endif ()
  
 -if (OMATH_USE_AVX2 AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 -    target_compile_options(${PROJECT_NAME} PUBLIC -mavx2 -mavx -mfma)
-+if (OMATH_USE_AVX2 AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
-+    if (EMSCRIPTEN)
+-endif ()
++if (OMATH_USE_AVX2)
++    if (MSVC)
++        target_compile_options(${PROJECT_NAME} PRIVATE /ARCH:AVX /ARCH:AVX2)
++    elseif (EMSCRIPTEN)
 +        target_compile_options(${PROJECT_NAME} PRIVATE -msimd128 -mavx -mavx2)
-+    else ()
-+        if (NOT MSVC)
-+            target_compile_options(${PROJECT_NAME} PRIVATE -mavx2 -mavx -mfma)
-+        else ()
-+            target_compile_options(${PROJECT_NAME} PRIVATE /ARCH:AVX /ARCH:AVX2)
-+        endif ()
-+    endif ()
- endif ()
++    elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
++        target_compile_options(${PROJECT_NAME} PRIVATE -mavx2 -mavx -mfma)
++    endif()
++endif()
  
  target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_23)
  
