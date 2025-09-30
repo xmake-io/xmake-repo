@@ -1,4 +1,4 @@
-package("OpenJPH")
+package("openjph")
     set_homepage("https://github.com/aous72/OpenJPH")
     set_description("Open-source implementation of JPEG2000 Part-15 (or JPH or HTJ2K) ")
     set_license("BSD-2")
