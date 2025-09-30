@@ -61,6 +61,11 @@ package("libgit2")
             package:add("deps", https)
         end
 
+        -- Fix OpenSSL 3.0+ compatibility on Linux
+        if package:is_plat("linux") and https == "openssl3" then
+            package:add("defines", "OPENSSL_API_COMPAT=0x10100000L")
+        end
+
         if package:config("ssh") then
             local backend
             if https == "winhttp" then
@@ -122,12 +127,6 @@ package("libgit2")
             "-DUSE_HTTP_PARSER=llhttp",
             "-DUSE_GSSAPI=OFF"
         }
-
-        -- Fix OpenSSL 3.0+ compatibility on Linux
-        if package:is_plat("linux") and https == "openssl3" then
-            table.insert(configs, "-DCMAKE_C_FLAGS=-DOPENSSL_API_COMPAT=0x10100000L")
-            table.insert(configs, "-DCMAKE_CXX_FLAGS=-DOPENSSL_API_COMPAT=0x10100000L")
-        end
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
