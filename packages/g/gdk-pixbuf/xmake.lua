@@ -66,9 +66,12 @@ package("gdk-pixbuf")
                          "-Dtests=false",
                          "-Dinstalled_tests=false"}
 
-        table.insert(configs, (package:version():gt("2.42.12") and "-Ddocumentation=false" or "-Ddocs=false"))
-        if package:version() and package:version():gt("2.42.12") then
+        local version = package:version()
+        if version and version:gt("2.42.12") then
+            table.insert(configs, "-Ddocumentation=false")
             table.insert(configs, "-Dglycin=disabled")
+        else
+            table.insert(configs, "-Ddocs=false")
         end
 
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
