@@ -30,8 +30,13 @@ package("minizip")
                     add_files("iowin32.c")
                     add_headerfiles("iowin32.h")
                 else
-                    add_defines("_LARGEFILE64_SOURCE=1")
+                    add_defines("_LARGEFILE64_SOURCE")
                 end
+                on_config(function(target)
+                    if not target:has_cfuncs("fopen64", {includes = "stdio.h", configs = {languages = "c11"}}) then
+                        target:add("defines", "IOAPI_NO_64")
+                    end
+                end)
         ]])
         local configs = {}
         if package:config("shared") then
