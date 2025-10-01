@@ -8,6 +8,8 @@ package("openjph")
 
     add_versions("0.24.1", "5e44a809c9ee3dad175da839feaf66746cfc114a625ec61c786de8ad3f5ab472")
 
+    add_configs("tools", {description = "Build tools", default = true, type = "boolean"})
+
     add_deps("cmake")
 
     if on_check then
@@ -20,6 +22,7 @@ package("openjph")
 
     on_install("!macosx and !iphoneos", function (package)
 	    local configs = {}
+        table.insert(configs, "-DOJPH_BUILD_EXECUTABLES=" .. (package:config("tools") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
