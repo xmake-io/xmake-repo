@@ -10,6 +10,9 @@ package("libxlsxwriter")
     add_versions("newtag:v1.2.3", "63f070c19c97ce4d5dfcbc1fa8cc5237d4c9decf39341a31188dbdceef93b542")
     add_versions("oldtag:1.1.5", "12843587d591cf679e6ec63ecc629245befec2951736804a837696cdb5d61946")
 
+    add_patches("v1.2.3", "patches/v1.2.3/fix-build.diff", "fddb251165ca0940f8099e423981377a837417c478cbc7a5fe79971b2d9c30b9")
+    add_patches("1.1.5", "patches/1.1.5/fix-build.diff", "a8f250d3287428e9035f3f1478d8464ff1e8ece2c738a1f4eda3d71adb1d83ee")
+
     add_configs("tmpfile", {description = "Use the C standard library's tmpfile()", default = false, type = "boolean"})
     add_configs("md5", {description = "Build libxlsxwriter without third party MD5 lib", default = false, type = "boolean"})
     add_configs("openssl_md5", {description = "Build libxlsxwriter with the OpenSSL MD5 lib", default = false, type = "boolean"})
@@ -36,7 +39,6 @@ package("libxlsxwriter")
         local configs = {
             "-DBUILD_TESTS=OFF",
             "-DBUILD_EXAMPLES=OFF",
-
             "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
             "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"),
             "-DUSE_STANDARD_TMPFILE=" .. (package:config("tmpfile") and "ON" or "OFF"),
@@ -45,42 +47,11 @@ package("libxlsxwriter")
             "-DUSE_MEM_FILE=" .. (package:config("mem_file") and "ON" or "OFF"),
             "-DIOAPI_NO_64=" .. (package:config("64") and "OFF" or "ON"),
             "-DUSE_DTOA_LIBRARY=" .. (package:config("dtoa") and "ON" or "OFF"),
-
             "-DUSE_SYSTEM_MINIZIP=ON",
-
             "-DUSE_STATIC_MSVC_RUNTIME=" .. ((package:is_plat("windows") and package:config("vs_runtime"):startswith("MT")) and "ON" or "OFF"),
         }
-
         io.replace("src/packager.c", "minizip/iowin32.h", "iowin32.h", {plain = true})
         os.tryrm("cmake/Findminizip.cmake")
-
-        if package:is_plat("windows") then
-            if package:is_debug() then
-                io.replace("CMakeLists.txt", [[${CMAKE_C_FLAGS_DEBUG} /Fd\"${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb\")]], "${CMAKE_C_FLAGS_DEBUG}", {plain = true})
-            else
-                io.replace("CMakeLists.txt", [[${CMAKE_C_FLAGS_RELEASE} /Ox /Zi /Fd\"${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb\"]], "${CMAKE_C_FLAGS_RELEASE}", {plain = true})
-            end
-        end
-
-        if package:version():eq("1.1.5") then
-            -- remove fixed version, fix name
-            io.replace("CMakeLists.txt", [[find_package(ZLIB REQUIRED "1.0")]], [[find_package(ZLIB REQUIRED)]], {plain = true})
-            io.replace("CMakeLists.txt", [[find_package(MINIZIP REQUIRED "1.0")]], [[find_package(minizip REQUIRED)]], {plain = true})
-            -- NOTICE: link order for gcc
-            io.replace("CMakeLists.txt", [[${ZLIB_LIBRARIES} ${MINIZIP_LIBRARIES}]], [[minizip::minizip ZLIB::ZLIB]], {plain = true})
-        elseif package:version():ge("1.2.3") then
-            if package:is_plat("windows") then
-                -- fix name
-                io.replace("CMakeLists.txt", "unofficial-minizip", "minizip", {plain = true})
-                io.replace("CMakeLists.txt", "unofficial::minizip", "minizip", {plain = true})
-            else
-                io.replace("CMakeLists.txt", [[find_package(PkgConfig REQUIRED)]], [[find_package(minizip REQUIRED)]], {plain = true})
-                io.replace("CMakeLists.txt", [[pkg_check_modules(MINIZIP minizip)]], "", {plain = true})
-                -- NOTICE: link order for gcc
-                io.replace("CMakeLists.txt", [[ZLIB::ZLIB]], [[minizip::minizip ZLIB::ZLIB]], {plain = true})
-            end
-        end
-
         import("package.tools.cmake").install(package, configs)
     end)
 
