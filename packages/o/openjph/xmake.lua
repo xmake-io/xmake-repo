@@ -21,6 +21,9 @@ package("openjph")
     end
 
     on_install("!macosx and !iphoneos", function (package)
+        if package:is_plat("windows", "mingw") then
+            io.replace("src/core/common/ojph_arch.h", "#define OJPH_EXPORT", "#define OJPH_EXPORT  __declspec(dllimport)", {plain = true})
+        end
 	    local configs = {}
         table.insert(configs, "-DOJPH_BUILD_EXECUTABLES=" .. (package:config("tools") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
