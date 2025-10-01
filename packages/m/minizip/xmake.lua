@@ -34,7 +34,8 @@ package("minizip")
                 end
                 on_config(function(target)
                     if not target:is_plat("windows") then
-                        if not target:has_cfuncs("fopen64", {includes = "stdio.h", configs = {languages = "c11"}}) then
+                        local snippet = target:has_cfuncs("fopen64", {includes = "stdio.h", configs = {languages = "c11"}})
+                        if not snippet then
                             target:add("defines", "IOAPI_NO_64")
                         end
                     end
