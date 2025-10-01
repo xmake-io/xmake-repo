@@ -16,9 +16,13 @@ package("minizip")
 
     if on_check then
         on_check("android", function(package)
-            local ndk = package:toolchain("ndk")
-            local ndk_sdkver = ndk:config("ndk_sdkver")
-            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(minizip): need ndk api level >= 24 for android")
+            assert(package:check_csnippets({test = [[
+                #include <stdio.h>
+                void test() {
+                    FILE *fp = fopen("example.txt", "r");
+                    off_t pos = ftello(fp);
+                }
+            ]]}, {configs = {languages = "c11"}}), "package(minizip): ftello require at least __ANDROID_API__ >= 24.")
         end)
     end
 
