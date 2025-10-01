@@ -16,13 +16,13 @@ package("minizip")
 
     if on_check then
         on_check("android", function(package)
-            assert(package:check_csnippets({test = [[
+            assert(package:check_cxxsnippets({test = [[
                 #include <stdio.h>
                 void test() {
                     FILE *fp = fopen("example.txt", "r");
                     off_t pos = ftello(fp);
                 }
-            ]]}, {configs = {languages = "c11"}}), "package(minizip): ftello require at least __ANDROID_API__ >= 24.")
+            ]]}, {configs = {languages = "c++11"}}), "package(minizip): ftello require at least __ANDROID_API__ >= 24.")
         end)
     end
 
