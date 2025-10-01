@@ -18,7 +18,7 @@ package("minizip")
         on_check("android", function(package)
             local ndk = package:toolchain("ndk")
             local ndk_sdkver = ndk:config("ndk_sdkver")
-            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(libmem): need ndk api level >= 24 for android")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(minizip): need ndk api level >= 24 for android")
         end)
     end
 
