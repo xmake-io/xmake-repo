@@ -18,8 +18,8 @@ package("minizip")
         assert(package:check_cxxsnippets({test = [[
             #include <stdio.h>
             void test() {
-                FILE *fp = fopen("example.txt", "r");
-                off_t pos = ftello(fp);
+                auto *fp = fopen("example.txt", "r");
+                auto pos = ftello(fp);
             }
         ]]}, {configs = {languages = "c++11"}}), "package(minizip): ftello requires at least __ANDROID_API__ >= 24.")
     end)
