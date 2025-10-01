@@ -29,6 +29,8 @@ package("minizip")
                 if is_plat("windows") then
                     add_files("iowin32.c")
                     add_headerfiles("iowin32.h")
+                else
+                    add_defines("_LARGEFILE64_SOURCE=1")
                 end
         ]])
         local configs = {}
