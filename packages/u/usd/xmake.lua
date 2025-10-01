@@ -36,7 +36,8 @@ package("usd")
 
     if on_check then
         on_check(function (package)
-            assert(package:is_arch("x64", "x86_64"), "package(usd) only support x86")
+            -- MacOS with Apple Silicon can use usd, so let it pass when using OSX.
+            assert(package:is_arch("x64", "x86_64") or package.is_plat("macosx"), "package(usd) only support x86 or macosx")
             if package:version() and package:version():eq("25.08") and
                 package:is_plat("linux") and package:has_tool("cxx", "clang") then
 
