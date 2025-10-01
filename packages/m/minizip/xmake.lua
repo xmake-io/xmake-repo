@@ -14,7 +14,7 @@ package("minizip")
 
     add_includedirs("include", "include/minizip")
 
-    on_check("android", function(package)
+    on_check("android", function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <stdio.h>
             void test() {
@@ -52,9 +52,7 @@ package("minizip")
                 end)
         ]])
         local configs = {}
-        if package:config("shared") then
-            configs.kind = "shared"
-        elseif not package:is_plat("windows", "mingw") and package:config("pic") ~= false then
+        if not package:is_plat("windows", "mingw") and package:config("pic") ~= false then
             configs.cxflags = "-fPIC"
         end
         import("package.tools.xmake").install(package, configs)
