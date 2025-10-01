@@ -33,7 +33,11 @@ package("libgit2")
         add_deps("pkgconf")
     end
 
-    add_deps("pcre2", "llhttp")
+    if is_plat("cross") then
+        add_deps("pcre2", "llhttp <=9.2.1")
+    else
+        add_deps("pcre2", "llhttp")
+    end
     if not is_plat("macosx", "iphoneos") then
         add_deps("zlib")
     end
@@ -133,6 +137,12 @@ package("libgit2")
         -- Fix OpenSSL 3.0+ compatibility on Linux
         if package:is_plat("linux") and package:config("https") == "openssl3" then
             opt.cxflags = {"-DOPENSSL_API_COMPAT=0x10100000L"}
+        end
+
+        -- Fix WASM Emscripten size_t/unsigned int pointer type conflicts
+        if package:is_plat("wasm") then
+            opt.cxflags = opt.cxflags or {}
+            table.insert(opt.cxflags, "-Wno-incompatible-pointer-types")
         end
 
         if package:is_plat("mingw") then
