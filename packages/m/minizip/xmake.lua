@@ -14,17 +14,15 @@ package("minizip")
 
     add_includedirs("include", "include/minizip")
 
-    if on_check then
-        on_check("android", function(package)
-            assert(package:check_cxxsnippets({test = [[
-                #include <stdio.h>
-                void test() {
-                    FILE *fp = fopen("example.txt", "r");
-                    off_t pos = ftello(fp);
-                }
-            ]]}, {configs = {languages = "c++11"}}), "package(minizip): ftello require at least __ANDROID_API__ >= 24.")
-        end)
-    end
+    on_check("android", function(package)
+        assert(package:check_cxxsnippets({test = [[
+            #include <stdio.h>
+            void test() {
+                FILE *fp = fopen("example.txt", "r");
+                off_t pos = ftello(fp);
+            }
+        ]]}, {configs = {languages = "c++11"}}), "package(minizip): ftello requires at least __ANDROID_API__ >= 24.")
+    end)
 
     on_install(function (package)
         os.cd(path.join("contrib", "minizip"))
