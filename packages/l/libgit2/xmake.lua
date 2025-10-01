@@ -33,11 +33,8 @@ package("libgit2")
         add_deps("pkgconf")
     end
 
-    if is_plat("cross") then
-        add_deps("pcre2", "llhttp <=9.2.1")
-    else
-        add_deps("pcre2", "llhttp")
-    end
+    add_deps("pcre2", "llhttp")
+
     if not is_plat("macosx", "iphoneos") then
         add_deps("zlib")
     end
