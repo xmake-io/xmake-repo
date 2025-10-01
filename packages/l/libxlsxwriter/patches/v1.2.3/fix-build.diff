@@ -1,0 +1,55 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index c9ceb6c3..1fb6f6cf 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -246,16 +246,16 @@ if(NOT BUILD_SHARED_LIBS)
+         list(APPEND LXW_PRIVATE_COMPILE_DEFINITIONS USE_FILE32API)
+     elseif(MSVC)
+         set(CMAKE_C_FLAGS_DEBUG
+-            "${CMAKE_C_FLAGS_DEBUG} /Fd\"${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb\""
++            "${CMAKE_C_FLAGS_DEBUG}"
+         )
+         set(CMAKE_C_FLAGS_RELEASE
+-            "${CMAKE_C_FLAGS_RELEASE} /Ox /Zi /Fd\"${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb\""
++            "${CMAKE_C_FLAGS_RELEASE}"
+         )
+         set(CMAKE_C_FLAGS_MINSIZEREL
+-            "${CMAKE_C_FLAGS_MINSIZEREL} /Zi /Fd\"${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb\""
++            "${CMAKE_C_FLAGS_MINSIZEREL}"
+         )
+         set(CMAKE_C_FLAGS_RELWITHDEBINFO
+-            "${CMAKE_C_FLAGS_RELWITHDEBINFO} /Fd\"${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb\""
++            "${CMAKE_C_FLAGS_RELWITHDEBINFO}"
+         )
+     endif()
+ endif()
+@@ -309,12 +309,11 @@ list(APPEND LXW_PRIVATE_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS})
+ 
+ # Set the minizip includes.
+ if(USE_SYSTEM_MINIZIP)
+-    if(MSVC)
++    if(0)
+         find_package(MINIZIP NAMES unofficial-minizip REQUIRED)
+         set(MINIZIP_LIBRARIES unofficial::minizip::minizip)
+     else()
+-        find_package(PkgConfig REQUIRED)
+-        pkg_check_modules(MINIZIP minizip)
++        find_package(minizip CONFIG REQUIRED)
+         list(APPEND LXW_PRIVATE_INCLUDE_DIRS ${MINIZIP_INCLUDE_DIRS}/..)
+     endif()
+ endif()
+@@ -384,12 +383,11 @@ add_library(${PROJECT_NAME} "")
+ set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION ${SOVERSION})
+ target_sources(${PROJECT_NAME} PRIVATE ${LXW_SOURCES} PUBLIC ${LXW_HEADERS})
+ 
+-target_link_libraries(${PROJECT_NAME} PRIVATE ZLIB::ZLIB)
+ 
+-if(MINIZIP_LINK_LIBRARIES)
++if(0)
+     target_link_libraries(${PROJECT_NAME} PRIVATE ${MINIZIP_LINK_LIBRARIES})
+ else()
+-    target_link_libraries(${PROJECT_NAME} PRIVATE ${MINIZIP_LIBRARIES})
++    target_link_libraries(${PROJECT_NAME} PRIVATE minizip::minizip ZLIB::ZLIB)
+ endif()
+ 
+ target_link_libraries(
