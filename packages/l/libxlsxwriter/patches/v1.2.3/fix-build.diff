@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index c9ceb6c3..1fb6f6cf 100644
+index c9ceb6c3..41f32155 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -246,16 +246,16 @@ if(NOT BUILD_SHARED_LIBS)
@@ -23,7 +23,13 @@ index c9ceb6c3..1fb6f6cf 100644
          )
      endif()
  endif()
-@@ -309,12 +309,11 @@ list(APPEND LXW_PRIVATE_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS})
+@@ -304,17 +304,16 @@ enable_language(CXX)
+ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+ 
+ # Set the zlib includes.
+-find_package(ZLIB "1.2.8" REQUIRED)
++find_package(ZLIB REQUIRED)
+ list(APPEND LXW_PRIVATE_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS})
  
  # Set the minizip includes.
  if(USE_SYSTEM_MINIZIP)
