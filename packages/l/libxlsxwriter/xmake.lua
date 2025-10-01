@@ -23,13 +23,16 @@ package("libxlsxwriter")
     add_deps("cmake")
     add_deps("zlib", "minizip")
 
-    on_load(function (package)
-        if package:is_plat("android") then
+    if on_check then
+        on_check("android", function (package)
             import("core.tool.toolchain")
             local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
             local ndk_sdkver = ndk:config("ndk_sdkver")
             assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(libxlsxwriter): need ndk api level > 21 for android")
-        end
+        end)
+    end
+
+    on_load(function (package)
         if package:config("openssl_md5") then
             package:add("deps", "openssl")
         end
