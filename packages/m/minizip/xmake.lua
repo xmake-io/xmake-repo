@@ -14,6 +14,17 @@ package("minizip")
 
     add_includedirs("include", "include/minizip")
 
+    if on_check then
+        on_check("android", function (package)
+            if package:is_plat("android") then
+                local ndk_sdkver = package:toolchain("ndk"):config("ndk_sdkver")
+                if ndk_sdkver and tonumber(ndk_sdkver) < 24 then
+                    raise("package(minizip): require ndk api >= 24")
+                end
+            end    
+        end)
+    end
+
     on_install(function (package)
         os.cd(path.join("contrib", "minizip"))
         io.writefile("xmake.lua", [[
