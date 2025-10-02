@@ -17,6 +17,10 @@ package("dbus-cxx")
     add_deps("libsigcplusplus")
 
     on_load(function (package)
+        if package:is_plat("linux") and package:is_arch("arm64") and package:config("with_qt") then
+            package:config_set("with_qt", false)
+            wprint("Disabling with_qt, since Linux arm64 AQT does not support QT5, but supports QT6 (6.7.0 -> 6.10.0).")
+        end
         if package:config("with_glib") then
             package:add("deps", "glib")
         end
@@ -25,10 +29,6 @@ package("dbus-cxx")
         end
         if package:config("with_uv") then
             package:add("deps", "libuv")
-        end
-        if package:is_plat("linux") and package:is_arch("arm64") then
-            package:config_set("with_qt", false)
-            wprint("Disabling with_qt, since Linux arm64 AQT does not support QT5, but supports QT6 (6.7.0 -> 6.10.0).")
         end
     end)
 
