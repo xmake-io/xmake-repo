@@ -6,6 +6,7 @@ package("omath")
     add_urls("https://github.com/orange-cpp/omath/archive/refs/tags/$(version).tar.gz",
              "https://github.com/orange-cpp/omath.git", {submodules = false})
 
+    add_versions("v3.8.0", "9819cb4f16439c62da2bda7a577887b890bf01cb079e931d4df39f12e3f904cd")
     add_versions("v3.0.3", "f72ec671eb99d83bf6d63ec5eee7436110a9f340b416eefac51464665bbda06c")
 
     add_configs("avx2",  {description = "Enable AVX2", default = true, type = "boolean"})
