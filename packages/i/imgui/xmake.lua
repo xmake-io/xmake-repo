@@ -214,6 +214,12 @@ package("imgui")
 
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
+        local config_version_file = path.join(package:installdir("lib"), "cmake", "imgui", "imguiConfigVersion.cmake")
+        if package:is_plat("cross") and package:check_sizeof("void*") == "4" and os.exists(config_version_file) then
+            io.replace(config_version_file, [[if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "" OR "8" STREQUAL "")]], [[if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "" OR "4" STREQUAL "")]], {plain = true})
+            io.replace(config_version_file, [[if(NOT CMAKE_SIZEOF_VOID_P STREQUAL "8")]], [[if(NOT CMAKE_SIZEOF_VOID_P STREQUAL "4")]], {plain = true})
+            io.replace(config_version_file, [[math(EXPR installedBits "8 * 8")]], [[math(EXPR installedBits "4 * 8")]], {plain = true})
+        end
     end)
 
     on_test(function (package)
