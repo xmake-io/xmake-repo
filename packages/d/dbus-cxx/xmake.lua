@@ -33,6 +33,10 @@ package("dbus-cxx")
         table.insert(configs, "-DENABLE_QT_SUPPORT=" .. (package:config("with_qt") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_UV_SUPPORT=" .. (package:config("with_uv") and "ON" or "OFF"))
 
+        if package:config("with_uv") and package:dep("libuv") then
+            table.insert(configs, "-DUV_STATIC=" .. (package:dep("libuv"):config("shared") and "OFF" or "ON"))
+        end
+
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
