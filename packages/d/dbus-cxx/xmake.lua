@@ -12,7 +12,7 @@ package("dbus-cxx")
     add_configs("with_uv", {description = "Build with UV library support.", default = true, type = "boolean"})
 
     add_deps("cmake")
-    add_deps("libsigcpp")
+    add_deps("libsigcplusplus")
 
     on_load(function (package)
         if package:config("with_glib") then
