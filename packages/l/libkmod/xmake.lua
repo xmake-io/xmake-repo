@@ -118,7 +118,6 @@ package("libkmod")
             }
 
             table.insert(configs, "-Dlogging=" .. (package:config("logging") and "true" or "false"))
-
             table.insert(configs, "-Dzstd=" .. (package:config("zstd") and "enabled" or "disabled"))
             table.insert(configs, "-Dzlib=" .. (package:config("zlib") and "enabled" or "disabled"))
             table.insert(configs, "-Dxz=" .. (package:config("xz") and "enabled" or "disabled"))
@@ -128,6 +127,8 @@ package("libkmod")
 
             import("package.tools.meson").install(package, configs)
         end
+
+        os.cp(package:installdir("include/libkmod.h"), package:installdir("include/libkmod/"))
     end)
 
     on_test(function (package)
