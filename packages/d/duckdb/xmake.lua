@@ -5,6 +5,7 @@ package("duckdb")
 
     add_urls("https://github.com/duckdb/duckdb/releases/download/$(version)/libduckdb-src.zip",
              "https://github.com/duckdb/duckdb.git")
+    add_versions("v1.4.0", "d1efda5fabc198d2099109f2d6a21392a7ca3888afbafe8573abcb1b09c6f15a")
     add_versions("v1.3.2", "3fc8b872f1e65e1271bb4c7ba698ffc28127968437a99500c44262c01f3de841")
     add_versions("v1.2.2", "478a4e2300d12cd5f494e5ae3d9dbdc7d71ae0e85bccfb72aa0b7731660eece9")
     add_versions("v1.2.1", "c7f21c12039e951dbb74e064ba218a4ca8b4b0a612d40c62d95a858ecaf2fb53")
