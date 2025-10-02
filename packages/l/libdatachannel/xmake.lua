@@ -4,7 +4,7 @@ package("libdatachannel")
     set_license("MPL-2.0")
 
     add_urls("https://github.com/paullouisageneau/libdatachannel/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/paullouisageneau/libdatachannel.git", {submodules = false})
+             "https://github.com/paullouisageneau/olibdatachannel.git", {submodules = false})
 
     add_versions("v0.23.2", "b9606efc5b2b173f2d22d0be3f6ba4f12af78c00ca02cde5932f3ff902980eb9")
     add_versions("v0.23.1", "63e14d619ac4d9cc310a0c7620b80e6da88abf878f27ccc78cd099f95d47b121")
@@ -75,6 +75,11 @@ package("libdatachannel")
         io.replace("CMakeLists.txt", "set(CMAKE_POSITION_INDEPENDENT_CODE ON)", "", {plain = true})
         -- add -DJUICE_STATIC from config mode 
         io.replace("CMakeLists.txt", "find_package(LibJuice REQUIRED)", "find_package(LibJuice CONFIG REQUIRED)", {plain = true})
+        -- Error evaluating generator expression: $<TARGET_PDB_FILE:datachannel>
+        -- TARGET_PDB_FILE is allowed only for targets with linker created artifacts.
+        if package:is_plat("windows") then
+            io.replace("CMakeLists.txt", "if(MSVC)\n\tinstall", "if(0)\ninstall", {plain = true})
+        end
 
         local configs = {
             "-DNO_EXAMPLES=ON",
