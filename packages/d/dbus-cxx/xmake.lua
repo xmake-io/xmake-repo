@@ -26,6 +26,9 @@ package("dbus-cxx")
         if package:config("with_uv") then
             package:add("deps", "libuv")
         end
+        if package:plat("linux") and package:is_arch("arm64") then
+            package:config_set("with_qt", false)
+        end
     end)
 
     on_install("linux", function (package)
