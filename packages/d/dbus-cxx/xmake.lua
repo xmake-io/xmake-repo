@@ -28,6 +28,7 @@ package("dbus-cxx")
         end
         if package:is_plat("linux") and package:is_arch("arm64") then
             package:config_set("with_qt", false)
+            wprint("Linux arm64 AQT does not support QT5, but supports QT6 (6.7.0 -> 6.10.0)")
         end
     end)
 
