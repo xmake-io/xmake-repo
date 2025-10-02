@@ -8,10 +8,13 @@ package("gdk-pixbuf")
     end, excludes = "*/tests/*"})
     add_urls("https://gitlab.gnome.org/GNOME/gdk-pixbuf/-/archive/$(version)/gdk-pixbuf-$(version).tar.gz",
              "https://gitlab.gnome.org/GNOME/gdk-pixbuf.git")
+
+    add_versions("home:2.44.2", "ea4ed9930b10db0655fb24f7c35b3375a65c58afbc9d3eb7417a0fd112bb6b08")
     add_versions("home:2.42.10", "ee9b6c75d13ba096907a2e3c6b27b61bcd17f5c7ebeab5a5b439d2f2e39fe44b")
     add_versions("home:2.42.6", "c4a6b75b7ed8f58ca48da830b9fa00ed96d668d3ab4b1f723dcf902f78bde77f")
 
-    add_patches("2.42.6", path.join(os.scriptdir(), "patches", "2.42.6", "macosx.patch"), "ad2705a5a9aa4b90fb4588bb567e95f5d82fccb6a5d463cd07462180e2e418eb")
+    add_patches("2.44.2", "patches/2.44.2/docs-option.patch", "f6318b332941798d637e645afeb1750366af6ba863b9ca57a3c8b1be1b10478e")
+    add_patches("2.42.6", "patches/2.42.6/macosx.patch", "ad2705a5a9aa4b90fb4588bb567e95f5d82fccb6a5d463cd07462180e2e418eb")
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::gdk-pixbuf2")
@@ -51,7 +54,6 @@ package("gdk-pixbuf")
         io.gsub("meson.build", "subdir%('docs'%)", "")
 
         local configs = {"-Dman=false",
-                         "-Ddocs=false",
                          "-Dgtk_doc=false",
                          "-Dpng=enabled",
                          "-Dtiff=enabled",
@@ -63,6 +65,15 @@ package("gdk-pixbuf")
                          "-Dintrospection=disabled",
                          "-Dtests=false",
                          "-Dinstalled_tests=false"}
+
+        local version = package:version()
+        if version and version:gt("2.42.12") then
+            table.insert(configs, "-Ddocumentation=false")
+            table.insert(configs, "-Dglycin=disabled")
+        else
+            table.insert(configs, "-Ddocs=false")
+        end
+
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
 
         package:addenv("PATH", "bin")

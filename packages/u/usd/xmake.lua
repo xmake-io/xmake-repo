@@ -36,7 +36,9 @@ package("usd")
 
     if on_check then
         on_check(function (package)
-            assert(package:is_arch("x64", "x86_64"), "package(usd) only support x86")
+            if not package:is_plat("macosx") then
+                assert(package:is_arch("x64", "x86_64"), "package(usd) only support x86")
+            end
             if package:version() and package:version():eq("25.08") and
                 package:is_plat("linux") and package:has_tool("cxx", "clang") then
 

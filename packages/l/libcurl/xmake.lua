@@ -39,9 +39,15 @@ package("libcurl")
     -- we init all configurations in on_load, because package("curl") need it.
     on_load(function (package)
         if package:is_plat("linux", "bsd", "android", "cross") then
-            -- if no TLS backend has been enabled nor disabled, enable openssl by default
+            -- if no TLS backend has been enabled nor disabled, prefer openssl3 on modern systems
             if package:config("openssl") == nil and package:config("openssl3") == nil and package:config("mbedtls") == nil then
-                package:config_set("openssl", true)
+                -- Default to OpenSSL 3.0+ on Linux systems (Ubuntu 22.04+, Fedora 36+, etc.)
+                -- This helps avoid conflicts with other packages like libgit2 that use OpenSSL 3.0+
+                if package:is_plat("linux") then
+                    package:config_set("openssl3", true)
+                else
+                    package:config_set("openssl", true)
+                end
             end
         end
 
