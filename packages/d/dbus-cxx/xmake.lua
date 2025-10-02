@@ -7,6 +7,7 @@ package("dbus-cxx")
 
     add_versions("2.6.0", "ca22380ec04a1f10154fca76d41e8ce4a8a6351ce86546b297bda5f7eefbc108")
 
+    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
     add_configs("with_glib", {description = "Build with GLib library support.", default = true, type = "boolean"})
     add_configs("with_qt", {description = "Build with QT library support.", default = true, type = "boolean"})
     add_configs("with_uv", {description = "Build with UV library support.", default = true, type = "boolean"})
