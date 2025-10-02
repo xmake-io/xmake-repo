@@ -1,6 +1,7 @@
 package("dbus-cxx")
     set_homepage("https://dbus-cxx.github.io/")
     set_description("DBus-cxx provides an object-oriented interface to DBus")
+    set_license("LGPL-3.0-or-later AND BSD-3-Clause")
 
     add_urls("https://github.com/dbus-cxx/dbus-cxx/archive/refs/tags/$(version).tar.gz",
              "https://github.com/dbus-cxx/dbus-cxx.git")
