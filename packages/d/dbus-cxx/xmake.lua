@@ -13,7 +13,7 @@ package("dbus-cxx")
     add_configs("with_qt", {description = "Build with QT library support.", default = true, type = "boolean"})
     add_configs("with_uv", {description = "Build with UV library support.", default = true, type = "boolean"})
 
-    add_includedirs("include", "include/dbus-cxx-2.0")
+    add_includedirs("include", "include/dbus-cxx-2.0", "include/dbus-cxx-glib-2.0", "include/dbus-cxx-qt-2.0", "include/dbus-cxx-uv-2.0")
 
     add_deps("cmake")
     add_deps("libsigcplusplus")
