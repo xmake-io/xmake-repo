@@ -129,7 +129,7 @@ package("libkmod")
 
             import("package.tools.meson").install(package, configs)
         end
-        os.mkdir(path.join(package:installdir("include"), "libkmod"))
+        os.mv(path.join(package:installdir("include"), "libkmod.h"), path.join(package:installdir("include/libkmod"), "libkmod.h"))
     end)
 
     on_test(function (package)
