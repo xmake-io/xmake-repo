@@ -20,6 +20,10 @@ package("crashpad")
         add_syslinks("bsm")
     end
 
+    if is_plat("windows") then
+        add_defines("NOMINMAX", "WIN32_LEAN_AND_MEAN")
+    end
+
     on_install("linux", "windows|x64", "windows|x86", "macosx", function(package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
