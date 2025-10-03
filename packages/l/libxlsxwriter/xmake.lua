@@ -51,7 +51,7 @@ package("libxlsxwriter")
             "-DIOAPI_NO_64=" .. (package:config("64") and "OFF" or "ON"),
             "-DUSE_DTOA_LIBRARY=" .. (package:config("dtoa") and "ON" or "OFF"),
             "-DUSE_SYSTEM_MINIZIP=ON",
-            "-DUSE_STATIC_MSVC_RUNTIME=" .. ((package:is_plat("windows") and package:config("vs_runtime"):startswith("MT")) and "ON" or "OFF"),
+            "-DUSE_STATIC_MSVC_RUNTIME=OFF",
         }
         io.replace("src/packager.c", "minizip/iowin32.h", "iowin32.h", {plain = true})
         os.tryrm("cmake/Findminizip.cmake")
