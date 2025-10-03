@@ -20,13 +20,10 @@ package("minizip")
 
     if on_check then
         on_check("android", function (package)
-            assert(package:check_cxxsnippets({test = [[
-                #include <stdio.h>
-                void test() {
-                    auto *fp = fopen("example.txt", "r");
-                    auto pos = ftello(fp);
-                }
-            ]]}, {configs = {languages = "c++11"}}), "package(minizip): ftello requires at least __ANDROID_API__ >= 24.")
+            local ndk = package:toolchain("ndk")
+            local ndkver = package:toolchain("ndk"):config("ndkver")
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert((ndkver and tonumber(ndkver) > 22) and (ndk_sdkver and tonumber(ndk_sdkver) >= 23), "package(minizip) require ndk api level >= 23")
         end)
     end
 
@@ -43,6 +40,13 @@ package("minizip")
 
     on_install(function (package)
         os.cd(path.join("contrib/minizip"))
+
+        local ndk_sdkver = package:toolchain("ndk"):config("ndk_sdkver")
+        if ndk_sdkver and tonumber(ndk_sdkver) < 24 then
+            io.replace("ioapi.c", "ftello", "ftell", {plain = true})
+            io.replace("ioapi.c", "fseeko", "fseek", {plain = true})
+        end
+
         if package:config("cmake") then
             local configs = {"-DMINIZIP_BUILD_TESTING=OFF"}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
