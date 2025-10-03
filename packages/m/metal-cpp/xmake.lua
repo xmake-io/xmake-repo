@@ -52,7 +52,6 @@ package("metal-cpp")
 
     on_install("macosx", "iphoneos", function (package)
         -- Copy metal-cpp
-        print(os.curdir())
         if not os.trycp("metal-cpp", package:installdir("include")) then
             -- print("metal-cpp not found")
             os.vcp("*", package:installdir("include", "metal-cpp"))
