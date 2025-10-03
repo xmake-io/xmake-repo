@@ -11,8 +11,8 @@ package("minizip")
     add_versions("v1.2.12", "d8688496ea40fb61787500e863cc63c9afcbc524468cedeb478068924eb54932")
     add_versions("v1.2.13", "1525952a0a567581792613a9723333d7f8cc20b87a81f920fb8bc7e3f2251428")
 
-    add_configs("cmake", {description = "Use cmake build system", default = false, type = "boolean"})
-    add_configs("bzip2", {description = "Build minizip withj bzip2 support", default = false, type = "boolean"})
+    add_configs("cmake", {description = "Use cmake build system", default = true, type = "boolean"})
+    add_configs("bzip2", {description = "Build minizip withj bzip2 support", default = true, type = "boolean"})
 
     add_deps("zlib")
 
@@ -57,6 +57,10 @@ package("minizip")
             os.vcp(path.join(dir, "minizip.pc.in"), os.curdir())
             os.vcp(path.join(dir, "minizip.pc.txt"), os.curdir())
             io.replace("CMakeLists.txt", "find_package(ZLIB REQUIRED CONFIG)", "find_package(ZLIB REQUIRED)", {plain = true})
+            if package:version() and package:version():le("1.2.13") then
+                io.replace("CMakeLists.txt", "ints.h", "", {plain = true})
+                io.replace("CMakeLists.txt", "skipset.h", "", {plain = true})
+            end
 
             local configs = {"-DMINIZIP_BUILD_TESTING=OFF"}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
