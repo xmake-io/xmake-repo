@@ -21,6 +21,8 @@ package("libkmod")
     add_configs("xz",      {description = "Enable Xz-compressed modules support.", default = true, type = "boolean"})
     add_configs("openssl", {description = "Enable PKCS7 signatures support", default = "openssl3", values = {false, "openssl", "openssl3"}})
 
+    add_includedirs("include", "include/libkmod")
+
     on_check("android", function (package)
         -- bionic, fread_unlocked
         if package:version():ge("v34") then
@@ -127,8 +129,6 @@ package("libkmod")
 
             import("package.tools.meson").install(package, configs)
         end
-
-        os.cp(package:installdir("include/libkmod.h"), package:installdir("include/libkmod/"))
     end)
 
     on_test(function (package)
