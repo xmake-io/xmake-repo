@@ -40,12 +40,11 @@ package("dbus-cxx")
     on_install("linux", function (package)
         local configs = {
             "-DBUILD_TESTING=OFF", "-DENABLE_CODE_COVERAGE_REPORT=OFF",
-            "-DENABLE_EXAMPLES=OFF", "-DENABLE_TOOLS=OFF", "-DBUILD_SITE=OFF", "-DUV_STATIC=OFF"}
-
+            "-DENABLE_EXAMPLES=OFF", "-DENABLE_TOOLS=OFF", "-DBUILD_SITE=OFF", "-DUV_STATIC=OFF"
+        }
         table.insert(configs, "-DENABLE_GLIB_SUPPORT=" .. (package:config("with_glib") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_QT_SUPPORT=" .. (package:config("with_qt") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_UV_SUPPORT=" .. (package:config("with_uv") and "ON" or "OFF"))
-
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
