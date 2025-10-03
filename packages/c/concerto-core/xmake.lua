@@ -23,7 +23,7 @@ package("concerto-core")
         if package:config("enet") then
             package:add("deps", "enet")
         end
-        if package:config("assert") then
+        if package:config("asserts") then
             package:add("defines", "CCT_ENABLE_ASSERTS")
         end
     end)
