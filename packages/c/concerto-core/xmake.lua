@@ -5,7 +5,7 @@ package("concerto-core")
 
     add_urls("https://github.com/ConcertoEngine/ConcertoCore.git")
 
-    add_versions("2025.08.21", "836d4f6ab7a2c961520e692d55bbbc6ff0729b8f")
+    add_versions("2025.10.03", "53d61bc0de15f8561be53420810864c19b0a2178")
 
     add_configs("asserts", {description = "Enable asserts.", default = false, type = "boolean"})
     add_configs("enet", {description = "Enable ENet support.", default = false, type = "boolean"})
@@ -22,6 +22,9 @@ package("concerto-core")
     on_load(function (package)
         if package:config("enet") then
             package:add("deps", "enet")
+        end
+        if package:config("assert") then
+            package:add("defines", "CCT_ENABLE_ASSERTS")
         end
     end)
 
