@@ -43,7 +43,7 @@ package("dbus-cxx")
             "-DENABLE_EXAMPLES=OFF", "-DENABLE_TOOLS=OFF", "-DBUILD_SITE=OFF", "-DUV_STATIC=OFF"
         }
         table.insert(configs, "-DENABLE_GLIB_SUPPORT=" .. (package:config("glib") and "ON" or "OFF"))
-        table.insert(configs, "-DENABLE_QT_SUPPORT=" .. (package:config("qt") and "ON" or "OFF"))
+        table.insert(configs, "-DENABLE_QT_SUPPORT=" .. (package:config("qt5") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_UV_SUPPORT=" .. (package:config("libuv") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
