@@ -49,9 +49,9 @@ package("concerto-core")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <string>
-            #include <Concerto/Core/Types.hpp>
-            #include <Concerto/Core/Result.hpp>
-            #include <Concerto/Core/DynLib.hpp>
+            #include <Concerto/Core/Types/Types.hpp>
+            #include <Concerto/Core/Result/Result.hpp>
+            #include <Concerto/Core/DynLib/DynLib.hpp>
             void test() {
                 cct::Result<cct::Int32, std::string> result(28);
                 cct::DynLib lib;
