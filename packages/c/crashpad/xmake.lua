@@ -4,7 +4,7 @@ package("crashpad")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/getsentry/crashpad.git")
-    add_versions("2024.04.15", "96e301b7d6b81990a244d7de41a0d36eeb60899e")
+    add_versions("2025.09.18", "79a91fe62324c9c17c8ec1b8508778228ba955a7")
 
     add_includedirs("include/crashpad", "include/crashpad/mini_chromium")
     add_links("crashpad_client", "crashpad_util", "mini_chromium")
@@ -45,5 +45,5 @@ package("crashpad")
             void test() {
                 CrashpadClient *client = new CrashpadClient();
             }
-        ]]}, {configs = {languages = "cxx17"}}))
+        ]]}, {configs = {languages = "cxx20"}}))
     end)
