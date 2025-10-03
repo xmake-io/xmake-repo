@@ -129,8 +129,10 @@ package("libkmod")
 
             import("package.tools.meson").install(package, configs)
         end
+        os.mkdir(path.join(package:installdir("include"), "libkmod"))
     end)
 
     on_test(function (package)
         assert(package:has_cfuncs("kmod_new", {includes = "libkmod.h"}))
+        assert(package:has_cfuncs("kmod_new", {includes = "libkmod/libkmod.h"}))
     end)
