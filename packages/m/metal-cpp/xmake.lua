@@ -1,10 +1,8 @@
 package("metal-cpp")
-
+    set_kind("library", { headeronly = true })
     set_homepage("https://developer.apple.com/metal/cpp/")
     set_description("Metal-cpp is a low-overhead C++ interface for Metal that helps you add Metal functionality to graphics apps, games, and game engines that are written in C++.")
     set_license("Apache-2.0")
-
-    set_kind("library", { headeronly = true })
 
     set_urls("https://developer.apple.com/metal/cpp/files/metal-cpp_$(version).zip",
          {version = function (version)
@@ -53,13 +51,12 @@ package("metal-cpp")
     )
 
     on_check(function (package)
-        assert(package:is_plat("macosx") or package:is_plat("iphoneos"), "package(metal-cpp) only support macosx or iOS")
+        assert(package:is_plat("macosx", "iphoneos"), "package(metal-cpp) only support macosx or iOS")
     end)
 
     on_install("macosx", "iphoneos", function (package)
         -- Copy metal-cpp
         if not os.trycp("metal-cpp", package:installdir("include")) then
-            -- print("metal-cpp not found")
             os.vcp("*", package:installdir("include", "metal-cpp"))
         end
 
@@ -80,7 +77,13 @@ package("metal-cpp")
             #include <AppKit/AppKit.hpp>
 
             void test () {
+                MTL::Device* pDevice = MTL::CreateSystemDefaultDevice();
+                MTL::CommandQueue* pCommnadQueue = pDevice->newCommandQueue();
 
+                CGRect frame = (CGRect){ {100.0, 100.0}, {512.0, 512.0} };
+                MTK::View* _pMtkView = MTK::View::alloc()->init( frame, pDevice );
+                _pMtkView->setColorPixelFormat( MTL::PixelFormat::PixelFormatBGRA8Unorm_sRGB );
+                _pMtkView->setClearColor( MTL::ClearColor::Make( 1.0, 0.0, 0.0, 1.0 ) );
             }
         ]]}, {configs = {languages = "c++17"}}))
     end)
