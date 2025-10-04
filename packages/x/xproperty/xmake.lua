@@ -11,7 +11,7 @@ package("xproperty")
     add_versions("0.12.0", "27cbc8e441dcc515a1ebbf11bad5ef240748d32f5e1adf84deed87a1dc57a440")
 
     add_deps("cmake")
-    add_deps("nlohmann_json 3.11", {configs = {cmake = true}})
+    add_deps("nlohmann_json", {configs = {cmake = true}})
 
     on_install(function (package)
         import("package.tools.cmake").install(package, {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"})
