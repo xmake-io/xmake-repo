@@ -97,7 +97,8 @@ package("glaze")
             import("package.tools.cmake").install(package, {
                 "-Dglaze_DEVELOPER_MODE=OFF",
                 "-DCMAKE_CXX_STANDARD=23",
-                "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release")
+                "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
+                "-Dglaze_ENABLE_SSL=" .. (package:config("ssl") and "ON" or "OFF")
             })
         else
             os.cp("include", package:installdir())
