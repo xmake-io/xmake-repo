@@ -49,7 +49,7 @@ package("glaze")
 
     on_load(function (package)
         if package:config("ssl") then
-            package:add("deps", "openssl")
+            package:add("deps", "openssl3")
             package:add("defines", "GLZ_ENABLE_SSL")
         end
     end)
