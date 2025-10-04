@@ -57,6 +57,7 @@ package("minizip")
             os.vcp(path.join(dir, "minizip.pc.in"), os.curdir())
             os.vcp(path.join(dir, "minizip.pc.txt"), os.curdir())
             io.replace("CMakeLists.txt", "find_package(ZLIB REQUIRED CONFIG)", "find_package(ZLIB REQUIRED)", {plain = true})
+            io.replace("CMakeLists.txt", "ZLIB::ZLIBSTATIC", "ZLIB::ZLIB", {plain = true})
             if package:version() and package:version():le("1.2.13") then
                 io.replace("CMakeLists.txt", "ints.h", "", {plain = true})
                 io.replace("CMakeLists.txt", "skipset.h", "", {plain = true})
