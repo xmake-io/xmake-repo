@@ -52,6 +52,10 @@ package("metal-cpp")
         "MTK_PRIVATE_IMPLEMENTATION"
     )
 
+    on_check(function (package)
+        assert(package:is_plat("macos") or package:is_plat("iphoneos"), "package(metal-cpp) only support macosx or iOS")
+    end)
+
     on_install("macosx", "iphoneos", function (package)
         -- Copy metal-cpp
         if not os.trycp("metal-cpp", package:installdir("include")) then
