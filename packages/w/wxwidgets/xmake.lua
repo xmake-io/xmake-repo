@@ -80,7 +80,7 @@ package("wxwidgets")
             add_patches("<=3.2.5", "patches/3.2.5/add_libdir.patch", "9a9fe4d745b4b6b09998ec7a93642d69761a8779d203fbb42a3df8c3d62adeb0")
         end
     end
-    
+
     if is_plat("macosx") then
         add_defines("__WXOSX_COCOA__", "__WXMAC__", "__WXOSX__", "__WXMAC_XCODE__")
         add_frameworks("AudioToolbox", "WebKit", "CoreFoundation", "Security", "Carbon", "Cocoa", "IOKit", "QuartzCore")
@@ -126,7 +126,7 @@ package("wxwidgets")
                 package:add("deps", "gdk-pixbuf")
             end
 
-            if is_plat("linux") then
+            if package:is_plat("linux") then
                  if package:config("shared") then
                     package:add("deps", "gtk3", {configs = {shared = true}})
                 else
@@ -150,10 +150,8 @@ package("wxwidgets")
         -- Notify the user about issues caused by the CMake version.
         local cmake = package:dep("cmake")
         local cmake_fetch = cmake:fetch()
-        local major, minor, patch = cmake_fetch.version:match("^(%d+)%.(%d+)%.(%d+)$")
-        local cmake_version = tonumber(major.. minor.. patch)
-        if cmake_version > 3280 then
-            wprint("\ncmake may not find Cmath detail in https://github.com/prusa3d/PrusaSlicer/issues/12169\n")
+        if cmake_fetch and cmake_fetch.version and semver.match(cmake_fetch.version):gt("3.28.0") then
+            wprint("cmake may not find Cmath detail in https://github.com/prusa3d/PrusaSlicer/issues/12169\n")
         end
 
         io.replace("build/cmake/modules/FindGTK3.cmake", "FIND_PACKAGE_HANDLE_STANDARD_ARGS(GTK3 DEFAULT_MSG GTK3_INCLUDE_DIRS GTK3_LIBRARIES VERSION_OK)", 
@@ -176,7 +174,7 @@ package("wxwidgets")
         end
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {jobs = ci_is_running() and 1 or nil})
         local version = package:version()
         local subdir = "wx-" .. version:major() .. "." .. version:minor()
         local setupdir = package:is_plat("macosx") and "osx" or "gtk"
