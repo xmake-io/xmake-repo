@@ -9,7 +9,7 @@ package("arrayfire")
 
     add_configs("cpu",     {description = "Build ArrayFire with a CPU backend.", default = true, type = "boolean"})
     add_configs("cuda",    {description = "Build ArrayFire with a CUDA backend.", default = false, type = "boolean"})
-    add_configs("opencl",  {description = "Build ArrayFire with a OpenCL backen.", default = false, type = "boolean"})
+    add_configs("opencl",  {description = "Build ArrayFire with a OpenCL backend.", default = false, type = "boolean"})
     add_configs("oneapi",  {description = "Build ArrayFire with a oneAPI backend.", default = false, type = "boolean"})
     add_configs("unified", {description = "Build Backend-Independent ArrayFire API.", default = true, type = "boolean"})
     add_configs("cudnn",   {description = "Use cuDNN for convolveNN functions.", default = false, type = "boolean"})
@@ -21,7 +21,7 @@ package("arrayfire")
     add_configs("kernel_to_disk", {description = "Enable caching kernels to disk.", default = true, type = "boolean"})
     add_configs("fast_math",      {description = "Use lower precision but high performance numeric optimizations.", default = true, type = "boolean"})
     add_configs("compute_lib",    {description = "Compute library for signal processing and linear algebra routines", default = "FFTW/LAPACK/BLAS", values = {"Intel-MKL", "FFTW/LAPACK/BLAS"}, type = "string"})
-    add_configs("imageio",        {description = "Build ArrayFire with Image IO support."})
+    add_configs("imageio",        {description = "Build ArrayFire with Image IO support." default = false, type = "boolean"})
 
     add_configs("mkl_thread_layer", {description = "The thread layer to choose for MKL.", default = "TBB", type = "string", values = {"TBB", "GNU OpenMP", "Intel OpenMP", "Sequential"}})
 
@@ -50,7 +50,7 @@ package("arrayfire")
             package:config_set("cuda", true)
         end
         if package:config("cuda") then
-            package:add("deps", "cuda", {configs = {utils = "cusolver", "cudnn", "cufft", "cublas", "culibos", "cusparse", "nvrtc"}})
+            package:add("deps", "cuda", {configs = {utils = {"cusolver", "cudnn", "cufft", "cublas", "culibos", "cusparse", "nvrtc"}}})
         end
         if package:config("opencl") then
             package:add("deps", "opencl", "opencl-headers")
@@ -70,16 +70,14 @@ package("arrayfire")
             package:add("deps", "fftw", {configs = {precisions = {"float", "double"}}})
             package:add("deps", "lapack")
         end
-        local mkl_thread_layer = package:config("mkl_thread_layer")
-        if mkl_thread_layer == "Sequential" then
-            package:add("defines", "AF_MKL_THREAD_LAYER=0")
-        elseif mkl_thread_layer == "GNU OpenMP" then
-            package:add("defines", "AF_MKL_THREAD_LAYER=1")
-        elseif mkl_thread_layer == "Intel OpenMP" then
-            package:add("defines", "AF_MKL_THREAD_LAYER=2")
-        else
-            package:add("defines", "AF_MKL_THREAD_LAYER=3")
-        end
+        local mkl_thread_layer_map = {
+            Sequential = "0",
+            ["GNU OpenMP"] = "1",
+            ["Intel OpenMP"] = "2",
+            TBB = "3"
+        }
+        local layer_val = mkl_thread_layer_map[package:config("mkl_thread_layer")] or "3"
+        package:add("defines", "AF_MKL_THREAD_LAYER=" .. layer_val)
     end)
 
     -- the lapack dep in xrepo only supports linux :(
@@ -112,9 +110,12 @@ package("arrayfire")
         table.insert(configs, "-DAF_COMPUTE_LIBRARY=" .. package:config("compute_lib"))
         table.insert(configs, "-DAF_STACKTRACE_TYPE=" .. package:config("stacktrace_type"))
         if package:dep("freeimage") then
-            local is_static = not package:dep("freeimage"):config("shared")
-            table.insert(configs, "-DAF_WITH_STATIC_FREEIMAGE=" .. (is_static and "ON" or "OFF"))
-            package:add("defines", "FREEIMAGE_STATIC")
+            if not package:dep("freeimage"):config("shared") then
+                table.insert(configs, "-DAF_WITH_STATIC_FREEIMAGE=ON")
+                package:add("defines", "FREEIMAGE_STATIC")
+            else
+                table.insert(configs, "-DAF_WITH_STATIC_FREEIMAGE=OFF")
+            end
         end
         if package:dep("mkl") then
             table.insert(configs, "-DAF_WITH_STATIC_MKL=" .. (package:dep("mkl"):config("shared") and "OFF" or "ON"))
