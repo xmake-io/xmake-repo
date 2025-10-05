@@ -24,11 +24,8 @@ package("minizip")
     if on_check then
         on_check("android", function (package)
             local ndk = package:toolchain("ndk")
-            local ndkver = package:toolchain("ndk"):config("ndkver")
             local ndk_sdkver = ndk:config("ndk_sdkver")
-            if ndkver and tonumber(ndkver) > 22 then
-                assert(ndk_sdkver and tonumber(ndk_sdkver) >= 23, "package(minizip) require ndk api level >= 23")
-            end
+            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 23, "package(minizip) require ndk api level >= 23")
         end)
     end
 
