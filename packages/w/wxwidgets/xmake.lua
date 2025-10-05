@@ -114,7 +114,7 @@ package("wxwidgets")
                 package:add("includedirs", path.join("lib", "wx", "include", "gtk3-unicode" .. static .. "-" .. suffix))
             end
             package:add("includedirs", path.join("include", "wx-" .. suffix))
-            if package:debug() then
+            if package:is_debug() then
                 package:add("defines", "wxDEBUG_LEVEL=2")
             end
             if package:config("shared") then
@@ -136,7 +136,7 @@ package("wxwidgets")
         end
     end)
 
-    on_install("windows", function (package)
+    on_install("windows|x86", "windows|x64", function (package)
         local dlldir = package:is_arch("x64") and "vc14x_x64_dll" or "vc14x_dll"
         os.cp(path.join("lib", dlldir, "*.lib"), package:installdir("lib"))
         os.cp(path.join(package:resourcedir("releaseDLL"),"lib", dlldir, "*.dll"), package:installdir("bin"))
