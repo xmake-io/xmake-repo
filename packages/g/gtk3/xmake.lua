@@ -35,10 +35,11 @@ package("gtk3")
     add_links("gtk-3", "gdk-3", "gailutil-3", "X11", "X11-cxb", "pangocairo-1.0", "pango", "rt")
 
     on_install("linux", function (package)
+        import("utils.ci.is_running", {alias = "ci_is_running"})
         local configs = {"-Dintrospection=false", "-Ddemos=false", "-Dexamples=false", "-Dtests=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         io.replace("gdk/x11/gdkglcontext-x11.c", [[cairo/cairo-xlib.h]], [[cairo-xlib.h]], {plain = true})
-        import("package.tools.meson").install(package, configs, {packagedeps = {"libiconv",
+        import("package.tools.meson").install(package, configs, {jobs = ci_is_running() and 1 or nil, packagedeps = {"libiconv",
                                                                                 "libx11", 
                                                                                 "libxext", 
                                                                                 "libxi",
