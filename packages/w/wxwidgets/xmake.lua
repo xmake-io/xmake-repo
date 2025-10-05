@@ -58,7 +58,7 @@ package("wxwidgets")
             "b8c4fd1a62c104c65089a088670d80e827b3893b7425c1cab8d7e49879797326")
         add_resources("3.3.1", "headers",
             "https://github.com/wxWidgets/wxWidgets/releases/download/v3.3.1/wxWidgets-3.3.1-headers.7z",
-            "f936c8d694f9c49a367a376f99c751467150a4ed7cbf8f4723ef19b2d2d9998d")
+            "2c9eecb179a24c2eeeb55b4a09d869bf4019b3e124a8c8c6de5d8e82a0aa3e91")
 
         add_configs("shared",     {description = "Build shared library.", default = true, type = "boolean", readonly = true})
         add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MD", readonly = true})
@@ -71,7 +71,7 @@ package("wxwidgets")
         add_versions("3.2.3", "c170ab67c7e167387162276aea84e055ee58424486404bba692c401730d1a67a")
         add_versions("3.2.4", "0640e1ab716db5af2ecb7389dbef6138d7679261fbff730d23845ba838ca133e")
         add_versions("3.2.5", "0ad86a3ad3e2e519b6a705248fc9226e3a09bbf069c6c692a02acf7c2d1c6b51")
-        add_versions("3.3.1", "2c9eecb179a24c2eeeb55b4a09d869bf4019b3e124a8c8c6de5d8e82a0aa3e91")
+        add_versions("3.3.1", "f936c8d694f9c49a367a376f99c751467150a4ed7cbf8f4723ef19b2d2d9998d")
 
         add_deps("cmake")
         add_deps("libjpeg", "libpng", "nanosvg", "expat", "zlib", "pango", "glib")
