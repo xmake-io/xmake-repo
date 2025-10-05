@@ -67,7 +67,7 @@ package("arrayfire")
                 package:add("defines", "AF_MKL_INTERFACE_SIZE=4")
             end
         else
-            package:add("deps", "fftw[precision=float]", "fftw[precision=double]")
+            package:add("deps", "fftw", {configs = {precisions = {"float", "double"}}})
             package:add("deps", "lapack")
         end
         local mkl_thread_layer = package:config("mkl_thread_layer")
