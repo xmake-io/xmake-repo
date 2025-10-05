@@ -27,7 +27,7 @@ package("gdk-pixbuf")
     add_includedirs("include", "include/gdk-pixbuf-2.0")
 
     add_deps("meson", "ninja")
-    add_deps("libpng", "libjpeg-turbo", "glib", "pcre2", "zlib")
+    add_deps("libpng", "libjpeg-turbo", "glib", "pcre2")
 
     on_load(function (package)
         if package:config("shared") then
@@ -77,7 +77,7 @@ package("gdk-pixbuf")
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
 
         package:addenv("PATH", "bin")
-        import("package.tools.meson").install(package, configs, {packagedeps = {"libjpeg-turbo", "libpng", "libtiff", "glib", "pcre2", "libintl", "libiconv", "zlib"}})
+        import("package.tools.meson").install(package, configs, {packagedeps = {"libjpeg-turbo", "libpng", "libtiff", "glib", "pcre2", "libintl", "libiconv"}})
     end)
 
     on_test(function (package)
