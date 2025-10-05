@@ -25,7 +25,7 @@ package("wxwidgets")
             add_resources("3.3.1", "releaseDLL",
                 "https://github.com/wxWidgets/wxWidgets/releases/download/v3.3.1/wxMSW-3.3.1_vc14x_x64_ReleaseDLL.7z",
                 "7587068798f3d8a9abb83a9fb3c6779b862af7f95288259e37b830f511776a49")
-        else
+        elseif is_arch("x86") then
             add_urls("https://github.com/wxWidgets/wxWidgets/releases/download/v$(version)/wxMSW-$(version)_vc14x_Dev.7z")
             add_versions("3.2.0", "0cd2387edcf1f26924d59efcc3ea4c8a00783ee01bf396756dabdd7967e4b37b")
             add_resources("3.2.0", "releaseDLL",
@@ -93,7 +93,7 @@ package("wxwidgets")
             "pango-1.0", "pangoxft-1.0", "pangocairo-1.0", "pangoft2-1.0"
         )
     elseif is_plat("windows") then
-        add_defines("WXUSINGDLL", "__WXMSW__", "wxSUFFIX=u", "wxMSVC_VERSION=14x")
+        add_defines("WXUSINGDLL", "__WXMSW__", "wxSUFFIX=u", "wxMSVC_VERSION=14x", "UNICODE", "_UNICODE")
         add_links(
             "wxbase32u", "wxbase32u_net", "wxbase32u_xml", "wxexpat",
             "wxjpeg", "wxmsw32u_adv", "wxmsw32u_aui", "wxmsw32u_core", "wxmsw32u_gl",
