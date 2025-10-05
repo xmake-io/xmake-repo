@@ -14,16 +14,6 @@ package("minizip")
 
     add_includedirs("include", "include/minizip")
 
-    on_check("android", function (package)
-        assert(package:check_cxxsnippets({test = [[
-            #include <stdio.h>
-            void test() {
-                auto *fp = fopen("example.txt", "r");
-                auto pos = ftello(fp);
-            }
-        ]]}, {configs = {languages = "c++11"}}), "package(minizip): ftello requires at least __ANDROID_API__ >= 24.")
-    end)
-
     on_install(function (package)
         os.cd(path.join("contrib", "minizip"))
         io.writefile("xmake.lua", [[
@@ -39,29 +29,15 @@ package("minizip")
                 if is_plat("windows") then
                     add_files("iowin32.c")
                     add_headerfiles("iowin32.h")
-                else
-                    add_defines("_LARGEFILE64_SOURCE=1", "_FILE_OFFSET_BITS=64")
                 end
-                on_config(function(target)
-                    if not target:is_plat("windows") then
-                        local snippet = target:has_cfuncs("fopen64", {includes = "stdio.h", configs = {languages = "c11"}})
-                        if not snippet then
-                            target:add("defines", "IOAPI_NO_64")
-                        end
-                    end
-                end)
         ]])
         local configs = {}
-        if not package:is_plat("windows", "mingw") and package:config("pic") ~= false then
+        if package:config("shared") then
+            configs.kind = "shared"
+        elseif not package:is_plat("windows", "mingw") and package:config("pic") ~= false then
             configs.cxflags = "-fPIC"
         end
         import("package.tools.xmake").install(package, configs)
-        local config_version_file = path.join(package:installdir("lib"), "cmake", "minizip", "minizipConfigVersion.cmake")
-        if package:is_plat("cross") and package:check_sizeof("void*") == "4" and os.exists(config_version_file) then
-            io.replace(config_version_file, [[if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "" OR "8" STREQUAL "")]], [[if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "" OR "4" STREQUAL "")]], {plain = true})
-            io.replace(config_version_file, [[if(NOT CMAKE_SIZEOF_VOID_P STREQUAL "8")]], [[if(NOT CMAKE_SIZEOF_VOID_P STREQUAL "4")]], {plain = true})
-            io.replace(config_version_file, [[math(EXPR installedBits "8 * 8")]], [[math(EXPR installedBits "4 * 8")]], {plain = true})
-        end
     end)
 
     on_test(function (package)
