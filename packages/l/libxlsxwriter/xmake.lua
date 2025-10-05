@@ -21,7 +21,7 @@ package("libxlsxwriter")
     add_configs("dtoa", {description = "Use the locale independent third party Milo Yip DTOA library", default = false, type = "boolean"})
 
     add_deps("cmake")
-    add_deps("zlib", "minizip")
+    add_deps("minizip")
 
     if on_check then
         on_check("android", function (package)
