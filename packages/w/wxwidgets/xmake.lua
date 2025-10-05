@@ -147,6 +147,7 @@ package("wxwidgets")
     end)
 
     on_install("macosx", "linux", function (package)
+        import("core.base.semver")
         -- Notify the user about issues caused by the CMake version.
         local cmake = package:dep("cmake")
         local cmake_fetch = cmake:fetch()
