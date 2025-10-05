@@ -21,6 +21,10 @@ package("wxwidgets")
             add_resources("3.2.4", "releaseDLL",
                 "https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.4/wxMSW-3.2.4_vc14x_x64_ReleaseDLL.7z",
                 "0f9108e64f98978580fee2d4b3a53451ab4333e4b47dde45b82e7867d0bbfc2c")
+            add_versions("3.3.1", "a1f6be9aaa5f022e2b215fba42a41c3a533debc3f9a39874b9219b3ba2db6056")
+            add_resources("3.3.1", "releaseDLL",
+                "https://github.com/wxWidgets/wxWidgets/releases/download/v3.3.1/wxMSW-3.3.1_vc14x_x64_ReleaseDLL.7z",
+                "7587068798f3d8a9abb83a9fb3c6779b862af7f95288259e37b830f511776a49")
         else
             add_urls("https://github.com/wxWidgets/wxWidgets/releases/download/v$(version)/wxMSW-$(version)_vc14x_Dev.7z")
             add_versions("3.2.0", "0cd2387edcf1f26924d59efcc3ea4c8a00783ee01bf396756dabdd7967e4b37b")
@@ -52,6 +56,9 @@ package("wxwidgets")
         add_resources("3.2.4", "headers",
             "https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.4/wxWidgets-3.2.4-headers.7z",
             "b8c4fd1a62c104c65089a088670d80e827b3893b7425c1cab8d7e49879797326")
+        add_resources("3.3.1", "headers",
+            "https://github.com/wxWidgets/wxWidgets/releases/download/v3.3.1/wxWidgets-3.3.1-headers.7z",
+            "f936c8d694f9c49a367a376f99c751467150a4ed7cbf8f4723ef19b2d2d9998d")
 
         add_configs("shared",     {description = "Build shared library.", default = true, type = "boolean", readonly = true})
         add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MD", readonly = true})
@@ -64,6 +71,7 @@ package("wxwidgets")
         add_versions("3.2.3", "c170ab67c7e167387162276aea84e055ee58424486404bba692c401730d1a67a")
         add_versions("3.2.4", "0640e1ab716db5af2ecb7389dbef6138d7679261fbff730d23845ba838ca133e")
         add_versions("3.2.5", "0ad86a3ad3e2e519b6a705248fc9226e3a09bbf069c6c692a02acf7c2d1c6b51")
+        add_versions("3.3.1", "2c9eecb179a24c2eeeb55b4a09d869bf4019b3e124a8c8c6de5d8e82a0aa3e91")
 
         add_deps("cmake")
         add_deps("libjpeg", "libpng", "nanosvg", "expat", "zlib", "pango", "glib")
