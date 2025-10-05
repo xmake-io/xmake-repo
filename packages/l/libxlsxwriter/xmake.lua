@@ -58,7 +58,7 @@ package("libxlsxwriter")
         }
         io.replace("src/packager.c", "minizip/iowin32.h", "iowin32.h", {plain = true})
         os.tryrm("cmake/Findminizip.cmake")
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"zlib"}})
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
