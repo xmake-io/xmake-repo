@@ -21,7 +21,7 @@ package("arrayfire")
     add_configs("kernel_to_disk", {description = "Enable caching kernels to disk.", default = true, type = "boolean"})
     add_configs("fast_math",      {description = "Use lower precision but high performance numeric optimizations.", default = true, type = "boolean"})
     add_configs("compute_lib",    {description = "Compute library for signal processing and linear algebra routines", default = "FFTW/LAPACK/BLAS", values = {"Intel-MKL", "FFTW/LAPACK/BLAS"}, type = "string"})
-    add_configs("imageio",        {description = "Build ArrayFire with Image IO support." default = false, type = "boolean"})
+    add_configs("imageio",        {description = "Build ArrayFire with Image IO support.", default = false, type = "boolean"})
 
     add_configs("mkl_thread_layer", {description = "The thread layer to choose for MKL.", default = "TBB", type = "string", values = {"TBB", "GNU OpenMP", "Intel OpenMP", "Sequential"}})
 
