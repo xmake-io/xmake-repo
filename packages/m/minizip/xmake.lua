@@ -13,6 +13,9 @@ package("minizip")
 
     add_configs("cmake", {description = "Use cmake build system", default = true, type = "boolean"})
     add_configs("bzip2", {description = "Build minizip withj bzip2 support", default = true, type = "boolean"})
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     add_deps("zlib")
 
