@@ -5,7 +5,7 @@ package("vulkan-headers")
     set_license("Apache-2.0")
                     
     add_urls("https://github.com/KhronosGroup/Vulkan-Headers.git")
-    add_urls("https://github.com/KhronosGroup/Vulkan-Headers/archive/$(version).tar.gz", {version = function (version)
+    add_urls("https://github.com/KhronosGroup/Vulkan-Headers/archive/refs/tags/$(version).tar.gz", {version = function (version)
         local prefix = "sdk-"
         if version:gt("1.3.261+1") then
             prefix = "vulkan-sdk-"
