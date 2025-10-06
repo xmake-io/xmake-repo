@@ -25,19 +25,16 @@ package("polyscope")
     add_deps("cmake")
     add_deps("glad", "glfw", "glm", "nlohmann_json", "stb")
 
-    on_load(function (package)
+    on_load("windows", "macosx", "linux", function (package)
         local version = package:version()
         if version then
             if version:ge("2.5.0") then
-                -- TODO
                 package:add("deps", "implot", "imgui", {configs = {glfw = true, opengl3 = true}})
+            elseif version:ge("2.2.0") then
+                package:add("deps", "imgui <=1.90.4", {configs = {glfw = true, opengl3 = true}})
             else
-                if version:ge("2.2.0") then
-                    package:add("deps", "imgui <=1.90.4", {configs = {glfw = true, opengl3 = true}})
-                else
-                    package:add("deps", "happly")
-                    package:add("deps", "imgui <=1.86", {configs = {glfw = true, opengl3 = true}})
-                end
+                package:add("deps", "happly")
+                package:add("deps", "imgui <=1.86", {configs = {glfw = true, opengl3 = true}})
             end
         end
         package:add("defines", "GLM_ENABLE_EXPERIMENTAL")
@@ -52,7 +49,9 @@ package("polyscope")
         local version = package:version()
         local opt = {}
         if version and version:ge("2.5.0") then
-            opt.packagedeps = {"implot", "imgui", "glad", "glfw", "glm", "happly", "nlohmann_json", "stb"}
+            opt.packagedeps = {"implot", "imgui", "glad", "glfw", "glm", "nlohmann_json", "stb"}
+        elseif version and version:ge("2.2.0") then
+            opt.packagedeps = {"imgui", "glad", "glfw", "glm", "nlohmann_json", "stb"}
         else
             opt.packagedeps = {"imgui", "glad", "glfw", "glm", "happly", "nlohmann_json", "stb"}
         end
