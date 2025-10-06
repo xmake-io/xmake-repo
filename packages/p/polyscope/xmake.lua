@@ -27,15 +27,12 @@ package("polyscope")
 
     on_load("windows", "macosx", "linux", function (package)
         local version = package:version()
-        if version then
-            if version:ge("2.5.0") then
-                package:add("deps", "implot", "imgui", {configs = {glfw = true, opengl3 = true}})
-            elseif version:ge("2.2.0") then
-                package:add("deps", "imgui <=1.90.4", {configs = {glfw = true, opengl3 = true}})
-            else
-                package:add("deps", "happly")
-                package:add("deps", "imgui <=1.86", {configs = {glfw = true, opengl3 = true}})
-            end
+        if version and version:ge("2.5.0") then
+            package:add("deps", "implot", "imgui", {configs = {glfw = true, opengl3 = true}})
+        elseif version and version:ge("2.2.0") then
+            package:add("deps", "imgui <=1.90.4", {configs = {glfw = true, opengl3 = true}})
+        else
+            package:add("deps", "happly", "imgui <=1.86", {configs = {glfw = true, opengl3 = true}})
         end
         package:add("defines", "GLM_ENABLE_EXPERIMENTAL")
     end)
@@ -48,13 +45,13 @@ package("polyscope")
 
         local version = package:version()
         local opt = {}
+        local packagedeps = {"imgui", "glad", "glfw", "glm", "nlohmann_json", "stb"}
         if version and version:ge("2.5.0") then
-            opt.packagedeps = {"implot", "imgui", "glad", "glfw", "glm", "nlohmann_json", "stb"}
-        elseif version and version:ge("2.2.0") then
-            opt.packagedeps = {"imgui", "glad", "glfw", "glm", "nlohmann_json", "stb"}
-        else
-            opt.packagedeps = {"imgui", "glad", "glfw", "glm", "happly", "nlohmann_json", "stb"}
+            table.insert(packagedeps, 1, "implot")
+        elseif not version or version:lt("2.2.0") then
+            table.insert(packagedeps, "happly")
         end
+        opt.packagedeps = packagedeps
         import("package.tools.cmake").install(package, configs, opt)
 
         if version and version:lt("2.2.0") then
