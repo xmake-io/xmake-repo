@@ -25,7 +25,9 @@ package("mariadb-connector-c")
         add_configs("mysqlcompat", {description = "Creates libmysql* symbolic links.", default = false, type = "boolean"})
     end
 
-    add_configs("ssl", {description = "Enables use of TLS/SSL library.", default = "openssl", type = "string", readonly = is_plat("bsd"), values = is_plat("windows") and {"openssl", "openssl3", "gnutls", "schannel"} or {"openssl", "openssl3", "gnutls"}})
+    local ssl_default_value = is_plat("windows") and "schannel" or "openssl"
+    local ssl_values = is_plat("windows") and {"openssl", "openssl3", "gnutls", "schannel"} or {"openssl", "openssl3", "gnutls"}
+    add_configs("ssl", {description = "Enables use of TLS/SSL library.", default = ssl_default_value, type = "string", readonly = is_plat("bsd"), values = ssl_values})
     add_configs("dyncol", {description = "Enables support of dynamic columns.", default = true, type = "boolean"})
     add_configs("curl", {description = "Enables use of curl.", default = true, type = "boolean"})
     add_configs("external_zlib", {description = "Enables use of external zlib.", default = false, type = "boolean"})
@@ -54,7 +56,7 @@ package("mariadb-connector-c")
 
         local ssl = package:config("ssl")
         if ssl == "schannel" then
-            add_syslinks("secur32", "crypt32", "bcrypt")
+            package:add("syslinks", "secur32", "crypt32", "bcrypt", "advapi32", "iphlpapi", "ws2_32")
         else
             package:add("deps", ssl)
         end
