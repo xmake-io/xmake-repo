@@ -46,6 +46,7 @@ package("nzsl")
 
     on_install(function (package)
         local configs = {}
+        configs.asan = package:config("asan")
         configs.cbinding = package:config("cbinding")
         configs.fs_watcher = package:config("fs_watcher") or false
         configs.erronwarn = false
