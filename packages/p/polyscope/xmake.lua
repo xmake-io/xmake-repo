@@ -24,7 +24,7 @@ package("polyscope")
 
     add_deps("cmake")
     add_deps("glad", "glfw", "glm", "nlohmann_json", "stb")
-        on_load("windows", "macosx", "linux", function (package)
+    on_load("windows", "macosx", "linux", function (package)
         local version = package:version()
         local cfgs = {glfw = true, opengl3 = true}
         local is_shared = package:config("shared")
@@ -34,8 +34,7 @@ package("polyscope")
             else
                 package:add("deps", "implot")
             end
-            package:add("deps", "implot")
-            package:add("deps", "imgui", {configs = cfgs})
+            package:add("deps", "imgui <1.91", {configs = cfgs})
         elseif version and version:ge("2.2.0") then
             package:add("deps", "imgui <=1.90.4", {configs = cfgs})
         else
