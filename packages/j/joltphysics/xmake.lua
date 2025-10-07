@@ -82,7 +82,7 @@ package("joltphysics")
             package:add("defines", "JPH_DOUBLE_PRECISION")
         end
         if package:config("profile") then
-           package:add("defines", "JPH_PROFILE_ENABLED")
+            package:add("defines", "JPH_PROFILE_ENABLED")
         end
         if package:config("shared") then
             package:add("defines", "JPH_SHARED_LIBRARY")
