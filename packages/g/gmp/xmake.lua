@@ -8,9 +8,8 @@ package("gmp")
     add_urls("https://gmplib.org/download/gmp/gmp-$(version).tar.xz")
 
     add_versions("6.3.0", "a3c2b80201b89e68616f4ad30bc66aee4927c3ce50e33929ca819d5c43538898")
-    add_versions("6.2.1", "fd4829912cddd12f84181c3451cc752be224643e87fac497b69edddadc49b4f2")
 
-    add_patches("6.3.0", "patches/6.3.0/gmp-gcc-15.patch", "c9be4854bee73af5ea028fcb6ed5ba5627d40f259d46bcfee4cd67e613173f7b")
+    add_patches("6.3.0", "patches/6.3.0/gmp-gcc-15.patch", "f77c32a1ea6ddcae2d15ff511fcb1d74f55dafda446ee6eda51d7b92583c9d89")
 
     add_configs("cpp", {description = "Enable C++ support", default = false, type = "boolean"})
     add_configs("assembly", {description = "Enable the use of assembly loops", default = false, type = "boolean"})

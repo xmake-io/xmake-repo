@@ -9,4 +9,4 @@
  void h(){}
  static __inline__ t1 e(t2 rp,t2 up,int n,t1 v0)
  {t1 c,x,r;int i;if(v0){c=1;for(i=1;i<n;i++){x=up[i];r=x+1;rp[i]=r;}}return c;}
-
+ 
