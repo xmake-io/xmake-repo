@@ -12,12 +12,6 @@ package("libpqxx")
 
     add_deps("cmake", "libpq")
 
-    on_check(function (package)
-        if package:is_arch("arm.*") then
-            raise("package(libpqxx/arm64): unsupported arch")
-        end
-    end)
-
     on_install("windows", "macosx", "linux", "bsd", function (package)
         if package:is_plat("windows") and package:version():eq("7.10.2") then
             io.replace("include/pqxx/internal/header-pre.hxx", "#if PQXX_CPLUSPLUS < 201703L && __has_include(<ciso646>)", "#if defined(_MSC_VER) && PQXX_CPLUSPLUS <= 201703L && __has_include(<ciso646>)", {plain=true})
