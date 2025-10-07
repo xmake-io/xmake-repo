@@ -6,11 +6,17 @@ package("libpqxx")
     add_urls("https://github.com/jtv/libpqxx/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jtv/libpqxx.git")
 
-    add_versions("7.10.2", "9e109ffe12daa7b689da41dac05509f41b803f8405e38b1687b54e09df19000f")
+    -- add_versions("7.10.2", "9e109ffe12daa7b689da41dac05509f41b803f8405e38b1687b54e09df19000f")
     add_versions("7.10.1", "9bfaf9cb5a73ac23f9b7a9dfd7ef069a6e2124fb")
     add_versions("7.7.0", "2d99de960aa3016915bc69326b369fcee04425e57fbe9dad48dd3fa6203879fb")
 
     add_deps("cmake", "libpq")
+
+    on_check(function (package)
+        if package:is_plat("windows") and package:is_arch("arm64") then
+            raise("package(libpqxx): ARM64 support on Windows is unavailable due to its dependence libpq.")
+        end
+    end)
 
     on_install("windows", "macosx", "linux", "bsd", function (package)
         if package:is_plat("windows") and package:version():eq("7.10.2") then
