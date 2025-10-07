@@ -11,8 +11,8 @@ package("libsdl3_ttf")
         add_extsources("brew::sdl3_ttf")
     end
 
-    add_urls("https://www.libsdl.org/projects/SDL_ttf/release/SDL3_ttf-$(version).tar.gz",
-             "https://github.com/libsdl-org/SDL_ttf/releases/download/release-$(version)/SDL3_ttf-$(version).tar.gz", { alias = "archive" })
+    --add_urls("https://www.libsdl.org/projects/SDL_ttf/release/SDL3_ttf-$(version).tar.gz",
+    --         "https://github.com/libsdl-org/SDL_ttf/releases/download/release-$(version)/SDL3_ttf-$(version).tar.gz", { alias = "archive" })
     add_urls("https://github.com/libsdl-org/SDL_ttf.git", { alias = "github" })
 
     add_versions("archive:3.2.2", "63547d58d0185c833213885b635a2c0548201cc8f301e6587c0be1a67e1e045d")
