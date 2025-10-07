@@ -9,7 +9,8 @@ package("gmp")
 
     add_versions("6.3.0", "a3c2b80201b89e68616f4ad30bc66aee4927c3ce50e33929ca819d5c43538898")
 
-    add_patches("6.3.0", "patches/6.3.0/gmp-gcc-15.patch", "f77c32a1ea6ddcae2d15ff511fcb1d74f55dafda446ee6eda51d7b92583c9d89")
+    -- https://github.com/microsoft/vcpkg/blob/4ed84798137bcf664989fa432d41d278d7ad3b25/ports/gmp/c23.patch
+    add_patches("6.3.0", "patches/6.3.0/c23.patch", "9af8a2a2e0d3855a23455835c1e749c5ec4dc84df80063c9f85f4882fed3b3f6")
 
     add_configs("cpp", {description = "Enable C++ support", default = false, type = "boolean"})
     add_configs("assembly", {description = "Enable the use of assembly loops", default = false, type = "boolean"})
