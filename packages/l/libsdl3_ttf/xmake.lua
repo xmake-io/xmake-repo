@@ -13,7 +13,7 @@ package("libsdl3_ttf")
 
     --add_urls("https://www.libsdl.org/projects/SDL_ttf/release/SDL3_ttf-$(version).tar.gz",
     --         "https://github.com/libsdl-org/SDL_ttf/releases/download/release-$(version)/SDL3_ttf-$(version).tar.gz", { alias = "archive" })
-    add_urls("https://github.com/libsdl-org/SDL_ttf.git", { alias = "github" })
+    add_urls("https://github.com/libsdl-org/SDL_ttf.git", {alias = "github", submodules = false})
 
     add_versions("archive:3.2.2", "63547d58d0185c833213885b635a2c0548201cc8f301e6587c0be1a67e1e045d")
     add_versions("archive:3.2.0", "9a741defb7c7d6dff658d402cb1cc46c1409a20df00949e1572eb9043102eb62")
