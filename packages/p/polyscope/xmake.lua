@@ -24,15 +24,22 @@ package("polyscope")
 
     add_deps("cmake")
     add_deps("glad", "glfw", "glm", "nlohmann_json", "stb")
-
-    on_load("windows", "macosx", "linux", function (package)
+        on_load("windows", "macosx", "linux", function (package)
         local version = package:version()
+        local cfgs = {glfw = true, opengl3 = true}
+        local is_shared = package:config("shared")
         if version and version:ge("2.5.0") then
-            package:add("deps", "implot", "imgui", {configs = {glfw = true, opengl3 = true}})
+            if is_shared then
+                package:add("deps", "implot", {configs = {shared = true}})
+            else
+                package:add("deps", "implot")
+            end
+            package:add("deps", "implot")
+            package:add("deps", "imgui", {configs = cfgs})
         elseif version and version:ge("2.2.0") then
-            package:add("deps", "imgui <=1.90.4", {configs = {glfw = true, opengl3 = true}})
+            package:add("deps", "imgui <=1.90.4", {configs = cfgs})
         else
-            package:add("deps", "happly", "imgui <=1.86", {configs = {glfw = true, opengl3 = true}})
+            package:add("deps", "happly", "imgui <=1.86", {configs = cfgs})
         end
         package:add("defines", "GLM_ENABLE_EXPERIMENTAL")
     end)
