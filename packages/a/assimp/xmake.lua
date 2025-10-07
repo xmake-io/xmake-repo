@@ -143,6 +143,9 @@ package("assimp")
             local minizip = package:dep("minizip")
             if minizip and not minizip:is_system() then
                 packagedeps = table.join2(packagedeps or {}, "minizip")
+                if minizip:config("bzip2") then
+                    table.insert(packagedeps, "bzip2")
+                end
             end
             -- fix ninja debug build
             os.mkdir(path.join(package:buildir(), "code/pdb"))
@@ -150,6 +153,9 @@ package("assimp")
             if package:is_debug() and package:has_runtime("MD", "MT") then
                 io.replace("CMakeLists.txt", "/D_DEBUG", "", {plain = true})
             end
+
+            -- fix std::min/max conflict with windows.h
+            io.insert("code/AssetLib/IFC/IFCLoader.cpp", 1, "#define NOMINMAX")
         end
 
         local zlib = package:dep("zlib")
