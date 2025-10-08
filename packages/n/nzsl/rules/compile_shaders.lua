@@ -48,7 +48,7 @@ rule("compile.shaders")
 
 		-- add commands
 		batchcmds:show_progress(opt.progress, "${color.build.object}compiling.shader %s", shaderfile)
-		local argv = { "--compile=nzslb" .. (header and "-header" or ""), "--partial", "--optimize" }
+		local argv = { "--compile=nzslb" .. (header and "-header" or ""), "--partial", "--optimize", "--skip-unchanged" }
 		if outputdir then
 			batchcmds:mkdir(outputdir)
 			table.insert(argv, "--output=" .. outputdir)
