@@ -5,7 +5,7 @@ package("gtk3")
 
     add_urls("https://gitlab.gnome.org/GNOME/gtk/-/archive/$(version)/gtk-$(version).tar.gz")
 
-    add_versions("3.24.50", "2d957b23ae917b9c6244c8027bfb2cf0f665086f0c4350ab0babc05728c4b176")
+    add_versions("3.24.51", "f3c87a20b3380b69efa720f412a0fea6ab6edce021f8ffaf5c4531fe1321b24f")
     add_versions("3.24.43", "ab197f76719fc875067671247533f8e5bd2bc090568ec17317de410d06397b7f")
 
     on_fetch("linux", function (package, opt)
