@@ -6,11 +6,16 @@ package("omath")
     add_urls("https://github.com/orange-cpp/omath/archive/refs/tags/$(version).tar.gz",
              "https://github.com/orange-cpp/omath.git", {submodules = false})
 
+    add_versions("v3.9.0", "a87b77e00d3cbaad171a1682976359106fecdc20d99367f2b61719bc46b19776")
     add_versions("v3.8.2", "e759aba554f9d50147931852c13408ff0bd302a787ff28818d19d4dc1a8f7fd0")
     add_versions("v3.8.1", "aaea99570c382478f825af759a2b0a214b429c74a9a5492ddd2866c836e85f4e")
 
+    add_patches("v3.9.0", "patches/v3.9.0/fix-fastcall.patch", "c439cbde15949786e87241a4a81575296e81cfdca8ec76192b5ff228126fa02c")
     add_patches("v3.8.1", "patches/v3.8.1/fix-build.patch", "c1554cf0cdd027d6386544871d6248c868f8f95add343660334888da52119ae9")
 
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
     if is_arch("x86_64", "x64", "x86", "i386", "i686") then
         add_configs("avx2",  {description = "Enable AVX2", default = true, type = "boolean"})
     end
@@ -34,7 +39,7 @@ package("omath")
         table.insert(configs, "-DOMATH_USE_AVX2=" .. (package:config("avx2") and "ON" or "OFF"))
         table.insert(configs, "-DOMATH_IMGUI_INTEGRATION=" .. (package:config("imgui") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DOMATH_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DOMATH_BUILD_AS_SHARED_LIBRARY=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
