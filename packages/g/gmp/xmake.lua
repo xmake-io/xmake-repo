@@ -11,7 +11,7 @@ package("gmp")
 
     add_patches("6.3.0", "patches/6.3.0/c23.patch", "24eb6ad75fb2552db247d3c5c522d30f221cca23a0fdc925b2684af44d51b7b3")
 
-    add_configs("cpp", {description = "Enable C++ support", default = false, type = "boolean"})
+    add_configs("cpp_api", {description = "Enable C++ support", default = false, type = "boolean"})
     add_configs("assembly", {description = "Enable the use of assembly loops", default = false, type = "boolean"})
     add_configs("fat", {description = "Build fat libraries on systems that support it", default = false, type = "boolean"})
     if is_plat("windows") then
@@ -87,7 +87,7 @@ package("gmp")
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
-        table.insert(configs, "--enable-cxx=" .. (package:config("cpp") and "yes" or "no"))
+        table.insert(configs, "--enable-cxx=" .. (package:config("cpp_api") and "yes" or "no"))
         table.insert(configs, "--enable-assembly=" .. (package:config("assembly") and "yes" or "no"))
         table.insert(configs, "--enable-fat=" .. (package:config("fat") and "yes" or "no"))
         if package:is_debug() then
@@ -160,14 +160,14 @@ package("gmp")
             autoconf.build(package, configs, opt)
             
             io.writefile("xmake.lua", [[
-                option("cpp", {default = false})
+                option("cpp_api", {default = false})
                 add_rules("mode.debug", "mode.release")
                 target("gmp")
                     set_kind("$(kind)")
                     add_rules("c++")
                     add_files("**.obj|gen-*.obj|cxx/*.obj", "**.o|gen-*.o|cxx/*.o")
                     add_headerfiles("gmp.h")
-                if has_config("cpp") then
+                if has_config("cpp_api") then
                     target("gmpxx")
                         set_kind("$(kind)")
                         add_rules("c++")
@@ -176,7 +176,7 @@ package("gmp")
                         add_deps("gmp")
                 end
             ]])
-            import("package.tools.xmake").install(package, {cpp = package:config("cpp")})
+            import("package.tools.xmake").install(package, {cpp_api = package:config("cpp_api")})
         else
             autoconf.install(package, configs, opt)
         end
