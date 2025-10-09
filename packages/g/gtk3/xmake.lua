@@ -49,6 +49,7 @@ package("gtk3")
                                                                                 "libthai", 
                                                                                 "libdatrie", 
                                                                                 "gdk-pixbuf"}})
+        os.tryrm(package:installdir("**.pc"))
     end)
 
     on_test(function (package)
