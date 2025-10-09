@@ -12,7 +12,7 @@ package("gmp")
     add_patches("6.3.0", "patches/6.3.0/c23.patch", "24eb6ad75fb2552db247d3c5c522d30f221cca23a0fdc925b2684af44d51b7b3")
 
     add_configs("cpp_api", {description = "Enable C++ support", default = false, type = "boolean"})
-    add_configs("assembly", {description = "Enable the use of assembly loops", default = true, type = "boolean"})
+    add_configs("assembly", {description = "Enable the use of assembly loops", default = false, type = "boolean"})
     add_configs("fat", {description = "Build fat libraries on systems that support it", default = false, type = "boolean"})
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
@@ -60,8 +60,10 @@ package("gmp")
             package:add("deps", "msys2", {configs = {msystem = msystem, base_devel = true}})
         end
         if package:is_plat("windows") then
-            package:add("defines", "_LONG_LONG_LIMB") -- mp_limb_t type
             package:add("defines", "__GMP_WITHIN_CONFIGURE")
+            if package:is_arch("x64", "arm64") then
+                package:add("defines", "_LONG_LONG_LIMB") -- mp_limb_t type
+            end
             -- if package:config("shared") then
             --     package:add("defines", "__GMP_LIBGMP_DLL")
             -- end
@@ -78,9 +80,7 @@ package("gmp")
         if is_host("windows") then
             io.replace("configure", "LIBTOOL='$(SHELL) $(top_builddir)/libtool'", "LIBTOOL='\"$(SHELL)\" $(top_builddir)/libtool'", {plain = true})
             if package:is_plat("android") then
-                -- Under bash, "exec </dev/null" closes stdin.  This is what we want, but it's obviously not right for interactive use of the shell.
-                -- By gemini 2.5 pro
-                io.replace("configure", [[test -n "$DJDIR" || exec 7<&0 </dev/null]], [[test -n "$DJDIR" || { exec 7<&0; exec 0</dev/null; }]], {plain = true})
+                os.setenv("DJDIR", "1")
             end
         end
         if is_plat("windows") then
@@ -155,7 +155,7 @@ package("gmp")
             opt.envs.CFLAGS = opt.envs.CFLAGS .. " " .. opt.envs.CXXFLAGS
             -- Fix mp_limb_t
             -- msvc sizeof long == 4 unmatch gcc sizeof long == 8
-            if package:is_arch64() then
+            if package:is_arch("x64", "arm64") then
                 opt.envs.CFLAGS = opt.envs.CFLAGS .. " -D_LONG_LONG_LIMB"
                 opt.envs.CXXFLAGS = opt.envs.CXXFLAGS .. " -D_LONG_LONG_LIMB"
             end
