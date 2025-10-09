@@ -46,6 +46,12 @@ package("aui")
         "aui.core"
     )
 
+    on_check(function (package)
+        if package:is_cross() then
+            raise("package(aui): does not support cross-compilation now.")
+        end
+    end)
+
     -- aui.audio
     on_component("audio", function (package, component)
         package:add("includedirs", "aui.audio/include")
