@@ -12,7 +12,7 @@ package("gmp")
     add_patches("6.3.0", "patches/6.3.0/c23.patch", "24eb6ad75fb2552db247d3c5c522d30f221cca23a0fdc925b2684af44d51b7b3")
 
     add_configs("cpp_api", {description = "Enable C++ support", default = false, type = "boolean"})
-    add_configs("assembly", {description = "Enable the use of assembly loops", default = false, type = "boolean"})
+    add_configs("assembly", {description = "Enable the use of assembly loops", default = true, type = "boolean"})
     add_configs("fat", {description = "Build fat libraries on systems that support it", default = false, type = "boolean"})
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
@@ -37,8 +37,13 @@ package("gmp")
 
     if on_check then
         on_check(function (package)
-            if package:is_plat("windows") and package:has_tool("cxx", "clang_cl") then
-                raise("package(gmp) unsupported clang-cl toolchain now, you can use clang toolchain\nadd_requires(\"gmp\", {configs = {toolchains = \"clang\"}}))")
+            if package:is_plat("windows") then
+                if package:has_tool("cxx", "clang_cl") then
+                    raise("package(gmp) unsupported clang-cl toolchain now, you can use clang toolchain\nadd_requires(\"gmp\", {configs = {toolchains = \"clang\"}}))")
+                end
+                if package:is_arch("arm64") and package:config("assembly") then
+                    raise("package(gmp) unsupported assembly config now")
+                end
             end
         end)
     end
