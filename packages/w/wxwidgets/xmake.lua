@@ -148,7 +148,6 @@ package("wxwidgets")
 
     on_install("macosx", "linux", function (package)
         import("core.base.semver")
-        import("utils.ci.is_running", {alias = "ci_is_running"})
         -- Notify the user about issues caused by the CMake version.
         local cmake = package:dep("cmake")
         local cmake_fetch = cmake:fetch()
@@ -176,7 +175,7 @@ package("wxwidgets")
         end
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
-        import("package.tools.cmake").install(package, configs, {jobs = ci_is_running() and 1 or nil})
+        import("package.tools.cmake").install(package, configs)
         local version = package:version()
         local subdir = "wx-" .. version:major() .. "." .. version:minor()
         local setupdir = package:is_plat("macosx") and "osx" or "gtk"
