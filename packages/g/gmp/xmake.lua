@@ -77,6 +77,11 @@ package("gmp")
             "SUBDIRS = mpn mpz mpq mpf printf scanf rand cxx tune", {plain = true})
         if is_host("windows") then
             io.replace("configure", "LIBTOOL='$(SHELL) $(top_builddir)/libtool'", "LIBTOOL='\"$(SHELL)\" $(top_builddir)/libtool'", {plain = true})
+            if package:is_plat("android") then
+                -- Under bash, "exec </dev/null" closes stdin.  This is what we want, but it's obviously not right for interactive use of the shell.
+                -- By gemini 2.5 pro
+                io.replace("configure", [[test -n "$DJDIR" || exec 7<&0 </dev/null]], [[test -n "$DJDIR" || { exec 7<&0; exec 0</dev/null; }]], {plain = true})
+            end
         end
         if is_plat("windows") then
             local obj_file_suffix = package:has_tool("cxx", "cl") and ".obj" or ".o"
@@ -150,8 +155,10 @@ package("gmp")
             opt.envs.CFLAGS = opt.envs.CFLAGS .. " " .. opt.envs.CXXFLAGS
             -- Fix mp_limb_t
             -- msvc sizeof long == 4 unmatch gcc sizeof long == 8
-            opt.envs.CFLAGS = opt.envs.CFLAGS .. " -D_LONG_LONG_LIMB"
-            opt.envs.CXXFLAGS = opt.envs.CXXFLAGS .. " -D_LONG_LONG_LIMB"
+            if package:is_arch64() then
+                opt.envs.CFLAGS = opt.envs.CFLAGS .. " -D_LONG_LONG_LIMB"
+                opt.envs.CXXFLAGS = opt.envs.CXXFLAGS .. " -D_LONG_LONG_LIMB"
+            end
 
             local clang_archs = {
                 ["x86"] = "i686",
