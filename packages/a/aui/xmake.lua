@@ -128,8 +128,7 @@ package("aui")
     on_component("uitests", function (package, component)
         package:add("includedirs", "aui.uitests/include")
         component:add("links", "aui.uitests")
-        package:add("deps", "gtest", {configs = {cmake = false}})
-        package:add("deps", "benchmark")
+        package:add("deps", "gtest", "benchmark")
     end)
 
     -- aui.views
