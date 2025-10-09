@@ -272,7 +272,7 @@ package("aui")
         package:add("defines", "GLM_ENABLE_EXPERIMENTAL=1")
     end)
 
-    on_install("windows", "macosx", "linux", "android", "iphoneos", "mingw", "msys", function (package)
+    on_install("windows", "macosx", "linux", function (package)
         local configs = {
             "-DAUI_INSTALL_RUNTIME_DEPENDENCIES=OFF",
             "-DAUIB_NO_PRECOMPILED=TRUE",
