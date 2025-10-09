@@ -13,6 +13,9 @@ package("omath")
     add_patches("v3.9.0", "patches/v3.9.0/fix-fastcall.patch", "c439cbde15949786e87241a4a81575296e81cfdca8ec76192b5ff228126fa02c")
     add_patches("v3.8.1", "patches/v3.8.1/fix-build.patch", "c1554cf0cdd027d6386544871d6248c868f8f95add343660334888da52119ae9")
 
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
     if is_arch("x86_64", "x64", "x86", "i386", "i686") then
         add_configs("avx2",  {description = "Enable AVX2", default = true, type = "boolean"})
     end
