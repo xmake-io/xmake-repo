@@ -10,6 +10,7 @@ package("omath")
     add_versions("v3.8.2", "e759aba554f9d50147931852c13408ff0bd302a787ff28818d19d4dc1a8f7fd0")
     add_versions("v3.8.1", "aaea99570c382478f825af759a2b0a214b429c74a9a5492ddd2866c836e85f4e")
 
+    add_patches("v3.9.0", "patches/v3.9.0/fix-fastcall.patch", "498d4a05b25e96fea6d0b7611ab4015ceee7942ba8e8f26b35ef370608978ede")
     add_patches("v3.8.1", "patches/v3.8.1/fix-build.patch", "c1554cf0cdd027d6386544871d6248c868f8f95add343660334888da52119ae9")
 
     if is_arch("x86_64", "x64", "x86", "i386", "i686") then
