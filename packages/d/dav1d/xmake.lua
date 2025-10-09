@@ -20,7 +20,7 @@ package("dav1d")
         add_syslinks("pthread", "dl")
     end
 
-    add_deps("meson", "ninja", "nasm")
+    add_deps("meson", "ninja")
 
     if on_check then
         on_check("android", function (package)
@@ -28,6 +28,12 @@ package("dav1d")
             assert(ndk and tonumber(ndk) > 22, "package(dav1d) require ndk version > 22")
         end)
     end
+
+    on_load(function (package)
+        if package:is_arch("x64", "x86", "x86_64", "i386") then
+            package:add("deps", "nasm")
+        end
+    end)
 
     on_install(function (package)
         if package:config("tools") then
