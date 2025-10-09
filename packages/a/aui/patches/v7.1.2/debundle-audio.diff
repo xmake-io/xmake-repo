@@ -1,8 +1,8 @@
 diff --git a/aui.audio/CMakeLists.txt b/aui.audio/CMakeLists.txt
-index 21e44153..f6732e73 100644
+index 21e441538..96d151626 100644
 --- a/aui.audio/CMakeLists.txt
 +++ b/aui.audio/CMakeLists.txt
-@@ -5,26 +5,44 @@ add_subdirectory(3rdparty/ogg)
+@@ -5,26 +5,43 @@ add_subdirectory(3rdparty/ogg)
  aui_link(aui.audio PUBLIC aui::core)
  
  if (AUI_PLATFORM_ANDROID)
@@ -37,16 +37,16 @@ index 21e44153..f6732e73 100644
  elseif (AUI_PLATFORM_LINUX)
 -    aui_link(aui.audio PUBLIC pulse)
 +    if (AUIB_DISABLE)
-+        auib_use_system_libs_begin()
-+        find_package(PkgConfig)
-+        pkg_check_modules(PULSEAUDIO REQUIRED IMPORTED_TARGET libpulse)
-+        aui_link(aui.audio PUBLIC PkgConfig::PULSEAUDIO)
-+        auib_use_system_libs_end()
++        include(FindPkgConfig)
++        pkg_check_modules(PulseAudio REQUIRED IMPORTED_TARGET libpulse)
++        pkg_check_modules(PulseAudioSimple REQUIRED IMPORTED_TARGET libpulse-simple)
++        aui_link(aui.audio PRIVATE PkgConfig::PulseAudio PkgConfig::PulseAudioSimple)
 +    else ()
 +        aui_link(aui.audio PUBLIC pulse)
 +    endif ()
  elseif (AUI_PLATFORM_WIN)
-     aui_link(aui.audio PUBLIC Winmm dsound.lib dxguid.lib)
+-    aui_link(aui.audio PUBLIC Winmm dsound.lib dxguid.lib)
++    aui_link(aui.audio PUBLIC Winmm dsound dxguid)
  endif()
  
 -auib_import(Opus https://github.com/xiph/opus.git VERSION v1.4)
@@ -61,7 +61,7 @@ index 21e44153..f6732e73 100644
  
  if (AUI_PLATFORM_IOS OR AUI_PLATFORM_MACOS)
      auib_use_system_libs_begin()
-@@ -42,9 +60,15 @@ if (AUI_PLATFORM_MACOS)
+@@ -42,9 +59,15 @@ if (AUI_PLATFORM_MACOS)
  					   "-framework QuartzCore")
  endif()
  

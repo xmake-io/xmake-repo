@@ -1,21 +1,34 @@
 diff --git a/aui.views/src/AUI/GL/gl.h b/aui.views/src/AUI/GL/gl.h
-index 64209c6..062af7b 100644
+index 64209c64..e82d0ed7 100644
 --- a/aui.views/src/AUI/GL/gl.h
 +++ b/aui.views/src/AUI/GL/gl.h
-@@ -10,7 +10,9 @@
+@@ -10,7 +10,14 @@
   */
  
  #pragma once
-+#if !AUI_PLATFORM_MACOS
++
++#if AUI_PLATFORM_MACOS
++#include <GL/glew.h>
++#endif
++
++#ifdef __cplusplus
  extern "C" {
 +#endif
  #if AUI_PLATFORM_ANDROID
  #include <GLES3/gl3.h>
  #include <GLES3/gl31.h>
-@@ -27,4 +29,6 @@ extern "C" {
+@@ -18,7 +25,6 @@ extern "C" {
+ #include <GLES3/gl3ext.h>
+ #include <EGL/egl.h>
+ #elif AUI_PLATFORM_MACOS
+-#include <GL/glew.h>
+ #include <OpenGL/OpenGL.h>
+ #elif AUI_PLATFORM_IOS
+ #include <OpenGLES/ES3/gl.h>
+@@ -27,4 +33,6 @@ extern "C" {
  #include <GL/glew.h>
  #include <GL/gl.h>
  #endif
-+#if !AUI_PLATFORM_MACOS
++#ifdef __cplusplus
  }
 +#endif
