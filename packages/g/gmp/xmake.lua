@@ -9,8 +9,7 @@ package("gmp")
 
     add_versions("6.3.0", "a3c2b80201b89e68616f4ad30bc66aee4927c3ce50e33929ca819d5c43538898")
 
-    -- https://github.com/microsoft/vcpkg/blob/4ed84798137bcf664989fa432d41d278d7ad3b25/ports/gmp/c23.patch
-    add_patches("6.3.0", "patches/6.3.0/c23.patch", "9af8a2a2e0d3855a23455835c1e749c5ec4dc84df80063c9f85f4882fed3b3f6")
+    add_patches("6.3.0", "patches/6.3.0/c23.patch", "24eb6ad75fb2552db247d3c5c522d30f221cca23a0fdc925b2684af44d51b7b3")
 
     add_configs("cpp", {description = "Enable C++ support", default = false, type = "boolean"})
     add_configs("assembly", {description = "Enable the use of assembly loops", default = false, type = "boolean"})
@@ -152,6 +151,7 @@ package("gmp")
             local clang_archs = {
                 ["x86"] = "i686",
                 ["x64"] = "x86_64",
+                ["arm64"] = "aarch64",
             }
             table.insert(configs, format("--host=%s-windows-msvc", clang_archs[package:arch()]))
         end
