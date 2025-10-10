@@ -14,9 +14,6 @@ package("gmp")
     add_configs("cpp_api", {description = "Enable C++ support", default = false, type = "boolean"})
     add_configs("assembly", {description = "Enable the use of assembly loops", default = true, type = "boolean"})
     add_configs("fat", {description = "Build fat libraries on systems that support it", default = false, type = "boolean"})
-    if is_plat("windows") then
-        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-    end
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::gmp")
@@ -85,6 +82,12 @@ package("gmp")
             if package:has_tool("ld", "link") then
                 -- `lib /out: xxx` -> `lib /out:xxx`
                 io.replace("configure", "$AR $AR_FLAGS ", "$AR $AR_FLAGS", {plain = true})
+            end
+            if package:config("shared") then
+                -- error: duplicate symbol: __gmpn_add
+                io.replace("gmp-h.in", "#define __GMP_EXTERN_INLINE  __inline", "#define __GMP_EXTERN_INLINE  static __inline", {plain = true})
+                -- export symbol macro
+                io.replace("gmp-h.in", "#define __GMP_LIBGMP_DLL  @LIBGMP_DLL@", "#define __GMP_LIBGMP_DLL  1", {plain = true})
             end
         end
 
