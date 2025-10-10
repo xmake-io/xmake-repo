@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index c9ceb6c3..f037fdc3 100644
+index c9ceb6c3..256cd894 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -246,16 +246,16 @@ if(NOT BUILD_SHARED_LIBS)
@@ -23,7 +23,7 @@ index c9ceb6c3..f037fdc3 100644
          )
      endif()
  endif()
-@@ -304,16 +304,16 @@ enable_language(CXX)
+@@ -304,18 +304,18 @@ enable_language(CXX)
  list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
  
  # Set the zlib includes.
@@ -41,8 +41,11 @@ index c9ceb6c3..f037fdc3 100644
      else()
 -        find_package(PkgConfig REQUIRED)
          pkg_check_modules(MINIZIP minizip)
-         list(APPEND LXW_PRIVATE_INCLUDE_DIRS ${MINIZIP_INCLUDE_DIRS}/..)
+-        list(APPEND LXW_PRIVATE_INCLUDE_DIRS ${MINIZIP_INCLUDE_DIRS}/..)
++        list(APPEND LXW_PRIVATE_INCLUDE_DIRS ${MINIZIP_INCLUDE_DIRS})
      endif()
+ endif()
+ 
 @@ -384,12 +384,11 @@ add_library(${PROJECT_NAME} "")
  set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION ${SOVERSION})
  target_sources(${PROJECT_NAME} PRIVATE ${LXW_SOURCES} PUBLIC ${LXW_HEADERS})
