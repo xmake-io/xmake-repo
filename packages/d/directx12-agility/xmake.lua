@@ -6,6 +6,8 @@ package("directx12-agility")
     set_urls("https://www.nuget.org/api/v2/package/Microsoft.Direct3D.D3D12/$(version)/#Microsoft.DXSDK.D3DX-$(version).zip")
     add_versions("1.618.1", "35a1bb4139f751e19956a0471fb621442450c63b1f100752b27ada6abed7a3da")
 
+    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+
     add_deps("cmake")
 
     add_syslinks("d3d12")
