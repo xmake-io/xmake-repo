@@ -3,13 +3,10 @@ cmake_minimum_required(VERSION 3.16)
 project(directx12-agility
     DESCRIPTION "DirectX 12 Agility SDK"
     VERSION ${VERSION}
-    LANGUAGES CXX
+    LANGUAGES C
 )
 
 include(CMakePackageConfigHelpers)
-
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_library(D3D12_LIB NAMES d3d12)
 
