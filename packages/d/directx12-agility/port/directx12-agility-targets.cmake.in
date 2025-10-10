@@ -23,9 +23,6 @@ get_filename_component(_IMPORT_PREFIX "${CMAKE_CURRENT_LIST_FILE}" PATH)
 get_filename_component(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
 get_filename_component(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
 get_filename_component(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
-if(_IMPORT_PREFIX STREQUAL "/")
-  set(_IMPORT_PREFIX "")
-endif()
 
 find_library(_directx12_agility_D3D12_LIB NAMES d3d12)
 if("${_directx12_agility_D3D12_LIB}" STREQUAL "_directx12_agility_D3D12_LIB-NOTFOUND")
@@ -57,8 +54,6 @@ add_library(Microsoft::DirectX12-Agility INTERFACE IMPORTED)
 set_target_properties(Microsoft::DirectX12-Agility PROPERTIES
   INTERFACE_LINK_LIBRARIES "Microsoft::DirectX12-Core;Microsoft::DirectX12-Layers"
 )
-
-set(_IMPORT_PREFIX)
 
 foreach(target Microsoft::DirectX12-Core Microsoft::DirectX12-Layers Microsoft::DirectX12-Agility)
   if(TARGET ${target})
