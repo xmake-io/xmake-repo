@@ -1,0 +1,76 @@
+cmake_minimum_required(VERSION 3.16)
+
+project(directx12-agility 
+    VERSION ${VERSION}
+    LANGUAGES C
+)
+
+include(CMakePackageConfigHelpers)
+
+find_library(D3D12_LIB NAMES d3d12)
+
+if("${D3D12_LIB}" STREQUAL "D3D12_LIB-NOTFOUND")
+    message(FATAL_ERROR "D3D12.LIB import library from the Windows SDK is required")
+endif()
+
+add_library(Microsoft::DirectX12-Core SHARED IMPORTED GLOBAL)
+set_target_properties(Microsoft::DirectX12-Core PROPERTIES
+    IMPORTED_LOCATION_RELEASE            "${CMAKE_INSTALL_PREFIX}/bin/D3D12Core.dll"
+    IMPORTED_LOCATION_DEBUG              "${CMAKE_INSTALL_PREFIX}/bin/D3D12Core.dll"
+    IMPORTED_IMPLIB                      "${D3D12_LIB}"
+    IMPORTED_CONFIGURATIONS              "Debug;Release"
+    IMPORTED_LINK_INTERFACE_LANGUAGES    "C"
+)
+
+add_library(Microsoft::DirectX12-Layers SHARED IMPORTED GLOBAL)
+set_target_properties(Microsoft::DirectX12-Layers PROPERTIES
+    IMPORTED_LOCATION_RELEASE            "${CMAKE_INSTALL_PREFIX}/bin/d3d12SDKLayers.dll"
+    IMPORTED_LOCATION_DEBUG              "${CMAKE_INSTALL_PREFIX}/bin/d3d12SDKLayers.dll"
+    IMPORTED_IMPLIB                      "${D3D12_LIB}"
+    IMPORTED_CONFIGURATIONS              "Debug;Release"
+    IMPORTED_LINK_INTERFACE_LANGUAGES    "C"
+)
+
+add_library(Microsoft::DirectX12-Agility INTERFACE IMPORTED GLOBAL)
+set_target_properties(Microsoft::DirectX12-Agility PROPERTIES
+    INTERFACE_LINK_LIBRARIES "Microsoft::DirectX12-Core;Microsoft::DirectX12-Layers"
+)
+
+install(
+    FILES "${D3D12_LIB}"
+    DESTINATION "lib"
+)
+
+configure_file(
+    "${CMAKE_CURRENT_LIST_DIR}/${PROJECT_NAME}.pc.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc" @ONLY
+)
+
+configure_file(
+    "${CMAKE_CURRENT_LIST_DIR}/${PROJECT_NAME}-config.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake" @ONLY
+)
+
+configure_file(
+    "${CMAKE_CURRENT_LIST_DIR}/${PROJECT_NAME}-targets.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-targets.cmake" @ONLY
+)
+
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMajorVersion
+)
+
+install(
+    FILES "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc"
+    DESTINATION "lib/pkgconfig"
+)
+
+install(
+    FILES 
+        "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-targets.cmake"
+    DESTINATION "lib/cmake/${PROJECT_NAME}"
+)

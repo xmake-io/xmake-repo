@@ -1,0 +1,24 @@
+@PACKAGE_INIT@
+
+get_filename_component(_IMPORT_PREFIX "${CMAKE_CURRENT_LIST_FILE}" PATH)
+get_filename_component(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
+get_filename_component(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
+if(_IMPORT_PREFIX STREQUAL "/")
+  set(_IMPORT_PREFIX "")
+endif()
+
+if(EXISTS "${_IMPORT_PREFIX}/bin/D3D12Core.dll")
+    set(directx12-agility_FOUND TRUE)
+    
+    # Include the targets file
+    include("${CMAKE_CURRENT_LIST_DIR}/directx12-agility-targets.cmake")
+    
+    check_required_components(directx12-agility)
+else()
+    set(directx12-agility_FOUND FALSE)
+    if(directx12-agility_FIND_REQUIRED)
+        message(FATAL_ERROR "DirectX12 Agility SDK DLLs not found in ${_IMPORT_PREFIX}/bin/")
+    endif()
+endif()
+
+set(_IMPORT_PREFIX)
