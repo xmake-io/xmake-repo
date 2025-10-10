@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index c9ceb6c3..41f32155 100644
+index c9ceb6c3..7a975f12 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -246,16 +246,16 @@ if(NOT BUILD_SHARED_LIBS)
@@ -23,12 +23,12 @@ index c9ceb6c3..41f32155 100644
          )
      endif()
  endif()
-@@ -304,17 +304,16 @@ enable_language(CXX)
+@@ -304,12 +304,12 @@ enable_language(CXX)
  list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
  
  # Set the zlib includes.
 -find_package(ZLIB "1.2.8" REQUIRED)
-+find_package(ZLIB REQUIRED)
++pkg_check_modules(ZLIB zlib)
  list(APPEND LXW_PRIVATE_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS})
  
  # Set the minizip includes.
@@ -38,13 +38,7 @@ index c9ceb6c3..41f32155 100644
          find_package(MINIZIP NAMES unofficial-minizip REQUIRED)
          set(MINIZIP_LIBRARIES unofficial::minizip::minizip)
      else()
--        find_package(PkgConfig REQUIRED)
--        pkg_check_modules(MINIZIP minizip)
-+        find_package(minizip CONFIG REQUIRED)
-         list(APPEND LXW_PRIVATE_INCLUDE_DIRS ${MINIZIP_INCLUDE_DIRS}/..)
-     endif()
- endif()
-@@ -384,12 +383,11 @@ add_library(${PROJECT_NAME} "")
+@@ -384,12 +384,11 @@ add_library(${PROJECT_NAME} "")
  set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION ${SOVERSION})
  target_sources(${PROJECT_NAME} PRIVATE ${LXW_SOURCES} PUBLIC ${LXW_HEADERS})
  
@@ -55,7 +49,7 @@ index c9ceb6c3..41f32155 100644
      target_link_libraries(${PROJECT_NAME} PRIVATE ${MINIZIP_LINK_LIBRARIES})
  else()
 -    target_link_libraries(${PROJECT_NAME} PRIVATE ${MINIZIP_LIBRARIES})
-+    target_link_libraries(${PROJECT_NAME} PRIVATE minizip::minizip ZLIB::ZLIB)
++    target_link_libraries(${PROJECT_NAME} PRIVATE ${MINIZIP_LIBRARIES} ${ZLIB_LIBRARIES})
  endif()
  
  target_link_libraries(
