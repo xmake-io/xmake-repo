@@ -12,7 +12,7 @@ package("gmp")
     add_patches("6.3.0", "patches/6.3.0/c23.patch", "24eb6ad75fb2552db247d3c5c522d30f221cca23a0fdc925b2684af44d51b7b3")
 
     add_configs("cpp_api", {description = "Enable C++ support", default = false, type = "boolean"})
-    add_configs("assembly", {description = "Enable the use of assembly loops", default = false, type = "boolean"})
+    add_configs("assembly", {description = "Enable the use of assembly loops", default = true, type = "boolean"})
     add_configs("fat", {description = "Build fat libraries on systems that support it", default = false, type = "boolean"})
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
@@ -29,9 +29,6 @@ package("gmp")
     if not is_subhost("windows") then
         add_deps("m4")
     end
-    if is_plat("windows") then
-        add_deps("yasm") -- Needed for determining 32-bit word size
-    end
 
     add_links("gmpxx", "gmp")
 
@@ -40,9 +37,6 @@ package("gmp")
             if package:is_plat("windows") then
                 if package:has_tool("cxx", "clang_cl") then
                     raise("package(gmp) unsupported clang-cl toolchain now, you can use clang toolchain\nadd_requires(\"gmp\", {configs = {toolchains = \"clang\"}}))")
-                end
-                if package:is_arch("arm64") and package:config("assembly") then
-                    raise("package(gmp) unsupported assembly config now")
                 end
             end
         end)
@@ -60,6 +54,12 @@ package("gmp")
             package:add("deps", "msys2", {configs = {msystem = msystem, base_devel = true}})
         end
         if package:is_plat("windows") then
+            -- msvc toolchain require other tool to build asm
+            -- x86, x64 -> yasm, arm64 -> clang
+            if package:is_arch("x64", "x86") and package:config("assembly") then
+                package:add("deps", "yasm")
+            end
+
             package:add("defines", "__GMP_WITHIN_CONFIGURE")
             if package:is_arch("x64", "arm64") then
                 package:add("defines", "_LONG_LONG_LIMB") -- mp_limb_t type
@@ -72,16 +72,10 @@ package("gmp")
 
     on_install("!wasm", function (package)
         import("package.tools.autoconf")
+        import("lib.detect.find_tool")
 
-        -- ref https://github.com/microsoft/vcpkg/blob/4ed84798137bcf664989fa432d41d278d7ad3b25/ports/gmp/subdirs.patch
-        io.replace("Makefile.am",
-            "SUBDIRS = tests mpn mpz mpq mpf printf scanf rand cxx demos tune doc",
-            "SUBDIRS = mpn mpz mpq mpf printf scanf rand cxx tune", {plain = true})
         if is_host("windows") then
             io.replace("configure", "LIBTOOL='$(SHELL) $(top_builddir)/libtool'", "LIBTOOL='\"$(SHELL)\" $(top_builddir)/libtool'", {plain = true})
-            if package:is_plat("android") then
-                os.setenv("DJDIR", "1")
-            end
         end
         if is_plat("windows") then
             local obj_file_suffix = package:has_tool("cxx", "cl") and ".obj" or ".o"
@@ -111,23 +105,13 @@ package("gmp")
         if package:is_plat("macosx") and package:is_arch("arm64") and os.arch() == "x86_64" then
             table.insert(configs, "--build=x86_64-apple-darwin")
             table.insert(configs, "--host=arm64-apple-darwin")
-            local envs = autoconf.buildenvs(package, {cflags = "--target=arm64-apple-darwin"})
-            envs.CC = package:build_getenv("cc") .. " -arch arm64" -- for linker flags
+            opt.envs = autoconf.buildenvs(package, {cflags = "--target=arm64-apple-darwin"})
+            opt.envs.CC = package:build_getenv("cc") .. " -arch arm64" -- for linker flags
         elseif package:is_plat("windows") then
-            local yasm_machine = {
-                ["x86"] = "x86",
-                ["x64"] = "amd64",
-            }
-            local yasm_format = {
-                ["x86"] = "win32",
-                ["x64"] = "win64",
-            }
             local msvc = package:toolchain("msvc") or package:toolchain("clang") or package:toolchain("clang-cl")
             assert(msvc:check(), "msvs not found!")
             -- buildenvs maybe missing deps bin dir
             opt.envs = os.joinenvs(os.joinenvs(msvc:runenvs()), autoconf.buildenvs(package))
-            opt.envs.CCAS = "yasm"
-            opt.envs.CCASFLAGS = format("-a x86 -m %s -p gas -r raw -f %s -g null -X gnu", yasm_machine[package:arch()], yasm_format[package:arch()])
             if package:has_tool("cxx", "cl") then
                 opt.envs.CC  = "cl -nologo"
                 opt.envs.CXX = "cl -nologo"
@@ -135,7 +119,6 @@ package("gmp")
                 opt.envs.LD  = "link -nologo"
                 opt.envs.NM = "dumpbin -nologo -symbols"
                 opt.envs.AR_FLAGS = "-out:" -- override `cq` flag
-                table.insert(configs, "gmp_cv_asm_w32=.word") -- fix detect
             elseif package:has_tool("cxx", "clang") then
                 local suffix = opt.envs.CC:split("-")
                 if #suffix > 1 then
@@ -165,7 +148,33 @@ package("gmp")
                 ["x64"] = "x86_64",
                 ["arm64"] = "aarch64",
             }
-            table.insert(configs, format("--host=%s-windows-msvc", clang_archs[package:arch()]))
+            local target = clang_archs[package:arch()] .. "-windows-msvc"
+            if package:config("assembly") then
+                if package:is_arch("x64", "x86") then
+                    local yasm_machine = {
+                        ["x86"] = "x86",
+                        ["x64"] = "amd64",
+                    }
+                    local yasm_format = {
+                        ["x86"] = "win32",
+                        ["x64"] = "win64",
+                    }
+                    opt.envs.CCAS = "yasm"
+                    opt.envs.CCASFLAGS = format("-a x86 -m %s -p gas -r raw -f %s -g null -X gnu", yasm_machine[package:arch()], yasm_format[package:arch()])
+                    table.insert(configs, "gmp_cv_asm_w32=.word") -- fix detect
+                elseif package:is_arch("arm64") then
+                    if package:has_tool("cxx", "clang") then
+                        opt.envs.CCAS = opt.envs.CC
+                    else
+                        local llvm_nm = assert(find_tool("llvm-nm"), "windows arm64 require llvm-nm to detect")
+                        local clang = assert(find_tool("clang"), "windows arm64 require clang to build asm")
+                        opt.envs.CCAS = path.unix(clang.program)
+                        opt.envs.NM = path.unix(llvm_nm.program)
+                    end
+                    opt.envs.CCASFLAGS = table.concat({"--target=" .. target, "-c"}, " ")
+                end
+            end
+            table.insert(configs, "--host=" .. target)
         end
         -- Can't generate correct gmp.lib with lib.exe
         if package:is_plat("windows") then
