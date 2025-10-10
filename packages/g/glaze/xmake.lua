@@ -43,7 +43,16 @@ package("glaze")
 
     add_patches("4.0.1", "https://github.com/stephenberry/glaze/commit/8f35df43bcb1210a0c1e07a68b99608e29ecea43.patch", "66eba4c0eea1469c1bf21b2b6ea31cb320391d1095ffe06c5a7ff3dfda796763")
 
+    add_configs("ssl", {description = "Enable SSL support for networking", default = false, type = "boolean"})
+
     add_deps("cmake")
+
+    on_load(function (package)
+        if package:config("ssl") then
+            package:add("deps", "openssl3")
+            package:add("defines", "GLZ_ENABLE_SSL")
+        end
+    end)
 
     if on_check then
         on_check(function (package)
@@ -88,7 +97,8 @@ package("glaze")
             import("package.tools.cmake").install(package, {
                 "-Dglaze_DEVELOPER_MODE=OFF",
                 "-DCMAKE_CXX_STANDARD=23",
-                "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release")
+                "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
+                "-Dglaze_ENABLE_SSL=" .. (package:config("ssl") and "ON" or "OFF")
             })
         else
             os.cp("include", package:installdir())

@@ -289,10 +289,7 @@ end
 
 -- @see https://github.com/xmake-io/xmake-repo/issues/6940
 function _lock_packages(packages)
-    local locked_packages = {
-        "flashlight",
-        "systemd"
-    }
+    local locked_packages = {}
     for _, package in ipairs(packages) do
         if table.contains(locked_packages, package) then
             raise("package(%s) has been locked, please do not submit it, @see https://github.com/xmake-io/xmake-repo/issues/6940", package)

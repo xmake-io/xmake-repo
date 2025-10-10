@@ -6,17 +6,22 @@ package("omath")
     add_urls("https://github.com/orange-cpp/omath/archive/refs/tags/$(version).tar.gz",
              "https://github.com/orange-cpp/omath.git", {submodules = false})
 
-    add_versions("v3.0.3", "f72ec671eb99d83bf6d63ec5eee7436110a9f340b416eefac51464665bbda06c")
+    add_versions("v3.9.0", "a87b77e00d3cbaad171a1682976359106fecdc20d99367f2b61719bc46b19776")
+    add_versions("v3.8.2", "e759aba554f9d50147931852c13408ff0bd302a787ff28818d19d4dc1a8f7fd0")
+    add_versions("v3.8.1", "aaea99570c382478f825af759a2b0a214b429c74a9a5492ddd2866c836e85f4e")
 
-    add_configs("avx2",  {description = "Enable AVX2", default = true, type = "boolean"})
+    add_patches("v3.9.0", "patches/v3.9.0/fix-fastcall.patch", "c439cbde15949786e87241a4a81575296e81cfdca8ec76192b5ff228126fa02c")
+    add_patches("v3.8.1", "patches/v3.8.1/fix-build.patch", "c1554cf0cdd027d6386544871d6248c868f8f95add343660334888da52119ae9")
+
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+    if is_arch("x86_64", "x64", "x86", "i386", "i686") then
+        add_configs("avx2",  {description = "Enable AVX2", default = true, type = "boolean"})
+    end
     add_configs("imgui", {description = "Define method to convert omath types to imgui types", default = true, type = "boolean"})
 
     add_deps("cmake")
-    if is_plat("windows") then
-        add_deps("pkgconf")
-    else
-        add_deps("pkg-config")
-    end
 
     on_load(function (package)
         if package:config("imgui") then
@@ -25,35 +30,28 @@ package("omath")
     end)
 
     on_install("!macosx and !iphoneos and !android and !bsd", function (package)
-        if package:config("imgui") then
-            local imgui = package:dep("imgui")
-            if imgui and not imgui:is_system() then
-                local imgui_fetch = imgui:fetch()
-                if imgui_fetch then
-                    for _, inc in ipairs(imgui_fetch.includedirs or imgui_fetch.sysincludedirs) do
-                        os.mkdir(inc)
-                    end
-                end
-            end
-        end
-        io.replace("CMakeLists.txt", [[find_package(imgui CONFIG REQUIRED)]], [[include(FindPkgConfig)
-pkg_search_module("imgui" REQUIRED IMPORTED_TARGET "imgui")]], {plain = true})
-        io.replace("CMakeLists.txt", [[imgui::imgui]], [[PkgConfig::imgui]], {plain = true})
-        if package:is_plat("wasm") then
-            io.replace("CMakeLists.txt", [[target_compile_options(${PROJECT_NAME} PRIVATE -mavx2 -mfma)]], [[target_compile_options(${PROJECT_NAME} PRIVATE -msimd128 -mavx2)]], {plain = true})
-        end
-        local configs = {"-DOMATH_THREAT_WARNING_AS_ERROR=OFF", "-DOMATH_BUILD_TESTS=OFF"}
+        local configs = {
+            "-DOMATH_BUILD_TESTS=OFF",
+            "-DOMATH_BUILD_BENCHMARK=OFF",
+            "-DOMATH_THREAT_WARNING_AS_ERROR=OFF",
+            "-DOMATH_BUILD_EXAMPLES=OFF",
+        }
         table.insert(configs, "-DOMATH_USE_AVX2=" .. (package:config("avx2") and "ON" or "OFF"))
         table.insert(configs, "-DOMATH_IMGUI_INTEGRATION=" .. (package:config("imgui") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DOMATH_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DOMATH_BUILD_AS_SHARED_LIBRARY=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+            #if __has_include(<omath/omath.hpp>)
+                #include <omath/omath.hpp>
+            #else
+                #include <omath/vector2.hpp>
+            #endif
             void test() {
                 omath::Vector2 w = omath::Vector2(20.0, 30.0);
             }
-        ]]}, {configs = {languages = "c++23"}, includes = "omath/vector2.hpp"}))
+        ]]}, {configs = {languages = "c++23"}}))
     end)

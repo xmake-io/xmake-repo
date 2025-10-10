@@ -1,8 +1,8 @@
 diff --git a/BuildTools/CMake/BuildUtils.cmake b/BuildTools/CMake/BuildUtils.cmake
-index e97b96b..bf9d26e 100644
+index ee394acab..da9d7b69e 100644
 --- a/BuildTools/CMake/BuildUtils.cmake
 +++ b/BuildTools/CMake/BuildUtils.cmake
-@@ -292,14 +292,22 @@ function(install_core_lib _TARGET)
+@@ -335,14 +335,19 @@ function(install_core_lib _TARGET)
      if(TARGET_TYPE STREQUAL STATIC_LIBRARY)
          list(APPEND DILIGENT_CORE_INSTALL_LIBS_LIST ${_TARGET})
          set(DILIGENT_CORE_INSTALL_LIBS_LIST ${DILIGENT_CORE_INSTALL_LIBS_LIST} CACHE INTERNAL "Core libraries installation list")
@@ -11,9 +11,6 @@ index e97b96b..bf9d26e 100644
 +                LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 +                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
 +        )
-+        if (DILIGENT_INSTALL_PDB)
-+            install(FILES $<TARGET_PDB_FILE:${_TARGET}> DESTINATION "${CMAKE_INSTALL_BINDIR}" OPTIONAL)
-+        endif()
      elseif(TARGET_TYPE STREQUAL SHARED_LIBRARY)
          install(TARGETS                 ${_TARGET}
 -                ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/${DILIGENT_CORE_DIR}/$<CONFIG>"
@@ -30,10 +27,10 @@ index e97b96b..bf9d26e 100644
      endif()
  
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index fc3c5d8..9edc6a4 100644
+index 37baf199b..caf3d0867 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -614,7 +614,6 @@ add_subdirectory(Primitives)
+@@ -595,7 +595,6 @@ add_subdirectory(Primitives)
  add_subdirectory(Platforms)
  add_subdirectory(Common)
  add_subdirectory(Graphics)
@@ -41,7 +38,7 @@ index fc3c5d8..9edc6a4 100644
  
  
  # Installation instructions
-@@ -625,7 +624,7 @@ if(DILIGENT_INSTALL_CORE)
+@@ -606,7 +605,7 @@ if(DILIGENT_INSTALL_CORE)
          "${DILIGENT_CORE_INSTALL_LIBS_LIST}"
          DiligentCore-static                     # Custom target name
          DiligentCore                            # Folder

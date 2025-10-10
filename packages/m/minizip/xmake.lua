@@ -12,7 +12,7 @@ package("minizip")
     add_versions("v1.2.13", "1525952a0a567581792613a9723333d7f8cc20b87a81f920fb8bc7e3f2251428")
 
     add_configs("cmake", {description = "Use cmake build system", default = true, type = "boolean"})
-    add_configs("bzip2", {description = "Build minizip withj bzip2 support", default = true, type = "boolean"})
+    add_configs("bzip2", {description = "Build minizip withj bzip2 support", default = false, type = "boolean"})
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
@@ -32,7 +32,7 @@ package("minizip")
     on_load(function (package)
         if package:config("cmake") then
             package:add("deps", "cmake")
-            package:add("resources", "*", "cmake", "https://github.com/madler/zlib.git", "61a56bcbb0561e5c9a9a93af51d43e6a495b468f")
+            package:add("resources", "*", "cmake", "https://github.com/madler/zlib.git", "61a56bcbb0561e5c9a9a93af51d43e6a495b468f") -- 2025.02.01
         end
 
         if package:config("bzip2") then
@@ -72,10 +72,6 @@ package("minizip")
             table.insert(configs, "-DMINIZIP_BUILD_STATIC=" .. (not package:config("shared") and "ON" or "OFF"))
             table.insert(configs, "-DMINIZIP_ENABLE_BZIP2=" .. (package:config("bzip2") and "ON" or "OFF"))
             import("package.tools.cmake").install(package, configs)
-            local cmake_config_file = path.join(package:installdir("lib"), "cmake", "minizip", "minizipConfig.cmake")
-            io.replace(cmake_config_file, [[find_dependency(ZLIB)]], [[find_dependency(PkgConfig)
-pkg_check_modules(ZLIB REQUIRED IMPORTED_TARGET ZLIB)
-add_library(PkgConfig::ZLIB ALIAS ZLIB::ZLIB)]], {plain = true})
         else
             local configs = {}
             configs.bzip2 = package:config("bzip2")

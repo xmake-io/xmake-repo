@@ -93,6 +93,8 @@ package("libuv")
             if version:lt("1.40") then
                 os.cp("include", package:installdir())
             end
+            os.tryrm(package:installdir("lib/pkgconfig/libuv-static.pc"))
+            os.tryrm(package:installdir("lib/pkgconfig/libuv.pc"))
         else
             local configs = {}
             table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
