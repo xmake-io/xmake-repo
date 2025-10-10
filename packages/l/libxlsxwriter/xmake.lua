@@ -10,7 +10,7 @@ package("libxlsxwriter")
     add_versions("newtag:v1.2.3", "63f070c19c97ce4d5dfcbc1fa8cc5237d4c9decf39341a31188dbdceef93b542")
     add_versions("oldtag:1.1.5", "12843587d591cf679e6ec63ecc629245befec2951736804a837696cdb5d61946")
 
-    add_patches("v1.2.3", "patches/v1.2.3/fix-build.diff", "0b399e728a2371d9c4dc596979d136ef04c3440eb53705aa10a889c20778764d")
+    add_patches("v1.2.3", "patches/v1.2.3/fix-build.diff", "c37c05cf173543252ad50d798c644b247afaad85e47293e04b7a09ec76f6fe23")
     add_patches("1.1.5", "patches/1.1.5/fix-build.diff", "10902862f76400206090e63274417c75ff4469a44c45781282ff97feb414cb55")
 
     add_configs("tmpfile", {description = "Use the C standard library's tmpfile()", default = false, type = "boolean"})
