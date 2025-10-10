@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index e656184d..6ad4330c 100644
+index e656184d..f31b8983 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -183,10 +183,10 @@ if(NOT BUILD_SHARED_LIBS)
@@ -17,28 +17,29 @@ index e656184d..6ad4330c 100644
      endif()
  endif()
  
-@@ -219,13 +219,13 @@ enable_language(CXX)
+@@ -219,13 +219,14 @@ enable_language(CXX)
  list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
  
  # ZLIB
 -find_package(ZLIB REQUIRED "1.0")
-+find_package(ZLIB REQUIRED)
++find_package(PkgConfig REQUIRED)
++pkg_check_modules(ZLIB zlib)
  list(APPEND LXW_PRIVATE_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS})
  message("zlib version: " ${ZLIB_VERSION})
  
  # MINIZIP
  if (USE_SYSTEM_MINIZIP)
 -    find_package(MINIZIP REQUIRED "1.0")
-+    find_package(minizip CONFIG REQUIRED)
++    pkg_check_modules(MINIZIP minizip)
      list(APPEND LXW_PRIVATE_INCLUDE_DIRS ${MINIZIP_INCLUDE_DIRS})
  endif()
  
-@@ -281,7 +281,7 @@ target_sources(${PROJECT_NAME}
+@@ -281,7 +282,7 @@ target_sources(${PROJECT_NAME}
      PRIVATE ${LXW_SOURCES}
      PUBLIC ${LXW_HEADERS}
  )
 -target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${ZLIB_LIBRARIES} ${MINIZIP_LIBRARIES} ${LIB_CRYPTO} ${OPENSSL_CRYPTO_LIBRARY})
-+target_link_libraries(${PROJECT_NAME} LINK_PUBLIC minizip::minizip ZLIB::ZLIB ${LIB_CRYPTO} ${OPENSSL_CRYPTO_LIBRARY})
++target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${MINIZIP_LIBRARIES} ${ZLIB_LIBRARIES} ${LIB_CRYPTO} ${OPENSSL_CRYPTO_LIBRARY})
  target_compile_definitions(${PROJECT_NAME} PRIVATE ${LXW_PRIVATE_COMPILE_DEFINITIONS})
  
  # /utf-8 needs VS2015 Update 2 or above.
