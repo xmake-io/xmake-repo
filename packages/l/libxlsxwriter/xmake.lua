@@ -11,7 +11,7 @@ package("libxlsxwriter")
     add_versions("oldtag:1.1.5", "12843587d591cf679e6ec63ecc629245befec2951736804a837696cdb5d61946")
 
     add_patches("v1.2.3", "patches/v1.2.3/fix-build.diff", "c37c05cf173543252ad50d798c644b247afaad85e47293e04b7a09ec76f6fe23")
-    add_patches("1.1.5", "patches/1.1.5/fix-build.diff", "10902862f76400206090e63274417c75ff4469a44c45781282ff97feb414cb55")
+    add_patches("1.1.5", "patches/1.1.5/fix-build.diff", "cd12048e66aa183ac322b355f6a567a602cf66b0ceff3ae813e28939b8c94c71")
 
     add_configs("tmpfile", {description = "Use the C standard library's tmpfile()", default = false, type = "boolean"})
     add_configs("md5", {description = "Build libxlsxwriter without third party MD5 lib", default = false, type = "boolean"})
@@ -22,6 +22,12 @@ package("libxlsxwriter")
 
     add_deps("cmake")
     add_deps("minizip")
+
+    if is_subhost("windows") then
+        add_deps("pkgconf")
+    else
+        add_deps("pkg-config")
+    end
 
     if on_check then
         on_check("android", function (package)
