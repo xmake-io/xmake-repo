@@ -20,9 +20,6 @@ package("libxlsxwriter")
     add_configs("64", {description = "Enable 64-bit filesystem support", default = true, type = "boolean"})
     add_configs("dtoa", {description = "Use the locale independent third party Milo Yip DTOA library", default = false, type = "boolean"})
 
-    -- Workaround against ZLib provided by system path /usr/lib64/cmake/ZLIB/ZLIBConfig.cmake
-    add_resources("*", "cmake", "https://github.com/madler/zlib.git", "61a56bcbb0561e5c9a9a93af51d43e6a495b468f")
-
     add_deps("cmake")
     add_deps("minizip")
 
