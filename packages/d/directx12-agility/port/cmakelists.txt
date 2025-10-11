@@ -1,0 +1,56 @@
+cmake_minimum_required(VERSION 3.16)
+
+project(directx12-agility
+    DESCRIPTION "DirectX 12 Agility SDK"
+    VERSION ${VERSION}
+    LANGUAGES C
+)
+
+include(CMakePackageConfigHelpers)
+
+find_library(D3D12_LIB NAMES d3d12)
+
+if("${D3D12_LIB}" STREQUAL "D3D12_LIB-NOTFOUND")
+    message(FATAL_ERROR "D3D12.LIB import library from the Windows SDK is required")
+endif()
+
+message(STATUS "Found D3D12.LIB: ${D3D12_LIB}")
+
+install(
+    FILES "${D3D12_LIB}"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+)
+
+configure_file(
+    "${CMAKE_CURRENT_LIST_DIR}/${PROJECT_NAME}-targets.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-targets.cmake" @ONLY
+)
+
+configure_file(
+    "${CMAKE_CURRENT_LIST_DIR}/${PROJECT_NAME}.pc.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc" @ONLY
+)
+
+configure_file(
+    "${CMAKE_CURRENT_LIST_DIR}/${PROJECT_NAME}-config.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake" @ONLY
+)
+
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMajorVersion
+)
+
+install(
+    FILES "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
+)
+
+install(
+    FILES 
+        "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-targets.cmake"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
+)
