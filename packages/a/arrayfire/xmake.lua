@@ -5,6 +5,7 @@ package("arrayfire")
 
     add_urls("https://github.com/arrayfire/arrayfire/archive/refs/tags/$(version).tar.gz",
              "https://github.com/arrayfire/arrayfire.git")
+    add_versions("v3.10.0", "959f6c00a5ad6e030a178271c3976bbb06a16eef77f431ed42f4fd003c73761c")
     add_versions("v3.9.0", "ffd078dde66a1a707d049f5d2dab128e86748a92ca7204d0b3a7933a9a9904be")
 
     add_configs("cpu",     {description = "Build ArrayFire with a CPU backend.", default = true, type = "boolean"})
