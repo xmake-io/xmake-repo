@@ -196,6 +196,7 @@ package("gmp")
                     set_kind("$(kind)")
                     add_rules("c++")
                     add_files("**.obj|gen-*.obj|cxx/*.obj", "**.o|gen-*.o|cxx/*.o")
+                    remove_files("dummy.obj") -- I don't know why, it only happen on ci
                     add_headerfiles("gmp.h")
                 if has_config("cpp_api") then
                     target("gmpxx")
