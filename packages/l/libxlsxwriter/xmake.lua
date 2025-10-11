@@ -11,7 +11,9 @@ package("libxlsxwriter")
     add_versions("oldtag:1.1.5", "12843587d591cf679e6ec63ecc629245befec2951736804a837696cdb5d61946")
 
     add_patches("v1.2.3", "patches/v1.2.3/fix-build.diff", "6443592d8274579aab0c2fd2439887649d55a93c9a8f4f4ecbb9cba436d5b101")
+    add_patches("v1.2.3", "patches/minizip.diff", "c9696934e97e24e73525864cd6d25f263a980f7bf1dc172dfe35c3474754af16")
     add_patches("1.1.5", "patches/1.1.5/fix-build.diff", "cd12048e66aa183ac322b355f6a567a602cf66b0ceff3ae813e28939b8c94c71")
+    add_patches("1.1.5", "patches/minizip.diff", "c9696934e97e24e73525864cd6d25f263a980f7bf1dc172dfe35c3474754af16")
 
     add_configs("tmpfile", {description = "Use the C standard library's tmpfile()", default = false, type = "boolean"})
     add_configs("md5", {description = "Build libxlsxwriter without third party MD5 lib", default = false, type = "boolean"})
