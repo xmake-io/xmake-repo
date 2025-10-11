@@ -12,7 +12,11 @@ package("gmp")
     add_patches("6.3.0", "patches/6.3.0/c23.patch", "24eb6ad75fb2552db247d3c5c522d30f221cca23a0fdc925b2684af44d51b7b3")
 
     add_configs("cpp_api", {description = "Enable C++ support", default = false, type = "boolean"})
-    add_configs("assembly", {description = "Enable the use of assembly loops", default = true, type = "boolean"})
+    if is_plat("windows") and is_plat("arm64") then
+        add_configs("assembly", {description = "Enable the use of assembly loops", default = false, type = "boolean"})
+    else
+        add_configs("assembly", {description = "Enable the use of assembly loops", default = true, type = "boolean"})
+    end
     add_configs("fat", {description = "Build fat libraries on systems that support it", default = false, type = "boolean"})
 
     if is_plat("mingw") and is_subhost("msys") then
@@ -53,7 +57,7 @@ package("gmp")
         if package:is_plat("windows") then
             -- msvc toolchain require other tool to build asm
             -- x86, x64 -> yasm, arm64 -> clang
-            if package:is_arch("x64", "x86") and package:config("assembly") then
+            if package:is_arch("x64", "x86") then
                 package:add("deps", "yasm")
             end
 
@@ -71,6 +75,10 @@ package("gmp")
         import("package.tools.autoconf")
         import("lib.detect.find_tool")
 
+        -- ref https://github.com/microsoft/vcpkg/blob/4ed84798137bcf664989fa432d41d278d7ad3b25/ports/gmp/subdirs.patch
+        io.replace("Makefile.am",
+            "SUBDIRS = tests mpn mpz mpq mpf printf scanf rand cxx demos tune doc",
+            "SUBDIRS = mpn mpz mpq mpf printf scanf rand cxx tune", {plain = true})
         if is_host("windows") then
             io.replace("configure", "LIBTOOL='$(SHELL) $(top_builddir)/libtool'", "LIBTOOL='\"$(SHELL)\" $(top_builddir)/libtool'", {plain = true})
         end
@@ -122,6 +130,7 @@ package("gmp")
                 opt.envs.LD  = "link -nologo"
                 opt.envs.NM = "dumpbin -nologo -symbols"
                 opt.envs.AR_FLAGS = "-out:" -- override `cq` flag
+                table.insert(configs, "gmp_cv_asm_w32=.word") -- fix detect
             elseif package:has_tool("cxx", "clang") then
                 local suffix = opt.envs.CC:split("-")
                 if #suffix > 1 then
@@ -152,30 +161,27 @@ package("gmp")
                 ["arm64"] = "aarch64",
             }
             local target = clang_archs[package:arch()] .. "-windows-msvc"
-            if package:config("assembly") then
-                if package:is_arch("x64", "x86") then
-                    local yasm_machine = {
-                        ["x86"] = "x86",
-                        ["x64"] = "amd64",
-                    }
-                    local yasm_format = {
-                        ["x86"] = "win32",
-                        ["x64"] = "win64",
-                    }
-                    opt.envs.CCAS = "yasm"
-                    opt.envs.CCASFLAGS = format("-a x86 -m %s -p gas -r raw -f %s -g null -X gnu", yasm_machine[package:arch()], yasm_format[package:arch()])
-                    table.insert(configs, "gmp_cv_asm_w32=.word") -- fix detect
-                elseif package:is_arch("arm64") then
-                    if package:has_tool("cxx", "clang") then
-                        opt.envs.CCAS = opt.envs.CC
-                    else
-                        local llvm_nm = assert(find_tool("llvm-nm"), "windows arm64 require llvm-nm to detect")
-                        local clang = assert(find_tool("clang"), "windows arm64 require clang to build asm")
-                        opt.envs.CCAS = path.unix(clang.program)
-                        opt.envs.NM = path.unix(llvm_nm.program)
-                    end
-                    opt.envs.CCASFLAGS = table.concat({"--target=" .. target, "-c"}, " ")
+            if package:is_arch("x64", "x86") then
+                local yasm_machine = {
+                    ["x86"] = "x86",
+                    ["x64"] = "amd64",
+                }
+                local yasm_format = {
+                    ["x86"] = "win32",
+                    ["x64"] = "win64",
+                }
+                opt.envs.CCAS = "yasm"
+                opt.envs.CCASFLAGS = format("-a x86 -m %s -p gas -r raw -f %s -g null -X gnu", yasm_machine[package:arch()], yasm_format[package:arch()])
+            elseif package:is_arch("arm64") then
+                if package:has_tool("cxx", "clang") then
+                    opt.envs.CCAS = opt.envs.CC
+                else
+                    local llvm_nm = assert(find_tool("llvm-nm"), "windows arm64 require llvm-nm to detect")
+                    local clang = assert(find_tool("clang"), "windows arm64 require clang to build asm")
+                    opt.envs.CCAS = path.unix(clang.program)
+                    opt.envs.NM = path.unix(llvm_nm.program)
                 end
+                opt.envs.CCASFLAGS = table.concat({"--target=" .. target, "-c"}, " ")
             end
             table.insert(configs, "--host=" .. target)
         end
