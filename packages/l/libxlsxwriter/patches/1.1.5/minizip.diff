@@ -1,3 +1,16 @@
+diff --git a/include/xlsxwriter/packager.h b/include/xlsxwriter/packager.h
+index 76382bd0..4046c44d 100644
+--- a/include/xlsxwriter/packager.h
++++ b/include/xlsxwriter/packager.h
+@@ -13,7 +13,7 @@
+ 
+ #ifdef USE_SYSTEM_MINIZIP
+ #pragma GCC system_header
+-#include "minizip/zip.h"
++#include <zip.h>
+ #else
+ #include "third_party/zip.h"
+ #endif
 diff --git a/src/packager.c b/src/packager.c
 index 829ac38d..a8652f65 100644
 --- a/src/packager.c
