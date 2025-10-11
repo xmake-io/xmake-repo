@@ -30,6 +30,7 @@ package("libcurl")
     add_configs("brotli",   {description = "Enable brotli support.", default = false, type = "boolean"})
     add_configs("libssh2",  {description = "Use libSSH2 library.", default = false, type = "boolean"})
     add_configs("libpsl",   {description = "Use libpsl library.", default = false, type = "boolean"})
+    add_configs("curlexe",  {description = "Build curl executable.", default = true, type = "boolean"})
 
     if is_plat("android") and is_host("windows") then
         add_deps("ninja")
@@ -106,6 +107,7 @@ package("libcurl")
         local configs = {"-DBUILD_TESTING=OFF", "-DENABLE_MANUAL=OFF", "-DENABLE_CURL_MANUAL=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DBUILD_CURL_EXE=" .. (package:config("curlexe") and "ON" or "OFF"))
 
         if (package:is_plat("mingw") and version:ge("7.85")) then
             package:add("syslinks", "bcrypt")
