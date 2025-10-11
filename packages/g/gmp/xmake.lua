@@ -12,7 +12,7 @@ package("gmp")
     add_patches("6.3.0", "patches/6.3.0/c23.patch", "24eb6ad75fb2552db247d3c5c522d30f221cca23a0fdc925b2684af44d51b7b3")
 
     add_configs("cpp_api", {description = "Enable C++ support", default = false, type = "boolean"})
-    if is_plat("windows") and is_plat("arm64") then
+    if is_plat("windows") and is_arch("arm64") then
         add_configs("assembly", {description = "Enable the use of assembly loops", default = false, type = "boolean"})
     else
         add_configs("assembly", {description = "Enable the use of assembly loops", default = true, type = "boolean"})
