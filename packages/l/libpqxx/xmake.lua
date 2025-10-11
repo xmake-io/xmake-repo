@@ -6,6 +6,7 @@ package("libpqxx")
     add_urls("https://github.com/jtv/libpqxx/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jtv/libpqxx.git")
 
+    add_versions("7.10.3", "c5ba455e4f28901297c18a76e533c466cbe8908d4b2ff6313235954bb37cef25")
     add_versions("7.10.2", "9e109ffe12daa7b689da41dac05509f41b803f8405e38b1687b54e09df19000f")
     add_versions("7.10.1", "cfbbb1d93a0a3d81319ec71d9a3db80447bb033c4f6cee088554a88862fd77d7")
     add_versions("7.7.0", "2d99de960aa3016915bc69326b369fcee04425e57fbe9dad48dd3fa6203879fb")
