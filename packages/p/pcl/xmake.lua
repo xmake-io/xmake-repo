@@ -65,10 +65,11 @@ package("pcl")
         table.insert(configs, "-DBUILD_apps=" .. (package:config("apps") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_tools=" .. (package:config("tools") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_visualization=" .. (package:config("visualization") and "ON" or "OFF"))
-        local confs = { "cuda", "glew", "libusb", "opengl", "openmp", "pcap", "qhull", "qt", "vtk" }
+        local confs = { "cuda", "glew", "libusb", "opengl", "openmp", "qhull", "vtk" }
         for _, conf in ipairs(confs) do
             table.insert(configs, "-DWITH_" .. conf:upper() .. "=" .. (package:config(conf) and "ON" or "OFF"))
         end
+        table.insert(configs, "-DWITH_PCAP=" .. (package:config("libpcap") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_PNG=" .. (package:config("libpng") and "ON" or "OFF"))
 
         if package:is_plat("windows") then
