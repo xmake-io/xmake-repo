@@ -72,11 +72,15 @@ package("pcl")
         end
         table.insert(configs, "-DWITH_PCAP=" .. (package:config("libpcap") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_PNG=" .. (package:config("libpng") and "ON" or "OFF"))
-
         if package:is_plat("windows") then
             table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"lz4", "dl"}})
+
+        local opt = {packagedeps = {"lz4", "dl"}}
+        if package:config("shared") and package:is_plat("macosx") then
+            opt.shflags = {"-framework", "CoreFoundation", "-framework", "IOKit", "-framework", "Security"}
+        end
+        import("package.tools.cmake").install(package, configs, opt)
         package:addenv("PATH", "bin")
     end)
 
