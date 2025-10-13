@@ -41,6 +41,11 @@ package("openexr")
     add_deps("zlib", "libdeflate")
 
     if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 28, "package(openexr) dep(openjph) need ndk api level >= 28")
+        end)
         on_check("windows", function (package)
             local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
             if vs_toolset and package:is_arch("arm.*") then
