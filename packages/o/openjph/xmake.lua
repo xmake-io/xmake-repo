@@ -42,5 +42,5 @@ package("openjph")
                 ojph::j2c_outfile file;
                 file.open("file.txt");
             }
-        ]]}, {languages = "c++11", includes = {"openjph/ojph_file.h"}}))
+        ]]}, {languages = "c++17", includes = {"openjph/ojph_file.h"}}))
     end)
