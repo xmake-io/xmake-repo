@@ -20,7 +20,7 @@ package("openjph")
         end)
     end
 
-    on_install(function (package)
+    on_install("!macosx and !iphoneos", function (package)
         if package:is_plat("windows", "mingw") and package:config("shared") then
             io.replace("src/core/common/ojph_arch.h", [[#else
 #define OJPH_EXPORT
@@ -42,5 +42,5 @@ package("openjph")
                 ojph::j2c_outfile file;
                 file.open("file.txt");
             }
-        ]]}, {languages = "c++17", includes = {"openjph/ojph_file.h"}}))
+        ]]}, {configs = {languages = "c++11"}, includes = "openjph/ojph_file.h"}))
     end)
