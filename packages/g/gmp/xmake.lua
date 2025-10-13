@@ -82,7 +82,7 @@ package("gmp")
         if is_host("windows") then
             io.replace("configure", "LIBTOOL='$(SHELL) $(top_builddir)/libtool'", "LIBTOOL='\"$(SHELL)\" $(top_builddir)/libtool'", {plain = true})
         end
-        if is_plat("windows") then
+        if package:is_plat("windows") then
             local obj_file_suffix = package:has_tool("cxx", "cl") and ".obj" or ".o"
             io.replace("configure", "$CCAS $CFLAGS $CPPFLAGS", "$CCAS $CCASFLAGS -o conftest" .. obj_file_suffix, {plain = true})
             -- Remove error flags for asm build
