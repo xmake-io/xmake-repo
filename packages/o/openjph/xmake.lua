@@ -20,7 +20,7 @@ package("openjph")
         end)
     end
 
-    on_install("!macosx and !iphoneos", function (package)
+    on_install(function (package)
         if package:is_plat("windows", "mingw") and package:config("shared") then
             io.replace("src/core/common/ojph_arch.h", [[#else
 #define OJPH_EXPORT
