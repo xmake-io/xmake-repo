@@ -25,6 +25,7 @@ package("openexr")
     add_versions("v3.1.5", "93925805c1fc4f8162b35f0ae109c4a75344e6decae5a240afdfce25f8a433ec")
     add_versions("v3.2.1", "61e175aa2203399fb3c8c2288752fbea3c2637680d50b6e306ea5f8ffdd46a9b")
 
+    add_patches("3.4.0", "patches/3.4.0/openjph-include.patch", "d8eb99fd9f064821134ee61c4bfb0e5dff4be557a21698365361250f13e82e53")
     add_patches("3.3.3", "patches/3.3.3/mingw32.patch", "17cbe9d0cbc0c670a846454893c1a427590789cf6bf052a4d800d1263e0faa9a")
 
     add_configs("build_both", {description = "Build both static library and shared library. (deprecated)", default = false, type = "boolean"})
@@ -51,8 +52,11 @@ package("openexr")
     end
 
     on_load(function (package)
-        local ver = package:version()
+        local ver = assert(package:version(), "package(openexr) require version number")
         local suffix = format("-%d_%d", ver:major(), ver:minor())
+        if ver:ge("3.4.0") then
+            package:add("deps", "openjph")
+        end
         local links = {}
         if ver:ge("3.0") then
             package:add("deps", "imath")
@@ -71,6 +75,9 @@ package("openexr")
     on_install(function (package)
         io.replace("CMakeLists.txt", "add_subdirectory(website/src)", "", {plain = true})
         io.replace("cmake/OpenEXRSetup.cmake", [[set(CMAKE_DEBUG_POSTFIX "_d")]], "", {plain = true})
+        if package:version():ge("3.4.0") then
+            -- io.replace("src/lib/OpenEXRCore/CMakeLists.txt", "${EXR_OPENJPH_LIB}", "openjph::openjph", {plain = true})
+        end
 
         local configs = {
             "-DBUILD_TESTING=OFF",
