@@ -81,6 +81,10 @@ package("gmp")
             "SUBDIRS = mpn mpz mpq mpf printf scanf rand cxx tune", {plain = true})
         if is_host("windows") then
             io.replace("configure", "LIBTOOL='$(SHELL) $(top_builddir)/libtool'", "LIBTOOL='\"$(SHELL)\" $(top_builddir)/libtool'", {plain = true})
+            if is_plat("android") then
+                -- ./configure: line 603: 0: Bad file descriptor
+                io.replace("configure", "exec 7<&0 </dev/null", "exec </dev/null", {plain = true})
+            end
         end
         if is_plat("windows") then
             local obj_file_suffix = package:has_tool("cxx", "cl") and ".obj" or ".o"
