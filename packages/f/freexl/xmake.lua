@@ -1,9 +1,9 @@
 package("freexl")
-    set_homepage("https://github.com/aous72/OpenJPH")
+    set_homepage("https://www.gaia-gis.it/fossil/freexl/index")
     set_description("FreeXL is an open source library to extract valid data from within an Excel (.xls) spreadsheet.")
     set_license("MPL-1.0")
     
-    add_urls("http://www.gaia-gis.it/gaia-sins/freexl-sources/freexl-$(version).tar.gz")
+    add_urls("https://www.gaia-gis.it/gaia-sins/freexl-sources/freexl-$(version).tar.gz")
 
     add_versions("2.0.0", "176705f1de58ab7c1eebbf5c6de46ab76fcd8b856508dbd28f5648f7c6e1a7f0")
 
@@ -20,8 +20,8 @@ package("freexl")
         if not package:is_plat("windows") then
             os.touch("src/config.h")
         end
-        io.writefile("xmake.lua", [[
-            option("ver", {default = "2.0.0"})
+        io.writefile("xmake.lua", string.format([[
+            option("ver", {default = "%s"})
             add_rules("mode.debug", "mode.release")
             add_requires("libiconv", "expat", "minizip")
             target("freexl")
@@ -40,8 +40,8 @@ package("freexl")
                     add_defines("VERSION=\"" .. get_config("ver") .. "\"")
                     set_version(get_config("ver"), {soname = true})
                 end
-        ]])
-        import("package.tools.xmake").install(package, {ver = package:version()})
+        ]], package:version_str()))
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
