@@ -15,9 +15,9 @@ package("ng-log")
 
     add_deps("cmake")
 
-    if is_plat("linux") then
+    if is_plat("linux", "bsd") then
         add_syslinks("pthread")
-    elseif is_plat("windows") then
+    elseif is_plat("windows", "mingw") then
         add_syslinks("dbghelp")
     end
 
