@@ -65,8 +65,6 @@ package("openssl")
     end)
 
     on_install("windows", function (package)
-        local working_dir = try {function() return os.iorunv("perl", {"-MFile::Spec::Functions=rel2abs", "-e", "print rel2abs('.')"}) end}
-        assert(working_dir, "package(openssl): perl not found!")
         -- Check if Perl is using Unix-style paths
         local unix_perl = working_dir:find("/") == 1
         if (unix_perl and package:is_plat("windows")) or (not unix_perl and not package:is_plat("windows")) then
