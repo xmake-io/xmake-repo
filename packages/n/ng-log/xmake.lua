@@ -42,20 +42,17 @@ package("ng-log")
     end)
 
     on_install(function (package)
-        local configs = {"-DBUILD_TESTING=OFF", "-DCMAKE_INSTALL_LIBDIR=lib"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        local configs = {"-DBUILD_TESTING=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         for config, dep in pairs(configdeps) do
             table.insert(configs, "-DWITH_" .. config:upper() .. "=" .. (package:config(config) and "ON" or "OFF"))
         end
-
         -- fix cmake try run
         if package:is_plat("mingw") or (package:is_plat("windows") and package:is_arch("arm64")) then
             table.insert(configs, "-DHAVE_SYMBOLIZE_EXITCODE=1")
         end
-
         import("package.tools.cmake").install(package, configs)
-
         -- ng-log has similar mechanism as glog
         -- refer to https://github.com/xmake-io/xmake-repo/discussions/4221
         if package:version() and package:version():ge("0.7.0") then
@@ -67,7 +64,6 @@ package("ng-log")
     on_test(function (package)
         assert(package:check_cxxsnippets([[
         #include <ng-log/logging.h>
-
         int main(int argc, char* argv[]) {
             nglog::InitializeLogging(argv[0]);
             nglog::InstallFailureSignalHandler();
