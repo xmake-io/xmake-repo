@@ -66,6 +66,7 @@ package("openssl")
 
     on_install("windows", function (package)
         -- Check if Perl is using Unix-style paths
+        local working_dir = os.iorunv("perl", {"-MFile::Spec::Functions=rel2abs", "-e", "print rel2abs('.')"})
         local unix_perl = working_dir:find("/") == 1
         if (unix_perl and package:is_plat("windows")) or (not unix_perl and not package:is_plat("windows")) then
             wprint("package(openssl): Detected Perl may not match your build platform. "..
