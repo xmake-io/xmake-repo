@@ -51,7 +51,7 @@ package("dobby")
             table.insert(configs, "-DCMAKE_OSX_DEPLOYMENT_TARGET=9.3") -- @from scripts/platform_builder.py:158
         end
 
-        import("package.tools.cmake").install(package, configs, {buildir = "build"})
+        import("package.tools.cmake").build(package, configs, {buildir = "build"})
         os.trycp("include", package:installdir())
         os.trycp(package:config("shared") and "build/**.so" or "build/**.a", package:installdir("lib"))
     end)
