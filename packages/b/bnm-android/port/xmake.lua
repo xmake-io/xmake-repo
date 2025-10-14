@@ -10,9 +10,22 @@ elseif is_config("hook_lib", "shadowhook") then
     add_requires("shadowhook")
 end
 
-option("link_log")
-option("hook_lib")
-option("unity_version")
+option("link_log", {
+    description = "Link against liblog.so",
+    default = false,
+    type = "boolean"
+})
+option("hook_lib", {
+    description = "Choose the hooking library used (dobby or shadowhook).",
+    default = "shadowhook", 
+    type = "string",
+    values = {"shadowhook", "dobby"}
+})
+option("unity_version", {
+    description = "Unity version (e.g., 5.6.4, 2017.1.0, 2022.2.1)",
+    default = "2022.2.0",
+    type = "string"
+})
 option("version", {description = "Set the version"})
 
 set_version(get_config("version"))
