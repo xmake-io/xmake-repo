@@ -65,7 +65,7 @@ package("minizip")
                 io.replace("CMakeLists.txt", "skipset.h", "", {plain = true})
             end
 
-            local configs = {"-DMINIZIP_BUILD_TESTING=OFF"}
+            local configs = {"-DMINIZIP_BUILD_TESTING=OFF", "-DCMAKE_INSTALL_INCLUDEDIR=include/minizip"}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
             table.insert(configs, "-DMINIZIP_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
