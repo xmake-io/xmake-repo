@@ -26,7 +26,10 @@ option("unity_version", {
     default = "2022.2.0",
     type = "string"
 })
-option("version", {description = "Set the version"})
+option("version", {
+    description = "Set the version",
+    type = "string"
+})
 
 set_version(get_config("version"))
 
