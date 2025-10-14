@@ -12,6 +12,11 @@ package("bnm-android")
         type = "string",
         values = {"shadowhook", "dobby"},
     })
+    add_configs("unity_version", {
+        description = "Unity version (e.g., 5.6.4, 2017.1.0, 2022.2.1)",
+        default = "2022.2.0",
+        type = "string",
+    })
 
     on_load(function (package)
         if package:config("hook_lib") == "dobby" then
@@ -21,7 +26,101 @@ package("bnm-android")
         end
     end)
 
+    local parse_unity_version = function (version)
+        local major, minor, patch = version:match("^(%d+)%.(%d+)%.(%d+)")
+        if not major then
+            major, minor = version:match("^(%d+)%.(%d+)%.%w+")
+            if not major then
+                return 222, 32
+            end
+            patch = nil
+        end
+        
+        major = tonumber(major)
+        minor = tonumber(minor)
+        patch = patch and tonumber(patch) or nil
+        
+        local unity_ver
+        local unity_patch_ver
+        
+        if major == 5 then
+            if minor == 6 then
+                unity_ver = 56
+            end
+        elseif major == 2017 then
+            if minor == 1 then
+                unity_ver = 171
+            elseif minor >= 2 and minor <= 4 then
+                unity_ver = 172
+            end
+        elseif major == 2018 then
+            if minor == 1 then
+                unity_ver = 181
+            elseif minor == 2 then
+                unity_ver = 182
+            elseif minor >= 3 then
+                unity_ver = 183
+            end
+        elseif major == 2019 then
+            if minor <= 2 then
+                unity_ver = 191
+            elseif minor == 3 then
+                unity_ver = 193
+            elseif minor == 4 then
+                unity_ver = 194
+            end
+        elseif major == 2020 then
+            if minor == 1 then
+                unity_ver = 201
+            elseif minor == 2 then
+                unity_ver = 202
+            elseif minor == 3 then
+                if patch and patch >= 20 then
+                    unity_ver = 203
+                else
+                    unity_ver = 202
+                end
+            end
+        elseif major == 2021 then
+            if minor == 1 then
+                unity_ver = 211
+                -- Need to set UNITY_PATCH_VER to 24 if x (2021.1.x) >= 24
+                if patch and patch >= 24 then
+                    unity_patch_ver = patch
+                end
+            elseif minor == 2 then
+                unity_ver = 212
+            elseif minor == 3 then
+                unity_ver = 213
+            end
+        elseif major == 2022 then
+            if minor == 1 then
+                unity_ver = 221
+            elseif minor >= 2 then
+                unity_ver = 222
+                unity_patch_ver = patch or 32
+            end
+        elseif major == 2023 then
+            if minor == 1 then
+                unity_ver = 231
+            elseif minor >= 2 then
+                unity_ver = 232
+            end
+        end
+        
+        -- Fallback to default if no match found
+        if not unity_ver then
+            unity_ver = 222
+            unity_patch_ver = 32
+        end
+        
+        return unity_ver, unity_patch_ver
+    end
+
     on_install("android", function (package)
+        local unity_version = package:config("unity_version")
+        local unity_ver, unity_patch_ver = parse_unity_version(unity_version)
+        
         local dummy_impl = [[// Dummy
 #include <cassert>
 
@@ -45,6 +144,11 @@ inline void Unhook(PTR_T ptr) {
 }
 ]]
     
+
+        io.replace("include/BNM/UserSettings/GlobalSettings.hpp", "#define UNITY_VER 222 // 2022.2.x", "#define UNITY_VER " .. unity_ver .. " // " .. unity_version, {plain = true})
+        if unity_patch_ver then
+            io.replace("include/BNM/UserSettings/GlobalSettings.hpp", "#define UNITY_PATCH_VER 32", "#define UNITY_PATCH_VER " .. unity_patch_ver, {plain = true})
+        end
         if package:config("hook_lib") == "dobby" then
             io.replace("include/BNM/UserSettings/GlobalSettings.hpp", dummy_impl,  [[
 #include <dobby.h>
@@ -106,6 +210,7 @@ end
 
 option("link_log")
 option("hook_lib")
+option("unity_version")
 
 target("BNM")
     set_kind("static")
@@ -130,6 +235,7 @@ target("BNM")
         import("package.tools.xmake").install(package, {
             link_log = package:config("link_log"),
             hook_lib = package:config("hook_lib"),
+            unity_version = package:config("unity_version"),
         })
     end)
 
