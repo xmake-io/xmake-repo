@@ -19,11 +19,7 @@ package("bnm-android")
     })
 
     on_load(function (package)
-        if package:config("hook_lib") == "dobby" then
-            package:add("deps", "dobby")
-        elseif package:config("hook_lib") == "shadowhook" then
-            package:add("deps", "shadowhook")
-        end
+        package:add("deps", package:config("hook_lib"))
     end)
 
     local parse_unity_version = function (version)
