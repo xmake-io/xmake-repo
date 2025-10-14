@@ -13,6 +13,14 @@ package("freexl")
         add_syslinks("m")
     end
 
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 23, "package(freexl) dep(minizip) require ndk api level >= 23")
+        end)
+    end
+
     on_install(function (package)
         if package:is_plat("windows") and package:config("shared") then
             io.replace("headers/freexl.h", "#define FREEXL_DECLARE extern", "#define FREEXL_DECLARE __declspec(dllimport)", {plain = true})
@@ -27,7 +35,7 @@ package("freexl")
             target("freexl")
                 set_kind("$(kind)")
                 add_files("src/*.c")
-                add_includedirs("headers")
+                add_includedirs(".", "headers")
                 add_headerfiles("headers/freexl.h")
                 if is_kind("shared") and is_plat("windows") then
                     add_defines("DLL_EXPORT")
