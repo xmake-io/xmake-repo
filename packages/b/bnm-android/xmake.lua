@@ -21,7 +21,7 @@ package("bnm-android")
         end
     end)
 
-    on_install(function (package)
+    on_install("android", function (package)
         local dummy_impl = [[// Dummy
 #include <cassert>
 
