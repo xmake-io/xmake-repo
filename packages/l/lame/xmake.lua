@@ -5,10 +5,10 @@ package("lame")
 
     add_urls("https://downloads.sourceforge.net/project/lame/lame/$(version)/lame-$(version).tar.gz")
     add_versions("3.100", "ddfe36cab873794038ae2c1210557ad34857a4b6bdc515785d1da9e175b1da1e")
-    add_configs("shared", {description = "Build static libraries", default = false, type = "boolean", readonly = true})
+
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean"})
 
     add_deps("nasm")
-
     on_install("linux", "macosx", "bsd", function (package)
         local configs = {"--enable-nasm"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
