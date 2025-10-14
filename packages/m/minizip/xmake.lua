@@ -65,7 +65,7 @@ package("minizip")
                 io.replace("CMakeLists.txt", "skipset.h", "", {plain = true})
             end
 
-            local configs = {"-DMINIZIP_BUILD_TESTING=OFF"}
+            local configs = {"-DMINIZIP_BUILD_TESTING=OFF", "-DCMAKE_INSTALL_INCLUDEDIR=include/minizip"}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
             table.insert(configs, "-DMINIZIP_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
@@ -79,7 +79,7 @@ package("minizip")
             import("package.tools.xmake").install(package, configs)
 
             local config_version_file = path.join(package:installdir("lib"), "cmake", "minizip", "minizipConfigVersion.cmake")
-            if package:is_plat("cross") and package:check_sizeof("void*") == "4" and os.exists(config_version_file) then
+            if xmake:version():lt("3.0.4") and package:is_plat("cross") and package:check_sizeof("void*") == "4" and os.exists(config_version_file) then
                 io.replace(config_version_file, [[if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "" OR "8" STREQUAL "")]], [[if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "" OR "4" STREQUAL "")]], {plain = true})
                 io.replace(config_version_file, [[if(NOT CMAKE_SIZEOF_VOID_P STREQUAL "8")]], [[if(NOT CMAKE_SIZEOF_VOID_P STREQUAL "4")]], {plain = true})
                 io.replace(config_version_file, [[math(EXPR installedBits "8 * 8")]], [[math(EXPR installedBits "4 * 8")]], {plain = true})
