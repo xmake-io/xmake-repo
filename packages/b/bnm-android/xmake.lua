@@ -143,7 +143,6 @@ inline void Unhook(PTR_T ptr) {
     if ((void *) ptr != nullptr) ((void)0);
 }
 ]]
-    
 
         io.replace("include/BNM/UserSettings/GlobalSettings.hpp", "#define UNITY_VER 222 // 2022.2.x", "#define UNITY_VER " .. unity_ver .. " // " .. unity_version, {plain = true})
         if unity_patch_ver then
@@ -194,48 +193,15 @@ inline void Unhook(PTR_T ptr) {
             raise("Unknown hooking library: " .. package:config("hook_lib"))
         end
 
-        io.writefile("xmake.lua", [[
-set_project("BNM")
-set_version("1.0.0")
+        io.replace("include/BNM/UnityStructures/Matrix4x4.hpp", [[#include "Matrix3x3.hpp"]], [[#include "Matrix3x3.hpp"
+#include <cmath>]], {plain = true})
 
-set_languages("c++20")
-
-add_rules("mode.debug", "mode.release")
-
-if is_config("hook_lib", "dobby") then
-    add_requires("dobby")
-elseif is_config("hook_lib", "shadowhook") then
-    add_requires("shadowhook")
-end
-
-option("link_log")
-option("hook_lib")
-option("unity_version")
-
-target("BNM")
-    set_kind("static")
-    if is_config("hook_lib", "dobby") then
-        add_packages("dobby", {public = true})
-    elseif is_config("hook_lib", "shadowhook") then
-        add_packages("shadowhook", {public = true})
-    end
-
-    add_files("src/*.cpp")
-    
-    add_headerfiles("include/(**.h)", "include/(**.hpp)")
-    add_headerfiles("external/include/(**.h)", "external/include/(**.hpp)")
-    add_includedirs("include", "external/include", "external", "external/utf8", "src/private")
-    
-    if has_config("link_log") then
-        add_syslinks("log")
-    end
-    
-    set_configvar("BNM_INCLUDE_DIRECTORIES", "include;external/include")
-        ]])
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, {
             link_log = package:config("link_log"),
             hook_lib = package:config("hook_lib"),
             unity_version = package:config("unity_version"),
+            version = package:version_str()
         })
     end)
 
