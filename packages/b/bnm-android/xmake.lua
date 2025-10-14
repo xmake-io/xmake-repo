@@ -121,7 +121,7 @@ target("BNM")
     add_headerfiles("external/include/(**.h)", "external/include/(**.hpp)")
     add_includedirs("include", "external/include", "external", "external/utf8", "src/private")
     
-    if has_config("BNM_LINK_LOG") then
+    if has_config("link_log") then
         add_syslinks("log")
     end
     
