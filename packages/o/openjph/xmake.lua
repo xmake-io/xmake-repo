@@ -6,6 +6,7 @@ package("openjph")
     add_urls("https://github.com/aous72/OpenJPH/archive/refs/tags/$(version).tar.gz",
              "https://github.com/aous72/OpenJPH.git")
 
+    add_versions("0.24.2", "c99218752b15b5b2afca3b0e4d4f0ddf1ac19f94dbcbe11874fe492d44ed3e2d")
     add_versions("0.24.1", "5e44a809c9ee3dad175da839feaf66746cfc114a625ec61c786de8ad3f5ab472")
 
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
