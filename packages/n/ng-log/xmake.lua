@@ -13,7 +13,7 @@ package("ng-log")
         add_configs(config, {description = "Enable " .. dep .. " support.", default = (config == "gflags"), type = "boolean"})
     end
 
-    add_deps("cmake")
+    add_links("glog", "ng-log")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
@@ -21,6 +21,7 @@ package("ng-log")
         add_syslinks("dbghelp")
     end
 
+    add_deps("cmake")
 
     on_load(function (package)
         if package:is_plat("windows") then
@@ -42,7 +43,9 @@ package("ng-log")
     end)
 
     on_install(function (package)
-        local configs = {"-DBUILD_TESTING=OFF"}
+        io.replace("CMakeLists.txt", "set (CMAKE_DEBUG_POSTFIX d)", "", {plain = true})
+
+        local configs = {"-DBUILD_TESTING=OFF", "-DBUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         for config, dep in pairs(configdeps) do
@@ -55,20 +58,17 @@ package("ng-log")
         import("package.tools.cmake").install(package, configs)
         -- ng-log has similar mechanism as glog
         -- refer to https://github.com/xmake-io/xmake-repo/discussions/4221
-        if package:version() and package:version():ge("0.7.0") then
-            io.replace(path.join(package:installdir("include"), "ng-log/logging.h"),
-                "#define NGLOG_LOGGING_H", "#define NGLOG_LOGGING_H\n#ifndef NGLOG_USE_EXPORT\n#define NGLOG_USE_EXPORT\n#endif", {plain = true})
-        end
+        io.replace(path.join(package:installdir("include"), "ng-log/logging.h"),
+            "#define NGLOG_LOGGING_H", "#define NGLOG_LOGGING_H\n#ifndef NGLOG_USE_EXPORT\n#define NGLOG_USE_EXPORT\n#endif", {plain = true})
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets([[
-        #include <ng-log/logging.h>
-        int main(int argc, char* argv[]) {
-            nglog::InitializeLogging(argv[0]);
-            nglog::InstallFailureSignalHandler();
-            int num_cookies = 4;
-            LOG(INFO) << "Found " << num_cookies << " cookies";
-        }
-        ]], {includes = "ng-log/logging.h", configs = {languages = "c++14"}}))
+        assert(package:check_cxxsnippets({test = [[
+            void test(int argc, char* argv[]) {
+                nglog::InitializeLogging(argv[0]);
+                nglog::InstallFailureSignalHandler();
+                int num_cookies = 4;
+                LOG(INFO) << "Found " << num_cookies << " cookies";
+            }
+        ]]}, {includes = "ng-log/logging.h", configs = {languages = "c++14"}}))
     end)
