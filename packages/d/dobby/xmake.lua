@@ -10,15 +10,15 @@ package("dobby")
     add_patches("2023.4.14", path.join(os.scriptdir(), "patches", "fix-compile-on-lower-version-of-gcc.patch"), "632aad7d79e2afd9587089a39c3eb2b64a3750ab3c8954f04672c13abcddbbae")
 
     add_configs("symbol_resolver", {description = "Enable symbol resolver plugin.", default = true,  type = "boolean"})
-    add_configs("import_table_replacer", {description = "Enable import table replacer plugin.", default = false, type = "boolean"})
-    add_configs("android_bionic_linker_utils", {description = "Enable android bionic linker utils.",  default = false, type = "boolean"})
+    add_configs("import_table_replacer", {description = "Enable import table replacer plugin.", default = true, type = "boolean"})
+    add_configs("android_bionic_linker_utils", {description = "Enable android bionic linker utils.",  default = true, type = "boolean"})
 
     add_configs("near_branch", {description = "Enable near branch trampoline.", default = true,  type = "boolean"})
-    add_configs("full_floating_point_register_pack", {description = "Enables saving and packing of all floating-point registers.", default = false, type = "boolean"})
+    add_configs("full_floating_point_register_pack", {description = "Enables saving and packing of all floating-point registers.", default = true, type = "boolean"})
 
     if is_plat("macosx") then
         -- @see https://github.com/xmake-io/xmake-repo/pull/5920#issuecomment-2522876049
-        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+        -- add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
     if is_plat("linux", "bsd") then
