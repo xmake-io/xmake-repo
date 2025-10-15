@@ -9,6 +9,10 @@ package("lame")
     add_deps("nasm")
     on_install("linux", "macosx", "bsd", function (package)
         local configs = {"--enable-nasm"}
+        -- @see https://github.com/xmake-io/xmake-repo/pull/8377#issuecomment-3405442429
+        if package:is_arch("arm.*", "mips.*") then
+            table.insert(configs, "--enable-debug=no")
+        end
         -- fix undefined symbol error _lame_init_old
         -- https://sourceforge.net/p/lame/mailman/message/36081038/
         io.replace("include/libmp3lame.sym", "lame_init_old\n", "", {plain = true})
