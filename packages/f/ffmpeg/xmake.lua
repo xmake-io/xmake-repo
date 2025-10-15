@@ -44,6 +44,7 @@ package("ffmpeg")
     add_configs("libx264",          {description = "Enable libx264 encoder.", default = false, type = "boolean"})
     add_configs("libx265",          {description = "Enable libx265 encoder.", default = false, type = "boolean"})
     add_configs("libopenh264",      {description = "Enable openh264 encoder.", default = false, type = "boolean"})
+    add_configs("libvpx"            {description = "Enable libvpx encoder.", default = false, type = "boolean"})
     add_configs("iconv",            {description = "Enable libiconv library.", default = false, type = "boolean"})
     add_configs("vaapi",            {description = "Enable vaapi library.", default = false, type = "boolean"})
     add_configs("vdpau",            {description = "Enable vdpau library.", default = false, type = "boolean"})
@@ -105,6 +106,7 @@ package("ffmpeg")
             libopenh264 = "openh264",
             iconv       = "libiconv",
             libdrm      = "libdrm",
+            libvpx      = "libvpx",
         }
         for name, dep in pairs(configdeps) do
             if package:config(name) then
