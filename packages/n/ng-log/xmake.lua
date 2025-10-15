@@ -24,9 +24,6 @@ package("ng-log")
     add_deps("cmake")
 
     on_load(function (package)
-        if package:is_plat("windows") then
-            package:add("defines", "NGLOG_NO_ABBREVIATED_SEVERITIES")
-        end
         for config, dep in pairs(configdeps) do
             if package:config(config) then
                 -- ng-log depends on gflags (latest is 2.2.2), and gflags-2.2.2 has 
@@ -40,6 +37,15 @@ package("ng-log")
                 end
             end
         end
+
+        package:add("defines", "NGLOG_USE_EXPORT")
+        if not package:config("shared") then
+            package:add("defines", "NGLOG_COMPAT_STATIC_DEFINE")
+            package:add("defines", "NGLOG_STATIC_DEFINE")
+        end
+        if package:is_plat("windows") then
+            package:add("defines", "NGLOG_NO_ABBREVIATED_SEVERITIES")
+        end
     end)
 
     on_install(function (package)
@@ -51,15 +57,7 @@ package("ng-log")
         for config, dep in pairs(configdeps) do
             table.insert(configs, "-DWITH_" .. config:upper() .. "=" .. (package:config(config) and "ON" or "OFF"))
         end
-        -- fix cmake try run
-        if package:is_plat("mingw") or (package:is_plat("windows") and package:is_arch("arm64")) then
-            table.insert(configs, "-DHAVE_SYMBOLIZE_EXITCODE=1")
-        end
         import("package.tools.cmake").install(package, configs)
-        -- ng-log has similar mechanism as glog
-        -- refer to https://github.com/xmake-io/xmake-repo/discussions/4221
-        io.replace(path.join(package:installdir("include"), "ng-log/logging.h"),
-            "#define NGLOG_LOGGING_H", "#define NGLOG_LOGGING_H\n#ifndef NGLOG_USE_EXPORT\n#define NGLOG_USE_EXPORT\n#endif", {plain = true})
     end)
 
     on_test(function (package)
