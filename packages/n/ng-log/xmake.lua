@@ -57,6 +57,10 @@ package("ng-log")
         for config, dep in pairs(configdeps) do
             table.insert(configs, "-DWITH_" .. config:upper() .. "=" .. (package:config(config) and "ON" or "OFF"))
         end
+        -- fix cmake try run
+        if package:is_plat("mingw") or (package:is_plat("windows") and package:is_arch("arm64")) then
+            table.insert(configs, "-DHAVE_SYMBOLIZE_EXITCODE=1")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
