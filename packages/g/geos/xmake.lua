@@ -13,6 +13,8 @@ package("geos")
     add_versions("3.11.3", "3c517fcccdd3d562122d59c93e0982ef9bc10e775a177ad88882fca1d7d28d08")
     add_versions("3.9.1", "e9e20e83572645ac2af0af523b40a404627ce74b3ec99727754391cdf5b23645")
 
+    add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
+
     add_links("geos_c", "geos")
 
     add_deps("cmake")
@@ -24,10 +26,11 @@ package("geos")
         end)
     end
 
-    on_install("!wasm", function (package)
+    on_install(function (package)
         local configs = {"-DBUILD_BENCHMARKS=OFF", "-DBUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DBUILD_GEOSOP=" .. (package:config("tools") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 

@@ -9,6 +9,14 @@ package("freexl")
 
     add_deps("libiconv", "expat", "minizip")
 
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::libfreexl")
+    elseif is_plat("linux") then
+        add_extsources("pacman::libfreexl", "apt::libfreexl-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::freexl")
+    end
+
     if is_plat("linux", "bsd") then
         add_syslinks("m")
     end
