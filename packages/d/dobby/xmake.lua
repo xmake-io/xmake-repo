@@ -16,11 +16,6 @@ package("dobby")
     add_configs("near_branch", {description = "Enable near branch trampoline.", default = true,  type = "boolean"})
     add_configs("full_floating_point_register_pack", {description = "Enables saving and packing of all floating-point registers.", default = false, type = "boolean"})
 
-    if is_plat("macosx") then
-        -- @see https://github.com/xmake-io/xmake-repo/pull/5920#issuecomment-2522876049
-        -- add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-    end
-
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
@@ -62,7 +57,11 @@ package("dobby")
         if package:config("android_bionic_linker_utils") then
             os.cp("builtin-plugin/BionicLinkerUtil/bionic_linker_util.h", package:installdir("include"))
         end
-        os.cp(package:config("shared") and "build/libdobby.so" or "build/libdobby.a", package:installdir("lib"))
+        local so_extname = "so"
+        if package:is_plat("macosx", "iphoneos") then
+            so_extname = "dylib"
+        end
+        os.cp(package:config("shared") and "build/libdobby." .. so_extname or "build/libdobby.a", package:installdir("lib"))
     end)
 
     on_test(function (package)
