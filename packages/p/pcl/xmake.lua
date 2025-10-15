@@ -78,7 +78,7 @@ package("pcl")
 
         local opt = {packagedeps = {"lz4", "dl"}}
         if package:config("shared") and package:is_plat("macosx") then
-            opt.shflags = {"-framework", "CoreFoundation", "-framework", "IOKit", "-framework", "Security", "-lssl", "-lcrypto"}
+            opt.shflags = {"-framework", "CoreFoundation", "-framework", "IOKit", "-framework", "Security"}
         end
         import("package.tools.cmake").install(package, configs, opt)
         package:addenv("PATH", "bin")
