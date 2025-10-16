@@ -11,6 +11,7 @@ package("omath")
     add_versions("v3.8.2", "e759aba554f9d50147931852c13408ff0bd302a787ff28818d19d4dc1a8f7fd0")
     add_versions("v3.8.1", "aaea99570c382478f825af759a2b0a214b429c74a9a5492ddd2866c836e85f4e")
 
+    add_patches("v3.9.3", "patches/v3.9.3/fix-cend.patch", "1e45f4e702963bddd456b85c39dbda9a64df5903f2d5e7568ac9fbf920ec8681")
     add_patches("v3.9.0", "patches/v3.9.0/fix-fastcall.patch", "c439cbde15949786e87241a4a81575296e81cfdca8ec76192b5ff228126fa02c")
     add_patches("v3.8.1", "patches/v3.8.1/fix-build.patch", "c1554cf0cdd027d6386544871d6248c868f8f95add343660334888da52119ae9")
 
