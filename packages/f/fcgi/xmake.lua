@@ -8,6 +8,10 @@ package("fcgi")
 
     add_versions("2.4.6", "39af4fb21a6d695a5f0b1c4fa95776d2725f6bc6c77680943a2ab314acd505c1")
 
+    if is_plat("windows", "mingw") then
+        add_patches("*", "patches/windows_type.patch", "921143191bc0f2c33773d35a7a0352ab04c95963e03073c3f9dc3ec5c7751340")
+    end
+
     add_links("fcgi++", "fcgi")
 
     if is_plat("windows", "mingw") then
@@ -17,10 +21,8 @@ package("fcgi")
     end
 
     on_install(function (package)
-        if package:is_plat("windows") then
-            -- incompatible function pointer types
-            io.replace("libfcgi/os_win32.c", "DWORD     data", "DWORD_PTR  data", {plain = true})
-            io.replace("libfcgi/os_win32.c", "(DWORD) webServerAddrs", "(DWORD_PTR) webServerAddrs", {plain = true})
+        if package:is_plat("windows") and  not package:config("shared") then
+            package:add("defines", "DLLAPI=")
         end
         os.cp(path.join(package:scriptdir(), "port", "fcgi_config.h.in"), "fcgi_config.h.in")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")

@@ -17,7 +17,7 @@ target("fcgi")
     end
     if is_plat("windows") then
         if is_kind("static") then
-            add_defines("DLLAPI", {public = true})
+            add_defines("DLLAPI=", {public = true})
         else
             add_defines("DLLAPI=__declspec(dllexport)")
         end
@@ -73,7 +73,7 @@ target("fcgi++")
     add_files("libfcgi/*.cpp")
     if is_plat("windows") then
         if is_kind("static") then
-            add_defines("DLLAPI", {public = true})
+            add_defines("DLLAPI=", {public = true})
         else
             add_defines("DLLAPI=__declspec(dllexport)")
         end
