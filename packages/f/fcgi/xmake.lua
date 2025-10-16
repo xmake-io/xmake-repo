@@ -10,7 +10,7 @@ package("fcgi")
 
     add_links("fcgi++", "fcgi")
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("ws2_32")
     elseif is_plat("linux", "bsd") then
         add_syslinks("m")
