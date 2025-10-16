@@ -5,6 +5,7 @@ package("quantlib")
     add_urls("https://github.com/lballabio/QuantLib/releases/download/v$(version)/QuantLib-$(version).tar.gz",
              "https://github.com/lballabio/QuantLib.git")
 
+    add_versions("1.40", "5d6b971b998b8b47e5694dfc4851e9c8809624ff24c620579efc7fedef9dc149")
     add_versions("1.35", "fd83657bbc69d8692065256699b7424d5a606dff03e7136a820b6e9675016c89")
     add_versions("1.34", "eb87aa8ced76550361771e167eba26aace018074ec370f7af49a01aa56b2fe50")
     add_versions("1.33", "4810d789261eb36423c7d277266a6ee3b28a3c05af1ee0d45544ca2e0e8312bd")
@@ -14,7 +15,7 @@ package("quantlib")
     end
 
     add_deps("cmake")
-    add_deps("boost")
+    add_deps("boost", {configs = {math = true, container = true, serialization = true, regex = true, thread = true}})
 
     on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", "cross", function (package)
         local configs = {"-DQL_BUILD_BENCHMARK=OFF", "-DQL_BUILD_EXAMPLES=OFF", "-DQL_BUILD_TEST_SUITE=OFF"}
@@ -24,6 +25,7 @@ package("quantlib")
     end)
 
     on_test(function (package)
+        local cppver = package:version():ge("1.36") and "c++17" or "c++14"
         assert(package:check_cxxsnippets({test = [[
             #include <ql/time/calendars/target.hpp>
             using namespace QuantLib;
@@ -31,5 +33,5 @@ package("quantlib")
                 Calendar calendar = TARGET();
                 Date todaysDate(19, March, 2014);
             }
-        ]]}, {configs = {languages = "c++14"}}))
+        ]]}, {configs = {languages = cppver}}))
     end)
