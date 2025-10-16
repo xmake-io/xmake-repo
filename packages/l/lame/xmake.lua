@@ -11,7 +11,7 @@ package("lame")
         local configs = {"--enable-nasm"}
         -- @see https://github.com/xmake-io/xmake-repo/pull/8377#issuecomment-3405442429
         if package:is_arch("arm.*", "mips.*") then
-            table.insert(configs, "--enable-debug=no")
+            io.replace("configure", [[enableval=$enable_debug; CONFIG_DEBUG="${enableval}"]], [[CONFIG_DEBUG="no"]], {plain = true})
         end
         -- fix undefined symbol error _lame_init_old
         -- https://sourceforge.net/p/lame/mailman/message/36081038/
