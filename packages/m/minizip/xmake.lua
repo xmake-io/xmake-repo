@@ -41,7 +41,6 @@ package("minizip")
         end
     end)
 
-    local is_old_xmake = xmake:version():lt("3.0.4")
     on_install(function (package)
         os.cd(path.join("contrib/minizip"))
 
@@ -77,10 +76,10 @@ package("minizip")
             local configs = {}
             configs.bzip2 = package:config("bzip2")
             os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-            import("package.tools.xmake").install(package, configs)
+            import("package.tools.xmake", {anonymous = true}).install(package, configs)
 
             local config_version_file = path.join(package:installdir("lib"), "cmake", "minizip", "minizipConfigVersion.cmake")
-            if is_old_xmake and package:is_plat("cross") and package:check_sizeof("void*") == "4" and os.exists(config_version_file) then
+            if xmake:version():lt("3.0.4") and package:is_plat("cross") and package:check_sizeof("void*") == "4" and os.exists(config_version_file) then
                 io.replace(config_version_file, [[if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "" OR "8" STREQUAL "")]], [[if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "" OR "4" STREQUAL "")]], {plain = true})
                 io.replace(config_version_file, [[if(NOT CMAKE_SIZEOF_VOID_P STREQUAL "8")]], [[if(NOT CMAKE_SIZEOF_VOID_P STREQUAL "4")]], {plain = true})
                 io.replace(config_version_file, [[math(EXPR installedBits "8 * 8")]], [[math(EXPR installedBits "4 * 8")]], {plain = true})
