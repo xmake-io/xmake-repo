@@ -61,5 +61,5 @@ package("eigen")
                 m(0,1) = -1;
                 m(1,1) = m(1,0) + m(0,1);
             }
-        ]]}, {configs = {languages = package:version():gt("5.0") and "c++14" or "c++11"}}))
+        ]]}, {configs = {languages = package:version():ge("5.0.0") and "c++14" or "c++11"}}))
     end)
