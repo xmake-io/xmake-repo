@@ -3,12 +3,12 @@ package("onnxruntime")
     set_description("ONNX Runtime: cross-platform, high performance ML inferencing and training accelerator")
     set_license("MIT")
 
-    add_configs("gpu", {description = "Enable GPU support on windows|x64 and linux|x86_64", default = false, type = "boolean"})
+    add_configs("gpu", {description = "Enable GPU support on windows|x64, mingw and linux|x86_64", default = false, type = "boolean"})
     add_configs("cuda_version", {description = "Specify which CUDA version to use for GPU support", default = "11", type = "string"})
     add_configs("shared", {description = "Download shared binaries.", default = true, type = "boolean", readonly = true})
 
-    if is_plat("windows") then
-        if is_arch("x64") then
+    if is_plat("windows", "mingw") then
+        if is_arch("x64", "x86_64") then
             set_urls("https://github.com/microsoft/onnxruntime/releases/download/v$(version)/onnxruntime-win-x64-$(version).zip")
             add_versions("1.11.1", "1f127b9d41f445a2d03356c86c125cb79dc3e66d391872c9babe6b444a51a93d")
             add_versions("1.14.1", "1243f2c505de8845b6927ae1cbde75b9372f16965c6b2c8db2279f385003fd85")
@@ -90,7 +90,7 @@ package("onnxruntime")
             package:add("deps", "cuda", {configs = {utils = {"cudart", "nvrtc"}}})
 
             local versions = package:get("versions")
-            if package:is_plat("windows") and package:is_arch("x64") then
+            if package:is_plat("windows", "mingw") and package:is_arch("x64", "x86_64") then
                 package:set("urls", "https://github.com/microsoft/onnxruntime/releases/download/v$(version)/onnxruntime-win-x64-gpu-$(version).zip")
                 versions["1.11.1"] = "a9a10e76fbb4351d4103a4d46dc37690075901ef3bb7304dfa138820c42c547b"
                 versions["1.15.1"] = "dcc3a385b415dd2e4a813018b71da5085d9b97774552edf17947826a255a3732"
@@ -124,8 +124,8 @@ package("onnxruntime")
         end
     end)
 
-    on_install("windows", "linux|arm64", "linux|x86_64", "macosx", function (package)
-        if package:is_plat("windows") then
+    on_install("windows", "mingw", "linux|arm64", "linux|x86_64", "macosx", function (package)
+        if package:is_plat("windows", "mingw") then
             os.mv("lib/*.dll", package:installdir("bin"))
         end
         os.cp("*", package:installdir())
