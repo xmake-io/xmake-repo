@@ -5,6 +5,7 @@ package("libsystemd")
     add_urls("https://github.com/systemd/systemd/archive/refs/tags/$(version).tar.gz",
              "https://github.com/systemd/systemd.git")
 
+    add_versions("v258.1", "8eb34eaf2f78330217280bd7a923578f37e28d3f3ac5168e336ebc9cad84a34d")
     add_versions("v258", "07a580cf21856f468f82b77b82973a926f42ccc696462459b53f8b88893dff8e")
 
     add_configs("udev", {description = "Build libudev.", default = true, type = "boolean"})
