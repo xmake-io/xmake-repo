@@ -37,7 +37,7 @@ package("libdispatch")
         end
     end)
 
-    on_install("!bsd and !macosx annd !iphoneos", function (package)
+    on_install("!bsd and !macosx and !iphoneos", function (package)
         if not package:config("shared") then
             package:add("defines", "dispatch_STATIC")
             if not package:is_plat("macosx") then
