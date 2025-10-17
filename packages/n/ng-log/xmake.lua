@@ -31,7 +31,7 @@ package("ng-log")
                 -- using master branch can bypass this problem,
                 -- once gflags has new versions, this if-clause can be removed
                 if config == "gflags" then
-                    package:add("deps", "gflags master")
+                    package:add("deps", "gflags 52e94563eba1968783864942fedf6e87e3c611f4") -- 2025.04.01
                 else
                     package:add("deps", dep)
                 end
@@ -56,10 +56,6 @@ package("ng-log")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         for config, dep in pairs(configdeps) do
             table.insert(configs, "-DWITH_" .. config:upper() .. "=" .. (package:config(config) and "ON" or "OFF"))
-        end
-        -- fix cmake try run
-        if package:is_plat("mingw") or (package:is_plat("windows") and package:is_arch("arm64")) then
-            table.insert(configs, "-DHAVE_SYMBOLIZE_EXITCODE=1")
         end
         import("package.tools.cmake").install(package, configs)
     end)
