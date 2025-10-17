@@ -56,8 +56,10 @@ package("opencv")
     elseif is_plat("linux") then
         add_extsources("pacman::opencv", "apt::libopencv-dev")
         add_syslinks("pthread", "dl")
-    elseif is_plat("windows", "mingw") then
+    elseif is_plat("windows") then
         add_syslinks("gdi32", "user32", "glu32", "opengl32", "advapi32", "comdlg32", "ws2_32")
+    elseif is_plat("mingw") then
+        add_syslinks("gdi32", "user32", "glu32", "opengl32", "advapi32", "comdlg32", "ws2_32", "pthread")
     end
 
     on_fetch("macosx", function (package, opt)
