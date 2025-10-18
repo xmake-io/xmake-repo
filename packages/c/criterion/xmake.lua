@@ -6,6 +6,7 @@ package("criterion")
     add_urls("https://github.com/Snaipe/Criterion/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Snaipe/Criterion.git")
 
+    add_versions("v2.4.3", "6d924ee5eeaaaed7762ab968f560b9ff543fc3473aa949bf53ac56a2a1a9416c")
     add_versions("v2.4.2", "83e1a39c8c519fbef0d64057dc61c8100b3a5741595788c9f094bba2eeeef0df")
 
     add_configs("i18n", {description = "Enable i18n", default = false, type = "boolean"})
