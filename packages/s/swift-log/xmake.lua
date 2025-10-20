@@ -8,7 +8,7 @@ package("swift-log")
 
     add_versions("1.6.4", "0c5ce73e9e90da99391600436317e2ed7186645c63ae9e866321c3e977b7d587")
 
-    on_install(function (package)
+    on_install("macosx", "iphoneos", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)
     end)
