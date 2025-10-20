@@ -193,7 +193,9 @@ package("poco")
         table.insert(configs, "-DPOCO_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
-        table.insert(configs, "-DOPENSSL_USE_STATIC_LIBS=" .. (package:dep("openssl"):config("shared") and "OFF" or "ON"))
+        if package:config("netssl") or package:config("crypto") or package:config("jwt") then
+            table.insert(configs, "-DOPENSSL_USE_STATIC_LIBS=" .. (package:dep("openssl"):config("shared") and "OFF" or "ON"))
+        end
 
         table.insert(configs, "-DENABLE_XML=" .. (package:config("xml") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_JSON=" .. (package:config("json") and "ON" or "OFF"))
