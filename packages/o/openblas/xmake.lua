@@ -20,6 +20,7 @@ package("openblas")
             add_versions("0.3.26", "859c510a962a30ef1b01aa93cde26fdb5fb1050f94ad5ab2802eba3731935e06")
             add_versions("0.3.27", "7b4d7504f274f8e26001aab4e25ec05032d90b8785b0355dc0d09247858d9f1e")
             add_versions("0.3.28", "4cbd0e5daa3fb083b18f5e5fa6eefe79e2f2c51a6d539f98a3c6309a21160042")
+            add_versions("0.3.30", "8b04387766efc05c627e26d24797ec0d4ed4c105ec14fa7400aa84a02db22b66")
         elseif is_arch("x86") then
             add_urls("https://github.com/OpenMathLib/OpenBLAS/releases/download/v$(version)/OpenBLAS-$(version)-x86.zip")
             add_versions("0.3.15", "bcde933737b477813eaac290de5cb8756d3b42199e8ef5f44b23ae5f06fe0834")
@@ -32,6 +33,7 @@ package("openblas")
             add_versions("0.3.26", "9c3d48c3c21cd2341d642a63ee8a655205587befdab46462df7e0104d6771f67")
             add_versions("0.3.27", "0cb61cff9eac7fcc07036880dfeec7a2e194d0412524901bf03e55208f51f900")
             add_versions("0.3.28", "4a14ba2b43937278616cd0883e033cc07ee1331afdd2d264ad81432bd7b16c7b")
+            add_versions("0.3.30", "5eb9df2ccaacf686028f1d08444b9116c0e55c5264f462dafd0b036a2979737a")
         end
 
         add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
@@ -50,13 +52,14 @@ package("openblas")
         add_versions("0.3.26", "4e6e4f5cb14c209262e33e6816d70221a2fe49eb69eaf0a06f065598ac602c68")
         add_versions("0.3.27", "aa2d68b1564fe2b13bc292672608e9cdeeeb6dc34995512e65c3b10f4599e897")
         add_versions("0.3.28", "f1003466ad074e9b0c8d421a204121100b0751c96fc6fcf3d1456bd12f8a00a1")
+        add_versions("0.3.30", "27342cff518646afb4c2b976d809102e368957974c250a25ccc965e53063c95d")
 
         add_configs("fortran", {description = "Compile with fortran enabled.", default = not is_plat("macosx"), type = "boolean"})
         add_configs("openmp",  {description = "Compile with OpenMP enabled.", default = not is_plat("macosx"), type = "boolean"})
     end
 
     if is_plat("linux") then
-        add_extsources("apt::libopenblas-dev", "pacman::libopenblas")
+        add_extsources("apt::libopenblas-dev", "pacman::openblas")
         add_syslinks("pthread")
     elseif is_plat("macosx") then
         add_frameworks("Accelerate")
@@ -73,11 +76,12 @@ package("openblas")
     on_install("windows|x64", "windows|x86", function (package)
         os.cp(path.join("bin", "libopenblas.dll"), package:installdir("bin"))
         os.cp("include", package:installdir())
-        if package:version():ge("0.3.28") then
+        if package:version():eq("0.3.28") then
             os.cp("libopenblas.lib", path.join(package:installdir("lib"), "openblas.lib"))
         else
             os.cp(path.join("lib", "libopenblas.lib"), path.join(package:installdir("lib"), "openblas.lib"))
         end
+        os.cp(path.join("lib", "cmake"), package:installdir("lib"))
         package:addenv("PATH", "bin")
     end)
 
