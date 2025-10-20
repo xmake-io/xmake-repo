@@ -29,6 +29,9 @@ package("zstd")
         if package:config("cmake") then
             package:add("deps", "cmake")
         end
+        if package:config("tools") then
+            package:addenv("PATH", "bin")
+        end
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "ZSTD_DLL_IMPORT=1")
         end
@@ -51,9 +54,6 @@ package("zstd")
         table.insert(configs, "-DZSTD_BUILD_CONTRIB=" .. (package:config("contrib") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
 
-        if package:config("tools") then
-            package:addenv("PATH", "bin")
-        end
         if package:is_plat("windows") then
             -- Some custom Findzstd.cmake will match zstd.lib
             local lib = package:installdir("lib/zstd_static.lib")
