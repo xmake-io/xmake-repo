@@ -2,7 +2,6 @@ add_rules("mode.release", "mode.debug")
 
 target("Logging")
     set_kind("$(kind)")
-    add_rules("swift.library")
     add_files("Sources/Logging/**.swift")
     
     add_scflags("-enable-experimental-feature", "StrictConcurrency=complete")
