@@ -7,16 +7,16 @@ package("krabs")
     add_urls("https://github.com/Microsoft/krabsetw.git")
     add_versions("2025.10.20", "62a3dea877f436f2e63d5234f3ab64493b240c8e")
 
+    add_includedirs("include", "include/krabs")
+
     on_install("windows", function (package)
-        os.cp("krabs/krabs", package:installdir("include"))
-        os.cp("krabs/krabs.hpp", package:installdir("include"))
+        os.cp("krabs", package:installdir("include"))
     end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <krabs/krabs.hpp>
+            #include <krabs.hpp>
             #include <iostream>
-            
             void test() {
                 krabs::provider<> provider(12345);
                 std::cout << "Krabs ETW test" << std::endl;
