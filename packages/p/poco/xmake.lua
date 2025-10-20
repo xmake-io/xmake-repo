@@ -100,8 +100,16 @@ package("poco")
     end)
 
     on_check(function (package)
-        if package:is_plat("windows") and package:is_debug() and package:has_runtime("MT", "MD") then
-            raise("package(poco) unsupported debug build type with MT/MD runtimes")
+        if package:is_plat("windows") then
+            if package:is_debug() and package:has_runtime("MT", "MD") then
+                raise("package(poco) unsupported debug build type with MT/MD runtimes")
+            end
+        elseif package:is_plat("android") then
+            if package:is_arch("armeabi-v7a") then
+                local ndk = package:toolchain("ndk")
+                local ndkver = ndk:config("ndkver")
+                assert(ndkver and tonumber(ndkver) > 22, "package(poco) dep(pcre2/armeabi-v7a): need ndk version > 22")
+            end
         end
         assert(not (package:is_plat("mingw") and package:is_subhost("macos")), "Poco not support mingw@macos")
         assert(not (package:is_plat("wasm")), "Poco not support wasm")
