@@ -8,14 +8,25 @@ package("swift-log")
 
     add_versions("1.6.4", "0c5ce73e9e90da99391600436317e2ed7186645c63ae9e866321c3e977b7d587")
 
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+
     on_install("macosx", "iphoneos", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
-        for _, file in ipairs(os.files(path.join(package:installdir(), "**"))) do
-            print(file)
-        end
-        assert(os.isdir(package:installdir("lib")), "Library directory not found")
+        io.writefile("test.swift", [[
+import Logging
+let logger = Logger(label: "test")
+]])
+        
+        local libdir = package:installdir("lib")
+        os.vrunv("swiftc", {
+            "-I", libdir,
+            "-parse", 
+            "test.swift"
+        })
+        
+        os.rm("test.swift")
     end)
