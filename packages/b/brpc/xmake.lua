@@ -5,6 +5,7 @@ package("brpc")
 
     add_urls("https://github.com/apache/brpc/archive/refs/tags/$(version).tar.gz")
 
+    add_versions("1.15.0", "3301b7637a09170ead55b46c0e1d167fe096245d214438329d091456c2099606")
     add_versions("1.14.1", "9d07cf40e7c6c70210b032cd69b0b525459d204ebb8068ca93678c13807e2af1")
     add_versions("1.10.0", "fe4eb10b4ca1a59e0f71086552b2d8897afd66df93b53c18ad83f6a93717cc2d")
     add_versions("1.8.0", "13ffb2f1f57c679379a20367c744b3e597614a793ec036cd7580aae90798019d")
