@@ -29,8 +29,8 @@ package("zstd")
         if package:config("cmake") then
             package:add("deps", "cmake")
         end
-        if package:config("tools") then
-            package:addenv("PATH", "bin")
+        if package:is_binary() then
+            package:config_set("tools", true)
         end
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "ZSTD_DLL_IMPORT=1")
@@ -65,6 +65,11 @@ package("zstd")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("ZSTD_compress", {includes = {"zstd.h"}}))
-        assert(package:has_cfuncs("ZSTD_decompress", {includes = {"zstd.h"}}))
+        if package:is_library() then
+            assert(package:has_cfuncs("ZSTD_compress", {includes = {"zstd.h"}}))
+            assert(package:has_cfuncs("ZSTD_decompress", {includes = {"zstd.h"}}))
+        end
+        if not package:is_cross() and package:config("tools") then
+            os.runv("zstd --version")
+        end
     end)

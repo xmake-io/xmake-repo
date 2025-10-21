@@ -127,7 +127,7 @@ package("mkl")
         add_syslinks("pthread", "dl")
     end
 
-    add_deps("zstd", {configs = {private = true, tools = true}})
+    add_deps("zstd", {configs = {private = true, kind = "binary"}})
     on_load(function (package)
         -- Refer to [oneAPI Math Kernel Library Link Line Advisor](https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl-link-line-advisor.html)
         -- to get the link option for MKL library.
