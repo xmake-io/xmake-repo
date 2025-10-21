@@ -53,6 +53,10 @@ package("libcurl")
 
         assert(not (package:config("openssl") and package:config("openssl3")), "OpenSSL and OpenSSL-3 cannot be enabled at the same time.")
 
+        if package:config("libssh2") then
+            package:config_set("zlib", true)
+        end
+
         if package:is_plat("macosx", "iphoneos") then
             package:add("frameworks", "Security", "CoreFoundation", "SystemConfiguration")
         elseif package:is_plat("linux", "bsd") then
