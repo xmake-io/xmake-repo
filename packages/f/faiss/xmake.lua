@@ -30,7 +30,7 @@ package("faiss")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "bsd", function (package)
+    on_install("windows|x64", "linux", "macosx", function (package)
         local configs = {
             "-DBUILD_TESTING=OFF",
             "-DFAISS_ENABLE_EXTRAS=OFF",
