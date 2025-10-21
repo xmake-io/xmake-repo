@@ -4,5 +4,5 @@ target("Logging")
     set_kind("static")
     add_files("Sources/Logging/**.swift")
     
-    add_scflags("-enable-experimental-feature", "StrictConcurrency=complete")
-    add_scflags("-enable-upcoming-feature", "MemberImportVisibility")
+    add_scflags("-enable-experimental-feature StrictConcurrency=complete")
+    add_scflags("-enable-upcoming-feature MemberImportVisibility")
