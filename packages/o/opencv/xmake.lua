@@ -6,6 +6,7 @@ package("opencv")
 
     add_urls("https://github.com/opencv/opencv/archive/$(version).tar.gz",
              "https://github.com/opencv/opencv.git")
+    add_versions("4.12.0", "44c106d5bb47efec04e531fd93008b3fcd1d27138985c5baf4eafac0e1ec9e9d")
     add_versions("4.11.0", "9a7c11f924eff5f8d8070e297b322ee68b9227e003fd600d4b8122198091665f")
     add_versions("4.10.0", "b2171af5be6b26f7a06b1229948bbb2bdaa74fcf5cd097e0af6378fce50a6eb9")
     add_versions("4.9.0", "ddf76f9dffd322c7c3cb1f721d0887f62d747b82059342213138dc190f28bc6c")
@@ -21,6 +22,7 @@ package("opencv")
 
     add_patches("4.11.0", "https://github.com/opencv/opencv/commit/767dd838d3074409fd72a4d76c320b1370e95943.diff", "376dd90500ab7205084fd4298ff26137ce9678b00233ad20ca2189ef9eca3a58")
 
+    add_resources("4.12.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.12.0.tar.gz", "4197722b4c5ed42b476d42e29beb29a52b6b25c34ec7b4d589c3ae5145fee98e")
     add_resources("4.11.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.11.0.tar.gz", "2dfc5957201de2aa785064711125af6abb2e80a64e2dc246aca4119b19687041")
     add_resources("4.10.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.10.0.tar.gz", "65597f8fb8dc2b876c1b45b928bbcc5f772ddbaf97539bf1b737623d0604cba1")
     add_resources("4.9.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.9.0.tar.gz", "8952c45a73b75676c522dd574229f563e43c271ae1d5bbbd26f8e2b6bc1a4dae")
@@ -54,8 +56,10 @@ package("opencv")
     elseif is_plat("linux") then
         add_extsources("pacman::opencv", "apt::libopencv-dev")
         add_syslinks("pthread", "dl")
-    elseif is_plat("windows", "mingw") then
+    elseif is_plat("windows") then
         add_syslinks("gdi32", "user32", "glu32", "opengl32", "advapi32", "comdlg32", "ws2_32")
+    elseif is_plat("mingw") then
+        add_syslinks("gdi32", "user32", "glu32", "opengl32", "advapi32", "comdlg32", "ws2_32", "pthread")
     end
 
     on_fetch("macosx", function (package, opt)

@@ -6,6 +6,7 @@ package("libjpeg-turbo")
     add_urls("https://github.com/libjpeg-turbo/libjpeg-turbo/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libjpeg-turbo/libjpeg-turbo.git")
 
+    add_versions("3.1.2", "560f6338b547544c4f9721b18d8b87685d433ec78b3c644c70d77adad22c55e6")
     add_versions("3.1.1", "304165ae11e64ab752e9cfc07c37bfdc87abd0bfe4bc699e59f34036d9c84f72")
     add_versions("3.1.0", "35fec2e1ddfb05ecf6d93e50bc57c1e54bc81c16d611ddf6eff73fff266d8285")
     add_versions("3.0.4",  "0270f9496ad6d69e743f1e7b9e3e9398f5b4d606b6a47744df4b73df50f62e38")

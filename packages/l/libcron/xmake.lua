@@ -6,6 +6,7 @@ package("libcron")
     add_urls("https://github.com/PerMalmberg/libcron/archive/refs/tags/$(version).tar.gz",
              "https://github.com/PerMalmberg/libcron.git")
 
+    add_versions("v1.3.3", "7d413b7950c82b54157b2a7f446e1e660bd718e542e2ffd3f8715e467ab2b825")
     add_versions("v1.3.1", "cf5af6af392df29c8fc61fcc5a8e452118f31f47d7aa92eb7d4f4183dea227c8")
 
     add_deps("cmake")
