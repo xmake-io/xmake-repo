@@ -1,11 +1,11 @@
 package("liburing")
-
     set_homepage("https://github.com/axboe/liburing")
     set_description("liburing provides helpers to setup and teardown io_uring instances")
     set_license("MIT")
 
     add_urls("https://github.com/axboe/liburing/archive/refs/tags/liburing-$(version).tar.gz",
              "https://github.com/axboe/liburing.git")
+
     add_versions("2.12", "f1d10cb058c97c953b4c0c446b11e9177e8c8b32a5a88b309f23fdd389e26370")
     add_versions("2.11", "462c35ef21d67e50490f8684c76641ee2c7796e83d43de796852ef4e40662e33")
     add_versions("2.10", "0a687616a6886cd82b746b79c4e33dc40b8d7c0c6e24d0f6f3fd7cf41886bf53")
@@ -20,14 +20,12 @@ package("liburing")
     add_versions("2.1",  "f1e0500cb3934b0b61c5020c3999a973c9c93b618faff1eba75aadc95bb03e07")
 
     on_install("linux|native", function (package)
-        local cflags
-        if package:config("pic") ~= false then
-            cflags = "-fPIC"
+        local configs = {}
+        if package:version() and package:version():ge("2.5") then
+            table.insert(configs, "--use-libc")
         end
-        import("package.tools.autoconf").install(package, {"--use-libc"}, {makeconfigs = {CFLAGS = cflags}})
+        import("package.tools.autoconf").install(package, configs)
 
-        -- liburing build for static and shared by default without giving 
-        -- any option to choose between the two, so remove the wrong kind afterward
         if package:config("shared") then
             os.rm(path.join(package:installdir("lib"), "*.a"))
         else
