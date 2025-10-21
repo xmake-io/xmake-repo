@@ -9,9 +9,22 @@ package("libeconf")
     add_versions("v0.8.0", "d50b7135483f13c1a6229a293bd5fdac77b1d827607c72cc61d13be56f58aaa2")
     add_versions("v0.7.10", "e8fee300cbbae11287d2682d185d946a1ffbd23bf02b4f97d68f2df34d8de07f")
 
+    add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     add_deps("cmake")
 
     on_install("!windows and !mingw", function (package)
+        io.replace("CMakeLists.txt", "add_subdirectory(doc)", "", {plain = true})
+        if not package:config("tools") then
+            io.replace("CMakeLists.txt", "add_subdirectory(util)", "", {plain = true})
+        end
+        if package:is_plat("macosx") then
+            io.replace("lib/CMakeLists.txt", [[LINK_FLAGS "-Wl,--no-undefined -Wl,--no-undefined-version -Wl,--version-script,\"${PROJECT_SOURCE_DIR}/lib/libeconf.map\""]], "", {plain = true})
+        end
+
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
