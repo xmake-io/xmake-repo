@@ -3,19 +3,21 @@ package("ceres-solver")
     set_description("Ceres Solver is an open source C++ library for modeling and solving large, complicated optimization problems.")
     set_license("BSD-3-Clause")
     
-    add_urls("http://ceres-solver.org/ceres-solver-$(version).tar.gz")
+    add_urls("http://ceres-solver.org/ceres-solver-$(version).tar.gz",
+             "https://github.com/ceres-solver/ceres-solver/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/ceres-solver/ceres-solver.git")
     add_versions("2.0.0", "10298a1d75ca884aa0507d1abb0e0f04800a92871cd400d4c361b56a777a7603")
     add_versions("2.1.0", "f7d74eecde0aed75bfc51ec48c91d01fe16a6bf16bce1987a7073286701e2fc6")
     add_versions("2.2.0", "48b2302a7986ece172898477c3bcd6deb8fb5cf19b3327bc49969aad4cede82d")
 
     add_patches("2.1.0", "patches/2.1.0/int64.patch", "1df14f30abf1a942204b408c780eabbeac0859ba5a6db3459b55c47479583c57")
-    add_patches("2.2.0", "patches/2.2.0/suitesparse.patch", "1eaa17d98a99e8f5ac5a75f8685ee165bd1e05f5ea6da3774b4933de4084e3b5")
+    add_patches("2.2.0", "patches/2.2.0/suitesparse.patch", "3af807aec867512dbb18ac7a912dbdb1e1f66f3c8f2976c96d09ead80456beb8")
 
     add_configs("blas", {description = "Choose BLAS library to use.", default = "openblas", type = "string", values = {"mkl", "openblas"}})
     add_configs("suitesparse", {description = "Enable SuiteSparse.", default = true, type = "boolean"})
     add_configs("cuda", {description = "Enable CUDA support.", default = false, type = "boolean"})
 
-    add_deps("cmake", "eigen", "glog", "gflags", "pkgconf")
+    add_deps("cmake", "eigen <5.0", "glog", "gflags", "metis")
 
     on_load(function (package)
         if package:config("suitesparse") then
@@ -27,7 +29,7 @@ package("ceres-solver")
         end
     end)
 
-    on_install("windows|x64", "windows|x86", "linux", "macosx", function (package)
+    on_install("windows", "linux", "macosx", "bsd", function (package)
         local configs = {
             "-DBUILD_TESTING=OFF",
             "-DBUILD_DOCUMENTATION=OFF",

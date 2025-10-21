@@ -1,8 +1,8 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 8e49c19..9ef55e2 100644
+index 8e49c19e..460e9b1a 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -292,20 +292,19 @@ if (SUITESPARSE)
+@@ -292,20 +292,18 @@ if (SUITESPARSE)
    # built with SuiteSparse support.
  
    # Check for SuiteSparse and dependencies.
@@ -10,13 +10,13 @@ index 8e49c19..9ef55e2 100644
 -    OPTIONAL_COMPONENTS Partition)
 +  find_package(CHOLMOD REQUIRED)
 +  find_package(SPQR REQUIRED)
-+  add_library (SuiteSparse::Partition IMPORTED INTERFACE)
-+  set_property (TARGET SuiteSparse::Partition APPEND PROPERTY INTERFACE_LINK_LIBRARIES SuiteSparse::CHOLMOD)
 +  set(SuiteSparse_FOUND TRUE)
 +  set(SuiteSparse_Partition_FOUND TRUE)
 +  set(SuiteSparse_VERSION ${SUITESPARSE_CONFIG_VERSION})
    if (SuiteSparse_FOUND)
-     set(SuiteSparse_DEPENDENCY "find_dependency(SuiteSparse ${SuiteSparse_VERSION})")
+-    set(SuiteSparse_DEPENDENCY "find_dependency(SuiteSparse ${SuiteSparse_VERSION})")
++    set(SuiteSparse_DEPENDENCY "find_dependency(CHOLMOD)
++                                find_dependency(SPQR)")
      # By default, if all of SuiteSparse's dependencies are found, Ceres is
      # built with SuiteSparse support.
      message("-- Found SuiteSparse ${SuiteSparse_VERSION}, "
@@ -31,17 +31,17 @@ index 8e49c19..9ef55e2 100644
      # Disable use of SuiteSparse if it cannot be found and continue.
      message("-- Did not find all SuiteSparse dependencies, disabling "
 diff --git a/internal/ceres/CMakeLists.txt b/internal/ceres/CMakeLists.txt
-index f9fc241..55a3ceb 100644
+index f9fc2415..f457c90c 100644
 --- a/internal/ceres/CMakeLists.txt
 +++ b/internal/ceres/CMakeLists.txt
-@@ -33,7 +33,9 @@
- # Avoid 'xxx.cc has no symbols' warnings from source files which are 'empty'
- # when their enclosing #ifdefs are disabled.
- find_package(Threads REQUIRED)
--list(APPEND CERES_LIBRARY_PRIVATE_DEPENDENCIES Threads::Threads)
-+include(FindPkgConfig)
-+pkg_search_module(gklib REQUIRED IMPORTED_TARGET gklib)
-+list(APPEND CERES_LIBRARY_PRIVATE_DEPENDENCIES Threads::Threads PkgConfig::gklib)
- # Make dependency visible to the parent CMakeLists.txt
- set(Threads_DEPENDENCY "find_dependency (Threads)" PARENT_SCOPE)
+@@ -102,10 +102,6 @@ if (SUITESPARSE AND SuiteSparse_FOUND)
+   add_definitions(-DCERES_SUITESPARSE_VERSION="${SuiteSparse_VERSION}")
+   list(APPEND CERES_LIBRARY_PRIVATE_DEPENDENCIES SuiteSparse::CHOLMOD
+     SuiteSparse::SPQR)
+-
+-  if (SuiteSparse_Partition_FOUND)
+-    list(APPEND CERES_LIBRARY_PRIVATE_DEPENDENCIES SuiteSparse::Partition)
+-  endif (SuiteSparse_Partition_FOUND)
+ endif (SUITESPARSE AND SuiteSparse_FOUND)
  
+ if (SuiteSparse_Partition_FOUND OR EIGENMETIS)
