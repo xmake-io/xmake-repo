@@ -54,7 +54,7 @@ package("openblas")
         add_versions("0.3.28", "f1003466ad074e9b0c8d421a204121100b0751c96fc6fcf3d1456bd12f8a00a1")
         add_versions("0.3.30", "27342cff518646afb4c2b976d809102e368957974c250a25ccc965e53063c95d")
 
-        if is_plat("macosx") and is_arch("x86_64") then
+        if is_plat("macosx") then
             add_patches("0.3.30", "https://github.com/OpenMathLib/OpenBLAS/pull/5478/commits/b48a089d7526211e5521a6767470b3d38642831e.patch", "89f786442a0b5fb48d19c2adc3add34dbfedc00fe5c8c86fb8b6ca0128b1082f")
         end
 
