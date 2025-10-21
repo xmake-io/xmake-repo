@@ -9,15 +9,13 @@ package("libeconf")
     add_versions("v0.8.0", "d50b7135483f13c1a6229a293bd5fdac77b1d827607c72cc61d13be56f58aaa2")
     add_versions("v0.7.10", "e8fee300cbbae11287d2682d185d946a1ffbd23bf02b4f97d68f2df34d8de07f")
 
-    add_deps("meson", "ninja")
-    on_install("linux", "bsd", "android", "macosx", "iphoneos", "cross", function (package)
-        if package:is_plat("macosx") then
-            io.replace("meson.build", " + version_flag", "", {plain = true})
-        end
-        io.replace("meson.build", "subdir%b()", "")
-        io.replace("meson.build", "executable%b()", "")
+    add_deps("cmake")
 
-        import("package.tools.meson").install(package)
+    on_install("!windows and !mingw", function (package)
+        local configs = {}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
