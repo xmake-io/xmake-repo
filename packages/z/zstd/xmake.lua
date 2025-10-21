@@ -70,6 +70,6 @@ package("zstd")
             assert(package:has_cfuncs("ZSTD_decompress", {includes = {"zstd.h"}}))
         end
         if not package:is_cross() and package:config("tools") then
-            os.runv("zstd --version")
+            os.vrun("zstd --version")
         end
     end)
