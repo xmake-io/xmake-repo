@@ -6,6 +6,7 @@ package("oboe")
     add_urls("https://github.com/google/oboe/archive/refs/tags/$(version).tar.gz",
              "https://github.com/google/oboe.git")
 
+    add_versions("1.10.0", "0e4245f8860c4287040a5d76501c588490bcc9cb57614c486c0c201a5dde3e9f")
     add_versions("1.9.3", "9d2486b74bd396d9d9112625077d5eb656fd6942392dc25ebf222b184ff4eb61")
     add_configs("cmake", {description = "Use cmake build system", default = false, type = "boolean"})
 
