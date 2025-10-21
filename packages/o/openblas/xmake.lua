@@ -55,7 +55,7 @@ package("openblas")
         add_versions("0.3.30", "27342cff518646afb4c2b976d809102e368957974c250a25ccc965e53063c95d")
 
         if is_plat("macosx") and is_arch("x86_64") then
-            add_patches("0.3.30", "https://github.com/OpenMathLib/OpenBLAS/pull/5478/commits/b48a089d7526211e5521a6767470b3d38642831e.patch", "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
+            add_patches("0.3.30", "https://github.com/OpenMathLib/OpenBLAS/pull/5478/commits/b48a089d7526211e5521a6767470b3d38642831e.patch", "89f786442a0b5fb48d19c2adc3add34dbfedc00fe5c8c86fb8b6ca0128b1082f")
         end
 
         add_configs("fortran", {description = "Compile with fortran enabled.", default = not is_plat("macosx"), type = "boolean"})
