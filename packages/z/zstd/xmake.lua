@@ -29,6 +29,9 @@ package("zstd")
         if package:config("cmake") then
             package:add("deps", "cmake")
         end
+        if package:config("tools") then
+            package:addenv("PATH", "bin")
+        end
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "ZSTD_DLL_IMPORT=1")
         end
