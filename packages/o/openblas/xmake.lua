@@ -39,6 +39,10 @@ package("openblas")
         on_check("windows|arm64", function (package)
             assert(not package:is_cross(), "package(openblas) does not support cross-compiling for Windows ARM64 yet.")
         end)
+        on_check("android", function (package)
+            local ndk_sdkver = package:toolchain("ndk"):config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(openblas) does not support ndk api <= 21 yet.")
+        end)
     end
 
     on_load(function (package)
@@ -78,11 +82,6 @@ package("openblas")
             table.insert(configs, "-DMSVC_STATIC_CRT=ON")
         end
 
-        local opt = {}
-        if package:is_plat("android") then
-            opt.ldflags = "-lm"
-            opt.shflags = "-lm"
-        end
         import("package.tools.cmake").install(package, configs, opt)
     end)
 
