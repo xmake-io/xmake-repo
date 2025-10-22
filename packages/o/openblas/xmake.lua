@@ -25,6 +25,7 @@ package("openblas")
         add_extsources("apt::libopenblas-dev", "pacman::openblas")
         add_syslinks("pthread")
     elseif is_plat("macosx") then
+        add_extsources("brew::openblas64", "brew::openblas")
         add_frameworks("Accelerate")
     end
 
@@ -32,8 +33,11 @@ package("openblas")
     add_includedirs("include", "include/openblas")
 
     if on_check then
-        on_check("cross", "mingw@macosx", "iphoneos", function (package)
+        on_check("cross", "mingw@macosx", "iphoneos", "wasm", function (package)
             assert(package:config("target") ~= "auto", "When cross compiling, a target is required (e.g. add_requires(\"openblas\", {configs = {target = \"your_target\"}})).")
+        end)
+        on_check("windows|arm64", function (package)
+            assert(not package:is_cross(), "package(openblas) does not support cross-compiling for Windows ARM64 yet.")
         end)
     end
 
@@ -73,7 +77,13 @@ package("openblas")
         if package:is_plat("windows") and package:has_runtime("MT", "MTd") then
             table.insert(configs, "-DMSVC_STATIC_CRT=ON")
         end
-        import("package.tools.cmake").install(package, configs)
+
+        local opt = {}
+        if package:is_plat("android") then
+            opt.ldflags = "-lm"
+            opt.shflags = "-lm"
+        end
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
