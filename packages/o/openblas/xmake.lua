@@ -34,7 +34,7 @@ package("openblas")
 
     if on_check then
         on_check("cross", "mingw@macosx", "iphoneos", "wasm", function (package)
-            assert(package:config("target") ~= "auto", "When cross compiling, a target is required (e.g. add_requires(\"openblas\", {configs = {target = \"your_target\"}})).")
+            assert(package:config("target") ~= "auto", "When cross compiling, a target is required, e.g., add_requires(\"openblas\", {configs = {target = \"your_target\"}}).")
         end)
         on_check("windows|arm64", function (package)
             assert(not package:is_cross(), "package(openblas) does not support cross-compiling for Windows ARM64 yet.")
@@ -85,7 +85,7 @@ package("openblas")
             table.insert(configs, "-DMSVC_STATIC_CRT=ON")
         end
 
-        import("package.tools.cmake").install(package, configs, opt)
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
