@@ -7,18 +7,19 @@ package("openblas")
              "https://github.com/OpenMathLib/OpenBLAS.git")
     add_versions("v0.3.30", "27342cff518646afb4c2b976d809102e368957974c250a25ccc965e53063c95d")
 
-    add_configs("lapack",            {description = "Build LAPACK.",                                                                                                        default = true,  type = "boolean"})
-    add_configs("lapacke",           {description = "Build the C interface to LAPACK.",                                                                                                 default = true,  type = "boolean"})
-    add_configs("lapack_deprecated", {description = "When building LAPACK, include also some older, deprecated routines.",                                                              default = true,  type = "boolean"})
-    add_configs("c_lapack",          {description = "Build LAPACK from C sources instead of the original Fortran.",                                                                     default = false, type = "boolean"})
-    add_configs("cblas",             {description = "Build the C interface (CBLAS) to the BLAS functions.",                                                                             default = true,  type = "boolean"})
-    add_configs("dynamic_arch",      {description = "Include support for multiple CPU targets, with automatic selection at runtime (x86/x86_64, aarch64, ppc or RISCV64-RVV1.0 only).", default = false, type = "boolean"})
-    add_configs("dynamic_older",     {description = "Include specific support for older x86 cpu models (Penryn,Dunnington,Atom,Nano,Opteron) with DYNAMIC_ARCH.",                       default = false, type = "boolean"})
-    add_configs("relapack",          {description = "Build with ReLAPACK (recursive implementation of several LAPACK functions on top of standard LAPACK).",                            default = false, type = "boolean"})
-    add_configs("locking",           {description = "Use locks even in single-threaded builds to make them callable from multiple threads.",                                            default = false, type = "boolean"})
-    add_configs("thread",            {description = "Enable threads support.",                                                                                                          default = false, type = "boolean"})
-    add_configs("openmp",            {description = "Compile with OpenMP enabled.",                                                                                                     default = false, type = "boolean"})
-    add_configs("fortran",           {description = "Compile with fortran enabled.",                                                                                                    default = false, type = "boolean"})
+    add_configs("lapack",            {description = "Build LAPACK.",                                                                                                                    default = true,   type = "boolean"})
+    add_configs("lapacke",           {description = "Build the C interface to LAPACK.",                                                                                                 default = true,   type = "boolean"})
+    add_configs("lapack_deprecated", {description = "When building LAPACK, include also some older, deprecated routines.",                                                              default = true,   type = "boolean"})
+    add_configs("c_lapack",          {description = "Build LAPACK from C sources instead of the original Fortran.",                                                                     default = false,  type = "boolean"})
+    add_configs("cblas",             {description = "Build the C interface (CBLAS) to the BLAS functions.",                                                                             default = true,   type = "boolean"})
+    add_configs("dynamic_arch",      {description = "Include support for multiple CPU targets, with automatic selection at runtime (x86/x86_64, aarch64, ppc or RISCV64-RVV1.0 only).", default = false,  type = "boolean"})
+    add_configs("dynamic_older",     {description = "Include specific support for older x86 cpu models (Penryn,Dunnington,Atom,Nano,Opteron) with DYNAMIC_ARCH.",                       default = false,  type = "boolean"})
+    add_configs("relapack",          {description = "Build with ReLAPACK (recursive implementation of several LAPACK functions on top of standard LAPACK).",                            default = false,  type = "boolean"})
+    add_configs("locking",           {description = "Use locks even in single-threaded builds to make them callable from multiple threads.",                                            default = false,  type = "boolean"})
+    add_configs("thread",            {description = "Enable threads support.",                                                                                                          default = false,  type = "boolean"})
+    add_configs("openmp",            {description = "Compile with OpenMP enabled.",                                                                                                     default = false,  type = "boolean"})
+    add_configs("fortran",           {description = "Compile with fortran enabled.",                                                                                                    default = false,  type = "boolean"})
+    add_configs("target",            {description = "Specify CPU architecture (see TargetList.txt).",                                                                                   default = "auto", type = "string"})
 
     if is_plat("linux") then
         add_extsources("apt::libopenblas-dev", "pacman::openblas")
@@ -30,6 +31,12 @@ package("openblas")
     add_deps("cmake")
     add_includedirs("include", "include/openblas")
 
+    if on_check then
+        on_check("cross", "mingw@macosx", function (package)
+            assert(package:config("target") ~= "auto", "When cross compiling, a target is required (e.g. add_requires(\"openblas\", {configs = {target = \"your_target\"}})).")
+        end)
+    end
+
     on_load(function (package)
         if package:config("fortran") then
             package:add("deps", "gfortran")
@@ -39,7 +46,10 @@ package("openblas")
         end
     end)
 
-    on_install("windows", "macosx", "linux", "bsd", "mingw", function (package)
+    on_install(function (package)
+        if package:has_tool("cxx", "cl") then
+            io.replace("CMakeLists.txt", "/Zi", "/Z7", {plain = true})
+        end
         local configs = {
             "-DBUILD_TESTING=OFF",
             "-DBUILD_BENCHMARKS=OFF",
@@ -60,6 +70,9 @@ package("openblas")
         table.insert(configs, "-DUSE_THREAD=" .. (package:config("thread") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_OPENMP=" .. (package:config("openmp") and "ON" or "OFF"))
         table.insert(configs, "-DNOFORTRAN=" .. (package:config("fortran") and "OFF" or "ON"))
+        if package:is_plat("windows") and package:has_runtime("MT", "MTd") then
+            table.insert(configs, "-DMSVC_STATIC_CRT=ON")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
