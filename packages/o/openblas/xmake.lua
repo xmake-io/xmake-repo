@@ -78,6 +78,9 @@ package("openblas")
         table.insert(configs, "-DUSE_THREAD=" .. (package:config("thread") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_OPENMP=" .. (package:config("openmp") and "ON" or "OFF"))
         table.insert(configs, "-DNOFORTRAN=" .. (package:config("fortran") and "OFF" or "ON"))
+        if package:config("target") ~= "auto" then
+            table.insert(configs, "-DTARGET=" .. package:config("target"))
+        end
         if package:is_plat("windows") and package:has_runtime("MT", "MTd") then
             table.insert(configs, "-DMSVC_STATIC_CRT=ON")
         end
