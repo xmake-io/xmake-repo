@@ -32,7 +32,7 @@ package("openblas")
     add_includedirs("include", "include/openblas")
 
     if on_check then
-        on_check("cross", "mingw@macosx", function (package)
+        on_check("cross", "mingw@macosx", "iphoneos", function (package)
             assert(package:config("target") ~= "auto", "When cross compiling, a target is required (e.g. add_requires(\"openblas\", {configs = {target = \"your_target\"}})).")
         end)
     end
