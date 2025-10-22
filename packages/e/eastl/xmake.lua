@@ -16,19 +16,19 @@ package("eastl")
     add_deps("cmake")
     add_deps("eabase")
 
-    on_load("windows", function (package)
+    on_load("windows", "mingw", function (package)
         if package:config("shared") then
             package:add("defines", "EA_DLL")
         end
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows", "linux", "macosx", "mingw", function (package)
         io.replace("CMakeLists.txt", [[target_compile_features(EASTL PUBLIC cxx_std_14)]], [[target_compile_features(EASTL PUBLIC cxx_std_17)]], {plain = true})
-        if package:is_plat("windows") and package:config("shared") then
+        if package:is_plat("windows", "mingw") and package:config("shared") then
             io.replace("CMakeLists.txt", [[add_definitions(-D_CHAR16T)]], [[add_definitions(-D_CHAR16T)
 if(BUILD_SHARED_LIBS)
   target_compile_definitions(EASTL PUBLIC EA_DLL)
-  if(MSVC OR CYGWIN)
+  if(WIN32)
     target_compile_definitions(EASTL PRIVATE "EASTL_API=__declspec(dllexport)")
   endif()
 endif()]], {plain = true})
@@ -37,13 +37,10 @@ endif()]], {plain = true})
         io.replace("CMakeLists.txt", "target_link_libraries(EASTL EABase)", "", {plain = true})
         local configs = {"-DEASTL_BUILD_TESTS=OFF", "-DEASTL_BUILD_BENCHMARK=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        if not package:is_plat("windows") then
-            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        end
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, {packagedeps = "eabase"})
         os.cp("include/EASTL", package:installdir("include"))
     end)
-
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
