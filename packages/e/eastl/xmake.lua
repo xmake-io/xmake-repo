@@ -16,6 +16,12 @@ package("eastl")
     add_deps("cmake")
     add_deps("eabase")
 
+    on_check("mingw", function (package)
+        if package:version():lt("3.27.00") then
+            raise("package(eastl): MinGW is unsupported for version less than 3.27.00")
+        end
+    end)
+
     on_load("windows", "mingw", function (package)
         if package:config("shared") then
             package:add("defines", "EA_DLL")
