@@ -97,6 +97,10 @@ package("poco")
             package:add("deps", "aprutil")
             package:add("deps", "apache2")
         end
+
+        if not package:config("shared") then
+            package:add("defines", "POCO_STATIC")
+        end
     end)
 
     on_check(function (package)
