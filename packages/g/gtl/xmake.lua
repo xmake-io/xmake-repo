@@ -23,6 +23,14 @@ package ("gtl")
     add_versions("1.2.0", "1547ab78f62725c380f50972f7a49ffd3671ded17a3cb34305da5c953c6ba8e7")
 
     add_deps("cmake")
+
+    on_check("android", function (package)
+        import("core.tool.toolchain")
+        local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
+        local ndkver = ndk:config("ndkver")
+        assert(ndkver and tonumber(ndkver) > 25, "package(gtl): need ndk revision >= 26 for android")
+    end)
+
     on_install(function (package)
         local configs = {
 	    "-DGTL_BUILD_TESTS=OFF",
