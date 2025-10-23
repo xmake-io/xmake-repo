@@ -33,5 +33,5 @@ package ("gtl")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxincludes("gtl/phmap.hpp"))
+        assert(package:has_cxxincludes("gtl/phmap.hpp", {configs = {languages = "cxx20"}}))
     end)
