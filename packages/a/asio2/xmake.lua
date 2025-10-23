@@ -13,7 +13,7 @@ package("asio2")
 
     add_patches("2.9", "patches/2.9/remove-const.patch", "6326f333ab2d0484c23bb3cd9cfd5a565030b5525d083677565a693f5f8803b6")
 
-    add_deps("asio", "cereal")
+    add_deps("asio 1.29.0", "cereal")
     add_deps("spdlog", { configs = { header_only = false, fmt_external = true } })
 
     if is_plat("windows", "mingw") then
