@@ -115,7 +115,7 @@ package("openblas")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("windows|!x64 and windows|!x86", function (package)
+    on_install("!windows or (windows|!x64 and windows|!x86)", function (package)
         if package:version():lt("0.3.30") and package:is_plat("macosx", "linux", "mingw@windows,msys") then
             import("lib.detect.find_tool")
             import("package.tools.make")
