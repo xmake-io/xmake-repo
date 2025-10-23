@@ -1,13 +1,11 @@
 package ("gtl")
-
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/greg7mdp/gtl")
     set_description("Greg's Template Library of useful classes.")
     set_license("Apache-2.0")
-    set_urls("https://github.com/greg7mdp/gtl/archive/refs/tags/$(version).tar.gz", {version = function (version)
-        return version:startswith("v") and version or ("v" .. version)
-    end})
-    add_urls("https://github.com/greg7mdp/gtl.git", {version = function (version)
+
+    add_urls("https://github.com/greg7mdp/gtl/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/greg7mdp/gtl.git", {version = function (version)
         return version:startswith("v") and version or ("v" .. version)
     end})
 
@@ -33,13 +31,13 @@ package ("gtl")
 
     on_install(function (package)
         local configs = {
-	    "-DGTL_BUILD_TESTS=OFF",
-	    "-DGTL_BUILD_EXAMPLES=OFF",
-	    "-DGTL_BUILD_BENCHMARKS=OFF",
-    }
+    	    "-DGTL_BUILD_TESTS=OFF",
+    	    "-DGTL_BUILD_EXAMPLES=OFF",
+    	    "-DGTL_BUILD_BENCHMARKS=OFF"
+        }
         import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
-        assert(package:has_cxxincludes("gtl/phmap.hpp", {configs = {languages = "cxx20"}}))
+        assert(package:has_cxxincludes("gtl/phmap.hpp", {configs = {languages = "c++20"}}))
     end)
