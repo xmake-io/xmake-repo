@@ -6,6 +6,7 @@ package("sqlgen")
     add_urls("https://github.com/getml/sqlgen/archive/refs/tags/$(version).tar.gz",
              "https://github.com/getml/sqlgen.git")
 
+    add_versions("v0.3.0", "f3a086e26a069f243265769831837d385986734458f52ed3aef06efddf03b3ac")
     add_versions("v0.2.0", "c093036ebdf2aaf1003b2d1623713b97106ed43b1d39dc3d4f38e381f371799e")
 
     add_patches("0.2.0", "patches/0.2.0/cmake.patch", "e9819b9a8a2c8f8a5b6c553eac3bb10fc65856aa9af451f83e2dbf55ca6c66c0")
