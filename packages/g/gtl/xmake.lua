@@ -7,8 +7,6 @@ package("gtl")
     add_urls("https://github.com/greg7mdp/gtl/archive/refs/tags/v$(version).tar.gz")
     add_urls("https://github.com/greg7mdp/gtl.git", {alias = "git"})
 
-    add_versions("git:1.2.0", "v1.2.0")
-
     add_versions("1.2.0", "1547ab78f62725c380f50972f7a49ffd3671ded17a3cb34305da5c953c6ba8e7")
     add_versions("1.1.8", "6bda4c07bd966a88740ee07e3df23863a93d7b5365e0eea7f13cde9eda961b86")
     add_versions("1.1.6", "d90224c0b26deeab730b02857a20c6c7dee014ecd7a76aaa7a469c35049fe3a9")
@@ -18,6 +16,10 @@ package("gtl")
     add_versions("1.1.2", "22ac9fb43608c7ddccb983096f5dadb036e5d3122d9194cdb42fee67d754c552")
     add_versions("1.1.1", "3c87cad50bc2de6d17596c796c81521ff80b00d66674faa52f147544c4951270")
     add_versions("1.1.0", "d18b6124c51e99d8e7e2cc1f1b3e8a8c649c2872b7a1e9987417c9166c9f427f")
+
+    for _, v in ipairs({"1.2.0", "1.1.8", "1.1.6", "1.1.5", "1.1.4", "1.1.3", "1.1.2", "1.1.1", "1.1.0"}) do
+        add_versions("git:" .. v, "v" .. v)
+    end
 
     add_deps("cmake")
 
