@@ -3,8 +3,10 @@ package("mysql")
     set_description("A real-time, open source transactional database.")
     set_license("GPL-2.0")
 
-    add_urls("https://github.com/mysql/mysql-server/archive/refs/tags/mysql-$(version).tar.gz")
+    add_urls("https://github.com/mysql/mysql-server/archive/refs/tags/mysql-$(version).tar.gz",
+             "https://github.com/mysql/mysql-server.git")
 
+    add_versions("8.0.40", "746c111747ba56ac9cdcd3d47867ee9f2e7d5d6230a1fd3401723db997e33f28")
     add_versions("8.0.39", "3a72e6af758236374764b7a1d682f7ab94c70ed0d00bf0cb0f7dd728352b6d96")
 
     add_configs("server", {description = "Build server", default = false, type = "boolean"})
@@ -30,6 +32,10 @@ package("mysql")
         add_deps("patchelf")
         add_deps("libedit", {configs = {terminal_db = "ncurses"}})
     end
+    if is_plat("windows") then
+        add_deps("ninja")
+        set_policy("package.cmake_generator.ninja", true)
+    end
 
     if on_check then
         on_check(function (package)
@@ -44,7 +50,8 @@ package("mysql")
     on_load(function(package)
         local version = package:version()
         if version:lt("9.0.0") then
-            package:add("deps", "boost", "libevent")
+            package:add("deps", "boost", {configs = {header_only = true}})
+            package:add("deps", "libevent")
         end
 
         if package:config("server") then
@@ -73,10 +80,11 @@ package("mysql")
     on_install("windows", "macosx", "linux", function (package)
         import("patch").cmake(package)
 
+        local is_shared = package:config("shared")
         local configs = import("configs").get(package, false)
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DINSTALL_STATIC_LIBRARIES=" .. (package:config("shared") and "OFF" or "ON"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (is_shared and "ON" or "OFF"))
+        table.insert(configs, "-DINSTALL_STATIC_LIBRARIES=" .. (is_shared and "OFF" or "ON"))
         table.insert(configs, "-DWITH_LTO=" .. (package:config("lto") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_ASAN=" .. (package:config("asan") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_LSAN=" .. (package:config("lsan") and "ON" or "OFF"))
@@ -88,7 +96,7 @@ package("mysql")
         import("package.tools.cmake").install(package, configs)
 
         if package:is_plat("windows") then
-            if package:config("shared") then
+            if is_shared then
                 os.tryrm(package:installdir("lib/mysqlclient.lib"))
                 os.trymv(package:installdir("lib/libmysql.dll"), package:installdir("bin"))
             else
@@ -96,10 +104,11 @@ package("mysql")
                 os.tryrm(package:installdir("lib/libmysql.dll"))
             end
         else
-            if package:config("shared") then
+            if is_shared then
                 os.tryrm(package:installdir("lib/*.a"))
             else
                 os.tryrm(package:installdir("lib/*.so*"))
+                os.tryrm(package:installdir("lib/*.dylib"))
             end
         end
     end)
