@@ -4,8 +4,10 @@ package("gtl")
     set_description("Greg's Template Library of useful classes.")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/greg7mdp/gtl/archive/refs/tags/v$(version).tar.gz",
-             "https://github.com/greg7mdp/gtl.git")
+    add_urls("https://github.com/greg7mdp/gtl/archive/refs/tags/v$(version).tar.gz")
+    add_urls("https://github.com/greg7mdp/gtl.git", {alias = "git"})
+
+    add_versions("git:1.2.0", "v1.2.0")
 
     add_versions("1.2.0", "1547ab78f62725c380f50972f7a49ffd3671ded17a3cb34305da5c953c6ba8e7")
     add_versions("1.1.8", "6bda4c07bd966a88740ee07e3df23863a93d7b5365e0eea7f13cde9eda961b86")
