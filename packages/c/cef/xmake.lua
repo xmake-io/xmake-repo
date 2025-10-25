@@ -46,6 +46,7 @@ package("cef")
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
     
     if is_plat("windows") then
+        add_defines("UNICODE", "_UNICODE")
         add_syslinks("user32", "advapi32", "shlwapi", "comctl32", "rpcrt4")
     end
     add_includedirs(".", "include")
