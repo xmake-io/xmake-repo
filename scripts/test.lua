@@ -280,7 +280,11 @@ function get_modified_packages()
             if #packages > 0 and version then
                 local lastpackage = packages[#packages]
                 local splitinfo = lastpackage:split("%s+")
-                table.insert(packages, splitinfo[1] .. " " .. version)
+                if #splitinfo > 1 then
+                    table.insert(packages, splitinfo[1] .. " " .. version)
+                else
+                    packages[#packages] = splitinfo[1] .. " " .. version
+                end
             end
         end
     end
