@@ -12,7 +12,7 @@ package("cef")
         ["97.1.9"] = "97.1.9+ga00bca5+chromium-97.0.4692.99",
         ["100.0.23"] = "100.0.23+ga1e2187+chromium-100.0.4896.127",
         ["100.0.24"] = "100.0.24+g0783cf8+chromium-100.0.4896.127",
-        ["124.3.9"] = "124.3.9+g9bd638f+chromium-124.0.6367.207"
+        ["141.0.11"] = "141.0.11+g7e73ac4+chromium-141.0.7390.123"
     }
   
     if is_plat("windows") then
@@ -20,7 +20,7 @@ package("cef")
             return format("%s_windows%s", buildver[tostring(version)], (is_arch("x64") and "64" or "32"))
         end})
         if is_arch("x64") then
-            add_versions("124.3.9", "531a29e097e1535f19df362fb178a0f2302d4c6fce8ddca13ee65e4203bc5f9e")
+            add_versions("141.0.11", "bc115f929ec5ab107e62cd67d833da299c856177d8a63c8662c977f741c93157")
             add_versions("100.0.24", "c16329ff3beff7ab383d93fe5785eafe83dc3c0b34992cf28c59b0aa3f6fc7ec")
             add_versions("100.0.23", "6ba279186f5dc3487f1f89facdeaaa81efcdea90d8a8c4a89273e10262593fa1")
             add_versions("97.1.9", "b5f788df517aeac2b86d264440d26eec5c1eb803e66cf1f7cf38cabca3af6fa5")
@@ -29,7 +29,7 @@ package("cef")
             add_versions("88.2.9", "86c01e38e7b7d59fed8a1e1ab2c3bfbcc1db42e21f8a6e6feb4061b2af7b1b7d")
             add_versions("88.2.1", "8ed01da6327258536c61ada46e14157149ce727e7729ec35a30b91b3ad3cf555")
         else
-            add_versions("124.3.9", "d122b826342982f1ab5eac7f14bc8b892bbbd18e2d173b57b46edc7ba2634ace")
+            add_versions("141.0.11", "4ece426f5103291175839cd87944d9a405cc02c946d82154838cc0e95f27a011")
             add_versions("100.0.24", "ac26164edc67988d53c6e78dd19f42b429ac9ff4a3b197d9f2b416e8e0ace07c")
             add_versions("100.0.23", "93febdee82776122b982b1f620d74ce5572a5b7b75d882384634ede947a5b751")
             add_versions("97.1.9", "10c0af4b939b3ec6e0f072c2e3c15a044e20b8d42c799ee13a2730ac26dc0908")
