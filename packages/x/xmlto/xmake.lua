@@ -13,6 +13,8 @@ package("xmlto")
 
     on_install("macosx", "linux", function (package)
         import("package.tools.autoconf")
+        io.replace("xmlif/xmlif.l",[[static ifsense;]],[[static int ifsense;]],{plain = true})
+        io.replace("xmlif/xmlif.l",[[main(int argc, char *argv[])]],[[int main(int argc, char *argv[])]],{plain = true})
         local envs = autoconf.buildenvs(package)
         local getopt = package:dep("util-linux"):fetch()
         for _, dir in ipairs(getopt.linkdirs) do
