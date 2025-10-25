@@ -52,8 +52,6 @@ package("cef")
 
     -- TODO: add support for arm
     on_install("windows|x86", "windows|x64", function (package)
-        package:add("defines", "UNICODE", "_UNICODE")
-
         local distrib_type = package:debug() and "Debug" or "Release"
         os.cp(path.join(distrib_type, "*.lib"), package:installdir("lib"))
         os.cp(path.join(distrib_type, "*.dll"), package:installdir("bin"))

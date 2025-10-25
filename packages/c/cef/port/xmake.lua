@@ -4,7 +4,7 @@ target("cef_dll_wrapper")
     add_files("libcef_dll/**.cc|ctocpp/test/**.cc|cpptoc/test/**.cc")
     add_includedirs(".")
     add_headerfiles("include/(**.h)")
-    add_defines("WRAPPING_CEF_SHARED")
+    add_defines("WRAPPING_CEF_SHARED", "UNICODE", "_UNICODE")
     set_languages("c++17")
     if is_plat("windows") then
         -- fix std::max conflict with windows.h
