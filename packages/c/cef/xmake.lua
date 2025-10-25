@@ -46,13 +46,14 @@ package("cef")
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
     
     if is_plat("windows") then
-        add_defines("UNICODE", "_UNICODE")
         add_syslinks("user32", "advapi32", "shlwapi", "comctl32", "rpcrt4")
     end
     add_includedirs(".", "include")
 
     -- TODO: add support for arm
     on_install("windows|x86", "windows|x64", function (package)
+        package:add("defines", "UNICODE", "_UNICODE")
+
         local distrib_type = package:debug() and "Debug" or "Release"
         os.cp(path.join(distrib_type, "*.lib"), package:installdir("lib"))
         os.cp(path.join(distrib_type, "*.dll"), package:installdir("bin"))
