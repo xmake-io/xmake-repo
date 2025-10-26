@@ -10,7 +10,7 @@ package("faiss")
 
     add_configs("gpu",        {description = "Enable support for GPU indexes.", default = false, type = "boolean"})
     add_configs("gpu_static", {description = "Link GPU libraries statically.",  default = false, type = "boolean"})
-    add_configs("mkl",        {description = "Enable MKL.",                     default = true,  type = "boolean"})
+    add_configs("mkl",        {description = "Enable MKL.",                     default = false, type = "boolean"})
     add_configs("python",     {description = "Build Python extension.",         default = false, type = "boolean"})
     add_configs("c_api",      {description = "Build C API.",                    default = false, type = "boolean"})
     add_configs("lto",        {description = "Enable Link-Time optimization.",  default = false, type = "boolean"})
@@ -20,12 +20,13 @@ package("faiss")
     end
 
     add_deps("cmake", "openmp")
-    add_deps("mkl", {system = true, optional = true})
     on_load(function (package)
         if package:config("gpu") then
             package:add("deps", "cuda")
         end
-        if not find_package("mkl") or not package:config("mkl") then
+        if package:config("mkl") then
+            package:add("deps", "mkl", {system = true, optional = true})
+        else
             package:add("deps", "openblas")
         end
     end)
