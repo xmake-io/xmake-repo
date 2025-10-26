@@ -5,6 +5,7 @@ package("libpcsclite")
     add_urls("https://github.com/LudovicRousseau/PCSC/archive/refs/tags/$(version).tar.gz",
              "https://github.com/LudovicRousseau/PCSC.git")
 
+    add_versions("2.4.0", "3d20f3d23c29260fed9195529d30ec3e9f1db60a8a835b4be68716d97751f2e7")
     add_versions("2.3.3", "00b667aa71504ed1d39a48ad377de048c70dbe47229e8c48a3239ab62979c70f")
 
     add_configs("embedded", {description = "For embedded systems [limit RAM and CPU resources by disabling features (log)].", default = false, type = "boolean"})
