@@ -6,6 +6,7 @@ package("clip")
     add_urls("https://github.com/dacap/clip/archive/refs/tags/$(version).tar.gz",
              "https://github.com/dacap/clip.git")
 
+    add_versions("v1.12", "54e96e04115c7ca1eeeecf432548db5cd3dddb08a91ededb118adc31b128e08c")
     add_versions("v1.11", "047d43f837adffcb3a26ce09fd321472615cf35a18e86418d789b70d742519dc")
 
     add_configs("image", {description = "Compile with support to copy/paste images", default = true, type = "boolean"})
