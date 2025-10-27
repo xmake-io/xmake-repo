@@ -22,18 +22,29 @@ package("lastools")
     end)
 
     on_install(function (package)
+        if package:is_plat("mingw") then
+            if package:version() and package:version():ge("2.0.4") then
+                io.replace("LASzip/src/mydefs.cpp", "#ifdef _MSC_VER\n#include <windows.h>", "#ifdef _WIN32\n#include <windows.h>", {plain = true})
+                io.replace("LASzip/src/mydefs.cpp", "#ifdef _MSC_VER\n  GetCurrentDirectory", "#ifdef _WIN32\n  GetCurrentDirectory", {plain = true})
+            end
+        end
+
         local enable_tools = package:config("tools")
         if package:config("cmake") then
+            io.replace("LASlib/src/CMakeLists.txt", "RUNTIME DESTINATION lib/LASlib", "RUNTIME DESTINATION bin", {plain = true})
+            io.replace("LASlib/src/CMakeLists.txt", "DESTINATION lib/LASlib", "DESTINATION lib", {plain = true})
             if not enable_tools then
                 io.replace("CMakeLists.txt", "add_subdirectory(src)", "", {plain = true})
             end
-    
+
             local configs = {}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-    
+
             local opt = {}
-            opt.cxflags = "/utf-8"
+            if package:has_tool("cxx", "cl") then
+                opt.cxflags = "/utf-8"
+            end
             import("package.tools.cmake").install(package, configs, opt)
 
             os.cp("LASlib/lib/*.lib", package:installdir("lib"))
