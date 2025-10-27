@@ -13,7 +13,6 @@ package("faiss")
     add_configs("mkl",        {description = "Enable MKL.",                     default = false, type = "boolean"})
     add_configs("python",     {description = "Build Python extension.",         default = false, type = "boolean"})
     add_configs("c_api",      {description = "Build C API.",                    default = false, type = "boolean"})
-    add_configs("lto",        {description = "Enable Link-Time optimization.",  default = false, type = "boolean"})
 
     if is_plat("linux") then
         add_syslinks("pthread")
