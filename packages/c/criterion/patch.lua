@@ -7,17 +7,19 @@ function main(package)
         [[nanopb = dependency('nanopb', required: get_option('wrap_mode') == 'nofallback', method: 'cmake',]],
         [[nanopb = dependency('nanopb', method: 'pkg-config')]], {plain = true})
     io.replace("meson.build", "modules: ['nanopb::protobuf-nanopb-static'])", "", {plain = true})
-    io.replace("meson.build", [[libgit2 = dependency('libgit2', required: get_option('wrap_mode') == 'nofallback')]],
-        [[libgit2 = dependency('libgit2', method: 'pkg-config')
-        openssl = dependency('openssl', 'openssl3')
-        pcre2 = dependency('pcre2-8', 'libpcre2-8', method: 'pkg-config')
-        llhttp = dependency('llhttp', 'libllhttp', method: 'pkg-config')]], {plain = true})
-    io.replace("meson.build", [[	libgit2,
-	nanomsg,]], [[	libgit2,
-	openssl,
-	pcre2,
-	llhttp,
-	nanomsg,]], {plain = true})
+    if not package:is_plat("windows", "mingw") then
+        io.replace("meson.build", [[libgit2 = dependency('libgit2', required: get_option('wrap_mode') == 'nofallback')]],
+            [[libgit2 = dependency('libgit2', method: 'pkg-config')
+            openssl = dependency('openssl', 'openssl3')
+            pcre2 = dependency('pcre2-8', 'libpcre2-8', method: 'pkg-config')
+            llhttp = dependency('llhttp', 'libllhttp', method: 'pkg-config')]], {plain = true})
+        io.replace("meson.build", [[	libgit2,
+        nanomsg,]], [[	libgit2,
+        openssl,
+        pcre2,
+        llhttp,
+        nanomsg,]], {plain = true})
+    end
     if package:is_plat("windows", "mingw") then
         io.replace("src/compat/path.c", "defined (HAVE_GETCWD)", "0", {plain = true})
         io.replace("src/compat/path.c", "defined (HAVE_GETCURRENTDIRECTORY)", "1", {plain = true})

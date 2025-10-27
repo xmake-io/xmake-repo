@@ -23,8 +23,7 @@ package("criterion")
     else
         add_deps("pkg-config")
     end
-    add_deps("debugbreak", "klib", "libffi", "nanopb", "nanomsg")
-    add_deps("libgit2", {configs = {https = "openssl3"}})
+    add_deps("debugbreak", "klib", "libffi", "nanopb", "nanomsg", "libgit2")
 
     on_load(function (package)
         if package:is_plat("bsd") and package:config("shared") then
