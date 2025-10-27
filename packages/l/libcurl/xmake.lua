@@ -53,6 +53,10 @@ package("libcurl")
 
         assert(not (package:config("openssl") and package:config("openssl3")), "OpenSSL and OpenSSL-3 cannot be enabled at the same time.")
 
+        if package:config("libssh2") then
+            package:config_set("zlib", true)
+        end
+
         if package:is_plat("macosx", "iphoneos") then
             package:add("frameworks", "Security", "CoreFoundation", "SystemConfiguration")
         elseif package:is_plat("linux", "bsd") then
@@ -183,6 +187,29 @@ package("libcurl")
         handledependency("mbedtls", "mbedtls", "MBEDTLS_INCLUDE_DIRS", {MBEDTLS_LIBRARY = "mbedtls", MBEDX509_LIBRARY = "mbedx509", MBEDCRYPTO_LIBRARY = "mbedcrypto"})
         handledependency("zlib", "zlib", "ZLIB_INCLUDE_DIR", "ZLIB_LIBRARY")
         handledependency("zstd", "zstd", "Zstd_INCLUDE_DIR", "Zstd_LIBRARY")
+
+        local libssh2 = package:dep("libssh2")
+        if libssh2 then
+            local libssh2_deps = {"ZLIB::ZLIB"}
+            local backend = libssh2:config("backend")
+            if backend == "openssl" or backend == "openssl3" then
+                table.join2(libssh2_deps, {"OpenSSL::SSL", "OpenSSL::Crypto"})
+            elseif backend == "mbedtls" then
+                table.join2(libssh2_deps, {"${MBEDTLS_LIBRARIES}"})
+            end
+
+            if package:is_plat("windows", "mingw") then
+                table.join2(libssh2_deps, {"ws2_32", "user32", "crypt32", "advapi32"})
+            end
+            io.replace("CMakeLists.txt",
+                "list(APPEND CURL_LIBS ${LIBSSH2_LIBRARIES})",
+                format("list(APPEND CURL_LIBS ${LIBSSH2_LIBRARIES} %s)", table.concat(libssh2_deps, " ")), {plain = true})
+        end
+
+        local openssl = package:dep("openssl") or package:dep("openssl3")
+        if openssl and not openssl:is_system() then
+            table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
+        end
         import("package.tools.cmake").install(package, configs, {buildir = "build"})
     end)
 

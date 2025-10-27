@@ -32,7 +32,7 @@ package("diligenttools")
     add_deps("diligentcore", "libpng", "libtiff", "zlib", "libjpeg", "taywee_args", "nlohmann_json", "stb", "tinygltf")
 
     if is_plat("windows") then
-        add_deps("imgui", {configs = {win32 = true}})
+        add_deps("imgui 1.89", {configs = {win32 = true}})
     elseif is_plat("linux") then
         add_deps("imgui 1.89", "libxcb", "libx11", "libxrandr", "libxrender", "libxinerama", "libxfixes", "libxcursor", "libxi", "libxext", "wayland")
     elseif is_plat("macosx") then
