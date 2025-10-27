@@ -9,7 +9,7 @@ function main(package)
     io.replace("meson.build", "modules: ['nanopb::protobuf-nanopb-static'])", "", {plain = true})
     io.replace("meson.build", [[libgit2 = dependency('libgit2', required: get_option('wrap_mode') == 'nofallback')]],
         [[libgit2 = dependency('libgit2', method: 'pkg-config')
-        openssl = dependency('openssl', 'openssl3', method: 'pkg-config')
+        openssl = dependency('openssl', 'openssl3')
         pcre2 = dependency('pcre2-8', 'libpcre2-8', method: 'pkg-config')
         llhttp = dependency('llhttp', 'libllhttp', method: 'pkg-config')]], {plain = true})
     io.replace("meson.build", [[	libgit2,
