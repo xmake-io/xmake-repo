@@ -23,13 +23,16 @@ package("libepoxy")
 
     if is_plat("linux") then
         add_extsources("apt::libepoxy-dev")
-        add_deps("libx11", "pkg-config")
-        add_syslinks("pthread", "dl")
+    end
+
+    if is_plat("linux", "bsd", "cross") then
+        add_deps("pkg-config")
+        add_deps("libx11")
     end
 
     add_deps("meson", "ninja")
 
-    on_install("!android and !bsd and !cross", function (package)
+    on_install("!android", function (package)
         if package:is_plat("windows") and not package:config("shared") then
             io.replace("include/epoxy/common.h", "__declspec(dllimport)", "", {plain = true})
         end
