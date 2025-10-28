@@ -3,7 +3,7 @@ package("libraw")
     set_description("LibRaw is a library for reading RAW files from digital cameras.")
     set_license("LGPL-2.1")
 
-    add_urls("https://github.com/LibRaw/LibRaw/archive//refs/tags/$(version).tar.gz",
+    add_urls("https://github.com/LibRaw/LibRaw/archive/refs/tags/$(version).tar.gz",
              "https://github.com/LibRaw/LibRaw.git")
 
     add_versions("0.21.4", "8baeb5253c746441fadad62e9c5c43ff4e414e41b0c45d6dcabccb542b2dff4b")
@@ -17,6 +17,15 @@ package("libraw")
 
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32")
+    end
+
+    if on_check then
+        on_check("android", function (package)
+            local ndk_sdkver = package:toolchain("ndk"):config("ndk_sdkver")
+            if package:is_arch("armeabi-v7a") then
+                assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(libraw) require ndk version >= 24")
+            end
+        end)
     end
 
     on_load(function (package)
