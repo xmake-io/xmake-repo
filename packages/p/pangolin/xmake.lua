@@ -101,6 +101,15 @@ package("pangolin")
         io.replace("CMakeLists.txt", "-Werror=maybe-uninitialized", "", {plain = true})
         io.replace("CMakeLists.txt", "-Werror=vla", "", {plain = true})
         io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
+        if package:config("libraw") then
+            io.replace("cmake/FindLibraw.cmake", "NAMES raw_r", "NAMES raw", {plain = true})
+            io.replace("components/pango_image/CMakeLists.txt", "libraw_INCLUDE_DIR", "libraw_INCLUDE_DIRS", {plain = true})
+            if not package:dep("libraw"):config("shared") then
+                io.replace("components/pango_image/CMakeLists.txt", "HAVE_LIBRAW", "HAVE_LIBRAW LIBRAW_NODLL", {plain = true})
+            end
+        end
+        -- fix gcc15
+        io.replace("components/pango_core/include/pangolin/factory/factory.h", "#include <map>", "#include <map>\n#include <cstdint>", {plain = true})
 
         local configs = {"-DBUILD_EXAMPLES=OFF", "-DBUILD_PANGOLIN_PYTHON=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
