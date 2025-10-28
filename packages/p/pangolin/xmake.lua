@@ -98,6 +98,7 @@ package("pangolin")
     end)
 
     on_install("windows", "linux", "macosx", "mingw", "msys", "wasm", function (package)
+        io.replace("CMakeLists.txt", "-Werror=maybe-uninitialized", "", {plain = true})
         io.replace("CMakeLists.txt", "-Werror=vla", "", {plain = true})
         io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
 
