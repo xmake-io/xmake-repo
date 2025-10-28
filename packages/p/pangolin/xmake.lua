@@ -110,9 +110,11 @@ package("pangolin")
         end
 
         for _, dep in ipairs(deps) do
-            if package:config(dep) then
-                table.insert(configs, format("-DBUILD_PANGOLIN_%s=%s", dep:upper(), (package:config(dep) and "ON" or "OFF")))
+            local name = dep
+            if dep == "openexr" then
+                name = "libopenexr"
             end
+            table.insert(configs, format("-DBUILD_PANGOLIN_%s=%s", name:upper(), (package:config(dep) and "ON" or "OFF")))
         end
         table.insert(configs, "-DBUILD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
 
