@@ -22,9 +22,16 @@ if is_kind("shared") then
 else
     add_defines("LIBRAW_NODLL")
 end
+
 if is_plat("windows") then
     add_defines("WIN32")
+elseif is_plat("mingw") then
+    add_defines(
+        "M_PI=3.14159265358979323846",
+        "M_SQRT1_2=0.70710678118654752440"
+    )
 end
+
 if is_plat("windows", "mingw") then
     add_syslinks("ws2_32")
 end
