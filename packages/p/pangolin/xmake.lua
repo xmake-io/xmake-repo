@@ -8,6 +8,27 @@ package("pangolin")
 
     add_versions("v0.9.4", "fb95a354dc64bb151881192703db461a59089f7bcdb2c2c9185cfb5393586d97")
 
+    add_configs("libpng",  { description = "Build support for libpng image input",  default = false, type = "boolean"})
+    add_configs("libjpeg", { description = "Build support for libjpeg image input", default = false, type = "boolean"})
+    add_configs("libtiff", { description = "Build support for libtiff image input", default = false, type = "boolean"})
+    add_configs("openexr", { description = "Build support for OpenEXR image input", default = false, type = "boolean"})
+    add_configs("lz4",     { description = "Build support for lz4 compression",     default = false, type = "boolean"})
+    add_configs("zstd",    { description = "Build support for zstd compression",    default = false, type = "boolean"})
+    add_configs("libraw",  { description = "Build support for libraw (raw images)", default = false, type = "boolean"})
+
+    add_configs("libdc1394",           { description = "Build support for libdc1394 video input",               default = false, type = "boolean"})
+    add_configs("v4l",                 { description = "Build support for V4L video input (Linux only)",        default = false, type = "boolean"})
+    add_configs("ffmpeg",              { description = "Build support for ffmpeg video input",                  default = false, type = "boolean"})
+    add_configs("realsense",           { description = "Build support for RealSense video input",               default = false, type = "boolean"})
+    add_configs("realsense2",          { description = "Build support for RealSense2 video input",              default = false, type = "boolean"})
+    add_configs("openni",              { description = "Build support for OpenNI video input",                  default = false, type = "boolean"})
+    add_configs("openni2",             { description = "Build support for OpenNI2 video input",                 default = false, type = "boolean"})
+    add_configs("libuvc",              { description = "Build support for libuvc video input",                  default = false, type = "boolean"})
+    add_configs("uvc_mediafoundation", { description = "Build support for MediaFoundation UVC input (Windows)", default = false, type = "boolean"})
+    add_configs("depthsense",          { description = "Build support for DepthSense video input",              default = false, type = "boolean"})
+    add_configs("telicam",             { description = "Build support for TeliCam video input",                 default = false, type = "boolean"})
+    add_configs("pleora",              { description = "Build support for Pleora video input",                  default = false, type = "boolean"})
+
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
 
     if is_plat("linux", "bsd") then
@@ -15,19 +36,48 @@ package("pangolin")
     elseif is_plat("windows", "mingw") then
         add_syslinks("shlwapi", "gdi32", "user32", "shell32")
     elseif is_plat("macosx") then
-        add_frameworks("Cocoa")
+        add_frameworks("Cocoa", "OpenGL")
     end
 
     add_deps("cmake")
     add_deps("eigen")
-    if not is_plat("wasm", "linux") then
-        add_deps("glew")
-    elseif is_plat("linux") then
+    if is_plat("linux") then
         add_deps("libepoxy")
+    elseif not is_plat("wasm") then
+        add_deps("glew")
     end
     -- TODO: unbundle sigslot tinyobjloader
+    local deps = {
+        "libpng",
+        "libjpeg",
+        "libtiff",
+        "openexr",
+        "lz4",
+        "zstd",
+        "libraw",
+
+        "libdc1394",
+        "v4l",
+        "ffmpeg",
+        "realsense",
+        "realsense2",
+        "openni",
+        "openni2",
+        "libuvc",
+        "uvc_mediafoundation",
+        "depthsense",
+        "telicam",
+        "pleora",
+    }
 
     on_load(function (package)
+        for _, dep in ipairs(deps) do
+            if package:config(dep) then
+                package:add("deps", dep)
+            end
+        end
+
+        package:add("defines", "HAVE_EIGEN")
         if package:is_plat("windows") then
             package:add("defines", "_WIN_")
         elseif package:is_plat("linux") then
@@ -48,14 +98,26 @@ package("pangolin")
     end)
 
     on_install("windows", "linux", "macosx", "mingw", "msys", "wasm", function (package)
-        local configs = {"-DBUILD_EXAMPLES=OFF"}
+        io.replace("CMakeLists.txt", "-Werror=vla", "", {plain = true})
+        io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
+
+        local configs = {"-DBUILD_EXAMPLES=OFF", "-DBUILD_PANGOLIN_PYTHON=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:is_plat("windows") and package:is_debug() and package:config("shared") then
+            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=")
+        end
+
+        for _, dep in ipairs(deps) do
+            if package:config(dep) then
+                table.insert(configs, format("-DBUILD_PANGOLIN_%s=%s", dep:upper(), (package:config(dep) and "ON" or "OFF")))
+            end
+        end
         table.insert(configs, "-DBUILD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
 
         local opt = {}
         local glew = package:dep("glew")
-        if glew and not glew:config("shared") then
+        if glew and not glew:config("shared") and package:is_plat("windows", "mingw") then
             opt.cxflags = "-DGLEW_STATIC"
         end
         import("package.tools.cmake").install(package, configs, opt)
