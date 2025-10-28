@@ -3,16 +3,36 @@ package("libraw")
     set_description("LibRaw is a library for reading RAW files from digital cameras.")
     set_license("LGPL-2.1")
 
-    add_urls("https://github.com/LibRaw/LibRaw/archive/$(version).tar.gz")
-    add_urls("https://github.com/LibRaw/LibRaw.git")
+    add_urls("https://github.com/LibRaw/LibRaw/archive//refs/tags/$(version).tar.gz",
+             "https://github.com/LibRaw/LibRaw.git")
+
+    add_versions("0.21.4", "8baeb5253c746441fadad62e9c5c43ff4e414e41b0c45d6dcabccb542b2dff4b")
     add_versions("0.20.2", "dc1b486c2003435733043e4e05273477326e51c3ea554c6864a4eafaff1004a6")
     add_versions("0.19.5", "9a2a40418e4fb0ab908f6d384ff6f9075f4431f8e3d79a0e44e5a6ea9e75abdc")
+
+    add_configs("thread_safe", {description = "Build raw_r library with -pthread enabled", default = false, type = "boolean"})
+    add_configs("libjpeg", {description = "Build with libjpeg.", default = false, type = "boolean"})
+    add_configs("lcms", {description = "Build with LCMS.", default = false, type = "boolean"})
+    add_configs("jasper", {description = "Build with Jasper.", default = false, type = "boolean"})
 
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32")
     end
 
     on_load(function (package)
+        if package:config("libjpeg") then
+            package:add("deps", "libjpeg")
+            package:add("defines", "USE_JPEG", "USE_JPEG8")
+        end
+        if package:config("lcms") then
+            package:add("deps", "lcms")
+            package:add("defines", "USE_LCMS2")
+        end
+        if package:config("jasper") then
+            package:add("deps", "jasper")
+            package:add("defines", "USE_JASPER")
+        end
+
         if package:is_plat("windows") then
             package:add("defines", "WIN32")
         end
@@ -21,33 +41,13 @@ package("libraw")
         end
     end)
 
-    on_install("macosx", "linux", "windows", "mingw@windows", "iphoneos", function(package)
-        io.writefile("xmake.lua", [[
-            target("libraw")
-                set_kind("$(kind)")
-                if is_kind("shared") then
-                    add_defines("LIBRAW_BUILDLIB")
-                else
-                    add_defines("LIBRAW_NODLL")
-                end
-                if is_plat("windows") then
-                    add_defines("WIN32")
-                end
-                if is_plat("windows") or is_plat("mingw") then
-                    add_syslinks("ws2_32")
-                end
-                add_headerfiles("(libraw/*.h)")
-                add_includedirs(".")
-                add_files("src/libraw_cxx.cpp", "src/libraw_datastream.cpp", "src/libraw_c_api.cpp")
-                add_files("internal/dcraw_common.cpp", "internal/dcraw_fileio.cpp", "internal/demosaic_packs.cpp")
-        ]])
+    on_install(function(package)
         local configs = {}
-        if package:config("shared") then
-            configs.kind = "shared"
+        configs.ver = package:version_str()
+        for _, config in ipairs({"thread_safe", "libjpeg", "lcms", "jasper"}) do
+            configs[config] = package:config(config)
         end
-        if package:is_plat("linux") and package:config("pic") then
-            configs.cxflags = "-fPIC"
-        end
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
     end)
 
