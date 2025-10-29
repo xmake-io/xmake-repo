@@ -4,7 +4,7 @@ package("rendergraph")
     set_license("MIT")
 
     set_urls("https://github.com/DragonJoker/RenderGraph/archive/refs/tags/$(version).tar.gz",
-         "https://github.com/DragonJoker/RenderGraph.git")
+             "https://github.com/DragonJoker/RenderGraph.git")
 
     add_versions("v2.1.0", "a496e0b04944edd52cb6f131877559314a9d43e6964567a5d613df1989da0cb2")
     add_versions("v2.0.0", "9ab5bf4ef16fac2bec8633b1634843c97e3e244a556be62c942348e2462d0888")
@@ -37,17 +37,12 @@ package("rendergraph")
                 add_headerfiles("include/RenderGraph/PixelFormat.inl")
                 add_packages("vulkan-headers")
         ]])
-        local configs = {}
-        if package:config("shared") then
-            configs.kind = "shared"
-        end
-        import("package.tools.xmake").install(package, configs)
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            static void test()
-            {
+            void test() {
                 crg::ResourceHandler handler;
                 crg::FrameGraph graph{ handler, "test" };
             }
