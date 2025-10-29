@@ -31,8 +31,14 @@ package("pangolin")
 
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
 
+    add_links(
+        "pango_plot", "pango_tools", "pango_display", "pango_scene", "pango_geometry", "pango_glgeometry",
+        "pango_windowing", "pango_vars", "pango_opengl", "pango_image", "pango_video", "pango_packetstream", "pango_core",
+        "tinyobj"
+    )
+
     if is_plat("linux", "bsd") then
-        add_syslinks("pthread", "rt")
+        add_syslinks("EGL", "pthread", "rt")
     elseif is_plat("windows", "mingw") then
         add_syslinks("shlwapi", "gdi32", "user32", "shell32")
     elseif is_plat("macosx") then
@@ -111,6 +117,14 @@ package("pangolin")
         -- fix gcc15
         io.replace("components/pango_core/include/pangolin/factory/factory.h", "#include <map>", "#include <map>\n#include <cstdint>", {plain = true})
 
+        local glew = package:dep("glew")
+        if glew and not glew:config("shared") then
+            -- Only failed on mingw
+            io.replace("components/pango_opengl/CMakeLists.txt",
+                "target_link_libraries(${COMPONENT} PUBLIC ${GLEW_LIBRARY})",
+                "target_link_libraries(${COMPONENT} PRIVATE ${GLEW_LIBRARY})", {plain = true})
+        end
+
         local configs = {"-DBUILD_EXAMPLES=OFF", "-DBUILD_PANGOLIN_PYTHON=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -128,7 +142,6 @@ package("pangolin")
         table.insert(configs, "-DBUILD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
 
         local opt = {}
-        local glew = package:dep("glew")
         if glew and not glew:config("shared") and package:is_plat("windows", "mingw") then
             opt.cxflags = "-DGLEW_STATIC"
         end
