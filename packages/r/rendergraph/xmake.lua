@@ -1,11 +1,12 @@
 package("rendergraph")
-
     set_homepage("https://github.com/DragonJoker/RenderGraph/")
     set_description("Vulkan render graph management library.")
     set_license("MIT")
 
     set_urls("https://github.com/DragonJoker/RenderGraph/archive/refs/tags/$(version).tar.gz",
          "https://github.com/DragonJoker/RenderGraph.git")
+
+    add_versions("v2.1.0", "a496e0b04944edd52cb6f131877559314a9d43e6964567a5d613df1989da0cb2")
     add_versions("v1.4.1", "7096a6384165f98ec3fab995deba10523b42a4f170f9ad9473107bc03eb50a3d")
     add_versions("v1.4.0", "0009eac85885231069f7ba644d22a801e71505cc")
     add_versions("v1.3.0", "b9c68b6949c7b60ffb49f9b9997432aac5baec69")
@@ -15,8 +16,6 @@ package("rendergraph")
 
     add_deps("vulkan-headers")
 
-    add_links("RenderGraph")
-
     on_install("windows|x64", "macosx", "linux", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
@@ -25,7 +24,7 @@ package("rendergraph")
                 set_kind("$(kind)")
                 add_includedirs("include")
                 add_files("source/RenderGraph/**.cpp")
-                set_languages("c++17")
+                set_languages("c++20")
                 if is_plat("windows") then
                     if is_kind("shared") then
                         add_defines("RenderGraph_EXPORTS")
@@ -34,10 +33,11 @@ package("rendergraph")
                     end
                 end
                 add_headerfiles("include/(RenderGraph/**.hpp)")
+                add_headerfiles("include/RenderGraph/PixelFormat.inl")
                 add_packages("vulkan-headers")
         ]])
         local configs = {}
-        if package:config("shared") then 
+        if package:config("shared") then
             configs.kind = "shared"
         end
         import("package.tools.xmake").install(package, configs)
@@ -50,7 +50,7 @@ package("rendergraph")
                 crg::ResourceHandler handler;
                 crg::FrameGraph graph{ handler, "test" };
             }
-        ]]}, {configs = {languages = "cxx17"},
+        ]]}, {configs = {languages = "cxx20"},
             includes = {
                 "RenderGraph/FrameGraph.hpp",
                 "RenderGraph/ResourceHandler.hpp"}}))
