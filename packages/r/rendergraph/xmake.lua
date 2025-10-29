@@ -35,6 +35,7 @@ package("rendergraph")
                 end
                 add_headerfiles("include/(RenderGraph/**.hpp)")
                 add_headerfiles("include/RenderGraph/PixelFormat.inl")
+                add_headerfiles("include/RenderGraph/PixelFormat.enum")
                 add_packages("vulkan-headers")
         ]])
         import("package.tools.xmake").install(package)
