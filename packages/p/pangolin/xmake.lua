@@ -118,8 +118,7 @@ package("pangolin")
         io.replace("components/pango_core/include/pangolin/factory/factory.h", "#include <map>", "#include <map>\n#include <cstdint>", {plain = true})
 
         local glew = package:dep("glew")
-        if glew and not glew:config("shared") then
-            -- Only failed on mingw
+        if glew and not glew:config("shared") and package:is_plat("mingw") then
             io.replace("components/pango_opengl/CMakeLists.txt",
                 "target_link_libraries(${COMPONENT} PUBLIC ${GLEW_LIBRARY})",
                 "target_link_libraries(${COMPONENT} PRIVATE ${GLEW_LIBRARY})", {plain = true})
