@@ -17,6 +17,12 @@ package("rendergraph")
 
     add_deps("vulkan-headers")
 
+    on_load("windows", function (package)
+        if not package:config("shared") then
+            package:add("defines", "CRG_BUILD_STATIC")
+        end
+    end)
+
     on_install("windows|x64", "macosx", "linux", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
