@@ -39,7 +39,7 @@ package("simdjson")
         end
     end)
 
-    on_install("windows|x64", "mingw|x86_64", "macosx|x86_64", "linux|x86_64", "linux|arm64", "iphoneos|arm64", function(package)
+    on_install("windows|x64", "mingw|x86_64", "macosx|x86_64", "macosx|arm64", "linux|x86_64", "linux|arm64", "iphoneos|arm64", function(package)
         local configs = {}
         if package:config("shared") then
             configs.kind = "shared"
