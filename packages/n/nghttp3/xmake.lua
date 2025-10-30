@@ -36,11 +36,13 @@ package("nghttp3")
     on_install(function (package)
         io.replace("CMakeLists.txt", [[set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")]], "", {plain = true})
         if package:version() and package:version():ge("1.11.0") then
-            io.replace("lib/CMakeLists.txt", [[sfparse/sfparse.c]], "", {plain = true})
-            io.replace("lib/CMakeLists.txt", [[add_library(nghttp3 SHARED ${nghttp3_SOURCES})]], [[add_library(nghttp3 SHARED ${nghttp3_SOURCES})
-  target_link_libraries(nghttp3 sfparse)]], {plain = true})
-            io.replace("lib/CMakeLists.txt", [[add_library(nghttp3_static STATIC ${nghttp3_SOURCES})]], [[add_library(nghttp3_static STATIC ${nghttp3_SOURCES})
-  target_link_libraries(nghttp3_static sfparse)]], {plain = true})
+            io.replace("lib/CMakeLists.txt", "sfparse/sfparse.c", "", {plain = true})
+            io.replace("lib/CMakeLists.txt",
+                "add_library(nghttp3 SHARED ${nghttp3_SOURCES})",
+                "add_library(nghttp3 SHARED ${nghttp3_SOURCES})\ntarget_link_libraries(nghttp3 sfparse)", {plain = true})
+            io.replace("lib/CMakeLists.txt",
+                "add_library(nghttp3_static STATIC ${nghttp3_SOURCES})",
+                "add_library(nghttp3_static STATIC ${nghttp3_SOURCES})\ntarget_link_libraries(nghttp3_static sfparse)", {plain = true})
         end
 
         local configs = {"-DENABLE_LIB_ONLY=ON", "-DBUILD_TESTING=OFF"}
@@ -48,7 +50,7 @@ package("nghttp3")
         table.insert(configs, "-DENABLE_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_STATIC_LIB=" .. (package:config("shared") and "OFF" or "ON"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DENABLE_STATIC_CRT=" .. (package:runtimes():startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DENABLE_STATIC_CRT=" .. (package:has_runtime("MT") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs, {packagedeps = "sfparse"})
     end)
