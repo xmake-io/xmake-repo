@@ -10,13 +10,10 @@ package("metal-cpp")
                 ["12"]   = "macOS12_iOS15",
                 ["13"]   = "macOS13_iOS16",      -- 13.0
                 ["13.3"] = "macOS13.3_iOS16.4",
-                ["14"]   = "macOS14_iOS17-beta", -- 14.0
                 ["14.2"] = "macOS14.2_iOS17.2",
-                ["15b"]  = "macOS15_iOS18-beta",
                 ["15"]   = "macOS15_iOS18",      -- 15.0
                 ["15.2"] = "macOS15.2_iOS18.2",
-                ["26b1"] = "macOS26_iOS26-beta",
-                ["26b2"] = "macOS26_iOS26-beta2"
+                ["26"]   = "26",
             }
             return versions[tostring(version)]
         end})
@@ -24,13 +21,10 @@ package("metal-cpp")
     add_versions("12",   "a4e2d4668951b6f2595618ed8c5dc514fc94fda5487fc722b1c1ff29d7b524f7")
     add_versions("13",   "6f741894229e9c750add1afc3797274fc008c7507e2ae726370c17c34b7c6a68")
     add_versions("13.3", "0afd87ca851465191ae4e3980aa036c7e9e02fe32e7c760ac1a74244aae6023b")
-    add_versions("14",   "2009a339ecbd56b36601435fe08c415749f8ad09145755472bb637b319003367")
     add_versions("14.2", "d800ddbc3fccabce3a513f975eeafd4057e07a29e905ad5aaef8c1f4e12d9ada")
-    add_versions("15b",  "d0a7990f43c7ce666036b5649283c9965df2f19a4a41570af0617bbe93b4a6e5")
     add_versions("15",   "0433df1e0ab13c2b0becbd78665071e3fa28381e9714a3fce28a497892b8a184")
     add_versions("15.2", "3437e4abfbd3d45217f34772ef3502f31ba3358e5fb6ac9d0ca952a047bcfe25")
-    add_versions("26b1", "3778084a9b50be7f3dd3edfb127b77b2dcef75c4c71dc23583abb4f8df8bf62d")
-    add_versions("26b2", "4f0e62aac6a875616d8e86a1cb206158312e52b34de72716773b3785eeb12dc6")
+    add_versions("26",   "4df3c078b9aadcb516212e9cb03004cbc5ce9a3e9c068fa3144d021db585a3a4")
 
     -- todo:Move metal-cpp-extensions to github
     add_resources("*", "LearnMetalCPP", "https://developer.apple.com/metal/LearnMetalCPP.zip", "a709f3c0b532d5b9e3a5db3da3a35f3b783af27eb50f23a711115c02f86a256d")
