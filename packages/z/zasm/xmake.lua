@@ -54,7 +54,7 @@ package("zasm")
 
         io.writefile("xmake.lua", format([[
             add_rules("mode.debug", "mode.release")
-            add_requires("zydis v4.0.0")
+            add_requires("zydis %s")
             target("zasm")
                 set_kind("$(kind)")
                 set_languages("c++17")
@@ -66,7 +66,7 @@ package("zasm")
                     end
                 end
                 add_packages("zydis")
-        ]], src_include))
+        ]], package:dep("zydis"):version(), src_include))
         import("package.tools.xmake").install(package)
     end)
 
