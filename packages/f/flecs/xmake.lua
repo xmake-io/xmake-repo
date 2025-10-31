@@ -62,5 +62,5 @@ package("flecs")
             void test() {
                 flecs::world ecs;
             }
-        ]]}, {configs = {languages = "c++14"}, includes = "flecs.h"}))
+        ]]}, {configs = {languages = "c++17"}, includes = "flecs.h"}))
     end)
