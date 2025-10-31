@@ -15,8 +15,8 @@ package("libsdl3")
              "https://github.com/libsdl-org/SDL/releases/download/release-$(version)/SDL3-$(version).zip", { alias = "archive" })
     add_urls("https://github.com/libsdl-org/SDL.git", { alias = "github" })
 
-    add_versions("archive:3.2.22", "3d60068b1e5c83c66bb14c325dfef46f8fcc380735b4591de6f5e7b9738929d1")
     add_versions("archive:3.2.26", "739356eef1192fff9d641c320a8f5ef4a10506b8927def4b9ceb764c7e947369")
+    add_versions("archive:3.2.22", "3d60068b1e5c83c66bb14c325dfef46f8fcc380735b4591de6f5e7b9738929d1")
     add_versions("archive:3.2.16", "0cc7430fb827c1f843e31b8b26ba7f083b1eeb8f6315a65d3744fd4d25b6c373")
     add_versions("archive:3.2.14", "46a17d3ea71fe2580a7f43ca7da286c5b9106dd761e2fd5533bb113e5d86b633")
     add_versions("archive:3.2.10", "01d9ab20fc071b076be91df5396b464b4ef159e93b2b2addda1cc36750fc1f29")
@@ -25,8 +25,8 @@ package("libsdl3")
     add_versions("archive:3.2.2", "58d8adc7068d38923f918e0bdaa9c4948f93d9ba204fe4de8cc6eaaf77ad6f82")
     add_versions("archive:3.2.0", "abe7114fa42edcc8097856787fa5d37f256d97e365b71368b60764fe7c10e4f8")
 
-    add_versions("github:3.2.22", "release-3.2.22")
     add_versions("github:3.2.26", "release-3.2.26")
+    add_versions("github:3.2.22", "release-3.2.22")
     add_versions("github:3.2.16", "release-3.2.16")
     add_versions("github:3.2.14", "release-3.2.14")
     add_versions("github:3.2.10", "release-3.2.10")
@@ -53,10 +53,6 @@ package("libsdl3")
                 package:config_set("wayland", true)
             end
         end
-        if package:config("shared") then
-            package:add("defines", "DLL_EXPORT")
-        end
-
         if package:is_plat("windows") then
             package:add("deps", "ninja")
             package:set("policy", "package.cmake_generator.ninja", true)
