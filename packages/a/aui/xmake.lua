@@ -280,7 +280,6 @@ package("aui")
     end)
 
     on_install("windows", "macosx", "linux", function (package)
-        io.replace("aui.views/src/AUI/Render/IRenderer.h", "#include <glm/glm.hpp>", "#include <glm/glm.hpp>\n#include <glm/gtc/matrix_transform.hpp>", {plain = true})
         local configs = {
             "-DAUI_INSTALL_RUNTIME_DEPENDENCIES=OFF",
             "-DAUIB_NO_PRECOMPILED=TRUE",
