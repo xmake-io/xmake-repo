@@ -49,7 +49,7 @@ package("sentry-native")
         add_syslinks("dl", "log")
     elseif is_plat("macosx") then
         add_deps("libcurl")
-        add_frameworks("CoreText", "CoreGraphics", "SystemConfiguration", "CoreFoundation", "Foundation")
+        add_frameworks("CoreText", "CoreGraphics", "SystemConfiguration", "CoreFoundation", "Foundation", "IOKit")
         add_syslinks("bsm")
     end
 
