@@ -20,7 +20,13 @@ package("imgui-file-dialog")
         add_deps("dirent")
     end
 
-    on_install("windows", "linux", "macosx", "mingw", "android", function (package)
+    on_check("mingw|i386", function (package)
+        if package:version() and package:version():ge("0.6.8") then
+            raise("package(imgui-file-dialog >0.6.8) does not support i386 mingw build")
+        end
+    end)
+
+    on_install(function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
             add_requires("imgui")
