@@ -1,0 +1,12 @@
+diff --git a/sw/src/TabControl.cpp b/sw/src/TabControl.cpp
+index 9cb47965..2dd31cd4 100644
+--- a/sw/src/TabControl.cpp
++++ b/sw/src/TabControl.cpp
+@@ -1,6 +1,7 @@
+ #include "TabControl.h"
+ #include "Utils.h"
+ #include <cmath>
++#include <limits>
+ 
+ sw::TabControl::TabControl()
+     : ContentRect(

@@ -8,6 +8,8 @@ package("simplewindow")
     
     add_versions("0.0.7", "b06d6d7840b40bac1c7c7c145d95c723a155581951b2ac3a6679b81b11a17adf")
 
+    add_patches("0.0.7", path.join(os.scriptdir(), "patches", "0.0.7", "mingw.patch"), "b4c63bf701fdb05ec9220102feaec4b5bd5c676ccd54e0a9e2bce46c4039ac56")
+
     if is_plat("windows", "mingw") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
