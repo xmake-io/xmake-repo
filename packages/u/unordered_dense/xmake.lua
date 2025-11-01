@@ -6,6 +6,7 @@ package("unordered_dense")
 
     add_urls("https://github.com/martinus/unordered_dense/archive/refs/tags/$(version).tar.gz",
              "https://github.com/martinus/unordered_dense.git")
+    add_versions("v4.8.0", "29214a96de12959d8d0342a235c26d6f246c3f3e75f4bc135b6e784753513ead")
     add_versions("v1.1.0", "b47d8590afdc32b306272a6bcb15d5464462f3cd3d44653648924a1e10d1e78c")
     add_versions("v1.4.0", "36b6bfe2fe2633f9d9c537b9b808b4be6b77ff51c66d370d855f477517bc3bc9")
     add_versions("v2.0.2", "d4be48c164fa2f49deb55354b33c335688da3bd4b2299b3a46b8092602f67556")
