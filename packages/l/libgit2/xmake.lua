@@ -148,10 +148,6 @@ package("libgit2")
             table.insert(configs, "-DDLLTOOL=" .. dlltool)
         end
         import("package.tools.cmake").install(package, configs, opt)
-        if package:is_plat("linux") and linuxos.name() == "fedora" then
-            io.replace(path.join(package:installdir("lib/pkgconfig"), "libgit2.pc"),
-                "Requires.private: openssl ", "Requires.private: openssl3 ", {plain = true})
-        end
     end)
 
     on_test(function (package)
