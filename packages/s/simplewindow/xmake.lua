@@ -20,7 +20,7 @@ package("simplewindow")
 
     on_install("windows", "mingw@windows,msys", function (package)
         if package:has_tool("cxx", "cl") then
-            package:add("cxxflags", "/utf-8")
+            package:add("cxxflags", "/source-charset:utf-8")
         end
 
         os.cd("sw")
