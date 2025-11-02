@@ -7,6 +7,7 @@ package("samurai")
     add_urls("https://github.com/hpc-maths/samurai/archive/refs/tags/$(version).tar.gz",
              "https://github.com/hpc-maths/samurai.git")
 
+    add_versions("v0.26.1", "07971b2c5359cc33f5e3fb3f4f7d156b6aed91441139a1ae133378ba25e46d7a")
     add_versions("v0.25.1", "6eb053138161d4823ad4e2d400add581b0a70402d59513fd855af6b625f48bfe")
     add_versions("v0.23.0", "7f0c626b5f5671e40dc2d35c520db69c30444083b247eba1a5dc026a519b4ce3")
     add_versions("v0.22.0", "65a087ba0eb461f75b3ee4cf7725432d8c92f2a1af42220d6b233279a432429b")
@@ -19,7 +20,15 @@ package("samurai")
     add_versions("v0.10.0", "06739ad6ddc6d62396669e8c0a3806a375c88f3a9345519ae1c1415666229c16")
     add_versions("v0.6.0", "bab96adac8e1553b79678a22de2248bec67c7c205b5fd35e9e1aaccaca41286e")
 
-    add_deps("xtensor <0.26.0", "highfive", "pugixml", "fmt")
+    add_deps("highfive", "pugixml", "fmt")
+
+    on_load(function (package)
+        if package:version() and package:version():ge("0.27.0") then
+            package:add("deps", "xtensor")
+        else
+            package:add("deps", "xtensor <=0.25.0")
+        end
+    end)
 
     on_install("windows|!arm64", "linux", "macosx|!arm64", function (package)
         os.cp("include", package:installdir())
