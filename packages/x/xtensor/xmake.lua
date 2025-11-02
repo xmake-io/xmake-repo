@@ -17,7 +17,7 @@ package("xtensor")
     add_versions("0.24.0", "37738aa0865350b39f048e638735c05d78b5331073b6329693e8b8f0902df713")
     add_versions("0.23.10", "2e770a6d636962eedc868fef4930b919e26efe783cd5d8732c11e14cf72d871c")
 
-    add_patches("0.25.0", "https://patch-diff.githubusercontent.com/raw/xtensor-stack/xtensor/pull/2833.patch", "809e9009286d6ab56cd07531b8055a45d08a140066f5ba0db2e957cfee5d56a4")
+    add_patches("0.25.0", "patches/0.25.0/clang19_build.patch", "b40ef789b39dad40d8f97b73793a5d0377e6165f99a49a8fddde45ff66ed87a2")
 
     add_configs("simd", {description = "Enable SIMD acceleration ", default = true, type = "boolean"})
     add_configs("tbb", {description = "Enable parallelization using intel TBB", default = false, type = "boolean"})
