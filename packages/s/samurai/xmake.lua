@@ -36,7 +36,7 @@ package("samurai")
     end)
 
     on_test(function (package)
-        local cpp_ver = package:version():ge("0.20.0") and "c++20" or "c++17"
+        local cpp_ver = (package:version() and package:version():ge("0.20.0")) and "c++20" or "c++17"
         assert(package:check_cxxsnippets({test = [[
             #include <samurai/cell_list.hpp>
             void test() {
