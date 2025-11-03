@@ -20,6 +20,11 @@ package("bdwgc")
                 assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(bdwgc/armeabi-v7a): need ndk api level > 21")
             end
         end)
+        on_check("mingw", function (target)
+            if package:version() and package:version():eq("8.2.4") then
+                raise("package(bdwgc 8.2.4) unsupported mingw")
+            end
+        end)
     end
 
     on_install("!wasm", function (package)
