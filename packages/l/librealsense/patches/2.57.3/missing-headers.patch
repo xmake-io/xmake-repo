@@ -36,6 +36,32 @@ index 13c8f536b..ce58e9ce0 100644
  #include "platform-utils.h"
  
  #include "uvc-device-info.h"
+diff --git a/src/source.h b/src/source.h
+index 819b99e3e..d9b9be951 100644
+--- a/src/source.h
++++ b/src/source.h
+@@ -3,7 +3,7 @@
+ 
+ #pragma once
+ 
+-
++#include <algorithm>
+ #include <librealsense2/hpp/rs_types.hpp>
+ #include <src/frame-archive.h>
+ 
+diff --git a/src/types.cpp b/src/types.cpp
+index 226b464b3..e13ffd3ce 100644
+--- a/src/types.cpp
++++ b/src/types.cpp
+@@ -6,7 +6,7 @@
+ #include "librealsense-exception.h"
+ #include <librealsense2/hpp/rs_processing.hpp>
+ #include <ostream>
+-
++#include <cmath>
+ 
+ std::ostream & operator<<( std::ostream & out, rs2_extrinsics const & e )
+ {
 diff --git a/third-party/rsutils/src/control-c-handler.cpp b/third-party/rsutils/src/control-c-handler.cpp
 index 53f5e1e2b..90df42de7 100644
 --- a/third-party/rsutils/src/control-c-handler.cpp

@@ -8,7 +8,7 @@ package("librealsense")
 
     add_versions("v2.57.4", "3e82f9b545d9345fd544bb65f8bf7943969fb40bcfc73d983e7c2ffcdc05eaeb")
 
-    add_patches(">=2.57.3", "patches/2.57.3/missing-headers.patch", "1953622988a68e2775f66d112f16988548838690e5235ae16898283362963cb7")
+    add_patches(">=2.57.3", "patches/2.57.3/missing-headers.patch", "13834e38528e5009cdffc653515602f32a72e042497457c424de684ff5c69723")
 
     add_configs("cuda", {description = "Enable CUDA", default = false, type = "boolean"})
     add_configs("openmp", {description = "Use OpenMP", default = false, type = "boolean"})
@@ -16,6 +16,12 @@ package("librealsense")
     add_configs("check_for_updates", {description = "Checks for versions updates", default = false, type = "boolean"})
 
     add_links("realsense2", "realsense-file", "rsutils")
+
+    if is_plat("windows", "mingw") then
+        add_syslinks("advapi32", "shell32")
+    elseif is_plat("macosx") then
+        add_frameworks("Security")
+    end
 
     add_deps("cmake")
     add_deps("libusb", "lz4")
@@ -56,6 +62,11 @@ package("librealsense")
             io.replace("tools/realsense-viewer/CMakeLists.txt", "set(RS_VIEWER_LIBS ${RS_VIEWER_LIBS} curl)", "set(RS_VIEWER_LIBS ${RS_VIEWER_LIBS} CURL::libcurl)", {plain = true})
         end
 
+        io.replace("src/basics.h", "WIN32", "_WIN32", {plain = true})
+        if package:is_plat("windows") and not package:config("shared") then
+            io.replace("src/basics.h", "__declspec(dllexport)", "", {plain = true})
+        end
+
         local configs = {
             "-DENABLE_CCACHE=OFF",
             "-DBUILD_EXAMPLES=OFF",
@@ -73,6 +84,10 @@ package("librealsense")
         table.insert(configs, "-DBUILD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
         table.insert(configs, "-DCHECK_FOR_UPDATES=" .. (package:config("check_for_updates") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, opt)
+
+        if package:is_plat("windows") and package:config("shared") then
+            io.replace("src/basics.h", "__declspec(dllexport)", "__declspec(dllimport)", {plain = true})
+        end
     end)
 
     on_test(function (package)
