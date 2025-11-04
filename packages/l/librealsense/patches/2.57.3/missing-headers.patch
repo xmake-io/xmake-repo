@@ -1,5 +1,5 @@
 diff --git a/src/librealsense-exception.h b/src/librealsense-exception.h
-index ec0f4785..9dcfa13a 100644
+index ec0f47854..9dcfa13a9 100644
 --- a/src/librealsense-exception.h
 +++ b/src/librealsense-exception.h
 @@ -9,7 +9,7 @@
@@ -12,7 +12,7 @@ index ec0f4785..9dcfa13a 100644
  namespace librealsense {
  
 diff --git a/src/linux/backend-hid.h b/src/linux/backend-hid.h
-index 20d5e731..ed88df56 100644
+index 20d5e7319..ed88df564 100644
 --- a/src/linux/backend-hid.h
 +++ b/src/linux/backend-hid.h
 @@ -7,6 +7,7 @@
@@ -24,7 +24,7 @@ index 20d5e731..ed88df56 100644
  namespace librealsense
  {
 diff --git a/src/platform/platform-utils.cpp b/src/platform/platform-utils.cpp
-index 13c8f536..ce58e9ce 100644
+index 13c8f536b..ce58e9ce0 100644
 --- a/src/platform/platform-utils.cpp
 +++ b/src/platform/platform-utils.cpp
 @@ -1,6 +1,7 @@
@@ -36,8 +36,21 @@ index 13c8f536..ce58e9ce 100644
  #include "platform-utils.h"
  
  #include "uvc-device-info.h"
+diff --git a/third-party/rsutils/src/control-c-handler.cpp b/third-party/rsutils/src/control-c-handler.cpp
+index 53f5e1e2b..90df42de7 100644
+--- a/third-party/rsutils/src/control-c-handler.cpp
++++ b/third-party/rsutils/src/control-c-handler.cpp
+@@ -6,7 +6,7 @@
+ 
+ #include <signal.h>
+ #include <atomic>
+-
++#include <stdexcept>
+ 
+ namespace rsutils {
+ namespace concurrency {
 diff --git a/third-party/rsutils/src/network-adapter-watcher.cpp b/third-party/rsutils/src/network-adapter-watcher.cpp
-index 9ce5001a..3ae1f139 100644
+index 9ce5001a8..3ae1f1398 100644
 --- a/third-party/rsutils/src/network-adapter-watcher.cpp
 +++ b/third-party/rsutils/src/network-adapter-watcher.cpp
 @@ -1,6 +1,7 @@
@@ -50,7 +63,7 @@ index 9ce5001a..3ae1f139 100644
  #include <rsutils/shared-ptr-singleton.h>
  #include <rsutils/signal.h>
 diff --git a/third-party/rsutils/src/special-folder.cpp b/third-party/rsutils/src/special-folder.cpp
-index bab2330a..220221c1 100644
+index bab2330a9..220221c1e 100644
 --- a/third-party/rsutils/src/special-folder.cpp
 +++ b/third-party/rsutils/src/special-folder.cpp
 @@ -1,6 +1,6 @@
