@@ -8,7 +8,7 @@ package("librealsense")
 
     add_versions("v2.57.4", "3e82f9b545d9345fd544bb65f8bf7943969fb40bcfc73d983e7c2ffcdc05eaeb")
 
-    add_patches(">=2.57.3", "patches/2.57.3/missing-headers.patch", "2dc30960bd455dc4e8632da7f74515df0f8a924f746361f74d48fed6bed96102")
+    add_patches(">=2.57.3", "patches/2.57.3/missing-headers.patch", "0d84a0bc27a188ab24e906e48ff9f1c23307a8824a7f266758414cc0a19bf387")
 
     add_configs("cuda", {description = "Enable CUDA", default = false, type = "boolean"})
     add_configs("openmp", {description = "Use OpenMP", default = false, type = "boolean"})
