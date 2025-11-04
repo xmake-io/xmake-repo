@@ -32,7 +32,7 @@ package("lz4")
     on_install(function (package)
         if package:config("cmake") then
             if package:version() and package:version():le("1.10.0") then
-            io.writefile("build/cmake/lz4Config.cmake.in", [[@PACKAGE_INIT@
+                io.writefile("build/cmake/lz4Config.cmake.in", [[@PACKAGE_INIT@
 include( "${CMAKE_CURRENT_LIST_DIR}/lz4Targets.cmake" )
 if(NOT TARGET lz4::lz4)
     add_library(lz4::lz4 INTERFACE IMPORTED)
