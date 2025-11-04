@@ -17,6 +17,7 @@ package("unordered_dense")
     add_versions("v4.6.0", "f8c1787cc8ce9028f02e2a09fefbb6c89d5fa3fd4c2c3475faabbb531c9b2ab0")
     add_versions("v4.7.0", "73ce8ec4784619be4d6e54f2c4cb95d4d8dbc1fbbf24b5cf1e93b157bfa1043d")
     add_versions("v4.8.0", "29214a96de12959d8d0342a235c26d6f246c3f3e75f4bc135b6e784753513ead")
+    add_versions("v4.8.1", "9f7202ec6d8353932ef865d33f5872e4b7a1356e9032da7cd09c3a0c5bb2b7de")
 
     add_configs("modules", {description = "Build with C++20 modules support.", default = false, type = "boolean"})
 
