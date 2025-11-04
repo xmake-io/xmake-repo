@@ -31,6 +31,19 @@ package("lz4")
 
     on_install(function (package)
         if package:config("cmake") then
+            if package:version() and package:version():le("1.10.0") then
+                io.writefile("build/cmake/lz4Config.cmake.in", [[@PACKAGE_INIT@
+include( "${CMAKE_CURRENT_LIST_DIR}/lz4Targets.cmake" )
+if(NOT TARGET lz4::lz4)
+    add_library(lz4::lz4 INTERFACE IMPORTED)
+    if("@BUILD_SHARED_LIBS@")
+        set_target_properties(lz4::lz4 PROPERTIES INTERFACE_LINK_LIBRARIES LZ4::lz4_shared)
+    else()
+        set_target_properties(lz4::lz4 PROPERTIES INTERFACE_LINK_LIBRARIES LZ4::lz4_static)
+    endif()
+endif()]])
+            end
+
             local configs = {}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -44,7 +57,7 @@ package("lz4")
             io.writefile("xmake.lua", ([[
                 set_version("%s")
                 option("tools", {default = false})
-                add_rules("mode.debug", "mode.release")
+                add_rules("mode.debug", "mode.release", "utils.install.cmake_importfiles")
                 target("lz4")
                     set_kind("$(kind)")
                     add_rules("utils.install.pkgconfig_importfiles", {filename = "liblz4.pc"})
@@ -77,4 +90,7 @@ package("lz4")
 
     on_test(function (package)
         assert(package:has_cfuncs("LZ4_compress_default", {includes = {"lz4.h"}}))
+        if package.check_importfiles then
+            package:check_importfiles("cmake::lz4", {configs = {link_libraries = "lz4::lz4"}})
+        end
     end)
