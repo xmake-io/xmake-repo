@@ -3,8 +3,9 @@ package("libiconv")
     set_description("Character set conversion library.")
     set_license("LGPL-2.0")
 
-    set_urls("https://ftpmirror.gnu.org/gnu/libiconv/libiconv-$(version).tar.gz",
-             "https://ftp.gnu.org/gnu/libiconv/libiconv-$(version).tar.gz")
+    set_urls("https://ftp.gnu.org/gnu/libiconv/libiconv-$(version).tar.gz",
+             "https://mirrors.ustc.edu.cn/gnu/libiconv/libiconv-$(version).tar.gz",
+             "https://mirror.csclub.uwaterloo.ca/gnu/libiconv/libiconv-$(version).tar.gz")
 
     add_versions("1.18", "3b08f5f4f9b4eb82f151a7040bfd6fe6c6fb922efe4b1659c66ea933276965e8")
     add_versions("1.17", "8f74213b56238c85a50a5329f77e06198771e70dd9a739779f4c02f65d971313")
