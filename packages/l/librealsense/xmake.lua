@@ -43,7 +43,7 @@ package("librealsense")
         end
     end)
 
-    on_install("!wasm and !mingw and (!windows or windows|!arm*)", function (package)
+    on_install("!cross and !wasm and !mingw and (!windows or windows|!arm*)", function (package)
         -- nlohmann_json
         io.replace("third-party/CMakeLists.txt", "include(CMake/external_json.cmake)", "", {plain = true})
         io.replace("third-party/rsutils/CMakeLists.txt", "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/third-party/json/include>", "", {plain = true})
@@ -57,7 +57,7 @@ package("librealsense")
         if package:is_plat("linux") then
             io.replace("src/linux/CMakeLists.txt", "target_link_libraries(${LRS_TARGET} PRIVATE udev)", "target_link_libraries(${LRS_TARGET} PRIVATE ${UDEV_LIBRARIES})", {plain = true})
         elseif package:is_plat("macosx") then
-            io.replace("CMake/libusb_config.cmake", "${LIBUSB_LIB}", "${LIBUSB_LIB} CoreFoundation IOKit Security", {plain = true})
+            io.replace("CMake/libusb_config.cmake", "${LIBUSB_LIB}", "${LIBUSB_LIB} -framework CoreFoundation -framework IOKit -framework Security", {plain = true})
         end
         -- libcurl
         if package:config("tools") and package:config("check_for_updates") then
