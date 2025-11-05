@@ -6,6 +6,10 @@ package("subhook")
     add_urls("https://github.com/Zeex/subhook.git")
     add_versions("2023.02.10", "e935959d2f9cc642bcbb5e7759b2b1e7196b0947")
 
+    on_load(function (package)
+        raise("package(subhook) is no longer public (Updated at 2025/11/05).")
+    end)
+
     on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", "mingw", "msys", function (package)
         if (not package:config("shared")) and package:is_plat("windows", "mingw") then
             package:add("defines", "SUBHOOK_STATIC")
