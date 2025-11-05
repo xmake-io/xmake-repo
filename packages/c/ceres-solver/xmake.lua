@@ -29,7 +29,7 @@ package("ceres-solver")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "bsd", function (package)
+    on_install("windows|x64", "windows|x86", "linux", "macosx", function (package)
         local configs = {
             "-DBUILD_TESTING=OFF",
             "-DBUILD_DOCUMENTATION=OFF",
