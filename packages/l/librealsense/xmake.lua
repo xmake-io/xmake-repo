@@ -43,7 +43,8 @@ package("librealsense")
         end
     end)
 
-    on_install(function (package)
+    on_install("!wasm and !mingw and (!windows or windows|!arm*)", function (package)
+        -- nlohmann_json
         io.replace("third-party/CMakeLists.txt", "include(CMake/external_json.cmake)", "", {plain = true})
         io.replace("third-party/rsutils/CMakeLists.txt", "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/third-party/json/include>", "", {plain = true})
         local file = io.open("third-party/rsutils/CMakeLists.txt", "a")
@@ -52,8 +53,13 @@ package("librealsense")
             file:print("target_link_libraries(${PROJECT_NAME} PUBLIC $<BUILD_LOCAL_INTERFACE:nlohmann_json::nlohmann_json>)")
             file:close()
         end
-
-        io.replace("src/linux/CMakeLists.txt", "target_link_libraries(${LRS_TARGET} PRIVATE udev)", "target_link_libraries(${LRS_TARGET} PRIVATE ${UDEV_LIBRARIES})", {plain = true})
+        -- libusb
+        if package:is_plat("linux") then
+            io.replace("src/linux/CMakeLists.txt", "target_link_libraries(${LRS_TARGET} PRIVATE udev)", "target_link_libraries(${LRS_TARGET} PRIVATE ${UDEV_LIBRARIES})", {plain = true})
+        elseif package:is_plat("macosx") then
+            io.replace("CMake/libusb_config.cmake", "${LIBUSB_LIB}", "${LIBUSB_LIB} CoreFoundation IOKit Security", {plain = true})
+        end
+        -- libcurl
         if package:config("tools") and package:config("check_for_updates") then
             io.replace("CMake/global_config.cmake", "include(CMake/external_libcurl.cmake)", "find_package(CURL REQUIRED)", {plain = true})
             io.replace("tools/depth-quality/CMakeLists.txt", "add_dependencies(${PROJECT_NAME} libcurl)", "", {plain = true})
@@ -61,11 +67,8 @@ package("librealsense")
             io.replace("tools/realsense-viewer/CMakeLists.txt", "add_dependencies(${PROJECT_NAME} libcurl)", "", {plain = true})
             io.replace("tools/realsense-viewer/CMakeLists.txt", "set(RS_VIEWER_LIBS ${RS_VIEWER_LIBS} curl)", "set(RS_VIEWER_LIBS ${RS_VIEWER_LIBS} CURL::libcurl)", {plain = true})
         end
-
-        io.replace("src/basics.h", "WIN32", "_WIN32", {plain = true})
-        if package:is_plat("windows") and not package:config("shared") then
-            io.replace("src/basics.h", "__declspec(dllexport)", "", {plain = true})
-        end
+        -- fix links
+        io.replace("CMake/windows_config.cmake", [[set(CMAKE_DEBUG_POSTFIX "d")]], "", {plain = true})
 
         local configs = {
             "-DENABLE_CCACHE=OFF",
@@ -83,11 +86,7 @@ package("librealsense")
         table.insert(configs, "-DBUILD_WITH_OPENMP=" .. (package:config("openmp") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
         table.insert(configs, "-DCHECK_FOR_UPDATES=" .. (package:config("check_for_updates") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs, opt)
-
-        if package:is_plat("windows") and package:config("shared") then
-            io.replace("src/basics.h", "__declspec(dllexport)", "__declspec(dllimport)", {plain = true})
-        end
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
