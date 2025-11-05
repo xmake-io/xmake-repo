@@ -119,7 +119,7 @@ function _report_issue(instance)
         os.vexec("gh issue create --title \"%s\" --body \"%s\" --label \"help wanted, auto-update\" -R xmake-io/xmake-repo",
             title, body)
     else
-        print("Found know open issue #%s for package %s", curr_open_issue, package_name)
+        print("Found a known open issue #%s for package %s", curr_open_issue, package_name)
     end
 end
 
