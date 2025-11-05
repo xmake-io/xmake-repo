@@ -25,7 +25,7 @@ package("luisa-compute")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/LuisaGroup/LuisaCompute.git", {submodules = false})
-    add_versions("2025.11.04", "edf39a37924e89608cc3198e196cd1004ceb6c0c")
+    add_versions("2025.11.05", "f363db428873120924880e28d3a284202edb237a")
 
     add_configs("cuda", {description = "Enable CUDA backend", default = false, type = "boolean"})
     add_configs("vulkan", {description = "Enable Vulkan backend", default = false, type = "boolean"})
@@ -68,6 +68,9 @@ package("luisa-compute")
     add_deps("cmake", "pkgconf")
     add_deps("spdlog", {configs = {header_only = false, fmt_external = true}})
     add_deps("lmdb", "reproc", "xxhash", "yyjson", "magic_enum", "marl", "stb") -- TODO: half
+    if is_plat("linux") then
+        add_deps("libuuid")
+    end
 
     on_check(function (package)
         assert(package:is_arch64(), "package(luisa-compute) only support 64 bit")
