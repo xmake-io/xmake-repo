@@ -1,5 +1,4 @@
 package("dynareadout")
-
     set_homepage("https://github.com/PucklaJ/dynareadout")
     set_description("High-Performance C/C++ library for parsing binary output files and key files of LS Dyna (d3plot, binout, input deck)")
     set_license("zlib")
@@ -30,6 +29,8 @@ package("dynareadout")
     add_configs("thread_safe", {description = "Build with synchronisation for thread safety", default = true,  type = "boolean"})
 
     on_load(function (package)
+        raise("package(dynareadout) is no longer public (Updated at 2025/11/05).")
+
         if package:config("cpp") then
             package:add("links", "dynareadout_cpp", "dynareadout")
         else
