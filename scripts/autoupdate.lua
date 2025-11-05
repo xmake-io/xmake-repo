@@ -116,10 +116,10 @@ function _report_issue(instance)
         local body = string.format("Failed to get tags of %s, which may be due to changes in repository visibility.",
             package_name)
         local title = "[auto-update] " .. package_name .. " requires manual handling."
-        os.vexec("gh issue create --title \"%s\" --body \"%s\" --label \"help wanted, auto-update\" -R xmake-io/xmake-repo",
+        os.vexec("gh issue create --title \"%s\" --body \"%s\" --label \"help wanted,auto-update\" -R xmake-io/xmake-repo",
             title, body)
     else
-        print("Found a known open issue #%s for package %s", curr_open_issue, package_name)
+        print("Found a known open issue #%s for package %s", curr_open_issue:trim(), package_name)
     end
 end
 
