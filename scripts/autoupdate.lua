@@ -110,7 +110,7 @@ end
 
 function _report_issue(instance)
     local package_name = instance:name()
-    local curr_open_issue = os.iorun("gh issue list --label \"help wanted\" --label \"auto-update\" --search \"in:title [auto-update] %s requires manual handling.\" -R xmake-io/xmake-repo --json number",
+    local curr_open_issue = os.iorun("gh issue list --label \"help wanted\" --label \"auto-update\" --search \"in:title [auto-update] %s requires manual handling\" -R xmake-io/xmake-repo --json number",
         package_name)
     if curr_open_issue == "[]\n" then
         local body = string.format("Failed to get tags of %s, which may be due to changes in repository visibility.",
