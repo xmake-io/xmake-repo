@@ -29,7 +29,7 @@ package("dynareadout")
     add_configs("thread_safe", {description = "Build with synchronisation for thread safety", default = true,  type = "boolean"})
 
     on_load(function (package)
-        raise("package(dynareadout) is no longer public (Updated at 2025/11/05).")
+        raise("package(dynareadout) is no longer public (Updated on 2025/11/05).")
 
         if package:config("cpp") then
             package:add("links", "dynareadout_cpp", "dynareadout")
