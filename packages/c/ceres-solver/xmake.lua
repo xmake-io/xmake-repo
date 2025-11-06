@@ -17,9 +17,10 @@ package("ceres-solver")
     add_configs("suitesparse", {description = "Enable SuiteSparse.", default = true, type = "boolean"})
     add_configs("cuda", {description = "Enable CUDA support.", default = false, type = "boolean"})
 
-    add_deps("cmake", "eigen <5.0", "glog", "gflags", "metis")
+    add_deps("cmake", "eigen <5.0", "glog")
 
     on_load(function (package)
+        package:add("deps", "metis", {configs = {shared = package:config("shared")}})
         if package:config("suitesparse") then
             package:add("deps", "suitesparse", {configs = {blas = package:config("blas")}})
             package:add("deps", "openmp")
@@ -35,7 +36,7 @@ package("ceres-solver")
             "-DBUILD_DOCUMENTATION=OFF",
             "-DBUILD_EXAMPLES=OFF",
             "-DBUILD_BENCHMARKS=OFF",
-            "-DCXSPARSE=OFF"
+            "-DGFLAGS=OFF",
         }
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
