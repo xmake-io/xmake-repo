@@ -45,6 +45,11 @@ package("aws-lc")
                 raise("package(aws-lc 1.45.0) unsupported version")
             end
         end)
+        on_check("mingw", function (target)
+            if package:version() and package:version():ge("1.52.0") then
+                raise("package(aws-lc >=1.52.0) unsupported version")
+            end
+        end)
     end
 
     on_load(function (package)

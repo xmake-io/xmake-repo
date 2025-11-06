@@ -6,6 +6,9 @@ package("simdjson")
 
     add_urls("https://github.com/simdjson/simdjson/archive/refs/tags/$(version).tar.gz",
              "https://github.com/simdjson/simdjson.git")
+    add_versions("v4.2.0", "cf294f624bab25d6e48f2c5380192f839055a7c0e82a77b454f5fcefdb02d07f")
+    add_versions("v4.1.0", "78115e37b2e88ec63e6ae20bb148063a9112c55bcd71404c8572078fd8a6ac3e")
+    add_versions("v4.0.7", "d2d15490605858d3dd42e90d25e0fde31c53446b7d3cde9ef334449236927916")
     add_versions("v4.0.6", "84b90eaff91c8a4ac40feff1fffa9d13d706f914413dd41351644038a14079b6")
     add_versions("v3.12.3", "d0af071f2f4187d8b26b556e83ef832b634bd5feb4e2f537b9dabbd334d4e334")
     add_versions("v3.12.2", "8ac7c97073d5079f54ad66d04381ec75e1169c2e20bfe9b6500bc81304da3faf")
@@ -38,7 +41,7 @@ package("simdjson")
         end
     end)
 
-    on_install("windows|x64", "mingw|x86_64", "macosx|x86_64", "linux|x86_64", "linux|arm64", "iphoneos|arm64", function(package)
+    on_install("windows|x64", "mingw|x86_64", "macosx|x86_64", "macosx|arm64", "linux|x86_64", "linux|arm64", "iphoneos|arm64", function(package)
         local configs = {}
         if package:config("shared") then
             configs.kind = "shared"

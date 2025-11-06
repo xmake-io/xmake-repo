@@ -6,6 +6,7 @@ package("brotli")
     set_urls("https://github.com/google/brotli/archive/$(version).tar.gz",
              "https://github.com/google/brotli.git")
 
+    add_versions("v1.2.0", "816c96e8e8f193b40151dad7e8ff37b1221d019dbcb9c35cd3fadbfe6477dfec")
     add_versions("v1.1.0", "e720a6ca29428b803f4ad165371771f5398faba397edf6778837a18599ea13ff")
     add_versions("v1.0.9", "f9e8d81d0405ba66d181529af42a3354f838c939095ff99930da6aa9cdf6fe46")
 

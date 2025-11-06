@@ -1,7 +1,7 @@
 package("raylib")
-
     set_homepage("http://www.raylib.com")
     set_description("A simple and easy-to-use library to enjoy videogames programming.")
+    set_license("zlib")
 
     if is_plat("macosx") and is_arch("x86_64") then
         add_urls("https://github.com/raysan5/raylib/releases/download/$(version).tar.gz", {version = function (version)
@@ -57,11 +57,11 @@ package("raylib")
 
     on_install("windows", "linux", "macosx|arm64", "mingw", "wasm", "android", function (package)
         local configs = {"-DBUILD_EXAMPLES=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        if is_plat("wasm") then
+        if package:is_plat("wasm") then
             table.insert(configs, "-DPLATFORM=Web")
-        elseif is_plat("android") then
+        elseif package:is_plat("android") then
             table.insert(configs, "-DPLATFORM=Android")
             table.insert(configs, "-DANDROID_ABI=" .. (package:arch() or "arm64-v8a"))
             table.insert(configs, "-DOPENGL_API=ES2")
