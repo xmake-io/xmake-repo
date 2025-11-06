@@ -28,9 +28,13 @@ package("dynareadout")
     add_configs("profiling",   {description = "Build with profiling features",                default = false, type = "boolean"})
     add_configs("thread_safe", {description = "Build with synchronisation for thread safety", default = true,  type = "boolean"})
 
-    on_load(function (package)
-        raise("package(dynareadout) is no longer public (Updated on 2025/11/05).")
+    if on_check then
+        on_check(function (package)
+            raise("package(dynareadout) is no longer public (Updated on 2025/11/05).")
+        end)
+    end
 
+    on_load(function (package)
         if package:config("cpp") then
             package:add("links", "dynareadout_cpp", "dynareadout")
         else
