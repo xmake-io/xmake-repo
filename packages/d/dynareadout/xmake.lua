@@ -24,7 +24,7 @@ package("dynareadout")
     add_versions("24.01",   "f39094567272816c9a7dd84d3eaa0ef5c26309eeeadba814cac12f82e93ae0e1")
     add_versions("24.02",   "acd483bd737a7769087befa1eb2010426c1328bb84ab0481ea11cdeb7655c64e")
 
-    add_configs("cpp",         {description = "Build the C++ bindings",                       default = true,  type = "boolean"})
+    add_configs("cpp_bind",    {description = "Build the C++ bindings",                       default = true,  type = "boolean"})
     add_configs("profiling",   {description = "Build with profiling features",                default = false, type = "boolean"})
     add_configs("thread_safe", {description = "Build with synchronisation for thread safety", default = true,  type = "boolean"})
 
@@ -35,7 +35,7 @@ package("dynareadout")
     end
 
     on_load(function (package)
-        if package:config("cpp") then
+        if package:config("cpp_bind") then
             package:add("links", "dynareadout_cpp", "dynareadout")
         else
             package:add("links", "dynareadout")
@@ -48,7 +48,7 @@ package("dynareadout")
     on_install("windows", "linux", "macosx", "mingw", function (package)
         local configs = {}
         configs.build_test = "n"
-        configs.build_cpp = package:config("cpp") and "y" or "n"
+        configs.build_cpp = package:config("cpp_bind") and "y" or "n"
         configs.profiling = package:config("profiling") and "y" or "n"
         configs.thread_safe = package:config("thread_safe") and "y" or "n"
         import("package.tools.xmake").install(package, configs)
@@ -57,7 +57,7 @@ package("dynareadout")
     on_test(function (package)
         assert(package:has_cfuncs("binout_open", {includes = "binout.h", configs = {languages = "ansi"}}))
         assert(package:has_cfuncs("d3plot_open", {includes = "d3plot.h", configs = {languages = "ansi"}}))
-        if package:config("cpp") then
+        if package:config("cpp_bind") then
             assert(package:has_cxxtypes("dro::Binout", {includes = "binout.hpp", configs = {languages = "cxx17"}}))
             assert(package:has_cxxtypes("dro::D3plot", {includes = "d3plot.hpp", configs = {languages = "cxx17"}}))
             assert(package:has_cxxtypes("dro::Array<int32_t>",  {includes = {"array.hpp", "cstdint"}, configs = {languages = "cxx17"}}))
