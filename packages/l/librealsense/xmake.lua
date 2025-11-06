@@ -57,7 +57,7 @@ package("librealsense")
         if package:is_plat("linux") then
             io.replace("src/linux/CMakeLists.txt", "target_link_libraries(${LRS_TARGET} PRIVATE udev)", "target_link_libraries(${LRS_TARGET} PRIVATE ${UDEV_LIBRARIES})", {plain = true})
         elseif package:is_plat("macosx") then
-            io.replace("CMake/libusb_config.cmake", "${LIBUSB_LIB}", "${LIBUSB_LIB} -framework CoreFoundation -framework IOKit -framework Security", {plain = true})
+            io.replace("CMake/libusb_config.cmake", "${LIBUSB_LIB}", [[${LIBUSB_LIB} "-framework CoreFoundation" "-framework IOKit" "-framework Security"]], {plain = true})
         end
         -- libcurl
         if package:config("tools") and package:config("check_for_updates") then
@@ -86,7 +86,12 @@ package("librealsense")
         table.insert(configs, "-DBUILD_WITH_OPENMP=" .. (package:config("openmp") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
         table.insert(configs, "-DCHECK_FOR_UPDATES=" .. (package:config("check_for_updates") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        -- llvm-ar: error: /librealsense2-all.a: Permission denied
+        if is_host("linux") and package:is_plat("android") then
+            import("package.tools.cmake").install(package, configs, {builddir = "build"})
+        else
+            import("package.tools.cmake").install(package, configs)
+        end
     end)
 
     on_test(function (package)
