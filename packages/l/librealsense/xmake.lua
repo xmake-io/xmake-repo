@@ -77,6 +77,9 @@ package("librealsense")
             "-DBUILD_EASYLOGGINGPP=OFF",
             "-DIMPORT_DEPTH_CAM_FW=OFF", -- TODO: unbundle download file
             "-DUSE_EXTERNAL_LZ4=ON",
+            -- Do not merge static library all in one, it will run `CREATE /librealsense2-all.a` and failed with Permission denied
+            -- We can use policy `package.merge_staticlibs`
+            "-DBUILD_RS2_ALL=OFF",
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
