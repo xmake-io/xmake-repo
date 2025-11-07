@@ -240,9 +240,11 @@ package("opencv")
         end
         import("package.tools.cmake").install(package, configs, {builddir = "bd", shflags = shflags, ldflags = ldflags})
 
-        io.replace(package:installdir("lib/cmake/opencv4/OpenCVModules.cmake"),
-                   "opencv_wechat_qrcode\n",
-                   "opencv_wechat_qrcode\ninclude(CMakeFindDependencyMacro)\nfind_dependency(Iconv)\n", {plain = true})
+        if package:is_plat("linux", "macosx") then
+            io.replace(package:installdir("lib/cmake/opencv4/OpenCVModules.cmake"),
+                    "opencv_wechat_qrcode\n",
+                    "opencv_wechat_qrcode\ninclude(CMakeFindDependencyMacro)\nfind_dependency(Iconv)\n", {plain = true})
+        end
         for _, link in ipairs({"opencv_phase_unwrapping", "opencv_surface_matching", "opencv_saliency",
                                "opencv_wechat_qrcode", "opencv_mcc", "opencv_face",
                                "opencv_img_hash", "opencv_videostab", "opencv_structured_light", "opencv_intensity_transform",
