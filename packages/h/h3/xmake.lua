@@ -6,6 +6,7 @@ package("h3")
     add_urls("https://github.com/uber/h3/archive/refs/tags/$(version).tar.gz",
              "https://github.com/uber/h3.git")
 
+    add_versions("v4.4.0", "b88de0212058812f560c21517e62cd6b2d146f5382b9cc1316bd45c1a3334239")
     add_versions("v4.3.0", "a47cfa36e255e4bf16c63015aaff8e6fe2afc14ffaa3f6b281718158446c0e9b")
 
     add_patches("v4.3.0", "patches/v4.3.0/fix-m-lib.diff", "4cacd501c8a63f5b336569b18855ddfc4f80bcc9d9ef441cd590a5c64242680f")
