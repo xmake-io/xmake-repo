@@ -357,7 +357,7 @@ package("ffmpeg")
                     table.insert(cflags, "-mfpu=neon")
                     table.insert(cflags, "-mfloat-abi=hard")
                 end
-            else
+            elseif package:is_arch("arm*") then
                 table.insert(cflags, "-mfpu=neon")
                 table.insert(cflags, "-mfloat-abi=soft")
             end
@@ -369,8 +369,12 @@ package("ffmpeg")
             table.insert(configs, "--ar=" .. _translate_path(path.join(bin, "llvm-ar")))
             table.insert(configs, "--ranlib=" .. _translate_path(path.join(bin, "llvm-ranlib")))
             table.insert(configs, "--strip=" .. _translate_path(path.join(bin, "llvm-strip")))
-            table.insert(configs, "--extra-cflags=" .. table.concat(cflags, ' '))
-            table.insert(configs, "--extra-cxxflags=" .. table.concat(cxxflags, ' '))
+            if #cflags > 0 then
+                table.insert(configs, "--extra-cflags=" .. table.concat(cflags, ' '))
+            end
+            if #cxxflags > 0 then
+                table.insert(configs, "--extra-cxxflags=" .. table.concat(cxxflags, ' '))
+            end
             table.insert(configs, "--sysroot=" .. _translate_path(sysroot))
             table.insert(configs, "--cross-prefix=" .. _translate_path(cross_prefix))
             table.insert(configs, "--prefix=" .. _translate_path(package:installdir()))
