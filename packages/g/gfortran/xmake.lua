@@ -1,5 +1,4 @@
 package("gfortran")
-
     set_homepage("https://gcc.gnu.org/fortran/")
     set_description("The GNU Fortran compiler")
 
@@ -15,7 +14,7 @@ package("gfortran")
             else
                 local installdir = path.directory(path.directory(fortran.program))
                 local target
-                local out, version = os.iorunv(fortran.program, {"-v", "-E"})
+                local _, version = os.iorunv(fortran.program, {"-v", "-E"}, {envs = {LC_MESSAGES = "C"}})
                 if version then
                     target = version:match("Target: (.-)\n")
                     version = version:match("version (%d+%.%d+%.%d+)")
