@@ -77,7 +77,7 @@ package("librealsense")
             "-DBUILD_EASYLOGGINGPP=OFF",
             "-DIMPORT_DEPTH_CAM_FW=OFF", -- TODO: unbundle download file
             "-DUSE_EXTERNAL_LZ4=ON",
-            -- Do not merge static library all in one, it will run `CREATE /librealsense2-all.a` and failed with Permission denied
+            -- Do not merge static library all in one, it will run `CREATE /librealsense2-all.a` and fail with Permission denied
             -- We can use policy `package.merge_staticlibs`
             "-DBUILD_RS2_ALL=OFF",
         }
@@ -89,12 +89,7 @@ package("librealsense")
         table.insert(configs, "-DBUILD_WITH_OPENMP=" .. (package:config("openmp") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
         table.insert(configs, "-DCHECK_FOR_UPDATES=" .. (package:config("check_for_updates") and "ON" or "OFF"))
-        -- llvm-ar: error: /librealsense2-all.a: Permission denied
-        if is_host("linux") and package:is_plat("android") then
-            import("package.tools.cmake").install(package, configs, {builddir = "build"})
-        else
-            import("package.tools.cmake").install(package, configs)
-        end
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
