@@ -22,7 +22,7 @@ package("dynareadout")
             package:add("links", "dynareadout")
         end
         if package:is_plat("macosx") then
-            package:add("deps", "boost")
+            package:add("deps", "boost", {configs = {filesystem = false}})
         end
     end)
 
