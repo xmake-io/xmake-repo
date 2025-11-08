@@ -37,6 +37,9 @@ target("dynareadout")
 target_end()
 
 if get_config("build_cpp") or get_config("build_python") then
+    if is_plat("macosx") then
+        add_requires("boost", {configs = {filesystem = true}})
+    end
     target("dynareadout_cpp")
         set_kind("$(kind)")
         set_languages("cxx17")
@@ -49,6 +52,9 @@ if get_config("build_cpp") or get_config("build_python") then
         add_headerfiles("src/cpp/*.hpp")
         if is_kind("shared") then
             add_rules("utils.symbols.export_all", {export_classes = true})
+        end
+        if is_plat("macosx") then
+            add_packages("boost")
         end
     target_end()
 end
