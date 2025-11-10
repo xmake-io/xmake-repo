@@ -1,3 +1,4 @@
+
 package("filc")
     set_kind("toolchain")
     set_homepage("https://fil-c.org/")
@@ -18,24 +19,24 @@ package("filc")
         os.cp(path.join(os.curdir(), "*"), installdir)
 
         -- now we replicate the commands in setup.sh...
-        local pathx = path.join(installdir, "/pizfix/lib64") .. ":" .. path.join(installdir, "/pizfix/lib")
-        os.runv("patchelf --set-rpath", {pathx, "pizfix/lib/libc.so"}, {shell=true})
-        os.runv("patchelf --set-rpath", {pathx, "pizfix/lib/libpizlo.so"}, {shell=true})
-        os.runv("patchelf --set-rpath", {pathx, "pizfix/lib/libc++.so.1.0"}, {shell=true})
-        os.runv("patchelf --set-rpath", {pathx, "pizfix/lib/libc++abi.so.1.0"}, {shell=true})
-        os.runv("patchelf --set-rpath", {pathx, "pizfix/lib_test/libpizlo.so"}, {shell=true})
-        os.runv("patchelf --set-rpath", {pathx, "pizfix/lib_test_gcverify/libpizlo.so"}, {shell=true})
-        os.runv("patchelf --set-rpath", {pathx, "pizfix/lib_gcverify/libpizlo.so"}, {shell=true})
+        local pathx = path.joinenv(path.join(installdir, "pizfix/lib64"), path.join(installdir, "pizfix/lib"))
+        os.runv("patchelf", {"--set-rpath", pathx, "pizfix/lib/libc.so"})
+        os.runv("patchelf", {"--set-rpath", pathx, "pizfix/lib/libpizlo.so"})
+        os.runv("patchelf", {"--set-rpath", pathx, "pizfix/lib/libc++.so.1.0"})
+        os.runv("patchelf", {"--set-rpath", pathx, "pizfix/lib/libc++abi.so.1.0"})
+        os.runv("patchelf", {"--set-rpath", pathx, "pizfix/lib_test/libpizlo.so"})
+        os.runv("patchelf", {"--set-rpath", pathx, "pizfix/lib_test_gcverify/libpizlo.so"})
+        os.runv("patchelf", {"--set-rpath", pathx, "pizfix/lib_gcverify/libpizlo.so"})
 
         -- ... but copy dirs instead of symlinking to system dirs
         local dest = path.join(installdir, "pizfix", "os-include")
-        os.cp("/usr/include/linux", path.join(dest, "linux"))
+        os.ln("/usr/include/linux", path.join(dest, "linux"))
         if os.exists("/usr/include/x86_64-linux-gnu/asm") then
-            os.cp("/usr/include/x86_64-linux-gnu/asm", path.join(dest, "asm"))
+            os.ln("/usr/include/x86_64-linux-gnu/asm", path.join(dest, "asm"))
         else
-            os.cp("/usr/include/asm", path.join(dest, "asm"))
+            os.ln("/usr/include/asm", path.join(dest, "asm"))
         end
-        os.cp("/usr/include/asm-generic", path.join(dest, "asm-generic"))
+        os.ln("/usr/include/asm-generic", path.join(dest, "asm-generic"))
 
         -- we must preserve relative directory positions
         package:addenv("PATH", "build/bin")
