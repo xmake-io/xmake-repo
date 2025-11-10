@@ -6,14 +6,8 @@ package("dynareadout")
     add_urls("https://github.com/xmake-mirror/dynareadout/releases/download/$(version)/$(version).tar.gz")
     add_versions("24.07", "11138c1236f44434adf99ad86dc3315fcba17e59dd4b0ae0e6564972e2de12c5")
 
-    add_configs("cpp",         {description = "Build the C++ bindings",                       default = true,  type = "boolean"})
+    add_configs("cpp_bind",    {description = "Build the C++ bindings",                       default = true,  type = "boolean"})
     add_configs("profiling",   {description = "Build with profiling features",                default = true, type = "boolean"})
-
-    if on_check then
-        on_check(function (package)
-            raise("package(dynareadout) is no longer public (Updated on 2025/11/05).")
-        end)
-    end
 
     on_load(function (package)
         if package:config("cpp_bind") then
@@ -34,6 +28,7 @@ package("dynareadout")
         configs.build_cpp = package:config("cpp_bind") and "y" or "n"
         configs.profiling = package:config("profiling") and "y" or "n"
         import("package.tools.xmake").install(package, configs)
+        wprint("The original repository PucklaJ/dynareadout is no longer public. You are using a mirror of this repository.")
     end)
 
     on_test(function (package)
