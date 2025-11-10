@@ -85,5 +85,9 @@ package("cpptrace")
             ]]
         end
 
-        assert(package:check_cxxsnippets({test = code}, {configs = {languages = "c++11"}, includes = {"cpptrace/cpptrace.hpp"}}))
+        local languages = "c++11"
+        if package:is_plat("windows") and package:has_tool("cxx", "clang", "clangxx") then
+            languages = "c++14"
+        end
+        assert(package:check_cxxsnippets({test = code}, {configs = {languages = languages}, includes = {"cpptrace/cpptrace.hpp"}}))
     end)
