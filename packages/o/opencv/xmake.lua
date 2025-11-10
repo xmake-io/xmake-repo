@@ -241,10 +241,9 @@ package("opencv")
         import("package.tools.cmake").install(package, configs, {builddir = "bd", shflags = shflags, ldflags = ldflags})
 
         if not package:is_plat("windows", "android") then
-            local cmakefile = os.files("**/OpenCVModules.cmake")
+            local cmakefile = os.files(package:installdir("**/OpenCVModules.cmake"))
             if cmakefile then
-                io.replace(package:installdir(cmakefile[1]),
-                           "opencv_wechat_qrcode\n",
+                io.replace(cmakefile[1], "opencv_wechat_qrcode\n",
                            "opencv_wechat_qrcode\ninclude(CMakeFindDependencyMacro)\nfind_dependency(Iconv)\n", {plain = true})
             end
         end
