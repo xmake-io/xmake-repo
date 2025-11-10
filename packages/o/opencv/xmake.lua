@@ -241,9 +241,12 @@ package("opencv")
         import("package.tools.cmake").install(package, configs, {builddir = "bd", shflags = shflags, ldflags = ldflags})
 
         if not package:is_plat("windows", "android") then
-            io.replace(package:installdir("lib/cmake/opencv4/OpenCVModules.cmake"),
-                       "opencv_wechat_qrcode\n",
-                       "opencv_wechat_qrcode\ninclude(CMakeFindDependencyMacro)\nfind_dependency(Iconv)\n", {plain = true})
+            local cmakefile = os.files("**/OpenCVModules.cmake")
+            if cmakefile then
+                io.replace(package:installdir(cmakefile[1]),
+                           "opencv_wechat_qrcode\n",
+                           "opencv_wechat_qrcode\ninclude(CMakeFindDependencyMacro)\nfind_dependency(Iconv)\n", {plain = true})
+            end
         end
         for _, link in ipairs({"opencv_phase_unwrapping", "opencv_surface_matching", "opencv_saliency",
                                "opencv_wechat_qrcode", "opencv_mcc", "opencv_face",
