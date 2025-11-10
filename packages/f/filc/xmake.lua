@@ -18,7 +18,7 @@ package("filc")
         os.cp(path.join(os.curdir(), "*"), installdir)
 
         -- now we replicate the commands in setup.sh...
-        local pathx = path.joinenv(path.join(installdir, "pizfix/lib64"), path.join(installdir, "pizfix/lib"))
+        local pathx = path.join(installdir, "pizfix/lib64") .. ":" .. path.join(installdir, "pizfix/lib")
         os.runv("patchelf", {"--set-rpath", pathx, "pizfix/lib/libc.so"})
         os.runv("patchelf", {"--set-rpath", pathx, "pizfix/lib/libpizlo.so"})
         os.runv("patchelf", {"--set-rpath", pathx, "pizfix/lib/libc++.so.1.0"})
