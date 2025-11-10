@@ -27,7 +27,6 @@ package("filc")
         os.runv("patchelf", {"--set-rpath", pathx, "pizfix/lib_test_gcverify/libpizlo.so"})
         os.runv("patchelf", {"--set-rpath", pathx, "pizfix/lib_gcverify/libpizlo.so"})
 
-        -- ... but copy dirs instead of symlinking to system dirs
         local dest = path.join(installdir, "pizfix", "os-include")
         os.ln("/usr/include/linux", path.join(dest, "linux"))
         if os.exists("/usr/include/x86_64-linux-gnu/asm") then
