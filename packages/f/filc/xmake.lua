@@ -1,4 +1,3 @@
-
 package("filc")
     set_kind("toolchain")
     set_homepage("https://fil-c.org/")
