@@ -6,6 +6,7 @@ package("aws-c-io")
     add_urls("https://github.com/awslabs/aws-c-io/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-io.git")
 
+    add_versions("v0.23.3", "cdcb31b694fc28ba96237ee33a742679daf2dcabfd41464f8a68fbd913907085")
     add_versions("v0.23.2", "3a335b812411c30bcc64072f148ddf6cd632d8261799cd04e54051b44506feb9")
     add_versions("v0.22.0", "07b0ac7271e482e1f5f1e84fcf33ec23fb8a2c12e7a7f331455a5f1d38b9fbfd")
     add_versions("v0.21.2", "75ada840ed7ef1b8e6908a9d2d017375f9093b9db04c51caf68f8edcfd20cc4c")
