@@ -11,7 +11,6 @@ package("imgui-sfml")
     add_versions("v2.5", "3775c9303f656297f2392e91ffae2021e874ee319b4139c60076d6f757ede109")
 
     add_deps("cmake")
-    add_deps("imgui")
     add_deps("opengl", {optional = true})
 
     if is_plat("windows", "mingw") then
@@ -21,6 +20,11 @@ package("imgui-sfml")
     add_links("ImGui-SFML")
 
     on_load(function(package)
+        if package:version():eq("v3.0") then
+            package:add("deps", "imgui >=1.91.1 <=1.91.9")
+        else
+            package:add("deps", "imgui")
+        end
         if package:is_plat("linux") and package:config("shared") then
             package:add("deps", "sfml", {configs = {shared = true}})
         else
@@ -32,9 +36,11 @@ package("imgui-sfml")
     end)
 
     on_install("macosx", "linux", "windows", "mingw", function (package)
-        io.writefile("xmake.lua", [[
+        local imgui_dep = package:dep("imgui")
+        local imgui_version = imgui_dep and " " .. imgui_dep:version_str() or ""
+        io.writefile("xmake.lua", string.format([[
             add_rules("mode.release", "mode.debug")
-            add_requires("imgui")
+            add_requires("imgui%s")
             if is_plat("linux") and is_kind("shared") then
                 add_requires("sfml", {configs = {shared = true}})
             else
@@ -57,7 +63,7 @@ package("imgui-sfml")
                 end
                 add_rules("utils.install.pkgconfig_importfiles")
                 add_rules("utils.install.cmake_importfiles")
-        ]])
+        ]], imgui_version))
         local configs = {}
         if package:config("shared") then
             configs.kind = "shared"
