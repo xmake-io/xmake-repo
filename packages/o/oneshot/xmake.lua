@@ -1,5 +1,4 @@
 package("oneshot")
-
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/ashtum/oneshot")
     set_description("A single-header scheduler aware C++ oneshot channel.")
@@ -20,8 +19,7 @@ package("oneshot")
         end
     end)
 
-
-    on_install(function (package)
+    on_install("!wasm", function (package)
         os.cp("include", package:installdir())
     end)
 
