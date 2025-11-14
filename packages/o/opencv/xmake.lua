@@ -1,5 +1,4 @@
 package("opencv")
-
     set_homepage("https://opencv.org/")
     set_description("A open source computer vision library.")
     set_license("Apache-2.0")
