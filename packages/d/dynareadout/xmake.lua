@@ -6,9 +6,9 @@ package("dynareadout")
     add_urls("https://github.com/xmake-mirror/dynareadout/releases/download/$(version)/$(version).tar.gz")
     add_versions("24.07", "11138c1236f44434adf99ad86dc3315fcba17e59dd4b0ae0e6564972e2de12c5")
 
-    add_configs("cpp_bind",     {description = "Build the C++ bindings",        default = true,  type = "boolean"})
-    add_configs("profiling",    {description = "Build with profiling features", default = true,  type = "boolean"})
-    add_configs("python_bind",  {description = "Build the python bindings",     default = true, type = "boolean"})
+    add_configs("cpp_bind",    {description = "Build the C++ bindings",        default = true, type = "boolean"})
+    add_configs("profiling",   {description = "Build with profiling features", default = true, type = "boolean"})
+    add_configs("python_bind", {description = "Build the python bindings",     default = true, type = "boolean"})
 
     on_load(function (package)
         if package:config("cpp_bind") then

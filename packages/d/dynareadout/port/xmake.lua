@@ -46,13 +46,10 @@ if has_config("build_python") then
         add_deps("dynareadout_cpp")
         add_packages("python", "pybind11")
         add_rules("python.module")
+        set_basename("dynareadout" .. (is_mode("debug") and "_d" or ""))
         add_options("profiling")
         add_files("src/python/*.cpp")
         add_headerfiles("src/python/*.hpp")
         add_includedirs("src", "src/cpp")
         add_rpathdirs("@executable_path")
-
-        on_load(function (target)
-            target:set("filename", "dynareadout" .. (is_mode("debug") and "_d" or ""))
-        end)
 end
