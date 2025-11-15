@@ -11,7 +11,7 @@ package("shadowhook")
 
     add_deps("xdl", "linux-syscall-support")
 
-    on_install("android|!arm*", function (package)
+    on_install("android|arm64-v8a,armeabi-v7a,armeabi", function (package)
         io.replace("shadowhook/src/main/cpp/sh_safe.c", [[#include "linux_syscall_support.h"]], [[#include <lss/linux_syscall_support.h>]], {plain = true})
         os.cd("shadowhook/src/main/cpp")
         os.mv("shadowhook.map.txt", "shadowhook.map")
