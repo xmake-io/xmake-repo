@@ -6,11 +6,12 @@ package("dynareadout")
     add_urls("https://github.com/xmake-mirror/dynareadout/releases/download/$(version)/$(version).tar.gz")
     add_versions("24.07", "11138c1236f44434adf99ad86dc3315fcba17e59dd4b0ae0e6564972e2de12c5")
 
-    add_configs("cpp",         {description = "Build the C++ bindings",                       default = true,  type = "boolean"})
-    add_configs("profiling",   {description = "Build with profiling features",                default = true, type = "boolean"})
+    add_configs("cpp_bind",     {description = "Build the C++ bindings",        default = true,  type = "boolean"})
+    add_configs("profiling",    {description = "Build with profiling features", default = true,  type = "boolean"})
+    add_configs("python_bind",  {description = "Build the python bindings",     default = true, type = "boolean"})
 
     on_load(function (package)
-        if package:config("cpp") then
+        if package:config("cpp_bind") then
             package:add("links", "dynareadout_cpp", "dynareadout")
         else
             package:add("links", "dynareadout")
@@ -24,16 +25,17 @@ package("dynareadout")
         os.cd("lib/dynareadout")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         local configs = {}
-        configs.build_test = "n"
-        configs.build_cpp = package:config("cpp") and "y" or "n"
+        configs.build_cpp = package:config("cpp_bind") and "y" or "n"
         configs.profiling = package:config("profiling") and "y" or "n"
+        configs.build_python = package:config("python_bind") and "y" or "n"
         import("package.tools.xmake").install(package, configs)
+        wprint("The original repository PucklaJ/dynareadout is no longer public. You are using a mirror of this repository.")
     end)
 
     on_test(function (package)
         assert(package:has_cfuncs("binout_open", {includes = "binout.h", configs = {languages = "ansi"}}))
         assert(package:has_cfuncs("d3plot_open", {includes = "d3plot.h", configs = {languages = "ansi"}}))
-        if package:config("cpp") then
+        if package:config("cpp_bind") then
             assert(package:has_cxxtypes("dro::Binout", {includes = "binout.hpp", configs = {languages = "cxx17"}}))
             assert(package:has_cxxtypes("dro::D3plot", {includes = "d3plot.hpp", configs = {languages = "cxx17"}}))
             assert(package:has_cxxtypes("dro::Array<int32_t>",  {includes = {"array.hpp", "cstdint"}, configs = {languages = "cxx17"}}))
