@@ -19,6 +19,7 @@ package("quantlib")
 
     add_deps("cmake")
     add_deps("boost", {configs = {math = true, serialization = true, regex = true, thread = true}})
+    add_deps("python")
 
     on_load(function (package)
         if package:config("openmp") then
