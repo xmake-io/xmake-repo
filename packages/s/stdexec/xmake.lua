@@ -6,6 +6,13 @@ package("stdexec")
 
     add_urls("https://github.com/NVIDIA/stdexec.git")
 
+    -- https://github.com/NVIDIA/stdexec/tags
+    add_versions("nvhpc-25.09", "1f6379682dd1598c9b48313fa6dfdae620bc8535")
+    add_versions("nvhpc-25.03.rc1", "9514e7bdf4b5d16d8ee4b5ad0e9c8733c3539f37")
+    add_versions("nvhpc-24.09", "cddcd5a17dbec59d8502c0c6108553a20e74d2da")
+    add_versions("nvhpc-24.09.rc1", "cddcd5a17dbec59d8502c0c6108553a20e74d2da") -- same as above
+    add_versions("nvhpc-23.09.rc4", "dc90c30ff4968d5043299f97a8294d3f4a6c62e4")
+
     add_versions("2024.12.08", "26d8565bc7660b4fb8b504e00cac6b0419ffa939")
     add_versions("2024.03.08", "b3ba13a7b8c206371207196e08844fb7bc745438")
 
