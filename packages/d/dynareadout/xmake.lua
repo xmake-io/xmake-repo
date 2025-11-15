@@ -16,6 +16,9 @@ package("dynareadout")
         else
             package:add("links", "dynareadout")
         end
+        if package:config("python_bind") and not package:is_plat("mingw") then
+            package:add("deps", "pybind11")
+        end
         if package:is_plat("macosx") then
             package:add("deps", "boost", {configs = {filesystem = true}})
         end
@@ -27,7 +30,7 @@ package("dynareadout")
         local configs = {}
         configs.build_cpp = package:config("cpp_bind") and "y" or "n"
         configs.profiling = package:config("profiling") and "y" or "n"
-        configs.build_python = package:config("python_bind") and "y" or "n"
+        configs.build_python = (package:config("python_bind") and not package:is_plat("mingw")) and "y" or "n"
         import("package.tools.xmake").install(package, configs)
         wprint("The original repository PucklaJ/dynareadout is no longer public. You are using a mirror of this repository.")
     end)

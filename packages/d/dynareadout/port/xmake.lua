@@ -40,11 +40,11 @@ if has_config("build_cpp", "build_python") then
 end
 
 if has_config("build_python") then
-    add_requires("python 3.x", "pybind11")
+    add_requires("pybind11")
     target("pybind11_module")
         set_languages("cxx17")
         add_deps("dynareadout_cpp")
-        add_packages("python", "pybind11")
+        add_packages("pybind11")
         add_rules("python.module")
         set_basename("dynareadout" .. (is_mode("debug") and "_d" or ""))
         add_options("profiling")
