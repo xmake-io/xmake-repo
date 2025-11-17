@@ -17,12 +17,12 @@ package("openmvs")
     add_configs("openmp", {description = "Enable OpenMP library", default = true, type = "boolean"})
     add_configs("python", {description = "Enable Python library bindings", default = false, type = "boolean"})
 
-    add_deps("cmake", "eigen <5.0", "glew", "opencv", "cgal", "vcglib", "zstd")
+    add_deps("cmake", "cgal", "eigen <5.0", "glew", "opencv", "vcglib", "zstd")
     add_deps("boost", {configs = {iostreams = true, container = true, graph=true, program_options = true, serialization = true, thread = true, zlib = true, zstd = true}})
 
+    add_includedirs("include", "include/OpenMVS")
+    add_linkdirs("lib/OpenMVS")
     on_load(function (package)
-        package:add("defines", "BOOST_ALL_NO_LIB") -- disable boost auto-linking
-        package:add("linkdirs", "lib/OpenMVS")
         if package:has_tool("cxx", "cl") then
             package:add("cxxflags", "/Zc:__cplusplus")
         end
@@ -33,7 +33,7 @@ package("openmvs")
         if package:config("python") then package:add("deps", "python") end
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows|!arm64", "linux", "macosx", function (package)
         io.replace("CMakeLists.txt", "# Project-wide settings", [[
             # Project-wide settings
             find_package(PkgConfig REQUIRED)
@@ -54,7 +54,7 @@ package("openmvs")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <openMVS/MVS.h>
+            #include "MVS.h"
             using namespace MVS;
             void test() {
                 SEACAVE::cListTest<true>(100);
@@ -63,5 +63,5 @@ package("openmvs")
                 SEACAVE::TestRayTriangleIntersection<float>(1000);
                 SEACAVE::TestRayTriangleIntersection<double>(1000);
             }
-        ]]}, {configs = {languages = "c++11"}}))
+        ]]}, {configs = {languages = "c++14"}}))
     end)
