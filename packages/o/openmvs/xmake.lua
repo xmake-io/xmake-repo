@@ -22,6 +22,7 @@ package("openmvs")
 
     add_includedirs("include", "include/OpenMVS")
     add_linkdirs("lib/OpenMVS")
+    add_links("MVS", "Math", "IO", "Common")
     on_load(function (package)
         if package:has_tool("cxx", "cl") then
             package:add("cxxflags", "/Zc:__cplusplus")
@@ -33,7 +34,7 @@ package("openmvs")
         if package:config("python") then package:add("deps", "python") end
     end)
 
-    on_install("windows|!arm64", "linux", "macosx", function (package)
+    on_install("windows|!arm64", "linux", function (package)
         io.replace("CMakeLists.txt", "# Project-wide settings", [[
             # Project-wide settings
             find_package(PkgConfig REQUIRED)
@@ -49,6 +50,9 @@ package("openmvs")
             "-DOpenMVS_BUILD_TOOLS=OFF",
             "-DOpenMVS_ENABLE_TESTS=OFF",
         }
+        if package:is_plat("linux") and package:has_tool("cxx", "clang") then
+            table.insert(configs, "-DCMAKE_CXX_STANDARD=17")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
