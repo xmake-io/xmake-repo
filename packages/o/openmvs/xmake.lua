@@ -50,11 +50,11 @@ package("openmvs")
             "-DOpenMVS_BUILD_TOOLS=OFF",
             "-DOpenMVS_ENABLE_TESTS=OFF",
         }
-        local cxflags = {}
+        local cxxflags = {}
         if package:is_plat("linux") and package:has_tool("cxx", "clang") then
-            table.insert(cxflags, "-std=c++17")
+            table.insert(cxxflags, "-std=c++17")
         end
-        import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
+        import("package.tools.cmake").install(package, configs, {cxxflags = cxxflags})
     end)
 
     on_test(function (package)
