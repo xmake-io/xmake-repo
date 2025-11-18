@@ -11,6 +11,8 @@ package("g2o")
 
     add_deps("cmake", "eigen <5.0")
 
+    add_links("g2o_solver_slam2d_linear", "g2o_solver_structure_only", "g2o_solver_dense", "g2o_solver_eigen", "g2o_solver_pcg", "g2o_types_data", "g2o_types_icp", "g2o_types_sim3", "g2o_types_sba", "g2o_types_sclam2d", "g2o_types_slam2d_addons", "g2o_types_slam2d", "g2o_types_slam3d_addons", "g2o_types_slam3d", "g2o_core", "g2o_stuff", "g2o_opengl_helper", "g2o_ext_freeglut_minimal")
+
     on_install("linux", "windows", "macosx", function (package)
         local configs = {"-DG2O_BUILD_APPS=OFF", "-DG2O_BUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
