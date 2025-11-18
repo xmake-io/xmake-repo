@@ -7,8 +7,9 @@ package("g2o")
     end})
     add_urls("https://github.com/RainerKuemmerle/g2o.git")
     add_versions("2020.12.23", "20af80edf8fd237e29bd21859b8fc734e615680e8838824e8b3f120c5f4c1672")
+    add_versions("2024.12.28", "d691ead69184ebbb8256c9cd9f4121d1a880b169370efc0554dd31a64802a452")
 
-    add_deps("cmake", "eigen")
+    add_deps("cmake", "eigen <5.0")
 
     on_install("linux", "windows", "macosx", function (package)
         local configs = {"-DG2O_BUILD_APPS=OFF", "-DG2O_BUILD_EXAMPLES=OFF"}
@@ -28,5 +29,5 @@ package("g2o")
                 g2o::SparseOptimizer optimizer;
                 optimizer.setVerbose(false);
             }
-        ]]}, {configs = {languages = "c++14"}}))
+        ]]}, {configs = {languages = package:version():ge("2023.08.06") and "c++17" or "c++14"}}))
     end)
