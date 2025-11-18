@@ -1,5 +1,4 @@
 package("opencv")
-
     set_homepage("https://opencv.org/")
     set_description("A open source computer vision library.")
     set_license("Apache-2.0")
@@ -21,6 +20,7 @@ package("opencv")
     add_versions("3.4.9", "b7ea364de7273cfb3b771a0d9c111b8b8dfb42ff2bcd2d84681902fb8f49892a")
 
     add_patches("4.11.0", "https://github.com/opencv/opencv/commit/767dd838d3074409fd72a4d76c320b1370e95943.diff", "376dd90500ab7205084fd4298ff26137ce9678b00233ad20ca2189ef9eca3a58")
+    add_patches("4.12.0", "https://github.com/opencv/opencv/pull/27691/commits/90c444abd387ffa70b2e72a34922903a2f0f4f5a.patch", "4811cf490195a7b2952e075c4d713593326bc54fcfa42a33e19d7ed025bb5b6f")
 
     add_resources("4.12.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.12.0.tar.gz", "4197722b4c5ed42b476d42e29beb29a52b6b25c34ec7b4d589c3ae5145fee98e")
     add_resources("4.11.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.11.0.tar.gz", "2dfc5957201de2aa785064711125af6abb2e80a64e2dc246aca4119b19687041")
@@ -237,7 +237,15 @@ package("opencv")
                 shflags = {"-Wl,-Bsymbolic"}
             end
         end
-        import("package.tools.cmake").install(package, configs, {buildir = "bd", shflags = shflags, ldflags = ldflags})
+        import("package.tools.cmake").install(package, configs, {builddir = "bd", shflags = shflags, ldflags = ldflags})
+
+        if not package:is_plat("windows", "android") then
+            local cmakefile = os.files(package:installdir("**/OpenCVModules.cmake"))
+            if cmakefile then
+                io.replace(cmakefile[1], "opencv_wechat_qrcode\n",
+                           "opencv_wechat_qrcode\ninclude(CMakeFindDependencyMacro)\nfind_dependency(Iconv)\n", {plain = true})
+            end
+        end
         for _, link in ipairs({"opencv_phase_unwrapping", "opencv_surface_matching", "opencv_saliency",
                                "opencv_wechat_qrcode", "opencv_mcc", "opencv_face",
                                "opencv_img_hash", "opencv_videostab", "opencv_structured_light", "opencv_intensity_transform",
