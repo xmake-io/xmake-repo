@@ -20,6 +20,12 @@ package("openmvs")
     add_deps("cmake", "cgal", "eigen <5.0", "glew", "opencv", "vcglib", "zstd")
     add_deps("boost", {configs = {iostreams = true, container = true, graph=true, program_options = true, serialization = true, thread = true, zlib = true, zstd = true}})
 
+    if on_check then
+        on_check("linux", function (package)
+            assert(not package:has_tool("cxx", "clang"), "Linux Clang is not supported yet.")
+        end)
+    end
+
     add_includedirs("include", "include/OpenMVS")
     add_linkdirs("lib/OpenMVS")
     add_links("MVS", "Math", "IO", "Common")
@@ -50,11 +56,7 @@ package("openmvs")
             "-DOpenMVS_BUILD_TOOLS=OFF",
             "-DOpenMVS_ENABLE_TESTS=OFF",
         }
-        local cxxflags = {}
-        if package:is_plat("linux") and package:has_tool("cxx", "clang") then
-            table.insert(cxxflags, "-std=c++17")
-        end
-        import("package.tools.cmake").install(package, configs, {cxxflags = cxxflags})
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
