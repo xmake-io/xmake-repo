@@ -79,10 +79,11 @@ package("imgui-sfml")
             #include <SFML/Graphics/RenderWindow.hpp>
             #include <SFML/System/Clock.hpp>
             #include <SFML/Window/Event.hpp>
+            #include <tuple>
             void test() {
-                sf::RenderWindow window(sf::VideoMode({640, 480}), "ImGui + SFML = <3");
+                sf::RenderWindow window(sf::VideoMode({640, 480}), "ImGui + SFML");
                 window.setFramerateLimit(60);
-                ImGui::SFML::Init(window);
+                std::ignore = ImGui::SFML::Init(window);
             }
         ]]}, {configs = {languages = "c++17"}}))
     end)
