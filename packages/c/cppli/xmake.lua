@@ -5,7 +5,7 @@ package("cppli")
     add_urls("https://github.com/TheBearodactyl/cppli.git")
     add_versions("2025.10.22", "98c8c2e8ee65d7a5a6b160cf0b85ba1be39ffb05")
 
-    add_patches("2025.10.22", "patches/2025.10.22/fix-clang.patch", "08911f959ccc4b50b0dded396970c6741b83f73b62c133357cf21d75c8751af6")
+    add_patches("2025.10.22", "patches/2025.10.22/fix-clang.patch", "7d7c1363774e4279636455b7cfe4806138a272a03d10f6bfce6dda00b3b17d0d")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
