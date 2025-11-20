@@ -14,7 +14,7 @@ package("cppli")
 
     on_check(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #ifndef __cpp_lib_source_location
+            #if !__has_include(<version>)
             #   error source_location is not supported by compiler
             #endif
         ]]}, {configs = {languages = "c++20"}}), "package(cppli): need std::source_location from <source_location> header.")
