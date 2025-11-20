@@ -20,7 +20,7 @@ package("cppli")
         ]]}, {configs = {languages = "c++20"}}), "package(cppli): need std::source_location from <source_location> header.")
     end)
 
-    on_install(function(package)
+    on_install("!bsd", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DCPPLI_BUILD_TESTS=OFF")
