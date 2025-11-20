@@ -11,7 +11,7 @@ package("cppli")
     
     on_install(function(package)
         local configs = {}
-        table.insert(configs, "-DCMAKE_POLICY_VERSION_MINIMUM=3.5")
+        io.replace("CMakeLists.txt", "cmake_minimum_required(VERSION 4.1.1)", "cmake_minimum_required(VERSION 3.5)", {plain = true})
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DCPPLI_BUILD_TESTS=OFF")
         import("package.tools.cmake").install(package, configs)
