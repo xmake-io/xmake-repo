@@ -14,10 +14,9 @@ package("cppli")
 
     on_check(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <source_location>
-            void test(std::signed_integral auto x) {
-                std::source_location loc = std::source_location::current();
-            }
+            #ifndef __cpp_lib_source_location
+            #   error source_location is not supported by compiler
+            #endif
         ]]}, {configs = {languages = "c++20"}}), "package(cppli): need std::source_location from <source_location> header.")
     end)
 
