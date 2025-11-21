@@ -36,9 +36,8 @@ package("filament")
     if is_plat("windows") then
         add_syslinks("user32", "gdi32", "opengl32")
     elseif is_plat("macosx") then
-        add_frameworks("Cocoa", "Metal", "CoreVideo")
+        add_frameworks("Cocoa", "Metal", "CoreVideo", "QuatzCore")
     elseif is_plat("linux") then
-        add_deps("libc++")
         add_syslinks("pthread", "dl")
     end
     add_links("filament", "backend", "bluegl", "bluevk", "filabridge", "filaflat", "utils", "geometry", "smol-v", "ibl")
