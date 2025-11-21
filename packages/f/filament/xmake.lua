@@ -39,6 +39,7 @@ package("filament")
         add_frameworks("Cocoa", "Metal", "CoreVideo", "QuartzCore")
     elseif is_plat("linux") then
         add_syslinks("pthread", "dl")
+        add_deps("libc++")
     end
     add_links("filament", "backend", "bluegl", "bluevk", "filabridge", "filaflat", "utils", "geometry", "smol-v", "ibl")
     if not (is_plat("macosx") and is_arch("arm64")) then
