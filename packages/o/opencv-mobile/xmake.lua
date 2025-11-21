@@ -20,8 +20,7 @@ package("opencv-mobile")
 
     add_patches("*", "patches/msvc.patch", "6fa760ea58c8b90c87129f16c84b128a4447ea11cee7d6568ea4f5e7ae250971")
 
-    add_deps("cmake", "python 3.x", {kind = "binary"})
-    add_deps("openmp")
+    add_deps("cmake", "openmp")
 
     on_load(function (package)
         if package:is_plat("windows") then
