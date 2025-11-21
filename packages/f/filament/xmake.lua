@@ -38,7 +38,7 @@ package("filament")
     end
     add_links("filament", "backend", "bluegl", "bluevk", "filabridge", "filaflat", "utils", "geometry", "smol-v", "ibl")
     if not (is_plat("macosx") and is_arch("arm64")) then
-        add_links("vkshaders") летим.
+        add_links("vkshaders")
     end
 
     on_install("windows|x64", "macosx|x86_64", "macosx|arm64", "linux|x86_64", function (package)
