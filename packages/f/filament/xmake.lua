@@ -15,7 +15,6 @@ package("filament")
         add_versions("1.9.23", "0adbf2359338e28a80b2ef84c70d8914b56ed1c97ef0135603fcd330ec4c34a1")
         add_versions("1.20.3", "820f2c7b5360021b9ff361f0868b45613726d6704f9112e8c8cf92d07c7c95b7")
         add_versions("1.32.0", "f8bd877227f10a9dc10513bfc6a396a5bb0c65b15d2fd771e2e5de4d39267395")
-        add_versions("1.67.1", "edd708241f146f216c3a8ef93e0eb5cc16e13f0ae95c35c83daefde4f3546f2b")
     elseif is_plat("macosx") and is_arch("arm64") then
         add_urls("https://github.com/google/filament/releases/download/v$(version)/filament-v$(version)-mac.tgz")
         add_versions("1.67.1", "edd708241f146f216c3a8ef93e0eb5cc16e13f0ae95c35c83daefde4f3546f2b")
