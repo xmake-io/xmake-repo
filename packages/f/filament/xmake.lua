@@ -36,7 +36,7 @@ package("filament")
     if is_plat("windows") then
         add_syslinks("user32", "gdi32", "opengl32")
     elseif is_plat("macosx") then
-        add_frameworks("Cocoa", "Metal", "CoreVideo", "QuatzCore")
+        add_frameworks("Cocoa", "Metal", "CoreVideo", "QuartzCore")
     elseif is_plat("linux") then
         add_syslinks("pthread", "dl")
     end
