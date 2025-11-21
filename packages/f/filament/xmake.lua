@@ -45,7 +45,7 @@ package("filament")
         os.cp("*", package:installdir())
         if package:is_plat("windows") then
             package:add("linkdirs", path.join("lib", "x86_64", package:config("vs_runtime"):lower()))
-        elseif (is_arch("arm64") then
+        elseif is_arch("arm64") then
             package:add("linkdirs", path.join("lib", "arm64"))
         else
             package:add("linkdirs", path.join("lib", "x86_64"))
