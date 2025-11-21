@@ -52,17 +52,8 @@ package("filament")
             if not version then
                 return
             end
-            if package:is_plat("windows") and version:eq("1.67.1") then
-                raise("package(filament): does not support 1.67.1 version for Windows OS x64.")
-            end
             if package:is_plat("macosx") and package:is_arch("x86_64") and version:gt("1.32.0") then
                 raise("package(filament): does not support versions newer than 1.32.0 for Mac OS x64.")
-            end
-            if package:is_plat("macosx") and package:is_arch("arm64") and version:eq("1.67.0") then
-                raise("package(filament): does not support 1.67.0 version for Mac OS arm64.")
-            end
-            if package:is_plat("linux") and package:is_arch("x86_64") and version:eq("1.67.0") then
-                raise("package(filament): does not support 1.67.0 version for Linux x64.")
             end
         end)
     end
