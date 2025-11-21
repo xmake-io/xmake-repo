@@ -45,6 +45,7 @@ package("filament")
     if not (is_plat("macosx") and is_arch("arm64")) then
         add_links("vkshaders")
     end
+    add_deps("zstd")
 
     if on_check then
         on_check(function (package)
