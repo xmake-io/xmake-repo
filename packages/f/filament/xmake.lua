@@ -40,20 +40,22 @@ package("filament")
         add_links("vkshaders")
     end
 
-    on_check(function (package)
-        if package:is_plat("windows") and package:version():eq("1.67.1") then
-            raise("package(filament): does not support 1.67.1 version for Windows OS x64.")
-        end
-        if package:is_plat("macosx") and package:is_arch("x86_64") and package:version():gt("1.32.0") then
-            raise("package(filament): does not support versions newer than 1.32.0 for Mac OS x64.")
-        end
-        if package:is_plat("macosx") and package:is_arch("arm64") and package:version():eq("1.67.0") then
-            raise("package(filament): does not support 1.67.0 version for Mac OS arm64.")
-        end
-        if package:is_plat("linux") and package:is_arch("x86_64") and package:version():eq("1.67.0") then
-            raise("package(filament): does not support 1.67.0 version for Linux x64.")
-        end
-    end)
+    if on_check then
+        on_check(function (package)
+            if package:is_plat("windows") and package:version():eq("1.67.1") then
+                raise("package(filament): does not support 1.67.1 version for Windows OS x64.")
+            end
+            if package:is_plat("macosx") and package:is_arch("x86_64") and package:version():gt("1.32.0") then
+                raise("package(filament): does not support versions newer than 1.32.0 for Mac OS x64.")
+            end
+            if package:is_plat("macosx") and package:is_arch("arm64") and package:version():eq("1.67.0") then
+                raise("package(filament): does not support 1.67.0 version for Mac OS arm64.")
+            end
+            if package:is_plat("linux") and package:is_arch("x86_64") and package:version():eq("1.67.0") then
+                raise("package(filament): does not support 1.67.0 version for Linux x64.")
+            end
+        end)
+    end
 
     on_install("windows|x64", "macosx|x86_64", "macosx|arm64", "linux|x86_64", function (package)
         os.cp("*", package:installdir())
