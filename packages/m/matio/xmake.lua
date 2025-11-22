@@ -6,6 +6,7 @@ package("matio")
     add_urls("https://github.com/tbeu/matio/archive/refs/tags/$(version).tar.gz",
              "https://github.com/tbeu/matio.git", {submodules = false})
 
+    add_versions("v1.5.29", "345f18bad65ad4a736ef5b4d660e8587c672939ff88b8551453e03d2146ff8b0")
     add_versions("v1.5.28", "04d14160a637ea822593c336b231227372179f650250c98024a8a2b744afef25")
     add_versions("v1.5.27", "2efe7c4a206885287c0f56128f3a36aa6e453077d03e4c2c42cdce9d332b67eb")
     add_versions("v1.5.26", "4aa5ac827ee49a3111f88f8d9b8ae034b8757384477e8f29cb64582c7d54e156")
@@ -15,6 +16,9 @@ package("matio")
     add_configs("extended_sparse", {description = "Enable extended sparse matrix data types not supported in MATLAB", default = false, type = "boolean"})
     add_configs("mat73", {description = "Enable support for version 7.3 MAT files", default = false, type = "boolean"})
     add_configs("default_file_version", {description = "Select what MAT file format version is used by default", default = "5", type = "string", values = {"4", "5", "7.5"}})
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     add_deps("cmake")
 
