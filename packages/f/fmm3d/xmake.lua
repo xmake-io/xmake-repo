@@ -15,13 +15,16 @@ package("fmm3d")
     on_install("linux", "macosx", "windows", function (package)
         if package:is_plat("windows") then
             os.cp("make.inc.windows.mingw", "make.inc")
+
             io.replace("makefile", "mkdir -p $(FMM_INSTALL_DIR)", "", {plain = true})
-            io.replace("makefile", "cp -f", "copy /y", {plain = true})
-            io.replace("makefile", "cp ", "copy ", {plain = true})
-            io.replace("makefile", "mv ", "move ", {plain = true})
-            io.replace("makefile", "[ ! -f lib/$(LIMPLIB) ] ||", "if exist lib/$(LIMPLIB)", {plain = true})
-            io.replace("makefile", "[ ! -f $(LIMPLIB) ] ||", "if exist $(LIMPLIB)", {plain = true})
-            io.replace("makefile", "$(FMM_INSTALL_DIR)/", "$(FMM_INSTALL_DIR)", {plain = true})
+            io.replace("makefile", "cp -f lib/$(DYNAMICLIB) $(FMM_INSTALL_DIR)/", "copy /y lib\\$(DYNAMICLIB) $(FMM_INSTALL_DIR)", {plain = true})
+            io.replace("makefile", "cp -f lib-static/$(STATICLIB) $(FMM_INSTALL_DIR)/", "copy /y lib-static\\$(STATICLIB) $(FMM_INSTALL_DIR)", {plain = true})
+            io.replace("makefile", "[ ! -f lib/$(LIMPLIB) ] || cp lib/$(LIMPLIB) $(FMM_INSTALL_DIR)/", "if exist lib\\$(LIMPLIB) copy lib\\$(LIMPLIB) $(FMM_INSTALL_DIR)", {plain = true})
+
+            io.replace("makefile", "mv $(STATICLIB) lib-static/", "move $(STATICLIB) lib-static", {plain = true})
+            io.replace("makefile", "mv $(DYNAMICLIB) lib/", "move $(DYNAMICLIB) lib", {plain = true})
+            io.replace("makefile", "[ ! -f $(LIMPLIB) ] || mv $(LIMPLIB) lib/", "if exist $(LIMPLIB) move $(LIMPLIB) lib", {plain = true})
+
             io.replace("makefile", "\" $(FMM_INSTALL_DIR) \"", "$(FMM_INSTALL_DIR)", {plain = true})
             io.replace("makefile", "\"$(FMM_INSTALL_DIR) \"", "$(FMM_INSTALL_DIR)", {plain = true})
         elseif package:is_plat("macosx") then
