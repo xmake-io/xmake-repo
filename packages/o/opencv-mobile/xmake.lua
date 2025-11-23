@@ -54,10 +54,11 @@ package("opencv-mobile")
         if package:is_plat("windows") then
             table.insert(configs, "-DBUILD_WITH_STATIC_CRT=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
             if package:is_arch("arm64") then
-                table.insert(configs, "-DCMAKE_SYSTEM_NAME=Windows")
-                table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=ARM64")
+                table.insert(configs, "-DOPENCV_SKIP_SYSTEM_PROCESSOR_DETECTION=ON")
+                table.insert(configs, "-DAARCH64=ON")
             end
         elseif package:is_plat("mingw") then
+            table.insert(configs, "-DCMAKE_SYSTEM_NAME=Windows")
             table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "AMD64" or "i686"))
         elseif package:is_plat("macosx") then
             table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "AMD64" or "ARM64"))
