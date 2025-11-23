@@ -1,11 +1,12 @@
 package("libpng")
-    set_homepage("http://www.libpng.org/pub/png/libpng.html")
+    set_homepage("https://www.libpng.org/pub/png/libpng.html")
     set_description("The official PNG reference library")
     set_license("libpng-2.0")
 
     add_urls("https://github.com/glennrp/libpng/archive/refs/tags/$(version).tar.gz",
              "https://github.com/glennrp/libpng.git")
 
+    add_versions("v1.6.51", "b1872484c1c5c70acc79cbb15fb366df954fa8d5dacbe7f729d858902d17933c")
     add_versions("v1.6.50", "71158e53cfdf2877bc99bcab33641d78df3f48e6e0daad030afe9cb8c031aa46")
     add_versions("v1.6.49", "e425762fdfb9bb30a5d2da29c0067570e96b5d41d79c659cf0dad861e9df738e")
     add_versions("v1.6.48", "b17e99026055727e8cba99160c3a9a7f9af788e9f786daeadded5a42243f1dd0")
