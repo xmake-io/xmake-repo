@@ -3,10 +3,9 @@ package("fmm3d")
     set_description("A set of libraries to compute N-body interactions governed by the Laplace and Helmholtz equations, to a specified precision, in three dimensions, on a multi-core shared-memory machine.")
     set_license("Apache-2.0")
 
-    set_urls("https://github.com/flatironinstitute/FMM3D/archive/refs/tags/v$(version).zip",
+    set_urls("https://github.com/flatironinstitute/FMM3D/archive/refs/tags/$(version).zip",
              "https://github.com/flatironinstitute/FMM3D.git")
-    
-    add_versions("1.0.4", "702c99c2537060c589bdcf0903f7c219b450de28")
+    add_versions("v1.0.4", "59fa04965cd46cd564ba4784d91f00f8b0d24e0a08967a7b90f076dd5eb30faf")
 
     if is_plat("windows") then
         add_deps("mingw-w64", "make")
@@ -30,7 +29,7 @@ package("fmm3d")
         elseif package:is_plat("macosx") then
             os.cp("make.inc.macos.gnu", "make.inc")
         end
-        
+
         import("package.tools.make").build(package, {"install", "PREFIX=" .. package:installdir("lib")})
 
         local preface = "  #pragma once\n\n  #include <stdint.h>\n"
@@ -50,7 +49,7 @@ package("fmm3d")
             hfmm3d_h = preface .. "  #include <complex.h>\n\n  typedef double complex CPX;\n" .. ex_begin .. hfmm3d_h .. ex_end
         end
         io.writefile("c/hfmm3d_c.h", hfmm3d_h)
-        
+
         os.cp("c/lfmm3d_c.h", package:installdir("include"))
         os.cp("c/hfmm3d_c.h", package:installdir("include"))
     end)
