@@ -6,11 +6,14 @@ package("emhash")
 
     add_urls("https://github.com/ktprime/emhash/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ktprime/emhash.git")
+
     add_versions("v1.0.1", "dbcce726c5ccce4a260a2c5ca9aa239e4d6109aacb3b5097ebfa465247708a7b")
     add_versions("v1.0.0", "9de79897a94e8c2545a401bb441ee6f6c293124e46bf9cf3023be6b1632e708b")
 
+    add_deps("cmake")
+
     on_install(function (package)
-        os.cp("*.hpp", package:installdir("include"))
+        import("package.tools.cmake").install(package, {"-DWITH_BENCHMARKS=OFF"})
     end)
 
     on_test(function (package)
