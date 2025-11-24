@@ -8,9 +8,22 @@ package("dynareadout")
 
     add_configs("cpp_bind",    {description = "Build the C++ bindings",        default = true, type = "boolean"})
     add_configs("profiling",   {description = "Build with profiling features", default = true, type = "boolean"})
-    add_configs("python_bind", {description = "Build the python bindings",     default = true, type = "boolean"})
+    if is_plat("mingw") then
+        add_configs("python_bind", {description = "Build the python bindings", default = false, type = "boolean", readonly = true})
+    else
+        add_configs("python_bind", {description = "Build the python bindings", default = true, type = "boolean"})
+    end
+
+    on_check("windows", function (package)
+        if package:config("python_bind") then
+            if not package:is_arch("x64", "arm64") or package:is_cross() then
+                raise("package(dynareadout) python bind is only supported windows x64/arm64 native build")
+            end
+        end
+    end)
 
     on_load(function (package)
+        wprint("The original repository PucklaJ/dynareadout is no longer public. You are using a mirror of this repository.")
         if package:config("cpp_bind") then
             package:add("links", "dynareadout_cpp", "dynareadout")
         else
@@ -25,14 +38,14 @@ package("dynareadout")
     end)
 
     on_install("windows", "linux", "macosx", "mingw", function (package)
+        local configs = {}
+        configs.build_cpp = package:config("cpp_bind")
+        configs.profiling = package:config("profiling")
+        configs.build_python = package:config("python_bind")
+
         os.cd("lib/dynareadout")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        local configs = {}
-        configs.build_cpp = package:config("cpp_bind") and "y" or "n"
-        configs.profiling = package:config("profiling") and "y" or "n"
-        configs.build_python = (package:config("python_bind") and not package:is_plat("mingw")) and "y" or "n"
         import("package.tools.xmake").install(package, configs)
-        wprint("The original repository PucklaJ/dynareadout is no longer public. You are using a mirror of this repository.")
     end)
 
     on_test(function (package)
