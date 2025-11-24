@@ -6,6 +6,7 @@ package("utf8proc")
 
     add_urls("https://github.com/JuliaStrings/utf8proc/archive/refs/tags/$(version).tar.gz",
              "https://github.com/JuliaStrings/utf8proc.git")
+    add_versions("v2.11.2", "a9b8d8fd57fb3aeca2aede62fd58958036d3bd29871afc1b871e3916c48420a7")
     add_versions("v2.11.1", "dc146fd279eacbbf399d3f70932ce66f516aac2d13f8ec2d26a30f8ed70aa5b4")
     add_versions("v2.11.0", "c24379b5fa0a429a1f9a3fc23b44a75f2b141a34c09146a529a55d20a5808070")
     add_versions("v2.10.0", "6f4f1b639daa6dca9f80bc5db1233e9cbaa31a67790887106160b33ef743f136")
