@@ -34,7 +34,7 @@ if has_config("build_cpp", "build_python") then
             add_rules("utils.symbols.export_all", {export_classes = true})
         end
         if is_plat("macosx") then
-            add_packages("boost")
+            add_packages("boost", {public = true})
         end
     target_end()
 end
