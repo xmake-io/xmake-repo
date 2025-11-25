@@ -14,6 +14,10 @@ package("nsync")
     add_patches(">=1.30.0", "patches/1.30.0/cmake.patch", "9cb6c772cefe05af0024e8a0a6931531f000ddea3e54ad258a3b95cc04aa1e0c")
     add_patches(">=1.28.1<1.30.0", "patches/1.28.1/cmake.patch", "626a89a5a60884b7aaf44011494e7ba5dbfcdae9fcdb5afcef5b5d1f893b4600")
 
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     if is_plat("linux", "bsd") then
         add_syslinks("m", "pthread")
     end
@@ -21,6 +25,10 @@ package("nsync")
     add_deps("cmake")
 
     on_install(function (package)
+        if package:is_plat("iphoneos") then
+            io.replace("CMakeLists.txt", [[elseif ("${CMAKE_SYSTEM_NAME}X" STREQUAL "DarwinX")]], "elseif(1)", {plain = true})
+        end
+
         local configs = {"-DNSYNC_ENABLE_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
