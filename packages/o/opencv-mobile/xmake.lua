@@ -20,25 +20,30 @@ package("opencv-mobile")
 
     add_patches("*", "patches/msvc.patch", "6fa760ea58c8b90c87129f16c84b128a4447ea11cee7d6568ea4f5e7ae250971")
 
-    add_deps("cmake", "openmp")
+    add_deps("cmake")
+    if is_plat("android") then
+        add_deps("libomp")
+    else
+        add_deps("openmp")
+    end
 
     on_load("android", "linux", "macosx", "windows", "mingw@windows,msys", function (package)
         if package:is_plat("windows") then
-            -- local arch = "x64"
-            -- if     package:is_arch("x86")   then arch = "x86"
-            -- elseif package:is_arch("arm64") then arch = "ARM64"
-            -- end
+            local arch = "x64"
+            if     package:is_arch("x86")   then arch = "x86"
+            elseif package:is_arch("arm64") then arch = "ARM64"
+            end
             local linkdir = (package:config("shared") and "lib" or "staticlib")
-            -- local vs = package:toolchain("msvc"):config("vs")
-            -- local vc_ver = "vc13"
-            -- if     vs == "2015" then vc_ver = "vc14"
-            -- elseif vs == "2017" then vc_ver = "vc15"
-            -- elseif vs == "2019" then vc_ver = "vc16"
-            -- elseif vs == "2022" then vc_ver = "vc17"
-            -- elseif vs == "2026" then vc_ver = "vc18"
-            -- end
+            local vs = package:toolchain("msvc"):config("vs")
+            local vc_ver = "vc13"
+            if     vs == "2015" then vc_ver = "vc14"
+            elseif vs == "2017" then vc_ver = "vc15"
+            elseif vs == "2019" then vc_ver = "vc16"
+            elseif vs == "2022" then vc_ver = "vc17"
+            elseif vs == "2026" then vc_ver = "vc18"
+            end
             package:add("linkdirs", linkdir) -- fix path for 4.9.0/vs2022
-            -- package:add("linkdirs", path.join(arch, vc_ver, linkdir))
+            package:add("linkdirs", path.join(arch, vc_ver, linkdir))
         elseif package:is_plat("mingw") then
             local arch = (package:is_arch("x86_64") and "x64" or "x86")
             local linkdir = (package:config("shared") and "lib" or "staticlib")
@@ -77,49 +82,37 @@ package("opencv-mobile")
         import("package.tools.cmake").install(package, configs)
 
         if package:is_plat("windows") then
-            -- local arch = "x64"
-            -- if     package:is_arch("x86")   then arch = "x86"
-            -- elseif package:is_arch("arm64") then arch = "ARM64"
-            -- end
-            -- if package:is_arch("arm64") then
-            --     os.trymv(path.join(package:installdir(), "x64"), path.join(package:installdir(), "ARM64"))
-            --     os.trymv(path.join(package:installdir(), "x86"), path.join(package:installdir(), "ARM64"))
-            -- end
+            local arch = "x64"
+            if     package:is_arch("x86")   then arch = "x86"
+            elseif package:is_arch("arm64") then arch = "ARM64"
+            end
+            if package:is_arch("arm64") then
+                os.trymv(path.join(package:installdir(), "x64"), path.join(package:installdir(), "ARM64"))
+                os.trymv(path.join(package:installdir(), "x86"), path.join(package:installdir(), "ARM64"))
+            end
             local linkdir = (package:config("shared") and "lib" or "staticlib")
-            -- local vs = package:toolchain("msvc"):config("vs")
-            -- local vc_ver = "vc13"
-            -- if     vs == "2015" then vc_ver = "vc14"
-            -- elseif vs == "2017" then vc_ver = "vc15"
-            -- elseif vs == "2019" then vc_ver = "vc16"
-            -- elseif vs == "2022" then vc_ver = "vc17"
-            -- elseif vs == "2026" then vc_ver = "vc18"
-            -- end
+            local vs = package:toolchain("msvc"):config("vs")
+            local vc_ver = "vc13"
+            if     vs == "2015" then vc_ver = "vc14"
+            elseif vs == "2017" then vc_ver = "vc15"
+            elseif vs == "2019" then vc_ver = "vc16"
+            elseif vs == "2022" then vc_ver = "vc17"
+            elseif vs == "2026" then vc_ver = "vc18"
+            end
 
             local libfiles = {}
-            cprint("=== print info begin ===")
-            cprint(package:installdir())
-            os.execv("cmd", {"/c", "dir", installdir})
-            cprint("========================")
-            os.execv("cmd", {"/c", "tree", "/F", installdir})
-            cprint("===  print info end  ===")
             table.join2(libfiles, os.files(package:installdir(linkdir, "*.lib")))
-            -- table.join2(libfiles, os.files(package:installdir(arch, vc_ver, linkdir, "*.lib")))
+            table.join2(libfiles, os.files(package:installdir(arch, vc_ver, linkdir, "*.lib")))
             for _, f in ipairs(libfiles) do
                 if not f:match("opencv_.+") then
                     package:add("links", path.basename(f))
                 end
             end
             package:addenv("PATH", "bin") -- fix path for 4.9.0/vs2022
-            -- package:addenv("PATH", path.join(arch, vc_ver, "bin"))
+            package:addenv("PATH", path.join(arch, vc_ver, "bin"))
         elseif package:is_plat("mingw") then
             local arch = package:is_arch("x86_64") and "x64" or "x86"
             local linkdir = (package:config("shared") and "lib" or "staticlib")
-            cprint("=== print info begin ===")
-            cprint(package:installdir())
-            os.execv("cmd", {"/c", "dir", installdir})
-            cprint("========================")
-            os.execv("cmd", {"/c", "tree", "/F", installdir})
-            cprint("===  print info end  ===")
             for _, f in ipairs(os.files(package:installdir(arch, "mingw", linkdir, "lib*.a"))) do
                 if not f:match("libopencv_.+") then
                     package:add("links", path.basename(f):match("lib(.+)"))
