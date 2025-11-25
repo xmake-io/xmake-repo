@@ -32,6 +32,7 @@ package("miniaudio")
     add_configs("sse2", {description = "Enable SSE2 optimizations", default = true, type = "boolean"})
     add_configs("threading", {description = "Enable the threading API", default = true, type = "boolean"})
     add_configs("wav", {description = "Enable the builtin WAV decoder and encoder", default = true, type = "boolean"})
+    add_configs("worklets", {description = "Enable AudioWorklets when targeting web", default = true, type = "boolean"})
 
     if is_plat("iphoneos") then
         add_frameworks("AudioToolbox", "AVFoundation", "CoreFoundation", "Foundation")
