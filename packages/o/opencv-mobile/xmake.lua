@@ -86,7 +86,11 @@ package("opencv-mobile")
             table.insert(configs, "-DOPENCV_DISABLE_FILESYSTEM_SUPPORT=ON")
             table.insert(configs, "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON")
             if package:is_arch("arm64-v8a") then
-                table.insert(configs, "-DOPENCV_EXTRA_FLAGS=-mno-outline-atomics")
+                -- https://github.com/Tencent/ncnn/pull/4362#issuecomment-2857174155
+                local ndk = package:toolchain("ndk"):config("ndkver")
+                if ndk and tonumber(ndk) >= 24 then
+                    table.insert(configs, "-DOPENCV_EXTRA_FLAGS=-mno-outline-atomics")
+                end
             elseif package:is_arch("armeabi-v7a") then
                 table.insert(configs, "-DANDROID_ARM_NEON=ON")
             end
@@ -136,6 +140,16 @@ package("opencv-mobile")
                 end
             end
             package:addenv("PATH", path.join(arch, "mingw", "bin"))
+        elseif package:is_plat("android") then
+            for _, suffix in ipairs({"*.a", "*.so"}) do
+                local lib_name = package:config("shared") and "libs" or "staticlibs"
+                local libdir = package:installdir(path.join("sdk/native", lib_name, package:targetarch()))
+                cprint(libdir)
+                for _, f in ipairs(os.files(path.join(libdir, suffix))) do
+                    package:add("links", path.basename(f):match("lib(.+)"))
+                end
+            end
+            package:add("syslinks", "omp")
         else
             package:addenv("PATH", "bin")
         end
