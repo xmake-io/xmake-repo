@@ -20,10 +20,22 @@ package("opencv-mobile")
 
     add_patches("*", "patches/msvc.patch", "6fa760ea58c8b90c87129f16c84b128a4447ea11cee7d6568ea4f5e7ae250971")
 
-    add_deps("cmake", "python 3.x", {kind = "binary"})
-    add_deps("openmp")
+    add_deps("cmake")
+    if not is_plat("android", "iphoneos") then
+        add_deps("openmp")
+    end
 
-    on_load(function (package)
+    if on_check then
+        on_check("android", function (package)
+            -- https://github.com/android/ndk/issues/1202#issuecomment-768524852
+            if package:is_arch("armeabi-v7a") then
+                local ndk = package:toolchain("ndk"):config("ndkver")
+                assert(ndk and tonumber(ndk) >= 23, "package(opencv-mobile): armeabi-v7a requires NDK version >= r23")
+            end
+        end)
+    end
+
+    on_load("android", "iphoneos", "linux", "macosx", "windows", "mingw@windows,msys", function (package)
         if package:is_plat("windows") then
             local arch = "x64"
             if     package:is_arch("x86")   then arch = "x86"
@@ -36,6 +48,7 @@ package("opencv-mobile")
             elseif vs == "2017" then vc_ver = "vc15"
             elseif vs == "2019" then vc_ver = "vc16"
             elseif vs == "2022" then vc_ver = "vc17"
+            elseif vs == "2026" then vc_ver = "vc18"
             end
             package:add("linkdirs", linkdir) -- fix path for 4.9.0/vs2022
             package:add("linkdirs", path.join(arch, vc_ver, linkdir))
@@ -43,25 +56,46 @@ package("opencv-mobile")
             local arch = (package:is_arch("x86_64") and "x64" or "x86")
             local linkdir = (package:config("shared") and "lib" or "staticlib")
             package:add("linkdirs", path.join(arch, "mingw", linkdir))
+        elseif package:is_plat("android") then
+            local linkdir = (package:config("shared") and "libs" or "staticlibs")
+            package:add("linkdirs", path.join("sdk/native", linkdir, package:targetarch()))
+            package:add("linkdirs", path.join("sdk/native/3rdparty/libs", package:targetarch()))
+            package:add("includedirs", "sdk/native/jni/include")
         elseif package:version():ge("4.0") then
             package:add("includedirs", "include/opencv4")
         end
     end)
 
-    on_install("linux", "macosx", "windows", "mingw@windows,msys", function (package)
+    on_install("android", "iphoneos", "linux", "macosx", "windows", "mingw@windows,msys", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
             table.insert(configs, "-DBUILD_WITH_STATIC_CRT=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
             if package:is_arch("arm64") then
-                table.insert(configs, "-DCMAKE_SYSTEM_NAME=Windows")
-                table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=ARM64")
+                table.insert(configs, "-DOPENCV_SKIP_SYSTEM_PROCESSOR_DETECTION=ON")
+                table.insert(configs, "-DAARCH64=ON")
             end
         elseif package:is_plat("mingw") then
+            table.insert(configs, "-DCMAKE_SYSTEM_NAME=Windows")
             table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "AMD64" or "i686"))
         elseif package:is_plat("macosx") then
             table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "AMD64" or "ARM64"))
+        elseif package:is_plat("android") then
+            table.insert(configs, "-DANDROID_CPP_FEATURES=no-rtti no-exceptions")
+            table.insert(configs, "-DOPENCV_DISABLE_FILESYSTEM_SUPPORT=ON")
+            table.insert(configs, "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON")
+            if package:is_arch("arm64-v8a") then
+                -- https://github.com/Tencent/ncnn/pull/4362#issuecomment-2857174155
+                local ndk = package:toolchain("ndk"):config("ndkver")
+                if ndk and tonumber(ndk) >= 24 then
+                    table.insert(configs, "-DOPENCV_EXTRA_FLAGS=-mno-outline-atomics")
+                end
+            elseif package:is_arch("armeabi-v7a") then
+                table.insert(configs, "-DANDROID_ARM_NEON=ON")
+            end
+        elseif package:is_plat("iphoneos") or (package:is_plat("linux") and package:is_arch("arm.*")) then
+            table.insert(configs, "-DCMAKE_CXX_FLAGS=-fno-rtti -fno-exceptions")
         end
         local options = string.split(io.readfile("options.txt"), "\n", {plain = true})
         table.remove_if(options, function (_, option)
@@ -75,6 +109,10 @@ package("opencv-mobile")
             if     package:is_arch("x86")   then arch = "x86"
             elseif package:is_arch("arm64") then arch = "ARM64"
             end
+            if package:is_arch("arm64") then
+                os.trymv(path.join(package:installdir(), "x64"), path.join(package:installdir(), "ARM64"))
+                os.trymv(path.join(package:installdir(), "x86"), path.join(package:installdir(), "ARM64"))
+            end
             local linkdir = (package:config("shared") and "lib" or "staticlib")
             local vs = package:toolchain("msvc"):config("vs")
             local vc_ver = "vc13"
@@ -82,6 +120,7 @@ package("opencv-mobile")
             elseif vs == "2017" then vc_ver = "vc15"
             elseif vs == "2019" then vc_ver = "vc16"
             elseif vs == "2022" then vc_ver = "vc17"
+            elseif vs == "2026" then vc_ver = "vc18"
             end
 
             local libfiles = {}
@@ -103,6 +142,15 @@ package("opencv-mobile")
                 end
             end
             package:addenv("PATH", path.join(arch, "mingw", "bin"))
+        elseif package:is_plat("android") then
+            for _, suffix in ipairs({"*.a", "*.so"}) do
+                local lib_name = package:config("shared") and "libs" or "staticlibs"
+                local libdir = package:installdir(path.join("sdk/native", lib_name, package:targetarch()))
+                for _, f in ipairs(os.files(path.join(libdir, suffix))) do
+                    package:add("links", path.basename(f):match("lib(.+)"))
+                end
+            end
+            package:add("syslinks", "omp")
         else
             package:addenv("PATH", "bin")
         end
