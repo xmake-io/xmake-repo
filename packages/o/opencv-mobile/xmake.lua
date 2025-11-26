@@ -35,7 +35,7 @@ package("opencv-mobile")
         end)
     end
 
-    on_load("android", "linux", "macosx", "windows", "mingw@windows,msys", function (package)
+    on_load("android", "iphoneos", "linux", "macosx", "windows", "mingw@windows,msys", function (package)
         if package:is_plat("windows") then
             local arch = "x64"
             if     package:is_arch("x86")   then arch = "x86"
@@ -66,7 +66,7 @@ package("opencv-mobile")
         end
     end)
 
-    on_install("android", "linux", "macosx", "windows", "mingw@windows,msys", function (package)
+    on_install("android", "iphoneos", "linux", "macosx", "windows", "mingw@windows,msys", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -94,6 +94,9 @@ package("opencv-mobile")
             elseif package:is_arch("armeabi-v7a") then
                 table.insert(configs, "-DANDROID_ARM_NEON=ON")
             end
+        elseif package:is_plat("iphoneos") or (package:is_plat("linux") and package:is_arch("arm.*")) then
+            table.insert(configs, "-DCMAKE_C_FLAGS=-fno-rtti -fno-exceptions")
+            table.insert(configs, "-DCMAKE_CXX_FLAGS=-fno-rtti -fno-exceptions")
         end
         local options = string.split(io.readfile("options.txt"), "\n", {plain = true})
         table.remove_if(options, function (_, option)
