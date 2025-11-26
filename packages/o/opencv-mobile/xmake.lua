@@ -95,7 +95,6 @@ package("opencv-mobile")
                 table.insert(configs, "-DANDROID_ARM_NEON=ON")
             end
         elseif package:is_plat("iphoneos") or (package:is_plat("linux") and package:is_arch("arm.*")) then
-            table.insert(configs, "-DCMAKE_C_FLAGS=-fno-rtti -fno-exceptions")
             table.insert(configs, "-DCMAKE_CXX_FLAGS=-fno-rtti -fno-exceptions")
         end
         local options = string.split(io.readfile("options.txt"), "\n", {plain = true})
