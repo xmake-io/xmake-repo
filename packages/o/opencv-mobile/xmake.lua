@@ -147,7 +147,6 @@ package("opencv-mobile")
             for _, suffix in ipairs({"*.a", "*.so"}) do
                 local lib_name = package:config("shared") and "libs" or "staticlibs"
                 local libdir = package:installdir(path.join("sdk/native", lib_name, package:targetarch()))
-                cprint(libdir)
                 for _, f in ipairs(os.files(path.join(libdir, suffix))) do
                     package:add("links", path.basename(f):match("lib(.+)"))
                 end
