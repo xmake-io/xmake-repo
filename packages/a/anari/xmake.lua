@@ -14,7 +14,7 @@ package("anari")
     add_deps("cmake", "python 3.x", {kind = "binary"})
 
     on_install(function (package)
-        if not package:config("shared") and package:is_plat("windows") then
+        if not package:config("shared") and package:is_plat("windows", "mingw") then
             package:add("defines", "ANARI_STATIC_DEFINE")
         end
 
