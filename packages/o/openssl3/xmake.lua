@@ -26,7 +26,9 @@ package("openssl3")
     add_versions("3.0.0", "1bdb33f131af75330de94475563c62d6908ac1c18586f7f4aa209b96b0bfc2f9")
 
     -- https://github.com/microsoft/vcpkg/blob/11faa3f168ec2a2f77510b92a42fb5c8a7e28bd8/ports/openssl/command-line-length.patch
-    add_patches("3.3.2", path.join(os.scriptdir(), "patches/3.3.2/command-line-length.patch"), "e969153046f22d6abbdedce19191361f20edf3814b3ee47fb79a306967e03d81")
+    add_patches("3.3.2", path.join(os.scriptdir(), "patches", "3.3.2", "command-line-length.patch"), "e969153046f22d6abbdedce19191361f20edf3814b3ee47fb79a306967e03d81")
+    -- https://github.com/openssl/openssl/issues/28745
+    add_patches("3.6.0", path.join(os.scriptdir(), "patches", "3.6.0", "Scope aes_cfb128_vaes_encdec_wrapper to x64.patch"), "e6f0093289879d382ff9c0ad0797eacad6a5dbe9880109e0c33ca3eeb10bb43e")
 
     on_fetch("fetch")
 
