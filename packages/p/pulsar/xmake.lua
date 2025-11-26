@@ -5,6 +5,7 @@ package("pulsar")
 
     add_urls("https://github.com/apache/pulsar-client-cpp/archive/refs/tags/v$(version).tar.gz")
 
+    add_versions("3.8.0", "40db9423a1f82fafb69b1ad517132506136019d3bf2b8e89cedefb37ff067e8d")
     add_versions("3.6.0", "321e288e60b340155d9a9ad8eb823738047f5055a71a8a345c93ddbe3d023741")
     add_versions("3.5.1", "279debf04b566321ff4fe2c5bd5bef8547a20b2bdbc6943cb027224ce6b45ec4")
     add_versions("3.5.0", "21d71a36666264418e3c5d3bc745628228b258daf659e6389bb9c9584409a27e")
