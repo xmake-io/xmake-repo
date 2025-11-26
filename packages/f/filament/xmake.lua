@@ -27,8 +27,8 @@ package("filament")
         add_versions("1.9.23", "016473371753ff6beb430900eb6550f73acc71c1092cbb654f272ed0666f6210")
         add_versions("1.20.3", "f57e1c967e09fe73ef69b0db8a48a09b3dab6f9ecb21b906b3f1fbe1d3a2ce3d")
         add_versions("1.32.0", "9c3fba4ed307aeeaa412f1846774c7a1c30afff3404d7f9822a7e77338f70fe9")
-        add_versions("1.67.0", "d39fd7faec6fafefc9e3dce1f0fb7505068141bd2fb59ec42119ecf9b190114a")
-        add_versions("1.67.1", "dde71072c84781b2b908735aebb9657f07dfdfd9b917bcd42a38c9e265e26bb8")
+        --add_versions("1.67.0", "d39fd7faec6fafefc9e3dce1f0fb7505068141bd2fb59ec42119ecf9b190114a")
+        --add_versions("1.67.1", "dde71072c84781b2b908735aebb9657f07dfdfd9b917bcd42a38c9e265e26bb8")
     end
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
