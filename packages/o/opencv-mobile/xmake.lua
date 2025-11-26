@@ -21,7 +21,7 @@ package("opencv-mobile")
     add_patches("*", "patches/msvc.patch", "6fa760ea58c8b90c87129f16c84b128a4447ea11cee7d6568ea4f5e7ae250971")
 
     add_deps("cmake")
-    if not is_plat("android") then
+    if not is_plat("android", "iphoneos") then
         add_deps("openmp")
     end
 
