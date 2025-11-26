@@ -18,6 +18,12 @@ package("anari")
             package:add("defines", "ANARI_STATIC_DEFINE")
         end
 
+        if package:config("shared") then
+            package:add("links", "anari_test_scenes", "anari_library_debug", "anari_library_sink", "helium", "anari", "anari_backend")
+        else
+            package:add("links", "anari_test_scenes", "anari_library_debug", "anari_library_sink", "helium", "anari_static", "anari_backend")
+        end
+
         local configs = {
             "-DBUILD_TESTING=OFF",
             "-DBUILD_EXAMPLES=OFF",
@@ -28,6 +34,15 @@ package("anari")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (not package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
+
+        if package:config("shared") then
+            os.tryrm(path.join(package:installdir("lib"), "*anari_static*"))
+        else
+            os.tryrm(path.join(package:installdir("lib"), "libanari.so*"))
+            os.tryrm(path.join(package:installdir("lib"), "libanari.dylib*"))
+            os.tryrm(path.join(package:installdir("lib"), "anari.lib"))
+            os.tryrm(path.join(package:installdir("bin"), "anari.dll"))
+        end
     end)
 
     on_test(function (package)
