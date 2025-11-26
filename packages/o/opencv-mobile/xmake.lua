@@ -21,10 +21,18 @@ package("opencv-mobile")
     add_patches("*", "patches/msvc.patch", "6fa760ea58c8b90c87129f16c84b128a4447ea11cee7d6568ea4f5e7ae250971")
 
     add_deps("cmake")
-    if is_plat("android") then
-        add_deps("libomp")
-    else
+    if not is_plat("android") then
         add_deps("openmp")
+    end
+
+    if on_check then
+        on_check("android", function (package)
+            -- https://github.com/android/ndk/issues/1202#issuecomment-768524852
+            if package:is_arch("armeabi-v7a") then
+                local ndk = package:toolchain("ndk"):config("ndkver")
+                assert(ndk and tonumber(ndk) >= 23, "package(opencv-mobile): armeabi-v7a requires NDK version >= r23")
+            end
+        end)
     end
 
     on_load("android", "linux", "macosx", "windows", "mingw@windows,msys", function (package)
@@ -73,6 +81,15 @@ package("opencv-mobile")
             table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "AMD64" or "i686"))
         elseif package:is_plat("macosx") then
             table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "AMD64" or "ARM64"))
+        elseif package:is_plat("android") then
+            table.insert(configs, "-DANDROID_CPP_FEATURES=no-rtti no-exceptions")
+            table.insert(configs, "-DOPENCV_DISABLE_FILESYSTEM_SUPPORT=ON")
+            table.insert(configs, "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON")
+            if package:is_arch("arm64-v8a") then
+                table.insert(configs, "-DOPENCV_EXTRA_FLAGS=-mno-outline-atomics")
+            elseif package:is_arch("armeabi-v7a") then
+                table.insert(configs, "-DANDROID_ARM_NEON=ON")
+            end
         end
         local options = string.split(io.readfile("options.txt"), "\n", {plain = true})
         table.remove_if(options, function (_, option)
