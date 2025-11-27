@@ -272,18 +272,20 @@ function get_modified_packages()
                 local package = file:match("packages/%w/(%S-)/")
                 table.insert(packages, package)
             end
-        elseif line:startswith("+") and line:find("add_versions") then
-            local version = line:match("add_versions%(\"(.-)\"")
-            if version:find(":", 1, true) then
-                version = version:split(":")[2]
-            end
-            if #packages > 0 and version then
-                local lastpackage = packages[#packages]
-                local splitinfo = lastpackage:split("%s+")
-                if #splitinfo > 1 then
-                    table.insert(packages, splitinfo[1] .. " " .. version)
-                else
-                    packages[#packages] = splitinfo[1] .. " " .. version
+        elseif line:startswith("+") and (line:find("add_versions") or line:find("package:add%(\"versions\"")) then
+            local version = line:match("add_versions%(\"(.-)\"") or line:match("package:add%(\"versions\",%s*\"(.-)\"")
+            if version then
+                if version:find(":", 1, true) then
+                    version = version:split(":")[2]
+                end
+                if #packages > 0 and version then
+                    local lastpackage = packages[#packages]
+                    local splitinfo = lastpackage:split("%s+")
+                    if #splitinfo > 1 then
+                        table.insert(packages, splitinfo[1] .. " " .. version)
+                    else
+                        packages[#packages] = splitinfo[1] .. " " .. version
+                    end
                 end
             end
         end
