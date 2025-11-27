@@ -58,11 +58,11 @@ package("filament")
             end
             if package:is_plat("linux") and package:version():gt("1.32.0") then
                  assert(package:check_cxxsnippets({test = [[
-                     #include <iostream>
-                     void test() {
-                         std::cout << _LIBCPP_VERSION << std::endl;
-                     }
-                 ]]}, {configs = {languages = "c++17"}}))
+                     #include <version>
+                     #if !defined(_LIBCPP_VERSION)
+                     #  error "This is not libc++!"
+                     #endif
+                 ]]}, {configs = {languages = "c++20"}}))
             end
         end)
     end
