@@ -5,6 +5,7 @@ package("tracy")
     add_urls("https://github.com/wolfpld/tracy/archive/refs/tags/$(version).tar.gz",
              "https://github.com/wolfpld/tracy.git")
 
+    add_versions("v0.13.0", "b0e972dfeebe42470187c1a47b449c8ee9e8656900bcf87b403175ed50796918")
     add_versions("v0.12.2", "09617765ba5ff1aa6da128d9ba3c608166c5ef05ac28e2bb77f791269d444952")
     add_versions("v0.12.1", "03580b01df3c435f74eec165193d6557cdbf3a84d39582ca30969ef5354560aa")
     add_versions("v0.12.0", "ce2fb5b89aeb6db8401d7efe1bfe8393b7a81ca551273e8c6dd46ed37c02a040")
@@ -68,6 +69,8 @@ package("tracy")
 #endif]], {plain = true})
         io.replace("public/client/TracyProfiler.cpp", [[RelationProcessorDie]], [[static_cast<LOGICAL_PROCESSOR_RELATIONSHIP>(5)]], {plain = true})
         if package:config("cmake") then
+            io.replace("CMakeLists.txt", [[/$<IF:$<CONFIG:Release>,,$<CONFIG>>]], "", {plain = true})
+
             local configs = {}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
