@@ -368,7 +368,7 @@ function main(...)
     end
 
     -- lock packages
-    _lock_packages(packages)
+    -- _lock_packages(packages)
 
     -- require packages
     _require_packages(argv, packages)
