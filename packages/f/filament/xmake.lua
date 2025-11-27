@@ -56,6 +56,9 @@ package("filament")
             if package:is_plat("macosx") and package:is_arch("x86_64") and version:gt("1.32.0") then
                 raise("package(filament): does not support versions newer than 1.32.0 for Mac OS x64.")
             end
+            if package:is_plat("linux") and package:version():gt("1.32.0") and not package:has_runtime("c++_shared", "c++_static") then
+                raise("package(filament): does not support versions newer than 1.32.0 without clang++ libc++ support for Linux OS.")
+            end
         end)
     end
 
