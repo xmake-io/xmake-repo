@@ -57,7 +57,7 @@ package("filament")
                 raise("package(filament): does not support versions newer than 1.32.0 for Mac OS x64.")
             end
             if package:is_plat("linux") and package:version():gt("1.32.0") then
-                 assert(target:check_cxxsnippets({test = [[
+                 assert(package:check_cxxsnippets({test = [[
                      #include <iostream>
                      void test() {
                          std::cout << _LIBCPP_VERSION << std::endl;
