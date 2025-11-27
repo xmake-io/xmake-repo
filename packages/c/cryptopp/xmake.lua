@@ -4,8 +4,6 @@ package("cryptopp")
 
     add_urls("https://github.com/weidai11/cryptopp.git")
     add_urls("https://github.com/weidai11/cryptopp/archive/refs/tags/CRYPTOPP_$(version).tar.gz", {version = function (version) return version:gsub("%.", "_") end})
-    add_versions("8.9.0", "ab5174b9b5c6236588e15a1aa1aaecb6658cdbe09501c7981ac8db276a24d9ab")
-    add_versions("8.7.0", "8d6a4064b8e9f34cd3e838f5a12c40067ee7b95ee37d9173ec273cb0913e7ca2")
     add_versions("8.6.0", "9304625f4767a13e0a5f26d0f019d78cf9375604a33e5391c3bf2e81399dfeb8")
     add_versions("8.5.0", "8f64cf09cf4f61d5d74bca53574b8cc9959186cc0f072a2e6597e4999d6ad5db")
     add_versions("8.4.0", "6687dfc1e33b084aeab48c35a8550b239ee5f73a099a3b6a0918d70b8a89e654")
@@ -49,13 +47,15 @@ package("cryptopp")
         -- @see https://github.com/weidai11/cryptopp/issues/358
         io.replace("iterhash.h", "CRYPTOPP_NO_VTABLE", "CRYPTOPP_DLL CRYPTOPP_NO_VTABLE", {plain = true})
 
-        io.replace("cryptopp/CMakeLists.txt", "set(CMAKE_CXX_VISIBILITY_PRESET hidden)", "", {plain = true})
-        io.replace("cryptopp/CMakeLists.txt", "set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)", "", {plain = true})
-        io.replace("cryptopp/CMakeLists.txt", "set(CMAKE_POSITION_INDEPENDENT_CODE 1)", "", {plain = true})
-        io.replace("cryptopp/CMakeLists.txt", [[target_compile_definitions(cryptopp PRIVATE "CRYPTOPP_EXPORTS")]], "", {plain = true})
-        io.replace("cryptopp/CMakeLists.txt",
-            "set(BUILD_SHARED_LIBS ${CRYPTOPP_BUILD_SHARED})",
-            format("set(CRYPTOPP_BUILD_SHARED %s)", package:config("shared") and "ON" or "OFF"), {plain = true})
+        if os.isfile("cryptopp/CMakeLists.txt") then
+            io.replace("cryptopp/CMakeLists.txt", "set(CMAKE_CXX_VISIBILITY_PRESET hidden)", "", {plain = true})
+            io.replace("cryptopp/CMakeLists.txt", "set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)", "", {plain = true})
+            io.replace("cryptopp/CMakeLists.txt", "set(CMAKE_POSITION_INDEPENDENT_CODE 1)", "", {plain = true})
+            io.replace("cryptopp/CMakeLists.txt", [[target_compile_definitions(cryptopp PRIVATE "CRYPTOPP_EXPORTS")]], "", {plain = true})
+            io.replace("cryptopp/CMakeLists.txt",
+                "set(BUILD_SHARED_LIBS ${CRYPTOPP_BUILD_SHARED})",
+                format("set(CRYPTOPP_BUILD_SHARED %s)", package:config("shared") and "ON" or "OFF"), {plain = true})
+        end
 
         local configs = {
             -- Disable auto fetch source code
