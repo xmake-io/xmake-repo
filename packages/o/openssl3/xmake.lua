@@ -5,6 +5,8 @@ package("openssl3")
 
     add_urls("https://github.com/openssl/openssl/archive/refs/tags/openssl-$(version).zip")
 
+    add_versions("3.6.0", "273d989d1157f0bd494054e1b799b6bdba39d4acaff6dfcb8db02656f1b454dd")
+    add_versions("3.5.4", "6e6ca87952a3908282bae88c6e6a5d38bc6fc25d5570218866e5f2d206c03be1")
     add_versions("3.5.1", "9a1472b5e2a019f69da7527f381b873e3287348f3ad91783f83fff4e091ea4a8")
     add_versions("3.4.2", "d313ac2ee07ad0d9c6e9203c56a485b3ecacac61c18fe450fe3c1d4db540ad71")
     add_versions("3.3.4", "88c892a670df8924889f3bfd2f2dde822e1573a23dc4176556cb5170b40693ea")
@@ -24,7 +26,9 @@ package("openssl3")
     add_versions("3.0.0", "1bdb33f131af75330de94475563c62d6908ac1c18586f7f4aa209b96b0bfc2f9")
 
     -- https://github.com/microsoft/vcpkg/blob/11faa3f168ec2a2f77510b92a42fb5c8a7e28bd8/ports/openssl/command-line-length.patch
-    add_patches("3.3.2", path.join(os.scriptdir(), "patches/3.3.2/command-line-length.patch"), "e969153046f22d6abbdedce19191361f20edf3814b3ee47fb79a306967e03d81")
+    add_patches("3.3.2", path.join(os.scriptdir(), "patches", "3.3.2", "command-line-length.patch"), "e969153046f22d6abbdedce19191361f20edf3814b3ee47fb79a306967e03d81")
+    -- https://github.com/openssl/openssl/issues/28745
+    add_patches("3.6.0", path.join(os.scriptdir(), "patches", "3.6.0", "c20d4704e9e99a89d29f5ee848f9498694388905.patch"), "5d2523a6e0cc938c5d5acab849899da4b6a333b51151eaac5bd3b52741536bbc")
 
     on_fetch("fetch")
 
