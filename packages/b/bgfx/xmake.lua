@@ -53,6 +53,9 @@ package("bgfx")
         if package:config("shared") then
             table.insert(args, "--with-shared-lib")
         end
+        if package:has_runtime("MD", "MDd") then
+            table.insert(args, "--with-dynamic-runtime")
+        end
         os.trycp(path.join("include", "bgfx"), package:installdir("include"))
         os.trycp(path.join(bxdir, "include", "*"), package:installdir("include"))
         os.trycp(path.join(bimgdir, "include", "*"), package:installdir("include"))
