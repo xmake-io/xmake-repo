@@ -30,11 +30,23 @@ package("quickjs-ng")
                 assert(minor and minor >= 30, "package(quickjs-ng) require vs_toolset >= 14.3")
             end
         end)
+        on_check("iphoneos", function (package)
+            if package:version() and package:version():gt("v0.11.0") then
+                raise("package(quickjs-ng >v0.11.0) supports ios")
+            end
+        end)
     end
 
     on_install(function (package)
         io.replace("CMakeLists.txt", "xcheck_add_c_compiler_flag(-Werror)", "", {plain = true})
         io.replace("CMakeLists.txt", "if(NOT WIN32 AND NOT EMSCRIPTEN)", "if(0)", {plain = true})
+        if package:is_plat("wasm") then
+            io.replace("quickjs-libc.c", " defined(__wasi__)", " (defined(__wasi__) || defined(EMSCRIPTEN))", {plain = true})
+            io.replace("quickjs-libc.c", " !defined(__wasi__)", " (!defined(__wasi__) && !defined(EMSCRIPTEN))", {plain = true})
+        end
+        if package:is_plat("linux", "bsd", "cross") then
+            io.replace("CMakeLists.txt", "M_LIBRARIES OR CMAKE_C_COMPILER_ID STREQUAL \"TinyCC\"", "1", {plain = true}) -- m library link
+        end
 
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
@@ -46,19 +58,7 @@ package("quickjs-ng")
         if package:config("shared") and package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
-        if package:is_plat("wasm") then
-            io.replace("quickjs-libc.c", " defined(__wasi__)", " (defined(__wasi__) || defined(EMSCRIPTEN))", {plain = true})
-            io.replace("quickjs-libc.c", " !defined(__wasi__)", " (!defined(__wasi__) && !defined(EMSCRIPTEN))", {plain = true})
-        end
-        if package:is_plat("linux", "bsd", "cross") then
-            io.replace("CMakeLists.txt", "M_LIBRARIES OR CMAKE_C_COMPILER_ID STREQUAL \"TinyCC\"", "1", {plain = true}) -- m library link
-        end
         import("package.tools.cmake").install(package, configs)
-
-        if package:is_plat("windows") and package:is_debug() then
-            local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.vcp(path.join(package:buildir(), "qjs.pdb"), dir)
-        end
 
         os.trycp("*.h", package:installdir("include"))
         os.trycp(path.join(package:buildir(), "**.a"), package:installdir("lib"))
