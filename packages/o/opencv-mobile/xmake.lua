@@ -124,6 +124,10 @@ package("opencv-mobile")
             io.replace("modules/highgui/src/display_win32.h", "#include <Windows.h>", "#include <windows.h>", {plain = true})
             io.replace("modules/highgui/src/display_win32.h", "static LRESULT", "LRESULT", {plain = true})
         end
+        -- no platforms folder https://github.com/nihui/opencv-mobile/blob/v32/.github/workflows/release.yml#L73
+        if package:is_plat("linux") and package:is_arch("arm64") and package:version():eq("4.11.0") then
+            io.replace("cmake/platforms/OpenCV-Linux.cmake", "AND NOT CMAKE_CROSSCOMPILING", "AND FALSE", {plain = true})
+        end
 
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
@@ -203,8 +207,12 @@ package("opencv-mobile")
         elseif package:is_plat("android") then
             for _, suffix in ipairs({"*.a", "*.so"}) do
                 local lib_name = package:config("shared") and "libs" or "staticlibs"
-                local libdir = package:installdir(path.join("sdk/native", lib_name, package:targetarch()))
-                for _, f in ipairs(os.files(path.join(libdir, suffix))) do
+                local libdir_1 = package:installdir(path.join("sdk/native", lib_name, package:targetarch()))
+                local libdir_2 = package:installdir(path.join("sdk/native/3rdparty/libs", package:targetarch()))
+                local libfiles = {}
+                table.join2(libfiles, os.files(path.join(libdir_1, suffix)))
+                table.join2(libfiles, os.files(path.join(libdir_2, suffix)))
+                for _, f in ipairs(libfiles) do
                     package:add("links", path.basename(f):match("lib(.+)"))
                 end
             end
