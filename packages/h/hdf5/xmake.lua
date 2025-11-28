@@ -22,7 +22,7 @@ package("hdf5")
     add_versions("github:1.14.4-3", "019ac451d9e1cf89c0482ba2a06f07a46166caf23f60fea5ef3c37724a318e03")
     add_versions("github:1.14.6", "e4defbac30f50d64e1556374aa49e574417c9e72c6b1de7a4ff88c4b1bea6e9b")
 
-    add_patches(">1.10", "patch/cmake.patch", "f1a3f6be6d1bf53a49d47b726107261f8dacf028428f9d1552fc307c03670015")
+    add_patches(">1.14.4 <2.0", "patch/cmake.patch", "f1a3f6be6d1bf53a49d47b726107261f8dacf028428f9d1552fc307c03670015")
 
     add_configs("zlib", {description = "Enable Zlib Filters", default = false, type = "boolean"})
     add_configs("szip", {description = "Enable Szip Filters", default = false, type = "boolean"})
@@ -55,7 +55,9 @@ package("hdf5")
 
     on_install("windows", "macosx", "linux", "bsd", function (package)
         -- remove postfix
-        io.replace("config/cmake/HDFMacros.cmake", "if(NOT CMAKE_DEBUG_POSTFIX)", "if(0)", {plain = true})
+        if os.isfile("config/cmake/HDFMacros.cmake") then
+            io.replace("config/cmake/HDFMacros.cmake", "if(NOT CMAKE_DEBUG_POSTFIX)", "if(0)", {plain = true})
+        end
         if os.isfile("CMakeInstallation.cmake") then
             io.replace("CMakeInstallation.cmake", "include (InstallRequiredSystemLibraries)", "", {plain = true})
         end
