@@ -115,6 +115,15 @@ package("opencv-mobile")
     end)
 
     on_install("android", "iphoneos", "linux", "macosx", "windows", "mingw@windows,msys", function (package)
+        if is_plat("windows", "mingw") then
+            -- fix for v30-v34
+            io.replace("modules/highgui/src/display_win32.cpp", "#include <mutex>\n\n", "#include <mutex>\n#include <cstdio>\n\n", {plain = true})
+            -- fix for v30, v31
+            io.replace("modules/highgui/src/display_win32.cpp", "static LRESULT", "LRESULT", {plain = true})
+            io.replace("modules/highgui/src/display_win32.h", "#include <Windows.h>", "#include <windows.h>", {plain = true})
+            io.replace("modules/highgui/src/display_win32.h", "static LRESULT", "LRESULT", {plain = true})
+        end
+
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
