@@ -48,7 +48,7 @@ package("opencv-mobile")
                     ["4.12.0"] = "v34",
                     ["4.11.0"] = "v33",
                     ["4.10.0"] = "v31",
-                    ["3.4.20"] = "v31",
+                    ["3.4.20"] = "v33",
                 }
 
                 package:add("urls", "https://github.com/nihui/opencv-mobile/releases/download/$(version).zip", {version = function (version)
@@ -60,8 +60,9 @@ package("opencv-mobile")
                     end
                 end})
 
+                package:add("versions", "4.11.0", "394b0dc31b9fee48333b6f043b0f22942ed95cd9b5acd101995e3054f468f930")  -- v33
                 package:add("versions", "4.10.0", "0ad54eef6fbd34787a6b13e9486f97e99102b1dc478eb74f2e8d30008c35be4e")  -- v31
-                package:add("versions", "3.4.20", "60d05862441e85072e4e45b5241d1799de18f4a755bf26a7a89583d968b00e42")  -- v31
+                package:add("versions", "3.4.20", "6c0b45d1df1165c798d8e051b049c10ec55fa84cba2a6fbd6f7cfe93ab36ebd0")  -- v33
             end
         end)
     end
