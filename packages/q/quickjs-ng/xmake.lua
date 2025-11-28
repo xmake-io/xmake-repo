@@ -31,8 +31,8 @@ package("quickjs-ng")
             end
         end)
         on_check("iphoneos", function (package)
-            if package:version() and package:version():gt("v0.11.0") then
-                raise("package(quickjs-ng >v0.11.0) supports ios")
+            if package:version() and package:version():le("v0.11.0") then
+                raise("package(quickjs-ng <=v0.11.0) unsupported ios platform")
             end
         end)
     end
