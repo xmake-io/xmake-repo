@@ -5,9 +5,9 @@ package("colmap")
 
     add_urls("https://github.com/colmap/colmap/archive/refs/tags/$(version).tar.gz", 
              "https://github.com/colmap/colmap.git")
-    add_versions("3.12.6", "f66d34be7a738fa753d1b71aec4fb7411d8c117beb58d1f2ba84ee2696c96410")
+    add_versions("3.13.0", "98a8f8cf6358774be223239a9b034cc9d55bf66c43f54fc6ddea9128a1ee197a")
 
-    add_patches(">3.0", "patches/deps.patch", "c8dac13cc5251bbe776c189cf620aac59401aa1f008fa966dcacafdab1b12680")
+    add_patches(">3.0", "patches/deps.patch", "93f43c149b95195bf03f30b22710502faa4c26242e7a7059881464c0b1fde2e6")
 
     add_configs("simd",      {description = "Enable SIMD optimizations.",               default = true,  type = "boolean"})
     add_configs("openmp",    {description = "Enable OpenMP parallelization.",           default = true,  type = "boolean"})
@@ -26,7 +26,7 @@ package("colmap")
     add_deps("boost", {configs = { graph = true, program_options = true, system = true }})
 
     on_load(function (package)
-        local confs = {"cgal", "cuda", "opengl", "openmp"}
+        local confs = {"cgal", "opengl", "openmp"}
         for _, conf in ipairs(confs) do
             if package:config(conf) then
                 package:add("deps", conf)

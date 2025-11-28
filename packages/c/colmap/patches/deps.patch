@@ -1,5 +1,5 @@
 diff --git a/cmake/FindFreeImage.cmake b/cmake/FindFreeImage.cmake
-index cf213cf..4521567 100644
+index cf213cf2..45215673 100644
 --- a/cmake/FindFreeImage.cmake
 +++ b/cmake/FindFreeImage.cmake
 @@ -47,7 +47,10 @@ set(FREEIMAGE_LIBRARY_DIR_HINTS "" CACHE PATH "FreeImage library directory")
@@ -15,7 +15,7 @@ index cf213cf..4521567 100644
      if(TARGET freeimage::FreeImage)
          set(FREEIMAGE_FOUND TRUE)
 diff --git a/cmake/FindGlew.cmake b/cmake/FindGlew.cmake
-index 10cfcdd..061c3a1 100644
+index 10cfcdd3..061c3a19 100644
 --- a/cmake/FindGlew.cmake
 +++ b/cmake/FindGlew.cmake
 @@ -49,7 +49,10 @@ unset(GLEW_FOUND)
@@ -30,3 +30,15 @@ index 10cfcdd..061c3a1 100644
  if(TARGET GLEW::GLEW)
      set(GLEW_FOUND TRUE)
      message(STATUS "Found Glew")
+diff --git a/cmake/FindMetis.cmake b/cmake/FindMetis.cmake
+index a7eca25f..ecfbec94 100644
+--- a/cmake/FindMetis.cmake
++++ b/cmake/FindMetis.cmake
+@@ -82,6 +82,7 @@ else()
+     find_library(GK_LIBRARIES
+         NAMES
+         GKlib
++        gklib
+         PATHS
+         ${METIS_CHECK_LIBRARY_DIRS})
+ 
