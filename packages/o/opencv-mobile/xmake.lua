@@ -7,7 +7,6 @@ package("opencv-mobile")
     if on_source then
         on_source(function (package)
             local raw_ver = package:requireinfo().version
-            -- TODO: deal with version comparison
             if raw_ver and raw_ver:find('-') then
                 local vers = raw_ver:split('-', {plain = true})
                 if #vers == 2 then
@@ -38,8 +37,10 @@ package("opencv-mobile")
                         package:requireinfo().version = ocv_ver
                         package:add("versions", ocv_ver, ver_map[ocv_mobile_ver][ocv_ver])
                     else
-                        raise("The version of opencv-mobile that you are requiring is not supported or exists.")
+                        raise("package(opencv-mobile): The version that you are requiring is not supported or does not exist.")
                     end
+                else
+                    raise("package(opencv-mobile): Invalid version format! Please specify the version in the format of '<opencv_version>-<mobile_tag>' (like 4.12.0-v34).")
                 end
             else
                 -- this map stores the latest opencv-mobile version-tag mapping
@@ -221,7 +222,6 @@ package("opencv-mobile")
         else
             package:addenv("PATH", "bin")
         end
-        print(package:version())
     end)
 
     on_test(function (package)
