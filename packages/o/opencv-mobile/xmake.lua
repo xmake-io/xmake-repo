@@ -118,7 +118,7 @@ package("opencv-mobile")
     end)
 
     on_install("android", "iphoneos", "linux", "macosx", "windows", "mingw@windows,msys", function (package)
-        if is_plat("windows", "mingw") then
+        if package:is_plat("windows", "mingw") then
             -- fix for v30-v34
             io.replace("modules/highgui/src/display_win32.cpp", "#include <mutex>\n\n", "#include <mutex>\n#include <cstdio>\n\n", {plain = true})
             -- fix for v30, v31
