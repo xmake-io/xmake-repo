@@ -3,20 +3,71 @@ package("opencv-mobile")
     set_description("The minimal opencv for Android, iOS, ARM Linux, Windows, Linux, MacOS, WebAssembly")
     set_license("Apache-2.0")
 
-    local version_map = {
-        ["4.10.0"] = "v29",
-        ["3.4.20"] = "v29"
-    }
-    add_urls("https://github.com/nihui/opencv-mobile/releases/download/$(version).zip", {version = function (version)
-        local v = version_map[tostring(version)]
-        if not v then
-            return version
-        end
-        return string.format("%s/opencv-mobile-%s", v, tostring(version))
-    end})
+    -- parse version-tag: version -> ocv, tag -> ocv-mobile
+    if on_source then
+        on_source(function (package)
+            local raw_ver = package:requireinfo().version
+            if raw_ver and raw_ver:find('-') then
+                local vers = raw_ver:split('-', {plain = true})
+                if #vers == 2 then
+                    local ver_map = {
+                        ["v29"] = {
+                            ["4.10.0"] = "e9209285ad4d682536db4505bc06e46b94b9e56d91896e16c2853c83a870f004",
+                            ["3.4.20"] = "85c19b443454d3ae839d8f4f7a6a71c79f9ac38592a8a96e2f806fc0c68b64f4", 
+                        },
+                        ["v31"] = {
+                            ["4.10.0"] = "0ad54eef6fbd34787a6b13e9486f97e99102b1dc478eb74f2e8d30008c35be4e",
+                            ["3.4.20"] = "60d05862441e85072e4e45b5241d1799de18f4a755bf26a7a89583d968b00e42", 
+                        },
+                        ["v33"] = {
+                            ["4.11.0"] = "394b0dc31b9fee48333b6f043b0f22942ed95cd9b5acd101995e3054f468f930",
+                            ["3.4.20"] = "6c0b45d1df1165c798d8e051b049c10ec55fa84cba2a6fbd6f7cfe93ab36ebd0", 
+                        },
+                        ["v34"] = {
+                            ["4.12.0"] = "34f2f113dd78392baaba97cae74226a0337e14b4d6b938f17e215c25d547dad6",
+                            ["3.4.20"] = "c976c30d47c18a6307f55703079a9c80f3bb73c7ec0dd50759a7e37aab111aff", 
+                        }
+                    }
+                    local ocv_ver = vers[1]
+                    local ocv_mobile_ver = vers[2]
+                    if ver_map[ocv_mobile_ver] and ver_map[ocv_mobile_ver][ocv_ver] then
+                        local url = string.format("https://github.com/nihui/opencv-mobile/releases/download/%s/opencv-mobile-%s.zip", ocv_mobile_ver, ocv_ver)
+                        package:add("urls", url)
+                        -- package:version_set(ocv_ver)
+                        package:requireinfo().version = ocv_ver
+                        package:add("versions", ocv_ver, ver_map[ocv_mobile_ver][ocv_ver])
+                    else
+                        raise("package(opencv-mobile): The version that you are requiring is not supported or does not exist.")
+                    end
+                else
+                    raise("package(opencv-mobile): Invalid version format! Please specify the version in the format of '<opencv_version>-<mobile_tag>' (like 4.12.0-v34).")
+                end
+            else
+                -- this map stores the latest opencv-mobile version-tag mapping
+                -- key = opencv version, value = the latest opencv-mobile release tag
+                local lts_version_map = {
+                    ["4.12.0"] = "v34",
+                    ["4.11.0"] = "v33",
+                    ["4.10.0"] = "v31",
+                    ["3.4.20"] = "v34",
+                }
 
-    add_versions("4.10.0", "e9209285ad4d682536db4505bc06e46b94b9e56d91896e16c2853c83a870f004")
-    add_versions("3.4.20", "85c19b443454d3ae839d8f4f7a6a71c79f9ac38592a8a96e2f806fc0c68b64f4")
+                package:add("urls", "https://github.com/nihui/opencv-mobile/releases/download/$(version).zip", {version = function (version)
+                    local tag = lts_version_map[tostring(version)]
+                    if tag then
+                        return string.format("%s/opencv-mobile-%s", tag, tostring(version))
+                    else
+                        raise("The version of opencv-mobile that you are requiring is not supported or exists.")
+                    end
+                end})
+
+                package:add("versions", "4.12.0", "34f2f113dd78392baaba97cae74226a0337e14b4d6b938f17e215c25d547dad6")  -- v34
+                package:add("versions", "4.11.0", "394b0dc31b9fee48333b6f043b0f22942ed95cd9b5acd101995e3054f468f930")  -- v33
+                package:add("versions", "4.10.0", "0ad54eef6fbd34787a6b13e9486f97e99102b1dc478eb74f2e8d30008c35be4e")  -- v31
+                package:add("versions", "3.4.20", "c976c30d47c18a6307f55703079a9c80f3bb73c7ec0dd50759a7e37aab111aff")  -- v34
+            end
+        end)
+    end
 
     add_patches("*", "patches/msvc.patch", "6fa760ea58c8b90c87129f16c84b128a4447ea11cee7d6568ea4f5e7ae250971")
 
@@ -67,6 +118,19 @@ package("opencv-mobile")
     end)
 
     on_install("android", "iphoneos", "linux", "macosx", "windows", "mingw@windows,msys", function (package)
+        if package:is_plat("windows", "mingw") then
+            -- fix for v30-v34
+            io.replace("modules/highgui/src/display_win32.cpp", "#include <mutex>\n\n", "#include <mutex>\n#include <cstdio>\n\n", {plain = true})
+            -- fix for v30, v31
+            io.replace("modules/highgui/src/display_win32.cpp", "static LRESULT", "LRESULT", {plain = true})
+            io.replace("modules/highgui/src/display_win32.h", "#include <Windows.h>", "#include <windows.h>", {plain = true})
+            io.replace("modules/highgui/src/display_win32.h", "static LRESULT", "LRESULT", {plain = true})
+        end
+        -- no platforms folder https://github.com/nihui/opencv-mobile/blob/v32/.github/workflows/release.yml#L73
+        if package:is_plat("linux") and package:is_arch("arm64") and package:version():eq("4.11.0") then
+            io.replace("cmake/platforms/OpenCV-Linux.cmake", "AND NOT CMAKE_CROSSCOMPILING", "AND FALSE", {plain = true})
+        end
+
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -145,8 +209,12 @@ package("opencv-mobile")
         elseif package:is_plat("android") then
             for _, suffix in ipairs({"*.a", "*.so"}) do
                 local lib_name = package:config("shared") and "libs" or "staticlibs"
-                local libdir = package:installdir(path.join("sdk/native", lib_name, package:targetarch()))
-                for _, f in ipairs(os.files(path.join(libdir, suffix))) do
+                local libdir_1 = package:installdir(path.join("sdk/native", lib_name, package:targetarch()))
+                local libdir_2 = package:installdir(path.join("sdk/native/3rdparty/libs", package:targetarch()))
+                local libfiles = {}
+                table.join2(libfiles, os.files(path.join(libdir_1, suffix)))
+                table.join2(libfiles, os.files(path.join(libdir_2, suffix)))
+                for _, f in ipairs(libfiles) do
                     package:add("links", path.basename(f):match("lib(.+)"))
                 end
             end
