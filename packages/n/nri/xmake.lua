@@ -57,7 +57,7 @@ package("nri")
         end
     end)
 
-    on_install(function(package)
+    on_install("!wasm and !bsd and (!windows or windows|!x86) and (!android or android|!armeabi-v7a)", function(package)
         io.replace("CMakeLists.txt", "/WX", "", {plain = true})
         io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
         if package:config("d3d12") then
