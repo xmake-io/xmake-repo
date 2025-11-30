@@ -7,6 +7,7 @@ package("cpp-httplib")
     set_urls("https://github.com/yhirose/cpp-httplib/archive/refs/tags/$(version).tar.gz",
              "https://github.com/yhirose/cpp-httplib.git")
 
+    add_versions("v0.28.0", "ccb32f9832c906d571f61794f453223dbb724ba738265551e3cd28ca325b529d")
     add_versions("v0.26.0", "a66f908f50ccb119769adce44fe1eac75f81b6ffab7c4ac0211bb663ffeb2688")
     add_versions("v0.23.1", "410a1347ed6bcbcc4a19af8ed8ad3873fe9fa97731d52db845c4c78f3f9c31e6")
     add_versions("v0.22.0", "fcfea48c8f2c386e7085ef8545c8a4875efa30fa6d5cf9dd31f03c6ad038da9d")
@@ -36,6 +37,7 @@ package("cpp-httplib")
     add_versions("v0.9.2", "bfef2587a2aa31c85fb361df71c720be97076f8083e4f3881da8572f6a58054f")
     add_versions("v0.8.5", "b353f3e7c124a08940d9425aeb7206183fa29857a8f720c162f8fd820cc18f0e")
 
+    add_patches(">=v0.28.0", "patches/v0.23.1/fix-mingw.diff", "d2d8a4c16de3a00d9872526a187257c7ad344eba2a9f109d10b58eadce1c4059")
     add_patches("v0.26.0", "patches/v0.26.0/fix-mingw.diff", "f7b704e86abd8fd04217056e3ffb01427185e0bae72999246a3b8d13ba23c56a")
     add_patches("v0.23.1", "patches/v0.23.1/fix-mingw.diff", "d2d8a4c16de3a00d9872526a187257c7ad344eba2a9f109d10b58eadce1c4059")
 
@@ -59,7 +61,7 @@ package("cpp-httplib")
                     assert(vs and tonumber(vs) > 2013, "package(httplib >= 0.11.0): VS 2013 or lower is neither supported nor tested.")
                 end
             end
-            if pkg_ver and pkg_ver:ge("0.15.0") and package:is_plat("msys") then
+            if pkg_ver and pkg_ver:ge("0.15.0") and package:is_plat("msys", "mingw") then
                 wprint("package(httplib): MSYS2 (including MinGW) is not officially supported or tested by httplib.")
             end
             if package:is_plat("android") then
