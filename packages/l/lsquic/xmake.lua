@@ -17,6 +17,9 @@ package("lsquic")
     add_patches(">=4.0.8", "patches/4.0.8/cmake.patch", "c9b8412fbd7df511dee4d57ea5dfa50bc527e015fc808270235b91abfd9baa89")
 
     add_configs("fiu", {description = "Use Fault Injection in Userspace (FIU)", default = false, type = "boolean"})
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     add_deps("cmake")
     add_deps("zlib", "ls-qpack", "ls-hpack")
@@ -52,6 +55,11 @@ package("lsquic")
         io.replace("src/liblsquic/CMakeLists.txt",
             "${SSLLIB_LIB_ssl} ${SSLLIB_LIB_crypto}",
             "${LIBSSL_LIB_ssl} ${LIBSSL_LIB_crypto}", {plain = true})
+
+        -- boringssl requires C++ linker
+        local file = io.open("src/liblsquic/CMakeLists.txt", "a")
+        file:print("set_target_properties(lsquic PROPERTIES LINKER_LANGUAGE CXX)")
+        file:close()
 
         local configs = {
             "-DLSQUIC_BIN=OFF",
