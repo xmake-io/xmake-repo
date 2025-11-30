@@ -21,15 +21,19 @@ package("tiltedcore")
 
     add_patches("v0.2.8", "patches/0.2.8/include-mutex.patch", "3d9b87a95f9bafea72758507027ea737668eb8efa05e8dea98dc4f101701e810")
 
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+
     add_deps("mimalloc", {configs = {rltgenrandom = true}})
 
-    on_install("windows", "msys", "linux", function (package)
-        if package:is_plat("windows") then
-            local vs = import("core.tool.toolchain").load("msvc"):config("vs")
-            if tonumber(vs) < 2019 then
-                raise("Your compiler is too old to use this library, it need c++17 support above vs2019.")
-            end
+    on_check("windows", function (package)
+        local msvc = package:toolchain("msvc")
+        local vs = msvc:config("vs")
+        if vs and tonumber(vs) < 2019 then
+            raise("package(tiltedcore): VS2019 or newer is required.")
         end
+    end)
+
+    on_install("windows", "msys", "linux", function (package)
         import("package.tools.xmake").install(package)
     end)
 
