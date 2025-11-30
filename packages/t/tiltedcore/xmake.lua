@@ -33,7 +33,7 @@ package("tiltedcore")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows", "mingw", "linux", "cross", "android", "macosx|!arm*", function (package)
         import("package.tools.xmake").install(package)
     end)
 
