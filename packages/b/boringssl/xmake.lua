@@ -42,7 +42,7 @@ package("boringssl")
         end
     end)
 
-    on_install("!windows or windows|!arm64", function (package)
+    on_install("!mingw and (!windows or windows|!arm64)", function (package)
         import("net.fasturl")
 
         local configs = {}
