@@ -19,13 +19,18 @@ package("lsquic")
     add_configs("fiu", {description = "Use Fault Injection in Userspace (FIU)", default = false, type = "boolean"})
 
     add_deps("cmake")
-    add_deps("zlib", "boringssl", "ls-qpack", "ls-hpack")
+    add_deps("zlib", "ls-qpack", "ls-hpack")
 
     add_includedirs("include/lsquic")
 
-    on_load("windows", function (package)
-        if not package:is_precompiled() then
+    on_load(function (package)
+        if not package:is_precompiled() and package:is_plat("windows") then
             package:add("deps", "strawberry-perl")
+        end
+        if package:version() and package:version():lt("4.3.2") then
+            package:add("deps", "boringssl <2024.09.13")
+        else
+            package:add("deps", "boringssl")
         end
     end)
 
@@ -43,6 +48,10 @@ package("lsquic")
         io.replace("CMakeLists.txt",
             "lib${LIB_NAME}${LIB_SUFFIX}",
             "lib${LIB_NAME}" .. (boringssl:config("shared") and ".so" or ".a"), {plain = true})
+
+        io.replace("src/liblsquic/CMakeLists.txt",
+            "${SSLLIB_LIB_ssl} ${SSLLIB_LIB_crypto}",
+            "${LIBSSL_LIB_ssl} ${LIBSSL_LIB_crypto}", {plain = true})
 
         local configs = {
             "-DLSQUIC_BIN=OFF",
