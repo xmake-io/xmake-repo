@@ -34,7 +34,7 @@ package("lsquic")
         end
     end)
 
-    on_install("windows|!arm64", "linux", "macosx", function (package)
+    on_install("!mingw and (!windows or windows|!arm64)", function (package)
         local opt = {}
         opt.packagedeps = {"ls-qpack", "ls-hpack"}
         if package:is_plat("windows") then
