@@ -18,21 +18,21 @@ package("boringssl")
     add_versions("2022.06.13", "a343962da2fbb10d8fa2cd9a2832839a23045a197c0ff306dc0fa0abb85759b3")
     add_versions("2021.12.29", "d80f17d5c94b21c4fb2e82ee527bfe001b3553f2")
 
-    add_versions("git:2025.11.24", "0.2025.11.24.0")
+    add_versions("git:2025.11.24", "0.20251124.0")
 
     add_patches("2022.06.13", path.join(os.scriptdir(), "patches", "2022.06.13", "cmake.patch"), "c44e5c2b4b4f010a6fab1c0bce22a50feb5d85f37a870cf9a71f8d58bdfbd169")
     add_patches("2021.12.29", path.join(os.scriptdir(), "patches", "2021.12.29", "cmake.patch"), "d8bb6312b87b8aad434ea3f9f4275f769af3cdbaab78adf400e8e3907443b505")
 
     if is_plat("linux") then
         add_syslinks("pthread", "dl", "m")
-    elseif is_plat("windows") then
-        add_syslinks("advapi32")
+    elseif is_plat("windows", "mingw") then
+        add_syslinks("ws2_32", "advapi32")
     end
 
     add_links("ssl", "crypto")
 
     add_deps("cmake", "go")
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_deps("nasm")
     end
 
@@ -42,7 +42,7 @@ package("boringssl")
         end
     end)
 
-    on_install(function (package)
+    on_install("!windows or windows|!arm64", function (package)
         import("net.fasturl")
 
         local configs = {}
@@ -55,6 +55,9 @@ package("boringssl")
 
         io.replace("CMakeLists.txt", "-WX", "", {plain = true})
         io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
+        if package:is_plat("wasm") then
+            io.replace("CMakeLists.txt", "-Wa,-g", "", {plain = true})
+        end
 
         local configs = {"-DBUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
