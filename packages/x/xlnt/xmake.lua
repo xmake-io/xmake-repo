@@ -18,6 +18,12 @@ package("xlnt")
     end)
 
     on_install(function (package)
+        -- fix gcc15
+        io.replace("include/xlnt/utils/time.hpp", "#include <string>", "#include <string>\n#include <cstdint>", {plain = true})
+        io.replace("include/xlnt/utils/timedelta.hpp", "#include <string>", "#include <string>\n#include <cstdint>", {plain = true})
+        io.replace("include/xlnt/utils/variant.hpp", "#include <string>", "#include <string>\n#include <cstdint>", {plain = true})
+        io.replace("include/xlnt/cell/phonetic_run.hpp", "#include <string>", "#include <string>\n#include <cstdint>", {plain = true})
+
         io.replace("source/CMakeLists.txt", "${XLNT_SOURCE_DIR}/../third-party/utfcpp", "", {plain = true})
         io.replace("source/CMakeLists.txt", "${XLNT_SOURCE_DIR}/../third-party/miniz", "", {plain = true})
         io.writefile("third-party/miniz/miniz.c", "")
