@@ -45,8 +45,7 @@ package("gtest")
                 package:add("links", "gmock_main")
             end
             package:add("links", "gmock")
-        end
-        if package:config("main") then
+        elseif package:config("main") then
             package:add("links", "gtest_main")
         end
         package:add("links", "gtest")
