@@ -6,6 +6,7 @@ package("moltenvk")
     add_urls("https://github.com/KhronosGroup/MoltenVK/archive/refs/tags/$(version).tar.gz",
              "https://github.com/KhronosGroup/MoltenVK.git")
 
+    add_versions("v1.4.1", "9985f141902a17de818e264d17c1ce334b748e499ee02fcb4703e4dc0038f89c")
     add_versions("v1.4.0", "fc74aef926ee3cd473fe260a93819c09fdc939bff669271a587e9ebaa43d4306")
     add_versions("v1.3.0", "9476033d49ef02776ebab288fffae3e28fd627a3e29b7ae5975a1e1c785bf912")
     add_versions("v1.2.11", "bfa115e283831e52d70ee5e13adf4d152de8f0045996cf2a33f0ac541be238b1")
