@@ -17,6 +17,8 @@ package("hopscotch-map")
     end)
 
     on_test(function (package)
+        local version = package:version()
+        local language = version and version:lt("v2.4.0") and "c++11" or "c++17"
         assert(package:check_cxxsnippets({test = [[
             void test()
             {
@@ -28,5 +30,5 @@ package("hopscotch-map")
                 set.insert({1, 9, 0});
                 set.insert({2, -1, 9});
             }
-        ]]}, {configs = {languages = "c++11"}, includes = { "tsl/hopscotch_map.h", "tsl/hopscotch_set.h"} }))
+        ]]}, {configs = {languages = language}, includes = { "tsl/hopscotch_map.h", "tsl/hopscotch_set.h"} }))
     end)
