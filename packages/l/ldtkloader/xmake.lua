@@ -25,5 +25,5 @@ package("ldtkloader")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxincludes("LDtkLoader/Project.hpp", {configs = {languages = "c++17"}}))
+        assert(package:has_cxxincludes("LDtkLoader/Project.hpp", {configs = {languages = package:config("field_optional") and "c++17" or "c++11"}}))
     end)
