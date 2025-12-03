@@ -79,9 +79,11 @@ package("openexr")
 
     on_install(function (package)
         io.replace("CMakeLists.txt", "add_subdirectory(website/src)", "", {plain = true})
-        io.replace("cmake/OpenEXRSetup.cmake", [[set(CMAKE_DEBUG_POSTFIX "_d")]], "", {plain = true})
-        if package:version():ge("3.4.0") then
-            -- io.replace("src/lib/OpenEXRCore/CMakeLists.txt", "${EXR_OPENJPH_LIB}", "openjph::openjph", {plain = true})
+        if package:version():lt("3.0") then
+            io.replace("OpenEXR/IlmImf/ImfNamespace.h", "#include \"OpenEXRConfig.h\"", "#include \"OpenEXRConfig.h\"\n#include <cstdint>", {plain = true})
+        end
+        if os.isfile("cmake/OpenEXRSetup.cmake") then
+            io.replace("cmake/OpenEXRSetup.cmake", [[set(CMAKE_DEBUG_POSTFIX "_d")]], "", {plain = true})
         end
 
         local configs = {
