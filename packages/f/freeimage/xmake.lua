@@ -33,7 +33,7 @@ package("freeimage")
         end
     end)
 
-    on_install("windows", "mingw", "macosx", "linux", "bsd", function (package)
+    on_install("windows|!arm*", "macosx", "linux", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             includes("@builtin/check")
