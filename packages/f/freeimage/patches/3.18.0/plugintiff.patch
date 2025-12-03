@@ -1,5 +1,5 @@
 diff --git a/Source/FreeImage/PluginTIFF.cpp b/Source/FreeImage/PluginTIFF.cpp
-index b48be9b..ca90604 100644
+index 67fab0b..8668b08 100644
 --- a/Source/FreeImage/PluginTIFF.cpp
 +++ b/Source/FreeImage/PluginTIFF.cpp
 @@ -199,15 +199,18 @@ Open a TIFF file for reading or writing
@@ -29,8 +29,35 @@ index b48be9b..ca90604 100644
  
  // ----------------------------------------------------------
  //   in FreeImage warnings and errors are disabled
+@@ -254,7 +258,7 @@ static void
+ msdosWarningHandler(const char* module, const char* fmt, va_list ap) {
+ }
+ 
+-TIFFErrorHandler _TIFFwarningHandler = msdosWarningHandler;
++// TIFFErrorHandler _TIFFwarningHandler = msdosWarningHandler;
+ 
+ static void
+ msdosErrorHandler(const char* module, const char* fmt, va_list ap) {
+@@ -269,7 +273,7 @@ msdosErrorHandler(const char* module, const char* fmt, va_list ap) {
+ 	*/
+ }
+ 
+-TIFFErrorHandler _TIFFerrorHandler = msdosErrorHandler;
++// TIFFErrorHandler _TIFFerrorHandler = msdosErrorHandler;
+ 
+ // ----------------------------------------------------------
+ 
+@@ -2655,6 +2659,8 @@ InitTIFF(Plugin *plugin, int format_id) {
+     // Set up the callback for extended TIFF directory tag support (see XTIFF.cpp)
+ 	// Must be called before using libtiff
+     XTIFFInitialize();	
++	TIFFSetWarningHandler(msdosWarningHandler);
++	TIFFSetErrorHandler(msdosErrorHandler);
+ 
+ 	plugin->format_proc = Format;
+ 	plugin->description_proc = Description;
 diff --git a/Source/Metadata/XTIFF.cpp b/Source/Metadata/XTIFF.cpp
-index 28c8bbc..79bee2e 100644
+index d5be902..02e0982 100644
 --- a/Source/Metadata/XTIFF.cpp
 +++ b/Source/Metadata/XTIFF.cpp
 @@ -40,6 +40,45 @@

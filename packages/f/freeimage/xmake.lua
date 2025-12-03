@@ -11,7 +11,7 @@ package("freeimage")
     add_patches("3.18.0", "patches/3.18.0/use_external_deps.patch", "0cb578f1cd5a0bb15f3f946b249ab7d537241e20d49c3c5825756eed2f6884ac")
 	add_patches("3.18.0", "patches/3.18.0/pluginbmp.patch",         "2029f95478c8ce77f83671fe8e1889c11caa04eef2584abf0cd0a9f6a7047db0")
     add_patches("3.18.0", "patches/3.18.0/pluginjpeg.patch",        "e8662a3bcb26194c104de131e621835bdc2ba295a8f9f64cc0e6f1fb66594337")
-    add_patches("3.18.0", "patches/3.18.0/plugintiff.patch",        "d4a93accc352d12d29cb521c5ff75633e9444037bacf816798590afb0c6c1a59")
+    add_patches("3.18.0", "patches/3.18.0/plugintiff.patch",        "0363ba3282a7c556965f530c5899b95db6d4861e3bf6ac7700d4309cd17decfe")
     add_patches("3.18.0", "patches/3.18.0/fix_typedef.patch",       "1e1fd08ae6d00616c2631a9dddda84ba5725836e0369b88424184a9da3cfac11")
 
     add_configs("rgb", {description = "Use RGB instead of BGR.", default = false})
