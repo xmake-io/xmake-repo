@@ -8,7 +8,7 @@ package("incbin")
 
     add_versions("2025.05.27", "22061f51fe9f2f35f061f85c2b217b55dd75310d")
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         os.cp("incbin.h", package:installdir("include"))
     end)
 
