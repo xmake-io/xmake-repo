@@ -15,7 +15,7 @@ package("urdfdom")
     add_patches("1.0.4", path.join(os.scriptdir(), "patches", "1.0.4", "build.patch"), "1f51148afccef7b9bf079ef4137c12d578fb7a76f7aed6e282ca2ceaf4a188ba")
 
     add_deps("cmake")
-    add_deps("urdfdom-headers", "console-bridge")
+    add_deps("console-bridge")
 
     add_includedirs("include", "include/urdfdom")
 
@@ -35,8 +35,10 @@ package("urdfdom")
             else
                 package:add("deps", "tinyxml")
             end
-            if version:gt("1.0.4") then
+            if version:ge("5.0.3") then
                 package:add("deps", "urdfdom-headers")
+            elseif version:gt("1.0.4") and version:lt("5.0.3") then
+                package:add("deps", "urdfdom-headers <2.0.1")
             else
                 package:add("deps", "urdfdom-headers 1.0.5")
             end
