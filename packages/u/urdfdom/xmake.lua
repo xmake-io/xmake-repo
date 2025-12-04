@@ -6,6 +6,7 @@ package("urdfdom")
     add_urls("https://github.com/ros/urdfdom/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ros/urdfdom.git")
 
+    add_versions("5.0.3", "c98412daaa7498ecea2f2c68ce1c27767113d137468eb26b7dcfa291cba615b4")
     add_versions("5.0.2", "f929a33ec6171a57d4ff7d4c0eff6fb79d4725c279189d4f4c8806c4aa4e71ac")
     add_versions("4.0.1", "46b122c922f44ec32674a56e16fd4b5d068b53265898cbea2c3e1939ecccc62a")
     add_versions("4.0.0", "9848d106dc88dc0b907d5667c09da3ca53241fbcf17e982d8c234fe3e0d6ddcc")
