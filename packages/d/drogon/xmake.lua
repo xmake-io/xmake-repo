@@ -143,7 +143,8 @@ package("drogon")
         end
 
         local opt = {}
-        if package:dep("trantor"):version():ge("v1.5.25") then
+        local trantor_version = package:dep("trantor"):version()
+        if trantor_version and trantor_version:ge("v1.5.25") then
             opt.cxflags = "-DMICRO_SECONDS_PRE_SEC=1000000"
         end
         import("package.tools.cmake").install(package, configs, opt)
