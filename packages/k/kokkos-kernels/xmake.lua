@@ -6,6 +6,7 @@ package("kokkos-kernels")
     add_urls("https://github.com/kokkos/kokkos-kernels/archive/refs/tags/$(version).tar.gz",
              "https://github.com/kokkos/kokkos-kernels.git")
 
+    add_versions("5.0.0", "31a5b8b4b8a36bcc6a424a6f2ad9ccc111dc77304c3ccc735fd4597fba9a03e4")
     add_versions("4.6.00", "22c83eb31d9eed1bbc69d7bd6b3d4646395ff5e4bb50403dcadf98c76945562e")
     add_versions("4.4.00", "6559871c091eb5bcff53bae5a0f04f2298971d1aa1b2c135bd5a2dae3f9376a2")
     add_versions("4.3.01", "749553a6ea715ba1e56fa0b13b42866bb9880dba7a94e343eadf40d08c68fab8")
@@ -75,5 +76,5 @@ package("kokkos-kernels")
                 Kokkos::initialize();
                 CRS A = KokkosSparse::Impl::kk_generate_diag_matrix<CRS>(1000);
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = {languages = package:version():ge("4.7.0") and "c++20" or "c++17"}}))
     end)
