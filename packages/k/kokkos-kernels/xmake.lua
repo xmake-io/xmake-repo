@@ -60,7 +60,11 @@ package("kokkos-kernels")
         if package:config("cuda") then
             table.insert(configs, "-DKokkosKernels_REQUIRE_DEVICES=CUDA")
         end
-        import("package.tools.cmake").install(package, configs, {buildir = path.join(os.tmpdir(), "kk-build")})
+        local opt = {buildir = path.join(os.tmpdir(), "kk-build")}
+        if package:version():ge("4.7.0") and package:is_plat("windows") then
+            opt.cxflags = "/bigobj"
+        end
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
