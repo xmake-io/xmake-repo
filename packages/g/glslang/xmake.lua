@@ -30,6 +30,7 @@ package("glslang")
     add_configs("spirv_tools", {description = "Enable SPIRV-Tools integration (Optimizer).", default = false, type = "boolean"})
     add_configs("hlsl",        {description = "Enable HLSL support.", default = true, type = "boolean"})
     add_configs("rtti",        {description = "Build with RTTI support.", default = false, type = "boolean"})
+    add_configs("tools",       {description = "Build the glslangValidator tool.", default = false, type = "boolean"})
     add_configs("default_resource_limits", {description = "Build with default resource limits.", default = false, type = "boolean"})
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
@@ -43,9 +44,12 @@ package("glslang")
     on_load(function (package)
         if package:config("binaryonly") then
             package:set("kind", "binary")
+            package:config_set("tools", true)
+        end
+        if package:config("spirv_tools") or package:config("tools") then
+            package:add("deps", "python 3.x", {kind = "binary"})
         end
         if package:config("spirv_tools") then
-            package:add("deps", "python 3.x", {kind = "binary"})
             package:add("deps", "spirv-tools")
         end
     end)
@@ -91,6 +95,7 @@ package("glslang")
         table.insert(configs, "-DENABLE_EXCEPTIONS=" .. (package:config("exceptions") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_HLSL=" .. (package:config("hlsl") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_RTTI=" .. (package:config("rtti") and "ON" or "OFF"))
+        table.insert(configs, "-DENABLE_GLSLANG_BINARIES=" .. (package:config("tools") and "ON" or "OFF"))
         local packagedeps = {}
         if package:config("spirv_tools") then
             table.insert(configs, "-DENABLE_OPT=ON")
@@ -114,16 +119,18 @@ package("glslang")
         os.cp("glslang/Include/**.h", package:installdir("include", "glslang", "Include"))
 
         -- https://github.com/KhronosGroup/glslang/releases/tag/12.3.0
-        local bindir = package:installdir("bin")
-        local glslangValidator = path.join(bindir, "glslangValidator" .. (is_host("windows") and ".exe" or ""))
-        if not os.isfile(glslangValidator) then
-            local glslang = path.join(bindir, "glslang" .. (is_host("windows") and ".exe" or ""))
-            os.trycp(glslang, glslangValidator)
+        if package:config("tools") then
+            local bindir = package:installdir("bin")
+            local glslangValidator = path.join(bindir, "glslangValidator" .. (is_host("windows") and ".exe" or ""))
+            if not os.isfile(glslangValidator) then
+                local glslang = path.join(bindir, "glslang" .. (is_host("windows") and ".exe" or ""))
+                os.trycp(glslang, glslangValidator)
+            end
         end
     end)
 
     on_test(function (package)
-        if not package:is_cross() then
+        if not package:is_cross() and package:config("tools") then
             os.vrun("glslangValidator --version")
         end
 
