@@ -25,25 +25,28 @@ package("glslang")
 
     add_patches("1.3.246+1", "https://github.com/KhronosGroup/glslang/commit/1e4955adbcd9b3f5eaf2129e918ca057baed6520.patch", "47893def550f1684304ef7c49da38f0a8fe35c190a3452d3bf58370b3ee7165d")
 
-    add_configs("binaryonly", {description = "Only use binary program.", default = false, type = "boolean"})
-    add_configs("exceptions", {description = "Build with exception support.", default = false, type = "boolean"})
-    add_configs("rtti",       {description = "Build with RTTI support.", default = false, type = "boolean"})
-    add_configs("default_resource_limits",       {description = "Build with default resource limits.", default = false, type = "boolean"})
+    add_configs("binaryonly",  {description = "Only use binary program.", default = false, type = "boolean"})
+    add_configs("exceptions",  {description = "Build with exception support.", default = false, type = "boolean"})
+    add_configs("spirv_tools", {description = "Enable SPIRV-Tools integration (Optimizer).", default = false, type = "boolean"})
+    add_configs("hlsl",        {description = "Enable HLSL support.", default = true, type = "boolean"})
+    add_configs("rtti",        {description = "Build with RTTI support.", default = false, type = "boolean"})
+    add_configs("default_resource_limits", {description = "Build with default resource limits.", default = false, type = "boolean"})
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    add_deps("cmake", "python 3.x", {kind = "binary"})
-    add_deps("spirv-tools")
+    add_deps("cmake")
     if is_plat("linux") then
         add_syslinks("pthread")
     end
 
-    add_defines("ENABLE_HLSL")
-
     on_load(function (package)
         if package:config("binaryonly") then
             package:set("kind", "binary")
+        end
+        if package:config("spirv_tools") then
+            package:add("deps", "python 3.x", {kind = "binary"})
+            package:add("deps", "spirv-tools")
         end
     end)
 
@@ -55,40 +58,56 @@ package("glslang")
 
     on_install(function (package)
         package:addenv("PATH", "bin")
-        io.replace("CMakeLists.txt", "ENABLE_OPT OFF", "ENABLE_OPT ON")
-        io.replace("StandAlone/CMakeLists.txt", "target_link_libraries(glslangValidator ${LIBRARIES})", [[
-            target_link_libraries(glslangValidator ${LIBRARIES} SPIRV-Tools-opt SPIRV-Tools-link SPIRV-Tools-reduce SPIRV-Tools)
-        ]], {plain = true})
-        io.replace("SPIRV/CMakeLists.txt", "target_link_libraries(SPIRV PRIVATE MachineIndependent SPIRV-Tools-opt)", [[
-            target_link_libraries(SPIRV PRIVATE MachineIndependent SPIRV-Tools-opt SPIRV-Tools-link SPIRV-Tools-reduce SPIRV-Tools)
-        ]], {plain = true})
+
+        if package:config("spirv_tools") then
+            io.replace("StandAlone/CMakeLists.txt", "target_link_libraries(glslangValidator ${LIBRARIES})", [[
+                target_link_libraries(glslangValidator ${LIBRARIES} SPIRV-Tools-opt SPIRV-Tools-link SPIRV-Tools-reduce SPIRV-Tools)
+            ]], {plain = true})
+            io.replace("SPIRV/CMakeLists.txt", "target_link_libraries(SPIRV PRIVATE MachineIndependent SPIRV-Tools-opt)", [[
+                target_link_libraries(SPIRV PRIVATE MachineIndependent SPIRV-Tools-opt SPIRV-Tools-link SPIRV-Tools-reduce SPIRV-Tools)
+            ]], {plain = true})
+        end
+
         -- glslang will add a debug lib postfix for win32 platform, disable this to fix compilation issues under windows
         io.replace("CMakeLists.txt", 'set(CMAKE_DEBUG_POSTFIX "d")', [[
             message(WARNING "Disabled CMake Debug Postfix for xmake package generation")
         ]], {plain = true})
+
         if package:is_plat("wasm") then
             -- wasm-ld doesn't support --no-undefined
             io.replace("CMakeLists.txt", [[add_link_options("-Wl,--no-undefined")]], "", {plain = true})
         end
-        local configs = {"-DENABLE_CTEST=OFF", "-DBUILD_EXTERNAL=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+
+        local configs = {"-DENABLE_CTEST=OFF", "-DGLSLANG_TESTS=OFF", "-DBUILD_EXTERNAL=OFF", "-DENABLE_PCH=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         if package:is_plat("windows") then
             table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
-            if package:debug() then
+            if package:is_debug() then
                 table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
             end
         else
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         end
         table.insert(configs, "-DENABLE_EXCEPTIONS=" .. (package:config("exceptions") and "ON" or "OFF"))
+        table.insert(configs, "-DENABLE_HLSL=" .. (package:config("hlsl") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_RTTI=" .. (package:config("rtti") and "ON" or "OFF"))
-        table.insert(configs, "-DALLOW_EXTERNAL_SPIRV_TOOLS=ON")
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"spirv-tools"}})
+        local packagedeps = {}
+        if package:config("spirv_tools") then
+            table.insert(configs, "-DENABLE_OPT=ON")
+            table.insert(configs, "-DALLOW_EXTERNAL_SPIRV_TOOLS=ON")
+            table.insert(packagedeps, "spirv-tools")
+        else
+            table.insert(configs, "-DENABLE_OPT=OFF")
+        end
+        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
         if not package:config("binaryonly") then
-            package:add("links", "glslang", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "OSDependent", "HLSL", "SPIRV", "SPVRemapper")
+            package:add("links", "glslang", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "OSDependent", "SPIRV", "SPVRemapper")
+            if package:config("hlsl") then
+                package:add("links", "HLSL")
+            end
         end
         if package:config("default_resource_limits") then
-            package:add("links", "glslang", "glslang-default-resource-limits")
+            package:add("links", "glslang-default-resource-limits")
         end
 
         os.cp("glslang/MachineIndependent/**.h", package:installdir("include", "glslang", "MachineIndependent"))
