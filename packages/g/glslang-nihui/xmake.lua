@@ -8,13 +8,13 @@ package("glslang-nihui")
     add_versions("20250916", "cpp14-2")  -- 8cd77a808d0bffa442ae9462d5e3a8141892ba5a
     add_versions("20250503", "a9ac7d5f307e5db5b8c4fbf904bdba8fca6283bc")
 
-    add_configs("binaryonly",  {description = "Only use binary program.", default = false, type = "boolean"})
+    add_configs("binaryonly",   {description = "Only use binary program.", default = false, type = "boolean"})
     add_configs("spv_remapper", {description = "Enable building of SPVRemapper.", default = false, type = "boolean"})
-    add_configs("spirv_tools", {description = "Enable SPIRV-Tools integration (Optimizer).", default = false, type = "boolean"})
-    add_configs("hlsl",        {description = "Enable HLSL support.", default = false, type = "boolean"})
-    add_configs("rtti",        {description = "Build with RTTI support.", default = false, type = "boolean"})
-    add_configs("exceptions",  {description = "Build with exception support.", default = false, type = "boolean"})
-    add_configs("tools",       {description = "Build the glslangValidator tool.", default = false, type = "boolean"})
+    add_configs("spirv_tools",  {description = "Enable SPIRV-Tools integration (Optimizer).", default = false, type = "boolean"})
+    add_configs("hlsl",         {description = "Enable HLSL support.", default = false, type = "boolean"})
+    add_configs("rtti",         {description = "Build with RTTI support.", default = false, type = "boolean"})
+    add_configs("exceptions",   {description = "Build with exception support.", default = false, type = "boolean"})
+    add_configs("tools",        {description = "Build the glslangValidator tool.", default = false, type = "boolean"})
     add_configs("default_resource_limits", {description = "Build with default resource limits.", default = false, type = "boolean"})
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
@@ -46,15 +46,6 @@ package("glslang-nihui")
 
     on_install(function (package)
         package:addenv("PATH", "bin")
-
-        if package:config("spirv_tools") then
-            io.replace("StandAlone/CMakeLists.txt", "target_link_libraries(glslangValidator ${LIBRARIES})", [[
-                target_link_libraries(glslangValidator ${LIBRARIES} SPIRV-Tools-opt SPIRV-Tools-link SPIRV-Tools-reduce SPIRV-Tools)
-            ]], {plain = true})
-            io.replace("SPIRV/CMakeLists.txt", "target_link_libraries(SPIRV PRIVATE MachineIndependent SPIRV-Tools-opt)", [[
-                target_link_libraries(SPIRV PRIVATE MachineIndependent SPIRV-Tools-opt SPIRV-Tools-link SPIRV-Tools-reduce SPIRV-Tools)
-            ]], {plain = true})
-        end
 
         -- glslang will add a debug lib postfix for win32 platform, disable this to fix compilation issues under windows
         io.replace("CMakeLists.txt", 'set(CMAKE_DEBUG_POSTFIX "d")', [[
