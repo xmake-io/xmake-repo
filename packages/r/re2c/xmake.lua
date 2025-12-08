@@ -14,6 +14,11 @@ package("re2c")
     add_deps("cmake")
 
     on_install(function (package)
+        if package:is_plat("mingw", "msys") and package:is_arch("i386") then
+            -- src/options/opt.cc.obj alignof(max_align_t) 16, src/main.cc alignof(max_align_t) 8, why?
+            io.replace("src/util/allocator.h", "(sizeof(void*) == 4) ? alignof(max_align_t) : sizeof(void*)", "8", {plain = true})
+        end
+
         local configs = {"-DRE2C_BUILD_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
