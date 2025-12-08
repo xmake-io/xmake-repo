@@ -42,7 +42,7 @@ package("aom")
         import("package.tools.cmake").install(package, configs)
 
         if package:config("shared") then
-            os.tryrm(package:installdir("lib/*.a"))
+            os.tryrm(package:installdir("lib/libaom.a"))
             os.tryrm(package:installdir("lib/aom.lib"))
         end
     end)
