@@ -25,7 +25,7 @@ package("msgpack23")
     end)
 
     on_install(function (package)
-        local configs = {"-DBUILD_TESTING=OFF"}
+        local configs = {"-DBUILD_TESTING=OFF", "-DBUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
 
