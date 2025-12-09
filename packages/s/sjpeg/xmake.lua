@@ -21,7 +21,7 @@ package("sjpeg")
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
         if package:is_plat("android") then
-            local ndk = package:toolchain("ndk"):config("ndk")
+            local ndk = path.unix(package:toolchain("ndk"):config("ndk"))
             table.insert(configs, "-DSJPEG_ANDROID_NDK_PATH=" .. ndk)
         end
 
