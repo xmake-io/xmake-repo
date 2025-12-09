@@ -1,5 +1,4 @@
 package("libjxl")
-
     set_homepage("https://jpeg.org/jpegxl")
     set_description("JPEG XL image format reference implementation")
     set_license("BSD-3-Clause")
@@ -7,6 +6,7 @@ package("libjxl")
     add_urls("https://github.com/libjxl/libjxl.git",
              "https://gitlab.com/wg1/jpeg-xl.git")
 
+    add_versions("v0.11.1", "794a5dcf0d54f9f0b20d288a12e87afb91d20dfc")
     add_versions("v0.8.2", "954b460768c08a147abf47689ad69b0e7beff65e")
 
     if is_plat("linux") then
@@ -25,6 +25,7 @@ package("libjxl")
     add_configs("openexr", {description = "Build JPEGXL with support for OpenEXR if available.", default = false, type = "boolean"})
     add_configs("skcms", {description = "Build with skcms instead of lcms2.", default = false, type = "boolean"})
     add_configs("tcmalloc", {description = "Build JPEGXL using gperftools (tcmalloc) allocator.", default = false, type = "boolean"})
+    add_configs("jni", {description = "Build JPEGXL JNI Java wrapper.", default = false, type = "boolean"})
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
     add_deps("cmake")
@@ -46,6 +47,7 @@ package("libjxl")
         table.insert(configs, "-DJPEGXL_ENABLE_OPENEXR=" .. (package:config("openexr") and "ON" or "OFF"))
         table.insert(configs, "-DJPEGXL_ENABLE_SKCMS=" .. (package:config("skcms") and "ON" or "OFF"))
         table.insert(configs, "-DJPEGXL_ENABLE_TCMALLOC=" .. (package:config("tcmalloc") and "ON" or "OFF"))
+        table.insert(configs, "-DJPEGXL_ENABLE_JNI=" .. (package:config("jni") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:config("shared") then
             table.insert(configs, "-DJPEGXL_STATIC=OFF")
