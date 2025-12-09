@@ -7,6 +7,7 @@ package("msgpack23")
     add_urls("https://github.com/rwindegger/msgpack23/archive/refs/tags/$(version).tar.gz",
              "https://github.com/rwindegger/msgpack23.git")
 
+    add_versions("v3.1", "6f0e09f5acc2d5e1e1455d38936aa2cc44a0402ad1d9d1b6cd9203280ff06036")
     add_versions("v2.1", "9ce1e294518aa76cac50f778a359aed17a0daa0d8dc4c1f94cd4f12438b3606c")
 
     add_deps("cmake")
