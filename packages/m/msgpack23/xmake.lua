@@ -34,9 +34,21 @@ package("msgpack23")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            void test() {
-                msgpack23::Packer packer;
-            }
-        ]]}, {configs = {languages = "c++23"}, includes = "msgpack23/msgpack23.h"}))
+        local code
+        if package:version() and package:version():lt("3.0.0") then
+            code = [[
+                void test() {
+                    msgpack23::Packer packer;
+                }
+            ]]
+        else
+            code = [[
+                void test() {
+                    std::vector<std::byte> packedData{};
+                    auto const inserter = std::back_insert_iterator(packedData);
+                    msgpack23::Packer packer{inserter};
+                }
+            ]]
+        end
+        assert(package:check_cxxsnippets({test = code}, {configs = {languages = "c++23"}, includes = "msgpack23/msgpack23.h"}))
     end)
