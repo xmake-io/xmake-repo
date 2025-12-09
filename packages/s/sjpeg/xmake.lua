@@ -13,6 +13,7 @@ package("sjpeg")
 
     on_install(function (package)
         io.replace("CMakeLists.txt", "set_target_properties(sjpeg PROPERTIES POSITION_INDEPENDENT_CODE ON)", "", {plain = true})
+        io.replace("CMakeLists.txt", "ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}", "ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}\nRUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}", {plain = true})
 
         local configs = {"-DSJPEG_BUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
