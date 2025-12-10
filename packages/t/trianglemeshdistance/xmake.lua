@@ -12,6 +12,7 @@ package("trianglemeshdistance")
 
     on_install(function (package)
         io.replace("CMakeLists.txt", "add_subdirectory(tests)", "", {plain = true})
+        io.replace("TriangleMeshDistance/include/tmd/TriangleMeshDistance.h", "#include <cmath>", "#include <cmath>\n#include <cstdint>", {plain = true})
         import("package.tools.cmake").install(package)
     end)
 
