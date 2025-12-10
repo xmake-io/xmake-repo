@@ -5,8 +5,8 @@ package("glslang-nihui")
 
     add_urls("https://github.com/nihui/glslang.git")
 
-    add_versions("20250916", "cpp14-2")  -- 8cd77a808d0bffa442ae9462d5e3a8141892ba5a
-    add_versions("20250503", "a9ac7d5f307e5db5b8c4fbf904bdba8fca6283bc")
+    add_versions("2025.09.16", "8cd77a808d0bffa442ae9462d5e3a8141892ba5a")
+    add_versions("2025.05.03", "a9ac7d5f307e5db5b8c4fbf904bdba8fca6283bc")
 
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
