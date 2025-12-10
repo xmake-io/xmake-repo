@@ -43,7 +43,7 @@ package("mujoco")
         end
     end)
 
-    on_install("!wasm", function (package)
+    on_install("!wasm and !bsd", function (package)
         if package:dep("qhull"):config("shared") then
             -- TODO: patch cmake target_link_libraries
             raise("package(mujoco) unsupported shared qhull library")
