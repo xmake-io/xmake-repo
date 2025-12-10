@@ -41,9 +41,21 @@ package("mujoco")
             raise("package(mujoco) unsupported shared qhull library")
         end
 
+        -- support static build
         io.replace("CMakeLists.txt", "add_library(mujoco SHARED", "add_library(mujoco ", {plain = true})
+        -- remove fetch content
         io.replace("CMakeLists.txt", "include(MujocoDependencies)", "", {plain = true})
+        -- remove hardcode ccd and dynamic library export macro
         io.replace("CMakeLists.txt", "CCD_STATIC_DEFINE MUJOCO_DLL_EXPORTS", "", {plain = true})
+        -- remove unused install target
+        io.replace("CMakeLists.txt", "list(APPEND MUJOCO_TARGETS lodepng)", "", {plain = true})
+        if package:is_plat("mingw") then
+            -- mujoco.rc:23: syntax error
+            io.replace("CMakeLists.txt", "set(MUJOCO_RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/dist/mujoco.rc)", "", {plain = true})
+            -- remove /STACK:16777216
+            io.replace("cmake/MujocoLinkOptions.cmake", "if(WIN32)", "if(0)", {plain = true})
+            io.replace("simulate/cmake/MujocoLinkOptions.cmake", "if(WIN32)", "if(0)", {plain = true})
+        end
 
         io.replace("cmake/MujocoOptions.cmake", "-Werror", "", {plain = true})
         io.replace("simulate/cmake/SimulateOptions.cmake", "-Werror", "", {plain = true})
@@ -93,6 +105,7 @@ package("mujoco")
         end
 
         if package:config("simulate") then
+        -- remove fetch content
             io.replace("simulate/CMakeLists.txt", "include(SimulateDependencies)", "", {plain = true})
             io.replace("simulate/CMakeLists.txt", "if(NOT TARGET lodepng)", "if(0)", {plain = true})
             io.replace("simulate/CMakeLists.txt",
@@ -115,10 +128,21 @@ package("mujoco")
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=" .. (package:config("lto") and "ON" or "OFF"))
 
         table.insert(configs, "-DMUJOCO_BUILD_SIMULATE=" .. (package:config("simulate") and "ON" or "OFF"))
         table.insert(configs, "-DMUJOCO_WITH_USD=" .. (package:config("usd") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+
+        local opt = {}
+        opt.cxflags = {}
+        if package:has_tool("cc", "gcc") then
+            table.insert(opt.cxflags, "-Wno-error=incompatible-pointer-types")
+        end
+        if package:is_plat("android", "bsd", "mingw") then
+            -- src/engine/engine_util_errmem.c:107:6: error: #error "Thread-safe version of `localtime` is not present in the standard C library"
+            table.insert(opt.cxflags, "-D_POSIX_C_SOURCE=200112L")
+        end
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
