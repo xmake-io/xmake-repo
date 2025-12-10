@@ -13,7 +13,6 @@ package("lsp-framework")
     add_patches("1.0.1", "patches/1.0.1/fix-missing-ios.diff", "8447605c2ed14cfbf394b29ffe2348e2179424504100aa01cd88b3d054e5ceb1")
 
     add_deps("cmake")
-    add_links("lsp")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
