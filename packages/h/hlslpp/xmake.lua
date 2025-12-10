@@ -7,6 +7,7 @@ package("hlslpp")
     add_urls("https://github.com/redorav/hlslpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/redorav/hlslpp.git")
 
+    add_versions("3.8", "7755a184772be5dc817d8e849a1ea00e2f97c8b22a2a3c13707cacf55b1eb896")
     add_versions("3.7", "819a3d20e5dcea27ee16903b6c96c309d1432c950f282791c06c8f27c2cb12f0")
     add_versions("3.6", "d23b51e631363e7337e89564014fd5a9b7b12498a0296caddcc8433fb23727b8")
     add_versions("3.5.3", "9be1b0edcd7877da49e5e85473c83eac792ef10dcccd3f1ff18297f2176ac251")
