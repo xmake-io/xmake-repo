@@ -39,6 +39,10 @@ package("lsp-framework")
 
     on_install("windows", "linux", "macosx", "mingw@windows", "bsd", function (package)
         local configs = {}
+        if package:version():ge("1.3.0") then
+            io.replace("CMakeLists.txt", "install(TARGETS lsp EXPORT lsp ARCHIVE LIBRARY)", "install(TARGETS lsp EXPORT lsp RUNTIME ARCHIVE LIBRARY)", {plain = true})
+            table.insert(configs, "-DCMAKE_INSTALL_LIBDIR=lib")
+        end
         table.insert(configs, "-DLSP_USE_SANITIZERS=" .. (package:config("asan") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
