@@ -21,6 +21,14 @@ package("mujoco")
     end
     add_deps("libccd", "lodepng", "qhull", "tinyobjloader", "tinyxml2", "trianglemeshdistance", "marchingcubecpp")
 
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(mujoco) require ndk api level > 21")
+        end)
+    end
+
     on_load(function (package)
         if package:config("usd") then
             package:add("deps", "usd")
@@ -35,7 +43,7 @@ package("mujoco")
         end
     end)
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         if package:dep("qhull"):config("shared") then
             -- TODO: patch cmake target_link_libraries
             raise("package(mujoco) unsupported shared qhull library")
@@ -56,6 +64,9 @@ package("mujoco")
             io.replace("cmake/MujocoLinkOptions.cmake", "if(WIN32)", "if(0)", {plain = true})
             io.replace("simulate/cmake/MujocoLinkOptions.cmake", "if(WIN32)", "if(0)", {plain = true})
         end
+
+        io.replace("cmake/MujocoOptions.cmake", "set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)", "", {plain = true})
+        io.replace("simulate/cmake/SimulateOptions.cmake", "set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)", "", {plain = true})
 
         io.replace("cmake/MujocoOptions.cmake", "-Werror", "", {plain = true})
         io.replace("simulate/cmake/SimulateOptions.cmake", "-Werror", "", {plain = true})
@@ -135,7 +146,7 @@ package("mujoco")
 
         local opt = {}
         opt.cxflags = {}
-        if package:has_tool("cc", "gcc") then
+        if package:has_tool("cc", "gcc") or package:is_plat("wasm") then
             table.insert(opt.cxflags, "-Wno-error=incompatible-pointer-types")
         end
         if package:is_plat("android", "bsd", "mingw") then
