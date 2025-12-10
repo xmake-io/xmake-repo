@@ -6,12 +6,14 @@ package("lsp-framework")
     add_urls("https://github.com/leon-bckl/lsp-framework/archive/refs/tags/$(version).tar.gz",
              "https://github.com/leon-bckl/lsp-framework.git")
 
+    add_versions("1.3.0", "b6b4c0cad392b5e6b5b3897095199ed1b9217b7e468d61993eb4e091972c264b")
     add_versions("1.0.1", "07f924d851896a2d424d554d20820483f8458aa1ff907bb68657b0d2d0bd0d13")
 
     add_patches("1.0.1", "patches/1.0.1/fix-install.diff", "bb5e4436091ba1846144ffa80fb8afd4d0213760bce45dd6fd31662905cb4bc3")
     add_patches("1.0.1", "patches/1.0.1/fix-missing-ios.diff", "8447605c2ed14cfbf394b29ffe2348e2179424504100aa01cd88b3d054e5ceb1")
 
     add_deps("cmake")
+    add_links("lsp")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
@@ -20,11 +22,18 @@ package("lsp-framework")
     end
 
     if on_check then
-        on_check("windows|arm64", function (package)
-            import("core.base.semver")
-            local vs = package:toolchain("msvc"):config("vs")
-            assert(tonumber(vs) >= 2022, "lsp-framework requires Visual Studio 2022 and later for arm64 targets")
-            assert(os.arch() == "arm64", "package(lsp-framework): requires host arch to be arm64.")
+        on_check(function (package)
+            if package:is_plat("windows") and package:is_arch("arm64") then
+                import("core.base.semver")
+                local vs = package:toolchain("msvc"):config("vs")
+                assert(tonumber(vs) >= 2022, "package(lsp-framework): requires Visual Studio 2022 and later for arm64 targets")
+                assert(os.arch() == "arm64", "package(lsp-framework): requires host arch to be arm64.")
+            end
+            if package:is_plat("macosx") then
+                if macos.version():lt("15") then
+                    raise("package(lsp-framework): requires macOS version >= 15.")
+                end
+            end
         end)
     end
 
