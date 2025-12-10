@@ -8,6 +8,9 @@ package("libccd")
     add_versions("v2.1", "542b6c47f522d581fbf39e51df32c7d1256ac0c626e7c2b41f1040d4b9d50d1e")
 
     add_configs("double_precision", {description = "Enable double precision floating-point arithmetic.", default = false, type = "boolean"})
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     add_deps("cmake")
 
