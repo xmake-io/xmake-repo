@@ -21,10 +21,6 @@ package("trianglemeshdistance")
             void test() {
                 std::vector<std::array<double, 3>> vertices;
                 std::vector<std::array<int, 3>> triangles;
-
-                // (... fill the `vertices` and `triangles` with the mesh data ...)
-
-                // Initialize TriangleMeshDistance
                 tmd::TriangleMeshDistance mesh_distance(vertices, triangles);
             }
         ]]}, {configs = {languages = "c++17"}, includes = "tmd/TriangleMeshDistance.h"}))
