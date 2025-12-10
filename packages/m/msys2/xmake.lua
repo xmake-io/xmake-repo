@@ -10,6 +10,7 @@ package("msys2")
 
     add_configs("make", {description = "Install gnumake.", default = false, type = "boolean"})
     add_configs("gcc", {description = "Install gcc.", default = false, type = "boolean"})
+    add_configs("uchardet", {description = "Install uchardet.", default = false, type = "boolean"})
     add_configs("diffutils", {description = "Install diffutils.", default = false, type = "boolean"})
     add_configs("base_devel", {description = "Install base-devel.", default = false, type = "boolean"})
     add_configs("mingw64_gcc", {description = "Install mingw64 gcc.", default = false, type = "boolean"})
@@ -41,6 +42,7 @@ package("msys2")
         local packages = {
             "gcc", "make", "diffutils",
             base_devel = "base-devel",
+            uchardet = "mingw-w64-x86_64-uchardet",
             mingw32_gcc = "mingw-w64-i686-gcc",
             mingw32_toolchain = "mingw-w64-i686-toolchain",
             mingw64_gcc = "mingw-w64-x86_64-gcc",
