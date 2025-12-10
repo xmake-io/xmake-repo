@@ -25,7 +25,7 @@ package("glslang")
 
     add_patches("1.3.246+1", "https://github.com/KhronosGroup/glslang/commit/1e4955adbcd9b3f5eaf2129e918ca057baed6520.patch", "47893def550f1684304ef7c49da38f0a8fe35c190a3452d3bf58370b3ee7165d")
 
-    add_configs("binaryonly",  {description = "Only use binary program.", default = false, type = "boolean"})
+    add_configs("binaryonly",  {description = "Only use binary program.", default = true, type = "boolean"})
     add_configs("exceptions",  {description = "Build with exception support.", default = false, type = "boolean"})
     add_configs("spirv_tools", {description = "Enable SPIRV-Tools integration (Optimizer).", default = false, type = "boolean"})
     add_configs("hlsl",        {description = "Enable HLSL support.", default = true, type = "boolean"})
@@ -56,18 +56,19 @@ package("glslang")
         if package:config("tools") or package:is_binary() then
             package:addenv("PATH", "bin")
         end
-
-        package:add("links", "glslang", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "OSDependent", "SPIRV", "SPVRemapper")
-        if package:config("hlsl") then
-            package:add("links", "HLSL")
-        end
-        if package:config("default_resource_limits") then
-            package:add("links", "glslang-default-resource-limits")
+        if not package:is_binary() then
+            package:add("links", "glslang", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "OSDependent", "SPIRV", "SPVRemapper")
+            if package:config("hlsl") then
+                package:add("links", "HLSL")
+            end
+            if package:config("default_resource_limits") then
+                package:add("links", "glslang-default-resource-limits")
+            end
         end
     end)
 
     on_fetch(function (package, opt)
-        if opt.system and package:config("binaryonly") then
+        if opt.system and package:is_binary() then
             return package:find_tool("glslangValidator")
         end
     end)
@@ -110,16 +111,20 @@ package("glslang")
         end
         import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
 
-        os.cp("glslang/MachineIndependent/**.h", package:installdir("include", "glslang", "MachineIndependent"))
-        os.cp("glslang/Include/**.h", package:installdir("include", "glslang", "Include"))
+        if package:is_binary() then
+            os.rm(package:installdir("*|bin"))
+        else
+            os.cp("glslang/MachineIndependent/**.h", package:installdir("include", "glslang", "MachineIndependent"))
+            os.cp("glslang/Include/**.h", package:installdir("include", "glslang", "Include"))
 
-        -- https://github.com/KhronosGroup/glslang/releases/tag/12.3.0
-        if package:config("tools") then
-            local bindir = package:installdir("bin")
-            local glslangValidator = path.join(bindir, "glslangValidator" .. (is_host("windows") and ".exe" or ""))
-            if not os.isfile(glslangValidator) then
-                local glslang = path.join(bindir, "glslang" .. (is_host("windows") and ".exe" or ""))
-                os.trycp(glslang, glslangValidator)
+            -- https://github.com/KhronosGroup/glslang/releases/tag/12.3.0
+            if package:config("tools") then
+                local bindir = package:installdir("bin")
+                local glslangValidator = path.join(bindir, "glslangValidator" .. (is_host("windows") and ".exe" or ""))
+                if not os.isfile(glslangValidator) then
+                    local glslang = path.join(bindir, "glslang" .. (is_host("windows") and ".exe" or ""))
+                    os.trycp(glslang, glslangValidator)
+                end
             end
         end
     end)
@@ -129,7 +134,7 @@ package("glslang")
             os.vrun("glslangValidator --version")
         end
 
-        if not package:config("binaryonly") then
+        if not package:is_binary() then
             assert(package:has_cxxfuncs("ShInitialize", {configs = {languages = "c++11"}, includes = "glslang/Public/ShaderLang.h"}))
         end
     end)
