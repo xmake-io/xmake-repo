@@ -26,6 +26,16 @@ package("snmalloc")
         add_syslinks("pthread")
     end
 
+    if on_check then
+        on_check("android", function (package)
+            if package:version() and package:version():ge("0.7.2") then
+                local ndk = package:toolchain("ndk")
+                local ndk_sdkver = ndk:config("ndk_sdkver")
+                assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(snmalloc) require ndk api level > 21")
+            end
+        end)
+    end
+
     on_load(function (package)
         if package:config("header_only") then
             package:set("kind", "library", {headeronly = true})
@@ -35,6 +45,14 @@ package("snmalloc")
 
     on_install("!wasm and !iphoneos", function (package)
         io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
+        io.replace("CMakeLists.txt", "/WX", "", {plain = true})
+
+        if os.isfile("src/snmalloc/pal/pal_windows.h") and package:has_runtime("MT") then
+            -- duplicate symbol: public: static void * __cdecl snmalloc::PALWindows::reserve(unsigned __int64)
+            io.replace("src/snmalloc/pal/pal_windows.h",
+                "static void* reserve(size_t size) noexcept;",
+                "static inline void* reserve(size_t size) noexcept;", {plain = true})
+        end
 
         local configs = {"-DSNMALLOC_BUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
