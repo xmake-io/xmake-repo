@@ -42,6 +42,9 @@ package("lsp-framework")
             io.replace("CMakeLists.txt", "install(TARGETS lsp EXPORT lsp ARCHIVE LIBRARY)", "install(TARGETS lsp EXPORT lsp RUNTIME ARCHIVE LIBRARY)", {plain = true})
             table.insert(configs, "-DCMAKE_INSTALL_LIBDIR=lib")
         end
+        if package:is_plat("windows") and package:config("shared") then
+            table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
+        end
         table.insert(configs, "-DLSP_USE_SANITIZERS=" .. (package:config("asan") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
