@@ -1,5 +1,5 @@
 package("mujoco")
-    set_homepage("https://www.ada-url.com")
+    set_homepage("https://mujoco.org/")
     set_description("Multi-Joint dynamics with Contact. A general purpose physics simulator.")
     set_license("Apache-2.0")
 
@@ -37,6 +37,7 @@ package("mujoco")
 
     on_install(function (package)
         if package:dep("qhull"):config("shared") then
+            -- TODO: patch cmake target_link_libraries
             raise("package(mujoco) unsupported shared qhull library")
         end
 
@@ -81,7 +82,7 @@ package("mujoco")
                 target_link_libraries(mujoco PRIVATE
                     ccd
                     PkgConfig::lodepng
-                    Qhull::qhullcpp
+                    Qhull::qhullstatic_r
                     tinyobjloader::tinyobjloader
                     tinyxml2::tinyxml2
                     PkgConfig::trianglemeshdistance
