@@ -12,10 +12,7 @@ package("trianglemeshdistance")
 
     on_install(function (package)
         io.replace("CMakeLists.txt", "add_subdirectory(tests)", "", {plain = true})
-
-        local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package)
     end)
 
     on_test(function (package)
