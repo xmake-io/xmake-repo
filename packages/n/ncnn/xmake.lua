@@ -90,6 +90,9 @@ package("ncnn")
         table.insert(configs, "-DNCNN_PIXEL_ROTATE=" .. (package:config("pixel_rotate") and "ON" or "OFF"))
         table.insert(configs, "-DNCNN_PIXEL_AFFINE=" .. (package:config("pixel_affine") and "ON" or "OFF"))
         table.insert(configs, "-DNCNN_PIXEL_DRAWING=" .. (package:config("pixel_drawing") and "ON" or "OFF"))
+        if package:config("vulkan") then
+            table.insert(configs, "-DCMAKE_CXX_STANDARD=11")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
@@ -101,7 +104,7 @@ package("ncnn")
                     ncnn::Net net;
                     net.load_param("model.param");
                 }
-            ]]}, {configs = {languages = "c++11"}}))
+            ]]}))
         else
             assert(package:check_csnippets({test = [[
                 #include <ncnn/c_api.h>
