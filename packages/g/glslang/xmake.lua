@@ -45,6 +45,8 @@ package("glslang")
         if package:is_binary() or package:config("binaryonly") then
             package:config_set("tools", true)
             package:set("kind", "binary")
+            package:config_set("shared", false)
+            wprint("The glslang package is configured to use static linking when binaryonly = true")
         end
         if package:config("spirv_tools") or package:config("tools") then
             package:add("deps", "python 3.x", {kind = "binary"})
