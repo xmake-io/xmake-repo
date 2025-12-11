@@ -13,8 +13,9 @@ package("microstl")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            void test(char fileName[]) {
-                std::filesystem::path filePath(fileName);
+            #include <filesystem>
+            void test() {
+                std::filesystem::path filePath("example.stl");
                 microstl::MeshReaderHandler meshHandler;
                 microstl::Result result = microstl::Reader::readStlFile(filePath, meshHandler);
                 const microstl::Mesh& mesh = meshHandler.mesh;
