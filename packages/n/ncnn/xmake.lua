@@ -48,6 +48,9 @@ package("ncnn")
         local glslang_ver = package:version() and package:version() or "2025.09.16"
         if package:config("vulkan") then
             package:add("deps", "glslang-nihui " .. glslang_ver)
+            if package:is_plat("macosx", "iphoneos") then
+                package:add("deps", "moltenvk")
+            end
         end
 
         if package:is_plat("linux", "bsd") and package:config("threads") then
@@ -92,6 +95,10 @@ package("ncnn")
         table.insert(configs, "-DNCNN_PIXEL_DRAWING=" .. (package:config("pixel_drawing") and "ON" or "OFF"))
         if package:config("vulkan") then
             table.insert(configs, "-DCMAKE_CXX_STANDARD=11")
+            if package:is_plat("macosx", "iphoneos") then
+                print(path.join(package:dep("moltenvk"):installdir("lib"), "libMoltenVK.dylib"))
+                table.insert(configs, "-DVulkan_LIBRARY=" .. path.join(package:dep("moltenvk"):installdir("lib"), "libMoltenVK.dylib"))
+            end
         end
         import("package.tools.cmake").install(package, configs)
     end)
