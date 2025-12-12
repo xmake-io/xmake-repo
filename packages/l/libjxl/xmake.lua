@@ -40,9 +40,15 @@ package("libjxl")
         if package:config("openexr") then
             package:add("deps", "openexr")
         end
+        if not package:config("shared") then
+            package:add("defines", "JXL_STATIC_DEFINE", "JXL_THREADS_STATIC_DEFINE", "JXL_CMS_STATIC_DEFINE")
+        end
     end)
 
     on_install(function (package)
+        if (package:is_plat("macosx") and not package:config("shared")) or package:is_plat("iphoneos") then
+            io.replace("CMakeLists.txt", "find_package(Threads REQUIRED)", "find_package(Threads)", {plain = true})
+        end
         if not package:config("tools") then
             io.replace("CMakeLists.txt", "add_subdirectory(tools)", "", {plain = true})
         end
