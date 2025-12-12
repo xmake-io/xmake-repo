@@ -51,6 +51,7 @@ package("libjxl")
             io.replace("CMakeLists.txt", "find_package(Atomics REQUIRED)", "find_package(Atomics)", {plain = true})
             io.replace("CMakeLists.txt", "find_package(Threads REQUIRED)", "find_package(Threads)", {plain = true})
             io.replace("lib/jxl_threads.cmake", "find_package(Threads REQUIRED)", "find_package(Threads)", {plain = true})
+            io.replace("lib/jxl_threads.cmake", "Threads::Threads", "", {plain = true})
         end
 
         if not package:config("tools") then
