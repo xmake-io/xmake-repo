@@ -22,6 +22,7 @@ package("glslang-nihui")
     end)
 
     on_install(function (package)
+        io.replace("CMakeLists.txt", "set(CMAKE_CXX_STANDARD 17)", "set(CMAKE_CXX_STANDARD 14)", {plain = true})
         -- glslang will add a debug lib postfix for win32 platform, disable this to fix compilation issues under windows
         io.replace("CMakeLists.txt", 'set(CMAKE_DEBUG_POSTFIX "d")', [[
             message(WARNING "Disabled CMake Debug Postfix for xmake package generation")
@@ -53,5 +54,5 @@ package("glslang-nihui")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxfuncs("ShInitialize", {configs = {languages = "c++11"}, includes = "glslang/Public/ShaderLang.h"}))
+        assert(package:has_cxxfuncs("ShInitialize", {configs = {languages = "c++14"}, includes = "glslang/Public/ShaderLang.h"}))
     end)
