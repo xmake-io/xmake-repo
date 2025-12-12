@@ -44,6 +44,14 @@ package("cimg")
         add_syslinks("m", "pthread")
     end
 
+    on_load(function (package)
+        if package:is_plat("macosx") then
+            if macos.version():lt("15") then
+                package:add("cxxflags", "-msse2") -- macOS 14 needs this flag to support fp16
+            end
+        end
+    end)
+
     on_install("windows", "linux", "macosx", "android", "mingw", "cygwin", "bsd", "cross", function (package)
         os.cp("CImg.h", package:installdir("include"))
     end)
