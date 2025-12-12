@@ -48,8 +48,9 @@ package("libjxl")
     on_install(function (package)
         io.replace("CMakeLists.txt", "set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)", "", {plain = true})
         if (package:is_plat("macosx") and not package:config("shared")) or package:is_plat("iphoneos") then
-            io.replace("CMakeLists.txt", "find_package(Threads REQUIRED)", "find_package(Threads)", {plain = true})
             io.replace("CMakeLists.txt", "find_package(Atomics REQUIRED)", "find_package(Atomics)", {plain = true})
+            io.replace("CMakeLists.txt", "find_package(Threads REQUIRED)", "find_package(Threads)", {plain = true})
+            io.replace("lib/jxl_threads.cmake", "find_package(Threads REQUIRED)", "find_package(Threads)", {plain = true})
         end
 
         if not package:config("tools") then
