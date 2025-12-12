@@ -96,8 +96,11 @@ package("ncnn")
         if package:config("vulkan") then
             table.insert(configs, "-DCMAKE_CXX_STANDARD=11")
             if package:is_plat("macosx", "iphoneos") then
-                print(path.join(package:dep("moltenvk"):installdir("lib"), "libMoltenVK.dylib"))
-                table.insert(configs, "-DVulkan_LIBRARY=" .. path.join(package:dep("moltenvk"):installdir("lib"), "libMoltenVK.dylib"))
+                local moltenvk = package:dep("moltenvk")
+                print("=====infoinfoinfo=====")
+                print(moltenvk:config("shared"))
+                print("=====infoinfoinfo=====")
+                table.insert(configs, "-DVulkan_LIBRARY=" .. path.join(moltenvk:installdir("lib"), "libMoltenVK." .. (moltenvk:config("shared") and "dylib" or "a")))
             end
         end
         import("package.tools.cmake").install(package, configs)
