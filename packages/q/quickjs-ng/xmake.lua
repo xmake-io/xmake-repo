@@ -47,14 +47,26 @@ package("quickjs-ng")
         if package:is_plat("linux", "bsd", "cross") then
             io.replace("CMakeLists.txt", "M_LIBRARIES OR CMAKE_C_COMPILER_ID STREQUAL \"TinyCC\"", "1", {plain = true}) -- m library link
         end
+        if package:is_plat("windows") and package:has_tool("cxx", "clang") then
+            -- cmake will use lld-link for clang toolchain and can't accept -Wl,--stack,8388608
+            io.replace("CMakeLists.txt",
+                [[set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--stack,8388608")]],
+                [[set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,/STACK:8388608")]], {plain = true})
+        end
 
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+
         table.insert(configs, "-DCONFIG_ASAN=" .. (package:config("asan") and "ON" or "OFF"))
         table.insert(configs, "-DCONFIG_MSAN=" .. (package:config("msan") and "ON" or "OFF"))
         table.insert(configs, "-DCONFIG_UBSAN=" .. (package:config("ubsan") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_QJS_LIBC=" .. (package:config("libc") and "ON" or "OFF"))
+
+        table.insert(configs, "-DQJS_ENABLE_ASAN=" .. (package:config("asan") and "ON" or "OFF"))
+        table.insert(configs, "-DQJS_ENABLE_MSAN=" .. (package:config("msan") and "ON" or "OFF"))
+        table.insert(configs, "-DQJS_ENABLE_UBSAN=" .. (package:config("ubsan") and "ON" or "OFF"))
+        table.insert(configs, "-DQJS_BUILD_LIBC=" .. (package:config("libc") and "ON" or "OFF"))
         if package:config("shared") and package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
