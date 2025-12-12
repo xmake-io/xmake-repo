@@ -111,7 +111,7 @@ package("ncnn")
                     ncnn::Net net;
                     net.load_param("model.param");
                 }
-            ]]}))
+            ]]}, {configs = package:config("vulkan") and {languages = "c++11"} or {}}))
         else
             assert(package:check_csnippets({test = [[
                 #include <ncnn/c_api.h>
