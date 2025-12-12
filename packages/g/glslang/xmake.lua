@@ -55,17 +55,15 @@ package("glslang")
             package:add("deps", "spirv-tools")
         end
 
-        if package:config("tools") or package:is_binary() then
+        if package:config("tools") then
             package:addenv("PATH", "bin")
         end
-        if not package:is_binary() then
-            package:add("links", "glslang", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "OSDependent", "SPIRV", "SPVRemapper")
-            if package:config("hlsl") then
-                package:add("links", "HLSL")
-            end
-            if package:config("default_resource_limits") then
-                package:add("links", "glslang-default-resource-limits")
-            end
+        package:add("links", "glslang", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "OSDependent", "SPIRV", "SPVRemapper")
+        if package:config("hlsl") then
+            package:add("links", "HLSL")
+        end
+        if package:config("default_resource_limits") then
+            package:add("links", "glslang-default-resource-limits")
         end
     end)
 
