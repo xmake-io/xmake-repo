@@ -48,7 +48,7 @@ package("sol2")
                     end
                     local libfiles = lua.libfiles
                     if libfiles then
-                        table.insert(configs, "-DLUA_LIBRARIES=" .. table.concat(libfiles, " "))
+                        table.insert(configs, "-DLUA_LIBRARY=" .. table.concat(libfiles, " "))
                     end
                 end
             end
