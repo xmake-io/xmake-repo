@@ -35,7 +35,7 @@ package("sol2")
         end
     end)
 
-    on_install("!wasm", function (package)
+    on_install(function (package)
         local configs = {}
         if package:config("includes_lua") then
             if package:version() and package:version():ge("3.3") then
