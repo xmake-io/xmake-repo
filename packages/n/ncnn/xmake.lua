@@ -49,7 +49,7 @@ package("ncnn")
         if package:config("vulkan") then
             package:add("deps", "glslang-nihui " .. glslang_ver)
             if package:is_plat("macosx", "iphoneos") then
-                package:add("deps", "moltenvk")
+                package:add("deps", "moltenvk", {configs = {shared = package:config("shared")}})
                 package:add("frameworks", "Metal", "Foundation", "QuartzCore", "CoreGraphics", "IOSurface")
                 if package:is_plat("macosx") then
                     package:add("frameworks", "IOKit", "AppKit")
