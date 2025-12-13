@@ -50,6 +50,12 @@ package("ncnn")
             package:add("deps", "glslang-nihui " .. glslang_ver)
             if package:is_plat("macosx", "iphoneos") then
                 package:add("deps", "moltenvk")
+                package:add("frameworks", "Metal", "Foundation", "QuartzCore", "CoreGraphics", "IOSurface")
+                if package:is_plat("macosx") then
+                    package:add("frameworks", "IOKit", "AppKit")
+                else
+                    package:add("frameworks", "UIKit")
+                end
             end
         end
 
@@ -97,9 +103,6 @@ package("ncnn")
             table.insert(configs, "-DCMAKE_CXX_STANDARD=11")
             if package:is_plat("macosx", "iphoneos") then
                 local moltenvk = package:dep("moltenvk")
-                print("=====infoinfoinfo=====")
-                print(moltenvk:config("shared"))
-                print("=====infoinfoinfo=====")
                 table.insert(configs, "-DVulkan_LIBRARY=" .. path.join(moltenvk:installdir("lib"), "libMoltenVK." .. (moltenvk:config("shared") and "dylib" or "a")))
             end
         end
