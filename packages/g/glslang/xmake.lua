@@ -25,7 +25,7 @@ package("glslang")
 
     add_patches("1.3.246+1", "https://github.com/KhronosGroup/glslang/commit/1e4955adbcd9b3f5eaf2129e918ca057baed6520.patch", "47893def550f1684304ef7c49da38f0a8fe35c190a3452d3bf58370b3ee7165d")
 
-    add_configs("binaryonly",  {description = "Only use binary program.", default = true, type = "boolean"})
+    add_configs("binaryonly",  {description = "Only use binary program.", default = false, type = "boolean"})
     add_configs("exceptions",  {description = "Build with exception support.", default = false, type = "boolean"})
     add_configs("spirv_tools", {description = "Enable SPIRV-Tools integration (Optimizer).", default = false, type = "boolean"})
     add_configs("hlsl",        {description = "Enable HLSL support.", default = true, type = "boolean"})
