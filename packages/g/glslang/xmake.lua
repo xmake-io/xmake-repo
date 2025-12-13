@@ -45,6 +45,8 @@ package("glslang")
         if package:is_binary() or package:config("binaryonly") then
             package:config_set("tools", true)
             package:set("kind", "binary")
+            package:config_set("shared", false)
+            wprint("The glslang package is configured to use static linking when binaryonly = true")
         end
         if package:config("spirv_tools") or package:config("tools") then
             package:add("deps", "python 3.x", {kind = "binary"})
@@ -53,10 +55,9 @@ package("glslang")
             package:add("deps", "spirv-tools")
         end
 
-        if package:config("tools") or package:is_binary() then
+        if package:config("tools") then
             package:addenv("PATH", "bin")
         end
-
         package:add("links", "glslang", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "OSDependent", "SPIRV", "SPVRemapper")
         if package:config("hlsl") then
             package:add("links", "HLSL")
@@ -67,7 +68,7 @@ package("glslang")
     end)
 
     on_fetch(function (package, opt)
-        if opt.system and package:config("binaryonly") then
+        if opt.system and package:is_binary() then
             return package:find_tool("glslangValidator")
         end
     end)
@@ -110,16 +111,20 @@ package("glslang")
         end
         import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
 
-        os.cp("glslang/MachineIndependent/**.h", package:installdir("include", "glslang", "MachineIndependent"))
-        os.cp("glslang/Include/**.h", package:installdir("include", "glslang", "Include"))
+        if package:is_binary() then
+            os.rm(package:installdir("*|bin"))
+        else
+            os.cp("glslang/MachineIndependent/**.h", package:installdir("include", "glslang", "MachineIndependent"))
+            os.cp("glslang/Include/**.h", package:installdir("include", "glslang", "Include"))
 
-        -- https://github.com/KhronosGroup/glslang/releases/tag/12.3.0
-        if package:config("tools") then
-            local bindir = package:installdir("bin")
-            local glslangValidator = path.join(bindir, "glslangValidator" .. (is_host("windows") and ".exe" or ""))
-            if not os.isfile(glslangValidator) then
-                local glslang = path.join(bindir, "glslang" .. (is_host("windows") and ".exe" or ""))
-                os.trycp(glslang, glslangValidator)
+            -- https://github.com/KhronosGroup/glslang/releases/tag/12.3.0
+            if package:config("tools") then
+                local bindir = package:installdir("bin")
+                local glslangValidator = path.join(bindir, "glslangValidator" .. (is_host("windows") and ".exe" or ""))
+                if not os.isfile(glslangValidator) then
+                    local glslang = path.join(bindir, "glslang" .. (is_host("windows") and ".exe" or ""))
+                    os.trycp(glslang, glslangValidator)
+                end
             end
         end
     end)
@@ -129,7 +134,7 @@ package("glslang")
             os.vrun("glslangValidator --version")
         end
 
-        if not package:config("binaryonly") then
+        if not package:is_binary() then
             assert(package:has_cxxfuncs("ShInitialize", {configs = {languages = "c++11"}, includes = "glslang/Public/ShaderLang.h"}))
         end
     end)
