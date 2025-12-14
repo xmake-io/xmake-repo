@@ -6,6 +6,7 @@ package("omath")
     add_urls("https://github.com/orange-cpp/omath/archive/refs/tags/$(version).tar.gz",
              "https://github.com/orange-cpp/omath.git", {submodules = false})
 
+    add_versions("v4.5.0", "2861c0dbb06d07ba83ebb1458fbf2c8b1cde0e7e9b137809007cd45a86ccc3c6")
     add_versions("v4.4.0", "46fe67d0524c643b28892d2c27b33c5bb4941b0cd5393390cc17e11ae5d31741")
     add_versions("v4.3.0", "e21c2e1ff22360715ef6dd231e9f0ac506256b786a246061fac2dfd4cd37d20d")
     add_versions("v4.2.0", "f1482c5fd0de0ed26b8197c51e4eb59425c541d4819a3ed6f9639aef251b4a53")
