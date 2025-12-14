@@ -35,7 +35,11 @@ package("ptex")
     end)
 
     on_install(function (package)
+        if package:version() and package:version():ge("2.5.0") and package:is_debug() then
+            io.replace("src/ptex/PtexCache.h", "static const int maxMruFiles", "static constexpr int maxMruFiles", {plain = true})
+        end
         io.replace("src/ptex/PtexPlatform.h", "sys/types.h", "unistd.h", {plain = true})
+        io.replace("src/ptex/PtexPlatform.h", "#include <stdlib.h>", "#include <stdlib.h>\n#include <unistd.h>", {plain = true})
         io.replace("CMakeLists.txt", "add_subdirectory(src/tests)", "", {plain = true})
 
         local libdeflate = package:dep("libdeflate"):config("shared") and "libdeflate_shared" or "libdeflate_static"
