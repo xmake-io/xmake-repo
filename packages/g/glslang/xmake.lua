@@ -53,10 +53,9 @@ package("glslang")
             package:add("deps", "spirv-tools")
         end
 
-        if package:config("tools") or package:is_binary() then
+        if package:config("tools") then
             package:addenv("PATH", "bin")
         end
-
         package:add("links", "glslang", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "OSDependent", "SPIRV", "SPVRemapper")
         if package:config("hlsl") then
             package:add("links", "HLSL")
@@ -67,7 +66,7 @@ package("glslang")
     end)
 
     on_fetch(function (package, opt)
-        if opt.system and package:config("binaryonly") then
+        if opt.system and package:is_binary() then
             return package:find_tool("glslangValidator")
         end
     end)
@@ -94,7 +93,7 @@ package("glslang")
 
         local configs = {"-DENABLE_CTEST=OFF", "-DGLSLANG_TESTS=OFF", "-DBUILD_EXTERNAL=OFF", "-DENABLE_PCH=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and not package:config("binaryonly") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_EXCEPTIONS=" .. (package:config("exceptions") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_HLSL=" .. (package:config("hlsl") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_RTTI=" .. (package:config("rtti") and "ON" or "OFF"))
@@ -110,16 +109,20 @@ package("glslang")
         end
         import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
 
-        os.cp("glslang/MachineIndependent/**.h", package:installdir("include", "glslang", "MachineIndependent"))
-        os.cp("glslang/Include/**.h", package:installdir("include", "glslang", "Include"))
+        if package:is_binary() then
+            os.rm(package:installdir("*|bin"))
+        else
+            os.cp("glslang/MachineIndependent/**.h", package:installdir("include", "glslang", "MachineIndependent"))
+            os.cp("glslang/Include/**.h", package:installdir("include", "glslang", "Include"))
 
-        -- https://github.com/KhronosGroup/glslang/releases/tag/12.3.0
-        if package:config("tools") then
-            local bindir = package:installdir("bin")
-            local glslangValidator = path.join(bindir, "glslangValidator" .. (is_host("windows") and ".exe" or ""))
-            if not os.isfile(glslangValidator) then
-                local glslang = path.join(bindir, "glslang" .. (is_host("windows") and ".exe" or ""))
-                os.trycp(glslang, glslangValidator)
+            -- https://github.com/KhronosGroup/glslang/releases/tag/12.3.0
+            if package:config("tools") then
+                local bindir = package:installdir("bin")
+                local glslangValidator = path.join(bindir, "glslangValidator" .. (is_host("windows") and ".exe" or ""))
+                if not os.isfile(glslangValidator) then
+                    local glslang = path.join(bindir, "glslang" .. (is_host("windows") and ".exe" or ""))
+                    os.trycp(glslang, glslangValidator)
+                end
             end
         end
     end)
@@ -129,7 +132,7 @@ package("glslang")
             os.vrun("glslangValidator --version")
         end
 
-        if not package:config("binaryonly") then
+        if not package:is_binary() then
             assert(package:has_cxxfuncs("ShInitialize", {configs = {languages = "c++11"}, includes = "glslang/Public/ShaderLang.h"}))
         end
     end)
