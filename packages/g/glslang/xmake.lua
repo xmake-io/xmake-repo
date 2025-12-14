@@ -45,8 +45,6 @@ package("glslang")
         if package:is_binary() or package:config("binaryonly") then
             package:config_set("tools", true)
             package:set("kind", "binary")
-            package:config_set("shared", false)
-            wprint("The glslang package is configured to use static linking when binaryonly = true")
         end
         if package:config("spirv_tools") or package:config("tools") then
             package:add("deps", "python 3.x", {kind = "binary"})
@@ -95,7 +93,7 @@ package("glslang")
 
         local configs = {"-DENABLE_CTEST=OFF", "-DGLSLANG_TESTS=OFF", "-DBUILD_EXTERNAL=OFF", "-DENABLE_PCH=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and not package:config("binaryonly") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_EXCEPTIONS=" .. (package:config("exceptions") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_HLSL=" .. (package:config("hlsl") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_RTTI=" .. (package:config("rtti") and "ON" or "OFF"))
