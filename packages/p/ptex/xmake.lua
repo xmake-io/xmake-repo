@@ -18,6 +18,12 @@ package("ptex")
         add_syslinks("pthread")
     end
 
+    on_check("android", function (package)
+        local ndk = package:toolchain("ndk")
+        local ndk_sdkver = ndk:config("ndk_sdkver")
+        assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(ptex): need ndk api level > 21 for android")
+    end)
+
     on_load(function (package)
         if package:config("cmake") then
             package:add("deps", "cmake")
@@ -34,7 +40,7 @@ package("ptex")
         end
     end)
 
-    on_install(function (package)
+    on_install("!mingw or mingw|!i386", function (package)
         if package:version() and package:version():ge("2.5.0") and package:is_debug() then
             io.replace("src/ptex/PtexCache.h", "static const int maxMruFiles", "static constexpr int maxMruFiles", {plain = true})
         end
