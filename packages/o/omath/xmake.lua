@@ -36,7 +36,27 @@ package("omath")
 
     on_check(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #if __cpp_nontype_template_args < 201911L
+            #if defined(__cpp_nontype_template_parameter_class)
+            #  define NONTYPE_TEMPLATE_PARAMETER 1
+            #elif defined(__cpp_nontype_template_args)
+            #  if __cpp_nontype_template_args >= 201911L
+            #    define NONTYPE_TEMPLATE_PARAMETER 1
+            #  elif __cpp_nontype_template_args >= 201411L
+            #    if defined(__apple_build_version__)
+            #      if defined(__clang_major__) && __clang_major__ >= 13
+            #        define NONTYPE_TEMPLATE_PARAMETER 1
+            #      endif
+            #    elif defined(__clang_major__) && __clang_major__ >= 12
+            #      define NONTYPE_TEMPLATE_PARAMETER 1
+            #    endif
+            #  endif
+            #endif
+
+            #ifndef NONTYPE_TEMPLATE_PARAMETER
+            #  define NONTYPE_TEMPLATE_PARAMETER 0
+            #endif
+
+            #if !NONTYPE_TEMPLATE_PARAMETER
             #  error "package(omath): Your compiler does not support floating-point non-type template."
             #endif
         ]]}, {configs = {languages = "c++23"}}))
