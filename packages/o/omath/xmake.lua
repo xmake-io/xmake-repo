@@ -35,11 +35,11 @@ package("omath")
     add_deps("cmake")
 
     on_check(function (package)
-        package:check_cxxsnippets({test = [[
+        assert(package:check_cxxsnippets({test = [[
             #if __cpp_nontype_template_args < 201911L
             #  error "package(omath): Your compiler does not support floating-point non-type template."
             #endif
-        ]]}, {configs = {languages = "c++23"}})
+        ]]}, {configs = {languages = "c++23"}}))
     end)
 
     on_load(function (package)
