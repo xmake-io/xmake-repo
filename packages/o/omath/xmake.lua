@@ -54,13 +54,7 @@ package("omath")
             #  define NONTYPE_TEMPLATE_PARAMETER 0
             #endif
 
-            #if (defined(_MSVC_LANG) && _MSVC_LANG >= 202302L) || (!defined(_MSVC_LANG) && __cplusplus >= 202302L)
-            #  define CPP23_STANDARD 1
-            #else
-            #  define CPP23_STANDARD 0
-            #endif
-
-            #if !NONTYPE_TEMPLATE_PARAMETER || !CPP23_STANDARD
+            #if !NONTYPE_TEMPLATE_PARAMETER
             #  error "package(omath): Your compiler does not support floating-point non-type template."
             #endif
         ]]}, {configs = {languages = "c++23"}}))
