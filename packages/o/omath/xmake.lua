@@ -6,6 +6,7 @@ package("omath")
     add_urls("https://github.com/orange-cpp/omath/archive/refs/tags/$(version).tar.gz",
              "https://github.com/orange-cpp/omath.git", {submodules = false})
 
+    add_versions("v4.5.0", "2861c0dbb06d07ba83ebb1458fbf2c8b1cde0e7e9b137809007cd45a86ccc3c6")
     add_versions("v4.4.0", "46fe67d0524c643b28892d2c27b33c5bb4941b0cd5393390cc17e11ae5d31741")
     add_versions("v4.3.0", "e21c2e1ff22360715ef6dd231e9f0ac506256b786a246061fac2dfd4cd37d20d")
     add_versions("v4.2.0", "f1482c5fd0de0ed26b8197c51e4eb59425c541d4819a3ed6f9639aef251b4a53")
@@ -18,6 +19,7 @@ package("omath")
     add_versions("v3.8.2", "e759aba554f9d50147931852c13408ff0bd302a787ff28818d19d4dc1a8f7fd0")
     add_versions("v3.8.1", "aaea99570c382478f825af759a2b0a214b429c74a9a5492ddd2866c836e85f4e")
 
+    add_patches("v4.5.0", "patches/v4.5.0/fix-freebsd.patch", "0d82edf375b605dacdffd5130898df34894fc5d4ef2610495de40e3a3f8faf90")
     add_patches("v3.9.3", "patches/v3.9.3/fix-cend.patch", "1e45f4e702963bddd456b85c39dbda9a64df5903f2d5e7568ac9fbf920ec8681")
     add_patches("v3.9.0", "patches/v3.9.0/fix-fastcall.patch", "c439cbde15949786e87241a4a81575296e81cfdca8ec76192b5ff228126fa02c")
     add_patches("v3.8.1", "patches/v3.8.1/fix-build.patch", "c1554cf0cdd027d6386544871d6248c868f8f95add343660334888da52119ae9")
@@ -32,13 +34,26 @@ package("omath")
 
     add_deps("cmake")
 
+    on_check(function (package)
+        assert(package:check_cxxsnippets({test = [[
+        template <typename T, T Min, T Max>
+        struct Angle {
+            static T get_min() { return Min; }
+        };
+        int main() {
+            Angle<float, 0.0f, 180.0f> a;
+            return 0;
+        }
+        ]]}, {configs = {languages = "c++23"}}), "package(omath): Your compiler does not support floating-point non-type template.")
+    end)
+
     on_load(function (package)
         if package:config("imgui") then
             package:add("deps", "imgui")
         end
     end)
 
-    on_install("!macosx and !iphoneos and !android and !bsd", function (package)
+    on_install(function (package)
         local configs = {
             "-DOMATH_BUILD_TESTS=OFF",
             "-DOMATH_BUILD_BENCHMARK=OFF",
