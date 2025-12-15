@@ -44,7 +44,7 @@ package("omath")
             Angle<float, 0.0f, 180.0f> a;
             return 0;
         }
-        ]]}, {configs = {languages = "c++23"}}), error "package(omath): Your compiler does not support floating-point non-type template.")
+        ]]}, {configs = {languages = "c++23"}}), "package(omath): Your compiler does not support floating-point non-type template.")
     end)
 
     on_load(function (package)
