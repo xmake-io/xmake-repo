@@ -23,7 +23,7 @@ package("sol2")
         add_extsources("pacman::sol2")
     end
 
-    add_deps("meson")
+    add_deps("cmake")
 
     on_load(function (package)
         if package:config("includes_lua") then
@@ -37,7 +37,7 @@ package("sol2")
 
     on_install(function (package)
         local configs = {}
-        --[[if package:config("includes_lua") then
+        if package:config("includes_lua") then
             if package:version() and package:version():ge("3.3") then
                 table.insert(configs, "-DSOL2_BUILD_LUA=FALSE")
                 local lua = package:dep("lua"):fetch()
@@ -52,8 +52,12 @@ package("sol2")
                     end
                 end
             end
-        end]]
-        import("package.tools.meson").install(package, configs)
+            if package:is_plat("wasm") then
+                -- to bypass m check (emscripten is not supported by FindLua.cmake)
+                table.insert(configs, "-DLUA_MATH_LIBRARY=m")
+            end
+        end
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
