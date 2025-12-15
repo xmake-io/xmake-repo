@@ -23,7 +23,7 @@ package("moltenvk")
         add_extsources("brew::molten-vk")
     end
 
-    add_links("MoltenVKShaderConverter", "MoltenVK")
+    add_links("MoltenVK")
 
     if is_plat("macosx", "iphoneos") then
         add_frameworks("Metal", "Foundation", "QuartzCore", "CoreGraphics", "IOSurface")
