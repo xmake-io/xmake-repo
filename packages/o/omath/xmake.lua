@@ -36,9 +36,7 @@ package("omath")
 
     on_check(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #if defined(__cpp_nontype_template_parameter_class)
-            #  define NONTYPE_TEMPLATE_PARAMETER 1
-            #elif defined(__cpp_nontype_template_args)
+            #if defined(__cpp_nontype_template_args)
             #  if __cpp_nontype_template_args >= 201911L
             #    define NONTYPE_TEMPLATE_PARAMETER 1
             #  elif __cpp_nontype_template_args >= 201411L
