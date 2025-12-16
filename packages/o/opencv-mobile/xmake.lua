@@ -3,10 +3,6 @@ package("opencv-mobile")
     set_description("The minimal opencv for Android, iOS, ARM Linux, Windows, Linux, MacOS, WebAssembly")
     set_license("Apache-2.0")
 
-    if is_plat("windows", "mingw") then
-        add_syslinks("user32", "gdi32")
-    end
-
     -- parse version-tag: version -> ocv, tag -> ocv-mobile
     if on_source then
         on_source(function (package)
@@ -107,10 +103,12 @@ package("opencv-mobile")
             end
             package:add("linkdirs", linkdir) -- fix path for 4.9.0/vs2022
             package:add("linkdirs", path.join(arch, vc_ver, linkdir))
+            add_syslinks("user32", "gdi32")
         elseif package:is_plat("mingw") then
             local arch = (package:is_arch("x86_64") and "x64" or "x86")
             local linkdir = (package:config("shared") and "lib" or "staticlib")
             package:add("linkdirs", path.join(arch, "mingw", linkdir))
+            add_syslinks("user32", "gdi32")
         elseif package:is_plat("android") then
             local linkdir = (package:config("shared") and "libs" or "staticlibs")
             package:add("linkdirs", path.join("sdk/native", linkdir, package:targetarch()))
