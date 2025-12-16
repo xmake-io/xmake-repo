@@ -3,6 +3,10 @@ package("opencv-mobile")
     set_description("The minimal opencv for Android, iOS, ARM Linux, Windows, Linux, MacOS, WebAssembly")
     set_license("Apache-2.0")
 
+    if is_plat("windows", "mingw") then
+        add_syslinks("user32", "gdi32")
+    end
+
     -- parse version-tag: version -> ocv, tag -> ocv-mobile
     if on_source then
         on_source(function (package)
