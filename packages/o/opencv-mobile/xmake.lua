@@ -86,7 +86,7 @@ package("opencv-mobile")
         end)
     end
 
-    on_load("android", "iphoneos", "linux", "macosx", "windows", "mingw@windows,msys", function (package)
+    on_load(function (package)
         if package:is_plat("windows") then
             local arch = "x64"
             if     package:is_arch("x86")   then arch = "x86"
@@ -103,12 +103,10 @@ package("opencv-mobile")
             end
             package:add("linkdirs", linkdir) -- fix path for 4.9.0/vs2022
             package:add("linkdirs", path.join(arch, vc_ver, linkdir))
-            add_syslinks("user32", "gdi32")
         elseif package:is_plat("mingw") then
             local arch = (package:is_arch("x86_64") and "x64" or "x86")
             local linkdir = (package:config("shared") and "lib" or "staticlib")
             package:add("linkdirs", path.join(arch, "mingw", linkdir))
-            add_syslinks("user32", "gdi32")
         elseif package:is_plat("android") then
             local linkdir = (package:config("shared") and "libs" or "staticlibs")
             package:add("linkdirs", path.join("sdk/native", linkdir, package:targetarch()))
@@ -116,6 +114,10 @@ package("opencv-mobile")
             package:add("includedirs", "sdk/native/jni/include")
         elseif package:version():ge("4.0") then
             package:add("includedirs", "include/opencv4")
+        end
+
+        if package:is_plat("windows", "mingw") then
+            package:add("syslinks""user32", "gdi32")
         end
     end)
 
