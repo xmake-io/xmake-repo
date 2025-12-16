@@ -117,7 +117,7 @@ package("opencv-mobile")
         end
 
         if package:is_plat("windows", "mingw") then
-            package:add("syslinks""user32", "gdi32")
+            package:add("syslinks", "user32", "gdi32")
         end
     end)
 
