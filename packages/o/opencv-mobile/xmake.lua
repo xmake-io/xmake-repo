@@ -86,7 +86,7 @@ package("opencv-mobile")
         end)
     end
 
-    on_load("android", "iphoneos", "linux", "macosx", "windows", "mingw@windows,msys", function (package)
+    on_load(function (package)
         if package:is_plat("windows") then
             local arch = "x64"
             if     package:is_arch("x86")   then arch = "x86"
@@ -114,6 +114,10 @@ package("opencv-mobile")
             package:add("includedirs", "sdk/native/jni/include")
         elseif package:version():ge("4.0") then
             package:add("includedirs", "include/opencv4")
+        end
+
+        if package:is_plat("windows", "mingw") then
+            package:add("syslinks", "user32", "gdi32")
         end
     end)
 
