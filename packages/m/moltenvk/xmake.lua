@@ -47,23 +47,36 @@ package("moltenvk")
     on_install("macosx", "iphoneos", function (package)
         local plat = package:is_plat("iphoneos") and "iOS" or "macOS"
         local configs = {"--" .. plat:lower()}
-        if package:debug() then
+        if package:is_debug() then
             table.insert(configs, "--debug")
         end
         os.vrunv("./fetchDependencies", configs)
-        local conf = package:debug() and "Debug" or "Release"
-        os.vrun("xcodebuild build -quiet -project MoltenVKPackaging.xcodeproj -scheme \"MoltenVK Package (" ..plat .. " only)\" -configuration \"" .. conf)
-        os.mv("Package/" .. conf .. "/MoltenVK/include", package:installdir())
-        os.mv("Package/" .. conf .. "/MoltenVK/dylib/" ..plat .. "/*", package:installdir("lib"))
-        os.mv("Package/" .. conf .. "/MoltenVK/MoltenVK.xcframework/" .. plat:lower() .. "-*/*.a", package:installdir("lib"))
+        
+        local conf = package:is_debug() and "Debug" or "Release"
+        local moltenvk_rootdir = path.join("Package", conf, "MoltenVK")
+        local moltenvk_shader_rootdir = path.join("Package", conf, "MoltenVKShaderConverter")
+        
+        os.vrunv("xcodebuild", {
+            "build",
+            "-quiet",
+            "-project", "MoltenVKPackaging.xcodeproj", 
+            "-scheme", "MoltenVK Package (" .. plat .. " only)",
+            "-configuration", conf
+        })
+        
+        os.mv(path.join(moltenvk_rootdir, "include"), package:installdir())
+        os.mv(path.join(moltenvk_rootdir, "dylib", plat, "*"), package:installdir("lib"))
+        os.mv(path.join(moltenvk_rootdir, "MoltenVK.xcframework", plat:lower() .. "-*", "*.a"), package:installdir("lib"))
+        
         if package:config("shared") then
-            os.mv("Package/" .. conf .. "/MoltenVK/dynamic/dylib/" .. plat .. "/*.dylib", package:installdir("lib"))
+            os.mv(path.join(moltenvk_rootdir, "dynamic", "dylib", plat, "*.dylib"), package:installdir("lib"))
         else
-            os.mv("Package/" .. conf .. "/MoltenVK/static/MoltenVK.xcframework/" .. plat:lower() .. "-*/*.a", package:installdir("lib"))
+            os.mv(path.join(moltenvk_rootdir, "static", "MoltenVK.xcframework", plat:lower() .. "-*", "*.a"), package:installdir("lib"))
         end
-        os.mv("Package/" .. conf .. "/MoltenVKShaderConverter/Tools/*", package:installdir("bin"))
-        os.mv("Package/" .. conf .. "/MoltenVKShaderConverter/MoltenVKShaderConverter.xcframework/" .. plat:lower() .. "-*/*.a", package:installdir("lib"))
-        os.mv("Package/" .. conf .. "/MoltenVKShaderConverter/include/*.h", package:installdir("include"))
+        
+        os.mv(path.join(moltenvk_shader_rootdir, "Tools", "*"), package:installdir("bin"))
+        os.mv(path.join(moltenvk_shader_rootdir, "MoltenVKShaderConverter.xcframework", plat:lower() .. "-*", "*.a"), package:installdir("lib"))
+        os.mv(path.join(moltenvk_shader_rootdir, "include", "*.h"), package:installdir("include"))
         package:addenv("PATH", "bin")
     end)
 
