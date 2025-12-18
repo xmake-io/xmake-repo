@@ -16,7 +16,7 @@ package("ncnn")
     add_versions("2025.09.16", "7d463f1e5061facd02b8af5e792e059088695cdcfcc152c8f4892f6ffe5eab1a")
     add_versions("2025.05.03", "3afea4cf092ce97d06305b72c6affbcfb3530f536ae8e81a4f22007d82b729e9")
 
-    add_configs("vulkan",        {description = "Enable Vulkan support", default = true, type = "boolean"})
+    add_configs("vulkan",        {description = "Enable Vulkan support", default = false, type = "boolean"})
     add_configs("openmp",        {description = "Enable OpenMP support", default = true, type = "boolean"})
     add_configs("threads",       {description = "Enable threads support", default = true, type = "boolean"})
     add_configs("c_api",         {description = "Build ncnn with C api", default = false, type = "boolean"})
