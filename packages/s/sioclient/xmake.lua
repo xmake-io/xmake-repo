@@ -9,9 +9,6 @@ package("sioclient")
     add_versions("3.0.0","6c11383eaea837d3dc4183d31f8d27f5ce08b3987f4903708983044115ebd95a")
     add_versions("2.1.0","f5bd6260403dd6c62c6dbf97ca848f5db69908edbdc0a365e28be06cdd2a44f8")
 
-    add_configs("test", {description = "Build unit tests", default = false, type = "boolean"})
-    add_configs("disable_logging", {description = "Disable logging", default = true, type = "boolean"})
-
     add_deps("rapidjson")
     add_deps("websocketpp")
     add_deps("asio")
