@@ -6,6 +6,7 @@ package("pmp")
 
     add_urls("https://github.com/pmp-library/pmp-library/archive/refs/tags/$(version).tar.gz",
              "https://github.com/pmp-library/pmp-library.git")
+    add_versions("3.0.0", "4533676c7ff8fe816253cb47e1a330e07e044101bdeb9b7b3a1fb437fdc0e4a1")
     add_versions("1.2.1", "4c9e6554a986710cec1e19dd67695d8ae65ce02a19100dcf1ba7e17f2f993e3b")
 
     add_configs("utils", {description = "Build utilities.", default = false, type = "boolean"})
@@ -35,5 +36,5 @@ package("pmp")
                 v2 = mesh.add_vertex(pmp::Point(0, 1, 0));
                 v3 = mesh.add_vertex(pmp::Point(0, 0, 1));
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "pmp/SurfaceMesh.h"}))
+        ]]}, {configs = {languages = "c++17"}, includes = "pmp/SurfaceMesh.h"}))
     end)
