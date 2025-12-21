@@ -1,0 +1,17 @@
+add_rules("mode.debug", "mode.release")
+add_requires("rapidjson")
+add_requires("websocketpp")
+add_requires("asio <=1.32.0")
+add_requires("openssl3")
+
+option("version")
+
+target("sioclient")
+    set_kind("$(kind)")
+    set_languages("cxx11")
+    add_files("src/*.cpp")
+    add_files("src/internal/*.cpp")
+    add_headerfiles("src/internal/*.h")
+    add_headerfiles("src/*.h")
+    add_packages("rapidjson", "websocketpp", "asio", "openssl3")
+    add_defines("VERSION=\"$(version)\"")
