@@ -6,11 +6,11 @@ package("socket-io-client")
     add_urls("https://github.com/socketio/socket.io-client-cpp.git", {submodules = false})
     add_urls("https://github.com/socketio/socket.io-client-cpp/archive/refs/tags/$(version).tar.gz")
 
-    add_versions("2025.8.28", "3b7be7e4173b5bdeed393966e3274f65d513a280")
+    add_versions("2025.08.28", "3b7be7e4173b5bdeed393966e3274f65d513a280")
     add_versions("2024.07.17", "da779141a7379cc30c870d48295033bc16a23c66")
-    add_versions("3.1.0","f54dd36b8e5618d028c7c42f0c1a83a0d3a58f9239cf4b770f6b02b925909597")
-    add_versions("3.0.0","6c11383eaea837d3dc4183d31f8d27f5ce08b3987f4903708983044115ebd95a")
-    add_versions("2.1.0","f5bd6260403dd6c62c6dbf97ca848f5db69908edbdc0a365e28be06cdd2a44f8")
+    add_versions("3.1.0", "f54dd36b8e5618d028c7c42f0c1a83a0d3a58f9239cf4b770f6b02b925909597")
+    add_versions("3.0.0", "6c11383eaea837d3dc4183d31f8d27f5ce08b3987f4903708983044115ebd95a")
+    add_versions("2.1.0", "f5bd6260403dd6c62c6dbf97ca848f5db69908edbdc0a365e28be06cdd2a44f8")
 
     local use_xmake_versions = {
         ["3.1.0"] = true,

@@ -1,7 +1,7 @@
 add_rules("mode.debug", "mode.release")
 add_requires("rapidjson")
 add_requires("websocketpp")
-add_requires("asio")
+add_requires("asio <=1.32.0")
 add_requires("openssl3")
 
 option("version")
