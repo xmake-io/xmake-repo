@@ -3,7 +3,7 @@ package("houdini")
     set_homepage("https://www.sidefx.com/")
     set_description("Houdini is built from the ground up to be a procedural system that empowers artists to work freely, create multiple iterations and rapidly share workflows with colleagues.")
 
-    add_configs("utils", {description = "Enabled Houdini utilities.", default = {"Alembic_sidefx"}, type = "table"})
+    add_configs("utils", {description = "Enabled Houdini utilities.", default = {}, type = "table"})
 
     on_fetch(function (package, opt)
         if opt.system then
