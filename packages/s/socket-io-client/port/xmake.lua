@@ -1,4 +1,4 @@
-option("version")
+option("version", {description = "The sioclient version."})
 
 add_rules("mode.debug", "mode.release")
 
