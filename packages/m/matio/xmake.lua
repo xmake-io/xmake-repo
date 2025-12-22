@@ -16,6 +16,7 @@ package("matio")
     add_configs("extended_sparse", {description = "Enable extended sparse matrix data types not supported in MATLAB", default = false, type = "boolean"})
     add_configs("mat73", {description = "Enable support for version 7.3 MAT files", default = false, type = "boolean"})
     add_configs("default_file_version", {description = "Select what MAT file format version is used by default", default = "5", type = "string", values = {"4", "5", "7.5"}})
+    add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
@@ -31,8 +32,13 @@ package("matio")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "bsd", "android", "iphoneos", "cross", "wasm", function (package)
-        local configs = {}
+    on_install(function (package)
+        io.replace("CMakeLists.txt", "include(cmake/test.cmake)", "", {plain = true})
+        if not package:config("tools") then
+            io.replace("CMakeLists.txt", "include(cmake/tools.cmake)", "", {plain = true})
+        end
+
+        local configs = {"-DMATIO_BUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DMATIO_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DMATIO_PIC=" .. (package:config("pic") and "ON" or "OFF"))
@@ -41,15 +47,13 @@ package("matio")
         table.insert(configs, "-DMATIO_EXTENDED_SPARSE=" .. (package:config("extended_sparse") and "ON" or "OFF"))
         table.insert(configs, "-DMATIO_MAT73=" .. (package:config("mat73") and "ON" or "OFF"))
         table.insert(configs, "-DMATIO_DEFAULT_FILE_VERSION=" .. package:config("default_file_version"))
-        io.replace("CMakeLists.txt", "include(cmake/tools.cmake)", "", {plain = true})
-        io.replace("CMakeLists.txt", "include(cmake/test.cmake)", "", {plain = true})
 
-        local packagedeps = {}
-        if package:config("hdf5") then
-            table.insert(packagedeps, "hdf5")
+        local hdf5 = package:dep("hdf5")
+        if hdf5 and not hdf5:is_system() then
+            table.insert(configs, "-DHDF5_ROOT=" .. hdf5:installdir())
+            table.insert(configs, "-DHDF5_USE_STATIC_LIBRARIES=" .. (hdf5:config("shared") and "OFF" or "ON"))
         end
-
-        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
