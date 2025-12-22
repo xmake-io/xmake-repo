@@ -26,13 +26,15 @@ package("socket-io-client")
     add_deps("websocketpp", "rapidjson", "openssl", "asio <=1.32.0")
 
     on_install("!wasm", function (package)
+        -- gcc14
+        io.replace("src/sio_message.h", "#include <string>", "#include <string>\n#include <cstdint>", {plain = true})
+
         if package:version() and package:version():le("3.1.0") then
             os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
             import("package.tools.xmake").install(package, {version = package:version_str()})
             return
         end
 
-        io.replace("src/sio_message.h", "#include <string>", "#include <string>\n#include <cstdint>", {plain = true})
         io.replace("CMakeLists.txt", "find_package(asio CONFIG REQUIRED)", "find_package(PkgConfig)\npkg_check_modules(asio REQUIRED IMPORTED_TARGET asio)", {plain = true})
         io.replace("CMakeLists.txt", "asio::asio", "PkgConfig::asio", {plain = true})
         io.replace("CMakeLists.txt", " asio ", " PkgConfig::asio ", {plain = true})
