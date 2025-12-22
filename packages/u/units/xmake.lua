@@ -14,7 +14,8 @@ package("units")
     add_deps("cmake")
 
     on_install(function (package)
-        import("package.tools.cmake").install(package, {"-DBUILD_TESTS=OFF"})
+        io.replace("CMakeLists.txt", "set(MAIN_PROJECT ON)", "", {plain = true})
+        import("package.tools.cmake").install(package)
     end)
 
     on_test(function (package)
@@ -25,14 +26,16 @@ package("units")
             languages = "c++20"
         end
         assert(package:check_cxxsnippets({test = [[
+            #include <iostream>
             #include <units.h>
             #include <cassert>
+            using namespace units::literals;
             void test() {
-                constexpr units::angle::degree_t deg1{90};
-                constexpr units::angle::degree_t deg2{60};
+                constexpr auto deg1 = 90_deg;
+                constexpr auto deg2 = 60_deg;
             
                 assert(deg1 > deg2);
-                assert(deg1 + deg2 == units::angle::degree_t{150});
+                assert(deg1 + deg2 == 150_deg);
             }
         ]]}, {configs = {languages = languages}}))
     end)
