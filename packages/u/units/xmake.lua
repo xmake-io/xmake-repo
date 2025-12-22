@@ -4,25 +4,35 @@ package("units")
     set_description("A compile-time, header-only, dimensional analysis library built on c++14 with no dependencies.")
     set_license("MIT")
 
-    add_urls("https://github.com/nholthaus/units/archive/refs/tags/$(version).tar.gz", "https://github.com/nholthaus/units.git")
+    add_urls("https://github.com/nholthaus/units/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/nholthaus/units.git")
+
     add_versions("v3.2.0", "c1cb5a92aff3fb027dbf0a81253364b41d6b03e236425a3e8fb546e4a004285a")
     add_versions("v2.3.4", "e7c7d307408c30bfd30c094beea8d399907ffaf9ac4b08f4045c890f2e076049")
     add_versions("v2.3.3", "b1f3c1dd11afa2710a179563845ce79f13ebf0c8c090d6aa68465b18bd8bd5fc")
 
+    add_deps("cmake")
+
     on_install(function (package)
-        os.cp("include", package:installdir())
+        import("package.tools.cmake").install(package, {"-DBUILD_TESTS=OFF"})
     end)
 
     on_test(function (package)
+        local languages
+        if package:version() and package:version():lt("3.0.0") then
+            languages = "c++14"
+        else
+            languages = "c++20"
+        end
         assert(package:check_cxxsnippets({test = [[
             #include <units.h>
             #include <cassert>
-            static void test() {
+            void test() {
                 constexpr units::angle::degree_t deg1{90};
                 constexpr units::angle::degree_t deg2{60};
             
                 assert(deg1 > deg2);
                 assert(deg1 + deg2 == units::angle::degree_t{150});
             }
-        ]]}, {configs = {languages = "c++14"}}))
+        ]]}, {configs = {languages = languages}}))
     end)
