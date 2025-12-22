@@ -12,12 +12,6 @@ package("socket-io-client")
     add_versions("3.0.0", "6c11383eaea837d3dc4183d31f8d27f5ce08b3987f4903708983044115ebd95a")
     add_versions("2.1.0", "f5bd6260403dd6c62c6dbf97ca848f5db69908edbdc0a365e28be06cdd2a44f8")
 
-    local use_xmake_versions = {
-        ["3.1.0"] = true,
-        ["3.0.0"] = true,
-        ["2.1.0"] = true,
-    }
-
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
@@ -31,7 +25,7 @@ package("socket-io-client")
     add_deps("websocketpp", "rapidjson", "openssl", "asio <=1.32.0")
 
     on_install("!wasm", function (package)
-        if use_xmake_versions[tostring(package:version())] then
+        if package:version():le("3.1.0") then
             os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
             import("package.tools.xmake").install(package, {version = package:version_str()})
             return
