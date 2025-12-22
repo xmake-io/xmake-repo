@@ -1,17 +1,18 @@
-add_rules("mode.debug", "mode.release")
-add_requires("rapidjson")
-add_requires("websocketpp")
-add_requires("asio")
-add_requires("openssl")
-
 option("version")
+
+add_rules("mode.debug", "mode.release")
+
+add_requires("websocketpp", "rapidjson", "openssl", "asio")
 
 target("sioclient")
     set_kind("$(kind)")
     set_languages("cxx11")
-    add_files("src/*.cpp")
-    add_files("src/internal/*.cpp")
-    add_headerfiles("src/internal/*.h")
+    add_files("src/*.cpp", "src/internal/*.cpp")
     add_headerfiles("src/*.h")
-    add_packages("rapidjson", "websocketpp", "asio", "openssl")
     add_defines("VERSION=\"$(version)\"")
+
+    if is_plat("windows") and is_kind("shared") then
+        add_rules("utils.symbols.export_all", {export_classes = true})
+    end
+
+    add_packages("rapidjson", "websocketpp", "asio", "openssl")
