@@ -8,6 +8,8 @@ package("sqlcipher")
     add_versions("4.6.0", "879fb030c36bc5138029af6aa3ae3f36c28c58e920af05ac7ca78a5915b2fa3c")
     add_versions("4.5.3", "5c9d672eba6be4d05a9a8170f70170e537ae735a09c3de444a8ad629b595d5e2")
 
+    add_patches("4.12.0", path.join(os.scriptdir(), "patch", "4.12.0", "stdint.patch"), "c18e9895e55f99ba812331012545848a4aae55e450a2f7f958262a26630d193d")
+
     add_configs("encrypt",  { description = "enable encrypt", default = true, type = "boolean"})
     add_configs("temp_store",  { description = "use an in-ram database for temporary tables", default = "2", values = {"0", "1", "2" , "3"}})
     add_configs("threadsafe",  { description = "sqltie thread safe mode", default = "1", values = {"0", "1", "2"}})

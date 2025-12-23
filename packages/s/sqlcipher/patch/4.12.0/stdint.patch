@@ -1,0 +1,13 @@
+diff --git a/src/sqlcipher.h b/src/sqlcipher.h
+index de25d0b..e8f80e2 100644
+--- a/src/sqlcipher.h
++++ b/src/sqlcipher.h
+@@ -35,6 +35,8 @@
+ #ifndef SQLCIPHER_H
+ #define SQLCIPHER_H
+ 
++#include <stdint.h>
++
+ #include "sqlite3.h"
+ #include "sqliteInt.h"
+ 
