@@ -8,7 +8,10 @@ package("sqlcipher")
     add_versions("4.6.0", "879fb030c36bc5138029af6aa3ae3f36c28c58e920af05ac7ca78a5915b2fa3c")
     add_versions("4.5.3", "5c9d672eba6be4d05a9a8170f70170e537ae735a09c3de444a8ad629b595d5e2")
 
-    add_patches("4.12.0", path.join(os.scriptdir(), "patch", "4.12.0", "stdint.patch"), "608ea7c41855b26029f114ac5b0c9abf35656dec559b86939909813da6bb78ae")
+    if not is_plat("windows") then
+        -- only for GCC 15
+        add_patches("4.12.0", path.join(os.scriptdir(), "patches", "4.12.0", "stdint.patch"), "608ea7c41855b26029f114ac5b0c9abf35656dec559b86939909813da6bb78ae")
+    end
 
     add_configs("encrypt",  { description = "enable encrypt", default = true, type = "boolean"})
     add_configs("temp_store",  { description = "use an in-ram database for temporary tables", default = "2", values = {"0", "1", "2" , "3"}})
@@ -46,8 +49,8 @@ package("sqlcipher")
     end)
 
     on_install("windows", function (package)
-        local openssl = package:dep("openssl"):fetch()
-        assert(openssl, "Failed fetch openssl library!")
+        local openssl = package:dep("openssl3"):fetch()
+        assert(openssl, "Failed fetch openssl3 library!")
 
         local rtcc_include = ""
         for _, dir in ipairs(openssl.sysincludedirs or openssl.includedirs) do
