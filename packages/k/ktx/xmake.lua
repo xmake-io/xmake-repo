@@ -6,8 +6,10 @@ package("ktx")
     add_urls("https://github.com/KhronosGroup/KTX-Software/archive/refs/tags/$(version).tar.gz",
              "https://github.com/KhronosGroup/KTX-Software.git", {submodules = false})
 
+    add_versions("v4.4.2", "9412cb45045a503005acd47d98f9e8b47154634a50b4df21e17a1dfa8971d323")
     add_versions("v4.4.0", "3585d76edcdcbe3a671479686f8c81c1c10339f419e4b02a9a6f19cc6e4e0612")
 
+    add_patches("4.4.2", "patches/4.4.2/dep-unbundle.patch", "8dbccc8fc21256da166ef6c3c952bd3ae099414910cb8a6575635a6e60810ab2")
     add_patches("4.4.0", "patches/4.4.0/dep-unbundle.patch", "2b883bcbfc19f80d72b812d68b606b6e2a4234d913ad92c45d8030bd94207a59")
 
     add_configs("tools", {description = "Create KTX tools", default = false, type = "boolean"})
