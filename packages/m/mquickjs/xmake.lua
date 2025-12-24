@@ -177,6 +177,9 @@ static int gettimeofday(struct timeval *tp, void *tzp) {
                 add_files("mquickjs.c", "libm.c", "dtoa.c", "cutils.c")
                 add_headerfiles("mquickjs.h")
                 add_defines("_GNU_SOURCE")
+                if is_plat("windows") and is_kind("shared") then
+                    add_rules("utils.symbols.export_all", {export_classes = true})
+                end
                 if is_plat("linux", "macosx", "bsd") then
                     add_syslinks("m")
                 end
