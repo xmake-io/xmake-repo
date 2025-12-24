@@ -3,10 +3,8 @@ package("libxlsxwriter")
     set_description("A C library for creating Excel XLSX files.")
     set_license("BSD-2-Clause")
 
-    add_urls("https://github.com/jmcnamara/libxlsxwriter/archive/refs/tags/$(version).tar.gz")
     add_urls("https://github.com/jmcnamara/libxlsxwriter.git", {alias = "git"})
 
-    add_versions("v1.2.3", "63f070c19c97ce4d5dfcbc1fa8cc5237d4c9decf39341a31188dbdceef93b542")
     add_versions("git:1.1.5", "RELEASE_1.1.5")
 
     add_configs("tmpfile", {description = "Use the C standard library's tmpfile()", default = false, type = "boolean"})
