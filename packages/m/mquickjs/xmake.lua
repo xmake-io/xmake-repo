@@ -5,11 +5,13 @@ package("mquickjs")
     add_urls("https://github.com/bellard/mquickjs.git")
     add_versions("2025.12.22", "17ce6fe54c1ea4f500f26636bd22058fce2ce61a")
 
-    add_configs("cli", {description = "Build mqjs command line tool", default = false, type = "boolean"})
-
     if is_plat("linux", "macosx", "bsd") then
         add_syslinks("m")
     end
+
+    on_load(function (package)
+        package:addenv("PATH", "bin")
+    end)
 
     on_install(function (package)
         io.replace("mquickjs.h", "#include <inttypes.h>", "#include <inttypes.h>\n#include <stddef.h>", {plain = true})
@@ -177,8 +179,6 @@ static int gettimeofday(struct timeval *tp, void *tzp) {
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
 
-            option("cli", {default = false, description = "Enable cli command."})
-
             set_policy("build.fence", true)
 
             target("mqjs_stdlib_gen")
@@ -232,29 +232,21 @@ static int gettimeofday(struct timeval *tp, void *tzp) {
                     end
                 end)
 
-            if has_config("cli") then
-                target("mqjs")
-                    set_kind("binary")
-                    add_files("mqjs.c", "readline.c")
-                    if is_plat("linux", "macosx", "windows", "mingw") then
-                        add_files("readline_tty.c")
-                    end
-                    add_deps("mquickjs")
-                    add_deps("mqjs_stdlib_gen")
-                    add_includedirs(".")
-            end
+            target("mqjs")
+                set_kind("binary")
+                add_files("mqjs.c", "readline.c")
+                add_files("readline_tty.c")
+                add_deps("mquickjs")
+                add_deps("mqjs_stdlib_gen")
+                add_includedirs(".")
         ]])
         local configs = {}
-        if package:config("cli") then
-            configs.cli = true
-            package:add("bindirs", "bin")
-        end
         import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
         assert(package:has_cfuncs("JS_NewContext", {includes = "mquickjs.h"}))
-        if package:config("cli") and not package:is_cross() then
+        if not package:is_cross() then
             os.vrun("mqjs -e \"var a = 1; console.log(a);\"")
         end
     end)
