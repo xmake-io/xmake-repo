@@ -14,14 +14,12 @@ package("mquickjs")
     on_install(function (package)
         io.replace("mquickjs.h", "#include <inttypes.h>", "#include <inttypes.h>\n#include <stddef.h>", {plain = true})
         io.replace("libm.c", "#define NDEBUG", "", {plain = true})
+        os.cp("cutils.h", "cutils_host.h")
+        io.replace("mqjs_stdlib.c", "cutils.h", "cutils_host.h", {plain = true})
+        io.replace("mquickjs_build.c", "cutils.h", "cutils_host.h", {plain = true})
 
-        if package:is_plat("windows", "mingw") then
-            -- Fix packed structs
-            io.replace("cutils.h", "struct __attribute__%(%(packed%)%) (packed_u%d+) {\n%s+(uint%d+_t) v;\n};",
-                "#ifdef _MSC_VER\n#pragma pack(push, 1)\nstruct %1 {\n    %2 v;\n};\n#pragma pack(pop)\n#else\nstruct __attribute__((packed)) %1 {\n    %2 v;\n};\n#endif")
-
-            -- Add MSVC compat definitions
-            local msvc_compat = [[
+        -- Add MSVC compat definitions
+        local msvc_compat = [[
 #ifdef _MSC_VER
 #include <intrin.h>
 #include <sys/timeb.h>
@@ -115,7 +113,33 @@ static int gettimeofday(struct timeval *tp, void *tzp) {
 }
 #endif
 ]]
+        if is_host("windows") then
+            -- Fix packed structs
+            io.replace("cutils_host.h", "struct __attribute__%(%(packed%)%) (packed_u%d+) {\n%s+(uint%d+_t) v;\n};",
+                "#ifdef _MSC_VER\n#pragma pack(push, 1)\nstruct %1 {\n    %2 v;\n};\n#pragma pack(pop)\n#else\nstruct __attribute__((packed)) %1 {\n    %2 v;\n};\n#endif")
+
+            io.replace("cutils_host.h", "#include <inttypes.h>", "#include <inttypes.h>\n" .. msvc_compat, {plain = true})
+
+            -- Prevent redefinition of macros
+            io.replace("cutils_host.h", "(#define likely%(x%).-)\n", "#ifndef likely\n%1\n#endif\n")
+            io.replace("cutils_host.h", "(#define unlikely%(x%).-)\n", "#ifndef unlikely\n%1\n#endif\n")
+            io.replace("cutils_host.h", "(#define force_inline.-)\n", "#ifndef force_inline\n%1\n#endif\n")
+            io.replace("cutils_host.h", "(#define no_inline.-)\n", "#ifndef no_inline\n%1\n#endif\n")
+            io.replace("cutils_host.h", "(#define __maybe_unused.-)\n", "#ifndef __maybe_unused\n%1\n#endif\n")
+        end
+        if package:is_plat("windows", "mingw") then
+            -- Fix packed structs
+            io.replace("cutils.h", "struct __attribute__%(%(packed%)%) (packed_u%d+) {\n%s+(uint%d+_t) v;\n};",
+                "#ifdef _MSC_VER\n#pragma pack(push, 1)\nstruct %1 {\n    %2 v;\n};\n#pragma pack(pop)\n#else\nstruct __attribute__((packed)) %1 {\n    %2 v;\n};\n#endif")
+
             io.replace("cutils.h", "#include <inttypes.h>", "#include <inttypes.h>\n" .. msvc_compat, {plain = true})
+
+            -- Prevent redefinition of macros
+            io.replace("cutils.h", "(#define likely%(x%).-)\n", "#ifndef likely\n%1\n#endif\n")
+            io.replace("cutils.h", "(#define unlikely%(x%).-)\n", "#ifndef unlikely\n%1\n#endif\n")
+            io.replace("cutils.h", "(#define force_inline.-)\n", "#ifndef force_inline\n%1\n#endif\n")
+            io.replace("cutils.h", "(#define no_inline.-)\n", "#ifndef no_inline\n%1\n#endif\n")
+            io.replace("cutils.h", "(#define __maybe_unused.-)\n", "#ifndef __maybe_unused\n%1\n#endif\n")
 
             -- Fix sys/time.h include in dtoa.c and other files
             io.replace("dtoa.c", "#include <sys/time.h>", "#ifndef _MSC_VER\n#include <sys/time.h>\n#endif", {plain = true})
@@ -148,13 +172,6 @@ static int gettimeofday(struct timeval *tp, void *tzp) {
             -- Fix division by zero constant expression (error C2124)
             io.replace("mquickjs.c", "return __JS_NewFloat64(ctx, is_max ? -1.0 / 0.0 : 1.0 / 0.0);", "return __JS_NewFloat64(ctx, is_max ? -HUGE_VAL : HUGE_VAL);", {plain = true})
             io.replace("mquickjs.c", "return __JS_NewFloat64(ctx, is_max ? -INFINITY : INFINITY);", "return __JS_NewFloat64(ctx, is_max ? -HUGE_VAL : HUGE_VAL);", {plain = true})
-
-            -- Prevent redefinition of macros
-            io.replace("cutils.h", "(#define likely%(x%).-)\n", "#ifndef likely\n%1\n#endif\n")
-            io.replace("cutils.h", "(#define unlikely%(x%).-)\n", "#ifndef unlikely\n%1\n#endif\n")
-            io.replace("cutils.h", "(#define force_inline.-)\n", "#ifndef force_inline\n%1\n#endif\n")
-            io.replace("cutils.h", "(#define no_inline.-)\n", "#ifndef no_inline\n%1\n#endif\n")
-            io.replace("cutils.h", "(#define __maybe_unused.-)\n", "#ifndef __maybe_unused\n%1\n#endif\n")
         end
 
         io.writefile("xmake.lua", [[
