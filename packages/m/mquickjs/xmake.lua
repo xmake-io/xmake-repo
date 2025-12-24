@@ -235,9 +235,7 @@ static int gettimeofday(struct timeval *tp, void *tzp) {
             target("mqjs")
                 set_kind("binary")
                 add_files("mqjs.c", "readline.c")
-                if is_plat("linux", "macosx", "windows", "mingw") then
-                    add_files("readline_tty.c")
-                end
+                add_files("readline_tty.c")
                 add_deps("mquickjs")
                 add_deps("mqjs_stdlib_gen")
                 add_includedirs(".")
