@@ -15,7 +15,7 @@ package("mquickjs")
         io.replace("mquickjs.h", "#include <inttypes.h>", "#include <inttypes.h>\n#include <stddef.h>", {plain = true})
         io.replace("libm.c", "#define NDEBUG", "", {plain = true})
 
-        if package:is_plat("windows") then
+        if package:is_plat("windows", "mingw") then
             -- Fix packed structs
             io.replace("cutils.h", "struct __attribute__%(%(packed%)%) (packed_u%d+) {\n%s+(uint%d+_t) v;\n};",
                 "#ifdef _MSC_VER\n#pragma pack(push, 1)\nstruct %1 {\n    %2 v;\n};\n#pragma pack(pop)\n#else\nstruct __attribute__((packed)) %1 {\n    %2 v;\n};\n#endif")
@@ -193,7 +193,7 @@ static int gettimeofday(struct timeval *tp, void *tzp) {
                     os.vrunv(mqjs_stdlib_gen, flags, {stdout = "mqjs_stdlib.h"})
 
                     -- Patch mqjs_stdlib.h for MSVC compatibility
-                    if is_plat("windows") then
+                    if is_plat("windows", "mingw") then
                         io.replace("mqjs_stdlib.h", "static const uint64_t __attribute%(%(aligned%(64%)%)%) js_stdlib_table%[%]", "__declspec(align(64)) static const uint64_t js_stdlib_table[]", {plain = false})
                         io.replace("mqjs_stdlib.h", "static const uint32_t __attribute%(%(aligned%(64%)%)%) js_stdlib_table%[%]", "__declspec(align(64)) static const uint32_t js_stdlib_table[]", {plain = false})
                         -- Fix zero-sized array error (C2466)
@@ -217,7 +217,7 @@ static int gettimeofday(struct timeval *tp, void *tzp) {
                 target("mqjs")
                     set_kind("binary")
                     add_files("mqjs.c", "readline.c")
-                    if is_plat("linux", "macosx", "windows") then
+                    if is_plat("linux", "macosx", "windows", "mingw") then
                         add_files("readline_tty.c")
                     end
                     add_deps("mquickjs")
@@ -235,7 +235,7 @@ static int gettimeofday(struct timeval *tp, void *tzp) {
 
     on_test(function (package)
         assert(package:has_cfuncs("JS_NewContext", {includes = "mquickjs.h"}))
-        if package:config("cli") then
+        if package:config("cli") and not package:is_cross() then
             os.vrun("mqjs -e \"var a = 1; console.log(a);\"")
         end
     end)
