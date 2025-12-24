@@ -35,7 +35,7 @@ package("sol2")
         end
     end)
 
-    on_install("!wasm", function (package)
+    on_install(function (package)
         local configs = {}
         if package:config("includes_lua") then
             if package:version() and package:version():ge("3.3") then
@@ -48,9 +48,13 @@ package("sol2")
                     end
                     local libfiles = lua.libfiles
                     if libfiles then
-                        table.insert(configs, "-DLUA_LIBRARIES=" .. table.concat(libfiles, " "))
+                        table.insert(configs, "-DLUA_LIBRARY=" .. table.concat(libfiles, " "))
                     end
                 end
+            end
+            if package:is_plat("wasm") then
+                -- to bypass m check (emscripten is not supported by FindLua.cmake)
+                table.insert(configs, "-DLUA_MATH_LIBRARY=m")
             end
         end
         import("package.tools.cmake").install(package, configs)

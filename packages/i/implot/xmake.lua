@@ -6,6 +6,7 @@ package("implot")
     add_urls("https://github.com/epezent/implot/archive/refs/tags/$(version).tar.gz",
              "https://github.com/epezent/implot.git")
 
+    add_versions("v0.17", "0aa3ff4fb97e553608e6758e77980eedf01745628fe6c025e647f941ae674127")
     add_versions("v0.16", "961df327d8a756304d1b0a67316eebdb1111d13d559f0d3415114ec0eb30abd1")
     add_versions("v0.15", "3df87e67a1e28db86828059363d78972a298cd403ba1f5780c1040e03dfa2672")
 

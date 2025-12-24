@@ -13,6 +13,11 @@ package("zlib")
     add_versions("v1.3", "b5b06d60ce49c8ba700e0ba517fa07de80b5d4628a037f4be8ad16955be7a7c0")
     add_versions("v1.3.1", "17e88863f3600672ab49182f217281b6fc4d3c762bde361935e436a95214d05c")
 
+    add_patches("v1.2.10", "patches/v1.2.10/fix-macosx-fdopen.patch", "382a129e1e604c0da6121e993cd2e7e70069fb287dcdf85a9aa9ff5bd7cb7872")
+    add_patches("v1.2.11", "patches/v1.2.10/fix-macosx-fdopen.patch", "382a129e1e604c0da6121e993cd2e7e70069fb287dcdf85a9aa9ff5bd7cb7872")
+    add_patches("v1.2.12", "patches/v1.2.12/fix-macosx-fdopen.patch", "9ccc43fbd2946fabb688ed687506710ed42bf6039d1034060183f8c5cb65a7ff")
+    add_patches("v1.2.13", "patches/v1.2.13/fix-macosx-fdopen.patch", "4ed4e669e853b9490ec39df35739ba4bbf08dcb245c8f5e26659e736c3007685")
+
     add_configs("zutil", {description = "Export zutil.h api", default = false, type = "boolean"})
 
     if is_plat("mingw") and is_subhost("msys") then

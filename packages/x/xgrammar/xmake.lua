@@ -5,6 +5,7 @@ package("xgrammar")
 
     add_urls("https://github.com/mlc-ai/xgrammar/archive/refs/tags/$(version).tar.gz",
              "https://github.com/mlc-ai/xgrammar.git")
+    add_versions("v0.1.27", "44c11de70e7bfed0dd856459ad08dfa9cb884959948165c5f4bb072cbb63e980")
     add_versions("v0.1.26", "e6e524e8fbdcc7970a93892e8ab2fe2769450006deb0dacf612139d5dee52976")
     add_versions("v0.1.25", "96d8ff03bf91bb082d6e3d6ec8a7d831929f2fad8cd43a1c6f2366b7673f140c")
     add_versions("v0.1.24", "e93b0793f74ac9c71e16dcc82a218d76bdb67b9ea790fe0dab127dc365ea3ffb")

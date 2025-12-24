@@ -1,0 +1,20 @@
+diff --git a/src/sqliteInt.h b/src/sqliteInt.h
+index 9bcc903..1969dd9 100644
+--- a/src/sqliteInt.h
++++ b/src/sqliteInt.h
+@@ -243,15 +243,8 @@
+ # define AtomicStore(PTR,VAL)  (*(PTR) = (VAL))
+ #endif
+
+-/*
+-** Include standard header files as necessary
+-*/
+-#ifdef HAVE_STDINT_H
+ #include <stdint.h>
+-#endif
+-#ifdef HAVE_INTTYPES_H
+ #include <inttypes.h>
+-#endif
+
+ /*
+ ** The following macros are used to cast pointers to integers and

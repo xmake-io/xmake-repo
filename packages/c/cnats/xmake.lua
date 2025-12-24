@@ -6,6 +6,8 @@ package("cnats")
     add_urls("https://github.com/nats-io/nats.c/archive/refs/tags/$(version).tar.gz",
              "https://github.com/nats-io/nats.c.git")
 
+    add_versions("v3.12.0", "06b64d7045fd618c98e5608001b384bdbfa6a17718dba64e732ba72a6f00649b")
+    add_versions("v3.11.0", "9ee45cd502a49dbd29bed491286a4926e5e53f14a8aacad413c0cf4a057abee0")
     add_versions("v3.10.1", "1765533bbc1270ab7c89e3481b4778db7d1e7b4db2fa906b6602cd5c02846222")
     add_versions("v3.9.2", "28c4f39b88f095d78d653e8d4fe4581163fe96ecde5f9683933f0d82fd889a57")
     add_versions("v3.8.2", "083ee03cf5a413629d56272e88ad3229720c5006c286e8180c9e5b745c10f37d")

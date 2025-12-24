@@ -44,6 +44,9 @@ package("ffmpeg")
     add_configs("libx264",          {description = "Enable libx264 encoder.", default = false, type = "boolean"})
     add_configs("libx265",          {description = "Enable libx265 encoder.", default = false, type = "boolean"})
     add_configs("libopenh264",      {description = "Enable openh264 encoder.", default = false, type = "boolean"})
+    add_configs("libaom",           {description = "Enable libaom encoder.", default = false, type = "boolean"})
+    add_configs("libsvtav1",        {description = "Enable libsvtav1 encoder.", default = false, type = "boolean"})
+    add_configs("libdav1d",         {description = "Enable libdav1d decoder.", default = false, type = "boolean"})
     add_configs("iconv",            {description = "Enable libiconv library.", default = false, type = "boolean"})
     add_configs("vaapi",            {description = "Enable vaapi library.", default = false, type = "boolean"})
     add_configs("vdpau",            {description = "Enable vdpau library.", default = false, type = "boolean"})
@@ -105,12 +108,20 @@ package("ffmpeg")
             libopenh264 = "openh264",
             iconv       = "libiconv",
             libdrm      = "libdrm",
+            libaom      = "aom",
+            libsvtav1   = "svt-av1",
+            libdav1d    = "dav1d",
         }
         for name, dep in pairs(configdeps) do
             if package:config(name) then
                 package:add("deps", dep)
             end
         end
+        if package:config("libsvtav1") then
+            -- TODO: patch build script support static svt-av1
+            package:add("deps", "svt-av1", {configs = {shared = true}})
+        end
+
         -- https://www.ffmpeg.org/platform.html#toc-Advanced-linking-configuration
         if package:config("pic") ~= false and package:is_plat("linux", "android") then
             package:add("shflags", "-Wl,-Bsymbolic")
@@ -126,6 +137,7 @@ package("ffmpeg")
             local configs = {
                 msystem = "MINGW64",
                 base_devel = true,
+                uchardet = true,
             }
             -- @see https://stackoverflow.com/questions/65438878/ffmpeg-build-on-windows-using-msvc-make-fails
             configs.make = true
@@ -260,6 +272,13 @@ package("ffmpeg")
                 if package:is_arch("arm", "arm64") then
                     envs.PATH = path.join(os.programdir(), "scripts") .. path.envsep() .. envs.PATH
                 end
+                -- fix build failure with gbk encoding
+                io.replace("configure", "cp_if_changed $TMPH config.h", [[
+                    config_encodings=$(uchardet $TMPH)
+                    case "$config_encodings" in GB18030|GBK|GB2312)
+                        { printf '\xEF\xBB\xBF'; iconv -f "$config_encodings" -t UTF-8 -c $TMPH; } > config.h;; 
+                    *) cp_if_changed $TMPH config.h;;
+                    esac]], {plain = true})
                 autoconf.install(package, configs, {envs = envs})
             else
                 import("core.base.option")

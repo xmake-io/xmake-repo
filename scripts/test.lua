@@ -261,8 +261,23 @@ function _package_is_supported(argv, packagename)
     end
 end
 
+function append_package_version(packages, line)
+    local version = line:match("add_versions%(\"(.-)\"") or line:match("package:add%(\"versions\",%s*\"(.-)\"")
+    if version then
+        if version:find(":", 1, true) then
+            version = version:split(":")[2]
+        end
+        if #packages > 0 and version then
+            local lastpackage = packages[#packages]
+            local splitinfo = lastpackage:split("%s+")
+            table.insert(packages, splitinfo[1] .. " " .. version)
+        end
+    end
+end
+
 function get_modified_packages()
-    local packages = {}
+    local new_packages = {}
+    local old_packages = {}
     local diff = os.iorun("git --no-pager diff HEAD^")
     for _, line in ipairs(diff:split("\n")) do
         if line:startswith("+++ b/") then
@@ -270,25 +285,34 @@ function get_modified_packages()
             if file:startswith("packages") then
                 assert(file == file:lower(), "%s must be lower case!", file)
                 local package = file:match("packages/%w/(%S-)/")
-                table.insert(packages, package)
+                table.insert(new_packages, package)
+                table.insert(old_packages, package)
             end
-        elseif line:startswith("+") and line:find("add_versions") then
-            local version = line:match("add_versions%(\"(.-)\"")
-            if version:find(":", 1, true) then
-                version = version:split(":")[2]
-            end
-            if #packages > 0 and version then
-                local lastpackage = packages[#packages]
-                local splitinfo = lastpackage:split("%s+")
-                if #splitinfo > 1 then
-                    table.insert(packages, splitinfo[1] .. " " .. version)
-                else
-                    packages[#packages] = splitinfo[1] .. " " .. version
-                end
+        elseif line:startswith("+") and (line:find("add_versions", 1, true) or line:find("package:add(\"versions\"", 1, true)) then
+            append_package_version(new_packages, line)
+        elseif line:startswith("-") and (line:find("add_versions", 1, true) or line:find("package:add(\"versions\"", 1, true)) then
+            append_package_version(old_packages, line)
+        end
+    end
+    if #old_packages > 0 then
+        table.remove_if(old_packages, function (_, package)
+            local splitinfo = package:split("%s+")
+            return #splitinfo == 1
+        end)
+        table.remove_if(new_packages, function (_, package)
+            return table.contains(old_packages, package)
+        end)
+        -- {
+        --     "pkgname", <-- remove this
+        --     "pkgname pkgver"
+        -- }
+        for i = #new_packages - 1, 1, -1 do
+            if new_packages[i + 1]:startswith(new_packages[i] .. " ") then
+                table.remove(new_packages, i)
             end
         end
     end
-    return table.unique(packages)
+    return table.unique(new_packages)
 end
 
 -- @see https://github.com/xmake-io/xmake-repo/issues/6940
@@ -366,7 +390,7 @@ function main(...)
     end
 
     -- lock packages
-    _lock_packages(packages)
+    -- _lock_packages(packages)
 
     -- require packages
     _require_packages(argv, packages)

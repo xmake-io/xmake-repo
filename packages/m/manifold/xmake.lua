@@ -6,6 +6,7 @@ package("manifold")
     set_urls("https://github.com/elalish/manifold/archive/refs/tags/$(version).tar.gz",
              "https://github.com/elalish/manifold.git")
 
+    add_versions("v3.3.2", "92a37034c407156f71446f9ca03bd4487adeb1b8246a03d1c047b859b1b9d211")
     add_versions("v3.2.1", "c2fddb0f4b2289caff660b29677883f0324415a9901f8f2aed4c83851f994c13")
 
     add_configs("parallel", { description = "Enable parallel processing", default = false, type = "boolean"})

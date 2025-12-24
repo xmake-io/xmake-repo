@@ -5,6 +5,7 @@ package("brpc")
 
     add_urls("https://github.com/apache/brpc/archive/refs/tags/$(version).tar.gz")
 
+    add_versions("1.15.0", "f674b753af71dc313d9d2dcf34f574f0a3438c9f9bb9e7e6ca500a3b0ca7ddfb")
     add_versions("1.14.1", "9d07cf40e7c6c70210b032cd69b0b525459d204ebb8068ca93678c13807e2af1")
     add_versions("1.10.0", "fe4eb10b4ca1a59e0f71086552b2d8897afd66df93b53c18ad83f6a93717cc2d")
     add_versions("1.8.0", "13ffb2f1f57c679379a20367c744b3e597614a793ec036cd7580aae90798019d")
@@ -14,6 +15,7 @@ package("brpc")
     add_versions("1.5.0", "5ce178e3070ecdf9576a8917e3f65d96085f437bfbf9f1d09d46bca1375938cf")
     add_versions("1.3.0", "b9d638b76725552ed11178c650d7fc95e30f252db7972a93dc309a0698c7d2b8")
 
+    add_patches("1.15.0", path.join(os.scriptdir(), "patches", "1.15.0", "cmake.patch"), "656ee11363d1d0d084ecf08a1ecde6ba1267485a000937015d4d9005a29c89ec")
     add_patches("1.14.1", path.join(os.scriptdir(), "patches", "1.14.1", "cmake.patch"), "04de26217d7fef37cf6e4d072cc65d767cf7d363b936d8cd652235be6f11e0c9")
     add_patches("1.10.0", path.join(os.scriptdir(), "patches", "1.8.0", "cmake.patch"), "315889dcca66331932a8ce90bbdc5f71e336ca39d625ff85a589ee2bf10155ee")
     add_patches("1.8.0", path.join(os.scriptdir(), "patches", "1.8.0", "cmake.patch"), "315889dcca66331932a8ce90bbdc5f71e336ca39d625ff85a589ee2bf10155ee")

@@ -5,6 +5,7 @@ package("mariadb-connector-c")
 
     add_urls("https://github.com/mariadb-corporation/mariadb-connector-c/archive/refs/tags/v$(version).tar.gz")
 
+    add_versions("3.4.8", "ced7e5063c91fe2bfafd9d63a759490fe53e81df80599a9abad01c570c202f0c")
     add_versions("3.4.7", "cf81cd1c71c3199da9d2125aee840cb6083d43e1ea4c60c4be5045bfc7824eba")
     add_versions("3.3.9", "062b9ec5c26cbb236a78f0ba26981272053f59bdfc113040bab904a9da36d31f")
     add_versions("3.3.4", "ea6a23850d6a2f6f2e0d9e9fdb7d94fe905a4317f73842272cf121ed25903e1f")
