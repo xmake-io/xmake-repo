@@ -94,11 +94,7 @@ function _config_packages(argv, packages)
     end
     local runtimes = argv.runtimes or argv.vs_runtime
     if runtimes then
-        if is_host("windows") then
-            table.insert(config_argv, "--vs_runtime=" .. runtimes)
-        else
-            table.insert(config_argv, "--runtimes=" .. runtimes)
-        end
+        table.insert(config_argv, "--runtimes=" .. runtimes)
     end
     if argv.xcode_sdkver then
         table.insert(config_argv, "--xcode_sdkver=" .. argv.xcode_sdkver)
