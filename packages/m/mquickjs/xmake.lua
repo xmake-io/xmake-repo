@@ -220,13 +220,15 @@ static int gettimeofday(struct timeval *tp, void *tzp) {
                         io.replace("mqjs.c", "#include <fcntl.h>", "#include <fcntl.h>\n#ifdef _WIN32\n#include <windows.h>\n#endif", {plain = true})
                         io.replace("mqjs.c", "nanosleep(&ts, NULL);", "#ifdef _WIN32\nSleep(min_delay);\n#else\nnanosleep(&ts, NULL);\n#endif", {plain = true})
 
-                        -- Export utf8 helper functions in cutils.c
-                        io.replace("cutils.c", "size_t __unicode_to_utf8(uint8_t *buf, unsigned int c)", "__declspec(dllexport) size_t __unicode_to_utf8(uint8_t *buf, unsigned int c)", {plain = true})
-                        io.replace("cutils.c", "int __utf8_get(const uint8_t *p, size_t *plen)", "__declspec(dllexport) int __utf8_get(const uint8_t *p, size_t *plen)", {plain = true})
+                        if is_plat("windows") then
+                            -- Export utf8 helper functions in cutils.c
+                            io.replace("cutils.c", "size_t __unicode_to_utf8(uint8_t *buf, unsigned int c)", "__declspec(dllexport) size_t __unicode_to_utf8(uint8_t *buf, unsigned int c)", {plain = true})
+                            io.replace("cutils.c", "int __utf8_get(const uint8_t *p, size_t *plen)", "__declspec(dllexport) int __utf8_get(const uint8_t *p, size_t *plen)", {plain = true})
 
-                        -- Add dllexport to declarations in cutils.h to match definitions
-                        io.replace("cutils.h", "size_t __unicode_to_utf8(uint8_t *buf, unsigned int c);", "__declspec(dllexport) size_t __unicode_to_utf8(uint8_t *buf, unsigned int c);", {plain = true})
-                        io.replace("cutils.h", "int __utf8_get(const uint8_t *p, size_t *plen);", "__declspec(dllexport) int __utf8_get(const uint8_t *p, size_t *plen);", {plain = true})
+                            -- Add dllexport to declarations in cutils.h to match definitions
+                            io.replace("cutils.h", "size_t __unicode_to_utf8(uint8_t *buf, unsigned int c);", "__declspec(dllexport) size_t __unicode_to_utf8(uint8_t *buf, unsigned int c);", {plain = true})
+                            io.replace("cutils.h", "int __utf8_get(const uint8_t *p, size_t *plen);", "__declspec(dllexport) int __utf8_get(const uint8_t *p, size_t *plen);", {plain = true})
+                        end
                     end
                 end)
 
