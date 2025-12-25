@@ -258,7 +258,7 @@ function _package_is_supported(argv, packagename)
 end
 
 function append_package_version(packages, line)
-    local version = line:match("add_versions%(\"(.-)\"") or line:match("package:add%(\"versions\",%s*\"(.-)\"")
+    local version = line:match("add_versions%(['\"](.-)['\"]") or line:match("package:add%(['\"]versions['\"],%s*['\"](.-)['\"]")
     if version then
         if version:find(":", 1, true) then
             version = version:split(":")[2]
@@ -284,9 +284,9 @@ function get_modified_packages()
                 table.insert(new_packages, package)
                 table.insert(old_packages, package)
             end
-        elseif line:startswith("+") and (line:find("add_versions", 1, true) or line:find("package:add(\"versions\"", 1, true)) then
+        elseif line:startswith("+") and (line:find("add_versions", 1, true) or line:find("package:add%((['\"])versions%1")) then
             append_package_version(new_packages, line)
-        elseif line:startswith("-") and (line:find("add_versions", 1, true) or line:find("package:add(\"versions\"", 1, true)) then
+        elseif line:startswith("-") and (line:find("add_versions", 1, true) or line:find("package:add%((['\"])versions%1")) then
             append_package_version(old_packages, line)
         end
     end
