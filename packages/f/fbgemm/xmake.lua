@@ -6,6 +6,7 @@ package("fbgemm")
     add_urls("https://github.com/pytorch/FBGEMM/archive/refs/tags/$(version).tar.gz",
              "https://github.com/pytorch/FBGEMM.git", {submodules = false})
 
+    add_versions("v1.4.2", "525abde5f161c1730952f175adfcbc77a4b7eeebd7b7a342170e9011734164cf")
     add_versions("v1.2.0", "f679c3a9d0b0b1511122dca39c553b52d1fbf23c563f897d8218746a087f8bed")
     add_versions("v1.1.2", "15f89d724a00ce2f82ea7c1782e3fdc5c472d0ad37698498c0f419cc4924d8c8")
     add_versions("v1.1.0", "ca55019d6b75952a14c64aed0b6b90df06b21196a1152ab97c385964cc996a30")
