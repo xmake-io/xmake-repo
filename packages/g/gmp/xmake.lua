@@ -132,7 +132,8 @@ package("gmp")
                 opt.envs.AR_FLAGS = "-out:" -- override `cq` flag
                 table.insert(configs, "gmp_cv_asm_w32=.word") -- fix detect
             elseif package:has_tool("cxx", "clang") then
-                local suffix = opt.envs.CC:split("-")
+                local clang_fname = path.filename(opt.envs.CC)
+                local suffix = clang_fname:split("-")
                 if #suffix > 1 then
                     suffix = "-" .. suffix[#suffix]
                 else
