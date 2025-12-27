@@ -5,11 +5,8 @@ package("boost")
 
     -- xrepo does not support `package:config("cmake")` in on_source to set the download url, so if you want to build with cmake, we need to `add_urls` cmake archive url at first line.
     -- Users can also download the cmake archive and put it in `xmake g --pkg_searchdirs=` to avoid xrepo using a non-cmake archive url.
-    if version_ge("1.90.0") then
-        add_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version)-cmake.7z", {alias = "cmake"})
-    else
-        add_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version)-cmake.tar.gz", {alias = "cmake"})
-    end
+    add_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version)-cmake.7z", {alias = "cmake"}, versions = ">=1.90.0")
+    add_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version)-cmake.tar.gz", {alias = "cmake"}, versions = "<1.90.0")
     add_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version)-b2-nodocs.tar.gz")
     add_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version).tar.gz")
     add_urls("https://github.com/xmake-mirror/boost/releases/download/boost-$(version).tar.bz2", {alias = "mirror", version = function (version)
