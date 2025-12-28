@@ -7,6 +7,7 @@ package("verilator")
     add_urls("https://github.com/verilator/verilator/archive/refs/tags/$(version).tar.gz",
              "https://github.com/verilator/verilator.git")
 
+    add_versions("v5.042", "bec14f17de724851b110b698f3bd25e22effaaced7265b26d2bc13075dbfb4bf")
     add_versions("v5.038", "f8c03105224fa034095ba6c8a06443f61f6f59e1d72f76b718f89060e905a0d4")
     add_versions("v5.036", "4199964882d56cf6a19ce80c6a297ebe3b0c35ea81106cd4f722342594337c47")
     add_versions("v5.034", "002da98e316ca6eee40407f5deb7d7c43a0788847d39c90d4d31ddbbc03020e8")
@@ -43,6 +44,10 @@ package("verilator")
 
         local version = package:version()
         if version then
+            if version:eq("5.042") and package:is_plat("bsd") then
+                io.replace("include/verilatedos_c.h", "#include \"verilatedos.h\"", "#include \"verilatedos.h\"\n#include <pthread_np.h>", {plain = true})
+            end
+
             if version:ge("5.024") then
                 io.replace("bin/verilator", "$verilator_root ne realpath($ENV{VERILATOR_ROOT})", "true")
             end
