@@ -6,6 +6,7 @@ package("lsquic")
     add_urls("https://github.com/litespeedtech/lsquic/archive/refs/tags/$(version).tar.gz",
              "https://github.com/litespeedtech/lsquic.git")
 
+    add_versions("v4.4.1", "0a9cdd758d1447c6936c1009f5f2e01f9ce6b5c3271f5358d3d04cf428e93b2f")
     add_versions("v4.3.2", "fbd941446f1ef532c2063f68acf8e185d86997ccb49c9d00a91337796a9dc793")
     add_versions("v4.3.0", "f0bc55eb4f135d6edade4c495c5928b25c4b3198060377cc1840dffbd99fb310")
     add_versions("v4.2.0", "f91b8b365f8c64f47798c5f6ef67cf738b8c15b572356fa6ba165bcde90f6b17")
