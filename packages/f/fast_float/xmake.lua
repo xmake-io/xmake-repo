@@ -7,6 +7,7 @@ package("fast_float")
     add_urls("https://github.com/fastfloat/fast_float/archive/refs/tags/$(version).tar.gz",
              "https://github.com/fastfloat/fast_float.git")
 
+    add_versions("v8.2.1", "e18b59feaff3aca8e9426e6969f18a86b291e6ec6553744aa6b5a033a21d62ba")
     add_versions("v8.1.0", "4bfabb5979716995090ce68dce83f88f99629bc17ae280eae79311c5340143e1")
     add_versions("v3.4.0", "a242877d2fae81ca412033f5ebf5dbc43cb029c56b4af78e33106b9a69f8f58e")
     add_versions("v3.5.1", "8558bf9c66ccd2f7d03c94461a107f49ad9cf6e4f6c0c84e148fec0aa32b4dd9")
