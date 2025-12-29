@@ -83,6 +83,9 @@ package("yalantinglibs")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include "ylt/struct_pack.hpp"
+            #include "ylt/coro_http/coro_http_client.hpp"
+            #include "ylt/coro_io/coro_file.hpp"
+
             struct person {
                 int64_t id;
                 std::string name;
@@ -92,6 +95,34 @@ package("yalantinglibs")
             void test() {
                 person person1{.id = 1, .name = "hello struct pack", .age = 20, .salary = 1024.42};
                 std::vector<char> buffer = struct_pack::serialize(person1);
+            }
+
+            async_simple::coro::Lazy<std::string> test2(std::string path) {
+              coro_io::coro_file file(path, std::ios::in | std::ios::binary);
+              if (!file.is_open()) {
+                throw std::runtime_error("Error opening file: " + path);
+              }
+            
+              auto size = file.file_size();
+            
+              if (size == 0) {
+                co_return "";
+              }
+            
+              std::string content(size, '\0');
+              auto [ec, read_size] = co_await file.async_read(content.data(), size);
+              if (ec) {
+                throw std::runtime_error("Error reading file: " + path + " - " +
+                                         ec.message());
+              }
+            
+              if (read_size != size) {
+                throw std::runtime_error("Error reading file: " + path +
+                                         " - Expected size: " + std::to_string(size) +
+                                         ", Read size: " + std::to_string(read_size));
+              }
+            
+              co_return content;
             }
         ]]}, {configs = {languages = "c++20"}}))
     end)
