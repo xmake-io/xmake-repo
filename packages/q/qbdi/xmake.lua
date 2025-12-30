@@ -39,6 +39,7 @@ package("qbdi")
         assert(qbdi_architectures[package:arch()], "package(qbdi): unsupported architecture!")
 
         local configs = {
+            "-DBUILD_SHARED_LIBS=OFF",
             "-DQBDI_CCACHE=OFF",
             "-DQBDI_TEST=OFF",
             "-DQBDI_TOOLS_PYQBDI=OFF",
@@ -52,6 +53,11 @@ package("qbdi")
         table.insert(configs, "-DQBDI_ASAN=" .. (package:config("asan") and "ON" or "OFF"))
         table.insert(configs, "-DQBDI_DISABLE_AVX=" .. (package:config("avx") and "OFF" or "ON"))
         table.insert(configs, "-DQBDI_LOG_DEBUG=" .. (package:config("log_debug") and "ON" or "OFF"))
+
+        if package:config("shared") then
+            table.insert(configs, "-DQBDI_TOOLS_QBDIPRELOAD=OFF")
+            table.insert(configs, "-DQBDI_TOOLS_VALIDATOR=OFF")
+        end
 
         import("package.tools.cmake").install(package, configs)
     end)
