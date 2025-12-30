@@ -10,34 +10,55 @@ package("qbdi")
 
     add_configs("avx", {description = "Enable the support of AVX instruction on X86 and X86_64.", default = true, type = "boolean"})
     add_configs("log_debug", {description = "Enable the debug level of the logging system.", default = false, type = "boolean"})
+    add_configs("preload", {description = "Build QBDIPreload static library.", default = true, type = "boolean"})
+    add_configs("validator", {description = "Build the validator library.", default = true, type = "boolean"})
+
+    local qbdi_platforms = {
+        linux = "linux",
+        android = "android",
+        iphoneos = "ios",
+        macosx = "osx",
+        windows = "windows"
+    }
+
+    local qbdi_architectures = {
+        x86_64 = "X86_64",
+        x64 = "X86_64",
+        i386 = "X86",
+        x86 = "X86",
+        arm64 = "AARCH64",
+        ["arm64-v8a"] = "AARCH64",
+        arm = "ARM",
+        armv7 = "ARM",
+        armv7s = "ARM",
+        ["armeabi-v7a"] = "ARM"
+    }
 
     add_deps("cmake", "ninja")
-    on_load(function (package)
-        package:add("links", "QBDI")
+    add_deps("python 3.x", {kind = "binary"})
+    on_check(function (package)
+        assert(qbdi_architectures[package:arch()], "package(qbdi): unsupported architecture!")
     end)
 
-    on_install("linux", "android", "iphoneos", "macosx", "windows", function (package)
-        local qbdi_platforms = {
-            linux = "linux",
-            android = "android",
-            iphoneos = "ios",
-            macosx = "osx",
-            windows = "windows"
-        }
-        local qbdi_architectures = {
-            x86_64 = "X86_64",
-            x64 = "X86_64",
-            i386 = "X86",
-            x86 = "X86",
-            arm64 = "AARCH64",
-            ["arm64-v8a"] = "AARCH64",
-            arm = "ARM",
-            armv7 = "ARM",
-            armv7s = "ARM",
-            ["armeabi-v7a"] = "ARM"
-        }
-        assert(qbdi_architectures[package:arch()], "package(qbdi): unsupported architecture!")
+    on_load(function (package)
+        if package:is_plat("windows") then
+            package:add("links", package:config("shared") and "QBDI" or "QBDI_static")
+        else
+            package:add("links", "QBDI")
+        end
+        if package:is_plat("android") then
+            package:add("syslinks", "log")
+        end
+        if package:config("shared") or package:is_plat("android", "ios") then
+            package:config_set("preload", false)
+            package:config_set("validator", false)
+        end
+        if not package:config("preload") and package:config("validator") then
+            package:config_set("preload", true)
+        end
+    end)
 
+    on_install("linux", "android", "iphoneos", "macosx", "windows|!arm*", function (package)
         local configs = {
             "-DBUILD_SHARED_LIBS=OFF",
             "-DQBDI_CCACHE=OFF",
@@ -53,10 +74,9 @@ package("qbdi")
         table.insert(configs, "-DQBDI_ASAN=" .. (package:config("asan") and "ON" or "OFF"))
         table.insert(configs, "-DQBDI_DISABLE_AVX=" .. (package:config("avx") and "OFF" or "ON"))
         table.insert(configs, "-DQBDI_LOG_DEBUG=" .. (package:config("log_debug") and "ON" or "OFF"))
-
-        if package:config("shared") then
-            table.insert(configs, "-DQBDI_TOOLS_QBDIPRELOAD=OFF")
-            table.insert(configs, "-DQBDI_TOOLS_VALIDATOR=OFF")
+        if not package:is_plat("android", "ios") then
+            table.insert(configs, "-DQBDI_TOOLS_QBDIPRELOAD=" .. (package:config("preload") and "ON" or "OFF"))
+            table.insert(configs, "-DQBDI_TOOLS_VALIDATOR=" .. (package:config("validator") and "ON" or "OFF"))
         end
 
         import("package.tools.cmake").install(package, configs)
