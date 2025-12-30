@@ -10,12 +10,27 @@ package("implot")
     add_versions("v0.16", "961df327d8a756304d1b0a67316eebdb1111d13d559f0d3415114ec0eb30abd1")
     add_versions("v0.15", "3df87e67a1e28db86828059363d78972a298cd403ba1f5780c1040e03dfa2672")
 
-    add_deps("imgui <1.91")
+    on_load(function (package)
+        local version = package:version()
+        
+        local imgui_dep = "imgui"
+        if version:lt("0.17") then
+            imgui_dep = "imgui <=1.91"
+        end
+
+        package:add("deps", imgui_dep)
+    end)
 
     on_install(function (package)
-        local configs = {}
-        io.writefile("xmake.lua", [[
-            add_requires("imgui <1.91")
+        local version = package:version()
+
+        local imgui_dep = "imgui"
+        if version:lt("0.17") then
+            imgui_dep = "imgui <=1.91"
+        end
+
+        local xmake_lua = string.format([[
+            add_requires("%s")
             add_rules("mode.release", "mode.debug")
             target("implot")
                 set_kind("$(kind)")
@@ -26,7 +41,9 @@ package("implot")
                 if is_plat("windows") and is_kind("shared") then
                     add_rules("utils.symbols.export_all", {export_classes = true})
                 end
-        ]])
+        ]], imgui_dep)
+
+        io.writefile("xmake.lua", xmake_lua)
         import("package.tools.xmake").install(package)
     end)
 
