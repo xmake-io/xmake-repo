@@ -18,8 +18,8 @@ package("qbdi")
         add_configs("validator", {description = "Build the validator library.", default = true, type = "boolean"})
     end
 
-    add_patches("v0.12.0", "patches/v0.12.0/explicitly-use-non-executable-stack.patch", "a2628cd1f0c92cc8ef67c13d944a397d9aee21abce5e382e73f2a168497b8625")
-    add_patches("v0.12.0", "patches/v0.12.0/set-llvm-host-triple.patch", "47df87484ed9403e31e5e83859e6e1d5fdb5a353631948fda008f11282932891")
+    -- add_patches("v0.12.0", "patches/v0.12.0/explicitly-use-non-executable-stack.patch", "a2628cd1f0c92cc8ef67c13d944a397d9aee21abce5e382e73f2a168497b8625")
+    -- add_patches("v0.12.0", "patches/v0.12.0/set-llvm-host-triple.patch", "47df87484ed9403e31e5e83859e6e1d5fdb5a353631948fda008f11282932891")
 
     local qbdi_platforms = {
         linux = "linux",
@@ -41,6 +41,10 @@ package("qbdi")
         armv7s = "ARM",
         ["armeabi-v7a"] = "ARM"
     }
+
+    if is_plat("linux", "bsd") then
+        add_syslinks("pthread")
+    end
 
     add_deps("cmake", "python 3.x", {kind = "binary"})
 
@@ -71,6 +75,8 @@ package("qbdi")
             "-DBUILD_SHARED_LIBS=OFF",
             "-DQBDI_CCACHE=OFF",
             "-DQBDI_TEST=OFF",
+            "-DQBDI_TOOLS_PYQBDI=OFF",
+            "-DQBDI_TOOLS_FRIDAQBDI=OFF",
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DQBDI_PLATFORM=" .. qbdi_platforms[package:plat()])
