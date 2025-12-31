@@ -11,10 +11,12 @@ package("implot")
     add_versions("v0.15", "3df87e67a1e28db86828059363d78972a298cd403ba1f5780c1040e03dfa2672")
 
     on_load(function (package)
+        local imgui_version
         local version = package:version()
         if version and version:lt("0.17") then
-            package:add("deps", "imgui <=1.91")
+            imgui_version = "<=1.91"
         end
+        package:add("deps", "imgui", {version = imgui_version})
     end)
 
     on_install(function (package)
