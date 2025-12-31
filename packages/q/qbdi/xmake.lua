@@ -10,8 +10,13 @@ package("qbdi")
 
     add_configs("avx", {description = "Enable the support of AVX instruction on X86 and X86_64.", default = true, type = "boolean"})
     add_configs("log_debug", {description = "Enable the debug level of the logging system.", default = false, type = "boolean"})
-    add_configs("preload", {description = "Build QBDIPreload static library.", default = true, type = "boolean"})
-    add_configs("validator", {description = "Build the validator library.", default = true, type = "boolean"})
+    if is_plat("android", "iphoneos") then
+        add_configs("preload", {description = "Build QBDIPreload static library.", default = false, type = "boolean", readonly  = true})
+        add_configs("validator", {description = "Build the validator library.", default = false, type = "boolean", readonly  = true})
+    else
+        add_configs("preload", {description = "Build QBDIPreload static library.", default = true, type = "boolean"})
+        add_configs("validator", {description = "Build the validator library.", default = true, type = "boolean"})
+    end
 
     add_patches("v0.12.0", "patches/v0.12.0/explicitly-use-non-executable-stack.patch", "a2628cd1f0c92cc8ef67c13d944a397d9aee21abce5e382e73f2a168497b8625")
     add_patches("v0.12.0", "patches/v0.12.0/set-llvm-host-triple.patch", "47df87484ed9403e31e5e83859e6e1d5fdb5a353631948fda008f11282932891")
@@ -37,8 +42,8 @@ package("qbdi")
         ["armeabi-v7a"] = "ARM"
     }
 
-    add_deps("cmake", "ninja")
-    add_deps("python 3.x", {kind = "binary"})
+    add_deps("cmake", "python 3.x", {kind = "binary"})
+
     on_check(function (package)
         assert(qbdi_architectures[package:arch()], "package(qbdi): unsupported architecture!")
     end)
@@ -52,7 +57,7 @@ package("qbdi")
         if package:is_plat("android") then
             package:add("syslinks", "log")
         end
-        if package:config("shared") or package:is_plat("android", "ios") then
+        if package:config("shared") then
             package:config_set("preload", false)
             package:config_set("validator", false)
         end
@@ -66,8 +71,6 @@ package("qbdi")
             "-DBUILD_SHARED_LIBS=OFF",
             "-DQBDI_CCACHE=OFF",
             "-DQBDI_TEST=OFF",
-            "-DQBDI_TOOLS_PYQBDI=OFF",
-            "-DQBDI_TOOLS_FRIDAQBDI=OFF"
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DQBDI_PLATFORM=" .. qbdi_platforms[package:plat()])
@@ -75,13 +78,11 @@ package("qbdi")
         table.insert(configs, "-DQBDI_STATIC_LIBRARY=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DQBDI_SHARED_LIBRARY=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DQBDI_ASAN=" .. (package:config("asan") and "ON" or "OFF"))
+
         table.insert(configs, "-DQBDI_DISABLE_AVX=" .. (package:config("avx") and "OFF" or "ON"))
         table.insert(configs, "-DQBDI_LOG_DEBUG=" .. (package:config("log_debug") and "ON" or "OFF"))
-        if not package:is_plat("android", "ios") then
-            table.insert(configs, "-DQBDI_TOOLS_QBDIPRELOAD=" .. (package:config("preload") and "ON" or "OFF"))
-            table.insert(configs, "-DQBDI_TOOLS_VALIDATOR=" .. (package:config("validator") and "ON" or "OFF"))
-        end
-
+        table.insert(configs, "-DQBDI_TOOLS_QBDIPRELOAD=" .. (package:config("preload") and "ON" or "OFF"))
+        table.insert(configs, "-DQBDI_TOOLS_VALIDATOR=" .. (package:config("validator") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
