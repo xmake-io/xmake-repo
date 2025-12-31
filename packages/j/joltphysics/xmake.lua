@@ -33,6 +33,7 @@ package("joltphysics")
     add_configs("cross_platform_deterministic", { description = "Turns on behavior to attempt cross platform determinism", default = false, type = "boolean" })
     add_configs("debug_renderer", { description = "Adds support to draw lines and triangles, used to be able to debug draw the state of the world", default = true, type = "boolean" })
     add_configs("double_precision", { description = "Compiles the library so that all positions are stored in doubles instead of floats. This makes larger worlds possible", default = false, type = "boolean" })
+    add_configs("profile", { description = "Turns on the internal profiler", default = false, type = "boolean" })
     add_configs("exceptions", { description = "Compile the library with C++ exceptions enabled. This adds some overhead and Jolt doesn't use exceptions so by default it is off.", default = false, type = "boolean" })
     add_configs("object_layer_bits", {description = "Number of bits to use in ObjectLayer. Can be 16 or 32.", default = "16", type = "string", values = {"16", "32"}})
     add_configs("object_stream", { description = "Compile the ObjectStream class and RTTI attribute information", default = true, type = "boolean" })
@@ -69,7 +70,6 @@ package("joltphysics")
         if package:is_plat("windows") and not package:config("shared") then
             package:add("syslinks", "advapi32")
         end
-        package:add("defines", "JPH_PROFILE_ENABLED")
         if package:is_plat("windows") then
             package:add("defines", "JPH_FLOATING_POINT_EXCEPTIONS_ENABLED")
         end
@@ -81,6 +81,9 @@ package("joltphysics")
         end
         if package:config("double_precision") then
             package:add("defines", "JPH_DOUBLE_PRECISION")
+        end
+        if package:config("profile") then
+            package:add("defines", "JPH_PROFILE_ENABLED")
         end
         if package:config("shared") then
             package:add("defines", "JPH_SHARED_LIBRARY")
