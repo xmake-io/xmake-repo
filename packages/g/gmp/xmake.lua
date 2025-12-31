@@ -18,6 +18,9 @@ package("gmp")
         add_configs("assembly", {description = "Enable the use of assembly loops", default = true, type = "boolean"})
     end
     add_configs("fat", {description = "Build fat libraries on systems that support it", default = false, type = "boolean"})
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::gmp")
@@ -83,6 +86,8 @@ package("gmp")
             io.replace("configure", "LIBTOOL='$(SHELL) $(top_builddir)/libtool'", "LIBTOOL='\"$(SHELL)\" $(top_builddir)/libtool'", {plain = true})
         end
         if package:is_plat("windows") then
+            -- Let asm code use windows abi
+            io.replace("configure", "*-*-mingw* | *-*-msys | *-*-cygwin)", "*-*-msvc)", {plain = true})
             local obj_file_suffix = package:has_tool("cxx", "cl") and ".obj" or ".o"
             io.replace("configure", "$CCAS $CFLAGS $CPPFLAGS", "$CCAS $CCASFLAGS -o conftest" .. obj_file_suffix, {plain = true})
             -- Remove error flags for asm build
@@ -184,7 +189,7 @@ package("gmp")
                 end
                 opt.envs.CCASFLAGS = table.concat({"--target=" .. target, "-c"}, " ")
             end
-            table.insert(configs, "--host=" .. clang_archs[package:arch()] .. "-pc-mingw32")
+            table.insert(configs, "--host=" .. target)
         end
         -- Can't generate correct gmp.lib with lib.exe
         if package:is_plat("windows") then
@@ -216,5 +221,5 @@ package("gmp")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("gmp_randinit", {includes = "gmp.h"}))
+        assert(package:has_cfuncs("gmp_version", {includes = "gmp.h"}))
     end)
