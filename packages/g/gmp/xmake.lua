@@ -184,12 +184,15 @@ package("gmp")
                 end
                 opt.envs.CCASFLAGS = table.concat({"--target=" .. target, "-c"}, " ")
             end
-            table.insert(configs, "--host=" .. target)
+            table.insert(configs, "--host=" .. clang_archs[package:arch()] .. "-pc-mingw32")
         end
         -- Can't generate correct gmp.lib with lib.exe
         if package:is_plat("windows") then
             autoconf.build(package, configs, opt)
-            
+
+            -- I don't know why, it only happen on ci
+            os.trymv("dummy.obj", "cxx/")
+
             io.writefile("xmake.lua", [[
                 option("cpp_api", {default = false})
                 add_rules("mode.debug", "mode.release")
@@ -197,16 +200,14 @@ package("gmp")
                     set_kind("$(kind)")
                     add_rules("c++")
                     add_files("**.obj|gen-*.obj|cxx/*.obj", "**.o|gen-*.o|cxx/*.o")
-                    remove_files("dummy.obj") -- I don't know why, it only happen on ci
                     add_headerfiles("gmp.h")
-                if has_config("cpp_api") then
-                    target("gmpxx")
-                        set_kind("$(kind)")
-                        add_rules("c++")
-                        add_files("cxx/*.obj", "cxx/*.o")
-                        add_headerfiles("gmpxx.h")
-                        add_deps("gmp")
-                end
+                target("gmpxx")
+                    set_default(has_config("cpp_api"))
+                    set_kind("$(kind)")
+                    add_rules("c++")
+                    add_files("cxx/*.obj", "cxx/*.o")
+                    add_headerfiles("gmpxx.h")
+                    add_deps("gmp")
             ]])
             import("package.tools.xmake").install(package, {cpp_api = package:config("cpp_api")})
         else
