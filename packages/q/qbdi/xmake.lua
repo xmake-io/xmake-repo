@@ -13,8 +13,8 @@ package("qbdi")
     add_configs("preload", {description = "Build QBDIPreload static library.", default = true, type = "boolean"})
     add_configs("validator", {description = "Build the validator library.", default = true, type = "boolean"})
 
-    add_patches("v0.12.0", "patches/v0.12.0/explicitly-use-non-executable-stack.patch", "0e44c5e482464c1cf2e90dd8eab1cabfe8327dcf0ded27773746c0cd56222169")
-    add_patches("v0.12.0", "patches/v0.12.0/set-llvm-host-triple.patch", "a69931fb5aad9218479f049a51022bcf70d29ab4bd3ab08e5cabe61675755495")
+    add_patches("v0.12.0", "patches/v0.12.0/explicitly-use-non-executable-stack.patch", "a2628cd1f0c92cc8ef67c13d944a397d9aee21abce5e382e73f2a168497b8625")
+    add_patches("v0.12.0", "patches/v0.12.0/set-llvm-host-triple.patch", "47df87484ed9403e31e5e83859e6e1d5fdb5a353631948fda008f11282932891")
 
     local qbdi_platforms = {
         linux = "linux",
