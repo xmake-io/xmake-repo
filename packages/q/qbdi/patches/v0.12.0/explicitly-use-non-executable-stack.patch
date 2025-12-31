@@ -1,0 +1,33 @@
+From 384afadef5ab9b9c3d9a94af9ed348a78a288e08 Mon Sep 17 00:00:00 2001
+From: Redbeanw44602 <redbeana44945@gmail.com>
+Date: Wed, 31 Dec 2025 12:25:42 +0800
+Subject: [PATCH] fix: explicitly use non-executable stack.
+
+---
+ src/ExecBlock/ARM/linux-android_ARM.s | 2 +-
+ src/Utility/ARM/linux-android_ARM.s   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/ExecBlock/ARM/linux-android_ARM.s b/src/ExecBlock/ARM/linux-android_ARM.s
+index 6aa5590..a4f8883 100644
+--- a/src/ExecBlock/ARM/linux-android_ARM.s
++++ b/src/ExecBlock/ARM/linux-android_ARM.s
+@@ -61,4 +61,4 @@ __qbdi_runCodeBlock:
+     pop {r0-r12,pc};
+ 
+ # mark stack as no-exec
+-.section	.note.GNU-stack
++.section	.note.GNU-stack,"",@progbits
+diff --git a/src/Utility/ARM/linux-android_ARM.s b/src/Utility/ARM/linux-android_ARM.s
+index 6c743aa..65d92d1 100644
+--- a/src/Utility/ARM/linux-android_ARM.s
++++ b/src/Utility/ARM/linux-android_ARM.s
+@@ -46,4 +46,4 @@ __qbdi_asmStackSwitch:
+     pop {fp, pc};
+ 
+ # mark stack as no-exec
+-.section	.note.GNU-stack
++.section	.note.GNU-stack,"",@progbits
+-- 
+2.52.0
+
