@@ -15,6 +15,8 @@ package("slikenet")
 
     if is_plat("windows", "mingw") then
         add_syslinks("iphlpapi", "ws2_32")
+    elseif is_plat("linux", "bsd") then
+        add_syslinks("pthread")
     end
 
     on_check("android", function (package)
@@ -27,8 +29,7 @@ package("slikenet")
     on_install(function (package)
         if package:is_plat("linux", "cross") and package:is_arch("arm.*") then
             io.replace("Source/src/FileList.cpp", "#include <sys/io.h>", "", {plain = true})
-        end
-        if package:is_plat("android") then
+        elseif package:is_plat("android") then
             io.replace("Source/src/FileList.cpp", "#include <asm/io.h>", "#include <ifaddrs.h>", {plain = true})
         end
         os.rmdir("Source/src/crypto")
