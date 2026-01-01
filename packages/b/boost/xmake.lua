@@ -6,17 +6,27 @@ package("boost")
     -- xrepo does not support `package:config("cmake")` in on_source to set the download url, so if you want to build with cmake, we need to `add_urls` cmake archive url at first line.
     -- Users can also download the cmake archive and put it in `xmake g --pkg_searchdirs=` to avoid xrepo using a non-cmake archive url.
     add_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version)-cmake.tar.gz", {alias = "cmake"})
+    function cmake_7z_or_not(version) 
+        local semver = import("core.base.semver")
+        if semver.compare(boost.version, "1.90.0") >= 0 then
+            add_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version)-cmake.7z", {alias = "cmake"})
+        elseif semver.compare(version, "1.90.0") < 0 then
+            add_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version)-cmake.tar.gz", {alias = "cmake"})
+        end
+    end
     add_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version)-b2-nodocs.tar.gz")
     add_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version).tar.gz")
     add_urls("https://github.com/xmake-mirror/boost/releases/download/boost-$(version).tar.bz2", {alias = "mirror", version = function (version)
             return version .. "/boost_" .. (version:gsub("%.", "_"))
         end})
 
+    add_versions("cmake:1.90.0", "218e74c4aa362a994b7b7a23b2920f455a00205c656405fcf262cf60b8871921")
     add_versions("cmake:1.89.0", "954a01219bf818c7fb850fa610c2c8c71a4fa28fa32a1900056bcb6ff58cf908")
     add_versions("cmake:1.88.0", "dcea50f40ba1ecfc448fdf886c0165cf3e525fef2c9e3e080b9804e8117b9694")
     add_versions("cmake:1.87.0", "78fbf579e3caf0f47517d3fb4d9301852c3154bfecdc5eeebd9b2b0292366f5b")
     add_versions("cmake:1.86.0", "c62ce6e64d34414864fef946363db91cea89c1b90360eabed0515f0eda74c75c")
 
+    add_versions("1.90.0", "e848446c6fec62d8a96b44ed7352238b3de040b8b9facd4d6963b32f541e00f5")
     add_versions("1.89.0", "aa25e7b9c227c21abb8a681efd4fe6e54823815ffc12394c9339de998eb503fb")
     add_versions("1.88.0", "85138e4a185a7e7535e82b011179c5b5fb72185bea9f59fe8e2d76939b2f5c51")
     add_versions("1.87.0", "d6c69e4459eb5d6ec208250291221e7ff4a2affde9af6e49c9303b89c687461f")
