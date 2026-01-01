@@ -8,7 +8,7 @@ index 4487ef7e..653a1294 100644
  
 -#if defined(_WIN32) && !(defined(__GNUC__)  || defined(__GCCXML__)) && !defined(_RAKNET_LIB) && defined(_RAKNET_DLL)
 -#define RAK_DLL_EXPORT __declspec(dllexport)
-+#if defined(_WIN32) && !(defined(__GNUC__)  || defined(__GCCXML__)) && !defined(_RAKNET_LIB)
++#if defined(_WIN32) && !defined(_RAKNET_LIB)
 +#   if defined(_RAKNET_DLL)
 +#       define RAK_DLL_EXPORT __declspec(dllexport)
 +#   elif defined(_RAKNET_DLL_IMPORT)
