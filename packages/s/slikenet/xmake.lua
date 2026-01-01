@@ -13,6 +13,10 @@ package("slikenet")
     add_deps("cmake")
     add_deps("openssl3")
 
+    if is_plat("windows", "mingw") then
+        add_syslinks("iphlpapi")
+    end
+
     on_install(function (package)
         if package:is_plat("linux", "cross") and package:is_arch("arm.*") then
             io.replace("Source/src/FileList.cpp", "#include <sys/io.h>", "", {plain = true})
