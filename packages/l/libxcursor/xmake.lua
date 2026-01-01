@@ -10,11 +10,11 @@ package("libxcursor")
         add_extsources("apt::libxcursor-dev")
     end
 
-    if is_plat("macosx", "linux", "cross") then
+    if is_plat("macosx", "linux", "bsd", "cross") then
         add_deps("pkg-config", "util-macros", "libx11", "libxfixes", "libxrender")
     end
 
-    on_install("macosx", "linux", "cross", function (package)
+    on_install("macosx", "linux", "bsd", "cross", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
                          "--localstatedir=" .. package:installdir("var"),
                          "--disable-dependency-tracking",
