@@ -17,6 +17,13 @@ package("slikenet")
         add_syslinks("iphlpapi")
     end
 
+    on_check("android", function (package)
+        local ndk_sdkver = package:toolchain("ndk"):config("ndk_sdkver")
+        if ndk_sdkver and tonumber(ndk_sdkver) < 24 then
+            raise("package(slikenet) require ndk api >= 24")
+        end
+    end)
+
     on_install(function (package)
         if package:is_plat("linux", "cross") and package:is_arch("arm.*") then
             io.replace("Source/src/FileList.cpp", "#include <sys/io.h>", "", {plain = true})
