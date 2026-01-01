@@ -28,8 +28,12 @@ package("tvision")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <utility>    
+            #include <iostream>
+            #include <vector>
+            #include <string>
+            #include <utility>
             #include <type_traits>
+            #include <algorithm>
             #define Uses_TRect
             #define Uses_TWindow
             #include <tvision/tv.h>
