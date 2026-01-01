@@ -10,7 +10,7 @@ package("libxcursor")
         add_extsources("apt::libxcursor-dev")
     end
 
-    if is_plat("macosx", "linux") then
+    if is_plat("macosx", "linux", "cross") then
         add_deps("pkg-config", "util-macros", "libx11", "libxfixes", "libxrender")
     end
 
