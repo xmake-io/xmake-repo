@@ -23,21 +23,21 @@ index 4487ef7e..653a1294 100644
  
  #define STATIC_FACTORY_DECLARATIONS(x) static x* GetInstance(void); \
 diff --git a/Source/include/slikenet/memoryoverride.h b/Source/include/slikenet/memoryoverride.h
-index de132908..929969b5 100644
+index de132908..aebc556e 100644
 --- a/Source/include/slikenet/memoryoverride.h
 +++ b/Source/include/slikenet/memoryoverride.h
 @@ -82,9 +82,17 @@ extern RAK_DLL_EXPORT int (*GetDLMallocMUnmap())(void* ptr, size_t size);
  
  namespace SLNet
  {
-+	template <class Type> Type* RAK_DLL_EXPORT OP_NEW(const char *file, unsigned int line);
-+	template <class Type, class P1> Type* RAK_DLL_EXPORT OP_NEW_1(const char *file, unsigned int line, const P1 &p1);
-+	template <class Type, class P1, class P2> Type* RAK_DLL_EXPORT OP_NEW_2(const char *file, unsigned int line, const P1 &p1, const P2 &p2);
-+	template <class Type, class P1, class P2, class P3> Type* RAK_DLL_EXPORT OP_NEW_3(const char *file, unsigned int line, const P1 &p1, const P2 &p2, const P3 &p3);
-+	template <class Type, class P1, class P2, class P3, class P4> Type* RAK_DLL_EXPORT OP_NEW_4(const char *file, unsigned int line, const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4);
-+	template <class Type> Type* RAK_DLL_EXPORT OP_NEW_ARRAY(const int count, const char *file, unsigned int line);
-+	template <class Type> void RAK_DLL_EXPORT OP_DELETE(Type *buff, const char *file, unsigned int line);
-+	template <class Type> void RAK_DLL_EXPORT OP_DELETE_ARRAY(Type *buff, const char *file, unsigned int line);
++	template <class Type> RAK_DLL_EXPORT Type* OP_NEW(const char *file, unsigned int line);
++	template <class Type, class P1> RAK_DLL_EXPORT Type* OP_NEW_1(const char *file, unsigned int line, const P1 &p1);
++	template <class Type, class P1, class P2> RAK_DLL_EXPORT Type* OP_NEW_2(const char *file, unsigned int line, const P1 &p1, const P2 &p2);
++	template <class Type, class P1, class P2, class P3> RAK_DLL_EXPORT Type* OP_NEW_3(const char *file, unsigned int line, const P1 &p1, const P2 &p2, const P3 &p3);
++	template <class Type, class P1, class P2, class P3, class P4> RAK_DLL_EXPORT Type* OP_NEW_4(const char *file, unsigned int line, const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4);
++	template <class Type> RAK_DLL_EXPORT Type* OP_NEW_ARRAY(const int count, const char *file, unsigned int line);
++	template <class Type> RAK_DLL_EXPORT void OP_DELETE(Type *buff, const char *file, unsigned int line);
++	template <class Type> RAK_DLL_EXPORT void OP_DELETE_ARRAY(Type *buff, const char *file, unsigned int line);
  
  	template <class Type>
 -	RAK_DLL_EXPORT Type* OP_NEW(const char *file, unsigned int line)
