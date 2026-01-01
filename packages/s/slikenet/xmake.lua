@@ -27,6 +27,7 @@ package("slikenet")
     end)
 
     on_install(function (package)
+        io.replace("CMakeLists.txt", "ws2_32.lib", "ws2_32", {plain = true})
         if package:is_plat("linux", "cross") and package:is_arch("arm.*") then
             io.replace("Source/src/FileList.cpp", "#include <sys/io.h>", "", {plain = true})
         elseif package:is_plat("android") then
