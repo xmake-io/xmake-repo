@@ -51,7 +51,6 @@ package("libsdl3")
     end
 
     on_load(function (package)
-        local version = package:version()
         if package:is_plat("linux", "android", "cross") then
             -- Enable Wayland by default except when cross-compiling (wayland package doesn't support cross-compilation yet)
             if package:config("wayland") == nil and not package:is_cross() then
@@ -64,9 +63,6 @@ package("libsdl3")
         end
         if package:is_plat("linux", "bsd", "cross") and package:config("x11") then
             package:add("deps", "libxext", {private = true})
-            if not version or version:ge("3.4") then
-                package:add("deps", "libxcursor", {private = true})
-            end
         end
         if package:is_plat("linux", "bsd", "cross") and package:config("wayland") then
             package:add("deps", "wayland", {private = true})
@@ -100,6 +96,8 @@ package("libsdl3")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSDL_TEST_LIBRARY=OFF")
         table.insert(configs, "-DSDL_EXAMPLES=OFF")
+        table.insert(configs, "-DSDL_X11_XCURSOR=OFF")
+        table.insert(configs, "-DSDL_X11_XINPUT=OFF")
 
         local cflags
         local packagedeps
