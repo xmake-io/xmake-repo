@@ -8,11 +8,18 @@ package("slikenet")
 
     add_patches("2021.07.01", "patches/2021.07.01/fix-emscripten.patch", "ee6720cd12d81bb89355b63e40fbdcca739b051af9f4fa2c5ad7846bd8cd13e7")
     add_patches("2021.07.01", "patches/2021.07.01/fix-install.patch", "7f1307651bbf7fdff4cedf1b0301521275d83a060361ffc896065254c9908953")
+    add_patches("2021.07.01", "patches/2021.07.01/fix-mingw.patch", "904ee48e53f31cf0a4cd40cef3db50ff64d641e40089816d4f0923b10ddcff81")
 
     add_deps("cmake")
-    add_deps("openssl")
+    add_deps("openssl3")
 
     on_install(function (package)
+        if package:is_plat("linux", "cross") and package:is_arch("arm.*") then
+            io.replace("Source/src/FileList.cpp", "#include <sys/io.h>", "", {plain = true})
+        end
+        if package:is_plat("android") then
+            io.replace("Source/src/FileList.cpp", "#include <asm/io.h>", "", {plain = true})
+        end
         os.rmdir("Source/src/crypto")
         os.rmdir("Source/include/slikenet/crypto")
         local configs = {"-DSLIKENET_ENABLE_SAMPLES=OFF"}
