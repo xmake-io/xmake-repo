@@ -1,5 +1,4 @@
 package("libxrender")
-
     set_homepage("https://www.x.org/")
     set_description("X.Org: Library for the Render Extension to the X11 protocol")
 
@@ -15,7 +14,7 @@ package("libxrender")
         add_deps("pkg-config", "libx11", "xorgproto")
     end
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx", "linux", "cross", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
                          "--localstatedir=" .. package:installdir("var"),
                          "--disable-dependency-tracking",
