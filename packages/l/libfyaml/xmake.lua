@@ -6,6 +6,7 @@ package("libfyaml")
     add_urls("https://github.com/pantoniou/libfyaml/archive/refs/tags/$(version).tar.gz",
              "https://github.com/pantoniou/libfyaml.git")
 
+    add_versions("v0.9.2", "979be4f6ba463c6d1a5b0d25c780486ae09c78477228e0af9368690e90a95698")
     add_versions("v0.9", "927306fc85c7566904751766d36178650766b34e59ce56882eaa5b60f791668c")
 
     add_deps("cmake")
