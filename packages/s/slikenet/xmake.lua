@@ -27,6 +27,8 @@ package("slikenet")
     end)
 
     on_install(function (package)
+        io.replace("Source/src/linux_adapter.cpp", "#ifdef __linux__", "#if defined(__linux__) || defined(__FreeBSD__)", {plain = true})
+        io.replace("Source/include/slikenet/linux_adapter.h", "#ifdef __linux__", "#if defined(__linux__) || defined(__FreeBSD__)", {plain = true})
         io.replace("CMakeLists.txt", "ws2_32.lib", "iphlpapi ws2_32", {plain = true})
         if package:is_plat("linux", "cross") and package:is_arch("arm.*") then
             io.replace("Source/src/FileList.cpp", "#include <sys/io.h>", "", {plain = true})
