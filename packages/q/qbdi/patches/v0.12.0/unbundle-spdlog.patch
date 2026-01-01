@@ -1,16 +1,16 @@
-From 76cb2a964b84a33da0851db2ea7a90ad67b8ec95 Mon Sep 17 00:00:00 2001
+From 9576a67e0805cab2b58297f8bcf2a3dcbe62baa5 Mon Sep 17 00:00:00 2001
 From: Redbeanw44602 <redbeana44945@gmail.com>
-Date: Thu, 1 Jan 2026 19:30:03 +0800
+Date: Thu, 1 Jan 2026 22:33:29 +0800
 Subject: [PATCH] unbundle spdlog.
 
 ---
  CMakeLists.txt                 |  4 +--
- cmake/QBDIDependencies.cmake   | 61 ----------------------------------
+ cmake/QBDIDependencies.cmake   | 59 +---------------------------------
  tools/validator/CMakeLists.txt |  2 +-
- 3 files changed, 3 insertions(+), 64 deletions(-)
+ 3 files changed, 4 insertions(+), 61 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 76a3517..d571183 100644
+index 76a3517..7324bc4 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -276,7 +276,7 @@ endif()
@@ -18,7 +18,7 @@ index 76a3517..d571183 100644
  add_library(QBDI_shared_src INTERFACE)
  
 -target_link_libraries(QBDI_src INTERFACE qbdi-llvm spdlog)
-+target_link_libraries(QBDI_src INTERFACE qbdi-llvm)
++target_link_libraries(QBDI_src INTERFACE qbdi-llvm spdlog::spdlog)
  
  include("${CMAKE_CURRENT_SOURCE_DIR}/src/CMakeLists.txt")
  
@@ -32,15 +32,13 @@ index 76a3517..d571183 100644
    merge_static_libs(QBDI_static QBDI \${qbdi_static_libs})
  
 diff --git a/cmake/QBDIDependencies.cmake b/cmake/QBDIDependencies.cmake
-index 4d55403..06404a8 100644
+index 4d55403..6308a57 100644
 --- a/cmake/QBDIDependencies.cmake
 +++ b/cmake/QBDIDependencies.cmake
-@@ -49,35 +49,6 @@ function(PREPARE_PACKAGE PACKAGE_NAME)
-                     ${ARG_UNPARSED_ARGUMENTS})
- endfunction()
+@@ -51,32 +51,7 @@ endfunction()
  
--# Spdlog
--# ======
+ # Spdlog
+ # ======
 -set(SPDLOG_VERSION 1.15.0)
 -
 -prepare_package(
@@ -67,11 +65,11 @@ index 4d55403..06404a8 100644
 -      SPDLOG_LEVEL_DEBUG
 -      CACHE BOOL "Enable SPDLOG_LEVEL_DEBUG level")
 -endif()
--
++find_package(spdlog REQUIRED)
+ 
  # Catch2
  # ======
- if((QBDI_TEST) OR (QBDI_BENCHMARK))
-@@ -130,35 +101,3 @@ FetchContent_MakeAvailable(${qbdi_deps})
+@@ -130,35 +105,3 @@ FetchContent_MakeAvailable(${qbdi_deps})
  # ==========
  list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/llvm")
  include(QBDI_llvm)
@@ -108,7 +106,7 @@ index 4d55403..06404a8 100644
 -    spdlog PRIVATE $<$<COMPILE_LANGUAGE:CXX>:${SPDLOG_QBDI_CXX_FLAGS}>)
 -endif()
 diff --git a/tools/validator/CMakeLists.txt b/tools/validator/CMakeLists.txt
-index ca75b54..776fb9a 100644
+index ca75b54..787e793 100644
 --- a/tools/validator/CMakeLists.txt
 +++ b/tools/validator/CMakeLists.txt
 @@ -34,7 +34,7 @@ target_include_directories(
@@ -116,7 +114,7 @@ index ca75b54..776fb9a 100644
            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>
            $<INSTALL_INTERFACE:include>)
 -target_link_libraries(validator PRIVATE QBDIPreload QBDI_static spdlog)
-+target_link_libraries(validator PRIVATE QBDIPreload QBDI_static)
++target_link_libraries(validator PRIVATE QBDIPreload QBDI_static spdlog::spdlog)
  
  set_target_properties(validator PROPERTIES CXX_STANDARD 14 CXX_STANDARD_REQUIRED
                                                             ON)
