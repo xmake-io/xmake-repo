@@ -6,7 +6,7 @@ package("slikenet")
     add_urls("https://github.com/SLikeSoft/SLikeNet.git")
     add_versions("2021.07.01", "d5f775d789563a2d505e2afbf99a550d990bb49e")
 
-    add_patches("2021.07.01", "patches/2021.07.01/fix-emscripten.patch", "ee6720cd12d81bb89355b63e40fbdcca739b051af9f4fa2c5ad7846bd8cd13e7")
+    add_patches("2021.07.01", "patches/2021.07.01/fix-emscripten.patch", "c4d8ffbbdb5fe1ca95f6fd7dbdafb83976fa5de9435e80e6aab5f8c34ae74d62")
     add_patches("2021.07.01", "patches/2021.07.01/fix-install.patch", "7f1307651bbf7fdff4cedf1b0301521275d83a060361ffc896065254c9908953")
     add_patches("2021.07.01", "patches/2021.07.01/fix-mingw.patch", "904ee48e53f31cf0a4cd40cef3db50ff64d641e40089816d4f0923b10ddcff81")
 
@@ -27,8 +27,6 @@ package("slikenet")
     end)
 
     on_install(function (package)
-        io.replace("Source/src/linux_adapter.cpp", "#ifdef __linux__", "#if defined(__linux__) || defined(__FreeBSD__)", {plain = true})
-        io.replace("Source/include/slikenet/linux_adapter.h", "#ifdef __linux__", "#if defined(__linux__) || defined(__FreeBSD__)", {plain = true})
         io.replace("CMakeLists.txt", "ws2_32.lib", "iphlpapi ws2_32", {plain = true})
         if package:is_plat("linux", "cross") and package:is_arch("arm.*") then
             io.replace("Source/src/FileList.cpp", "#include <sys/io.h>", "", {plain = true})
