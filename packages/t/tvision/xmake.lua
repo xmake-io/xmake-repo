@@ -11,6 +11,10 @@ package("tvision")
 
     add_deps("cmake")
 
+    if is_plat("windows") then
+        add_syslinks("kernel32", "user32")
+    end
+
     if not is_plat("windows", "mingw") then
         add_deps("ncurses")
     end
