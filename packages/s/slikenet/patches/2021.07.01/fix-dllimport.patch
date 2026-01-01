@@ -1,0 +1,24 @@
+diff --git a/Source/include/slikenet/Export.h b/Source/include/slikenet/Export.h
+index 4487ef7e..653a1294 100644
+--- a/Source/include/slikenet/Export.h
++++ b/Source/include/slikenet/Export.h
+@@ -15,10 +15,16 @@
+ 
+ #include "defines.h"
+ 
+-#if defined(_WIN32) && !(defined(__GNUC__)  || defined(__GCCXML__)) && !defined(_RAKNET_LIB) && defined(_RAKNET_DLL)
+-#define RAK_DLL_EXPORT __declspec(dllexport)
++#if defined(_WIN32) && !defined(_RAKNET_LIB)
++#   if defined(_RAKNET_DLL)
++#       define RAK_DLL_EXPORT __declspec(dllexport)
++#   elif defined(_RAKNET_DLL_IMPORT)
++#       define RAK_DLL_EXPORT __declspec(dllimport)
++#   else
++#       define RAK_DLL_EXPORT
++#   endif
+ #else
+-#define RAK_DLL_EXPORT  
++#   define RAK_DLL_EXPORT
+ #endif
+ 
+ #define STATIC_FACTORY_DECLARATIONS(x) static x* GetInstance(void); \
