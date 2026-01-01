@@ -35,5 +35,5 @@ package("tvision")
                 short number = 1;
                 TWindow window(TRect(0, 0, 0, 0), nullptr, number);
             }
-        ]]}, {configs = {languages = "c++14"}}))
+        ]]}, {configs = {languages = "c++17"}}))
     end)
