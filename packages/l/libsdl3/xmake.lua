@@ -15,8 +15,8 @@ package("libsdl3")
              "https://github.com/libsdl-org/SDL/releases/download/release-$(version)/SDL3-$(version).zip", { alias = "archive" })
     add_urls("https://github.com/libsdl-org/SDL.git", { alias = "github" })
 
-    add_versions("archive:3.2.28", "24a30069af514a6c6b773bdc8ccca8b321661b251381acc1daeebf8c8f4a109a")
     add_versions("archive:3.4.0", "9ac2debb493e0d3e13dbd2729fb91f4bfeb00a0f4dff5e04b73cc9bac276b38d")
+    add_versions("archive:3.2.28", "24a30069af514a6c6b773bdc8ccca8b321661b251381acc1daeebf8c8f4a109a")
     add_versions("archive:3.2.26", "739356eef1192fff9d641c320a8f5ef4a10506b8927def4b9ceb764c7e947369")
     add_versions("archive:3.2.22", "3d60068b1e5c83c66bb14c325dfef46f8fcc380735b4591de6f5e7b9738929d1")
     add_versions("archive:3.2.16", "0cc7430fb827c1f843e31b8b26ba7f083b1eeb8f6315a65d3744fd4d25b6c373")
@@ -27,8 +27,8 @@ package("libsdl3")
     add_versions("archive:3.2.2", "58d8adc7068d38923f918e0bdaa9c4948f93d9ba204fe4de8cc6eaaf77ad6f82")
     add_versions("archive:3.2.0", "abe7114fa42edcc8097856787fa5d37f256d97e365b71368b60764fe7c10e4f8")
 
-    add_versions("github:3.2.28", "release-3.2.28")
     add_versions("github:3.4.0", "release-3.4.0")
+    add_versions("github:3.2.28", "release-3.2.28")
     add_versions("github:3.2.26", "release-3.2.26")
     add_versions("github:3.2.22", "release-3.2.22")
     add_versions("github:3.2.16", "release-3.2.16")
@@ -51,6 +51,7 @@ package("libsdl3")
     end
 
     on_load(function (package)
+        local version = package:version()
         if package:is_plat("linux", "android", "cross") then
             -- Enable Wayland by default except when cross-compiling (wayland package doesn't support cross-compilation yet)
             if package:config("wayland") == nil and not package:is_cross() then
@@ -63,6 +64,9 @@ package("libsdl3")
         end
         if package:is_plat("linux", "bsd", "cross") and package:config("x11") then
             package:add("deps", "libxext", {private = true})
+            if not version or version:ge("3.4") then
+                package:add("deps", "libxcursor", {private = true})
+            end
         end
         if package:is_plat("linux", "bsd", "cross") and package:config("wayland") then
             package:add("deps", "wayland", {private = true})
