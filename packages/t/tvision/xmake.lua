@@ -28,6 +28,7 @@ package("tvision")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+            #include <utility>    
             #include <type_traits>
             #define Uses_TRect
             #define Uses_TWindow
