@@ -1,5 +1,4 @@
 package("libxrandr")
-
     set_homepage("https://www.x.org/")
     set_description("X.Org: X Resize, Rotate and Reflection extension library")
 
@@ -11,11 +10,11 @@ package("libxrandr")
         add_extsources("apt::libxrandr-dev")
     end
 
-    if is_plat("macosx", "linux") then
+    if is_plat("macosx", "linux", "bsd", "cross") then
         add_deps("pkg-config", "libx11", "libxext", "libxrender", "xorgproto")
     end
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx", "linux", "bsd", "cross", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
                          "--localstatedir=" .. package:installdir("var"),
                          "--disable-dependency-tracking",

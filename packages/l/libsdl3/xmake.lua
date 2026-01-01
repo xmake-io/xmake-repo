@@ -62,7 +62,7 @@ package("libsdl3")
             package:set("policy", "package.cmake_generator.ninja", true)
         end
         if package:is_plat("linux", "bsd", "cross") and package:config("x11") then
-            package:add("deps", "libxext", "libxcursor", "libxfixes", "libxi", {private = true})
+            package:add("deps", "libxext", "libxcursor", "libxfixes", "libxi", "libxrandr", {private = true})
         end
         if package:is_plat("linux", "bsd", "cross") and package:config("wayland") then
             package:add("deps", "wayland", {private = true})
@@ -110,6 +110,7 @@ package("libsdl3")
             table.insert(packagedeps, "libxcb")
             table.insert(packagedeps, "libx11")
             table.insert(packagedeps, "libxi")
+            table.insert(packagedeps, "libxrandr")
             table.insert(packagedeps, "xorgproto")
             table.insert(packagedeps, "wayland")
         elseif package:is_plat("wasm") then
