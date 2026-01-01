@@ -104,11 +104,12 @@ package("libsdl3")
         end
 
         if package:is_plat("linux", "bsd", "cross") then
-            --table.insert(packagedeps, "libxcursor")
+            table.insert(packagedeps, "libxcursor")
             table.insert(packagedeps, "libxext")
-            --table.insert(packagedeps, "libxfixes")
+            table.insert(packagedeps, "libxfixes")
             table.insert(packagedeps, "libxcb")
             table.insert(packagedeps, "libx11")
+            table.insert(packagedeps, "libxi")
             table.insert(packagedeps, "xorgproto")
             table.insert(packagedeps, "wayland")
         elseif package:is_plat("wasm") then
