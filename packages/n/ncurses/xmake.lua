@@ -73,6 +73,9 @@ package("ncurses")
             table.insert(cflags, "-D__USE_MINGW_ACCESS") -- Pass X_OK to access() on Windows which isn't supported with ucrt
         end
         import("package.tools.autoconf").install(package, configs, {cflags = cflags, arflags = {"-curvU"}})
+        for _, file in ipairs(os.files(path.join(package:installdir("include"), "**.h"))) do
+            io.replace(file, "#include <ncursesw/(.-)>", '#include "%1"', {plain = false})
+        end
     end)
 
     on_test(function (package)
