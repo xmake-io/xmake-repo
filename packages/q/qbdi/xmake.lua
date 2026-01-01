@@ -18,8 +18,10 @@ package("qbdi")
         add_configs("validator", {description = "Build the validator library.", default = true, type = "boolean"})
     end
 
-    -- add_patches("v0.12.0", "patches/v0.12.0/explicitly-use-non-executable-stack.patch", "a2628cd1f0c92cc8ef67c13d944a397d9aee21abce5e382e73f2a168497b8625")
-    -- add_patches("v0.12.0", "patches/v0.12.0/set-llvm-host-triple.patch", "47df87484ed9403e31e5e83859e6e1d5fdb5a353631948fda008f11282932891")
+    add_patches("v0.12.0", "patches/v0.12.0/unbundle-spdlog.patch", "59ef7ad8b0b6793d829cf7641613e8cb051ed95512ba94431a106874e1871c5d")
+
+    add_patches("v0.12.0", "patches/v0.12.0/explicitly-use-non-executable-stack.patch", "a2628cd1f0c92cc8ef67c13d944a397d9aee21abce5e382e73f2a168497b8625")
+    add_patches("v0.12.0", "patches/v0.12.0/set-llvm-host-triple.patch", "47df87484ed9403e31e5e83859e6e1d5fdb5a353631948fda008f11282932891")
 
     local qbdi_platforms = {
         linux = "linux",
@@ -46,6 +48,7 @@ package("qbdi")
         add_syslinks("pthread")
     end
 
+    add_deps("spdlog", {configs = {noexcept = true, tls = false, thread_id = false}})
     add_deps("cmake", "python 3.x", {kind = "binary"})
 
     on_check(function (package)
@@ -89,7 +92,7 @@ package("qbdi")
         table.insert(configs, "-DQBDI_LOG_DEBUG=" .. (package:config("log_debug") and "ON" or "OFF"))
         table.insert(configs, "-DQBDI_TOOLS_QBDIPRELOAD=" .. (package:config("preload") and "ON" or "OFF"))
         table.insert(configs, "-DQBDI_TOOLS_VALIDATOR=" .. (package:config("validator") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = "spdlog"})
     end)
 
     on_test(function (package)
