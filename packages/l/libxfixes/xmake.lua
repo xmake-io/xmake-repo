@@ -10,7 +10,7 @@ package("libxfixes")
         add_extsources("apt::libxfixes-dev", "pacman::libxfixes")
     end
 
-    if is_plat("macosx", "linux") then
+    if is_plat("macosx", "linux", "cross") then
         add_deps("pkg-config", "libx11", "xorgproto")
     end
 
