@@ -15,7 +15,7 @@ package("tvision")
         add_deps("ncurses")
     end
 
-    on_install("!wasm and !iphoneos", function (package)
+    on_install("!wasm and !iphoneos and (!android or android@!windows)", function (package)
         local configs = {
             "-DTV_BUILD_EXAMPLES=OFF",
             "-DTV_BUILD_TESTS=OFF",
@@ -28,13 +28,12 @@ package("tvision")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #define Uses_TDialog
-            #define Uses_TView
-            #define Uses_TProgram
+            #define Uses_TRect
+            #define Uses_TWindow
             #include <tvision/tv.h>
             void test() {
-                TDialog *d;
-                TView *p = TProgram::application->validView( d );
+                short number = 1;
+                TWindow window(TRect(0, 0, 0, 0), nullptr, number);
             }
         ]]}, {configs = {languages = "c++14"}}))
     end)
