@@ -14,7 +14,7 @@ package("slikenet")
     add_deps("openssl3")
 
     if is_plat("windows", "mingw") then
-        add_syslinks("iphlpapi")
+        add_syslinks("iphlpapi", "ws2_32")
     end
 
     on_check("android", function (package)
