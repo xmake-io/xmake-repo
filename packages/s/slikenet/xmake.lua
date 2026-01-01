@@ -18,7 +18,7 @@ package("slikenet")
             io.replace("Source/src/FileList.cpp", "#include <sys/io.h>", "", {plain = true})
         end
         if package:is_plat("android") then
-            io.replace("Source/src/FileList.cpp", "#include <asm/io.h>", "", {plain = true})
+            io.replace("Source/src/FileList.cpp", "#include <asm/io.h>", "#include <ifaddrs.h>", {plain = true})
         end
         os.rmdir("Source/src/crypto")
         os.rmdir("Source/include/slikenet/crypto")
