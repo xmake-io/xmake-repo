@@ -9,7 +9,7 @@ package("slikenet")
     add_patches("2021.07.01", "patches/2021.07.01/fix-emscripten.patch", "c4d8ffbbdb5fe1ca95f6fd7dbdafb83976fa5de9435e80e6aab5f8c34ae74d62")
     add_patches("2021.07.01", "patches/2021.07.01/fix-install.patch", "7f1307651bbf7fdff4cedf1b0301521275d83a060361ffc896065254c9908953")
     add_patches("2021.07.01", "patches/2021.07.01/fix-mingw.patch", "904ee48e53f31cf0a4cd40cef3db50ff64d641e40089816d4f0923b10ddcff81")
-    add_patches("2021.07.01", "patches/2021.07.01/fix-dllimport.patch", "88064d4caf7782039535d917a75b28f3f83162f8b6e4949670d9755a8c8091f8")
+    add_patches("2021.07.01", "patches/2021.07.01/fix-dllimport.patch", "2497ef759b70b77e1d814da212bd8d08212924de068672f7059a78f8ca0c889d")
 
     add_deps("cmake")
     add_deps("openssl3")

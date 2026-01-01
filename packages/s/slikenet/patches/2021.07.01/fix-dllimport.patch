@@ -23,11 +23,21 @@ index 4487ef7e..653a1294 100644
  
  #define STATIC_FACTORY_DECLARATIONS(x) static x* GetInstance(void); \
 diff --git a/Source/include/slikenet/memoryoverride.h b/Source/include/slikenet/memoryoverride.h
-index de132908..ddef20c6 100644
+index de132908..929969b5 100644
 --- a/Source/include/slikenet/memoryoverride.h
 +++ b/Source/include/slikenet/memoryoverride.h
-@@ -84,7 +84,7 @@ namespace SLNet
+@@ -82,9 +82,17 @@ extern RAK_DLL_EXPORT int (*GetDLMallocMUnmap())(void* ptr, size_t size);
+ 
+ namespace SLNet
  {
++	template <class Type> Type* RAK_DLL_EXPORT OP_NEW(const char *file, unsigned int line);
++	template <class Type, class P1> Type* RAK_DLL_EXPORT OP_NEW_1(const char *file, unsigned int line, const P1 &p1);
++	template <class Type, class P1, class P2> Type* RAK_DLL_EXPORT OP_NEW_2(const char *file, unsigned int line, const P1 &p1, const P2 &p2);
++	template <class Type, class P1, class P2, class P3> Type* RAK_DLL_EXPORT OP_NEW_3(const char *file, unsigned int line, const P1 &p1, const P2 &p2, const P3 &p3);
++	template <class Type, class P1, class P2, class P3, class P4> Type* RAK_DLL_EXPORT OP_NEW_4(const char *file, unsigned int line, const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4);
++	template <class Type> Type* RAK_DLL_EXPORT OP_NEW_ARRAY(const int count, const char *file, unsigned int line);
++	template <class Type> void RAK_DLL_EXPORT OP_DELETE(Type *buff, const char *file, unsigned int line);
++	template <class Type> void RAK_DLL_EXPORT OP_DELETE_ARRAY(Type *buff, const char *file, unsigned int line);
  
  	template <class Type>
 -	RAK_DLL_EXPORT Type* OP_NEW(const char *file, unsigned int line)
@@ -35,7 +45,7 @@ index de132908..ddef20c6 100644
  	{
  #if _USE_RAK_MEMORY_OVERRIDE==1
  		char *buffer = (char *) (GetMalloc_Ex())(sizeof(Type), file, line);
-@@ -98,7 +98,7 @@ namespace SLNet
+@@ -98,7 +106,7 @@ namespace SLNet
  	}
  
  	template <class Type, class P1>
@@ -44,7 +54,7 @@ index de132908..ddef20c6 100644
  	{
  #if _USE_RAK_MEMORY_OVERRIDE==1
  		char *buffer = (char *) (GetMalloc_Ex())(sizeof(Type), file, line);
-@@ -112,7 +112,7 @@ namespace SLNet
+@@ -112,7 +120,7 @@ namespace SLNet
  	}
  
  	template <class Type, class P1, class P2>
@@ -53,7 +63,7 @@ index de132908..ddef20c6 100644
  	{
  #if _USE_RAK_MEMORY_OVERRIDE==1
  		char *buffer = (char *) (GetMalloc_Ex())(sizeof(Type), file, line);
-@@ -126,7 +126,7 @@ namespace SLNet
+@@ -126,7 +134,7 @@ namespace SLNet
  	}
  
  	template <class Type, class P1, class P2, class P3>
@@ -62,7 +72,7 @@ index de132908..ddef20c6 100644
  	{
  #if _USE_RAK_MEMORY_OVERRIDE==1
  		char *buffer = (char *) (GetMalloc_Ex())(sizeof(Type), file, line);
-@@ -140,7 +140,7 @@ namespace SLNet
+@@ -140,7 +148,7 @@ namespace SLNet
  	}
  
  	template <class Type, class P1, class P2, class P3, class P4>
@@ -71,7 +81,7 @@ index de132908..ddef20c6 100644
  	{
  #if _USE_RAK_MEMORY_OVERRIDE==1
  		char *buffer = (char *) (GetMalloc_Ex())(sizeof(Type), file, line);
-@@ -155,7 +155,7 @@ namespace SLNet
+@@ -155,7 +163,7 @@ namespace SLNet
  
  
  	template <class Type>
@@ -80,7 +90,7 @@ index de132908..ddef20c6 100644
  	{
  		if (count==0)
  			return 0;
-@@ -179,7 +179,7 @@ namespace SLNet
+@@ -179,7 +187,7 @@ namespace SLNet
  	}
  
  	template <class Type>
@@ -89,7 +99,7 @@ index de132908..ddef20c6 100644
  	{
  #if _USE_RAK_MEMORY_OVERRIDE==1
  		if (buff==0) return;
-@@ -194,7 +194,7 @@ namespace SLNet
+@@ -194,7 +202,7 @@ namespace SLNet
  	}
  
  	template <class Type>
