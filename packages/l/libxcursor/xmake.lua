@@ -1,5 +1,4 @@
 package("libxcursor")
-
     set_homepage("https://www.x.org/")
     set_description("X.Org: X Window System Cursor management library")
 
@@ -15,7 +14,7 @@ package("libxcursor")
         add_deps("pkg-config", "util-macros", "libx11", "libxfixes", "libxrender")
     end
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx", "linux", "cross", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
                          "--localstatedir=" .. package:installdir("var"),
                          "--disable-dependency-tracking",
