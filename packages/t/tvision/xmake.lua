@@ -9,6 +9,10 @@ package("tvision")
 
     add_patches("2025.10.31", "patches/2025.10.31/find-ncurses.patch", "1215d09be45a8c401bc64bb209be4da25f232ae720437e2da496e94d5aa649fb")
 
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     add_deps("cmake")
 
     if is_plat("windows") then
@@ -20,6 +24,9 @@ package("tvision")
     end
 
     on_install("!wasm and !iphoneos and (!android or android@!windows)", function (package)
+        if not package:is_plat("windows") then
+            io.replace("source/CMakeLists.txt", "add_library(${PROJECT_NAME} STATIC ${TVSOURCE})", "add_library(${PROJECT_NAME} ${TVSOURCE})", {plain = true})
+        end
         local configs = {
             "-DTV_BUILD_EXAMPLES=OFF",
             "-DTV_BUILD_TESTS=OFF",
