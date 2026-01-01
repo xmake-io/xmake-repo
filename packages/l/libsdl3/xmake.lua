@@ -136,8 +136,6 @@ package("libsdl3")
                 table.insert(cflags, "-I" .. includedir)
             end
         end
-
-        table.insert(configs, "--trace")
         import("package.tools.cmake").install(package, configs, {cflags = cflags})
     end)
 
