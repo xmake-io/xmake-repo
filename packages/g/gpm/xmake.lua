@@ -6,11 +6,8 @@ package("gpm")
     add_urls("https://github.com/telmich/gpm.git")
     add_versions("2020.06.17", "e82d1a653ca94aa4ed12441424da6ce780b1e530")
 
-    add_deps("autotools")
-
-    if not is_plat("wasm", "iphoneos") and not is_host("windows") then
-        add_deps("ncurses")
-    end
+    add_deps("autotools", "bison")
+    add_deps("ncurses")
 
     on_install("linux", function (package)
         io.replace("src/Makefile.in",
