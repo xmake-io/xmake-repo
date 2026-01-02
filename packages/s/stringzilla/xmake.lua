@@ -10,6 +10,7 @@ package("stringzilla")
     add_configs("cpp", {description = "Enable C++ support.", default = true, type = "boolean"})
     add_configs("stringzillas", {description = "Enable advanced API support.", default = false, type = "boolean"})
 
+    add_versions("v4.6.0", "cba35adab6f0b25d277451e0130798d1a8742e4c52d0ab29c5a5fca54242d0e3")
     add_versions("v4.5.1", "2b706dff69baa28911f7df445f62391b8cc4b6b599c542a015dd685e7ea01948")
     add_versions("v4.4.2", "5c49782bc7f5a7392c8b960248d3cc9ba87b3a9629b665f731a2d407fefe425b")
     add_versions("v4.3.0", "59c31f316ee7d7dc9f8e4dcb0ef7bc39d4b067565335036fbed8d41e92d0a022")
