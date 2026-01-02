@@ -4,18 +4,10 @@ package("ncnn")
     set_license("BSD-3-Clause")
 
     add_urls("https://github.com/Tencent/ncnn/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/Tencent/ncnn.git", {
-        submodules = false,
-        version = function(version)
-            if version then
-                return version:gsub("%.", "")
-            end
-        end
-    })
+            "https://github.com/Tencent/ncnn.git", { submodules = false })
 
     add_versions("20250916", "7d463f1e5061facd02b8af5e792e059088695cdcfcc152c8f4892f6ffe5eab1a")
-    add_versions("2025.09.16", "7d463f1e5061facd02b8af5e792e059088695cdcfcc152c8f4892f6ffe5eab1a")
-    add_versions("2025.05.03", "3afea4cf092ce97d06305b72c6affbcfb3530f536ae8e81a4f22007d82b729e9")
+    add_versions("20250503", "3afea4cf092ce97d06305b72c6affbcfb3530f536ae8e81a4f22007d82b729e9")
 
     add_configs("vulkan",        {description = "Enable Vulkan support", default = false, type = "boolean"})
     add_configs("openmp",        {description = "Enable OpenMP support", default = true, type = "boolean"})
