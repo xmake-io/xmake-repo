@@ -1,5 +1,5 @@
 diff --git a/Source/include/slikenet/DS_List.h b/Source/include/slikenet/DS_List.h
-index a14894dd..b29d3eb1 100644
+index a14894dd..7cef7291 100644
 --- a/Source/include/slikenet/DS_List.h
 +++ b/Source/include/slikenet/DS_List.h
 @@ -38,7 +38,7 @@ namespace DataStructures
@@ -11,15 +11,6 @@ index a14894dd..b29d3eb1 100644
  	{	
  	public:
  		/// Default constructor
-@@ -137,6 +137,8 @@ namespace DataStructures
- 		/// Size of \a array 		
- 		unsigned int allocation_size;
- 	};
-+	template <class list_type>
-+		List<list_type>::List();
- 	template <class list_type>
- 		List<list_type>::List()
- 	{
 diff --git a/Source/include/slikenet/DS_MemoryPool.h b/Source/include/slikenet/DS_MemoryPool.h
 index 5b2e7c59..667bb32f 100644
 --- a/Source/include/slikenet/DS_MemoryPool.h
@@ -60,7 +51,7 @@ index 4df6dcaf..d37b0cb2 100644
  public:
  	// Queue operations
 diff --git a/Source/include/slikenet/Export.h b/Source/include/slikenet/Export.h
-index 4487ef7e..653a1294 100644
+index 4487ef7e..67c057c3 100644
 --- a/Source/include/slikenet/Export.h
 +++ b/Source/include/slikenet/Export.h
 @@ -15,10 +15,16 @@
@@ -84,7 +75,7 @@ index 4487ef7e..653a1294 100644
  
  #define STATIC_FACTORY_DECLARATIONS(x) static x* GetInstance(void); \
 diff --git a/Source/include/slikenet/memoryoverride.h b/Source/include/slikenet/memoryoverride.h
-index de132908..aebc556e 100644
+index de132908..929969b5 100644
 --- a/Source/include/slikenet/memoryoverride.h
 +++ b/Source/include/slikenet/memoryoverride.h
 @@ -82,9 +82,17 @@ extern RAK_DLL_EXPORT int (*GetDLMallocMUnmap())(void* ptr, size_t size);
