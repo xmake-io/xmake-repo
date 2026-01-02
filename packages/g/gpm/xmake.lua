@@ -7,6 +7,7 @@ package("gpm")
     add_versions("2020.06.17", "e82d1a653ca94aa4ed12441424da6ce780b1e530")
 
     add_deps("autotools")
+    add_deps("ncurses")
 
     on_install("!windows", function (package)
         io.replace("src/Makefile.in",
