@@ -24,6 +24,9 @@ package("libxrandr")
         if package:config("pic") then
             table.insert(configs, "--with-pic")
         end
+        if package:is_cross() then
+            table.insert(configs, "--disable-malloc0returnsnull")
+        end
         import("package.tools.autoconf").install(package, configs)
     end)
 
