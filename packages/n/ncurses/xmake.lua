@@ -12,6 +12,7 @@ package("ncurses")
     add_versions("6.3", "97fc51ac2b085d4cde31ef4d2c3122c21abc217e9090a43a30fc5ec21684e059")
     add_versions("6.4", "6931283d9ac87c5073f30b6290c4c75f21632bb4fc3603ac8100812bed248159")
     add_versions("6.5", "136d91bc269a9a5785e5f9e980bc76ab57428f604ce3e5a5a90cebc767971cc6")
+    add_versions("6.6", "355b4cbbed880b0381a04c46617b7656e362585d52e9cf84a67e2009b749ff11")
 
     add_configs("widec", {description = "Compile with wide-char/UTF-8 code.", default = true, type = "boolean"})
 
@@ -65,7 +66,7 @@ package("ncurses")
         end
 
         local cflags = {}
-        if package:version():le("6.5") then
+        if package:version():le("6.6") then
             table.insert(cflags, "-std=c17")
         end
         if package:is_plat("mingw", "cygwin", "msys") then
