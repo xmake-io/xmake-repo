@@ -20,6 +20,12 @@ package("ncurses")
         add_extsources("apt::libncurses-dev")
     end
 
+    if on_check then
+        on_check("mingw@macosx", function(package)
+            assert(package:version():ge("6.6") and macos.version():lt("15"), "package(ncurses >= 6.6): unsupported version on mingw@macosx.")
+        end)
+    end
+
     on_load(function (package)
         if package:is_cross() then
             package:add("deps", "ncurses", {private = true, host = true})
@@ -68,23 +74,6 @@ package("ncurses")
         local cflags = {}
         if package:version():le("6.6") then
             table.insert(cflags, "-std=c17")
-        end
-
-        if package:version():ge("6.6") and package:is_plat("mingw@macosx") then
-            import("core.tool.toolchain")
-            local xcode_dir
-            local xcode_sdkver
-            local xcode = toolchain.load("xcode", {plat = package:plat(), arch = package:arch()})
-            if xcode and xcode.config and xcode:check() then
-                xcode_dir = xcode:config("xcode")
-                xcode_sdkver = xcode:config("xcode_sdkver")
-            end
-            xcode_dir = xcode_dir or get_config("xcode")
-            xcode_sdkver = xcode_sdkver or get_config("xcode_sdkver")
-            if xcode_dir and xcode_sdkver then
-                local xcode_sdkdir = xcode_dir .. "/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX" .. xcode_sdkver .. ".sdk"
-                table.insert(cflags, "-I" .. path.join(xcode_sdkdir, "/usr/include/malloc"))
-            end
         end
 
         if package:is_plat("mingw", "cygwin", "msys") then
