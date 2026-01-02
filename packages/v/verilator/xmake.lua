@@ -44,6 +44,9 @@ package("verilator")
         end
 
         local version = package:version()
+        -- Set verilator version string, for example, "v5.044"
+        -- Otherwise, the `verilator --version` command will print "rev vUNKNOWN-built" if we build from source code tarball instead of a git repository.
+        os.setenv("VERILATOR_SRC_VERSION", package:version_str())
         if version then
             if version:eq("5.042") and package:is_plat("bsd") then
                 io.replace("include/verilatedos_c.h", "#include \"verilatedos.h\"", "#include \"verilatedos.h\"\n#include <pthread_np.h>", {plain = true})
@@ -52,7 +55,7 @@ package("verilator")
             if version:ge("5.024") then
                 io.replace("bin/verilator", "$verilator_root ne realpath($ENV{VERILATOR_ROOT})", "true")
             end
-            
+
             if version:ge("5.030") then
                 io.replace("src/CMakeLists.txt", "MSVC_RUNTIME_LIBRARY MultiThreaded$<IF:$<CONFIG:Release>,,DebugDLL>", "", {plain = true})
             else
