@@ -23,7 +23,7 @@ package("ncurses")
     if on_check then
         on_check("mingw", function(package)
             if is_subhost("macosx") then
-                assert(package:version():ge("6.6") and macos.version():lt("15"), "package(ncurses >= 6.6): unsupported version on mingw@macosx.")
+                assert(package:version():lt("6.6"), "package(ncurses >= 6.6): unsupported version on mingw@macosx.")
             end
         end)
     end
