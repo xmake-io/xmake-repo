@@ -1,0 +1,54 @@
+package("gpm")
+    set_homepage("http://www.nico.schottelius.org/software/gpm/")
+    set_description("general purpose mouse")
+    set_license("GPL-2.0")
+
+    add_urls("https://github.com/telmich/gpm.git")
+    add_versions("2020.06.17", "e82d1a653ca94aa4ed12441424da6ce780b1e530")
+
+    add_deps("autotools")
+
+    on_install("!windows", function (package)
+        io.replace("src/Makefile.in",
+            [[gpm lib/libgpm.so.@abi_lev@ lib/libgpm.so @LIBGPM_A@ $(PROG)]],
+            [[gpm lib/libgpm.so.@abi_lev@ lib/libgpm.so lib/libgpm.a $(PROG)]], {plain = true})
+        local configs = {}
+        table.insert(configs, "--prefix=" .. path.unix(package:installdir()))
+        table.insert(configs, 'CFLAGS=-std=c17 -fPIC')
+        if package:is_debug() then
+            table.insert(configs, "--enable-debug")
+        end
+        table.insert(configs, "--enable-static")
+        os.vrunv("./autogen.sh", {shell = true})
+        os.vrunv("./configure", configs, {shell = true})
+        local prefix = "PREFIX=" .. path.unix(package:installdir()),
+        os.vrunv("make", prefix)
+        os.vrunv("make install", prefix)
+        local libdir = path.join(package:installdir(), "lib")
+        if package:config("shared") then
+            os.cd(libdir)
+            if os.isfile("libgpm.so.2") then
+                os.ln("libgpm.so.2", "libgpm.so")
+            elseif os.isfile("libgpm.so.2.1.0") then
+                os.ln("libgpm.so.2.1.0", "libgpm.so")
+            end
+            os.rm("libgpm.a")
+        else
+            os.rm(path.join(libdir, "libgpm.so*"))
+        end
+    end)
+
+    on_test(function (package)
+        assert(package:check_csnippets({test = [[
+            #include <gpm.h>
+            void test() {
+                Gpm_Connect conn = {
+                    .eventMask = GPM_DOWN | GPM_UP | GPM_DRAG | GPM_MOVE,
+                    .defaultMask = 0,
+                    .minMod = 0,
+                    .maxMod = (unsigned short) ~(1 << 0)
+                };
+                Gpm_Open(&conn, 0);
+            }
+        ]]}, {configs = {languages = "c11"}}))
+    end)
