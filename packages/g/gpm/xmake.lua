@@ -24,16 +24,15 @@ package("gpm")
         os.vrunv("make", args)
         os.vrunv("make install", args)
         local libdir = path.join(package:installdir(), "lib")
+        os.cd(libdir)
         if package:config("shared") then
-            os.cd(libdir)
-            if os.isfile("libgpm.so.2") then
-                os.ln("libgpm.so.2", "libgpm.so")
-            elseif os.isfile("libgpm.so.2.1.0") then
-                os.ln("libgpm.so.2.1.0", "libgpm.so")
+            local files = os.files("libgpm.so.*")
+            if #files > 0 then
+                os.ln(path.filename(files[1]), "libgpm.so")
             end
-            os.rm("libgpm.a")
+            os.tryrm("libgpm.a")
         else
-            os.rm(path.join(libdir, "libgpm.so*"))
+            os.tryrm("libgpm.so*")
         end
     end)
 
