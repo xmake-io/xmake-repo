@@ -18,7 +18,7 @@ package("qbdi")
         add_configs("validator", {description = "Build the validator library.", default = true, type = "boolean"})
     end
 
-    add_patches("v0.12.0", "patches/v0.12.0/unbundle-spdlog.patch", "cfe99819dcf2007a491aca5861122e6ea4b1419a4ee4028f4227c9ef7a54748d")
+    add_patches(">=0.12.0", "patches/v0.12.0/unbundle-spdlog.patch", "cfe99819dcf2007a491aca5861122e6ea4b1419a4ee4028f4227c9ef7a54748d")
 
     add_patches("v0.12.0", "patches/v0.12.0/explicitly-use-non-executable-stack.patch", "a2628cd1f0c92cc8ef67c13d944a397d9aee21abce5e382e73f2a168497b8625")
     add_patches("v0.12.0", "patches/v0.12.0/set-llvm-host-triple.patch", "47df87484ed9403e31e5e83859e6e1d5fdb5a353631948fda008f11282932891")
