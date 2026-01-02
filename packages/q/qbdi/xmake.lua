@@ -22,6 +22,7 @@ package("qbdi")
 
     add_patches("v0.12.0", "patches/v0.12.0/explicitly-use-non-executable-stack.patch", "a2628cd1f0c92cc8ef67c13d944a397d9aee21abce5e382e73f2a168497b8625")
     add_patches("v0.12.0", "patches/v0.12.0/set-llvm-host-triple.patch", "47df87484ed9403e31e5e83859e6e1d5fdb5a353631948fda008f11282932891")
+    add_patches("v0.12.0", "patches/v0.12.0/fix-build-android-x86-64.patch", "69cc15efa38fd36547d4f5261a5e1aac6dd02aa183e2c13552dbce140ef4ad2f")
 
     local qbdi_platforms = {
         linux = "linux",
