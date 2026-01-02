@@ -19,7 +19,7 @@ package("libfyaml")
         end)
     end
 
-    on_install("!windows and !mingw", function (package)
+    on_install("linux", "macosx", "android", "iphoneos", "cross", function (package)
         io.replace("CMakeLists.txt", "-fPIC", "", {plain = true})
 
         local configs = {"-DBUILD_TESTING=OFF", "-DENABLE_LIBCLANG=OFF"}
