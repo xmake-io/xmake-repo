@@ -14,16 +14,15 @@ package("gpm")
             [[gpm lib/libgpm.so.@abi_lev@ lib/libgpm.so lib/libgpm.a $(PROG)]], {plain = true})
         local configs = {}
         table.insert(configs, "--prefix=" .. path.unix(package:installdir()))
-        table.insert(configs, 'CFLAGS=-std=c17 -fPIC')
+        table.insert(configs, 'CFLAGS=-std=c17')
         if package:is_debug() then
             table.insert(configs, "--enable-debug")
         end
-        table.insert(configs, "--enable-static")
         os.vrunv("./autogen.sh", {shell = true})
         os.vrunv("./configure", configs, {shell = true})
-        local prefix = "PREFIX=" .. path.unix(package:installdir()),
-        os.vrunv("make", prefix)
-        os.vrunv("make install", prefix)
+        local args = {"PREFIX=" .. path.unix(package:installdir())}
+        os.vrunv("make", args)
+        os.vrunv("make install", args)
         local libdir = path.join(package:installdir(), "lib")
         if package:config("shared") then
             os.cd(libdir)
