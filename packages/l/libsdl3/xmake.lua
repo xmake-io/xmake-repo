@@ -62,7 +62,7 @@ package("libsdl3")
             package:set("policy", "package.cmake_generator.ninja", true)
         end
         if package:is_plat("linux", "bsd", "cross") and package:config("x11") then
-            package:add("deps", "libxext", "libxcursor", "libxfixes", "libxi", "libxrandr", {private = true})
+            package:add("deps", "libxext", "libxcursor", "libxfixes", "libxi", "libxrandr", "libxss", {private = true})
         end
         if package:is_plat("linux", "bsd", "cross") and package:config("wayland") then
             package:add("deps", "wayland", {private = true})
@@ -96,6 +96,7 @@ package("libsdl3")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSDL_TEST_LIBRARY=OFF")
         table.insert(configs, "-DSDL_EXAMPLES=OFF")
+        table.insert(configs, "-DSDL_X11_XTEST=OFF")
 
         local cflags
         local packagedeps
@@ -111,6 +112,7 @@ package("libsdl3")
             table.insert(packagedeps, "libx11")
             table.insert(packagedeps, "libxi")
             table.insert(packagedeps, "libxrandr")
+            table.insert(packagedeps, "libxss")
             table.insert(packagedeps, "xorgproto")
             table.insert(packagedeps, "wayland")
         elseif package:is_plat("wasm") then

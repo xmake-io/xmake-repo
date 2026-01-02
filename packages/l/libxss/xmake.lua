@@ -1,25 +1,28 @@
-package("libxext")
-    set_homepage("https://www.x.org/")
-    set_description("X.Org: Library for common extensions to the X11 protocol")
+package("libxss")
+    set_homepage("https://gitlab.freedesktop.org/xorg/lib/libxscrnsaver")
+    set_description("XScreenSaver - X11 Screen Saver extension client library")
+    set_license("MIT")
 
-    set_urls("https://www.x.org/archive/individual/lib/libXext-$(version).tar.gz")
-    add_versions("1.3.5", "1a3dcda154f803be0285b46c9338515804b874b5ccc7a2b769ab7fd76f1035bd")
-    add_versions("1.3.6", "1a0ac5cd792a55d5d465ced8dbf403ed016c8e6d14380c0ea3646c4415496e3d")
+    add_urls("https://gitlab.freedesktop.org/xorg/lib/libxscrnsaver/-/archive/libXScrnSaver-$(version)/libxscrnsaver-libXScrnSaver-$(version).tar.gz", {alias = "release"})
+    add_urls("https://gitlab.freedesktop.org/xorg/lib/libxscrnsaver.git", {alias = "git"})
+
+    add_versions("release:1.2.5", "127cd6862cfe7bcd14aa882e82695b3ca2b05e0cc9c208cadbbfb0f6a1114734")
+
+    add_versions("git:1.2.5", "libXScrnSaver-1.2.5")
 
     if is_plat("linux") then
-        add_extsources("apt::libxext-dev")
+        add_extsources("apt::libxss-dev")
     end
 
     if is_plat("macosx", "linux", "bsd", "cross") then
-        add_deps("pkg-config", "libx11", "xorgproto")
+        add_deps("automake", "autoconf", "libtool", "libx11", "libxext", "xorgproto")
     end
 
     on_install("macosx", "linux", "bsd", "cross", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
                          "--localstatedir=" .. package:installdir("var"),
                          "--disable-dependency-tracking",
-                         "--disable-silent-rules",
-                         "--enable-specs=no"}
+                         "--disable-silent-rules"}
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         if package:config("pic") then
@@ -32,5 +35,5 @@ package("libxext")
     end)
 
     on_test(function (package)
-        assert(package:has_ctypes("XShapeEvent", {includes = "X11/extensions/shape.h"}))
+        assert(package:has_ctypes("XScreenSaverInfo", {includes = "X11/extensions/scrnsaver.h"}))
     end)
