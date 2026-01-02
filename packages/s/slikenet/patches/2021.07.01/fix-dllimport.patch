@@ -1,3 +1,64 @@
+diff --git a/Source/include/slikenet/DS_List.h b/Source/include/slikenet/DS_List.h
+index a14894dd..b29d3eb1 100644
+--- a/Source/include/slikenet/DS_List.h
++++ b/Source/include/slikenet/DS_List.h
+@@ -38,7 +38,7 @@ namespace DataStructures
+ 	/// \brief Array based implementation of a list.
+ 	/// \note ONLY USE THIS FOR SHALLOW COPIES.  I don't bother with operator= to improve performance.
+ 	template <class list_type>
+-	class RAK_DLL_EXPORT List
++	class List
+ 	{	
+ 	public:
+ 		/// Default constructor
+@@ -137,6 +137,8 @@ namespace DataStructures
+ 		/// Size of \a array 		
+ 		unsigned int allocation_size;
+ 	};
++	template <class list_type>
++		List<list_type>::List();
+ 	template <class list_type>
+ 		List<list_type>::List()
+ 	{
+diff --git a/Source/include/slikenet/DS_MemoryPool.h b/Source/include/slikenet/DS_MemoryPool.h
+index 5b2e7c59..667bb32f 100644
+--- a/Source/include/slikenet/DS_MemoryPool.h
++++ b/Source/include/slikenet/DS_MemoryPool.h
+@@ -39,7 +39,7 @@ namespace DataStructures
+ 	/// Very fast memory pool for allocating and deallocating structures that don't have constructors or destructors.
+ 	/// Contains a list of pages, each of which has an array of the user structures
+ 	template <class MemoryBlockType>
+-	class RAK_DLL_EXPORT MemoryPool
++	class MemoryPool
+ 	{
+ 	public:
+ 		struct Page;
+diff --git a/Source/include/slikenet/DS_Queue.h b/Source/include/slikenet/DS_Queue.h
+index dd82bd1a..348e6845 100644
+--- a/Source/include/slikenet/DS_Queue.h
++++ b/Source/include/slikenet/DS_Queue.h
+@@ -33,7 +33,7 @@ namespace DataStructures
+ {
+ 	/// \brief A queue implemented as an array with a read and write index.
+ 	template <class queue_type>
+-	class RAK_DLL_EXPORT Queue
++	class Queue
+ 	{
+ 	public:
+ 		Queue();
+diff --git a/Source/include/slikenet/DS_ThreadsafeAllocatingQueue.h b/Source/include/slikenet/DS_ThreadsafeAllocatingQueue.h
+index 4df6dcaf..d37b0cb2 100644
+--- a/Source/include/slikenet/DS_ThreadsafeAllocatingQueue.h
++++ b/Source/include/slikenet/DS_ThreadsafeAllocatingQueue.h
+@@ -34,7 +34,7 @@ namespace DataStructures
+ {
+ 
+ template <class structureType>
+-class RAK_DLL_EXPORT ThreadsafeAllocatingQueue
++class ThreadsafeAllocatingQueue
+ {
+ public:
+ 	// Queue operations
 diff --git a/Source/include/slikenet/Export.h b/Source/include/slikenet/Export.h
 index 4487ef7e..653a1294 100644
 --- a/Source/include/slikenet/Export.h
