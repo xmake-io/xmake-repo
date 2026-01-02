@@ -62,7 +62,7 @@ package("libsdl3")
             package:set("policy", "package.cmake_generator.ninja", true)
         end
         if package:is_plat("linux", "bsd", "cross") and package:config("x11") then
-            package:add("deps", "libxext", "libxcursor", "libxfixes", "libxi", "libxrandr", "libxss", {private = true})
+            package:add("deps", "libxext", "libxcursor", "libxfixes", "libxi", "libxrandr", "libxrender", "libxss", {private = true})
         end
         if package:is_plat("linux", "bsd", "cross") and package:config("wayland") then
             package:add("deps", "wayland", {private = true})
@@ -101,20 +101,11 @@ package("libsdl3")
         local cflags
         local packagedeps
         if not package:is_plat("wasm") then
-            packagedeps = {"egl-headers", "opengl-headers"}
+            packagedeps = table.join2(packagedeps or {}, {"egl-headers", "opengl-headers"})
         end
 
         if package:is_plat("linux", "bsd", "cross") then
-            table.insert(packagedeps, "libxcursor")
-            table.insert(packagedeps, "libxext")
-            table.insert(packagedeps, "libxfixes")
-            table.insert(packagedeps, "libxcb")
-            table.insert(packagedeps, "libx11")
-            table.insert(packagedeps, "libxi")
-            table.insert(packagedeps, "libxrandr")
-            table.insert(packagedeps, "libxss")
-            table.insert(packagedeps, "xorgproto")
-            table.insert(packagedeps, "wayland")
+            packagedeps = table.join2(packagedeps or {}, {"libxcursor", "libxext", "libxfixes", "libxcb", "libx11", "libxi", "libxrandr", "libxrender", "libxss", "xorgproto", "wayland"})
         elseif package:is_plat("wasm") then
             -- emscripten enables USE_SDL by default which will conflict with libsdl headers
             cflags = {"-sUSE_SDL=0"}
