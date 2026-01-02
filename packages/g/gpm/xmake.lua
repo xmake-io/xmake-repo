@@ -12,17 +12,22 @@ package("gpm")
         add_deps("ncurses")
     end
 
-    on_install("!windows", function (package)
+    on_install("linux", function (package)
         io.replace("src/Makefile.in",
             [[gpm lib/libgpm.so.@abi_lev@ lib/libgpm.so @LIBGPM_A@ $(PROG)]],
             [[gpm lib/libgpm.so.@abi_lev@ lib/libgpm.so lib/libgpm.a $(PROG)]], {plain = true})
+        local libtool = package:dep("libtool")
+        local envs = {}
+        if libtool then
+            envs.ACLOCAL_PATH = path.join(libtool:installdir("share"), "aclocal")
+        end
         local configs = {}
         table.insert(configs, "--prefix=" .. path.unix(package:installdir()))
         table.insert(configs, 'CFLAGS=-std=c17')
         if package:is_debug() then
             table.insert(configs, "--enable-debug")
         end
-        os.vrunv("./autogen.sh", {shell = true})
+        os.vrunv("./autogen.sh", {shell = true}, {envs = envs})
         os.vrunv("./configure", configs, {shell = true})
         local args = {"PREFIX=" .. path.unix(package:installdir())}
         os.vrunv("make", args)
