@@ -10,6 +10,11 @@ package("gpm")
     add_deps("ncurses")
 
     on_install("linux", function (package)
+        os.mkdir(path.join(package:installdir(), "bin"))
+        os.mkdir(path.join(package:installdir(), "sbin"))
+        os.mkdir(path.join(package:installdir(), "lib"))
+        os.mkdir(path.join(package:installdir(), "include"))
+        os.mkdir(path.join(package:installdir(), "etc"))
         io.replace("src/Makefile.in",
             [[gpm lib/libgpm.so.@abi_lev@ lib/libgpm.so @LIBGPM_A@ $(PROG)]],
             [[gpm lib/libgpm.so.@abi_lev@ lib/libgpm.so lib/libgpm.a $(PROG)]], {plain = true})
@@ -28,7 +33,7 @@ package("gpm")
         os.vrunv("./configure", configs, {shell = true})
         local args = {"PREFIX=" .. path.unix(package:installdir())}
         os.vrunv("make", args)
-        os.vrunv("make install", args)
+        os.vrunv("make -C src install", args)
         local libdir = path.join(package:installdir(), "lib")
         os.cd(libdir)
         if package:config("shared") then
