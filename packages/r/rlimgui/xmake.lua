@@ -14,7 +14,6 @@ package("rlimgui")
     add_deps("imgui", {configs = {docking = true, wchar32 = true}})
 
     on_install("!cross and !bsd and !iphoneos", function (package)
-        local configs = {}
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             set_languages("c99", "c++17")
