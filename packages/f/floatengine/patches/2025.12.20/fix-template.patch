@@ -1,0 +1,110 @@
+diff --git a/FloatEngine/FloatApi.h b/FloatEngine/FloatApi.h
+index cd2b34f..3dde595 100644
+--- a/FloatEngine/FloatApi.h
++++ b/FloatEngine/FloatApi.h
+@@ -1374,15 +1374,21 @@ public:
+     template <typename T>
+     class ClassRegistrar {
+     public:
+-        ClassRegistrar(sol::state& lua, const std::string& name, bool is_derived = false)
+-            : lua_(lua), class_name_(name), is_derived_(is_derived) {
++        ClassRegistrar(sol::state& lua, const std::string& name)
++            : lua_(lua), class_name_(name) {
++            usertype_ = lua_.new_usertype<T>(
++                name,
++                sol::base_classes, sol::bases<Bases...>()
++            );
+         }
+ 
+         /**
+          * @brief 启用std::shared_ptr智能指针管理
+          */
+-        ClassRegistrar<T>& enableSharedPtr() {
+-            use_shared_ptr_ = true;
++        ClassRegistrar& enableSharedPtr() {
++            lua_[class_name_]["create"] = [](auto&&... args) {
++                return std::make_shared<T>(std::forward<decltype(args)>(args)...);
++            };
+             return *this;
+         }
+ 
+@@ -1391,7 +1397,7 @@ public:
+          */
+         template <typename... Args>
+         ClassRegistrar& addConstructor() {
+-            constructors_ = std::make_tuple<Args...>();
++            usertype_.set(sol::call_constructor, sol::constructors<T(Args...)>());
+             return *this;
+         }
+ 
+@@ -1400,7 +1406,7 @@ public:
+          */
+         template <typename Func>
+         ClassRegistrar& addFunction(const std::string& name, Func func) {
+-            functions_[name] = func;
++            usertype_.set(name, func);
+             return *this;
+         }
+ 
+@@ -1409,7 +1415,7 @@ public:
+          */
+         template <typename Prop>
+         ClassRegistrar& addProperty(const std::string& name, Prop prop) {
+-            properties_[name] = prop;
++            usertype_.set(name, prop);
+             return *this;
+         }
+ 
+@@ -1418,7 +1424,7 @@ public:
+          */
+         template <typename Func>
+         ClassRegistrar& addStaticFunction(const std::string& name, Func func) {
+-            static_functions_[name] = func;
++            usertype_.set(name, func);
+             return *this;
+         }
+ 
+@@ -1427,20 +1433,14 @@ public:
+          */
+         template <typename Destructor>
+         ClassRegistrar& addDestructor(Destructor dtor) {
+-            destructor_ = dtor;
++            usertype_.set(sol::meta_function::garbage_collect, dtor);
+             return *this;
+         }
+ 
+         /**
+          * @brief 完成类注册
+          */
+-        void endClass() {
+-            // 实际的注册逻辑在析构函数中执行
+-        }
+-
+-        ~ClassRegistrar() {
+-            registerClass();
+-        }
++        ~ClassRegistrar() = default;
+ 
+     private:
+         void registerClass() {
+@@ -1501,6 +1501,7 @@ public:
+     private:
+         sol::state& lua_;
+         std::string class_name_;
++        sol::usertype<T> usertype_;
+         bool is_derived_;
+         bool use_shared_ptr_ = false;
+         std::tuple<> constructors_;
+@@ -1571,9 +1572,9 @@ public:
+      * @param is_derived 是否为派生类
+      * @return ClassRegistrar<T> 用于链式添加成员的对象
+      */
+-    template <typename T>
+-    ClassRegistrar<T> RegisterClass(const std::string& name, bool is_derived = false) {
+-        return ClassRegistrar<T>(lua_, name, is_derived);
++    template <typename T, typename... Bases>
++    ClassRegistrar<T, Bases...> RegisterClass(const std::string& name) {
++        return ClassRegistrar<T, Bases...>(lua_, name);
+     }
+ 
+     /**

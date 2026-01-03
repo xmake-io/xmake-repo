@@ -1,10 +1,13 @@
 package("floatengine")
     set_homepage("https://github.com/Fls-Float/FloatEngine")
-    set_description("FloatEngine的源代码")
+    set_description("A high-performance, cross-platform C++ game engine.")
     set_license("MIT")
 
     add_urls("https://github.com/fls-float/FloatEngine.git")
+
     add_versions("2025.12.20", "d3754c2b8235fe1920aea65cfd7cd9247c758408")
+
+    add_patches("2025.12.20", "patches/2025.12.20/fix-template.patch", "d0207aab06f0d976450af3eac0181847bfbcf20e68ca5528c0a659fd33564159")
 
     add_deps("minizip-ng", {configs = {bzip2 = true}})
     add_deps("lua", "libcurl", "slikenet", "nlohmann_json", "nativefiledialog-extended", "fls-float-raylib", "sol2", "imgui")
@@ -30,7 +33,6 @@ package("floatengine")
         io.replace("FloatEngine/FMath.cpp", "#include <numeric>", "#include <numeric>\n#include <cfloat>", {plain = true})
         io.replace("FloatEngine/F_Network.h", "#include <memory>", "#include <memory>\n#include <cstdint>", {plain = true})
         io.replace("FloatEngine/FloatApi.h", "struct ImGuiInputTextCallbackData;", "#include <cfloat>\nstruct ImGuiInputTextCallbackData;", {plain = true})
-        local configs = {}
         io.writefile("xmake.lua", [[
             set_languages("c11", "c++17")
             add_rules("mode.release", "mode.debug")
@@ -46,9 +48,7 @@ package("floatengine")
                                 "(FloatEngine/*.hpp)")
                 add_includedirs("FloatEngine",
                                 "FloatEngine/gui/include")
-                if is_plat("windows", "mingw") then
-                    add_syslinks("user32", "kernel32")
-                end
+                add_syslinks("user32", "kernel32")
         ]])
         import("package.tools.xmake").install(package)
     end)
