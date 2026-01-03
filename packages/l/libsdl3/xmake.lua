@@ -39,6 +39,8 @@ package("libsdl3")
     add_versions("github:3.2.2", "release-3.2.2")
     add_versions("github:3.2.0", "release-3.2.0")
 
+    add_patches("3.4.0", "patches/3.4.0/fix-ios.patch", "feffa146aa825f97fc431f115f3990a7a0ad0214d05a9765f2cfbd3633465bf8")
+
     add_deps("cmake", "egl-headers", "opengl-headers")
 
     if is_plat("linux", "bsd", "cross") then
