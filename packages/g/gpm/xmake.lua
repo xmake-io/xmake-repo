@@ -10,7 +10,7 @@ package("gpm")
     add_deps("ncurses")
 
     on_install("linux", "cross", function (package)
-        for _, dir in ipairs({"bin", "sbin", "lib", "include", "etc"}) do
+        for _, dir in ipairs({"bin", "sbin", "lib", "include"}) do
             os.mkdir(path.join(package:installdir(), dir))
         end
         io.replace("src/Makefile.in",
