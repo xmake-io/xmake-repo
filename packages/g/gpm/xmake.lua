@@ -30,7 +30,7 @@ package("gpm")
             table.insert(configs, "--enable-debug")
         end
         local envs = import("package.tools.autoconf").buildenvs(package)
-        envs.CFLAGS = (envs.CFLAGS or "") .. " -std=c17"
+        envs.CFLAGS = (envs.CFLAGS or "") .. " -std=c11"
         import("package.tools.autoconf").install(package, configs, {
             envs = envs,
             makeconfigs = {
