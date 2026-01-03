@@ -10,19 +10,12 @@ package("gpm")
     add_deps("ncurses")
 
     on_install("linux", "cross", function (package)
-        os.mkdir(path.join(package:installdir(), "bin"))
-        os.mkdir(path.join(package:installdir(), "sbin"))
-        os.mkdir(path.join(package:installdir(), "lib"))
-        os.mkdir(path.join(package:installdir(), "include"))
-        os.mkdir(path.join(package:installdir(), "etc"))
+        for _, dir in ipairs({"bin", "sbin", "lib", "include", "etc"}) do
+            os.mkdir(path.join(package:installdir(), dir))
+        end
         io.replace("src/Makefile.in",
             [[gpm lib/libgpm.so.@abi_lev@ lib/libgpm.so @LIBGPM_A@ $(PROG)]],
             [[gpm lib/libgpm.so.@abi_lev@ lib/libgpm.so lib/libgpm.a $(PROG)]], {plain = true})
-        local libtool = package:dep("libtool")
-        local envs = {}
-        if libtool then
-            envs.ACLOCAL_PATH = path.join(libtool:installdir("share"), "aclocal")
-        end
         local configs = {}
         table.insert(configs, "--enable-static")
         table.insert(configs, "--enable-shared")
