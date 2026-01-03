@@ -1,0 +1,17 @@
+diff --git a/FloatEngine/winfuns.h b/FloatEngine/winfuns.h
+index 3fab49a..30371e1 100644
+--- a/FloatEngine/winfuns.h
++++ b/FloatEngine/winfuns.h
+@@ -4,12 +4,9 @@
+ 
+ #ifdef LINK_WINFUNS
+ #include "rlgl.h"
+-#pragma comment(lib,"iphlpapi.lib")
+ #ifndef CALLBACK
+ #define CALLBACK __stdcall
+ #endif
+-#pragma comment(lib,"kernel32.lib")
+-#pragma comment(lib,"user32.lib")
+ #ifndef DECLARE_HANDLE
+ #define DECLARE_HANDLE(name) struct name##__{int unused;}; typedef struct name##__ *name
+ #endif
