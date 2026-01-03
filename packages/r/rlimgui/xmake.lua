@@ -6,10 +6,14 @@ package("rlimgui")
     add_urls("https://github.com/raylib-extras/rlImGui.git")
     add_versions("2025.11.27", "dc7f97679a024eee8f5f009e77cc311748200415")
 
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     add_deps("raylib")
     add_deps("imgui", {configs = {docking = true, wchar32 = true}})
 
-    on_install(function (package)
+    on_install("!cross and !bsd and !iphoneos", function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
@@ -38,5 +42,5 @@ package("rlimgui")
             void test() {
                 rlImGuiBegin();
             }
-        ]]}, {includes = {"rlImGui.h"}, configs = {languages = "c++14"}}))
+        ]]}, {includes = {"rlImGui.h"}, configs = {languages = "c++17"}}))
     end)
