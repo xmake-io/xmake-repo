@@ -35,5 +35,5 @@ package("libxss")
     end)
 
     on_test(function (package)
-        assert(package:has_ctypes("XScreenSaverInfo", {includes = "X11/extensions/scrnsaver.h"}))
+        assert(package:has_cfuncs("XScreenSaverQueryInfo", {includes = "X11/extensions/scrnsaver.h"}))
     end)
