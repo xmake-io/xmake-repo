@@ -47,8 +47,7 @@ package("floatengine")
                           "FloatEngine/*.c")
                 add_headerfiles("(FloatEngine/*.h)",
                                 "(FloatEngine/*.hpp)")
-                add_includedirs("FloatEngine",
-                                "FloatEngine/gui/include")
+                add_includedirs("FloatEngine")
                 add_syslinks("user32", "kernel32", "ws2_32", "iphlpapi")
                 add_defines("WIN32_LEAN_AND_MEAN", "NOMINMAX")
         ]])
