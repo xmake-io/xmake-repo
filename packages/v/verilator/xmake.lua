@@ -14,7 +14,6 @@ package("verilator")
     add_versions("v5.034", "002da98e316ca6eee40407f5deb7d7c43a0788847d39c90d4d31ddbbc03020e8")
     add_versions("v5.032", "5a262564b10be8bdb31ff4fb67d77bcf5f52fc1b4e6c88d5ca3264fb481f1e41")
     add_versions("v5.016", "66fc36f65033e5ec904481dd3d0df56500e90c0bfca23b2ae21b4a8d39e05ef1")
-    add_versions("v5.032", "5a262564b10be8bdb31ff4fb67d77bcf5f52fc1b4e6c88d5ca3264fb481f1e41")
 
     add_deps("cmake")
 
@@ -44,9 +43,6 @@ package("verilator")
         end
 
         local version = package:version()
-        -- Set verilator version string, for example, "v5.044"
-        -- Otherwise, the `verilator --version` command will print "rev vUNKNOWN-built" if we build from source code tarball instead of a git repository.
-        os.setenv("VERILATOR_SRC_VERSION", package:version_str())
         if version then
             if version:eq("5.042") and package:is_plat("bsd") then
                 io.replace("include/verilatedos_c.h", "#include \"verilatedos.h\"", "#include \"verilatedos.h\"\n#include <pthread_np.h>", {plain = true})
@@ -90,6 +86,9 @@ package("verilator")
 
         local opt = {}
         opt.envs = cmake.buildenvs(package)
+        -- Set verilator version string, for example, "v5.044"
+        -- Otherwise, the `verilator --version` command will print "rev vUNKNOWN-built" if we build from source code tarball instead of a git repository.
+        opt.envs.VERILATOR_SRC_VERSION = package:version_str()
         local winflexbison = package:dep("winflexbison")
         if winflexbison then
             opt.envs.WIN_FLEX_BISON = winflexbison:installdir("include")
