@@ -9,7 +9,7 @@ package("gpm")
     add_deps("autotools", "bison")
     add_deps("ncurses")
 
-    on_install(function (package)
+    on_install("linux", "cross", function (package)
         os.mkdir(path.join(package:installdir(), "bin"))
         os.mkdir(path.join(package:installdir(), "sbin"))
         os.mkdir(path.join(package:installdir(), "lib"))
