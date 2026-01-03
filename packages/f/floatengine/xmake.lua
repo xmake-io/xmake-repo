@@ -14,7 +14,7 @@ package("floatengine")
     add_deps("lua", "libcurl", "slikenet", "nlohmann_json", "nativefiledialog-extended", "fls-float-raylib", "sol2", "imgui")
 
     if is_plat("windows", "mingw") then
-        add_syslinks("user32", "kernel32")
+        add_syslinks("user32", "kernel32", "ws2_32", "iphlpapi")
     end
 
     on_install("windows", "mingw", function (package)
