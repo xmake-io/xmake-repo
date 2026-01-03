@@ -9,6 +9,10 @@ package("floatengine")
     add_deps("minizip-ng", {configs = {bzip2 = true}})
     add_deps("lua", "libcurl", "slikenet", "nlohmann_json", "nativefiledialog-extended", "fls-float-raylib", "sol2", "imgui")
 
+    if is_plat("windows", "mingw") then
+        add_syslinks("user32", "kernel32")
+    end
+
     on_install("windows", "mingw", function (package)
         io.replace("FloatEngine/F_Resource.cpp", [[#include "minizip-ng/]], [[#include "minizip/]], {plain = true})
         io.replace("FloatEngine/F_Network.cpp", [[#include "F_NetWork.h"]], [[#include "F_Network.h"]], {plain = true})
@@ -21,7 +25,8 @@ package("floatengine")
                                             #endif
                                             #ifndef WSASYS_STATUS_LEN
                                             #define WSASYS_STATUS_LEN       128
-                                            #endif]], {plain = true})
+                                            #endif
+                                            #include <sal.h>]], {plain = true})
         io.replace("FloatEngine/FMath.cpp", "#include <numeric>", "#include <numeric>\n#include <cfloat>", {plain = true})
         io.replace("FloatEngine/F_Network.h", "#include <memory>", "#include <memory>\n#include <cstdint>", {plain = true})
         io.replace("FloatEngine/FloatApi.h", "struct ImGuiInputTextCallbackData;", "#include <cfloat>\nstruct ImGuiInputTextCallbackData;", {plain = true})
@@ -41,6 +46,9 @@ package("floatengine")
                                 "(FloatEngine/*.hpp)")
                 add_includedirs("FloatEngine",
                                 "FloatEngine/gui/include")
+                if is_plat("windows", "mingw") then
+                    add_syslinks("user32", "kernel32")
+                end
         ]])
         import("package.tools.xmake").install(package)
     end)
