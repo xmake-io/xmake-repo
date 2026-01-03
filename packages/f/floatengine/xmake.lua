@@ -7,7 +7,7 @@ package("floatengine")
 
     add_versions("2025.12.20", "d3754c2b8235fe1920aea65cfd7cd9247c758408")
 
-    add_patches("2025.12.20", "patches/2025.12.20/fix-template.patch", "d0207aab06f0d976450af3eac0181847bfbcf20e68ca5528c0a659fd33564159")
+    add_patches("2025.12.20", "patches/2025.12.20/fix-template.patch", "59bdf5837e8fd1d210198d2213123ee7ab36aa5ef8b594363c872ffcfd2f7b79")
 
     add_deps("minizip-ng", {configs = {bzip2 = true}})
     add_deps("lua", "libcurl", "slikenet", "nlohmann_json", "nativefiledialog-extended", "fls-float-raylib", "sol2", "imgui")
