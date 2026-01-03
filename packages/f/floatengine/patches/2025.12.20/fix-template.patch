@@ -1,5 +1,5 @@
 diff --git a/FloatEngine/FloatApi.h b/FloatEngine/FloatApi.h
-index cd2b34f..bc0b614 100644
+index cd2b34f..c46a48d 100644
 --- a/FloatEngine/FloatApi.h
 +++ b/FloatEngine/FloatApi.h
 @@ -1370,19 +1370,27 @@ class F_Lua {
@@ -218,4 +218,16 @@ index cd2b34f..bc0b614 100644
 -
          enum_tables_[name] = enum_table;
      }
+ 
+@@ -1845,11 +1781,6 @@ namespace F_Gui {
+ };
+ 
+ 
+-template<typename T>
+-template<typename U>
+-inline auto F_Lua::ClassRegistrar<T>::getBaseClass() -> void
+-{
+-}
+ 
+ 
  
