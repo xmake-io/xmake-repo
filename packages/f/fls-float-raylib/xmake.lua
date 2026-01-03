@@ -22,12 +22,7 @@ package("fls-float-raylib")
     end
     add_deps("opengl", {optional = true})
 
-    on_install("macosx|x86_64", function (package)
-        os.cp("include/*.h", package:installdir("include"))
-        os.cp("lib/libraylib.a", package:installdir("lib"))
-    end)
-
-    on_install("windows", "linux", "macosx|arm64", "mingw", "wasm", "android", function (package)
+    on_install("windows", "mingw", function (package)
         local configs = {"-DBUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
