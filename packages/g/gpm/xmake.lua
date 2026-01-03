@@ -9,7 +9,7 @@ package("gpm")
     add_deps("autotools", "bison")
     add_deps("ncurses")
 
-    on_install("linux", function (package)
+    on_install(function (package)
         os.mkdir(path.join(package:installdir(), "bin"))
         os.mkdir(path.join(package:installdir(), "sbin"))
         os.mkdir(path.join(package:installdir(), "lib"))
@@ -24,16 +24,21 @@ package("gpm")
             envs.ACLOCAL_PATH = path.join(libtool:installdir("share"), "aclocal")
         end
         local configs = {}
-        table.insert(configs, "--prefix=" .. path.unix(package:installdir()))
-        table.insert(configs, 'CFLAGS=-std=c17')
+        table.insert(configs, "--enable-static")
+        table.insert(configs, "--enable-shared")
         if package:is_debug() then
             table.insert(configs, "--enable-debug")
         end
-        os.vrunv("./autogen.sh", {shell = true}, {envs = envs})
-        os.vrunv("./configure", configs, {shell = true})
-        local args = {"PREFIX=" .. path.unix(package:installdir())}
-        os.vrunv("make", args)
-        os.vrunv("make -C src install", args)
+        local envs = import("package.tools.autoconf").buildenvs(package)
+        envs.CFLAGS = (envs.CFLAGS or "") .. " -std=c17"
+        import("package.tools.autoconf").install(package, configs, {
+            envs = envs,
+            makeconfigs = {
+                "-C", "src",
+                "install",
+                "PREFIX=" .. path.unix(package:installdir())
+            }
+        })
         local libdir = path.join(package:installdir(), "lib")
         os.cd(libdir)
         if package:config("shared") then
