@@ -1,5 +1,5 @@
 diff --git a/FloatEngine/winfuns.h b/FloatEngine/winfuns.h
-index 3fab49a..9cc5d55 100644
+index 3fab49a..422516b 100644
 --- a/FloatEngine/winfuns.h
 +++ b/FloatEngine/winfuns.h
 @@ -4,12 +4,9 @@
@@ -48,8 +48,7 @@ index 3fab49a..9cc5d55 100644
 +		void CALLBACK SetConsoleOutputCP(unsigned int cp);
  #endif
  #if (!defined(ZeroMemory))
--		void ZeroMemory(void* memory, int size);
-+		void CALLBACK ZeroMemory(void* memory, int size);
+ 		void ZeroMemory(void* memory, int size);
  #endif
  #if (!defined(LoadIconA)&&!defined(LoadIconW))
 -		void* LoadIconW(void* , const wchar_t* );

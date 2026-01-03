@@ -7,7 +7,7 @@ package("floatengine")
 
     add_versions("2025.12.20", "d3754c2b8235fe1920aea65cfd7cd9247c758408")
 
-    add_patches("2025.12.20", "patches/2025.12.20/cleanup.patch", "c7c7d90efb97bea8a163a218a6d5196d644b1d5c1428b6078da5a6283b0204ee")
+    add_patches("2025.12.20", "patches/2025.12.20/cleanup.patch", "55ba6f8e4fa3855d9e998d381a148cf31a977e99174c27a33753095275994cc5")
     add_patches("2025.12.20", "patches/2025.12.20/fix-template.patch", "66450b0e49549d602e7436d234b46af83e779778398b4d2bb4fc9b5376143388")
 
     add_deps("minizip-ng", {configs = {bzip2 = true}})
