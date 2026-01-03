@@ -22,6 +22,9 @@ package("floatengine")
                                             #ifndef WSASYS_STATUS_LEN
                                             #define WSASYS_STATUS_LEN       128
                                             #endif]], {plain = true})
+        io.replace("FloatEngine/FMath.cpp", "#include <numeric>", "#include <numeric>\n#include <cfloat>", {plain = true})
+        io.replace("FloatEngine/F_Network.h", "#include <memory>", "#include <memory>\n#include <cstdint>", {plain = true})
+        io.replace("FloatEngine/FloatApi.h", "struct ImGuiInputTextCallbackData;", "#include <cfloat>\nstruct ImGuiInputTextCallbackData;", {plain = true})
         local configs = {}
         io.writefile("xmake.lua", [[
             set_languages("c11", "c++17")
