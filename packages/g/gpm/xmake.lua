@@ -1,5 +1,5 @@
 package("gpm")
-    set_homepage("http://www.nico.schottelius.org/software/gpm/")
+    set_homepage("https://www.nico.schottelius.org/software/gpm/")
     set_description("general purpose mouse")
     set_license("GPL-2.0-or-later")
 
