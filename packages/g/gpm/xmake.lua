@@ -1,7 +1,7 @@
 package("gpm")
     set_homepage("http://www.nico.schottelius.org/software/gpm/")
     set_description("general purpose mouse")
-    set_license("GPL-2.0")
+    set_license("GPL-2.0-or-later")
 
     add_urls("https://github.com/telmich/gpm.git")
     add_versions("2020.06.17", "e82d1a653ca94aa4ed12441424da6ce780b1e530")
