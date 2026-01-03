@@ -15,6 +15,7 @@ package("volk")
     add_urls("https://github.com/zeux/volk.git", {alias = "git"})
 
     -- when adding a new sdk version, please ensure vulkan-headers, vulkan-hpp, vulkan-loader, vulkan-tools, vulkan-validationlayers, vulkan-utility-libraries, spirv-headers, spirv-reflect, spirv-tools, glslang and volk packages are updated simultaneously
+    add_versions("archive:1.4.321+0", "021ed905eea6f3e2cc8a60a21459ee7b43f98f32052ca30f27a3be390b7a4862")
     add_versions("archive:1.4.309+0", "1724924d8e3dccf0c508887edb79d56d9dd11b0738eab5a44e2fa95b8a9ebe1c")
     add_versions("archive:1.3.290+0", "bb6a6d616c0f2bbd5d180da982a6d92a0948581cec937de69f17883980c6ca06")
     add_versions("archive:1.3.283+0", "872035f1f26c53b218632a3a8dbccbd276710aaabafb9bb1bc1a6c0633ee6aab")
@@ -25,6 +26,7 @@ package("volk")
     add_versions("archive:1.3.250+1", "673241c6561fb4965f873d7fcdece17d950b24c77d6cf41466e47bdc2af67b81")
     add_versions("archive:1.3.231+1", "fac8d3d295e88bcc6bfb2b729d2c4babb2ea04ccb39fd918a3471b2d756789b9")
 
+    add_versions("git:1.4.321+0", "vulkan-sdk-1.4.321.0")
     add_versions("git:1.4.309+0", "vulkan-sdk-1.4.309.0")
     add_versions("git:1.3.290+0", "vulkan-sdk-1.3.290.0")
     add_versions("git:1.3.283+0", "vulkan-sdk-1.3.283.0")
