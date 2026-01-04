@@ -13,7 +13,10 @@ package("gpm")
         local configs = {}
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
-        import("package.tools.autoconf").install(package, configs)
+
+        -- fix gcc15
+        local opt = {cxflags = "-std=c11"}
+        import("package.tools.autoconf").install(package, configs, opt)
 
         os.cd(package:installdir("lib"))
         if package:config("shared") then
