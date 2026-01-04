@@ -1,17 +1,21 @@
-package("libxrandr")
-    set_homepage("https://www.x.org/")
-    set_description("X.Org: X Resize, Rotate and Reflection extension library")
+package("libxss")
+    set_homepage("https://gitlab.freedesktop.org/xorg/lib/libxscrnsaver")
+    set_description("XScreenSaver - X11 Screen Saver extension client library")
+    set_license("MIT")
 
-    set_urls("https://www.x.org/archive/individual/lib/libXrandr-$(version).tar.gz")
-    add_versions("1.5.2", "3f10813ab355e7a09f17e147d61b0ce090d898a5ea5b5519acd0ef68675dcf8e")
-    add_versions("1.5.4", "c72c94dc3373512ceb67f578952c5d10915b38cc9ebb0fd176a49857b8048e22")
+    add_urls("https://gitlab.freedesktop.org/xorg/lib/libxscrnsaver/-/archive/libXScrnSaver-$(version)/libxscrnsaver-libXScrnSaver-$(version).tar.gz", {alias = "release"})
+    add_urls("https://gitlab.freedesktop.org/xorg/lib/libxscrnsaver.git", {alias = "git"})
+
+    add_versions("release:1.2.5", "127cd6862cfe7bcd14aa882e82695b3ca2b05e0cc9c208cadbbfb0f6a1114734")
+
+    add_versions("git:1.2.5", "libXScrnSaver-1.2.5")
 
     if is_plat("linux") then
-        add_extsources("apt::libxrandr-dev")
+        add_extsources("apt::libxss-dev")
     end
 
     if is_plat("macosx", "linux", "bsd", "cross") then
-        add_deps("pkg-config", "libx11", "libxext", "libxrender", "xorgproto")
+        add_deps("automake", "autoconf", "libtool", "libx11", "libxext", "xorgproto")
     end
 
     on_install("macosx", "linux", "bsd", "cross", function (package)
@@ -31,5 +35,5 @@ package("libxrandr")
     end)
 
     on_test(function (package)
-        assert(package:has_ctypes("XRRScreenSize", {includes = "X11/extensions/Xrandr.h"}))
+        assert(package:has_cfuncs("XScreenSaverQueryInfo", {includes = "X11/extensions/scrnsaver.h"}))
     end)
