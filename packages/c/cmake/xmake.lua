@@ -194,7 +194,7 @@ package("cmake")
     end)
 
     on_install("@linux", "@windows", "@msys", "@cygwin", function (package)
-        if linuxos.name() == "alpine" then
+        if is_host("linux") and linuxos.name() == "alpine" then
             import("core.base.option")
             os.vrunv("sh", {"./bootstrap", "--parallel=" .. (option.get("jobs") or tostring(os.default_njob())),
                 "--prefix=" .. package:installdir(), "--", "-DCMAKE_USE_OPENSSL=OFF"})
