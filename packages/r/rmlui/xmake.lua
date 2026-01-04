@@ -48,6 +48,13 @@ package("rmlui")
             io.replace("Include/RmlUi/Core/Types.h", "#include <cstdlib>", "#include <cstdlib>\n#include <cstdint>\n", {plain = true})
         end
 
+        if package:version() and package:version():eq("6.1") then
+            io.replace("Include/RmlUi/Core/Containers/robin_hood.h", "#include <algorithm>", [[
+            #include <algorithm>
+            #include <cstdint>
+            ]], {plain = true})
+        end
+        
         local configs = {"-DBUILD_TESTING=OFF", "-DBUILD_SAMPLES=OFF"}
         if package:is_plat("macosx") and package:is_arch("arm64") then
             table.insert(configs, "-DCMAKE_OSX_ARCHITECTURES=arm64")
