@@ -5,6 +5,7 @@ package("libthai")
     set_license("LGPL-2.1")
 
     add_urls("https://github.com/tlwg/libthai/releases/download/v$(version)/libthai-$(version).tar.xz")
+    add_versions("0.1.30", "ddba8b53dfe584c3253766030218a88825488a51a7deef041d096e715af64bdd")
     add_versions("0.1.29", "fc80cc7dcb50e11302b417cebd24f2d30a8b987292e77e003267b9100d0f4bcd")
     
     add_deps("libdatrie", "pkg-config", "autoconf", "automake","m4", "libtool")
