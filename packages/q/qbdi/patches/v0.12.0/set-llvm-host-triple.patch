@@ -1,0 +1,29 @@
+From a3eee180d6a09bf1bb0259930960961c826b1f2a Mon Sep 17 00:00:00 2001
+From: Redbeanw44602 <redbeana44945@gmail.com>
+Date: Wed, 31 Dec 2025 13:31:39 +0800
+Subject: [PATCH] fix: use LLVM_HOST_TRIPLE instead of
+ LLVM_DEFAULT_TARGET_TRIPLE.
+
+---
+ cmake/llvm/QBDI_llvm.cmake | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/cmake/llvm/QBDI_llvm.cmake b/cmake/llvm/QBDI_llvm.cmake
+index 8a1e335..fad60c1 100644
+--- a/cmake/llvm/QBDI_llvm.cmake
++++ b/cmake/llvm/QBDI_llvm.cmake
+@@ -145,9 +145,9 @@ if(QBDI_PLATFORM_WINDOWS)
+ endif()
+ 
+ if(NOT ("${QBDI_LLVM_TRIPLE}" STREQUAL ""))
+-  set(LLVM_DEFAULT_TARGET_TRIPLE
++  set(LLVM_HOST_TRIPLE
+       "${QBDI_LLVM_TRIPLE}"
+-      CACHE STRING "set LLVM_DEFAULT_TARGET_TRIPLE")
++      CACHE STRING "set LLVM_HOST_TRIPLE")
+ endif()
+ 
+ # build llvm with visibility hidden
+-- 
+2.52.0
+
