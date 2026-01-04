@@ -6,40 +6,24 @@ package("gpm")
     add_urls("https://github.com/telmich/gpm.git")
     add_versions("2020.06.17", "e82d1a653ca94aa4ed12441424da6ce780b1e530")
 
-    add_deps("autotools", "bison")
+    add_deps("autotools", "bison", "texinfo")
     add_deps("ncurses")
 
     on_install("linux", "cross", function (package)
-        for _, dir in ipairs({"bin", "sbin", "lib", "include"}) do
-            os.mkdir(path.join(package:installdir(), dir))
-        end
-        io.replace("src/Makefile.in",
-            [[gpm lib/libgpm.so.@abi_lev@ lib/libgpm.so @LIBGPM_A@ $(PROG)]],
-            [[gpm lib/libgpm.so.@abi_lev@ lib/libgpm.so lib/libgpm.a $(PROG)]], {plain = true})
         local configs = {}
-        table.insert(configs, "--enable-static")
-        table.insert(configs, "--enable-shared")
-        if package:is_debug() then
-            table.insert(configs, "--enable-debug")
-        end
-        local envs = import("package.tools.autoconf").buildenvs(package)
-        envs.CFLAGS = (envs.CFLAGS or "") .. " -std=c11"
-        import("package.tools.autoconf").install(package, configs, {
-            envs = envs,
-            makeconfigs = {
-                "-C", "src",
-                "install",
-                "PREFIX=" .. path.unix(package:installdir())
-            }
-        })
-        local libdir = path.join(package:installdir(), "lib")
-        os.cd(libdir)
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+
+        -- fix gcc15
+        local opt = {cxflags = "-std=c11"}
+        import("package.tools.autoconf").install(package, configs, opt)
+
+        os.cd(package:installdir("lib"))
         if package:config("shared") then
             local files = os.files("libgpm.so.*")
             if #files > 0 then
                 os.ln(path.filename(files[1]), "libgpm.so")
             end
-            os.tryrm("libgpm.a")
         else
             os.tryrm("libgpm.so*")
         end
