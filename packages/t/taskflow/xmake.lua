@@ -7,6 +7,7 @@ package("taskflow")
     add_urls("https://github.com/taskflow/taskflow.git")
     add_urls("https://github.com/taskflow/taskflow/archive/refs/tags/$(version).tar.gz")
 
+    add_versions("v4.0.0", "d98f3e44d3d33ee669720b018242240f6cb42595a1f4fca9703b82678516eed0")
     add_versions("v3.11.0", "5e45a7ee032cae136843c76824519acbc0306f02d682f7e69fb1d53f69173dcb")
     add_versions("v3.10.0", "fe86765da417f6ceaa2d232ffac70c9afaeb3dc0816337d39a7c93e39c2dee0b")
     add_versions("v3.9.0", "d872a19843d12d437eba9b8664835b7537b92fe01fdb33ed92ca052d2483be2d")
@@ -51,5 +52,5 @@ package("taskflow")
                 });
                 executor.run(taskflow).wait();
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = {languages = package:version():ge("4.0.0") and "c++20" or "c++17"}}))
     end)
