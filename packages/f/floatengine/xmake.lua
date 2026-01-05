@@ -18,6 +18,7 @@ package("floatengine")
     end
 
     on_install("windows", "mingw", function (package)
+        os.rmdir("FloatEngine/gui")
         io.replace("FloatEngine/F_Resource.cpp", [[#include "minizip-ng/]], [[#include "minizip/]], {plain = true})
         io.replace("FloatEngine/F_Network.cpp", [[#include "F_NetWork.h"]], [[#include "F_Network.h"]], {plain = true})
         io.replace("FloatEngine/F_Network.cpp", [[#include "slikenet/Peer.h"]], [[#include "slikenet/peer.h"]], {plain = true})
