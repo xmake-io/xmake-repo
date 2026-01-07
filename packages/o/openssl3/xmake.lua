@@ -34,6 +34,9 @@ package("openssl3")
 
     -- https://security.stackexchange.com/questions/173425/how-do-i-calculate-md2-hash-with-openssl
     add_configs("md2", {description = "Enable MD2 on OpenSSl3 or not", default = false, type = "boolean"})
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     -- @see https://github.com/xmake-io/xmake-repo/pull/7797#issuecomment-3153471643
     if is_plat("windows") then
