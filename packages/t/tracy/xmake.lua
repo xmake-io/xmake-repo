@@ -56,6 +56,15 @@ package("tracy")
         add_syslinks("pthread", "execinfo")
     end
 
+    if on_check then
+        on_check("android", function (package)
+            if package:version() and package:version():eq("v0.13.1") then
+                local ndk = package:toolchain("ndk"):config("ndkver")
+                assert(ndk and tonumber(ndk) > 22, "package(tracy v0.13.1) require ndk version > 22")
+            end
+        end)
+    end
+
     on_load(function (package)
         if package:config("cmake") then
             package:add("deps", "cmake")
