@@ -33,7 +33,11 @@ package("libsodium")
                 table.insert(configs, "--enable-static=yes")
                 table.insert(configs, "--enable-shared=no")
             end
-            import("package.tools.autoconf").install(package, configs)
+            local cflags = {}
+            if package:is_plat("linux") and package:is_arch("arm64") then
+                table.insert(cflags, "-flax-vector-conversions")
+            end
+            import("package.tools.autoconf").install(package, configs, { cflags = cflags })
         else
             os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
             import("package.tools.xmake").install(package)
