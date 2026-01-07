@@ -71,9 +71,6 @@ package("openssl3")
         elseif package:is_plat("linux", "bsd", "cross") then
             package:add("syslinks", "pthread", "dl")
         end
-        if package:is_plat("linux", "mingw", "msys") and package:is_arch("x86_64") then
-            package:add("linkdirs", "lib64")
-        end
         if package:is_plat("linux") then
             package:add("extsources", "apt::libssl-dev")
         end
@@ -130,7 +127,7 @@ package("openssl3")
     end)
 
     on_install("mingw", "msys", function (package)
-        local configs = {"Configure", "no-tests"}
+        local configs = {"Configure", "--libdir=lib", "no-tests"}
         table.insert(configs, package:is_arch("i386", "x86") and "mingw" or "mingw64")
         table.insert(configs, package:config("shared") and "shared" or "no-shared")
         local installdir = package:installdir()
@@ -161,15 +158,13 @@ package("openssl3")
         os.vrunv("perl", configs, {envs = buildenvs})
         import("package.tools.make").build(package)
         import("package.tools.make").make(package, {"install_sw"})
-        if os.isdir(package:installdir("lib64")) and package:is_arch("x86_64") then
-            os.trycp(path.join(package:installdir("lib64"), "*"), package:installdir("lib"))
-        end
     end)
 
     on_install("linux", "macosx", "bsd", function (package)
         -- https://wiki.openssl.org/index.php/Compilation_and_Installation#PREFIX_and_OPENSSLDIR
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
         local configs = {"--openssldir=" .. package:installdir(),
+                         "--libdir=lib",
                          "--prefix=" .. package:installdir()}
         table.insert(configs, package:config("shared") and "shared" or "no-shared")
         if package:debug() then
@@ -185,10 +180,7 @@ package("openssl3")
         import("package.tools.make").build(package, makeconfigs)
         import("package.tools.make").make(package, {"install_sw"})
         if package:config("shared") then
-            os.tryrm(path.join(package:installdir("lib"), "*.a"), path.join(package:installdir("lib64"), "*.a"))
-        end
-        if package:is_plat("linux") and os.isdir(package:installdir("lib64")) and package:is_arch("x86_64") then
-            os.trycp(path.join(package:installdir("lib64"), "*"), package:installdir("lib"))
+            os.tryrm(path.join(package:installdir("lib"), "*.a"))
         end
     end)
 
@@ -231,6 +223,7 @@ package("openssl3")
                          "-DOPENSSL_NO_HEARTBEATS",
                          package:config("shared") and "shared" or "no-shared",
                          "no-threads",
+                         "--libdir=lib",
                          "--openssldir=" .. package:installdir():gsub("\\", "/"),
                          "--prefix=" .. package:installdir():gsub("\\", "/")}
 
@@ -262,7 +255,7 @@ package("openssl3")
         import("package.tools.make").build(package, makeconfigs)
         import("package.tools.make").make(package, {"install_sw"})
         if package:config("shared") then
-            os.tryrm(path.join(package:installdir("lib"), "*.a"), path.join(package:installdir("lib64"), "*.a"))
+            os.tryrm(path.join(package:installdir("lib"), "*.a"))
         end
     end)
 
