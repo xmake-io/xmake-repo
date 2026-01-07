@@ -13,7 +13,7 @@ package("lwlog")
         add_syslinks("pthread")
     end
 
-    add_includedirs("include/src")
+    add_includedirs("include/src", "include/lwlog")
 
     add_deps("cmake")
 
@@ -36,8 +36,9 @@ package("lwlog")
         assert(package:check_cxxsnippets({test = [[
             #include <lwlog.h>
             void test() {
-                lwlog::init_default_logger();
-                lwlog::info("Info message");
+                auto basic = std::make_shared<lwlog::basic_logger<lwlog::sinks::stdout_sink>>("CONSOLE");
+                auto console = std::make_shared<lwlog::console_logger>("CONSOLE");
+                auto file = std::make_shared<lwlog::file_logger>("FILE", "C:/Users/user/Desktop/LogFolder/LOGS.txt");
             }
         ]]}, {configs = {languages = "c++17"}}))
     end)
