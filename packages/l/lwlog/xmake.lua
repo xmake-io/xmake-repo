@@ -6,6 +6,7 @@ package("lwlog")
     add_urls("https://github.com/ChristianPanov/lwlog/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ChristianPanov/lwlog.git")
 
+    add_versions("v1.5.0", "1820842edf252235aa97a7c876cba5455fcec767a68ac7ca5b05b673269b9942")
     add_versions("v1.3.1", "63123ff25b15d46ad0a89d4c85dd7c22d63382b89ed251607b3cbd908698a6da")
 
     if is_plat("linux", "bsd") then
