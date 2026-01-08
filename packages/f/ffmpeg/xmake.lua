@@ -217,6 +217,9 @@ package("ffmpeg")
         elseif package:is_plat("linux") then
             table.insert(configs, "--target-os=linux")
             table.insert(configs, "--enable-pthreads")
+            if package:has_tool("cxx", "clang") then
+                table.insert(configs, "--cc=clang")
+            end
         elseif package:is_plat("macosx", "iphoneos") then
             table.insert(configs, "--target-os=darwin")
             if package:is_plat("macosx") then
