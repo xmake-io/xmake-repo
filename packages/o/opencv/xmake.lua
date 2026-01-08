@@ -260,7 +260,7 @@ package("opencv")
                                "opencv_cudabgsegm", "opencv_cudafeatures2d", "opencv_cudastereo", "opencv_cudaimgproc", "opencv_cudafilters",
                                "opencv_cudaarithm", "opencv_cudawarping", "opencv_cudacodec", "opencv_cudev", "opencv_gapi", "opencv_objdetect",
                                "opencv_highgui", "opencv_videoio", "opencv_video", "opencv_calib3d", "opencv_dnn", "opencv_features2d",
-                               "opencv_flann", "opencv_imgcodecs", "opencv_imgproc", "opencv_core"}) do
+                               "opencv_flann", "opencv_imgcodecs", "opencv_imgproc", "opencv_core", "kleidicv_hal", "kleidicv_thread", "kleidicv"}) do
             local reallink = link
             if package:is_plat("windows", "mingw") then
                 reallink = reallink .. package:version():gsub("%.", "")
