@@ -45,7 +45,9 @@ package("libsdl3")
 
     if is_plat("linux", "bsd", "cross") then
         add_configs("x11", {description = "Enables X11 support", default = true, type = "boolean"})
+        add_configs("x11_shared", {description = "Dynamically load X11 support", default = true, type = "boolean"})
         add_configs("wayland", {description = "Enables Wayland support", default = nil, type = "boolean"})
+        add_configs("wayland_shared", {description = "Dynamically load Wayland support", default = true, type = "boolean"})
     end
 
     if is_plat("wasm") then
@@ -64,10 +66,18 @@ package("libsdl3")
             package:set("policy", "package.cmake_generator.ninja", true)
         end
         if package:is_plat("linux", "bsd", "cross") and package:config("x11") then
-            package:add("deps", "libxext", "libxcursor", "libxfixes", "libxi", "libxrandr", "libxrender", "libxss", {private = true})
+            if package:config("x11_shared") then
+                package:add("deps", "libx11", "libxcb", "libxext", "libxcursor", "libxfixes", "libxi", "libxrandr", "libxrender", "libxss", {private = true, configs = {shared = true}})
+            else
+                package:add("deps", "libx11", "libxcb", "libxext", "libxcursor", "libxfixes", "libxi", "libxrandr", "libxrender", "libxss")
+            end
         end
         if package:is_plat("linux", "bsd", "cross") and package:config("wayland") then
-            package:add("deps", "wayland", {private = true})
+            if package:config("wayland_shared") then
+                package:add("deps", "wayland", {private = true, configs = {shared = true}})
+            else
+                package:add("deps", "wayland")
+            end
         end
         local libsuffix = package:is_debug() and "d" or ""
         if not package:config("shared") then
@@ -99,6 +109,14 @@ package("libsdl3")
         table.insert(configs, "-DSDL_TEST_LIBRARY=OFF")
         table.insert(configs, "-DSDL_EXAMPLES=OFF")
         table.insert(configs, "-DSDL_X11_XTEST=OFF")
+        if package:is_plat("linux", "bsd", "cross") then
+            table.insert(configs, "-DSDL_X11=" .. (package:config("x11") and "ON" or "OFF"))
+            table.insert(configs, "-DSDL_X11_SHARED=" .. (package:config("x11_shared") and "ON" or "OFF"))
+        end
+        if package:is_plat("linux", "bsd", "cross") then
+            table.insert(configs, "-DSDL_WAYLAND=" .. (package:config("wayland") and "ON" or "OFF"))
+            table.insert(configs, "-DSDL_WAYLAND_SHARED=" .. (package:config("wayland_shared") and "ON" or "OFF"))
+        end
 
         local cflags
         local packagedeps
@@ -112,7 +130,7 @@ package("libsdl3")
             -- emscripten enables USE_SDL by default which will conflict with libsdl headers
             cflags = {"-sUSE_SDL=0"}
         end
-        
+
         local includedirs = {}
         for _, depname in ipairs(packagedeps) do
             local dep = package:dep(depname)
