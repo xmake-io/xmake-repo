@@ -71,8 +71,6 @@ package("libsdl3")
             for _, lib in ipairs(deplibs) do
                 package:add("deps", lib, depconfig)
             end
-            print("on_load libsdl3 deps")
-            print(package:get("deps"))
         end
         if package:is_plat("linux", "bsd", "cross") and package:config("wayland") then
             if package:config("wayland_shared") then
@@ -129,11 +127,6 @@ package("libsdl3")
         elseif package:is_plat("wasm") then
             -- emscripten enables USE_SDL by default which will conflict with libsdl headers
             cflags = {"-sUSE_SDL=0"}
-        end
-
-        print("on_install libsdl3 deps")
-        for depname, dep in pairs(package:deps()) do
-            print(depname, dep:fetch())
         end
 
         local includedirs = {}
