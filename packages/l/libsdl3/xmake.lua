@@ -112,8 +112,6 @@ package("libsdl3")
         if package:is_plat("linux", "bsd", "cross") then
             table.insert(configs, "-DSDL_X11=" .. (package:config("x11") and "ON" or "OFF"))
             table.insert(configs, "-DSDL_X11_SHARED=" .. (package:config("x11_shared") and "ON" or "OFF"))
-        end
-        if package:is_plat("linux", "bsd", "cross") then
             table.insert(configs, "-DSDL_WAYLAND=" .. (package:config("wayland") and "ON" or "OFF"))
             table.insert(configs, "-DSDL_WAYLAND_SHARED=" .. (package:config("wayland_shared") and "ON" or "OFF"))
         end
