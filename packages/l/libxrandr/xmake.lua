@@ -11,8 +11,12 @@ package("libxrandr")
     end
 
     if is_plat("macosx", "linux", "bsd", "cross") then
-        add_deps("pkg-config", "libx11", "libxext", "libxrender", "xorgproto")
+        add_deps("pkg-config", "xorgproto")
     end
+
+    on_load(function (package)
+        package:add("deps", "libx11", "libxext", "libxrender", { configs = { shared = package:config("shared") } })
+    end)
 
     on_install("macosx", "linux", "bsd", "cross", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),

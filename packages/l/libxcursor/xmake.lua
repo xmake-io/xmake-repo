@@ -11,8 +11,12 @@ package("libxcursor")
     end
 
     if is_plat("macosx", "linux", "bsd", "cross") then
-        add_deps("pkg-config", "util-macros", "libx11", "libxfixes", "libxrender")
+        add_deps("pkg-config", "util-macros")
     end
+
+    on_load(function (package)
+        package:add("deps", "libx11", "libxfixes", "libxrender", { configs = { shared = package:config("shared") } })
+    end)
 
     on_install("macosx", "linux", "bsd", "cross", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),

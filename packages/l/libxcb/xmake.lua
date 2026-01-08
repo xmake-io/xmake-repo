@@ -49,13 +49,16 @@ package("libxcb")
 
     if is_plat("macosx", "linux", "bsd", "cross") then
         add_deps("pkg-config", "python 3.x", {kind = "binary"})
-        add_deps("xcb-proto", "libpthread-stubs", "libxau", "libxdmcp")
+        add_deps("xcb-proto", "libpthread-stubs")
     end
 
-    on_load("linux", function(package)
-        for name, opt in pairs(components) do
-            if opt.apt_package and package:config(name) then
-                package:add("extsources", opt.apt_package)
+    on_load(function(package)
+        package:add("deps", "libxau", "libxdmcp", { configs = { shared = package:config("shared") } })
+        if package:is_plat("linux") then
+            for name, opt in pairs(components) do
+                if opt.apt_package and package:config(name) then
+                    package:add("extsources", opt.apt_package)
+                end
             end
         end
     end)
