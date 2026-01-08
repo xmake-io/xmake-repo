@@ -66,11 +66,10 @@ package("libsdl3")
             package:set("policy", "package.cmake_generator.ninja", true)
         end
         if package:is_plat("linux", "bsd", "cross") and package:config("x11") then
-            local libs = {"libx11", "libxcb", "libxext", "libxcursor", "libxfixes", "libxi", "libxrandr", "libxrender", "libxss"}
-            if package:config("x11_shared") then
-                package:add("deps", table.unpack(libs), {private = true, configs = {shared = true}})
-            else
-                package:add("deps", table.unpack(libs))
+            local deplibs = {"libx11", "libxcb", "libxext", "libxcursor", "libxfixes", "libxi", "libxrandr", "libxrender", "libxss"}
+            local depconfig = package:config("x11_shared") and {private = true, configs = {shared = true}} or nil
+            for _, lib in ipairs(deplibs) do
+                package:add("deps", lib, depconfig)
             end
             print("on_load libsdl3 deps")
             print(package:get("deps"))
