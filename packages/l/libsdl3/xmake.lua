@@ -66,10 +66,11 @@ package("libsdl3")
             package:set("policy", "package.cmake_generator.ninja", true)
         end
         if package:is_plat("linux", "bsd", "cross") and package:config("x11") then
+            local libs = {"libx11", "libxcb", "libxext", "libxcursor", "libxfixes", "libxi", "libxrandr", "libxrender", "libxss"}
             if package:config("x11_shared") then
-                package:add("deps", "libx11", "libxcb", "libxext", "libxcursor", "libxfixes", "libxi", "libxrandr", "libxrender", "libxss", {private = true, configs = {shared = true}})
+                package:add("deps", table.unpack(libs), {private = true, configs = {shared = true}})
             else
-                package:add("deps", "libx11", "libxcb", "libxext", "libxcursor", "libxfixes", "libxi", "libxrandr", "libxrender", "libxss")
+                package:add("deps", table.unpack(libs))
             end
         end
         if package:is_plat("linux", "bsd", "cross") and package:config("wayland") then
@@ -108,10 +109,10 @@ package("libsdl3")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSDL_TEST_LIBRARY=OFF")
         table.insert(configs, "-DSDL_EXAMPLES=OFF")
-        table.insert(configs, "-DSDL_X11_XTEST=OFF")
         if package:is_plat("linux", "bsd", "cross") then
             table.insert(configs, "-DSDL_X11=" .. (package:config("x11") and "ON" or "OFF"))
             table.insert(configs, "-DSDL_X11_SHARED=" .. (package:config("x11_shared") and "ON" or "OFF"))
+            table.insert(configs, "-DSDL_X11_XTEST=OFF")
             table.insert(configs, "-DSDL_WAYLAND=" .. (package:config("wayland") and "ON" or "OFF"))
             table.insert(configs, "-DSDL_WAYLAND_SHARED=" .. (package:config("wayland_shared") and "ON" or "OFF"))
         end
