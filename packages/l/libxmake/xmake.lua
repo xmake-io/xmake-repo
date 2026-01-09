@@ -7,6 +7,7 @@ package("libxmake")
              "https://github.com/xmake-io/xmake.git",
              "https://gitlab.com/tboox/xmake.git")
 
+    add_versions("v3.0.6", "1f7bd9ab7f7cbeade4ecd81f3580898e8d78aa5f64cea44239a9506ff41bc397")
     add_versions("v3.0.5", "b947666281222f79e082283b6f84e68880c499305890f6ab8b03b8bac82456dc")
     add_versions("v3.0.4", "b6968dbe266029987bee0a389175f8898042c0bd38f279befc40adaf8e67ce04")
     add_versions("v3.0.3", "49d70671f40f28a1d8125df1a2b318cbd44608a26fa3c60587be3a5ad835b0fb")
@@ -19,6 +20,7 @@ package("libxmake")
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     add_configs("embed", {description = "Embed lua scripts.", default = true, type = "boolean"})
 
+    add_patches("3.0.6", "patches/3.0.6/fix_embed_binary.diff", "862a73b2f89930aaf353ddedeed7060b0407a1e57495918e60073deea497bced")
     add_patches("2.9.8", "patches/2.9.8/xmake-cli.patch", "8d1cc779a4ee6a6958c4e5d9dae2f8811210518a1a48f47c540c363053f6b10b")
 
     add_includedirs("include")
