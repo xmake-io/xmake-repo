@@ -20,6 +20,7 @@ package("fls-float-rlimgui")
             { "PlaySound(",   "rlPlaySound(" },
             { "StopSound(",   "rlStopSound(" },
             { "(Rectangle)",  "(rlRectangle)" },
+            { "Rectangle{",   "rlRectangle{" },
             { "Rectangle;",   "rlRectangle;" },
             { "Rectangle ",   "rlRectangle " },
             { "CloseWindow(", "rlCloseWindow(" },
