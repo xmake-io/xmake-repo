@@ -10,6 +10,8 @@ package("floatengine")
     add_patches("2025.12.20", "patches/2025.12.20/cleanup.patch", "55ba6f8e4fa3855d9e998d381a148cf31a977e99174c27a33753095275994cc5")
     add_patches("2025.12.20", "patches/2025.12.20/fix-template.patch", "66450b0e49549d602e7436d234b46af83e779778398b4d2bb4fc9b5376143388")
 
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+
     add_deps("minizip-ng", {configs = {bzip2 = true}})
     add_deps("lua", "libcurl", "slikenet", "nlohmann_json", "nativefiledialog-extended", "sol2")
     add_deps("fls-float-raylib", "fls-float-rlimgui")
