@@ -1,13 +1,13 @@
 package("fls-float-raylib")
     set_base("raylib")
 
-    on_install("windows", "linux", "macosx|arm64", "mingw", "wasm", "android", function (package)
+    on_install("windows", "mingw", function (package)
         local renaming_rules = {
             { "ShowCursor(",  "rlShowCursor(" },
             { "HideCursor(",  "rlHideCursor(" },
             { "PlaySound(",   "rlPlaySound(" },
             { "StopSound(",   "rlStopSound(" },
-            { "Rectangle(",   "rlRectangle(" },
+            { "Rectangle",   "rlRectangle" },
             { "CloseWindow(", "rlCloseWindow(" },
             { "LoadImage(",   "rlLoadImage(" },
             { "DrawText(",    "rlDrawText(" },

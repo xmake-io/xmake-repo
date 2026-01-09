@@ -13,13 +13,13 @@ package("fls-float-rlimgui")
     add_deps("fls-float-raylib")
     add_deps("imgui", {configs = {docking = true, wchar32 = true}})
 
-    on_install("!cross and !bsd and !iphoneos", function (package)
+    on_install("windows", "mingw", function (package)
         local renaming_rules = {
             { "ShowCursor(",  "rlShowCursor(" },
             { "HideCursor(",  "rlHideCursor(" },
             { "PlaySound(",   "rlPlaySound(" },
             { "StopSound(",   "rlStopSound(" },
-            { "Rectangle(",   "rlRectangle(" },
+            { "Rectangle",   "rlRectangle" },
             { "CloseWindow(", "rlCloseWindow(" },
             { "LoadImage(",   "rlLoadImage(" },
             { "DrawText(",    "rlDrawText(" },
