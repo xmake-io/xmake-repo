@@ -27,6 +27,7 @@ package("glslang-nihui")
             message(WARNING "Disabled CMake Debug Postfix for xmake package generation")
         ]], {plain = true})
         io.replace("CMakeLists.txt", "set(CMAKE_CXX_STANDARD 17)", "set(CMAKE_CXX_STANDARD 14)", {plain = true})
+        io.replace("glslang/MachineIndependent/Intermediate.cpp", "#include <cfloat>", "#include <cfloat>\n#include <limits>", {plain = true})
 
         if package:is_plat("wasm") then
             -- wasm-ld doesn't support --no-undefined
