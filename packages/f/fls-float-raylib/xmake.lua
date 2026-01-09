@@ -7,6 +7,7 @@ package("fls-float-raylib")
             { "HideCursor(",  "rlHideCursor(" },
             { "PlaySound(",   "rlPlaySound(" },
             { "StopSound(",   "rlStopSound(" },
+            { "(Rectangle)",  "(rlRectangle)" },
             { "Rectangle;",   "rlRectangle;" },
             { "Rectangle ",   "rlRectangle " },
             { "CloseWindow(", "rlCloseWindow(" },

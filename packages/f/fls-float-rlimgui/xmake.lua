@@ -19,6 +19,7 @@ package("fls-float-rlimgui")
             { "HideCursor(",  "rlHideCursor(" },
             { "PlaySound(",   "rlPlaySound(" },
             { "StopSound(",   "rlStopSound(" },
+            { "(Rectangle)",  "(rlRectangle)" },
             { "Rectangle;",   "rlRectangle;" },
             { "Rectangle ",   "rlRectangle " },
             { "CloseWindow(", "rlCloseWindow(" },
@@ -26,6 +27,7 @@ package("fls-float-rlimgui")
             { "DrawText(",    "rlDrawText(" },
             { "DrawTextEx(",  "rlDrawTextEx(" },
         }
+
         for _, file in ipairs(table.join(os.files("**.cpp"), os.files("**.h"))) do
             for _, rule in ipairs(renaming_rules) do
                 io.replace(file, rule[1], rule[2], {plain = true})
