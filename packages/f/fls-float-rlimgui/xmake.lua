@@ -23,7 +23,8 @@ package("fls-float-rlimgui")
             { "CloseWindow", "rlCloseWindow" },
             { "LoadImage",   "rlLoadImage" },
             { "DrawText",    "rlDrawText" },
-            { "DrawTextEx",  "rlDrawTextEx" }
+            { "DrawTextEx",  "rlDrawTextEx" },
+            { "rlLoadImageW",  "LoadImageW" }
         }
         for _, file in ipairs(table.join(os.files("**.cpp"), os.files("**.h"))) do
             for _, rule in ipairs(renaming_rules) do

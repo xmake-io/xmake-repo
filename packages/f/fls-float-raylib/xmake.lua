@@ -11,7 +11,8 @@ package("fls-float-raylib")
             { "CloseWindow", "rlCloseWindow" },
             { "LoadImage",   "rlLoadImage" },
             { "DrawText",    "rlDrawText" },
-            { "DrawTextEx",  "rlDrawTextEx" }
+            { "DrawTextEx",  "rlDrawTextEx" },
+            { "rlLoadImageW",  "LoadImageW" }
         }
         for _, file in ipairs(table.join(os.files("src/**.c"), os.files("src/**.h"))) do
             for _, rule in ipairs(renaming_rules) do
