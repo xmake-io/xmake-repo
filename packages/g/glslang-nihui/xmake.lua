@@ -54,5 +54,5 @@ package("glslang-nihui")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxfuncs("ShInitialize", {configs = {languages = "c++11"}, includes = "glslang/Public/ShaderLang.h"}))
+        assert(package:has_cxxfuncs("ShInitialize", {configs = {languages = "c++14"}, includes = "glslang/Public/ShaderLang.h"}))
     end)
