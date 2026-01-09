@@ -34,7 +34,7 @@ package("fls-float-rlimgui")
             add_rules("mode.debug", "mode.release")
             set_languages("c99", "c++17")
 
-            add_requires("raylib")
+            add_requires("fls-float-raylib")
             add_requires("imgui", {configs = {docking = true, wchar32 = true}})
 
             if is_plat("linux") then
@@ -46,7 +46,7 @@ package("fls-float-rlimgui")
                 add_files("*.cpp")
                 add_headerfiles("*.h", "(extras/**.h)")
                 add_includedirs(".", {public = true})
-                add_packages("raylib", "imgui")
+                add_packages("fls-float-raylib", "imgui")
                 add_defines("IMGUI_DISABLE_OBSOLETE_FUNCTIONS", "IMGUI_DISABLE_OBSOLETE_KEYIO")
         ]])
         import("package.tools.xmake").install(package)
