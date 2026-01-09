@@ -8,6 +8,8 @@ package("floatengine")
     add_versions("2025.12.20", "d3754c2b8235fe1920aea65cfd7cd9247c758408")
 
     add_patches("2025.12.20", "patches/2025.12.20/cleanup.patch", "55ba6f8e4fa3855d9e998d381a148cf31a977e99174c27a33753095275994cc5")
+    add_patches("2025.12.20", "patches/2025.12.20/fix-include.patch", "6bb236de206b6b4b0773a03007acae8095e215a54f5add9279446a4c0613703b")
+    add_patches("2025.12.20", "patches/2025.12.20/fix-mingw-gcc15.patch", "252675e4f9b0f9531efb4243fe5819edb1aa9ea13d0b422904d07347041d276c")
     add_patches("2025.12.20", "patches/2025.12.20/fix-template.patch", "66450b0e49549d602e7436d234b46af83e779778398b4d2bb4fc9b5376143388")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
@@ -22,26 +24,6 @@ package("floatengine")
 
     on_install("windows", "mingw", function (package)
         os.rmdir("FloatEngine/gui")
-        io.replace("FloatEngine/F_Resource.cpp", [[#include "minizip-ng/]], [[#include "minizip/]], {plain = true})
-        io.replace("FloatEngine/F_Network.cpp", [[#include "F_NetWork.h"]], [[#include "F_Network.h"]], {plain = true})
-        io.replace("FloatEngine/F_Network.cpp", [[#include "slikenet/Peer.h"]], [[#include "slikenet/peer.h"]], {plain = true})
-        io.replace("FloatEngine/F_Network.cpp", [[#include "slikenet/Types.h"]], [[#include "slikenet/types.h"]], {plain = true})
-        io.replace("FloatEngine/winfuns.h", [[#ifndef WINFUNS_HAVE_WSADATA]],
-                                            [[#ifndef WINFUNS_HAVE_WSADATA
-                                            #ifndef WSADESCRIPTION_LEN
-                                            #define WSADESCRIPTION_LEN      256
-                                            #endif
-                                            #ifndef WSASYS_STATUS_LEN
-                                            #define WSASYS_STATUS_LEN       128
-                                            #endif
-                                            #include <sal.h>]], {plain = true})
-        io.replace("FloatEngine/FMath.cpp", "#include <numeric>", "#include <numeric>\n#include <cfloat>", {plain = true})
-        io.replace("FloatEngine/F_Network.h", "#include <memory>", "#include <memory>\n#include <cstdint>", {plain = true})
-        io.replace("FloatEngine/Game.cpp", [[#include "gui/include/imgui.h"]], [[#include <imgui.h>]], {plain = true})
-        io.replace("FloatEngine/Game.cpp", [[#include "gui/include/rlImGui.h"]], [[#include <rlImGui.h>]], {plain = true})
-        io.replace("FloatEngine/FloatAPI.cpp", [[#include "gui/include/imgui.h"]], [[#include <imgui.h>]], {plain = true})
-        io.replace("FloatEngine/FloatAPI.cpp", [[#include "gui/include/rlImGui.h"]], [[#include <rlImGui.h>]], {plain = true})
-        io.replace("FloatEngine/FloatApi.h", "struct ImGuiInputTextCallbackData;", "#include <cfloat>\nstruct ImGuiInputTextCallbackData;", {plain = true})
         io.writefile("xmake.lua", [[
             set_languages("c11", "c++17")
             add_rules("mode.release", "mode.debug")
