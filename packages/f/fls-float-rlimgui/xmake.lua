@@ -15,16 +15,15 @@ package("fls-float-rlimgui")
 
     on_install("!cross and !bsd and !iphoneos", function (package)
         local renaming_rules = {
-            { "ShowCursor",  "rlShowCursor" },
-            { "HideCursor",  "rlHideCursor" },
-            { "PlaySound",   "rlPlaySound" },
-            { "StopSound",   "rlStopSound" },
-            { "Rectangle",   "rlRectangle" },
-            { "CloseWindow", "rlCloseWindow" },
-            { "LoadImage",   "rlLoadImage" },
-            { "DrawText",    "rlDrawText" },
-            { "DrawTextEx",  "rlDrawTextEx" },
-            { "rlLoadImageW",  "LoadImageW" }
+            { "ShowCursor(",  "rlShowCursor(" },
+            { "HideCursor(",  "rlHideCursor(" },
+            { "PlaySound(",   "rlPlaySound(" },
+            { "StopSound(",   "rlStopSound(" },
+            { "Rectangle(",   "rlRectangle(" },
+            { "CloseWindow(", "rlCloseWindow(" },
+            { "LoadImage(",   "rlLoadImage(" },
+            { "DrawText(",    "rlDrawText(" },
+            { "DrawTextEx(",  "rlDrawTextEx(" },
         }
         for _, file in ipairs(table.join(os.files("**.cpp"), os.files("**.h"))) do
             for _, rule in ipairs(renaming_rules) do

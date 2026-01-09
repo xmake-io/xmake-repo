@@ -3,16 +3,15 @@ package("fls-float-raylib")
 
     on_install("windows", "linux", "macosx|arm64", "mingw", "wasm", "android", function (package)
         local renaming_rules = {
-            { "ShowCursor",  "rlShowCursor" },
-            { "HideCursor",  "rlHideCursor" },
-            { "PlaySound",   "rlPlaySound" },
-            { "StopSound",   "rlStopSound" },
-            { "Rectangle",   "rlRectangle" },
-            { "CloseWindow", "rlCloseWindow" },
-            { "LoadImage",   "rlLoadImage" },
-            { "DrawText",    "rlDrawText" },
-            { "DrawTextEx",  "rlDrawTextEx" },
-            { "rlLoadImageW",  "LoadImageW" }
+            { "ShowCursor(",  "rlShowCursor(" },
+            { "HideCursor(",  "rlHideCursor(" },
+            { "PlaySound(",   "rlPlaySound(" },
+            { "StopSound(",   "rlStopSound(" },
+            { "Rectangle(",   "rlRectangle(" },
+            { "CloseWindow(", "rlCloseWindow(" },
+            { "LoadImage(",   "rlLoadImage(" },
+            { "DrawText(",    "rlDrawText(" },
+            { "DrawTextEx(",  "rlDrawTextEx(" },
         }
         for _, file in ipairs(table.join(os.files("src/**.c"), os.files("src/**.h"))) do
             for _, rule in ipairs(renaming_rules) do
