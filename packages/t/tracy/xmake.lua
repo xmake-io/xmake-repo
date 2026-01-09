@@ -5,6 +5,7 @@ package("tracy")
     add_urls("https://github.com/wolfpld/tracy/archive/refs/tags/$(version).tar.gz",
              "https://github.com/wolfpld/tracy.git")
 
+    add_versions("v0.13.1", "d4efc50ebcb0bfcfdbba148995aeb75044c0d80f5d91223aebfaa8fa9e563d2b")
     add_versions("v0.13.0", "b0e972dfeebe42470187c1a47b449c8ee9e8656900bcf87b403175ed50796918")
     add_versions("v0.12.2", "09617765ba5ff1aa6da128d9ba3c608166c5ef05ac28e2bb77f791269d444952")
     add_versions("v0.12.1", "03580b01df3c435f74eec165193d6557cdbf3a84d39582ca30969ef5354560aa")
@@ -53,6 +54,15 @@ package("tracy")
         add_syslinks("pthread")
     elseif is_plat("bsd") then
         add_syslinks("pthread", "execinfo")
+    end
+
+    if on_check then
+        on_check("android", function (package)
+            if package:version() and package:version():eq("v0.13.1") then
+                local ndk = package:toolchain("ndk"):config("ndkver")
+                assert(ndk and tonumber(ndk) > 22, "package(tracy v0.13.1) require ndk version > 22")
+            end
+        end)
     end
 
     on_load(function (package)

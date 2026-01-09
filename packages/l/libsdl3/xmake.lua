@@ -15,6 +15,7 @@ package("libsdl3")
              "https://github.com/libsdl-org/SDL/releases/download/release-$(version)/SDL3-$(version).zip", { alias = "archive" })
     add_urls("https://github.com/libsdl-org/SDL.git", { alias = "github" })
 
+    add_versions("archive:3.4.0", "9ac2debb493e0d3e13dbd2729fb91f4bfeb00a0f4dff5e04b73cc9bac276b38d")
     add_versions("archive:3.2.28", "24a30069af514a6c6b773bdc8ccca8b321661b251381acc1daeebf8c8f4a109a")
     add_versions("archive:3.2.26", "739356eef1192fff9d641c320a8f5ef4a10506b8927def4b9ceb764c7e947369")
     add_versions("archive:3.2.22", "3d60068b1e5c83c66bb14c325dfef46f8fcc380735b4591de6f5e7b9738929d1")
@@ -26,6 +27,7 @@ package("libsdl3")
     add_versions("archive:3.2.2", "58d8adc7068d38923f918e0bdaa9c4948f93d9ba204fe4de8cc6eaaf77ad6f82")
     add_versions("archive:3.2.0", "abe7114fa42edcc8097856787fa5d37f256d97e365b71368b60764fe7c10e4f8")
 
+    add_versions("github:3.4.0", "release-3.4.0")
     add_versions("github:3.2.28", "release-3.2.28")
     add_versions("github:3.2.26", "release-3.2.26")
     add_versions("github:3.2.22", "release-3.2.22")
@@ -36,6 +38,8 @@ package("libsdl3")
     add_versions("github:3.2.6", "release-3.2.6")
     add_versions("github:3.2.2", "release-3.2.2")
     add_versions("github:3.2.0", "release-3.2.0")
+
+    add_patches("3.4.0", "patches/3.4.0/fix-ios.patch", "feffa146aa825f97fc431f115f3990a7a0ad0214d05a9765f2cfbd3633465bf8")
 
     add_deps("cmake", "egl-headers", "opengl-headers")
 
@@ -60,7 +64,7 @@ package("libsdl3")
             package:set("policy", "package.cmake_generator.ninja", true)
         end
         if package:is_plat("linux", "bsd", "cross") and package:config("x11") then
-            package:add("deps", "libxext", {private = true})
+            package:add("deps", "libxext", "libxcursor", "libxfixes", "libxi", "libxrandr", "libxrender", "libxss", {private = true})
         end
         if package:is_plat("linux", "bsd", "cross") and package:config("wayland") then
             package:add("deps", "wayland", {private = true})
@@ -94,19 +98,16 @@ package("libsdl3")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSDL_TEST_LIBRARY=OFF")
         table.insert(configs, "-DSDL_EXAMPLES=OFF")
+        table.insert(configs, "-DSDL_X11_XTEST=OFF")
 
         local cflags
         local packagedeps
         if not package:is_plat("wasm") then
-            packagedeps = {"egl-headers", "opengl-headers"}
+            packagedeps = table.join2(packagedeps or {}, {"egl-headers", "opengl-headers"})
         end
 
         if package:is_plat("linux", "bsd", "cross") then
-            table.insert(packagedeps, "libxext")
-            table.insert(packagedeps, "libxcb")
-            table.insert(packagedeps, "libx11")
-            table.insert(packagedeps, "xorgproto")
-            table.insert(packagedeps, "wayland")
+            packagedeps = table.join2(packagedeps or {}, {"libxcursor", "libxext", "libxfixes", "libxcb", "libx11", "libxi", "libxrandr", "libxrender", "libxss", "xorgproto", "wayland"})
         elseif package:is_plat("wasm") then
             -- emscripten enables USE_SDL by default which will conflict with libsdl headers
             cflags = {"-sUSE_SDL=0"}
@@ -132,7 +133,6 @@ package("libsdl3")
                 table.insert(cflags, "-I" .. includedir)
             end
         end
-
         import("package.tools.cmake").install(package, configs, {cflags = cflags})
     end)
 
