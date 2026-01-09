@@ -26,8 +26,7 @@ package("libxmake")
     add_includedirs("include")
     if is_plat("windows") then
         add_ldflags("/export:malloc", "/export:free", "/export:memmove")
-        add_syslinks("kernel32", "user32", "gdi32")
-        add_syslinks("ws2_32", "advapi32", "shell32")
+        add_syslinks("kernel32", "user32", "gdi32", "ws2_32", "advapi32", "shell32")
         add_ldflags("/LTCG")
         add_shflags("/LTCG")
     elseif is_plat("android") then
@@ -40,12 +39,10 @@ package("libxmake")
     add_defines("LUA_COMPAT_5_1", "LUA_COMPAT_5_2", "LUA_COMPAT_5_3")
 
     on_load(function (package)
-        package:add("links", "xmake", "tbox", "sv")
-        if package:debug() then
+        package:add("links", "xmake", "tbox", "sv", "lua-cjson", "lz4", "lua")
+        if package:is_debug() then
             package:add("defines", "__tb_debug__")
         end
-        package:add("links", "lua-cjson", "lz4")
-        package:add("links", "lua")
         package:add("includedirs", "include/lua")
     end)
 
