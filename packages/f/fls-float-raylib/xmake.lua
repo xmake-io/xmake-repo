@@ -8,6 +8,7 @@ package("fls-float-raylib")
             { "PlaySound(",   "rlPlaySound(" },
             { "StopSound(",   "rlStopSound(" },
             { "(Rectangle)",  "(rlRectangle)" },
+            { "Rectangle{",   "rlRectangle{" },
             { "Rectangle;",   "rlRectangle;" },
             { "Rectangle ",   "rlRectangle " },
             { "CloseWindow(", "rlCloseWindow(" },
