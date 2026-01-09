@@ -38,7 +38,7 @@ package("ncnn")
     end
 
     on_load(function (package)
-        local glslang_ver = package:version() and package:version() or "2025.09.16"
+        local glslang_ver = package:version() and package:version() or "20250916"
         if package:config("vulkan") then
             package:add("deps", "glslang-nihui " .. glslang_ver)
             if package:is_plat("macosx", "iphoneos") then
