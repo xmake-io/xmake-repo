@@ -11,7 +11,7 @@ package("fls-float-rlimgui")
     end
 
     add_deps("fls-float-raylib")
-    add_deps("imgui", {configs = {docking = true, wchar32 = true}})
+    add_deps("imgui v1.92.5-docking", {configs = {wchar32 = true}})
 
     on_install("windows", "mingw", function (package)
         local renaming_rules = {
@@ -38,7 +38,7 @@ package("fls-float-rlimgui")
             set_languages("c99", "c++17")
 
             add_requires("fls-float-raylib")
-            add_requires("imgui", {configs = {docking = true, wchar32 = true}})
+            add_requires("imgui v1.92.5-docking", {configs = {wchar32 = true}})
 
             if is_plat("linux") then
                 add_defines("_GLFW_X11", "_GNU_SOURCE")
