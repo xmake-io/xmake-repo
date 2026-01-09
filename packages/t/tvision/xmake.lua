@@ -39,11 +39,7 @@ package("tvision")
             "-DTV_BUILD_EXAMPLES=OFF",
             "-DTV_BUILD_TESTS=OFF"
         }
-        if package:is_plat("linux", "cross") then
-            table.insert(configs, "-DTV_BUILD_USING_GPM=" .. (package:config("gpm") and "ON" or "OFF"))
-        else
-            table.insert(configs, "-DTV_BUILD_USING_GPM=OFF")
-        end
+        table.insert(configs, "-DTV_BUILD_USING_GPM=" .. (package:config("gpm") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
