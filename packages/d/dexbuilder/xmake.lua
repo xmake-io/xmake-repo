@@ -2,7 +2,8 @@ package("dexbuilder")
     set_homepage("https://github.com/LSPosed/DexBuilder")
     set_description("Generate dex file by c++")
 
-    add_urls("https://github.com/LSPosed/DexBuilder.git")
+    add_urls("https://github.com/LSPosed/DexBuilder.git", {submodules = false})
+
     add_versions("2025.12.30", "ac7fb2230954ee311808bad469b0db501f31bfb8")
 
     add_deps("parallel-hashmap", "zlib")
