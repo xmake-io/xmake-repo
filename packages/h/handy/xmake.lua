@@ -5,15 +5,16 @@ package("handy")
 
     add_urls("https://github.com/yedf2/handy/archive/refs/tags/$(version).tar.gz",
              "https://github.com/yedf2/handy.git")
-    add_versions("0.2.0", "831d9e7cdf94d19fbc8438e75dc6c63fa75777ff2f83ac48df981c22e924a2d1")
+
+    add_versions("2023.08.19", "e58eb508ae399b539f3f64c59e9e015fa7bfd46b")
 
     add_deps("cmake")
 
-    if is_plat("linux") then
+    if is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
 
-    on_install("linux", "macosx", "iphoneos", function (package)
+    on_install(function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_HANDY_SHARED_LIBRARY=" .. (package:config("shared") and "ON" or "OFF"))
