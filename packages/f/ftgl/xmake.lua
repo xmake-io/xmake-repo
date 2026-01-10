@@ -10,8 +10,12 @@ package("ftgl")
     add_patches("v2.4.0", "patches/2.4.0/cmake.patch", "9006ccfba2632c5ffee50c76f163a98d9867a3e11c6390c14ed07ab401a85f29")
     add_patches("v2.4.0", "patches/2.4.0/fix-type-error.patch", "6d5080d92e8d18d39d7f4ad9279bae555fa8af6f9dcfe3b437647e09ffc88312")
 
+    if is_plat("windows", "mingw") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     add_deps("cmake")
-    add_deps("zlib", "freetype")
+    add_deps("freetype", "zlib")
     add_deps("opengl", {optional = true})
 
     on_load("windows", "mingw", function (package)
@@ -20,11 +24,11 @@ package("ftgl")
         end
     end)
 
-    on_install(function (package)
+    on_install("!android and !cross and !iphoneos", function (package)
         local configs = {"-DBUILD_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = "zlib"})
     end)
 
     on_test(function (package)
