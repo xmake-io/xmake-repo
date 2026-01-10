@@ -6,7 +6,7 @@ package("pine")
 
     add_versions("2025.11.08", "216d910f18b18430a5d21c510affb221a9833a55")
 
-    add_deps("xz-embedded")
+    add_deps("xz-embedded", "dobby")
 
     on_install("android", function (package)
         os.cd("core/src/main/cpp")
