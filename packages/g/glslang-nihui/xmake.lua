@@ -5,8 +5,8 @@ package("glslang-nihui")
 
     add_urls("https://github.com/nihui/glslang.git")
 
-    add_versions("2025.09.16", "8cd77a808d0bffa442ae9462d5e3a8141892ba5a")
-    add_versions("2025.05.03", "a9ac7d5f307e5db5b8c4fbf904bdba8fca6283bc")
+    add_versions("20250916", "8cd77a808d0bffa442ae9462d5e3a8141892ba5a")
+    add_versions("20250503", "a9ac7d5f307e5db5b8c4fbf904bdba8fca6283bc")
 
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
@@ -26,6 +26,8 @@ package("glslang-nihui")
         io.replace("CMakeLists.txt", 'set(CMAKE_DEBUG_POSTFIX "d")', [[
             message(WARNING "Disabled CMake Debug Postfix for xmake package generation")
         ]], {plain = true})
+        io.replace("CMakeLists.txt", "set(CMAKE_CXX_STANDARD 17)", "set(CMAKE_CXX_STANDARD 14)", {plain = true})
+        io.replace("glslang/MachineIndependent/Intermediate.cpp", "#include <cfloat>", "#include <cfloat>\n#include <limits>", {plain = true})
 
         if package:is_plat("wasm") then
             -- wasm-ld doesn't support --no-undefined
@@ -53,5 +55,5 @@ package("glslang-nihui")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxfuncs("ShInitialize", {configs = {languages = "c++11"}, includes = "glslang/Public/ShaderLang.h"}))
+        assert(package:has_cxxfuncs("ShInitialize", {configs = {languages = "c++14"}, includes = "glslang/Public/ShaderLang.h"}))
     end)
