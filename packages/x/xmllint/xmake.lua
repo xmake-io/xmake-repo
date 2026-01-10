@@ -28,7 +28,7 @@ package("xmllint")
             "--enable-shared",
             "--enable-static"
         }
-        import("package.tools.autoconf").install(package, configs, {packagedeps = {"readline"})
+        import("package.tools.autoconf").install(package, configs, {packagedeps = {"readline"}})
     end)
 
     on_test(function (package)
