@@ -34,3 +34,7 @@ target("xz_common")
         path.join(xz_lib_dir, "xz_dec_bcj.c")
     )
     add_headerfiles(path.join(xz_inc_dir, "(**.h)"))
+
+    if is_plat("windows") and is_kind("shared") then
+        add_rules("utils.symbols.export_all")
+    end
