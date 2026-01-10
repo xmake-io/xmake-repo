@@ -28,6 +28,9 @@ package("handy")
         elseif package:is_plat("bsd") then
             io.replace("handy/poller.cc", "#ifdef OS_LINUX", "#if defined(OS_LINUX) && !defined(__FreeBSD__)", {plain = true})
             io.replace("handy/poller.cc", "#elif defined(OS_MACOSX)", "#elif defined(OS_MACOSX) || defined(__FreeBSD__)", {plain = true})
+            -- Assume this resolves use of undeclared identifier 'AF_INET'
+            io.replace("handy/conn.cc", "#include <fcntl.h>", "#include <fcntl.h>\n#include <sys/socket.h>", {plain = true})
+            io.replace("handy/udp.cc", "#include <fcntl.h>", "#include <fcntl.h>\n#include <sys/socket.h>", {plain = true})
         end
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
