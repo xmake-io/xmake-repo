@@ -14,7 +14,18 @@ package("handy")
         add_syslinks("pthread")
     end
 
-    on_install("!windows and !mingw", function (package)
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(handy) requires ndk api >= 24")
+        end)
+    end
+
+    on_install("!windows and !mingw and !wasm", function (package)
+        if package:is_plat("bsd") then
+            io.replce("handy/poller.cc", "#elif defined(OS_MACOSX)", "#elif 1", {plain = true})
+        end
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_HANDY_SHARED_LIBRARY=" .. (package:config("shared") and "ON" or "OFF"))
