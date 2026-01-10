@@ -3,6 +3,7 @@ package("pine")
     set_description("Dynamic java method hook framework on ART. Allowing you to change almost all java methods' behavior dynamically.")
 
     add_urls("https://github.com/canyie/pine.git", {submodules = false})
+
     add_versions("2025.11.08", "216d910f18b18430a5d21c510affb221a9833a55")
 
     add_deps("xz-embedded")
