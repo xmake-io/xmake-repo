@@ -7,7 +7,7 @@ package("pine")
 
     add_deps("xz-embedded")
 
-    on_install(function (package)
+    on_install("android", function (package)
         os.cd("core/src/main/cpp")
         io.replace("utils/scoped_local_ref.h", [[#include "macros.h"]], [[#include "macros.h"
 #include <cstddef>]], {plain = true})
