@@ -6,12 +6,13 @@ package("eigen")
     add_urls("https://gitlab.com/libeigen/eigen/-/archive/$(version)/eigen-$(version).tar.bz2",
              "https://gitlab.com/libeigen/eigen.git")
 
-    add_versions("3.3.7", "685adf14bd8e9c015b78097c1dc22f2f01343756f196acdc76a678e1ae352e11")
-    add_versions("3.3.8", "0215c6593c4ee9f1f7f28238c4e8995584ebf3b556e9dbf933d84feb98d5b9ef")
-    add_versions("3.3.9", "0fa5cafe78f66d2b501b43016858070d52ba47bd9b1016b0165a7b8e04675677")
-    add_versions("3.4.0", "b4c198460eba6f28d34894e3a5710998818515104d6e74e5cc331ce31e46e626")
-    add_versions("3.4.1", "8bb7280b7551bf06418d11a9671fdf998cb927830cf21589b394382d26779821")
+    add_versions("5.0.1", "e4de6b08f33fd8b8985d2f204381408c660bffa6170ac65b68ae1bd3cd575c0a")
     add_versions("5.0.0", "bdca0ec740fb83be21fe038699923f4c589ead9ab904f4058a9c97752e60d50b")
+    add_versions("3.4.1", "8bb7280b7551bf06418d11a9671fdf998cb927830cf21589b394382d26779821")
+    add_versions("3.4.0", "b4c198460eba6f28d34894e3a5710998818515104d6e74e5cc331ce31e46e626")
+    add_versions("3.3.9", "0fa5cafe78f66d2b501b43016858070d52ba47bd9b1016b0165a7b8e04675677")
+    add_versions("3.3.8", "0215c6593c4ee9f1f7f28238c4e8995584ebf3b556e9dbf933d84feb98d5b9ef")
+    add_versions("3.3.7", "685adf14bd8e9c015b78097c1dc22f2f01343756f196acdc76a678e1ae352e11")
 
     add_configs("blas",   {description = "Build the Eigen BLAS library.",   default = false, type = "boolean"})
     add_configs("lapack", {description = "Build the Eigen LAPACK library.", default = false, type = "boolean"})
