@@ -7,6 +7,21 @@ package("dexbuilder")
 
     add_deps("parallel-hashmap", "zlib")
 
+    if on_check then
+        on_check(function (package)
+            assert(package:check_cxxsnippets({test = [[
+                #include <string_view>
+                #include <cstddef>
+                void test() {
+                    constexpr auto lambda_check = [](std::string_view a) { return a.empty(); };
+                    int data[2] = {1, 2};
+                    auto [x, y] = data;
+                    auto dex_idx = 0zu; 
+                }
+            ]]}, {configs = {languages = "c++23"}}), "package(dexbuilder) Require at least C++23 (supports '0zu' suffix).")
+        end)
+    end
+
     on_install("android", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
