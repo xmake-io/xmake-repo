@@ -15,8 +15,12 @@ package("libxss")
     end
 
     if is_plat("macosx", "linux", "bsd", "cross") then
-        add_deps("automake", "autoconf", "libtool", "libx11", "libxext", "xorgproto")
+        add_deps("automake", "autoconf", "libtool", "xorgproto")
     end
+
+    on_load(function (package)
+        package:add("deps", "libx11", "libxext", { configs = { shared = package:config("shared") } })
+    end)
 
     on_install("macosx", "linux", "bsd", "cross", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),

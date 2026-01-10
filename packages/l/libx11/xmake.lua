@@ -23,12 +23,16 @@ package("libx11")
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"})
 
     if is_plat("macosx", "linux", "bsd", "cross") then
-        add_deps("pkg-config", "util-macros", "xtrans", "libxcb", "xorgproto")
+        add_deps("pkg-config", "util-macros", "xtrans", "xorgproto")
     end
     if is_plat("macosx") then
         -- fix sed: RE error: illegal byte sequence
         add_deps("gnu-sed")
     end
+
+    on_load(function (package)
+        package:add("deps", "libxcb", { configs = { shared = package:config("shared") } })
+    end)
 
     on_install("macosx", "linux", "bsd", "cross", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),

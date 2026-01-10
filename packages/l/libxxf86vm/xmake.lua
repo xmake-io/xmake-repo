@@ -1,5 +1,4 @@
 package("libxxf86vm")
-
     set_homepage("https://www.x.org/")
     set_description("X.Org: XFree86-VidMode X extension")
 
@@ -12,8 +11,12 @@ package("libxxf86vm")
     end
 
     if is_plat("macosx", "linux") then
-        add_deps("pkg-config", "libx11", "libxext", "xorgproto")
+        add_deps("pkg-config", "xorgproto")
     end
+
+    on_load(function (package)
+        package:add("deps", "libx11", "libxext", { configs = { shared = package:config("shared") } })
+    end)
 
     on_install("macosx", "linux", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
