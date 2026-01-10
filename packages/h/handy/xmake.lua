@@ -26,7 +26,7 @@ package("handy")
         if package:is_plat("android") then
             io.replace("CMakeLists.txt", [[elseif(CMAKE_HOST_UNIX)]], [[elseif(CMAKE_HOST_UNIX OR ANDROID)]], {plain = true})
         elseif package:is_plat("bsd") then
-            io.replace("handy/poller.cc", "#elif defined(OS_MACOSX)", "#elif 1", {plain = true})
+            io.replace("handy/poller.cc", "#elif defined(OS_MACOSX)", "#elif defined(OS_MACOSX) || defined(__FreeBSD__)", {plain = true})
         end
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
