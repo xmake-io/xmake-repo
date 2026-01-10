@@ -16,7 +16,7 @@ package("fcl")
     end
     add_configs("octomap", {description = "Enable OctoMap library support.", default = false, type = "boolean"})
 
-    add_deps("cmake", "eigen 3.4.1", "libccd")
+    add_deps("cmake", "eigen", "libccd")
 
     on_load(function (package)
         if package:config("octomap") then
@@ -29,6 +29,13 @@ package("fcl")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DFCL_STATIC_LIBRARY=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DFCL_WITH_OCTOMAP=" .. (package:config("octomap") and "ON" or "OFF"))
+        if package:dep("eigen") and package:dep("eigen"):version() and package:dep("eigen"):version():ge("5.0.0") then
+            io.replace("CMakeLists.txt", [[set(PKG_CFLAGS "-std=c++11")]], [[set(PKG_CFLAGS "-std=c++14")]], {plain=true})
+            local content, err = io.replace("CMakeModules/CompilerSettings.cmake", "-std=c++11", "-std=c++14", {plain=true})
+            io.replace("include/fcl/geometry/shape/convex-inl.h", "#include <map>", "#include <cassert>\n#include <map>", {plain = true})
+            io.replace("include/fcl/math/motion/taylor_model/taylor_model-inl.h", [[#include "fcl/math/motion/taylor_model/taylor_model.h"]], [[#include <cassert>
+#include "fcl/math/motion/taylor_model/taylor_model.h"]], {plain = true})
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
