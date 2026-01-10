@@ -42,6 +42,7 @@ package("fcl")
     end)
 
     on_test(function (package)
+        local eigen_ver = package:dep("eigen") and package:dep("eigen"):version()
         assert(package:check_cxxsnippets({test = [[
             void test() {
                 using namespace fcl;
@@ -51,5 +52,5 @@ package("fcl")
                 SamplerR<double, 4> sampler(lower, upper);
                 auto sp = sampler.sample();
             }   
-        ]]}, {configs = {languages = "c++11"}, includes = "fcl/math/sampler/sampler_r.h"}))
+        ]]}, {configs = {languages = (eigen_ver and eigen_ver:lt("5.0.0") and "c++11" or "c++14")}, includes = "fcl/math/sampler/sampler_r.h"}))
     end)
