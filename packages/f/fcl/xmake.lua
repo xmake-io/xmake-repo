@@ -35,6 +35,8 @@ package("fcl")
             io.replace("include/fcl/geometry/shape/convex-inl.h", "#include <map>", "#include <cassert>\n#include <map>", {plain = true})
             io.replace("include/fcl/math/motion/taylor_model/taylor_model-inl.h", [[#include "fcl/math/motion/taylor_model/taylor_model.h"]], [[#include <cassert>
 #include "fcl/math/motion/taylor_model/taylor_model.h"]], {plain = true})
+            io.replace("include/fcl/math/geometry-inl.h", [[#include "fcl/math/geometry.h"]], [[#include <cassert>
+#include "fcl/math/geometry.h"]], {plain = true})
         end
         import("package.tools.cmake").install(package, configs)
     end)
