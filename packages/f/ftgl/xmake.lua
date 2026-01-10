@@ -12,7 +12,7 @@ package("ftgl")
     add_patches("v2.4.0", "patches/2.4.0/fix-type-error.patch", "6d5080d92e8d18d39d7f4ad9279bae555fa8af6f9dcfe3b437647e09ffc88312")
 
     add_deps("cmake")
-    add_deps("freetype", "zlib")
+    add_deps("freetype")
     add_deps("opengl", {optional = true})
 
     on_load("windows", "mingw", function (package)
@@ -25,7 +25,7 @@ package("ftgl")
         local configs = {"-DBUILD_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs, {packagedeps = "zlib"})
+        import("package.tools.cmake").install(package, configs, {packagedeps = "freetype"})
     end)
 
     on_test(function (package)
