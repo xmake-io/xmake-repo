@@ -15,7 +15,7 @@ package("xmllint")
     add_deps("autotools")
     add_deps("zlib", "xz", "readline", "icu4c", "libiconv")
 
-    on_install("@linux", "@macosx", "@mingw", function (package)
+    on_install("@linux", "@macosx", "@mingw", "@msys", function (package)
         local configs = {
             "--disable-dependency-tracking",
             "--with-history",
@@ -28,7 +28,7 @@ package("xmllint")
             "--enable-shared",
             "--enable-static"
         }
-        import("package.tools.autoconf").install(package, configs)
+        import("package.tools.autoconf").install(package, configs, {packagedeps = {"readline"})
     end)
 
     on_test(function (package)
