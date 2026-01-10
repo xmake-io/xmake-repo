@@ -1,0 +1,36 @@
+diff --git a/FloatEngine/FMath.cpp b/FloatEngine/FMath.cpp
+index ecbe90c..547b167 100644
+--- a/FloatEngine/FMath.cpp
++++ b/FloatEngine/FMath.cpp
+@@ -1,5 +1,6 @@
+ #include "FMath.h"
+-#include <numeric> 
++#include <numeric>
++#include <cfloat> 
+ FVec2::FVec2() :x(0), y(0)
+ {
+ }
+diff --git a/FloatEngine/F_Network.h b/FloatEngine/F_Network.h
+index 09e2319..a5375a4 100644
+--- a/FloatEngine/F_Network.h
++++ b/FloatEngine/F_Network.h
+@@ -5,6 +5,7 @@
+ #include <queue>
+ #include <map>
+ #include <memory>
++#include <cstdint>
+ 
+ // ----------------------------------------------------------------------------
+ // SLikeNet PIMPL 前置声明 (无需包含任何头文件)
+diff --git a/FloatEngine/FloatApi.h b/FloatEngine/FloatApi.h
+index cd2b34f..912adce 100644
+--- a/FloatEngine/FloatApi.h
++++ b/FloatEngine/FloatApi.h
+@@ -35,6 +35,7 @@
+ #include <type_traits>
+ #include <any>
+ #include <queue>
++#include <cfloat>
+ #ifdef _MSC_VER
+ #define _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING
+ #define _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
