@@ -10,16 +10,18 @@ package("ftgl")
     add_patches("v2.4.0", "patches/2.4.0/cmake.patch", "9006ccfba2632c5ffee50c76f163a98d9867a3e11c6390c14ed07ab401a85f29")
     add_patches("v2.4.0", "patches/2.4.0/fix-type-error.patch", "6d5080d92e8d18d39d7f4ad9279bae555fa8af6f9dcfe3b437647e09ffc88312")
 
-    add_deps("cmake", "freetype", "opengl")
-    on_load("windows", function (package)
+    add_deps("cmake")
+    add_deps("freetype", "opengl")
+
+    on_load("windows", "mingw", function (package)
         if not package:config("shared") then
             package:add("defines", "FTGL_LIBRARY_STATIC")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install(function (package)
         local configs = {"-DBUILD_TESTS=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
