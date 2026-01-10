@@ -9,6 +9,8 @@ package("fcl")
     add_versions("0.7.0", "90409e940b24045987506a6b239424a4222e2daf648c86dd146cbcb692ebdcbc")
     add_versions("0.6.1", "c8a68de8d35a4a5cd563411e7577c0dc2c626aba1eef288cb1ca88561f8d8019")
 
+    add_patches("0.6.1", "patches/0.6.1/fix_arm.diff", "57b7a0d6f5991a5d26fadd3ff2968a5192906aa922703723865f7da0a1cfac58")
+
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
