@@ -33,4 +33,4 @@ target("xz_common")
         path.join(xz_lib_dir, "xz_dec_lzma2.c"),
         path.join(xz_lib_dir, "xz_dec_bcj.c")
     )
-    add_headerfiles(xz_inc_dir .. "(**.h)")
+    add_headerfiles(path.join(xz_inc_dir, "(**.h)"))

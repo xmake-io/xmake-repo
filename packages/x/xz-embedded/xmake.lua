@@ -16,7 +16,7 @@ package("xz-embedded")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             void test() {
-                lzma_version_string();
+                xz_crc32_init();
             }
-        ]]}, {configs = {languages = "c11"}, includes = "lzma.h"}))
+        ]]}, {configs = {languages = "c11"}, includes = "xz.h"}))
     end)
