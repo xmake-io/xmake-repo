@@ -31,6 +31,18 @@ package("handy")
             io.replace("handy/conn.cc", "#include <fcntl.h>", "#include <fcntl.h>\n#include <sys/socket.h>", {plain = true})
             io.replace("handy/udp.cc", "#include <fcntl.h>", "#include <fcntl.h>\n#include <sys/socket.h>", {plain = true})
             io.replace("handy/port_posix.cc", "#include <sys/syscall.h>", "#include <sys/syscall.h>\n#include <sys/socket.h>", {plain = true})
+            io.replace("handy/port_posix.cc", [[uint64_t gettid() {
+    return syscall(SYS_gettid);
+}]], [[#if defined(__FreeBSD__)
+#include <pthread_np.h>
+uint64_t gettid() {
+    return pthread_getthreadid_np();
+}
+#elif !defined(__FreeBSD__)
+uint64_t gettid() {
+    return syscall(SYS_gettid);
+}
+#endif]], {plain = true})
         end
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
