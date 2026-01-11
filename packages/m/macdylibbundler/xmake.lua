@@ -19,6 +19,12 @@ package("macdylibbundler")
             io.replace("src/Dependency.cpp",
             [[else if (realpath(rtrim(path).c_str(), original_file_buffer))]],
             [[else if (_fullpath(original_file_buffer, rtrim(path).c_str(), _MAX_PATH))]], {plain = true})
+            io.replace("src/DylibBundler.cpp",
+            [[if (realpath(path_to_check.c_str(), buffer))]],
+            [[if (_fullpath(buffer, path_to_check.c_str(), _MAX_PATH))]], {plain = true})
+            io.replace("src/DylibBundler.cpp",
+            [[if (realpath(fullpath.c_str(), buffer))]],
+            [[if (_fullpath(buffer, fullpath.c_str(), _MAX_PATH))]], {plain = true})            
         end
         io.replace("src/Utils.cpp", [[using namespace std;]], [[using namespace std;
 #ifdef __MINGW32__
