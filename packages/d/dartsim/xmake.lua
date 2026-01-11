@@ -48,7 +48,7 @@ package("dartsim")
             package:add("deps", "glut")
         end
         if package:config("dartpy") then
-            package:add("patches", ">=6.16.0", "patches/6.16.0/dartpy.patch", "c8f989317ac8e20259a91e76d28b986b3d4bda01a8e4d0fc13704f6e4f0e144b")
+            package:add("patches", ">=6.16.0", "patches/6.16.0/dartpy.patch", "9c0e4a3d245cafed504f10fed96492010758ec9c6475a1b687f8075b981cd8e0")
             package:add("patches", "<6.16.0", "patches/6.14.5/dartpy.patch", "c8f989317ac8e20259a91e76d28b986b3d4bda01a8e4d0fc13704f6e4f0e144b")
             package:add("deps", "tinyxml2")
             package:add("deps", "urdfdom")
@@ -114,6 +114,8 @@ package("dartsim")
         local deps = {"imgui"}
         if package:is_plat("linux") then
             table.insert(deps, "freeglut")
+        elseif package:is_plat("windows") then
+            table.insert(deps, "assimp")
         end
         import("package.tools.cmake").install(package, configs, {packagedeps = deps})
         local suffix = package:is_debug() and "d" or ""
