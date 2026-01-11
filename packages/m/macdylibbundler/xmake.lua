@@ -15,6 +15,11 @@ package("macdylibbundler")
     end)
 
     on_install("!windows and !iphoneos", function (package)
+        if package:is_plat("mingw") then
+            io.replace("src/Dependency.cpp",
+            [[else if (realpath(rtrim(path).c_str(), original_file_buffer))]],
+            [[else if (_fullpath(rtrim(path).c_str(), original_file_buffer, _MAX_PATH))]], {plain = true})
+        end
         io.replace("src/Utils.cpp", [[using namespace std;]], [[using namespace std;
 #ifdef __MINGW32__
 #include <cstdlib>
