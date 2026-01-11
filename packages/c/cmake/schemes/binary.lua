@@ -31,7 +31,7 @@ function add_urls(package, scheme_name)
         scheme:add("versions", "4.1.4",  "7fc64e989af34201acff6d16628d6a8d1f72cfb74d5bd9342ab332c8c00e69ab")
         scheme:add("versions", "4.2.1",  "0bb18f295e52d7e9309980e361e79e76a1d8da67a1587255cbe3696ea998f597")
         return true
-    elseif is_host("linux") then
+    elseif is_host("linux") and linuxos.name() ~= "alpine" then
         if os.arch():find("arm64.*") then
             scheme:add("urls", "https://cmake.org/files/v$(version)-aarch64.tar.gz", {version = function (version)
                     return table.concat(table.slice((version):split('%.'), 1, 2), '.') .. "/cmake-" .. version .. (version:ge("3.20") and "-linux" or "-Linux")
