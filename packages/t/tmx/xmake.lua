@@ -37,6 +37,7 @@ package("tmx")
         local packagedeps
         local cxflags
         local shflags
+        io.replace("CMakeLists.txt", "find_package(LibXml2 REQUIRED)", "find_package(LibXml2 CONFIG REQUIRED)", {plain = true})
         if package:is_plat("windows") then
             cxflags = {"-DLIBXML_STATIC"}
             if package:config("shared") then
@@ -44,7 +45,7 @@ package("tmx")
             end
         elseif package:is_plat("android") then
             packagedeps = {"libxml2"}
-            io.replace("CMakeLists.txt", "find_package(LibXml2 REQUIRED)", "", {plain = true})
+            io.replace("CMakeLists.txt", "find_package(LibXml2 CONFIG REQUIRED)", "", {plain = true})
             io.replace("CMakeLists.txt", "target_link_libraries(tmx LibXml2::LibXml2)", "", {plain = true})
         end
         import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps, cxflags = cxflags, shflags = shflags})
