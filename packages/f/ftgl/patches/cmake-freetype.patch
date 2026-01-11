@@ -1,0 +1,18 @@
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index b0f26f6..b87801e 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -115,10 +115,11 @@ SET(ftlayout_sources
+     FTLayout/FTSimpleLayoutImpl.h
+ )
+ 
+-
++include(FindPkgConfig)
++pkg_search_module("freetype" REQUIRED IMPORTED_TARGET "freetype")
+ ADD_LIBRARY(ftgl ${libftgl_la_SOURCES} ${ftgl_headers} ${ftglyph_sources} ${ftfont_sources} ${ftlayout_sources})
+ TARGET_LINK_LIBRARIES(ftgl
+-	${FREETYPE_LIBRARIES}
++	PkgConfig::freetype
+ 	${OPENGL_LIBRARIES}
+ )
+
