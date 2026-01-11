@@ -10,13 +10,24 @@ package("udis86")
     add_patches("2014.12.25", "patches/2014.12.25/python3.patch", "984fd910f5270382df3e48dbb4bb05f4bd7a8aeb0e9d517333a845330bcd8950")
     add_patches("2014.12.25", "patches/2014.12.25/fix-macbuild.patch", "94813a80e7204872d5d8987bc6993528aefc89598dcaba9262e99dcd85b1ee68")
 
+    add_configs("tools", {description = "Build the udcli executable tool", default = true, type = "boolean"})
+
     add_deps("python", {kind = "binary"})
 
     on_install(function (package)
+        local configs = {
+            tools = package:config("tools")
+        }
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        import("package.tools.xmake").install(package)
+        import("package.tools.xmake").install(package, configs)
+        if package:config("tools") then
+            package:addenv("PATH", "bin")
+        end
     end)
 
     on_test(function (package)
         assert(package:has_cfuncs("ud_init", {includes = "udis86.h"}))
+        if not package:is_cross() then
+            os.vrun("udcli --version")
+        end
     end)
