@@ -9,7 +9,7 @@ package("ftgl")
     add_versions("v2.4.0", "aa97da1c3442a8fd3941037655df18016d70b5266381c81d81e8b5335f196ea8")
 
     add_patches("v2.4.0", "patches/2.4.0/cmake.patch", "9006ccfba2632c5ffee50c76f163a98d9867a3e11c6390c14ed07ab401a85f29")
-    add_patches("v2.4.0", "patches/2.4.0/cmake-freetype.patch", "644ff180e230e6ff49139fe18f34e10c648e4993324f8faf48b12d9f19d61f6f")
+    add_patches("v2.4.0", "patches/2.4.0/cmake-freetype.patch", "67d23894dea9fc7f5d9c66878c7c9beacbd3f2e7db698a832ecc17185bcbd002")
     add_patches("v2.4.0", "patches/2.4.0/fix-type-error.patch", "6d5080d92e8d18d39d7f4ad9279bae555fa8af6f9dcfe3b437647e09ffc88312")
 
     add_deps("cmake")
