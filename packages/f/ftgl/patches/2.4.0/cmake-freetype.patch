@@ -1,25 +1,14 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 303fcae..15667a8 100644
+index 303fcae..0a80adb 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -16,7 +16,6 @@ INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/FTFont)
- INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/FTGL)
- INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/FTGlyph)
- INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/FTLayout)
--INCLUDE_DIRECTORIES(${FREETYPE_INCLUDE_DIRS})
- INCLUDE_DIRECTORIES(${OPENGL_INCLUDE_DIR})
+@@ -8,7 +8,8 @@ SET(VERSION_MAJOR 4)
+ SET(VERSION_MINOR 0)
+ SET(FTGL_SOVERSION 1)
  
- IF(NOT CMAKE_BUILD_TYPE)
-diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index 693e49f..ff6e943 100644
---- a/src/CMakeLists.txt
-+++ b/src/CMakeLists.txt
-@@ -119,7 +119,7 @@ SET(ftlayout_sources
+-FIND_PACKAGE(Freetype REQUIRED) # if it fails, check this: https://bugs.launchpad.net/ubuntu/+source/cmake/+bug/826988
++include(FindPkgConfig)
++pkg_check_modules(FREETYPE REQUIRED freetype2)
+ FIND_PACKAGE(OpenGL   REQUIRED)
  
- ADD_LIBRARY(ftgl ${libftgl_la_SOURCES} ${ftgl_headers} ${ftglyph_sources} ${ftfont_sources} ${ftlayout_sources})
- TARGET_LINK_LIBRARIES(ftgl
--	${FREETYPE_LIBRARIES}
-+	Freetype::Freetype
- 	${OPENGL_LIBRARIES}
- )
- 
+ INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
