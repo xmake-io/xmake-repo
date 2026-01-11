@@ -5,6 +5,25 @@ package("lsplt")
     add_urls("https://github.com/LSPosed/LSPlt.git")
     add_versions("2025.03.26", "7d609ac3c2d8faa0c830b0904024ef5c81a98e6e")
 
+    if on_check then
+        on_check(function (package)
+            assert(package:check_cxxsnippets({test = [[
+                #include <vector>
+                struct MapInfoStub {
+                    unsigned long a;
+                    unsigned long b;
+                    int c;
+                    bool d;
+                };
+                void test() {
+                    std::vector<MapInfoStub> info;
+                    info.emplace_back(1UL, 2UL, 3, true); 
+                }
+            ]]}, {configs = {languages = "c++20"}}), 
+            "package(lsplt) requires a compiler supporting C++20.")
+        end)
+    end
+
     on_install("android", function (package)
         os.cd("lsplt/src/main/jni")
         local configs = {}
