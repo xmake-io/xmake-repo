@@ -3,25 +3,23 @@ package("cmake")
     set_homepage("https://cmake.org")
     set_description("A cross-platform family of tools designed to build, test and package software")
 
-    if add_schemes then
-        add_schemes("binary", "source")
-        on_source(function (package)
-            import("schemes.binary")
-            import("schemes.source")
+    on_source(function (package)
+        import("schemes.binary")
+        import("schemes.source")
+        if package.current_scheme then
             binary.add_urls(package, "binary")
             source.add_urls(package, "source")
-        end)
-    else
-        on_source(function (package)
-            import("schemes.binary")
-            import("schemes.source")
+        else
             if binary.add_urls(package) then
                 package:data_set("scheme", "binary")
             else
                 source.add_urls(package)
                 package:data_set("scheme", "source")
             end
-        end)
+        end
+    end)
+    if add_schemes then
+        add_schemes("binary", "source")
     end
 
     if is_plat("mingw") and is_subhost("msys") then
