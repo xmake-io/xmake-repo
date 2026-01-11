@@ -27,7 +27,7 @@ target("libudis86")
     add_headerfiles("libudis86/*.h", {prefixdir = "libudis86"})
     add_headerfiles("udis86.h")
 
-    on_load(function (target)
+    on_config(function (target)
         import("lib.detect.find_tool")
         local args = {
             path.join(os.curdir(), "scripts", "ud_itab.py"),
