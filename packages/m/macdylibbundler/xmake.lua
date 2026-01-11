@@ -8,20 +8,15 @@ package("macdylibbundler")
 
     add_versions("1.0.5", "d48138fd6766c70097b702d179a657127f9aed3d083051c2d4fce145881a316e")
 
-   if is_plat("windows") then
-        add_deps("unistd_h")
-    end
-
     on_load(function (package)
         if not package:is_cross() then
             package:addenv("PATH", "bin")
         end
     end)
 
-    on_install("!iphoneos", function (package)
+    on_install("!windows and !iphoneos", function (package)
         io.replace("src/Utils.cpp", [[using namespace std;]], [[using namespace std;
 #ifdef __MINGW32__
-#define _CRT_RAND_S
 #include <cstdlib>
 #include <cstring>
 #include <direct.h>
@@ -61,17 +56,15 @@ char * __cdecl mkdtemp(char *template_name)
             add_rules("mode.debug", "mode.release")
             set_languages("c++11")
 
-            if is_plat("windows") then
-                add_requires("unistd_h")
-            end
-
             target("macdylibbundler")
                 set_kind("$(kind)")
                 add_files("src/*.cpp")
                 remove_files("src/main.cpp")
                 add_includedirs("src")
                 add_headerfiles("src/*.h")
-                add_packages("unistd_h")
+                if is_plat("mingw") then
+                    add_defines("_CRT_RAND_S")
+                end
 
             target("macdylibbundler-cli")
                 set_basename("macdylibbundler")
