@@ -6,13 +6,13 @@ package("dartsim")
 
     add_urls("https://github.com/dartsim/dart/archive/refs/tags/$(version).tar.gz",
              "https://github.com/dartsim/dart.git")
+
+    add_versions("v6.16.0", "a036d943688fdd6fb34f140a1f3e8d44376361a265b734a3702da5dea9f75786")
     add_versions("v6.15.0", "bbf954e283f464f6d0a8a5ab43ce92fd49ced357ccdd986c7cb4c29152df8692")
     add_versions("v6.14.5", "eb89cc01f4f48c399b055d462d8ecd2a3f846f825a35ffc67f259186b362e136")
     add_versions("v6.14.4", "f5fc7f5cb1269cc127a1ff69be26247b9f3617ce04ff1c80c0f3f6abc7d9ab70")
-    add_versions("v6.13.0", "4da3ff8cee056252a558b05625a5ff29b21e71f2995e6d7f789abbf6261895f7")
     add_versions("v6.14.2", "6bbaf452f8182b97bf22adeab6cc7f3dc1cd2733358543131fa130e07c0860fc")
-
-    add_patches("6.x", "patches/6.14.5/dartpy.patch", "c8f989317ac8e20259a91e76d28b986b3d4bda01a8e4d0fc13704f6e4f0e144b")
+    add_versions("v6.13.0", "4da3ff8cee056252a558b05625a5ff29b21e71f2995e6d7f789abbf6261895f7")
 
     add_configs("dartpy", {description = "Build dartpy interface.", default = false, type = "boolean"})
     add_configs("gui",   {description = "Build GLUT GUI.", default = false, type = "boolean"})
@@ -48,6 +48,8 @@ package("dartsim")
             package:add("deps", "glut")
         end
         if package:config("dartpy") then
+            package:add("patches", ">=6.16.0", "patches/6.16.0/dartpy.patch", "c8f989317ac8e20259a91e76d28b986b3d4bda01a8e4d0fc13704f6e4f0e144b")
+            package:add("patches", "<6.16.0", "patches/6.14.5/dartpy.patch", "c8f989317ac8e20259a91e76d28b986b3d4bda01a8e4d0fc13704f6e4f0e144b")
             package:add("deps", "tinyxml2")
             package:add("deps", "urdfdom")
             package:add("deps", "openscenegraph")
