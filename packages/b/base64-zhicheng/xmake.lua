@@ -10,10 +10,14 @@ package("base64-zhicheng")
         local configs = {}
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
+            set_languages("c99")
             target("base64")
                 set_kind("$(kind)")
                 add_files("base64.c")
                 add_headerfiles("(*.h)")
+                if is_plat("windows") and is_kind("shared") then
+                    add_rules("utils.symbols.export_all")
+                end
         ]])
         import("package.tools.xmake").install(package)
     end)
@@ -23,10 +27,13 @@ package("base64-zhicheng")
             #include <base64.h>
             #include <stdlib.h>
             void test() {
-                unsigned char *encode = "foobar";
+                unsigned char encode[] = "foobar";
                 unsigned int encodelen = 6;
-                char *encode_out = malloc(BASE64_ENCODE_OUT_SIZE(encodelen));
-                base64_encode(encode, encodelen, encode_out);
+                char *encode_out = (char*)malloc(BASE64_ENCODE_OUT_SIZE(encodelen));
+                if (encode_out) {
+                    base64_encode(encode, encodelen, encode_out);
+                    free(encode_out);
+                }
             }
         ]]}, {configs = {languages = "c99"}}))
     end)
