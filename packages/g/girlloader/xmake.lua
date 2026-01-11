@@ -29,7 +29,6 @@ package("girlloader")
                 add_files(  
                     "Communicate/Communicate.cpp",
                     "Communicate/TcpServer.cpp",
-                    "Utility/base64.cpp",
                     "main.cpp")
                 add_includedirs("include")
                 add_packages("base64-zhicheng")
