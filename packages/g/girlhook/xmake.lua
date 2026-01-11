@@ -9,6 +9,12 @@ package("girlhook")
 
     add_deps("elfio", "sol2", "lua")
 
+    if on_check then
+        on_check(function (package)
+            assert(package:check_sizeof("void*") == "8", "package(girlhook): only supports 64 bit.")
+        end)
+    end
+
     on_install("android", function (package)
         io.replace("app/src/main/cpp/JVM/JVM.h", [[#include "../include/ELFIO/elfio/elfio.hpp"]], [[#include <elfio/elfio.hpp>]], {plain = true})
         os.rmdir(
