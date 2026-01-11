@@ -16,9 +16,10 @@ package("base64-zhicheng")
                 add_files("base64.c")
                 add_headerfiles("(*.h)")
                 if is_plat("windows") and is_kind("shared") then
-                    add_rules("utils.symbols.export_all")
+                    add_files("*.def")
                 end
         ]])
+        os.cp(path.join(package:scriptdir(), "port", "base64.def"), "base64.def")
         import("package.tools.xmake").install(package)
     end)
 
