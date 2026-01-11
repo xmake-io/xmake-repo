@@ -34,7 +34,7 @@ package("cmake")
             scheme:add("versions", "4.0.2",  "4c53ba41092617d1be2205dbc10bb5873a4c5ef5e9e399fc927ffbe78668a6d3")
             scheme:add("versions", "4.0.3",  "4e85de4daf1c3e82d7dc6b8ba5683972944b466343aeb9c327a742437bb3ce9a")
             scheme:add("versions", "4.1.4",  "7fc64e989af34201acff6d16628d6a8d1f72cfb74d5bd9342ab332c8c00e69ab")
-            --scheme:add("versions", "4.2.1",  "0bb18f295e52d7e9309980e361e79e76a1d8da67a1587255cbe3696ea998f597")
+            scheme:add("versions", "4.2.1",  "0bb18f295e52d7e9309980e361e79e76a1d8da67a1587255cbe3696ea998f597")
             return true
         elseif is_host("linux") then
             if os.arch():find("arm64.*") then
