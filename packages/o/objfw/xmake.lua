@@ -37,6 +37,7 @@ package("objfw")
     add_versions("1.3.2",   "8148df0d55d1a3218fe9965144b5c3ee2a7f4d8e43e430a6107e294043872cab")
     add_versions("1.4.1",   "e223b1cae37453f02ea98f085c3c1f4b78dcf7c16b43d35b05d9ad4480e175b2")
         add_versions("1.4.2",   "8e6d0cd39271130a0b6c2789fa08f2598c77d9b88acbd0e2c15c8eb1144baa08")
+    add_versions("1.4.3", "0e987c82bd482a957360a1cd7e8d14716442f9bfba68f58fef9b81750db301d9")
 
     if is_host("linux", "macosx") then
         add_deps("autoconf", "automake", "libtool")
@@ -46,6 +47,7 @@ package("objfw")
     if is_plat("macosx") then
         add_syslinks("objc")
         add_frameworks("CoreFoundation")
+
     end
 
     add_configs("tls", { description = "Enable TLS support.", default = (is_plat("macosx") and "securetransport" or "openssl"), values = { true, false, "openssl", "gnutls", "securetransport", "mbedtls" } })
