@@ -6,6 +6,7 @@ package("tmx")
     add_urls("https://github.com/baylej/tmx/archive/refs/tags/tmx_$(version).tar.gz",
              "https://github.com/baylej/tmx.git")
 
+    add_versions("1.10.0", "8ee42d1728c567d6047a58b2624c39c8844aaf675c470f9f284c4ed17e94188f")
     add_versions("1.2.0", "6f9ecb91beba1f73d511937fba3a04306a5af0058a4c2b623ad2219929a4116a")
 
     add_configs("zlib", {description = "use zlib (ability to decompress layers data)", default = false, type = "boolean"})
@@ -23,7 +24,7 @@ package("tmx")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "iphoneos", "android", function (package)
+    on_install(function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
