@@ -6,13 +6,14 @@ package("lwlog")
     add_urls("https://github.com/ChristianPanov/lwlog/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ChristianPanov/lwlog.git")
 
+    add_versions("v1.5.0", "1820842edf252235aa97a7c876cba5455fcec767a68ac7ca5b05b673269b9942")
     add_versions("v1.3.1", "63123ff25b15d46ad0a89d4c85dd7c22d63382b89ed251607b3cbd908698a6da")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
 
-    add_includedirs("include/src")
+    add_includedirs("include/src", "include/lwlog")
 
     add_deps("cmake")
 
@@ -35,8 +36,9 @@ package("lwlog")
         assert(package:check_cxxsnippets({test = [[
             #include <lwlog.h>
             void test() {
-                lwlog::init_default_logger();
-                lwlog::info("Info message");
+                auto basic = std::make_shared<lwlog::basic_logger<lwlog::sinks::stdout_sink>>("CONSOLE");
+                auto console = std::make_shared<lwlog::console_logger>("CONSOLE");
+                auto file = std::make_shared<lwlog::file_logger>("FILE", "C:/Users/user/Desktop/LogFolder/LOGS.txt");
             }
         ]]}, {configs = {languages = "c++17"}}))
     end)
