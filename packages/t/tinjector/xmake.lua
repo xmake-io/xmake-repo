@@ -3,10 +3,9 @@ package("tinjector")
     set_description("Hijacking Zygote to inject .so files before the app launches.")
     set_license("GPL-3.0")
 
-    add_urls("https://github.com/Mrack/TInjector/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/Mrack/TInjector.git")
+    add_urls("https://github.com/Mrack/TInjector.git")
 
-    add_versions("1.1", "36b2620cb60dc385ea940541f44b40c8a64d330770187322a266de5e629a53c5")
+    add_versions("2024.09.23", "658f2c6478b13d74b615debf9480ffd70a7286e8")
 
     add_deps("elfio", "dobby")
 
