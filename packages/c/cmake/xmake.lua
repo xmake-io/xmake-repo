@@ -3,6 +3,18 @@ package("cmake")
     set_homepage("https://cmake.org")
     set_description("A cross-platform family of tools designed to build, test and package software")
 
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::cmake")
+    elseif is_plat("linux") then
+        add_extsources("pacman::cmake", "apt::cmake")
+    elseif is_plat("macosx") then
+        add_extsources("brew::cmake")
+    end
+
+    if add_schemes then
+        add_schemes("binary", "source")
+    end
+
     on_source(function (package)
         import("schemes.binary")
         import("schemes.source")
@@ -18,17 +30,6 @@ package("cmake")
             end
         end
     end)
-    if add_schemes then
-        add_schemes("binary", "source")
-    end
-
-    if is_plat("mingw") and is_subhost("msys") then
-        add_extsources("pacman::cmake")
-    elseif is_plat("linux") then
-        add_extsources("pacman::cmake", "apt::cmake")
-    elseif is_plat("macosx") then
-        add_extsources("brew::cmake")
-    end
 
     on_load(function (package)
         -- xmake v3.x will enable this ninja policy by default
