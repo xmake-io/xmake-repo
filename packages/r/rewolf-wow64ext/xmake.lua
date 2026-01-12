@@ -27,10 +27,10 @@ package("rewolf-wow64ext")
     on_install("windows", "mingw", function (package)
         io.replace("src/wow64ext.h", [[#include <Windows.h>]], [[#include <windows.h>]], {plain = true})
         io.replace("src/wow64ext.cpp", [[#include <Windows.h>]], [[#include <windows.h>]], {plain = true})
+        io.replace("src/wow64ext.cpp", "reg64 restArgs = { (DWORD64)&va_arg(args, DWORD64) };", "reg64 restArgs = { (DWORD64)args };", {plain = true})
         if package:is_plat("mingw") then
             local rc_str = io.readfile("src/wow64ext.rc", {encoding = "utf16le"})
             io.writefile("src/wow64ext.rc", rc_str, {encoding = "utf8"})
-            io.replace("src/wow64ext.cpp", "PTR_TO_DWORD64(&va_arg(args, DWORD64))", "(DWORD64)args", {plain = true})
         end
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
