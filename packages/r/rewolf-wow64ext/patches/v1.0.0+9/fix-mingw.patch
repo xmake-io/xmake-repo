@@ -64,10 +64,10 @@ index 28d3554..f8f1018 100644
  };
 +#endif
 diff --git a/src/wow64ext.cpp b/src/wow64ext.cpp
-index fbba809..732f7c4 100644
+index fbba809..1af6a0b 100644
 --- a/src/wow64ext.cpp
 +++ b/src/wow64ext.cpp
-@@ -85,13 +85,65 @@ extern "C" __declspec(dllexport) DWORD64 __cdecl X64Call(DWORD64 func, int argC,
+@@ -85,13 +85,63 @@ extern "C" __declspec(dllexport) DWORD64 __cdecl X64Call(DWORD64 func, int argC,
      reg64 _r9 = { (argC > 0) ? argC--, va_arg(args, DWORD64) : 0 };
      reg64 _rax = { 0 };
  
@@ -81,50 +81,48 @@ index fbba809..732f7c4 100644
  
 +#ifdef __MINGW32__
 +    asm volatile (
-+        ".intel_syntax noprefix;"
-+        "mov word ptr %[back_fs], fs;"
-+        "mov eax, 0x2B;"
-+        "mov fs, ax;"
-+        "mov dword ptr %[back_esp], esp;"
-+        "and esp, 0xFFFFFFF0;"
++        "movw %%fs, %[back_fs];"
++        "movl $0x2B, %%eax;"
++        "movw %%ax, %%fs;"
++        "movl %%esp, %[back_esp];"
++        "andl $0xFFFFFFF0, %%esp;"
 +        X64_Start()
-+        REX_W "mov ecx, qword ptr %[rcx_val];"
-+        REX_W "mov edx, qword ptr %[rdx_val];"
-+        "push qword ptr %[r8_val];"
++        REX_W "movl %[rcx_val], %%ecx;"
++        REX_W "movl %[rdx_val], %%edx;"
++        "pushl %[r8_val];"
 +        X64_Pop(_R8)
-+        "push qword ptr %[r9_val];"
++        "pushl %[r9_val];"
 +        X64_Pop(_R9)
-+        REX_W "mov eax, qword ptr %[argC_val];"
-+        "test al, 1;"
++        REX_W "movl %[argC_val], %%eax;"
++        "testb $1, %%al;"
 +        "jnz _no_adjust%=;"
-+        "sub esp, 8;"
++        "subl $8, %%esp;"
 +        "_no_adjust%=:;"
-+        "push edi;"
-+        REX_W "mov edi, qword ptr %[restArgs_val];"
-+        REX_W "test eax, eax;"
++        "pushl %%edi;"
++        REX_W "movl %[restArgs_val], %%edi;"
++        REX_W "testl %%eax, %%eax;"
 +        "jz _ls_e%=;"
-+        REX_W "lea edi, [edi + 8*eax - 8];"
++        REX_W "leal -8(%%edi, %%eax, 8), %%edi;"
 +        "_ls%=:;"
-+        REX_W "test eax, eax;"
++        REX_W "testl %%eax, %%eax;"
 +        "jz _ls_e%=;"
-+        "push dword ptr [edi];"
-+        REX_W "sub edi, 8;"
-+        REX_W "sub eax, 1;"
++        "pushl (%%edi);"
++        REX_W "subl $8, %%edi;"
++        REX_W "subl $1, %%eax;"
 +        "jmp _ls%=;"
 +        "_ls_e%=:;"
-+        REX_W "sub esp, 0x20;"
-+        "call qword ptr %[func_val];"
-+        REX_W "mov ecx, qword ptr %[argC_val];"
-+        REX_W "lea esp, [esp + 8*ecx + 0x20];"
-+        "pop edi;"
-+        REX_W "mov qword ptr %[rax_out], eax;"
++        REX_W "subl $0x20, %%esp;"
++        "call *%[func_val];"
++        REX_W "movl %[argC_val], %%ecx;"
++        REX_W "leal 0x20(%%esp, %%ecx, 8), %%esp;"
++        "popl %%edi;"
++        REX_W "movl %%eax, %[rax_out];"
 +        X64_End()
-+        "mov ax, ds;"
-+        "mov ss, ax;"
-+        "mov esp, dword ptr %[back_esp];"
-+        "mov ax, word ptr %[back_fs];"
-+        "mov fs, ax;"
-+        ".att_syntax prefix;"
++        "movw %%ds, %%ax;"
++        "movw %%ax, %%ss;"
++        "movl %[back_esp], %%esp;"
++        "movw %[back_fs], %%ax;"
++        "movw %%ax, %%fs;"
 +        : [rax_out] "=m" (_rax.v), [back_fs] "=m" (back_fs), [back_esp] "=m" (back_esp)
 +        : [rcx_val] "m" (_rcx.v), [rdx_val] "m" (_rdx.v), [r8_val] "m" (_r8.v), [r9_val] "m" (_r9.v),
 +          [argC_val] "m" (_argC.v), [restArgs_val] "m" (restArgs.v), [func_val] "m" (func)
@@ -134,7 +132,7 @@ index fbba809..732f7c4 100644
      __asm
      {
          ;// reset FS segment, to properly handle RFG
-@@ -172,6 +224,7 @@ _ls_e:                                                  ;//
+@@ -172,6 +222,7 @@ _ls_e:                                                  ;//
          mov    ax, back_fs
          mov    fs, ax
      }
@@ -142,33 +140,31 @@ index fbba809..732f7c4 100644
      return _rax.v;
  }
  #pragma warning(pop)
-@@ -183,6 +236,34 @@ void getMem64(void* dstMem, DWORD64 srcMem, size_t sz)
+@@ -183,6 +234,32 @@ void getMem64(void* dstMem, DWORD64 srcMem, size_t sz)
  
      reg64 _src = { srcMem };
  
 +#ifdef __MINGW32__
 +    asm volatile (
-+        ".intel_syntax noprefix;"
 +        X64_Start()
-+        "mov edi, dword ptr %[dstMem];"
-+        REX_W "mov esi, dword ptr %[src];"
-+        "mov ecx, dword ptr %[sz];"
-+        "mov eax, ecx;"
-+        "and eax, 3;"
-+        "shr ecx, 2;"
-+        "rep movsd;"
-+        "test eax, eax;"
++        "movl %[dstMem], %%edi;"
++        REX_W "movl %[src], %%esi;"
++        "movl %[sz], %%ecx;"
++        "movl %%ecx, %%eax;"
++        "andl $3, %%eax;"
++        "shrl $2, %%ecx;"
++        "rep movsl;"
++        "testl %%eax, %%eax;"
 +        "je _move_0%=;"
-+        "cmp eax, 1;"
++        "cmpl $1, %%eax;"
 +        "je _move_1%=;"
 +        "movsw;"
-+        "cmp eax, 2;"
++        "cmpl $2, %%eax;"
 +        "je _move_0%=;"
 +        "_move_1%=:;"
 +        "movsb;"
 +        "_move_0%=:;"
 +        X64_End()
-+        ".att_syntax prefix;"
 +        : 
 +        : [dstMem] "m" (dstMem), [src] "m" (_src.v), [sz] "m" (sz)
 +        : "eax", "ecx", "edi", "esi", "memory", "cc"
@@ -177,7 +173,7 @@ index fbba809..732f7c4 100644
      __asm
      {
          X64_Start();
-@@ -222,15 +303,49 @@ _move_0:                            ;//
+@@ -222,15 +299,47 @@ _move_0:                            ;//
  
          X64_End();
      }
@@ -194,32 +190,30 @@ index fbba809..732f7c4 100644
      reg64 _src = { srcMem };
 +#ifdef __MINGW32__
 +    asm volatile (
-+        ".intel_syntax noprefix;"
 +        X64_Start()
-+        "mov edi, dword ptr %[dstMem];"
-+        REX_W "mov esi, dword ptr %[src];"
-+        "mov ecx, dword ptr %[sz];"
-+        "mov eax, ecx;"
-+        "and eax, 3;"
-+        "shr ecx, 2;"
-+        "repe cmpsd;"
++        "movl %[dstMem], %%edi;"
++        REX_W "movl %[src], %%esi;"
++        "movl %[sz], %%ecx;"
++        "movl %%ecx, %%eax;"
++        "andl $3, %%eax;"
++        "shrl $2, %%ecx;"
++        "repe cmpsl;"
 +        "jnz _ret_false%=;"
-+        "test eax, eax;"
++        "testl %%eax, %%eax;"
 +        "je _move_0%=;"
-+        "cmp eax, 1;"
++        "cmpl $1, %%eax;"
 +        "je _move_1%=;"
 +        "cmpsw;"
 +        "jnz _ret_false%=;"
-+        "cmp eax, 2;"
++        "cmpl $2, %%eax;"
 +        "je _move_0%=;"
 +        "_move_1%=:;"
 +        "cmpsb;"
 +        "jnz _ret_false%=;"
 +        "_move_0%=:;"
-+        "mov byte ptr %[result], 1;"
++        "movb $1, %[result];"
 +        "_ret_false%=:;"
 +        X64_End()
-+        ".att_syntax prefix;"
 +        : [result] "+m" (result)
 +        : [dstMem] "m" (dstMem), [src] "m" (_src.v), [sz] "m" (sz)
 +        : "eax", "ecx", "edi", "esi", "cc", "memory"
@@ -228,7 +222,7 @@ index fbba809..732f7c4 100644
      __asm
      {
          X64_Start();
-@@ -276,6 +391,7 @@ _ret_false:                         ;//
+@@ -276,6 +385,7 @@ _ret_false:                         ;//
  
          X64_End();
      }
@@ -236,18 +230,16 @@ index fbba809..732f7c4 100644
  
      return result;
  }
-@@ -285,12 +401,26 @@ DWORD64 getTEB64()
+@@ -285,12 +395,24 @@ DWORD64 getTEB64()
      reg64 reg;
      reg.v = 0;
      
 +#ifdef __MINGW32__
 +    asm volatile (
-+        ".intel_syntax noprefix;"
 +        X64_Start()
 +        X64_Push(_R12)
-+        "pop dword ptr %[reg];"
++        "popl %[reg];"
 +        X64_End()
-+        ".att_syntax prefix;"
 +        : [reg] "=m" (reg.v)
 +        : 
 +        : "memory"

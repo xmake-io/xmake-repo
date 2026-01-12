@@ -12,7 +12,7 @@ package("rewolf-wow64ext")
 
     add_versions("v1.0.0+9", "d74cd5353ec4f565c61302cf667f4319d2efb554a76cf83b216f8a8a32c058f6")
 
-    add_patches("v1.0.0+9", "patches/v1.0.0+9/fix-mingw.patch", "76b8fb8bfd0f072b9f90a6bfa6872dc1dedba22d4be9ea59022ca4092147c672")
+    add_patches("v1.0.0+9", "patches/v1.0.0+9/fix-mingw.patch", "d6cc4844ff4607ab450bc594792dd07594de1ecd9961e3f551350cb41ea8c23f")
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
