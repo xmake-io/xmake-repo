@@ -34,19 +34,20 @@ package("glib")
         add_syslinks("pthread", "dl", "resolv")
     end
 
-    add_deps("meson", "ninja", "libffi", "zlib")
+    add_deps("meson", "ninja")
+    if is_subhost("windows") then
+        add_deps("pkgconf")
+    else
+        add_deps("pkg-config")
+    end
+
+    add_deps("libffi", "zlib")
     if is_plat("linux") then
         add_deps("libiconv")
     elseif is_plat("macosx") then
-        add_deps("libiconv", {system = true})
-        add_deps("libintl")
+        add_deps("libiconv", "libintl")
     elseif is_plat("windows", "mingw") then
         add_deps("libintl")
-        if is_subhost("windows") then
-            add_deps("pkgconf")
-        else
-            add_deps("pkg-config")
-        end
     end
 
     add_includedirs("include/glib-2.0", "lib/glib-2.0/include")
