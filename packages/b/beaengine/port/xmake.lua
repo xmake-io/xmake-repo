@@ -32,31 +32,31 @@ target("BeaEngine")
     end
 
     on_config(function (target)
-        local name = "BeaEngine"
+        local suffix = ""
         local kind = target:kind()
 
         if kind == "shared" then
             target:add("defines", "BUILD_BEA_ENGINE_DLL")
         else
             target:add("defines", "BEA_ENGINE_STATIC")
-            name = name .. "_s"
+            suffix = suffix .. "_s"
         end
 
         if is_mode("debug") then 
-            name = name .. "_d" 
+            suffix = suffix .. "_d"
         end
 
         if not has_config("lite") then 
-            name = name .. "_l" 
+            suffix = suffix .. "_l" 
         end
 
         if has_config("stdcall") then 
-            name = name .. "_stdcall" 
+            suffix = suffix .. "_stdcall" 
         end
 
         if target:is_arch("x64", "x86_64") then 
-            name = name .. "_64" 
+            suffix = suffix .. "_64" 
         end
 
-        target:set("basename", name)
+        target:set("suffixname", suffix)
     end)
