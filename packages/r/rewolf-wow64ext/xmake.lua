@@ -3,16 +3,18 @@ package("rewolf-wow64ext")
     set_description("Helper library for x86 programs that runs under WOW64 layer on x64 versions of Microsoft Windows operating systems.")
     set_license("LGPL-3.0-or-later")
 
-    add_urls("https://github.com/rwfpl/rewolf-wow64ext/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/rwfpl/rewolf-wow64ext.git", {
-        version = function (version)
+    add_urls("https://github.com/rwfpl/rewolf-wow64ext/archive/refs/tags/$(version).tar.gz", {
+        alias = "tag", version = function (version)
             return version:gsub("+", ".")
         end
     })
-
-    add_versions("v1.0.0+9", "d74cd5353ec4f565c61302cf667f4319d2efb554a76cf83b216f8a8a32c058f6")
+    add_urls("https://github.com/rwfpl/rewolf-wow64ext.git", {alias = "git"})
+    
+    add_versions("tag:v1.0.0+9", "d74cd5353ec4f565c61302cf667f4319d2efb554a76cf83b216f8a8a32c058f6")
+    add_versions("git:2022.09.26", "82045488f48c8641609d9a5d8bb832937b9b5acd")
 
     add_patches("v1.0.0+9", "patches/v1.0.0+9/fix-mingw.patch", "d6cc4844ff4607ab450bc594792dd07594de1ecd9961e3f551350cb41ea8c23f")
+    add_patches("2022.09.26", "patches/2022.09.26/fix-mingw.patch", "7920999af8511066db3a5a2641e074f7d2bc81caf4f3fc31f370fb2843ac9be0")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
