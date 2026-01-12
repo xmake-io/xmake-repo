@@ -50,7 +50,7 @@ target("BeaEngine")
             name = name .. "_l" 
         end
 
-        if target:has_config("stdcall") then 
+        if has_config("stdcall") then 
             name = name .. "_stdcall" 
         end
 
