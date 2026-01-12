@@ -12,6 +12,8 @@ package("rewolf-wow64ext")
 
     add_versions("v1.0.0+9", "d74cd5353ec4f565c61302cf667f4319d2efb554a76cf83b216f8a8a32c058f6")
 
+    add_patches("v1.0.0+9", "patches/v1.0.0+9/fix-mingw.patch", "4f8488afa538b5076875c2449dcb2f88b2077e08858f557a846ceffa2883c270")
+
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
     end
@@ -27,7 +29,6 @@ package("rewolf-wow64ext")
     on_install("windows", "mingw", function (package)
         io.replace("src/wow64ext.h", [[#include <Windows.h>]], [[#include <windows.h>]], {plain = true})
         io.replace("src/wow64ext.cpp", [[#include <Windows.h>]], [[#include <windows.h>]], {plain = true})
-        io.replace("src/wow64ext.cpp", "reg64 restArgs = { (DWORD64)&va_arg(args, DWORD64) };", "reg64 restArgs = { (DWORD64)args };", {plain = true})
         if package:is_plat("mingw") then
             local rc_str = io.readfile("src/wow64ext.rc", {encoding = "utf16le"})
             io.writefile("src/wow64ext.rc", rc_str, {encoding = "utf8"})
