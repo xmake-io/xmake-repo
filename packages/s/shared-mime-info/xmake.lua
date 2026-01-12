@@ -16,10 +16,10 @@ package("shared-mime-info")
 
     add_deps("meson", "ninja", "pkg-config")
     add_deps("libxml2", {configs = {tools = true}})
-    add_deps("glib", "gettext", "libiconv")
+    add_deps("glib", "gettext")
 
     on_install("macosx", "linux", function (package)
-        import("package.tools.meson").install(package, {}, {packagedeps = {"libiconv"}})
+        import("package.tools.meson").install(package, {}, {packagedeps = "libiconv"})
     end)
 
     on_test(function (package)
