@@ -58,7 +58,7 @@ package("gdk-pixbuf")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("windows", "macosx", "linux", "cross", "mingw", function (package)
+    on_install("windows", "macosx", "linux", "mingw", function (package)
         import("package.tools.meson")
 
         io.gsub("meson.build", "subdir%('tests'%)", "")
@@ -89,15 +89,13 @@ package("gdk-pixbuf")
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
 
         local opt = {
-            packagedeps = {
-                "libjpeg-turbo", "libpng", "libtiff", "glib", "pcre2", "libintl", "libiconv"
-            }
+            packagedeps = {"libintl", "libiconv"}
         }
         if package:config("gio_sniffing") then
             table.insert(configs, "-Dgio_sniffing=true")
             local envs = meson.buildenvs(package)
             local pc_path = path.splitenv(envs.PKG_CONFIG_PATH)
-            table.insert(pc_path, path.join(package:dep("shared-mime-info"):installdir(), "share", "pkgconfig"))
+            table.insert(pc_path, path.join(package:dep("shared-mime-info"):installdir(), "share/pkgconfig"))
 
             envs.PKG_CONFIG_PATH = path.joinenv(pc_path)
             opt.envs = envs
