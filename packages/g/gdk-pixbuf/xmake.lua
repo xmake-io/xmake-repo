@@ -59,6 +59,7 @@ package("gdk-pixbuf")
     end)
 
     on_install("windows", "macosx", "linux", "mingw", function (package)
+        os.rmdir("subprojects")
         import("package.tools.meson")
 
         io.gsub("meson.build", "subdir%('tests'%)", "")
