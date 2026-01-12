@@ -34,12 +34,8 @@ package("sonyps5201314-wow64ext")
                 add_headerfiles("wow64ext/(*.h)")
                 set_pcxxheader("wow64ext/pch.h")
 
-                if is_plat("mingw") then
-                    add_shflags("-mwindows")
-                    add_asflags("-masm=intel")
-                elseif is_plat("windows") then
-                    add_shflags("/subsystem:windows")
-                end
+                add_ldflags("/subsystem:windows")
+                add_shflags("/subsystem:windows")
         ]])
         import("package.tools.xmake").install(package)
     end)
