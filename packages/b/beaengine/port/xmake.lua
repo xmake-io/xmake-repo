@@ -12,7 +12,7 @@ option("lite")
     add_defines("BEA_LIGHT_DISASSEMBLY")
 option_end()
 
-add_requires("zlib", {optional = true})
+add_requires("zlib")
 
 target("BeaEngine")
     set_languages("c99")

@@ -1,6 +1,7 @@
 package("beaengine")
     set_homepage("https://github.com/BeaEngine/beaengine")
     set_description("BeaEngine disasm project")
+    set_license("LGPL-3.0-or-later")
 
     add_urls("https://github.com/BeaEngine/beaengine/archive/refs/tags/$(version).tar.gz",
              "https://github.com/BeaEngine/beaengine.git")
@@ -10,7 +11,7 @@ package("beaengine")
     add_configs("stdcall", {description = "Build using stdcall", default = true, type = "boolean"})
     add_configs("lite", {description = "Build without text disassembly", default = false, type = "boolean"})
 
-    add_deps("zlib", {optional = true})
+    add_deps("zlib")
 
     on_load("windows", "mingw", function (package)
         if not package:config("shared") then
