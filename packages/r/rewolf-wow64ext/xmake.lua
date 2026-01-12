@@ -8,6 +8,10 @@ package("rewolf-wow64ext")
     add_versions("v1.0.0.9", "d74cd5353ec4f565c61302cf667f4319d2efb554a76cf83b216f8a8a32c058f6")
 
     on_install("windows", "mingw", function (package)
+        if package:is_plat("mingw") then
+            local rc_str = io.readfile("src/wow64ext.rc", {encoding = "utf16le"})
+            io.writefile("src/wow64ext.rc", rc_str, {encoding = "utf8"})
+        end
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             target("rewolf-wow64ext")
@@ -23,7 +27,9 @@ package("rewolf-wow64ext")
 
                 add_includedirs("src")
 
-                if is_plat("windows") then
+                if is_plat("mingw") then
+                    add_ldflags("-mwindows")
+                elseif is_plat("windows") then
                     add_ldflags("/subsystem:windows")
                 end
         ]])
