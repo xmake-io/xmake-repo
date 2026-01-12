@@ -33,9 +33,8 @@ target("BeaEngine")
 
     on_config(function (target)
         local name = "BeaEngine"
-        local kind = target:kind()
 
-        if kind == "shared" then
+        if is_kind("shared") then
             target:add("defines", "BUILD_BEA_ENGINE_DLL")
         else
             target:add("defines", "BEA_ENGINE_STATIC")
