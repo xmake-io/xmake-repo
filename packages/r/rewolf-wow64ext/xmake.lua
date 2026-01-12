@@ -27,7 +27,6 @@ package("rewolf-wow64ext")
     end
 
     on_install("windows", "mingw", function (package)
-        io.replace("src/wow64ext.h", [[#include <Windows.h>]], [[#include <windows.h>]], {plain = true})
         io.replace("src/wow64ext.cpp", [[#include <Windows.h>]], [[#include <windows.h>]], {plain = true})
         if package:is_plat("mingw") then
             local rc_str = io.readfile("src/wow64ext.rc", {encoding = "utf16le"})
