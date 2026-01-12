@@ -90,7 +90,7 @@ package("gdk-pixbuf")
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
 
         local opt = {
-            packagedeps = {"libintl", "libiconv"}
+            packagedeps = {"libintl", "glib"}
         }
         if package:config("gio_sniffing") then
             table.insert(configs, "-Dgio_sniffing=true")
