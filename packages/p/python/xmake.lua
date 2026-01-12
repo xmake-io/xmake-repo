@@ -69,6 +69,7 @@ package("python")
         add_versions("3.13.0", "12445c7b3db3126c41190bfdc1c8239c39c719404e844babbd015a1bc3fafcd4")
         add_versions("3.13.1", "1513925a9f255ef0793dbf2f78bb4533c9f184bdd0ad19763fd7f47a400a7c55")
         add_versions("3.13.2", "b8d79530e3b7c96a5cb2d40d431ddb512af4a563e863728d8713039aa50203f9")
+        add_versions("3.13.11", "03cfedbe06ce21bc44ce09245e091a77f2fee9ec9be5c52069048a181300b202")
     end
 
     add_configs("headeronly", {description = "Use header only version.", default = false, type = "boolean"})
