@@ -6,6 +6,7 @@ package("pocketpy")
 
     add_urls("https://github.com/pocketpy/pocketpy/releases/download/$(version)/pocketpy.h")
 
+    add_versions("v2.1.6", "c0386447b589f2234552caeb7ebd1bf0176f7184606c64f49f0003dd080451a2")
     add_versions("v2.1.3", "fb2d1b594ddc46084d5e090e3e907da0d6769287152dba5d51288ac231ff7dfa")
     add_versions("v2.1.1", "d54aec6d75f7f7d03b862d4370e0014f9723715da901623bedc82ac72566caae")
     add_versions("v2.0.8", "9d6dada0fa9b661a44bcaf581f56ad15c7fe9ee18e0c719438f3332ccb3ac76f")
