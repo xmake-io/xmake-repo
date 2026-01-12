@@ -1,11 +1,16 @@
 package("rewolf-wow64ext")
     set_homepage("https://github.com/rwfpl/rewolf-wow64ext")
     set_description("Helper library for x86 programs that runs under WOW64 layer on x64 versions of Microsoft Windows operating systems.")
+    set_license("LGPL-3.0-or-later")
 
     add_urls("https://github.com/rwfpl/rewolf-wow64ext/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/rwfpl/rewolf-wow64ext.git")
+             "https://github.com/rwfpl/rewolf-wow64ext.git", {
+        version = function (version)
+            return version:gsub("+", ".")
+        end
+    })
 
-    add_versions("v1.0.0.9", "d74cd5353ec4f565c61302cf667f4319d2efb554a76cf83b216f8a8a32c058f6")
+    add_versions("v1.0.0+9", "d74cd5353ec4f565c61302cf667f4319d2efb554a76cf83b216f8a8a32c058f6")
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
@@ -25,9 +30,7 @@ package("rewolf-wow64ext")
         if package:is_plat("mingw") then
             local rc_str = io.readfile("src/wow64ext.rc", {encoding = "utf16le"})
             io.writefile("src/wow64ext.rc", rc_str, {encoding = "utf8"})
-            io.replace("src/wow64ext.cpp", "reg64 restArgs = { PTR_TO_DWORD64(&va_arg(args, DWORD64)) }", "reg64 restArgs = { (DWORD64)args }", {plain = true})
-            io.replace("src/internal.h", "__asm", "__asm__", {plain = true})
-            io.replace("src/wow64ext.cpp", "__asm", "__asm__", {plain = true})
+            io.replace("src/wow64ext.cpp", "PTR_TO_DWORD64(&va_arg(args, DWORD64))", "(DWORD64)args", {plain = true})
         end
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
@@ -45,9 +48,10 @@ package("rewolf-wow64ext")
                 add_includedirs("src")
 
                 if is_plat("mingw") then
-                    add_ldflags("-mwindows")
+                    add_shflags("-mwindows")
+                    add_asflags("-masm=intel")
                 elseif is_plat("windows") then
-                    add_ldflags("/subsystem:windows")
+                    add_shflags("/subsystem:windows")
                 end
         ]])
         import("package.tools.xmake").install(package)
