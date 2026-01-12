@@ -10,10 +10,7 @@ end
 
 add_includedirs(".")
 
-option("tools")
-    set_default(false)
-    set_showmenu(true)
-    set_description("Build the udcli executable tool")
+option("tools", {default = false, description = "Build the udcli executable tool"})
 
 target("libudis86")
     set_kind("$(kind)")
