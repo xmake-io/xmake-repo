@@ -2,6 +2,9 @@ add_rules("mode.debug", "mode.release")
 
 set_languages("c11")
 
+add_requires("python", {kind = "binary"})
+add_packages("python")
+
 add_defines("HAVE_STRING_H")
 
 if is_plat("windows") then
