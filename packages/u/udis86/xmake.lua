@@ -15,19 +15,17 @@ package("udis86")
     add_deps("python", {kind = "binary"})
 
     on_install(function (package)
-        local configs = {
-            tools = package:config("tools")
-        }
-        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        import("package.tools.xmake").install(package, configs)
         if package:config("tools") then
             package:addenv("PATH", "bin")
         end
+
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        import("package.tools.xmake").install(package, {tools = package:config("tools")})
     end)
 
     on_test(function (package)
         assert(package:has_cfuncs("ud_init", {includes = "udis86.h"}))
-        if not package:is_cross() then
+        if not package:is_cross() and package:config("tools") then
             os.vrun("udcli --version")
         end
     end)
