@@ -23,7 +23,7 @@ package("beaengine")
     on_test(function (package)
         assert(package:check_csnippets({test = [[
             void test() {
-                char* ver = BeaEngineVersion();
+                const char* ver = BeaEngineVersion();
             }
         ]]}, {configs = {languages = "c99"}, includes = "beaengine/BeaEngine.h"}))
     end)
