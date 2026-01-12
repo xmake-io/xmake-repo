@@ -12,6 +12,12 @@ package("beaengine")
 
     add_deps("zlib", {optional = true})
 
+    on_load("windows", "mingw", function (package)
+        if not package:config("shared") then
+            package:add("defines", "BEA_ENGINE_STATIC")
+        end
+    end)
+
     on_install(function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, {
