@@ -14,12 +14,10 @@ package("rewolf-wow64ext")
 
     add_patches("v1.0.0+9", "patches/v1.0.0+9/fix-mingw.patch", "d6cc4844ff4607ab450bc594792dd07594de1ecd9961e3f551350cb41ea8c23f")
 
-    if is_plat("windows") then
-        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
-    end
+    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
     if on_check then
-        on_check("windows", function (package)
+        on_check(function (package)
             if package:check_sizeof("void*") == "8" then
                 raise("package(rewolf-wow64ext): Windows OS supports only 32-bit, it does not unsupport 64-bit.")
             end
