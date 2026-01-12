@@ -6,18 +6,28 @@ package("sonyps5201314-wow64ext")
     add_urls("https://github.com/sonyps5201314/wow64ext.git", {alias = "git"})
     
     add_versions("git:2026.01.01", "e51083dd7b60c68a103791d3d258547022d55ac8")
+    add_resources("2026.01.01", "ntdll", "https://github.com/sonyps5201314/ntdll.git", "549726c4348118f5e74a68b337366e5158c83e5c")
 
     on_install("windows", "mingw", function (package)
+        local ntdlldir = package:resourcefile("ntdll")
+        os.cp(path.join(ntdlldir, "include/ntdll.h"), "wow64ext/ntdll.h")
+        if package:check_sizeof("void*") == "8" then
+            os.cp(path.join(ntdlldir, "lib/amd64/ntdll.lib"), "wow64ext/ntdll.lib")
+        else
+            os.cp(path.join(ntdlldir, "lib/ntdll.lib"), "wow64ext/ntdll.lib")
+        end
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
 
-            target("rewolf-wow64ext")
+            target("sonyps5201314-wow64ext")
                 set_kind("$(kind)")
                 set_languages("c++11")
 
                 add_files("wow64ext/*.cpp")
 
                 add_includedirs("wow64ext")
+                add_linkdirs("wow64ext")
+                add_links("ntdll")
                 add_headerfiles("wow64ext/(*.h)")
                 set_pcxxheader("wow64ext/pch.h")
 
