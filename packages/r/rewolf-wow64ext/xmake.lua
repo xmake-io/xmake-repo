@@ -7,10 +7,23 @@ package("rewolf-wow64ext")
 
     add_versions("v1.0.0.9", "d74cd5353ec4f565c61302cf667f4319d2efb554a76cf83b216f8a8a32c058f6")
 
-    on_install("windows", "mingw", function (package)
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+    end
+
+    if on_check then
+        on_check("windows", function (package)
+            if package:check_sizeof("void*") == "8" then
+                raise("package(rewolf-wow64ext): Windows OS supports only 32-bit, it does not unsupport 64-bit.")
+            end
+        end)
+    end
+
+    on_install("windows|!arm64", "mingw", function (package)
         if package:is_plat("mingw") then
             local rc_str = io.readfile("src/wow64ext.rc", {encoding = "utf16le"})
             io.writefile("src/wow64ext.rc", rc_str, {encoding = "utf8"})
+            io.replace("src/wow64ext.cpp", "reg64 restArgs = { PTR_TO_DWORD64(&va_arg(args, DWORD64)) }", "reg64 restArgs = { (DWORD64)args }", {plain = true})
         end
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
