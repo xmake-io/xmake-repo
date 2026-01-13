@@ -65,6 +65,10 @@ package("gdk-pixbuf")
         io.gsub("meson.build", "subdir%('fuzzing'%)", "")
         io.gsub("meson.build", "subdir%('docs'%)", "")
 
+        if not package:is_plat("linux") then
+            io.replace("meson.build", "cc.find_library('intl', required: false)", "dependency('libintl')", {plain = true})
+        end
+
         local configs = {
             "-Dman=false",
             "-Dgtk_doc=false",
