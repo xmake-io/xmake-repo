@@ -22,6 +22,7 @@ package("python")
             add_versions("3.12.10", "c23a8efcecadbe19fead675c621af54dc8fa086f1526b568718343f06b6dc1d2")
             add_versions("3.13.1", "f89b297ca94ced2fbdad7919518ebf05005f39637f8ec5b01e42f2c71d53a673")
             add_versions("3.13.2", "67ccaa5e8fb05e8e15a46f9262368fcfef190b1cfab3e2511acada7d68cf6464")
+            add_versions("3.13.11", "653e1afc3ff4ffec13d0b03633b9aaf4bf7c129bf17ca81429f92da21c4f932e")
         elseif is_arch("x64", "x86_64") or os.arch() == "x64" then
             add_urls("https://github.com/xmake-mirror/python-windows/releases/download/$(version)/python-$(version).win64.zip")
             add_versions("2.7.18", "6680835ed5b818e2c041c7033bea47ace17f6f3b73b0d6efb6ded8598a266754")
@@ -40,10 +41,12 @@ package("python")
             add_versions("3.12.10", "c6218cb107638583bd51f617cd7400e903e3c0c7fbe3f5b3c3d87efeb4738fbf")
             add_versions("3.13.1", "104d1de9eb6ff7c345c3415a57880dc0b2c51695515f2a87097512e6d77e977d")
             add_versions("3.13.2", "baee66e4d1b16a220bf61d64a210676f6d6fef69c65959ffd9828264c7fe8ef5")
+            add_versions("3.13.11", "baf6d05e5e505616b1d48af6009198e64a371d175013c6bed90e691a569b3b9d")
         elseif is_arch("arm64.*", "aarch64") or os.arch() == "arm64" then
             add_urls("https://github.com/xmake-mirror/python-windows/releases/download/$(version)/python-$(version).winarm64.zip")
             add_versions("3.12.10", "ca559e226e5bb99ccad687817c191ddf4d972ac3f582f26e88c80f94884ff29f")
             add_versions("3.13.2", "f121c4a9a1118d297814155c93e75ef376f3d0bbccbd5cf38598d6e833b0e858")
+            add_versions("3.13.11", "b6b180c932d1495da32ceaa998987729010ebaa8aefdcaadc2ee16367fc09263")
         end
         set_policy("package.precompiled", false)
     else
@@ -66,6 +69,7 @@ package("python")
         add_versions("3.13.0", "12445c7b3db3126c41190bfdc1c8239c39c719404e844babbd015a1bc3fafcd4")
         add_versions("3.13.1", "1513925a9f255ef0793dbf2f78bb4533c9f184bdd0ad19763fd7f47a400a7c55")
         add_versions("3.13.2", "b8d79530e3b7c96a5cb2d40d431ddb512af4a563e863728d8713039aa50203f9")
+        add_versions("3.13.11", "03cfedbe06ce21bc44ce09245e091a77f2fee9ec9be5c52069048a181300b202")
     end
 
     add_configs("headeronly", {description = "Use header only version.", default = false, type = "boolean"})
