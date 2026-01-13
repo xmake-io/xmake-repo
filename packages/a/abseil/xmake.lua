@@ -46,22 +46,23 @@ package("abseil")
     end)
 
     on_install(function (package)
-        if package:version() and package:version():eq("20230802.1") and package:is_plat("mingw") then
+        local version = package:version()
+        if version and version:eq("20230802.1") and package:is_plat("mingw") then
             io.replace(path.join("absl", "synchronization", "internal", "pthread_waiter.h"), "#ifndef _WIN32", "#if !defined(_WIN32) && !defined(__MINGW32__)", {plain = true})
             io.replace(path.join("absl", "synchronization", "internal", "win32_waiter.h"), "#if defined(_WIN32) && _WIN32_WINNT >= _WIN32_WINNT_VISTA", "#if defined(_WIN32) && !defined(__MINGW32__) && _WIN32_WINNT >= _WIN32_WINNT_VISTA", {plain = true})
         end
         io.replace("CMakeLists.txt", [[set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")]], "", {plain = true})
         io.replace("CMakeLists.txt", [[set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")]], "", {plain = true})
-        if package:version() and package:is_plat("macosx") then
+        if version and package:is_plat("macosx") then
             local file_path = path.join("absl", "time", "internal", "cctz", "src", "time_zone_format.cc")
-            if  package:version():ge("20240116.1") and package:version():le("20260107.0") then
+            if version:ge("20240116.1") and version:le("20260107.0") then
                 io.replace(
                     file_path,
                     "#if !defined(_XOPEN_SOURCE) && !defined(__FreeBSD__) && !defined(__OpenBSD__)", 
                     "#if !defined(_XOPEN_SOURCE) && !defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__APPLE__)",
                     {plain = true}
                 )
-            elseif package:version():eq("20230802.1") then
+            elseif version:eq("20230802.1") then
                 io.replace(
                     file_path,
                     "#if !defined(_XOPEN_SOURCE) && !defined(__OpenBSD__)", 
