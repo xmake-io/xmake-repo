@@ -86,6 +86,14 @@ package("opencv")
         end
     end)
 
+    local vs_map = {
+        ["2015"] = "vc14",
+        ["2017"] = "vc15",
+        ["2019"] = "vc16",
+        ["2022"] = "vc17",
+        ["2026"] = "vc18"
+    }
+
     on_load("android", "linux", "macosx", "windows", "mingw@windows,msys", function (package)
         if package:is_plat("windows") then
             local arch = "x64"
@@ -94,12 +102,7 @@ package("opencv")
             end
             local linkdir = (package:config("shared") and "lib" or "staticlib")
             local vs = package:toolchain("msvc"):config("vs")
-            local vc_ver = "vc13"
-            if     vs == "2015" then vc_ver = "vc14"
-            elseif vs == "2017" then vc_ver = "vc15"
-            elseif vs == "2019" then vc_ver = "vc16"
-            elseif vs == "2022" then vc_ver = "vc17"
-            end
+            local vc_ver = vs_map[vs] or raise("Unknown Visual Studio version: " .. vs)
             package:add("linkdirs", linkdir) -- fix path for 4.9.0/vs2022
             package:add("linkdirs", path.join(arch, vc_ver, linkdir))
         elseif package:is_plat("mingw") then
@@ -286,13 +289,7 @@ package("opencv")
             end
             local linkdir = (package:config("shared") and "lib" or "staticlib")
             local vs = package:toolchain("msvc"):config("vs")
-            local vc_ver = "vc13"
-            if     vs == "2015" then vc_ver = "vc14"
-            elseif vs == "2017" then vc_ver = "vc15"
-            elseif vs == "2019" then vc_ver = "vc16"
-            elseif vs == "2022" then vc_ver = "vc17"
-            end
-
+            local vc_ver = vs_map[vs] or raise("Unknown Visual Studio version: " .. vs)
             local installdir = package:installdir(arch, vc_ver)
             local libfiles = {}
             table.join2(libfiles, os.files(path.join(package:installdir(), linkdir, "*.lib")))
