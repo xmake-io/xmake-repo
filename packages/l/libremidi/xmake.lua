@@ -6,6 +6,7 @@ package("libremidi")
     add_urls("https://github.com/jcelerier/libremidi/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jcelerier/libremidi.git")
 
+    add_versions("v5.4.2", "ae1176e4729bc98c8d0d48b436efa62bbca1c3a113eb544117d3e5a27475e60f")
     add_versions("v5.3.1", "b68cdb81feb168bfafa44a139c76b459ff622e75c36fda76b39baf2f3efabdd6")
     add_versions("v5.3.0", "56d23d13c8d3fc40f0b46442af320865d485da908ad52d8950a87e05f9073c87")
     add_versions("v5.2.0", "d34a2e8aaede56f234f0f1b653fef0d84aeae1084e66d71c7237c85280d4be1a")
@@ -31,6 +32,16 @@ package("libremidi")
     end
 
     add_deps("cmake")
+
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            if package:version() and package:version():ge("5.4.0") then
+                assert(ndk_sdkver and tonumber(ndk_sdkver) >= 31, "package(libremidi): need ndk api level >= 31 for android")
+            end
+        end)
+    end
 
     on_load(function (package)
         if package:config("header_only") then
