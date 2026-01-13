@@ -99,6 +99,7 @@ package("opencv")
             elseif vs == "2017" then vc_ver = "vc15"
             elseif vs == "2019" then vc_ver = "vc16"
             elseif vs == "2022" then vc_ver = "vc17"
+            elseif vs == "2026" then vc_ver = "vc18"
             end
             package:add("linkdirs", linkdir) -- fix path for 4.9.0/vs2022
             package:add("linkdirs", path.join(arch, vc_ver, linkdir))
