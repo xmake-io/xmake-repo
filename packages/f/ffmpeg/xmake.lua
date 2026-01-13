@@ -314,6 +314,13 @@ package("ffmpeg")
                 table.insert(configs, "--prefix=" .. package:installdir():gsub("\\", "/"))
                 os.vrunv("./configure", configs, {shell = true, envs = envs})
 
+                -- fix build failure with gbk encoding
+                -- https://github.com/xmake-io/xmake-repo/issues/9073
+                local config_h = io.readfile("config.h", {encoding = "gbk"})
+                if config_h then
+                    io.writefile("config.h", "\239\187\191" .. config_h)
+                end
+
                 local njob = option.get("jobs") or tostring(os.default_njob())
                 local argv = {"-j" .. njob}
                 if option.get("verbose") then
