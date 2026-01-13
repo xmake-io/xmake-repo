@@ -59,7 +59,6 @@ package("gdk-pixbuf")
     end)
 
     on_install("windows", "macosx", "linux", "mingw", function (package)
-        os.rmdir("subprojects")
         import("package.tools.meson")
 
         io.gsub("meson.build", "subdir%('tests'%)", "")
@@ -89,9 +88,7 @@ package("gdk-pixbuf")
 
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
 
-        local opt = {
-            packagedeps = {"libintl", "glib"}
-        }
+        local opt = {}
         if package:config("gio_sniffing") then
             table.insert(configs, "-Dgio_sniffing=true")
             local envs = meson.buildenvs(package)
