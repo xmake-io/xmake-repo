@@ -72,7 +72,7 @@ index 0000000..7a6a4ef
 +{
 +    char buf[NAME_MAX + sizeof(SHM_PREFIX)];
 +    if (!(name = __shm_mapname(name, buf))) return -1;
-+    int fd = open(name, flag|O_NOFOLLOW|O_CLOEXEC|O_NONBLOCK, mode);
++    int fd = open(name, flag|O_NOFOLLOW|O_CLOEXEC, mode);
 +    return fd;
 +}
 +
