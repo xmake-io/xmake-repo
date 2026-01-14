@@ -1,9 +1,9 @@
 diff --git a/src/android-shm.c b/src/android-shm.c
 new file mode 100644
-index 0000000..54d4889
+index 0000000..7a6a4ef
 --- /dev/null
 +++ b/src/android-shm.c
-@@ -0,0 +1,78 @@
+@@ -0,0 +1,79 @@
 +#ifdef __ANDROID__
 +/* This file is a port of posix shared memory for Python3 on Termux Android, 
 +   based on musl-libc which is licensed under the following standard MIT 
@@ -54,7 +54,8 @@ index 0000000..54d4889
 +    char *p;
 +    while (*name == '/') name++;
 +    if (*(p = __strchrnul(name, '/')) || p==name ||
-+        (p-name <= 2 && name[0]=='.' && p[-1]=='.')) {
++        (p-name == 1 && name[0] == '.') ||
++        (p-name == 2 && name[0] == '.' && name[1] == '.')) {
 +        errno = EINVAL;
 +        return 0;
 +    }
@@ -129,7 +130,7 @@ index 20eb142..73d0344 100644
  #ifdef BXF_ARENA_REOPEN_SHM
  # include <sys/mman.h>
 diff --git a/src/meson.build b/src/meson.build
-index e181ec7..8a2df66 100644
+index e181ec7..0f578f5 100644
 --- a/src/meson.build
 +++ b/src/meson.build
 @@ -1,6 +1,8 @@
