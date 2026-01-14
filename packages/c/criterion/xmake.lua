@@ -34,7 +34,7 @@ package("criterion")
         end
     end)
 
-    on_install("windows|!arm*", "linux", "macosx", "cross", "mingw@windows,msys", "bsd", "msys", function (package)
+    on_install("!wasm", function (package)
         os.rm("subprojects")
         import("patch")(package)
         local opt = {}
