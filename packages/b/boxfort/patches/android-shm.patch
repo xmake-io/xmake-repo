@@ -82,15 +82,76 @@ index 0000000..ca3180c
 +    return unlink(name);
 +}
 +#endif
+diff --git a/src/android-shm.h b/src/android-shm.h
+new file mode 100644
+index 0000000..d855b7d
+--- /dev/null
++++ b/src/android-shm.h
+@@ -0,0 +1,12 @@
++#ifndef ANDROID_SHM_H_
++#define ANDROID_SHM_H_
++
++#ifdef __ANDROID__
++#include <fcntl.h>
++#include <sys/types.h>
++
++int shm_open(const char *name, int flag, mode_t mode);
++int shm_unlink(const char *name);
++#endif
++
++#endif /* !ANDROID_SHM_H_ */
+diff --git a/src/arena.c b/src/arena.c
+index 09fd45a..5e63e37 100644
+--- a/src/arena.c
++++ b/src/arena.c
+@@ -43,6 +43,9 @@
+ # undef __BSD_VISIBLE
+ # include <sys/stat.h>
+ # include <unistd.h>
++# ifdef __ANDROID__
++#  include "android-shm.h"
++# endif
+ #endif
+ 
+ #define GROWTH_RATIO (1.61)
+diff --git a/src/context.c b/src/context.c
+index 20eb142..73d0344 100644
+--- a/src/context.c
++++ b/src/context.c
+@@ -33,6 +33,9 @@
+ #ifdef _WIN32
+ # include <io.h>
+ #endif
++#ifdef __ANDROID__
++# include "android-shm.h"
++#endif
+ 
+ #ifdef BXF_ARENA_REOPEN_SHM
+ # include <sys/mman.h>
 diff --git a/src/meson.build b/src/meson.build
-index e181ec7..8eabec3 100644
+index e181ec7..8a2df66 100644
 --- a/src/meson.build
 +++ b/src/meson.build
-@@ -1,6 +1,7 @@
+@@ -1,6 +1,8 @@
  sources = files(
  	'addr.c',
  	'addr.h',
 +	'android-shm.c',
++	'android-shm.h',
  	'arena.c',
  	'arena.h',
  	'context.c',
+diff --git a/src/sandbox-posix.c b/src/sandbox-posix.c
+index 04c382e..1466d91 100644
+--- a/src/sandbox-posix.c
++++ b/src/sandbox-posix.c
+@@ -39,6 +39,9 @@
+ #include <sys/signal.h>
+ #include <sys/stat.h>
+ #include <sys/wait.h>
++#ifdef __ANDROID__
++# include "android-shm.h"
++#endif
+ 
+ #ifdef __FreeBSD__
+ # include <sys/sysctl.h>
