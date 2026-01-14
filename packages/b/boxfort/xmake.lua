@@ -15,7 +15,7 @@ package("boxfort")
 
     add_deps("meson", "ninja")
 
-    on_install("windows|!arm64", "linux", "macosx", "bsd", "mingw", "msys", "cross", function (package)
+    on_install(function (package)
         if not package:config("shared") then
             package:add("defines", "BXF_STATIC_LIB")
         end
@@ -23,7 +23,7 @@ package("boxfort")
         local configs = {"-Dsamples=false", "-Dtests=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         table.insert(configs, "-Darena_reopen_shm=" .. (package:config("arena_reopen_shm") and "true" or "false"))
-        table.insert(configs, "-Darena_reopen_shm=" .. (package:config("arena_reopen_shm") and "true" or "false"))
+        table.insert(configs, "-Darena_file_backed=" .. (package:config("arena_file_backed") and "true" or "false"))
         import("package.tools.meson").install(package, configs)
     end)
 
