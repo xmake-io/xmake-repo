@@ -6,6 +6,7 @@ package("criterion")
     add_urls("https://github.com/Snaipe/Criterion/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Snaipe/Criterion.git")
 
+    add_versions("v2.4.3", "6d924ee5eeaaaed7762ab968f560b9ff543fc3473aa949bf53ac56a2a1a9416c")
     add_versions("v2.4.2", "83e1a39c8c519fbef0d64057dc61c8100b3a5741595788c9f094bba2eeeef0df")
 
     add_configs("i18n", {description = "Enable i18n", default = false, type = "boolean"})
@@ -17,6 +18,7 @@ package("criterion")
     end
 
     add_deps("meson", "ninja")
+    add_deps("python", {kind = "binary"})
     if is_subhost("windows") then
         add_deps("pkgconf", "wingetopt")
     else
@@ -36,20 +38,22 @@ package("criterion")
         os.rm("subprojects")
         import("patch")(package)
         local opt = {}
-        --    Gather protoc-gen-nanopb from python3 pip
         local python = package:is_plat("windows") and "python" or "python3"
         os.vrun(python .. " -m pip install protobuf==5.29.3 nanopb==0.4.9.1")
         if package:is_plat("bsd") then
             opt.cflags = {"-Wno-error=incompatible-function-pointer-types"}
             opt.packagedeps = {"llhttp", "openssl3", "pcre2"}
         elseif package:is_plat("windows", "mingw") then
-            opt.packagedeps = {"wingetopt", "nanomsg", "pcre2", "libgit2"}
+            opt.packagedeps = {"wingetopt", "nanomsg", "pcre2"}
             if package:has_tool("cxx", "cl") then
                 opt.cxflags = {"/utf-8"}
             end
         else
-            opt.packagedeps = {"libgit2"}
+            opt.packagedeps = {"openssl3"}
         end
+        table.insert(opt.packagedeps, "pcre2")
+        table.insert(opt.packagedeps, "llhttp")
+        table.insert(opt.packagedeps, "libgit2")
         local configs = {"-Dtests=false", "-Dsamples=false", "-Dc_std=c11"}
         table.insert(configs, "-Di18n=" .. (package:config("i18n") and "enabled" or "disabled"))
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
