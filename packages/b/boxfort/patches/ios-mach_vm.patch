@@ -1,0 +1,101 @@
+diff --git a/src/exe-mach-o.c b/src/exe-mach-o.c
+index bfbd158..69d4a60 100644
+--- a/src/exe-mach-o.c
++++ b/src/exe-mach-o.c
+@@ -31,7 +31,17 @@
+ 
+ #if defined (HAVE_MACH_VM_PROTECT)
+ # include <mach/mach.h>
+-# include <mach/mach_vm.h>
++// use the newer mach functions when available
++#if !TARGET_OS_IPHONE && !TARGET_OS_SIMULATOR
++    #define HAS_MACH_VM 1
++    #include <mach/mach_vm.h> /* mach_vm_*            */
++    typedef mach_vm_address_t vm_address;
++    typedef mach_vm_size_t vm_size;
++#else
++    #include <sys/mman.h>
++    typedef vm_address_t vm_address;
++    typedef vm_size_t vm_size;
++#endif
+ # include <mach/vm_prot.h>
+ #endif
+ 
+@@ -90,7 +100,12 @@ static int mem_protect(void *addr, size_t len, int prot)
+     if (prot & PROT_EXEC)
+         mach_prot |= VM_PROT_EXECUTE;
+ 
+-    result = mach_vm_protect(mach_task_self(), (mach_vm_address_t) addr, len, FALSE, mach_prot);
++#if defined(HAS_MACH_VM)
++    result = mach_vm_protect(mach_task_self(), (vm_address) addr, len, FALSE, mach_prot);
++#else
++    result = vm_protect(mach_task_self(), (vm_address) addr, len, FALSE, mach_prot);
++#endif
++
+ #endif
+ 
+     return result;
+@@ -99,35 +114,60 @@ static int mem_protect(void *addr, size_t len, int prot)
+ static int bxfi_exe_remapped_patch_main(void *addr, size_t len,
+     const void *opcodes, size_t opcodes_len)
+ {
+-    mach_vm_address_t remapped;
++    vm_address remapped;
+     vm_prot_t cur_prot;
+     vm_prot_t max_prot;
+ 
++#if defined(HAS_MACH_VM)
+     kern_return_t result = mach_vm_remap(mach_task_self(), &remapped, len, 0,
+         VM_FLAGS_ANYWHERE | VM_FLAGS_RETURN_DATA_ADDR,
+         mach_task_self(), (mach_vm_address_t) addr, FALSE, &cur_prot, &max_prot, VM_INHERIT_NONE);
+ 
++#else
++    kern_return_t result = vm_remap(mach_task_self(), &remapped, len, 0,
++        VM_FLAGS_ANYWHERE | VM_FLAGS_RETURN_DATA_ADDR,
++        mach_task_self(), (vm_address) addr, FALSE, &cur_prot, &max_prot, VM_INHERIT_NONE);
++#endif
+     if (result != KERN_SUCCESS)
+         return -1;
+ 
+-    result = mach_vm_protect(mach_task_self(), (mach_vm_address_t) remapped, len, FALSE,
++#if defined(HAS_MACH_VM)
++    result = mach_vm_protect(mach_task_self(), (vm_address) remapped, len, FALSE,
++        VM_PROT_READ | VM_PROT_WRITE | VM_PROT_COPY);
++#else
++    result = vm_protect(mach_task_self(), (vm_address) remapped, len, FALSE,
+         VM_PROT_READ | VM_PROT_WRITE | VM_PROT_COPY);
++#endif
+ 
+     if (result != KERN_SUCCESS)
+         return -1;
+ 
++#if defined(HAS_MACH_VM)
+     result = mach_vm_write(mach_task_self(), remapped, (vm_offset_t) opcodes, opcodes_len);
++#else
++    result = vm_write(mach_task_self(), remapped, (vm_offset_t) opcodes, opcodes_len);
++#endif
+     if (result != KERN_SUCCESS)
+         return -1;
+ 
++#if defined(HAS_MACH_VM)
+     result = mach_vm_protect(mach_task_self(), remapped, len, FALSE, VM_PROT_READ | VM_PROT_EXECUTE);
++#else
++    result = vm_protect(mach_task_self(), remapped, len, FALSE, VM_PROT_READ | VM_PROT_EXECUTE);
++#endif
+     if (result != KERN_SUCCESS)
+         return -1;
+ 
+-    result = mach_vm_remap(mach_task_self(), (mach_vm_address_t *) &addr, len, 0,
++#if defined(HAS_MACH_VM)
++    result = mach_vm_remap(mach_task_self(), (vm_address *) &addr, len, 0,
++        VM_FLAGS_OVERWRITE | VM_FLAGS_RETURN_DATA_ADDR,
++        mach_task_self(), remapped, FALSE, &cur_prot, &max_prot, VM_INHERIT_NONE);
++#else
++    result = vm_remap(mach_task_self(), (vm_address *) &addr, len, 0,
+         VM_FLAGS_OVERWRITE | VM_FLAGS_RETURN_DATA_ADDR,
+         mach_task_self(), remapped, FALSE, &cur_prot, &max_prot, VM_INHERIT_NONE);
+ 
++#endif
+     if (result != KERN_SUCCESS)
+         return -1;
+ 

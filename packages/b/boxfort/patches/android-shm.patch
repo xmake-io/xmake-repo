@@ -1,0 +1,158 @@
+diff --git a/src/android-shm.c b/src/android-shm.c
+new file mode 100644
+index 0000000..7a6a4ef
+--- /dev/null
++++ b/src/android-shm.c
+@@ -0,0 +1,79 @@
++#ifdef __ANDROID__
++/* This file is a port of posix shared memory for Python3 on Termux Android, 
++   based on musl-libc which is licensed under the following standard MIT 
++   license. The ported files are listed as following.
++
++   File(s): src/mman/shm_open.c
++
++   Copyright © 2005-2020 Rich Felker, et al.
++
++   Permission is hereby granted, free of charge, to any person obtaining
++   a copy of this software and associated documentation files (the
++   "Software"), to deal in the Software without restriction, including
++   without limitation the rights to use, copy, modify, merge, publish,
++   distribute, sublicense, and/or sell copies of the Software, and to
++   permit persons to whom the Software is furnished to do so, subject to
++   the following conditions:
++
++   The above copyright notice and this permission notice shall be
++   included in all copies or substantial portions of the Software.
++
++   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
++   IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
++   CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
++   TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
++   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++#include <fcntl.h>     // open()
++#include <string.h>    // strlen(), memcpy()
++#include <errno.h>     // errno
++#include <limits.h>    // NAME_MAX
++#include <unistd.h>    // unlink()
++
++#define SHM_PREFIX "/data/local/tmp/shm."
++
++static __inline__ char *__strchrnul(const char *s, int c)
++{
++    c = (unsigned char)c;
++    if (!c) return (char *)s + strlen(s);
++    for (; *s && *(unsigned char *)s != c; s++);
++    return (char *)s;
++}
++
++static char *__shm_mapname(const char *name, char *buf)
++{
++    char *p;
++    while (*name == '/') name++;
++    if (*(p = __strchrnul(name, '/')) || p==name ||
++        (p-name == 1 && name[0] == '.') ||
++        (p-name == 2 && name[0] == '.' && name[1] == '.')) {
++        errno = EINVAL;
++        return 0;
++    }
++    if (p-name > NAME_MAX-4) {
++        errno = ENAMETOOLONG;
++        return 0;
++    }
++    memcpy(buf, SHM_PREFIX, sizeof(SHM_PREFIX) - 1);
++    memcpy(buf + (sizeof(SHM_PREFIX) - 1), name, p - name + 1);
++    return buf;
++}
++
++int shm_open(const char *name, int flag, mode_t mode)
++{
++    char buf[NAME_MAX + sizeof(SHM_PREFIX)];
++    if (!(name = __shm_mapname(name, buf))) return -1;
++    int fd = open(name, flag|O_NOFOLLOW|O_CLOEXEC, mode);
++    return fd;
++}
++
++int shm_unlink(const char *name)
++{
++    char buf[NAME_MAX + sizeof(SHM_PREFIX)];
++    if (!(name = __shm_mapname(name, buf))) return -1;
++    return unlink(name);
++}
++#endif
+diff --git a/src/android-shm.h b/src/android-shm.h
+new file mode 100644
+index 0000000..d855b7d
+--- /dev/null
++++ b/src/android-shm.h
+@@ -0,0 +1,12 @@
++#ifndef ANDROID_SHM_H_
++#define ANDROID_SHM_H_
++
++#ifdef __ANDROID__
++#include <fcntl.h>
++#include <sys/types.h>
++
++int shm_open(const char *name, int flag, mode_t mode);
++int shm_unlink(const char *name);
++#endif
++
++#endif /* !ANDROID_SHM_H_ */
+diff --git a/src/arena.c b/src/arena.c
+index 09fd45a..5e63e37 100644
+--- a/src/arena.c
++++ b/src/arena.c
+@@ -43,6 +43,9 @@
+ # undef __BSD_VISIBLE
+ # include <sys/stat.h>
+ # include <unistd.h>
++# ifdef __ANDROID__
++#  include "android-shm.h"
++# endif
+ #endif
+ 
+ #define GROWTH_RATIO (1.61)
+diff --git a/src/context.c b/src/context.c
+index 20eb142..73d0344 100644
+--- a/src/context.c
++++ b/src/context.c
+@@ -33,6 +33,9 @@
+ #ifdef _WIN32
+ # include <io.h>
+ #endif
++#ifdef __ANDROID__
++# include "android-shm.h"
++#endif
+ 
+ #ifdef BXF_ARENA_REOPEN_SHM
+ # include <sys/mman.h>
+diff --git a/src/meson.build b/src/meson.build
+index e181ec7..0f578f5 100644
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -1,6 +1,8 @@
+ sources = files(
+ 	'addr.c',
+ 	'addr.h',
++	'android-shm.c',
++	'android-shm.h',
+ 	'arena.c',
+ 	'arena.h',
+ 	'context.c',
+diff --git a/src/sandbox-posix.c b/src/sandbox-posix.c
+index 04c382e..1466d91 100644
+--- a/src/sandbox-posix.c
++++ b/src/sandbox-posix.c
+@@ -39,6 +39,9 @@
+ #include <sys/signal.h>
+ #include <sys/stat.h>
+ #include <sys/wait.h>
++#ifdef __ANDROID__
++# include "android-shm.h"
++#endif
+ 
+ #ifdef __FreeBSD__
+ # include <sys/sysctl.h>
