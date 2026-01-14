@@ -11,6 +11,9 @@ package("cairo")
     add_versions("1.17.6", "a2227afc15e616657341c42af9830c937c3a6bfa63661074eabef13600e8936f")
 
     add_patches("1.18.0", path.join(os.scriptdir(), "patches", "1.18.0", "alloca.patch"), "55f8577929537d43eed9f74241560821001b6c8613d6a7a21cff83f8431c6a70")
+    if is_plat("mingw", "msys", "cygwin") then
+        add_patches("1.18.0", "patches/1.18.0/mingw.patch", "b8d0c2a44b054e9fd1365f3db4490e6ebcb980cda6453c8d8202cc37a0ee4d19")
+    end
 
     add_configs("freetype",   {description = "Enable freetype support.", default = true, type = "boolean"})
     add_configs("fontconfig", {description = "Enable fontconfig support.", default = true, type = "boolean"})
@@ -49,7 +52,7 @@ package("cairo")
             package:add("deps", "freetype")
         end
         if package:config("fontconfig") then
-            if package:is_plat("windows") then
+            if package:is_plat("windows", "mingw", "msys", "cygwin") then
                 -- fontconfig symbols are absorbed into cairo-2.dll and re-exported by Meson.
                 -- Linking both cairo and fontconfig downstream will cause symbol duplication.
                 package:add("deps", "fontconfig", {configs = {shared = package:config("shared")}})
@@ -68,7 +71,7 @@ package("cairo")
         end
     end)
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         io.replace("meson.build", "subdir('fuzzing')", "", {plain = true})
         io.replace("meson.build", "subdir('docs')", "", {plain = true})
         io.replace("meson.build", "'CoreFoundation'", "'CoreFoundation', 'Foundation'", {plain = true})
