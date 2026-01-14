@@ -31,17 +31,19 @@ package("pango")
     add_includedirs("include", "include/pango-1.0")
 
     on_load(function (package)
+        for _, name in ipairs({"fontconfig", "cairo", "freetype", "libthai"}) do
+            if package:config(name) then
+                package:add("deps", name)
+            end
+        end
         if package:config("fontconfig") then
-            package:add("deps", "fontconfig")
-        end
-        if package:config("cairo") then
-            package:add("deps", "cairo")
-        end
-        if package:config("freetype") then
-            package:add("deps", "freetype")
-        end
-        if package:config("libthai") then
-            package:add("deps", "libthai")
+            if package:is_plat("windows", "mingw", "msys", "cygwin") then
+                -- fontconfig symbols are absorbed into pango.dll and re-exported by Meson.
+                -- Linking both pango and fontconfig downstream will cause symbol duplication.
+                package:add("deps", "fontconfig", {configs = {shared = package:config("shared")}})
+            else
+                package:add("deps", "fontconfig")
+            end
         end
     end)
 
@@ -66,14 +68,15 @@ package("pango")
 
         local configs = {"-Dintrospection=disabled", "-Dgtk_doc=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-        table.insert(configs, "-Dfontconfig=" .. (package:config("fontconfig") and "enabled" or "disabled"))
-        table.insert(configs, "-Dcairo=" .. (package:config("cairo") and "enabled" or "disabled"))
-        table.insert(configs, "-Dfreetype=" .. (package:config("freetype") and "enabled" or "disabled"))
-        table.insert(configs, "-Dlibthai=" .. (package:config("libthai") and "enabled" or "disabled"))
+        for _, name in ipairs({"fontconfig", "cairo", "freetype", "libthai"}) do
+            table.insert(configs, "-D" .. name .. "=" .. (package:config(name) and "enabled" or "disabled"))
+        end
 
         local envs = meson.buildenvs(package)
-        -- workaround for https://github.com/xmake-io/xmake/issues/4412
-        envs.LDFLAGS = string.gsub(envs.LDFLAGS, "%-libpath:", "/libpath:")
+        if envs.LDFLAGS then
+            -- workaround for https://github.com/xmake-io/xmake/issues/4412
+            envs.LDFLAGS = string.gsub(envs.LDFLAGS, "%-libpath:", "/libpath:")
+        end
         meson.install(package, configs, {envs = envs})
     end)
 
