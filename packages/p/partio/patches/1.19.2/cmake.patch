@@ -1,0 +1,108 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 691d561..a6333bf 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -35,22 +35,25 @@ cmake_minimum_required(VERSION 3.15.0)
+ project(partio LANGUAGES CXX)
+ set(PARTIO_VERSION_MAJOR "1")
+ 
+-option(PARTIO_GTEST_ENABLED "Enable GTest for tests" OFF)
++option(PARTIO_ENABLE_TESTING "Enable testing" ON)
+ option(PARTIO_ORIGIN_RPATH "Enable ORIGIN rpath in the installed libraries" OFF)
+ 
+ if(WIN32 OR APPLE)
+     option(PARTIO_USE_GLVND "Use GLVND for OpenGL" OFF)
+-    option(PARTIO_BUILD_SHARED_LIBS "Enabled shared libraries" OFF)
++    option(PARTIO_BUILD_SHARED_LIBS "Enable shared libraries" OFF)
+ else()
+     option(PARTIO_USE_GLVND "Use GLVND for OpenGL" ON)
+-    option(PARTIO_BUILD_SHARED_LIBS "Enabled shared libraries" ON)
++    option(PARTIO_BUILD_SHARED_LIBS "Enable shared libraries" ON)
+ endif()
++option(PARTIO_BUILD_TOOLS "Enable partio's CLI tools" ON)
++option(PARTIO_BUILD_PYTHON "Enable partio's Python bindings" ON)
++option(PARTIO_BUILD_DOCS "Enable partio's documentation" ON)
+ 
+ # Enable C++11
+ if (DEFINED ENV{CXXFLAGS_STD})
+     set(CXXFLAGS_STD $ENV{CXXFLAGS_STD})
+ else()
+-    set(CXXFLAGS_STD "c++14")
++    set(CXXFLAGS_STD "c++17")
+ endif()
+ # Transform "c++17" into "17".  "-1" means "rest of the string".
+ if (NOT DEFINED WDAS_CXX_STANDARD)
+@@ -76,16 +79,16 @@ endif()
+ ## Setup platform specific helper defines build variants
+ if (WIN32)
+     if (MSVC)
+-        add_definitions(-DPARTIO_WIN32)
++        add_compile_definitions(PARTIO_WIN32)
+     endif()
+-    add_definitions(-D_USE_MATH_DEFINES)
++    add_compile_definitions(_USE_MATH_DEFINES)
+ else()
+     add_compile_options(-Wextra -Wno-unused-parameter)
+ endif()
+ 
+ if (APPLE)
+   set(CMAKE_SHARED_LINKER_FLAGS "-undefined dynamic_lookup")
+-  add_definitions(-DGL_SILENCE_DEPRECATION)
++  add_compile_definitions(GL_SILENCE_DEPRECATION)
+ endif()
+ 
+ if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+@@ -119,30 +122,33 @@ set(OpenGL_GL_PREFERENCE GLVND)
+ 
+ ## Search for useful libraries
+ find_package(Threads REQUIRED)
+-find_package(GLUT REQUIRED)
+-find_package(OpenGL REQUIRED)
+-find_package(Python REQUIRED COMPONENTS Interpreter Development)
++
++set(PARTIO_LIBRARIES partio)
+ find_package(ZLIB)
+ if (ZLIB_FOUND)
+-    add_definitions(-DPARTIO_USE_ZLIB)
+-else()
+-    set(ZLIB_LIBRARY "")
++    add_compile_definitions(PARTIO_USE_ZLIB)
++    list(APPEND PARTIO_LIBRARIES ZLIB::ZLIB)
+ endif()
+ 
+-# Make modules able to see partio library
+-set(PARTIO_LIBRARIES partio ${ZLIB_LIBRARY})
++if (PARTIO_BUILD_PYTHON)
++    find_package(Python REQUIRED COMPONENTS Interpreter Development)
++endif()
+ 
+ ## Traverse subdirectories
+ add_subdirectory(src/lib)
+-add_subdirectory(src/tools)
+-add_subdirectory(src/py)
+-add_subdirectory(src/doc)
+-
+-if (${PARTIO_GTEST_ENABLED})
+-    set(GTEST_LOCATION "/usr" CACHE STRING "gtest installation prefix")
+-    set(GTEST_INCLUDE_PATH ${GTEST_LOCATION}/include)
+-    set(GTEST_LIBDIR ${CMAKE_INSTALL_LIBDIR})
+-    set(GTEST_LINK_PATH ${GTEST_LOCATION}/${GTEST_LIBDIR} CACHE STRING "gtest library directory")
++if (PARTIO_BUILD_TOOLS)
++    find_package(GLUT REQUIRED)
++    find_package(OpenGL REQUIRED)
++    add_subdirectory(src/tools)
++endif()
++if (PARTIO_BUILD_PYTHON)
++    add_subdirectory(src/py)
++endif()
++if (PARTIO_BUILD_DOCS)
++    add_subdirectory(src/doc)
++endif()
+ 
++find_package(GTest)
++if (GTest_FOUND AND PARTIO_ENABLE_TESTING)
+     add_subdirectory(src/tests)
+-endif()
++endif()
+\ No newline at end of file
+ 

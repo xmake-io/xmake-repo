@@ -12,6 +12,8 @@ package("partio")
     add_versions("v1.14.6", "53a5754d6b2fc3e184953d985c233118ef0ab87169f34e3aec4a7e6d20cd9bd4")
     add_versions("v1.17.1", "5d00fbfc55817acb310bcaf61212a78b2c602e08b839060dfee69570b4b82464")
 
+    add_patches("1.19.2", "patches/1.19.2/cmake.patch", "60e5d2290167abdcfab27032fd89919032cb2b9159b7f736a4f999a2654a6937")
+
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
