@@ -1,6 +1,3 @@
-diff --git a/src/asm/trampoline-aarch64.asm b/src/asm/trampoline-aarch64.asm
-new file mode 100644
-index 0000000..e69de29
 diff --git a/src/exe-mach-o.c b/src/exe-mach-o.c
 index bfbd158..4e8c00b 100644
 --- a/src/exe-mach-o.c
