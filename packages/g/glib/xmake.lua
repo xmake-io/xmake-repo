@@ -116,11 +116,18 @@ package("glib")
         table.insert(configs, "-Dglib_debug=" .. (package:is_debug() and "enabled" or "disabled"))
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         table.insert(configs, "-Dgio_module_dir=" .. path.join(package:installdir(), "lib/gio/modules"))
-        import("package.tools.meson").install(package, configs, {packagedeps = {"libintl", "libiconv", "libffi", "zlib"}})
+        import("package.tools.meson").install(package, configs)
 
+        local deps = {}
         if package:dep("libiconv") and not package:dep("libiconv"):is_system() then
+            table.insert(deps, "libiconv")
+        end
+        if package:dep("libintl") and not package:dep("libintl"):is_system() then
+            table.insert(deps, "libintl")
+        end
+        if #deps > 0 then
             local glib_pc = package:installdir("lib/pkgconfig/glib-2.0.pc")
-            io.replace(glib_pc, "Requires: ", "Requires: libiconv ", {plain = true})
+            io.replace(glib_pc, "Requires: ", format("Requires: %s ", table.concat(deps, " ")), {plain = true})
         end
     end)
 
