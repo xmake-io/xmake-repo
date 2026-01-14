@@ -1,14 +1,14 @@
 package("cairo")
-
     set_homepage("https://cairographics.org/")
     set_description("Vector graphics library with cross-device output support.")
     set_license("MPL-1.1")
 
-    add_urls("https://gitlab.freedesktop.org/cairo/cairo/-/archive/$(version)/cairo-$(version).tar.gz")
-    add_urls("https://gitlab.freedesktop.org/cairo/cairo.git")
-    add_versions("1.17.6", "a2227afc15e616657341c42af9830c937c3a6bfa63661074eabef13600e8936f")
-    add_versions("1.17.8", "b4ed6d33037171d4c6594345b42d81796f335a6995fdf5638db0d306c17a0d3e")
+    add_urls("https://gitlab.freedesktop.org/cairo/cairo/-/archive/$(version)/cairo-$(version).tar.gz",
+             "https://gitlab.freedesktop.org/cairo/cairo.git")
+
     add_versions("1.18.0", "39a78afdc33a435c0f2ab53a5ec2a693c3c9b6d2ec9783ceecb2b94d54d942b0")
+    add_versions("1.17.8", "b4ed6d33037171d4c6594345b42d81796f335a6995fdf5638db0d306c17a0d3e")
+    add_versions("1.17.6", "a2227afc15e616657341c42af9830c937c3a6bfa63661074eabef13600e8936f")
 
     add_patches("1.18.0", path.join(os.scriptdir(), "patches", "1.18.0", "alloca.patch"), "55f8577929537d43eed9f74241560821001b6c8613d6a7a21cff83f8431c6a70")
 
@@ -16,17 +16,15 @@ package("cairo")
     add_configs("fontconfig", {description = "Enable fontconfig support.", default = true, type = "boolean"})
     add_configs("xlib",       {description = "Enable x11 surface backend.", default = is_plat("linux"), type = "boolean"})
     add_configs("glib",       {description = "Enable glib dependency.", default = false, type = "boolean"})
+    add_configs("lzo",        {description = "Enable lzo dependency.", default = false, type = "boolean"})
 
     add_deps("meson", "ninja")
-    add_deps("libpng", "pixman", "zlib")
-    if is_plat("windows") then
-        add_deps("pkgconf", "libintl")
-    elseif is_plat("macosx") then
-        add_deps("libiconv", {system = true})
-        add_deps("lzo")
-    elseif is_plat("linux") then
-        add_deps("libiconv")
+    if is_subhost("windows") then
+        add_deps("pkgconf")
+    else
+        add_deps("pkg-config")
     end
+    add_deps("libpng", "pixman", "zlib")
 
     add_includedirs("include", "include/cairo")
 
@@ -40,7 +38,7 @@ package("cairo")
         add_frameworks("CoreGraphics", "CoreFoundation", "CoreText", "Foundation")
     end
 
-    on_load("windows|x64", "windows|x86", "macosx", "linux", function (package)
+    on_load(function (package)
         if package:is_plat("windows") and not package:config("shared") then
             package:add("defines", "CAIRO_WIN32_STATIC_BUILD=1")
         end
@@ -56,10 +54,15 @@ package("cairo")
         if package:config("glib") then
             package:add("deps", "glib")
         end
+        if package:config("lzo") then
+            package:add("deps", "lzo")
+        end
     end)
 
-    on_install("windows|x64", "windows|x86", "macosx", "linux", function (package)
-        import("package.tools.meson")
+    on_install(function (package)
+        io.replace("meson.build", "subdir('fuzzing')", "", {plain = true})
+        io.replace("meson.build", "subdir('docs')", "", {plain = true})
+        io.replace("meson.build", "'CoreFoundation'", "'CoreFoundation', 'Foundation'", {plain = true})
 
         local configs = {
             "--wrap-mode=nopromote",
@@ -74,14 +77,10 @@ package("cairo")
         table.insert(configs, "-Dfontconfig=" .. (package:config("fontconfig") and "enabled" or "disabled"))
         table.insert(configs, "-Dxlib=" .. (package:config("xlib") and "enabled" or "disabled"))
         table.insert(configs, "-Dglib=" .. (package:config("glib") and "enabled" or "disabled"))
-        io.replace("meson.build", "subdir('fuzzing')", "", {plain = true})
-        io.replace("meson.build", "subdir('docs')", "", {plain = true})
-        io.replace("meson.build", "'CoreFoundation'", "'CoreFoundation', 'Foundation'", {plain = true})
-        local envs = meson.buildenvs(package, {packagedeps = {"libintl", "libiconv", "lzo"}})
-        if package:is_plat("windows") then
-            envs.PATH = package:dep("pkgconf"):installdir("bin") .. path.envsep() .. envs.PATH
+        if package:version() and package:version():ge("1.18.4") then
+            table.insert(configs, "-Dlzo=" .. (package:config("lzo") and "enabled" or "disabled"))
         end
-        meson.install(package, configs, {envs = envs})
+        import("package.tools.meson").install(package, configs)
     end)
 
     on_test(function (package)
