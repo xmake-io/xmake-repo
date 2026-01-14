@@ -8,7 +8,7 @@ package("boxfort")
     add_versions("2024.05.02", "1018a44e63b57e9ffc3b8b68b6c8a8aa8f342d2a")
 
     add_patches("2024.05.02", "patches/arm64-windows.patch", "fbe76fda92e07383e85e663d05bbe0b3e73854070a49bc6e03cd10c4fb03d9cd")
-    add_patches("2024.05.02", "patches/mach_vm-ios.patch", "a2cef900b6086bd7f327399eff5e16afbad31160d7a4f47935c3e91618477960")
+    add_patches("2024.05.02", "patches/mach_vm-ios.patch", "a66711d42c651196b3561fe5a7a0becb322525051fc6c883bb3d1e246edb2fab")
 
     add_configs("arena_reopen_shm", {description = "Reopen shared memory file in worker process rather than just inherit a file descriptor", default = false, type = "boolean"})
     add_configs("arena_file_backed", {description = "Use a file in tempfs to store the arena rather than using shm facilities", default = false, type = "boolean"})
