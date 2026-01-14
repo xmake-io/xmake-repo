@@ -38,8 +38,8 @@ package("cairo")
         add_syslinks("pthread")
     end
 
-    if is_plat("windows") then
-        add_syslinks("gdi32", "msimg32", "user32", "ole32")
+    if is_plat("windows", "mingw") then
+        add_syslinks("gdi32", "msimg32", "user32", "ole32", "windowscodecs")
     elseif is_plat("macosx") then
         add_frameworks("CoreGraphics", "CoreFoundation", "CoreText", "Foundation")
     end
