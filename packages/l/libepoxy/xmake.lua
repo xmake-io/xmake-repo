@@ -17,8 +17,8 @@ package("libepoxy")
     add_versions("gnome:1.5.10", "072cda4b59dd098bba8c2363a6247299db1fa89411dc221c8b81b8ee8192e623")
     add_versions("gnome:1.5.9", "d168a19a6edfdd9977fef1308ccf516079856a4275cf876de688fb7927e365e4")
 
-    add_configs("glx", {description = "Enable GLX support", default = is_plat("linux"), type = "boolean"})
-    add_configs("x11", {description = "Enable X11 support", default = is_plat("linux"), type = "boolean"})
+    add_configs("glx", {description = "Enable GLX support", default = false, type = "boolean"})
+    add_configs("x11", {description = "Enable X11 support", default = false, type = "boolean"})
     add_configs("egl", {description = "Enable EGL support", default = false, type = "boolean"})
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
@@ -44,7 +44,7 @@ package("libepoxy")
         end
     end)
 
-    on_install("!android and !bsd and !cross", function (package)
+    on_install("!android and !bsd", function (package)
         if package:is_plat("windows") and not package:config("shared") then
             io.replace("include/epoxy/common.h", "__declspec(dllimport)", "", {plain = true})
         end
@@ -58,6 +58,9 @@ package("libepoxy")
         table.insert(configs, "-Dx11=" .. (package:config("x11") and "true" or "false"))
         table.insert(configs, "-Degl=" .. (package:config("egl") and "yes" or "no"))
         import("package.tools.meson").install(package, configs)
+
+        local pc = package:installdir("lib/pkgconfig/epoxy.pc")
+        io.replace(pc, "Requires.private: egl", "Requires.private: egl-headers", {plain = true})
     end)
 
     on_test(function (package)
