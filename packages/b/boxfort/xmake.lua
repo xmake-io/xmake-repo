@@ -8,7 +8,7 @@ package("boxfort")
     add_versions("2024.05.02", "1018a44e63b57e9ffc3b8b68b6c8a8aa8f342d2a")
 
     add_patches("2024.05.02", "patches/android-shm.patch", "db99e1246ac97fa1edb041531c844f68dac0a7236c410ec22f318b5440b25169")
-    add_patches("2024.05.02", "patches/arm64-windows-setjmp.patch", "224a9e9766c308f4be00c12310b528891c48ca934fbaff023128e649c3071c53")
+    add_patches("2024.05.02", "patches/arm64-windows-setjmp.patch", "ba4c26eee443e60d9592d78f8aca6c1458b0df4a8c37896f475d8c05a1982767")
     add_patches("2024.05.02", "patches/arm64-windows-trampoline.patch", "fb03e5484e4f7b0b8945708483937c79da704c38e7cf0d1acaffb821f5338c60")
     add_patches("2024.05.02", "patches/arm64-windows-use-armas64.patch", "0fbdb9baf62c63311cef7497cf9be1c47c2d21166f7acbe2390a5ab14ae4b059")
     add_patches("2024.05.02", "patches/ios-mach_vm.patch", "fbfe9bf1c6fd4fd4a2a79a068053beaddbd15e7db50e8d4dab1fd25da3959201")
@@ -22,10 +22,7 @@ package("boxfort")
 
     add_deps("meson", "ninja")
 
-    on_install(function (package)
-        io.replace("meson.build", [[if arch == 'x86']], [[if arch == 'wasm32'
-	bitness = 32
-elif arch == 'x86']], {plain = true})
+    on_install("!wasm", function (package)
         if not package:config("shared") then
             package:add("defines", "BXF_STATIC_LIB")
         end

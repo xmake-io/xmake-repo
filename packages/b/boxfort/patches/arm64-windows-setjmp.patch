@@ -1,9 +1,9 @@
 diff --git a/src/asm/setjmp-aarch64.asm b/src/asm/setjmp-aarch64.asm
 new file mode 100644
-index 0000000..7bf6322
+index 0000000..7d37d65
 --- /dev/null
 +++ b/src/asm/setjmp-aarch64.asm
-@@ -0,0 +1,119 @@
+@@ -0,0 +1,115 @@
 +;
 +; The MIT License (MIT)
 +;
@@ -48,10 +48,6 @@ index 0000000..7bf6322
 +    ; Offset 0x78 (#120) : fpcr
 +    ; Offset 0x7C (#124) : fpsr
 +    ; Offset 0x80 (#128) : d8-d15
-+
-+    ; Store Frame and Reserved
-+    str     x29, [x0, #0]
-+    str     x1,  [x0, #8]
 +
 +    ; Store integer registers (x19-x28)
 +    stp     x19, x20, [x0, #16]
