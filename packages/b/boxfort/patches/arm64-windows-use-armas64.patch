@@ -1,9 +1,3 @@
-diff --git a/src/asm/setjmp-aarch64.asm b/src/asm/setjmp-aarch64.asm
-new file mode 100644
-index 0000000..e69de29
-diff --git a/src/asm/trampoline-aarch64.asm b/src/asm/trampoline-aarch64.asm
-new file mode 100644
-index 0000000..e69de29
 diff --git a/src/meson.build b/src/meson.build
 index e181ec7..16efb5f 100644
 --- a/src/meson.build
