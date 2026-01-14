@@ -1,37 +1,53 @@
 package("pango")
-
     set_homepage("https://www.pango.org/")
     set_description("Framework for layout and rendering of i18n text")
     set_license("LGPL-2.0")
 
-    add_urls("https://gitlab.gnome.org/GNOME/pango/-/archive/$(version)/pango-$(version).tar.gz")
-    add_urls("https://gitlab.gnome.org/GNOME/pango.git")
+    add_urls("https://gitlab.gnome.org/GNOME/pango/-/archive/$(version)/pango-$(version).tar.gz",
+             "https://gitlab.gnome.org/GNOME/pango.git")
+
     add_versions("1.51.1", "ea92cd570cdba62ca52cc0a7c9ea3cd311b6da3f0328a5aa8a4a81b0a74944a5")
     add_versions("1.50.3", "4a8b0cf33d5f9ecaa9cd99dd72703d5c4c53bc58df64dd9538493bb4356ab691")
 
-    add_deps("meson", "ninja")
-    add_deps("fontconfig", "freetype", "fribidi", "glib", "pcre2")
-    add_deps("harfbuzz", "cairo", {configs = {glib = true}})
-    if is_plat("windows") then
-        add_deps("libintl")
-    elseif is_plat("macosx") then
-        add_deps("libintl")
-        add_deps("libiconv", {system = true})
-        add_extsources("brew::pango")
-        add_frameworks("CoreFoundation")
-    elseif is_plat("linux") then
-        add_deps("libiconv")
-        add_deps("libthai")
-        add_deps("xorgproto")
-        add_extsources("apt::libpango-1.0-0", "pacman::pango")
+    add_configs("fontconfig", {description = "Build with FontConfig support", default = true, type = "boolean"})
+    add_configs("cairo", {description = "Build with cairo support", default = true, type = "boolean"})
+    add_configs("freetype", {description = "Build with freetype support", default = true, type = "boolean"})
+    if is_plat("linux") then
+        add_configs("libthai", {description = "Build with libthai support", default = true, type = "boolean"})
     end
+
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::pango")
+    elseif is_plat("linux") then
+        add_extsources("apt::libpango-1.0-0", "pacman::pango")
+    elseif is_plat("macosx") then
+        add_extsources("brew::pango")
+    end
+
+    add_deps("meson", "ninja")
+    add_deps("fribidi", "glib")
+    add_deps("harfbuzz", {configs = {glib = true}})
+
     add_includedirs("include", "include/pango-1.0")
 
-    on_install("windows|x64", "windows|x86", "macosx", "linux", function (package)
-        import("package.tools.meson")
-        local configs = {"-Dintrospection=disabled", "-Dgtk_doc=false", "-Dfontconfig=enabled"}
+    on_load(function (package)
+        if package:config("fontconfig") then
+            package:add("deps", "fontconfig")
+        end
+        if package:config("cairo") then
+            package:add("deps", "cairo")
+        end
+        if package:config("freetype") then
+            package:add("deps", "freetype")
+        end
+        if package:config("libthai") then
+            package:add("deps", "libthai")
+        end
+    end)
 
-        table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
+    on_install("windows", "macosx", "linux", "cross", "mingw", function (package)
+        import("package.tools.meson")
+
         io.gsub("meson.build", "subdir%('tests'%)", "")
         io.gsub("meson.build", "subdir%('fuzzing'%)", "")
         io.gsub("meson.build", "subdir%('docs'%)", "")
@@ -48,7 +64,14 @@ package("pango")
         -- fix unexpected -Werror=array-bounds errors, see https://gitlab.gnome.org/GNOME/pango/-/issues/740
         io.replace("meson.build", "'-Werror=array-bounds',", "", {plain = true})
 
-        local envs = meson.buildenvs(package, {packagedeps = {"fontconfig", "freetype", "harfbuzz", "fribidi", "cairo", "glib", "pcre2", "libintl", "libiconv", "libthai", "libdatrie"}})
+        local configs = {"-Dintrospection=disabled", "-Dgtk_doc=false"}
+        table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
+        table.insert(configs, "-Dfontconfig=" .. (package:config("fontconfig") and "enabled" or "disabled"))
+        table.insert(configs, "-Dcairo=" .. (package:config("cairo") and "enabled" or "disabled"))
+        table.insert(configs, "-Dfreetype=" .. (package:config("freetype") and "enabled" or "disabled"))
+        table.insert(configs, "-Dlibthai=" .. (package:config("libthai") and "enabled" or "disabled"))
+
+        local envs = meson.buildenvs(package)
         -- workaround for https://github.com/xmake-io/xmake/issues/4412
         envs.LDFLAGS = string.gsub(envs.LDFLAGS, "%-libpath:", "/libpath:")
         meson.install(package, configs, {envs = envs})
