@@ -1,6 +1,6 @@
 diff --git a/src/android-shm.c b/src/android-shm.c
 new file mode 100644
-index 0000000..ca3180c
+index 0000000..54d4889
 --- /dev/null
 +++ b/src/android-shm.c
 @@ -0,0 +1,78 @@
@@ -62,14 +62,14 @@ index 0000000..ca3180c
 +        errno = ENAMETOOLONG;
 +        return 0;
 +    }
-+    memcpy(buf, SHM_PREFIX, strlen(SHM_PREFIX));
-+    memcpy(buf+strlen(SHM_PREFIX), name, p-name+1);
++    memcpy(buf, SHM_PREFIX, sizeof(SHM_PREFIX) - 1);
++    memcpy(buf + (sizeof(SHM_PREFIX) - 1), name, p - name + 1);
 +    return buf;
 +}
 +
 +int shm_open(const char *name, int flag, mode_t mode)
 +{
-+    char buf[NAME_MAX+strlen(SHM_PREFIX)+1];
++    char buf[NAME_MAX + sizeof(SHM_PREFIX)];
 +    if (!(name = __shm_mapname(name, buf))) return -1;
 +    int fd = open(name, flag|O_NOFOLLOW|O_CLOEXEC|O_NONBLOCK, mode);
 +    return fd;
@@ -77,7 +77,7 @@ index 0000000..ca3180c
 +
 +int shm_unlink(const char *name)
 +{
-+    char buf[NAME_MAX+strlen(SHM_PREFIX)+1];
++    char buf[NAME_MAX + sizeof(SHM_PREFIX)];
 +    if (!(name = __shm_mapname(name, buf))) return -1;
 +    return unlink(name);
 +}

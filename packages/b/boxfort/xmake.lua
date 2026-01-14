@@ -7,7 +7,7 @@ package("boxfort")
 
     add_versions("2024.05.02", "1018a44e63b57e9ffc3b8b68b6c8a8aa8f342d2a")
 
-    add_patches("2024.05.02", "patches/android-shm.patch", "9daa87de0a3ac9d60b04d9ea350cab22a0aab90c1e834a70c07a3f435ecb4ef4")
+    add_patches("2024.05.02", "patches/android-shm.patch", "db99e1246ac97fa1edb041531c844f68dac0a7236c410ec22f318b5440b25169")
     add_patches("2024.05.02", "patches/arm64-windows-setjmp.patch", "224a9e9766c308f4be00c12310b528891c48ca934fbaff023128e649c3071c53")
     add_patches("2024.05.02", "patches/arm64-windows-trampoline.patch", "fb03e5484e4f7b0b8945708483937c79da704c38e7cf0d1acaffb821f5338c60")
     add_patches("2024.05.02", "patches/arm64-windows-use-armas64.patch", "0fbdb9baf62c63311cef7497cf9be1c47c2d21166f7acbe2390a5ab14ae4b059")
