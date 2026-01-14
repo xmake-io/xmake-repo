@@ -35,12 +35,11 @@ package("criterion")
     end)
 
     on_install("windows|!arm*", "linux", "macosx", "cross", "mingw@windows,msys", "bsd", "msys", function (package)
-        import("lib.detect.find_tool")
         os.rm("subprojects")
         import("patch")(package)
         local opt = {}
-        local python = find_tool("python")
-        os.vrun(python.program .. " -m pip install protobuf==5.29.3 nanopb==0.4.9.1")
+        local python = package:is_plat("windows") and "python" or "python3"
+        os.vrun(python .. " -m pip install protobuf==5.29.3 nanopb==0.4.9.1")
         if package:is_plat("bsd") then
             opt.cflags = {"-Wno-error=incompatible-function-pointer-types"}
             opt.packagedeps = {"llhttp", "openssl3", "pcre2"}
