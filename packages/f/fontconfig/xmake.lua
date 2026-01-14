@@ -13,6 +13,7 @@ package("fontconfig")
                           "2abdff214b99f2d074170e6512b0149cc858ea26cd930690aa6b4ccea2c549ef")
 
     add_configs("nls", {description = "Enable Native Language Support (NLS)", default = false, type = "boolean"})
+    add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
 
     add_deps("meson", "ninja", "gperf", "python 3.x", {kind = "binary"})
     if is_subhost("windows") then
@@ -40,12 +41,12 @@ package("fontconfig")
 
         local configs = {
             "-Dtests=disabled",
-            "-Dtools=disabled",
             "-Ddoc=disabled",
         }
         table.insert(configs, "-Ddebug=" .. (package:is_debug() and "true" or "false"))
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         table.insert(configs, "-Dnls=" .. (package:config("nls") and "enabled" or "disabled"))
+        table.insert(configs, "-Dtools=" .. (package:config("tools") and "enabled" or "disabled"))
         import("package.tools.meson").install(package, configs)
     end)
 
