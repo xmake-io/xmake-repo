@@ -17,6 +17,9 @@ package("cairo")
     add_configs("xlib",       {description = "Enable x11 surface backend.", default = is_plat("linux"), type = "boolean"})
     add_configs("glib",       {description = "Enable glib dependency.", default = false, type = "boolean"})
     add_configs("lzo",        {description = "Enable lzo dependency.", default = false, type = "boolean"})
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     add_deps("meson", "ninja")
     if is_subhost("windows") then
@@ -46,7 +49,13 @@ package("cairo")
             package:add("deps", "freetype")
         end
         if package:config("fontconfig") then
-            package:add("deps", "fontconfig")
+            if package:is_plat("windows") then
+                -- fontconfig symbols are absorbed into cairo-2.dll and re-exported by Meson.
+                -- Linking both cairo and fontconfig downstream will cause symbol duplication.
+                package:add("deps", "fontconfig", {configs = {shared = package:config("shared")}})
+            else
+                package:add("deps", "fontconfig")
+            end
         end
         if package:config("xlib") then
             package:add("deps", "libx11", "libxrender", "libxext")
@@ -63,6 +72,11 @@ package("cairo")
         io.replace("meson.build", "subdir('fuzzing')", "", {plain = true})
         io.replace("meson.build", "subdir('docs')", "", {plain = true})
         io.replace("meson.build", "'CoreFoundation'", "'CoreFoundation', 'Foundation'", {plain = true})
+        -- fix for non-glibc system
+        -- @see https://bugs.gentoo.org/903907
+        if package:version() and package:version():lt("1.18.2") then
+            io.replace("util/meson.build", "libmallocstats = library('malloc-stats', 'malloc-stats.c', dependencies : dl_dep)", "", {plain = true})
+        end
 
         local configs = {
             "--wrap-mode=nopromote",
