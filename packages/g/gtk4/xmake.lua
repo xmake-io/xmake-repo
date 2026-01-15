@@ -19,8 +19,9 @@ package("gtk4")
 
     add_includedirs("include/gtk-4.0")
 
-    add_deps("meson", "ninja")
-    add_deps("glib", "pango", "gdk-pixbuf", "graphene", "fribidi", "pcre2")
+    -- https://github.com/mesonbuild/meson/issues/6710
+    add_deps("meson >=1.8.3", "ninja")
+    add_deps("glib", "pango", "gdk-pixbuf", "graphene", "fribidi")
     add_deps("harfbuzz", "cairo", {configs = {glib = true}})
     if is_plat("linux") then
         add_deps("libdrm")
@@ -45,16 +46,10 @@ package("gtk4")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("windows|!arm*", "macosx", "linux", "cross", "mingw", function (package)
+    on_install("windows|!arm*", "macosx", "linux", "mingw", function (package)
         import("package.tools.meson")
 
         os.rm("subprojects")
-        local mesondir = package:dep("meson"):installdir()
-        local gnomemod = path.join(mesondir, "mesonbuild", "modules", "gnome.py")
-        if package:is_plat("windows") then
-            -- workaround https://github.com/mesonbuild/meson/issues/6710
-            io.replace(gnomemod, "absolute_paths=True,", "absolute_paths=False,#x", {plain = true})
-        end
 
         io.replace("meson.build", "xext_dep,", "[x11_dep, xext_dep],", {plain = true})
         io.replace("meson.build", "xi_dep)", "[x11_dep, xext_dep, xi_dep])", {plain = true})
@@ -72,14 +67,12 @@ package("gtk4")
         table.insert(configs, "-Dwayland-backend=" .. (package:config("wayland") and "true" or "false"))
 
         local envs = meson.buildenvs(package)
-        local pc_path = path.splitenv(envs.PKG_CONFIG_PATH)
-        table.insert(pc_path, path.join(package:dep("shared-mime-info"):installdir(), "share/pkgconfig"))
-        envs.PKG_CONFIG_PATH = path.joinenv(pc_path)
-        import("package.tools.meson").install(package, configs, {envs = envs})
-
-        if package:is_plat("windows") then
-            io.replace(gnomemod, "absolute_paths=False,#x", "absolute_paths=True,", {plain = true})
+        if package:is_plat("linux") then
+            local pc_path = path.splitenv(envs.PKG_CONFIG_PATH)
+            table.insert(pc_path, path.join(package:dep("shared-mime-info"):installdir(), "share/pkgconfig"))
+            envs.PKG_CONFIG_PATH = path.joinenv(pc_path)
         end
+        meson.install(package, configs, {envs = envs})
     end)
 
     on_test(function (package)
