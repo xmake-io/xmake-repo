@@ -21,10 +21,12 @@ package("gtk4")
 
     add_deps("meson", "ninja")
     add_deps("glib", "pango", "gdk-pixbuf", "graphene", "fribidi", "pcre2")
-    add_deps("libepoxy", {configs = {glx = true, x11 = true, egl = true}})
     add_deps("harfbuzz", "cairo", {configs = {glib = true}})
     if is_plat("linux") then
         add_deps("libdrm")
+        add_deps("libepoxy", {configs = {glx = true, x11 = true, egl = true}})
+    else
+        add_deps("libepoxy")
     end
 
     on_fetch(function (package, opt)
