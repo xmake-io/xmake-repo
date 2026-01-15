@@ -66,7 +66,7 @@ package("pango")
         -- fix unexpected -Werror=array-bounds errors, see https://gitlab.gnome.org/GNOME/pango/-/issues/740
         io.replace("meson.build", "'-Werror=array-bounds',", "", {plain = true})
 
-        if not package:is_plat("linux") and package:dep("libintl"):is_system() then
+        if not package:is_plat("linux") and package:dep("libintl") and package:dep("libintl"):is_system() then
             io.replace("meson.build", "subdir('pango')", "pango_deps += cc.find_library('intl')\nsubdir('pango')", {plain = true})
         end
 
