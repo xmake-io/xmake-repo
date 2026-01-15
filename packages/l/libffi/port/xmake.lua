@@ -77,7 +77,7 @@ end
 if is_plat("macosx") then
     set_configvar("SYMBOL_UNDERSCORE", 1)
 end
-if is_plat("linux") then
+if is_plat("linux", "android") then
     set_configvar("HAVE_HIDDEN_VISIBILITY_ATTRIBUTE", 1)
     set_configvar("EH_FRAME_FLAGS", "a")
 end
@@ -171,6 +171,23 @@ target("ffi")
         add_files("src/wasm32/ffi.c")
         add_headerfiles("src/wasm32/ffitarget.h")
     end
+
+    on_config(function (target)
+        if target:is_plat("android") and target:is_arch("arm.*") then
+            if target:is_arch64() then
+                target:add("files", "src/aarch64/ffi.c")
+                target:add("files", is_plat("windows") and "src/aarch64/win64_armasm.S" or "src/aarch64/sysv.S")
+                target:add("includedirs", "src/aarch64")
+                target:add("headerfiles", "src/aarch64/ffitarget.h")
+            else
+                target:add("files", "src/arm/ffi.c")
+                target:add("files", is_plat("windows") and "src/arm/sysv_msvc_arm32.S" or "src/arm/sysv.S")
+                target:add("includedirs", "src/arm")
+                target:add("headerfiles", "src/arm/ffitarget.h")
+            end
+        end
+    end)
+
     before_build(function (target)
         import("core.base.semver")
         if semver.compare(target:version(), "v3.4.4") <= 0 then
