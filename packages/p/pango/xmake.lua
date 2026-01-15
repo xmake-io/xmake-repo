@@ -47,7 +47,7 @@ package("pango")
         end
     end)
 
-    on_install("windows", "macosx", "linux", "cross", "mingw", function (package)
+    on_install("windows|!arm*", "macosx", "linux", "cross", "mingw", function (package)
         import("package.tools.meson")
 
         io.gsub("meson.build", "subdir%('tests'%)", "")
@@ -66,6 +66,10 @@ package("pango")
         -- fix unexpected -Werror=array-bounds errors, see https://gitlab.gnome.org/GNOME/pango/-/issues/740
         io.replace("meson.build", "'-Werror=array-bounds',", "", {plain = true})
 
+        if not package:is_plat("linux") and package:dep("libintl"):is_system() then
+            io.replace("meson.build", "subdir('pango')", "pango_deps += cc.find_library('intl')\nsubdir('pango')", {plain = true})
+        end
+
         local configs = {"-Dintrospection=disabled", "-Dgtk_doc=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         for _, name in ipairs({"fontconfig", "cairo", "freetype", "libthai"}) do
@@ -77,7 +81,12 @@ package("pango")
             -- workaround for https://github.com/xmake-io/xmake/issues/4412
             envs.LDFLAGS = string.gsub(envs.LDFLAGS, "%-libpath:", "/libpath:")
         end
-        meson.install(package, configs, {envs = envs})
+
+        local cxflags
+        if package:is_plat("windows", "mingw") and not package:dep("cairo"):config("shared") then
+            cxflags = "-DCAIRO_WIN32_STATIC_BUILD=1"
+        end
+        meson.install(package, configs, {envs = envs, cxflags = cxflags})
     end)
 
     on_test(function (package)
