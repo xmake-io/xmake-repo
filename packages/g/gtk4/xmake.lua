@@ -66,13 +66,17 @@ package("gtk4")
         table.insert(configs, "-Dx11-backend=" .. (package:config("x11") and "true" or "false"))
         table.insert(configs, "-Dwayland-backend=" .. (package:config("wayland") and "true" or "false"))
 
+        local shflags
         local envs = meson.buildenvs(package)
         if package:is_plat("linux") then
             local pc_path = path.splitenv(envs.PKG_CONFIG_PATH)
             table.insert(pc_path, path.join(package:dep("shared-mime-info"):installdir(), "share/pkgconfig"))
             envs.PKG_CONFIG_PATH = path.joinenv(pc_path)
+        elseif package:is_plat("mingw") then
+            -- gtk (c code) will call gcc to link, but cairo (c++ code) require g++
+            shflags = "-lstdc++"
         end
-        meson.install(package, configs, {envs = envs})
+        meson.install(package, configs, {envs = envs, shflags = shflags})
     end)
 
     on_test(function (package)
