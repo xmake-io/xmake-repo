@@ -7,7 +7,7 @@ index bfbd158..69d4a60 100644
  #if defined (HAVE_MACH_VM_PROTECT)
  # include <mach/mach.h>
 -# include <mach/mach_vm.h>
-+// use the newer mach functions when available
++#include <TargetConditionals.h>
 +#if !TARGET_OS_IPHONE && !TARGET_OS_SIMULATOR
 +    #define HAS_MACH_VM 1
 +    #include <mach/mach_vm.h> /* mach_vm_*            */
