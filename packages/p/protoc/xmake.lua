@@ -5,7 +5,7 @@ package("protoc")
 
     add_deps("protobuf-cpp")
 
-    on_install(function (package) end)
+    on_install("@windows|x86", "@windows|x64", "@windows|arm64*", "@msys", "@cygwin", "@macosx", "@bsd", "@linux", function (package) end)
 
     on_test(function (package)
         os.vrun("protoc --version")
