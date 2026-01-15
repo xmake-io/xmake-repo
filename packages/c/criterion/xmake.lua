@@ -20,7 +20,10 @@ package("criterion")
     add_deps("meson", "ninja")
     add_deps("python", {kind = "binary"})
     if is_subhost("windows") then
-        add_deps("pkgconf", "wingetopt")
+        add_deps("pkgconf")
+        if not is_plat("android") then
+            add_deps("wingetopt")
+        end
     else
         add_deps("pkg-config")
     end
@@ -37,6 +40,10 @@ package("criterion")
     on_install("!wasm", function (package)
         os.rm("subprojects")
         import("patch")(package)
+        if package:is_plat("android") then
+            io.replace("src/mutex.h", [[# define tls]], [[# define THREAD_LOCAL]], {plain = true})
+            io.replace("src/compat/strtok.c", [[static tls Type *state = NULL]], [[static THREAD_LOCAL Type *state = NULL]], {plain = true})
+        end
         local opt = {}
         local python = package:is_plat("windows") and "python" or "python3"
         os.vrun(python .. " -m pip install protobuf==5.29.3 nanopb==0.4.9.1")
