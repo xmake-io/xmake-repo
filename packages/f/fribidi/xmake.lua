@@ -17,6 +17,7 @@ package("fribidi")
     add_versions("v1.0.12", "0cd233f97fc8c67bb3ac27ce8440def5d3ffacf516765b91c2cc654498293495")
     add_versions("v1.0.13", "7fa16c80c81bd622f7b198d31356da139cc318a63fc7761217af4130903f54a2")
 
+    add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
@@ -29,14 +30,42 @@ package("fribidi")
 
     add_deps("meson", "ninja")
 
-    on_install(function (package)
-        if package:is_plat("windows", "mingw") and not package:config("shared") then
+    on_load("windows", "mingw", function (package)
+        if not package:config("shared") then
             package:add("defines", "FRIBIDI_LIB_STATIC")
+        end
+    end)
+
+    on_install(function (package)
+        import("package.tools.meson")
+        
+        local opt = {}
+        if package:is_plat("windows") and package:is_cross() then
+            local arch_prev = package:arch()
+            local plat_prev = package:plat()
+            package:plat_set(os.host())
+            package:arch_set(os.arch())
+
+            meson.build(package,
+                {"-Ddocs=false", "-Dtests=false", "-Dbin=false"},
+                {buildir = "build_host"}
+            )
+
+            package:plat_set(plat_prev)
+            package:arch_set(arch_prev)
+
+            opt.cxflags = "-Ibuild_host/gen.tab"
+            os.vcp("build_host/gen.tab/fribidi-unicode-version.h", package:installdir("include/fribidi"))
+
+            io.replace("meson.build", "subdir('gen.tab')", "", {plain = true})
+            io.replace("lib/meson.build", "fribidi_unicode_version_h,", "", {plain = true})
+            io.replace("lib/meson.build", "generated_tab_include_files,", "", {plain = true})
         end
 
         local configs = {"-Ddocs=false", "-Dtests=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-        import("package.tools.meson").install(package, configs)
+        table.insert(configs, "-Dbin=" .. (package:config("tools") and "true" or "false"))
+        meson.install(package, configs, opt)
     end)
 
     on_test(function (package)
