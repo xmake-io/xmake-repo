@@ -108,6 +108,7 @@ package("acl-dev")
             if package:is_plat("windows", "mingw") then
                 -- Do not build .gas on windows
                 if not package:is_arch("arm.*") then
+                    io.replace("lib_fiber/c/CMakeLists.txt", [[enable_language(C CXX ASM)]], [[enable_language(C CXX ASM_MASM)]], {plain = true})
                     if package:check_sizeof("void*") == "8" then
                         io.replace("lib_fiber/c/CMakeLists.txt",
                             [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]],
