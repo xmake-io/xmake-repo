@@ -15,7 +15,7 @@ package("slikenet")
     add_deps("openssl3")
 
     if is_plat("windows", "mingw") then
-        add_syslinks("iphlpapi", "ws2_32")
+        add_syslinks("iphlpapi", "ws2_32", "winmm")
     elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
@@ -35,6 +35,9 @@ package("slikenet")
 
     on_install(function (package)
         io.replace("CMakeLists.txt", "ws2_32.lib", "iphlpapi ws2_32", {plain = true})
+        io.replace("Source/include/slikenet/WindowsIncludes.h", [[#include <IPHlpApi.h>]], [[#include <iphlpapi.h>]], {plain = true})
+        io.replace("Source/include/slikenet/WindowsIncludes.h", [[#pragma comment(lib, "IPHLPAPI.lib")]], [[]], {plain = true})
+        io.replace("Source/src/GetTime.cpp", [[#pragma comment(lib, "Winmm.lib")]], [[]], {plain = true})
         if package:is_plat("linux", "cross") and package:is_arch("arm.*") then
             io.replace("Source/src/FileList.cpp", "#include <sys/io.h>", "", {plain = true})
         elseif package:is_plat("android") then
