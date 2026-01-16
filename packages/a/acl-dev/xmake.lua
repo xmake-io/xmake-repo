@@ -112,7 +112,7 @@ package("acl-dev")
                     if package:check_sizeof("void*") == "8" then
                         io.replace("lib_fiber/c/CMakeLists.txt",
                             [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]],
-                            [[list(APPEND lib_src ${src}/fiber/boost/make_x86_64_ms_pe_gas.asm]], {plain = true})
+                            [[list(APPEND lib_src ${src}/fiber/boost/make_x86_64_ms_pe_masm.asm]], {plain = true})
                         io.replace("lib_fiber/c/CMakeLists.txt",
                             [[${src}/fiber/boost/jump_gas.S)]],
                             [[${src}/fiber/boost/jump_x86_64_ms_pe_masm.asm)]], {plain = true})
