@@ -65,7 +65,7 @@ package("libhv")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "android", "iphoneos", "mingw@windows", function(package)
+    on_install("cross", "windows", "linux", "macosx", "android", "iphoneos", "mingw@windows", function(package)
         local configs = {"-DBUILD_EXAMPLES=OFF", "-DBUILD_UNITTEST=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
