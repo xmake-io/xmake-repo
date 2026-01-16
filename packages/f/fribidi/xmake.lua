@@ -29,13 +29,11 @@ package("fribidi")
 
     add_deps("meson", "ninja")
 
-    on_load("windows", function (package)
-        if not package:config("shared") then
+    on_install(function (package)
+        if package:is_plat("windows", "mingw") and not package:config("shared") then
             package:add("defines", "FRIBIDI_LIB_STATIC")
         end
-    end)
 
-    on_install(function (package)
         local configs = {"-Ddocs=false", "-Dtests=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         import("package.tools.meson").install(package, configs)
