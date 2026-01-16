@@ -34,7 +34,7 @@ package("slikenet")
     end)
 
     on_install(function (package)
-        io.replace("CMakeLists.txt", "ws2_32.lib", "iphlpapi ws2_32", {plain = true})
+        io.replace("CMakeLists.txt", "ws2_32.lib", "iphlpapi ws2_32 winmm", {plain = true})
         io.replace("Source/include/slikenet/WindowsIncludes.h", [[#include <IPHlpApi.h>]], [[#include <iphlpapi.h>]], {plain = true})
         io.replace("Source/include/slikenet/WindowsIncludes.h", [[#pragma comment(lib, "IPHLPAPI.lib")]], [[]], {plain = true})
         io.replace("Source/src/GetTime.cpp", [[#pragma comment(lib, "Winmm.lib")]], [[]], {plain = true})
