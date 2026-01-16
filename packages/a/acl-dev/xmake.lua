@@ -128,12 +128,21 @@ package("acl-dev")
                     end
                 else
                     io.replace("lib_fiber/c/CMakeLists.txt", [[enable_language(C CXX ASM)]], [[enable_language(C CXX ASM_MARMASM)]], {plain = true})
-                    io.replace("lib_fiber/c/CMakeLists.txt",
-                        [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]],
-                        [[list(APPEND lib_src ${src}/fiber/boost/make_arm_aapcs_pe_armasm.asm]], {plain = true})
-                    io.replace("lib_fiber/c/CMakeLists.txt",
-                        [[${src}/fiber/boost/jump_gas.S)]],
-                        [[${src}/fiber/boost/jump_arm_aapcs_pe_armasm.asm)]], {plain = true})
+                    if package:check_sizeof("void*") == "8" then
+                        io.replace("lib_fiber/c/CMakeLists.txt",
+                            [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]],
+                            [[list(APPEND lib_src ${src}/fiber/boost/make_arm64_aapcs_pe_armasm.asm]], {plain = true})
+                        io.replace("lib_fiber/c/CMakeLists.txt",
+                            [[${src}/fiber/boost/jump_gas.S)]],
+                            [[${src}/fiber/boost/jump_arm64_aapcs_pe_armasm.asm)]], {plain = true})
+                    else
+                        io.replace("lib_fiber/c/CMakeLists.txt",
+                            [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]],
+                            [[list(APPEND lib_src ${src}/fiber/boost/make_arm_aapcs_pe_armasm.asm]], {plain = true})
+                        io.replace("lib_fiber/c/CMakeLists.txt",
+                            [[${src}/fiber/boost/jump_gas.S)]],
+                            [[${src}/fiber/boost/jump_arm_aapcs_pe_armasm.asm)]], {plain = true})
+                    end
                 end
             else
                 io.replace("CMakeLists.txt", "project(acl)", "project(acl)\nfind_package(ZLIB)", {plain = true})
