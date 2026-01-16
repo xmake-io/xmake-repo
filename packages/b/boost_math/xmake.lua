@@ -1,6 +1,6 @@
 package("boost_math")
     set_kind("library", {headeronly = true})
-    set_homepage("http://boost.org/libs/math")
+    set_homepage("https://www.boost.org/libs/math")
     set_description("Boost Math Library")
     set_license("BSL-1.0")
 
