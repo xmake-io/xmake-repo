@@ -114,14 +114,14 @@ package("acl-dev")
                             [[list(APPEND lib_src ${src}/make_x86_64_ms_pe_gas.asm]], {plain = true})
                         io.replace("lib_fiber/c/CMakeLists.txt",
                             [[${src}/fiber/boost/jump_gas.S)]],
-                            [[${src}/fiber/boost/jump_x86_64_ms_pe_gas.asm]], {plain = true})
+                            [[${src}/fiber/boost/jump_x86_64_ms_pe_gas.asm)]], {plain = true})
                     else
                         io.replace("lib_fiber/c/CMakeLists.txt",
                             [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]],
                             [[list(APPEND lib_src ${src}/make_i386_ms_pe_gas.asm]], {plain = true})
                         io.replace("lib_fiber/c/CMakeLists.txt", 
                             [[${src}/fiber/boost/jump_gas.S)]],
-                            [[${src}/fiber/boost/jump_i386_ms_pe_gas.asm]], {plain = true})
+                            [[${src}/fiber/boost/jump_i386_ms_pe_gas.asm)]], {plain = true})
                     end
                 else
                     io.replace("lib_fiber/c/CMakeLists.txt", [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]], [[]], {plain = true})
