@@ -108,6 +108,7 @@ package("acl-dev")
             if package:is_plat("windows") then
                 -- Do not build .gas on windows
                 if not package:is_arch("arm.*") then
+                    io.replace("lib_fiber/c/CMakeLists.txt", [[cmake_minimum_required(VERSION 2.8.0)]], [[cmake_minimum_required(VERSION 3.5)]], {plain = true})
                     io.replace("lib_fiber/c/CMakeLists.txt", [[enable_language(C CXX ASM)]], [[enable_language(C CXX ASM_MASM)]], {plain = true})
                     io.replace("lib_fiber/c/CMakeLists.txt", [["-D_WINSOCK_DEPRECATED_NO_WARNINGS"]], [["-DBOOST_CONTEXT_EXPORT="
 "-D_WINSOCK_DEPRECATED_NO_WARNINGS"]], {plain = true})
