@@ -6,6 +6,7 @@ package("ncnn")
     add_urls("https://github.com/Tencent/ncnn/archive/refs/tags/$(version).tar.gz",
             "https://github.com/Tencent/ncnn.git", { submodules = false })
 
+    add_versions("20260113", "2fdc5c6e37f8552921a9daad498a1be54a6fa6edd32c1a9e3030b27fab253b47")
     add_versions("20250916", "7d463f1e5061facd02b8af5e792e059088695cdcfcc152c8f4892f6ffe5eab1a")
     add_versions("20250503", "3afea4cf092ce97d06305b72c6affbcfb3530f536ae8e81a4f22007d82b729e9")
 
@@ -38,11 +39,13 @@ package("ncnn")
     end
 
     on_load(function (package)
-        local glslang_ver = package:version() and package:version() or "20250916"
+        local glslang_ver = package:version() and package:version() or "20260113"
         if package:config("vulkan") then
             package:add("deps", "glslang-nihui " .. glslang_ver)
             if package:is_plat("macosx", "iphoneos") then
-                package:add("deps", "moltenvk", {configs = {shared = package:config("shared")}})
+                if package:version() and package:version():lt("20260113") then
+                    package:add("deps", "moltenvk", {configs = {shared = package:config("shared")}})
+                end
                 package:add("frameworks", "Metal", "Foundation", "QuartzCore", "CoreGraphics", "IOSurface")
                 if package:is_plat("macosx") then
                     package:add("frameworks", "IOKit", "AppKit")
@@ -94,7 +97,7 @@ package("ncnn")
         table.insert(configs, "-DNCNN_PIXEL_DRAWING=" .. (package:config("pixel_drawing") and "ON" or "OFF"))
         if package:config("vulkan") then
             table.insert(configs, "-DCMAKE_CXX_STANDARD=11")
-            if package:is_plat("macosx", "iphoneos") then
+            if package:version() and package:version():lt("20260113") and package:is_plat("macosx", "iphoneos") then
                 local moltenvk = package:dep("moltenvk")
                 table.insert(configs, "-DVulkan_LIBRARY=" .. path.join(moltenvk:installdir("lib"), "libMoltenVK." .. (moltenvk:config("shared") and "dylib" or "a")))
             end
