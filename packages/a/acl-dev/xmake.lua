@@ -129,6 +129,9 @@ package("acl-dev")
                 else
                     io.replace("lib_fiber/c/CMakeLists.txt", [[enable_language(C CXX ASM)]], [[enable_language(C CXX ASM_MARMASM)]], {plain = true})
                     if package:check_sizeof("void*") == "8" then
+                        os.cp(path.join(package:scriptdir(), "port", "ontop_arm64_aapcs_pe_armasm.asm"), "lib_fiber/c/src/fiber/boost/ontop_arm64_aapcs_pe_armasm.asm")
+                        os.cp(path.join(package:scriptdir(), "port", "jump_arm64_aapcs_pe_armasm.asm"), "lib_fiber/c/src/fiber/boost/jump_arm64_aapcs_pe_armasm.asm")
+                        os.cp(path.join(package:scriptdir(), "port", "make_arm64_aapcs_pe_armasm.asm"), "lib_fiber/c/src/fiber/boost/make_arm64_aapcs_pe_armasm.asm")
                         io.replace("lib_fiber/c/CMakeLists.txt",
                             [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]],
                             [[list(APPEND lib_src ${src}/fiber/boost/make_arm64_aapcs_pe_armasm.asm]], {plain = true})
