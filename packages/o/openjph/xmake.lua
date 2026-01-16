@@ -24,8 +24,14 @@ package("openjph")
     end
 
     on_install(function (package)
+        local ojph_header_path
+        if package:version():lt("0.26.0") then
+            ojph_header_path = "src/core/common"
+        else
+            ojph_header_path = "src/core/openjph"
+        end
         if package:is_plat("windows", "mingw") and package:config("shared") then
-            io.replace("src/core/common/ojph_arch.h", [[#else
+            io.replace(path.join(ojph_header_path, "ojph_arch.h"), [[#else
 #define OJPH_EXPORT
 #endif]], [[#else
 #define OJPH_EXPORT __declspec(dllimport)
