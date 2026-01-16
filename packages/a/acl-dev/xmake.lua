@@ -108,7 +108,9 @@ package("acl-dev")
             if package:is_plat("windows") then
                 -- Do not build .gas on windows
                 if not package:is_arch("arm.*") then
-                    io.replace("lib_fiber/c/CMakeLists.txt", [[enable_language(C CXX ASM)]], [[enable_language(C CXX ASM_MASM)]], {plain = true})
+                    --io.replace("lib_fiber/c/CMakeLists.txt", [[enable_language(C CXX ASM)]], [[enable_language(C CXX ASM_MASM)]], {plain = true})
+                    io.replace("lib_fiber/c/CMakeLists.txt", [["-D_WINSOCK_DEPRECATED_NO_WARNINGS"]], [["-DBOOST_CONTEXT_EXPORT="
+"-D_WINSOCK_DEPRECATED_NO_WARNINGS"]], {plain = true})
                     if package:check_sizeof("void*") == "8" then
                         io.replace("lib_fiber/c/CMakeLists.txt",
                             [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]],
