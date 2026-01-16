@@ -17,7 +17,7 @@ package("acl-dev")
     add_patches(">=3.6.2", "patches/v3.6.2/debundle_zlib.diff", "43043fb8fe84ef8f37a6a637e0447a849d38155e6d6ca20a9512c38023077a04")
 
     if is_plat("windows") then
-        add_configs("vs", {description = "Use Visual Studio buildsystem (.sln/.vcxproj)", default = true, type = "boolean"})
+        add_configs("vs", {description = "Use Visual Studio buildsystem (.sln/.vcxproj)", default = false, type = "boolean"})
     end
 
     add_includedirs("include", "include/acl-lib")
