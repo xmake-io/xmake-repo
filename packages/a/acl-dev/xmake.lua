@@ -105,7 +105,7 @@ package("acl-dev")
                 "add_library(acl_cpp_static STATIC ${lib_src})\ntarget_precompile_headers(acl_cpp_static PRIVATE src/acl_stdafx.hpp)", {plain = true})
             io.replace("lib_acl_cpp/CMakeLists.txt", [[add_library(acl_cpp_shared SHARED ${lib_src})]],
                 "add_library(acl_cpp_shared SHARED ${lib_src})\ntarget_precompile_headers(acl_cpp_shared PRIVATE src/acl_stdafx.hpp)", {plain = true})
-            if package:is_plat("windows", "mingw") then
+            if package:is_plat("windows") then
                 -- Do not build .gas on windows
                 if not package:is_arch("arm.*") then
                     io.replace("lib_fiber/c/CMakeLists.txt", [[enable_language(C CXX ASM)]], [[enable_language(C CXX ASM_MASM)]], {plain = true})
@@ -115,14 +115,14 @@ package("acl-dev")
                             [[list(APPEND lib_src ${src}/fiber/boost/make_x86_64_ms_pe_gas.asm]], {plain = true})
                         io.replace("lib_fiber/c/CMakeLists.txt",
                             [[${src}/fiber/boost/jump_gas.S)]],
-                            [[${src}/fiber/boost/jump_x86_64_ms_pe_gas.asm)]], {plain = true})
+                            [[${src}/fiber/boost/jump_x86_64_ms_pe_masm.asm)]], {plain = true})
                     else
                         io.replace("lib_fiber/c/CMakeLists.txt",
                             [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]],
                             [[list(APPEND lib_src ${src}/fiber/boost/make_i386_ms_pe_gas.asm]], {plain = true})
                         io.replace("lib_fiber/c/CMakeLists.txt", 
                             [[${src}/fiber/boost/jump_gas.S)]],
-                            [[${src}/fiber/boost/jump_i386_ms_pe_gas.asm)]], {plain = true})
+                            [[${src}/fiber/boost/jump_i386_ms_pe_masm.asm)]], {plain = true})
                     end
                 else
                     io.replace("lib_fiber/c/CMakeLists.txt", [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]], [[]], {plain = true})
