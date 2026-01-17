@@ -6,6 +6,7 @@ package("aws-crt-cpp")
     add_urls("https://github.com/awslabs/aws-crt-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-crt-cpp.git")
 
+    add_versions("v0.37.1", "b91b70c436bd2d35a8758871983312bea63696ff34ef8e44ec1b86072db28a18")
     add_versions("v0.29.8", "a693b1b6a802dd8bf0210cbb9f01fd58a95c851309a10a221e1ba7496b81384c")
     add_versions("v0.29.5", "17dd4a39537b5bd4040ff951c5a658e27c5d74d3f3cfab72831d3ecbabd58d35")
     add_versions("v0.28.3", "0d0255eb1983ff3b6f7a7e98a54f65e2e8b40a7c7d6118a96a9c656ada7afb5f")
@@ -38,7 +39,9 @@ package("aws-crt-cpp")
         if package:is_plat("windows") then
             table.insert(configs, "-DAWS_STATIC_MSVC_RUNTIME_LIBRARY=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
 
-            io.replace("include/aws/crt/Exports.h", "WIN32", "_WIN32", {plain = true})
+            if package:version():lt("0.31.2") then
+                io.replace("include/aws/crt/Exports.h", "defined(WIN32)", "defined(_WIN32)", {plain = true})
+            end
             if package:config("shared") then
                 package:add("defines", "AWS_CRT_CPP_USE_IMPORT_EXPORT")
             end
