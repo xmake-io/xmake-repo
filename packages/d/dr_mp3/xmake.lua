@@ -5,6 +5,7 @@ package("dr_mp3")
     set_license("MIT")
 
     set_urls("https://github.com/mackron/dr_libs.git", {submodules = false})
+    add_versions("0.7.3", "5690d4671d7ad07ae6021756d7222eb159745f06")
     add_versions("0.7.2", "547c211a87a06a42bf62c1366616aa14b57dd429")
     add_versions("0.7.1", "9de1c5dff6810cdb1a9c69a97a9808495168c4d0")
     add_versions("0.6.40", "37a5ffb671a4465cfefc7ba8ce7e8ae298612e5a")
