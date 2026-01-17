@@ -96,16 +96,17 @@ package("csfml")
     end)
 
     on_test(function (package)
+        local includedir = package:version():ge("3.0.0") and "CSFML" or "SFML"
         if package:config("graphics") then
-            assert(package:has_cfuncs("sfImage_create", {includes = "SFML/Graphics.h"}))
+            assert(package:has_cfuncs("sfImage_create", {includes = includedir .. "/Graphics.h"}))
         end
         if package:config("window") then
-            assert(package:has_cfuncs("sfWindow_create", {includes = "SFML/Window.h"}))
+            assert(package:has_cfuncs("sfWindow_create", {includes = includedir .. "/Window.h"}))
         end
         if package:config("audio") then
-            assert(package:has_cfuncs("sfMusic_createFromMemory", {includes = "SFML/Audio.h"}))
+            assert(package:has_cfuncs("sfMusic_createFromMemory", {includes = includedir .. "/Audio.h"}))
         end
         if package:config("network") then
-            assert(package:has_cfuncs("sfTcpSocket_create", {includes = "SFML/Network.h"}))
+            assert(package:has_cfuncs("sfTcpSocket_create", {includes = includedir .. "/Network.h"}))
         end
     end)
