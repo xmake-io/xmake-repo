@@ -225,7 +225,6 @@ package("openssl3")
         local configs = {target,
                          "-DOPENSSL_NO_HEARTBEATS",
                          package:config("shared") and "shared" or "no-shared",
-                         "no-threads",
                          "--libdir=lib",
                          "--openssldir=" .. package:installdir():gsub("\\", "/"),
                          "--prefix=" .. package:installdir():gsub("\\", "/")}
