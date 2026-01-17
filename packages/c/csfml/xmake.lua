@@ -21,13 +21,19 @@ package("csfml")
     end
 
     on_load(function (package)
-        if package:version():ge("2.6.0") and package:version():le("2.6.1") then
-            package:add("deps", "sfml " .. package:version(), {configs = {
-                graphics = package:config("graphics"),
-                window = package:config("window"),
-                audio = package:config("audio"),
-                network = package:config("network")
-            }})
+        if package:version():ge("3.0.0") then
+            if not package:config("shared") then
+                package:add("defines", "CSFML_STATIC")
+            end
+        else
+            if package:version():ge("2.6.0") and package:version():le("2.6.1") then
+                package:add("deps", "sfml " .. package:version(), {configs = {
+                    graphics = package:config("graphics"),
+                    window = package:config("window"),
+                    audio = package:config("audio"),
+                    network = package:config("network")
+                }})
+            end
         end
         if package:config("graphics") then
             package:add("deps", "zlib")
@@ -35,35 +41,37 @@ package("csfml")
     end)
 
     on_install("windows", "linux", "macosx", "mingw@windows,msys", function (package)
-        -- Mac OS X do not use BUILD_WITH_INSTALL_RPATH 1 INSTALL_NAME_DIR "@rpath"
-        io.replace("cmake/Macros.cmake", "if(SFML_OS_MACOSX AND BUILD_SHARED_LIBS)", "if(0)", {plain = true})
-        if package:is_plat("windows", "mingw") then
-            if not package:config("shared") then
-                if package:is_plat("windows") then
-                    io.replace("include/SFML/Config.h",
-                        [[#define CSFML_API_IMPORT CSFML_EXTERN_C __declspec(dllimport)]],
-                        [[#define CSFML_API_IMPORT CSFML_EXTERN_C __declspec(dllexport)]], {plain = true})
+        if package:version():lt("3.0.0") then
+            -- Mac OS X do not use BUILD_WITH_INSTALL_RPATH 1 INSTALL_NAME_DIR "@rpath"
+            io.replace("cmake/Macros.cmake", "if(SFML_OS_MACOSX AND BUILD_SHARED_LIBS)", "if(0)", {plain = true})
+            if package:is_plat("windows", "mingw") then
+                if not package:config("shared") then
+                    if package:is_plat("windows") then
+                        io.replace("include/SFML/Config.h",
+                            [[#define CSFML_API_IMPORT CSFML_EXTERN_C __declspec(dllimport)]],
+                            [[#define CSFML_API_IMPORT CSFML_EXTERN_C __declspec(dllexport)]], {plain = true})
+                    end
+                    if package:is_plat("mingw") then
+                        io.replace("cmake/Macros.cmake", [[if (SFML_OS_WINDOWS AND SFML_COMPILER_GCC)]], [[if(0)]], {plain = true})
+                        io.replace("include/SFML/Config.h",
+                            [[#define CSFML_API_IMPORT CSFML_EXTERN_C __declspec(dllimport)]],
+                            [[#define CSFML_API_IMPORT CSFML_EXTERN_C]], {plain = true})
+                    end
+                    -- Do not use CMAKE_SHARED_LIBRARY_SUFFIX when building static lib
+                    io.replace("cmake/Macros.cmake", "if(SFML_OS_WINDOWS)", "if(0)", {plain = true})
                 end
-                if package:is_plat("mingw") then
-                    io.replace("cmake/Macros.cmake", [[if (SFML_OS_WINDOWS AND SFML_COMPILER_GCC)]], [[if(0)]], {plain = true})
-                    io.replace("include/SFML/Config.h",
-                        [[#define CSFML_API_IMPORT CSFML_EXTERN_C __declspec(dllimport)]],
-                        [[#define CSFML_API_IMPORT CSFML_EXTERN_C]], {plain = true})
-                end
-                -- Do not use CMAKE_SHARED_LIBRARY_SUFFIX when building static lib
-                io.replace("cmake/Macros.cmake", "if(SFML_OS_WINDOWS)", "if(0)", {plain = true})
+                -- Add missing syslink
+                io.replace("src/SFML/Audio/CMakeLists.txt", "DEPENDS sfml-audio)", "DEPENDS sfml-audio avrt)", {plain = true})
             end
-            -- Add missing syslink
-            io.replace("src/SFML/Audio/CMakeLists.txt", "DEPENDS sfml-audio)", "DEPENDS sfml-audio avrt)", {plain = true})
-        end
-        -- Add missing zlib headers
-        if package:config("graphics") then
-            io.replace("src/SFML/CMakeLists.txt", 
-                [[find_package(SFML 2.6 COMPONENTS ${SFML_MODULES} REQUIRED)]],
-                [[find_package(SFML 2.6 COMPONENTS ${SFML_MODULES} REQUIRED)
-                find_package(ZLIB)]], {plain = true})
-            io.replace("src/SFML/Graphics/CMakeLists.txt",
-                "DEPENDS sfml-graphics)", [[DEPENDS sfml-graphics ZLIB::ZLIB)]], {plain = true})
+            -- Add missing zlib headers
+            if package:config("graphics") then
+                io.replace("src/SFML/CMakeLists.txt", 
+                    [[find_package(SFML 2.6 COMPONENTS ${SFML_MODULES} REQUIRED)]],
+                    [[find_package(SFML 2.6 COMPONENTS ${SFML_MODULES} REQUIRED)
+                    find_package(ZLIB)]], {plain = true})
+                io.replace("src/SFML/Graphics/CMakeLists.txt",
+                    "DEPENDS sfml-graphics)", [[DEPENDS sfml-graphics ZLIB::ZLIB)]], {plain = true})
+            end
         end
         local configs = {"-DCSFML_BUILD_EXAMPLES=OFF", "-DCSFML_BUILD_DOC=OFF"}
         table.insert(configs, "-DCSFML_BUILD_GRAPHICS=".. (package:config("graphics") and "ON" or "OFF"))
@@ -73,6 +81,7 @@ package("csfml")
         -- If dependency SFML is static or shared
         local sfml = package:dep("sfml")
         if sfml then
+            table.insert(configs, "-DSFML_ROOT=" .. sfml:installdir())
             table.insert(configs, "-DCSFML_LINK_SFML_STATICALLY=" .. (sfml:config("shared") and "OFF" or "ON"))
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
