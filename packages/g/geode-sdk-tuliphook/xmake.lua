@@ -19,7 +19,6 @@ package("geode-sdk-tuliphook")
     end
 
     on_install("!wasm", function (package)
-        --os.cp("include", package:installdir())
         io.writefile("xmake.lua", [[
             add_requires("geode-sdk-result")
             add_packages("geode-sdk-result")
