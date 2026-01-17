@@ -6,6 +6,7 @@ package("qbdi")
     add_urls("https://github.com/QBDI/QBDI/archive/refs/tags/$(version).tar.gz",
              "https://github.com/QBDI/QBDI.git")
 
+    add_versions("v0.12.1", "6c530f55285282cbf5b3ad569013c6db9751c4ce7f3d33eb6aa39df48e7abd45")
     add_versions("v0.12.0", "2b918fec3424ac9667796c1a5e216d0fbe57e83da92123e15411d9ea43b30a5b")
 
     add_configs("avx", {description = "Enable the support of AVX instruction on X86 and X86_64.", default = true, type = "boolean"})
