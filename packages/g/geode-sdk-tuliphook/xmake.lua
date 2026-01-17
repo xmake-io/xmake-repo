@@ -1,0 +1,124 @@
+package("geode-sdk-tuliphook")
+    set_homepage("https://github.com/geode-sdk/TulipHook")
+    set_description("Low level hooking lib specialized for Geometry Dash. Supports Windows x86/x86_64, macOS x86_64/aarch64, Android armv7/aarch64, iOS aarch64")
+    set_license("BSL-1.0")
+
+    add_urls("https://github.com/geode-sdk/TulipHook/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/geode-sdk/TulipHook.git")
+
+    add_versions("v3.1.7", "83f200a43002a343a17f57f861532d64018f8e7691a3c0097356df3dc1743543")
+
+    add_deps("geode-sdk-result")
+
+    if not is_plat("windows", "mingw") then
+        add_deps("dobby")
+    end
+
+    if not is_plat("android") then
+        add_deps("capstone")
+    end
+
+    on_install("!wasm", function (package)
+        --os.cp("include", package:installdir())
+        io.writefile("xmake.lua", [[
+            add_requires("geode-sdk-result")
+            add_packages("geode-sdk-result")
+
+            if not is_plat("windows", "mingw") then
+                add_requires("dobby")
+                add_packages("dobby")
+            end
+
+            if not is_plat("android") then
+                add_requires("capstone")
+                add_packages("capstone")
+            end
+
+            target("tuliphook")
+                set_kind("$(kind)")
+                set_languages("c++20")
+
+                add_includedirs(
+                    "include", "include/tulip",
+                    "libraries/dobby/source",
+                    "libraries/dobby/external"
+                )
+
+                add_headerfiles("include/tulip/(**.hpp)", {prefixdir = "tulip"})
+
+                add_files(
+                    "src/*.cpp",
+                    "src/assembler/BaseAssembler.cpp",
+                    "src/assembler/X86Assembler.cpp",
+                    "src/assembler/X64Assembler.cpp",
+                    "src/assembler/ArmV7Assembler.cpp",
+                    "src/assembler/ThumbV7Assembler.cpp",
+                    "src/assembler/ArmV8Assembler.cpp",
+                    "src/disassembler/BaseDisassembler.cpp",
+                    "src/disassembler/ArmV8Disassembler.cpp",
+                    "src/disassembler/ThumbV7Disassembler.cpp",
+                    "src/convention/AAPCSConvention.cpp",
+                    "src/convention/AAPCS64Convention.cpp",
+                    "src/convention/CallingConvention.cpp",
+                    "src/convention/DefaultConvention.cpp",
+                    "src/convention/SystemVConvention.cpp",
+                    "src/convention/Windows32Convention.cpp",
+                    "src/convention/Windows64Convention.cpp",
+                    "src/generator/Generator.cpp",
+                    "src/target/Target.cpp"
+                )
+
+                if is_plat("windows", "mingw") then
+                    add_files(
+                        "src/generator/X86Generator.cpp",
+                        "src/generator/X64Generator.cpp",
+                        "src/target/Windows32Target.cpp",
+                        "src/target/Windows64Target.cpp"
+                    )
+                elseif is_plat("macosx", "iphoneos") then
+                    add_files(
+                        "src/generator/X86Generator.cpp",
+                        "src/generator/X64Generator.cpp",
+                        "src/generator/ArmV8Generator.cpp",
+                        "src/target/DarwinTarget.cpp",
+                        "src/target/MacosIntelTarget.cpp",
+                        "src/target/MacosM1Target.cpp",
+                        "src/target/iOSTarget.cpp"
+                    )
+                elseif is_plat("android") then
+                    add_files(
+                        "src/generator/ArmV7Generator.cpp",
+                        "src/generator/ArmV8Generator.cpp",
+                        "src/target/PosixTarget.cpp",
+                        "src/target/PosixArmV7Target.cpp",
+                        "src/target/PosixArmV8Target.cpp"
+                    )
+                elseif is_plat("linux", "bsd", "cross") then
+                    add_files(
+                        "src/generator/X86Generator.cpp",
+                        "src/generator/X64Generator.cpp",
+                        "src/generator/ArmV7Generator.cpp",
+                        "src/generator/ArmV8Generator.cpp",
+                        "src/target/PosixTarget.cpp",
+                        "src/target/PosixX64Target.cpp",
+                        "src/target/PosixArmV7Target.cpp",
+                        "src/target/PosixArmV8Target.cpp"
+                    )
+                end
+
+                add_defines("TULIP_HOOK_EXPORTING")
+
+                if is_kind("shared") then
+                    add_defines("TULIP_HOOK_DYNAMIC")
+                end
+        ]])
+        import("package.tools.xmake").install(package)
+    end)
+
+    on_test(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            void test() {
+                geode::Result<void*, std::string> res = tulip::hook::followJumps(nullptr);
+            }
+        ]]}, {configs = {languages = "c++20"}, includes = "tulip/TulipHook.hpp"}))
+    end)
