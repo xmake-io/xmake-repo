@@ -15,12 +15,14 @@ package("vulkan-utility-libraries")
     add_urls("https://github.com/KhronosGroup/Vulkan-Utility-Libraries.git", {alias = "git"})
 
     -- when adding a new sdk version, please ensure vulkan-headers, vulkan-hpp, vulkan-loader, vulkan-tools, vulkan-validationlayers, vulkan-utility-libraries, spirv-headers, spirv-reflect, spirv-tools, glslang and volk packages are updated simultaneously
+    add_versions("archive:1.4.335+0", "df27b66cfabf7d890398274ffda16b89711d41647fc8e0e8bb419994457948f9")
     add_versions("archive:1.4.309+0", "92e3b842d61965ccab1de04f154eeedef23f895104330e8237055a9ee2feed62")
     add_versions("archive:1.3.283+0", "765a2bb9767e77cd168dfac870533d60b7e8e0031a0738bbe060ca0d4c4e7a03")
     add_versions("archive:1.3.280+0", "075e13f2fdeeca3bb6fb39155c8cc345cf216ab93661549b1a33368aa28a9dea")
     add_versions("archive:1.3.275+0", "37d6b0771e1e351916f4d642cc12c696a3afffea6c47f91c97372287974e2bd8")
     add_versions("archive:1.3.268+0", "0352a6a9a703a969a805e0d6498e013cba2dc7091cc2013b7c89b1a21f61e3f8")
 
+    add_versions("git:1.4.335+0", "vulkan-sdk-1.4.335.0")
     add_versions("git:1.4.309+0", "vulkan-sdk-1.4.309.0")
     add_versions("git:1.3.283+0", "vulkan-sdk-1.3.283.0")
     add_versions("git:1.3.280+0", "vulkan-sdk-1.3.280.0")
