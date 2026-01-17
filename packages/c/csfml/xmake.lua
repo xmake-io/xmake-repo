@@ -6,6 +6,7 @@ package("csfml")
     add_urls("https://github.com/SFML/CSFML/archive/refs/tags/$(version).tar.gz",
              "https://github.com/SFML/CSFML.git")
 
+    add_versions("3.0.0", "903cd4a782fb0b233f732dc5b37861b552998e93ae8f268c40bd4ce50b2e88ca")
     add_versions("2.6.1", "f3f3980f6b5cad85b40e3130c10a2ffaaa9e36de5f756afd4aacaed98a7a9b7b")
 
     add_configs("graphics",   {description = "Use the graphics module", default = true, type = "boolean"})
