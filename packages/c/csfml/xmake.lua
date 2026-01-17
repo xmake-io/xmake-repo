@@ -25,6 +25,12 @@ package("csfml")
             if not package:config("shared") then
                 package:add("defines", "CSFML_STATIC")
             end
+            package:add("deps", "sfml " .. package:version(), {configs = {
+                graphics = package:config("graphics"),
+                window = package:config("window"),
+                audio = package:config("audio"),
+                network = package:config("network")
+            }})
         else
             if package:version():ge("2.6.0") and package:version():le("2.6.1") then
                 package:add("deps", "sfml " .. package:version(), {configs = {
