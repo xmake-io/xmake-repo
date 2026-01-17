@@ -6,6 +6,7 @@ package("matio")
     add_urls("https://github.com/tbeu/matio/archive/refs/tags/$(version).tar.gz",
              "https://github.com/tbeu/matio.git", {submodules = false})
 
+    add_versions("v1.5.30", "cd514c42e13bb39477e7d8fdeaa1502014c552a6a53f0678809cce6951db2bc1")
     add_versions("v1.5.29", "345f18bad65ad4a736ef5b4d660e8587c672939ff88b8551453e03d2146ff8b0")
     add_versions("v1.5.28", "04d14160a637ea822593c336b231227372179f650250c98024a8a2b744afef25")
     add_versions("v1.5.27", "2efe7c4a206885287c0f56128f3a36aa6e453077d03e4c2c42cdce9d332b67eb")
