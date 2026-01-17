@@ -41,8 +41,6 @@ package("fribidi")
     end)
 
     on_install(function (package)
-        import("package.tools.meson")
-        
         local opt = {}
         if package:is_plat("windows") and package:is_cross() then
             local host_includedirs = package:dep("fribidi"):installdir("include/fribidi")
@@ -57,7 +55,7 @@ package("fribidi")
         local configs = {"-Ddocs=false", "-Dtests=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         table.insert(configs, "-Dbin=" .. (package:config("tools") and "true" or "false"))
-        meson.install(package, configs, opt)
+        import("package.tools.meson").install(package, configs, opt)
     end)
 
     on_test(function (package)
