@@ -34,6 +34,10 @@ package("fribidi")
         if not package:config("shared") then
             package:add("defines", "FRIBIDI_LIB_STATIC")
         end
+
+        if package:is_plat("windows") and package:is_cross() then
+            package:add("deps", "fribidi~host", {private = true, host = true})
+        end
     end)
 
     on_install(function (package)
@@ -41,21 +45,9 @@ package("fribidi")
         
         local opt = {}
         if package:is_plat("windows") and package:is_cross() then
-            local arch_prev = package:arch()
-            local plat_prev = package:plat()
-            package:plat_set(os.host())
-            package:arch_set(os.arch())
-
-            meson.build(package,
-                {"-Ddocs=false", "-Dtests=false", "-Dbin=false"},
-                {buildir = "build_host"}
-            )
-
-            package:plat_set(plat_prev)
-            package:arch_set(arch_prev)
-
-            opt.cxflags = "-Ibuild_host/gen.tab"
-            os.vcp("build_host/gen.tab/fribidi-unicode-version.h", package:installdir("include/fribidi"))
+            local host_includedirs = package:dep("fribidi"):installdir("include/fribidi")
+            opt.cxflags = "-I" .. host_includedirs
+            os.vcp(path.join(host_includedirs, "fribidi-unicode-version.h"), package:installdir("include/fribidi"))
 
             io.replace("meson.build", "subdir('gen.tab')", "", {plain = true})
             io.replace("lib/meson.build", "fribidi_unicode_version_h,", "", {plain = true})
