@@ -34,7 +34,7 @@ package("vulkan-tools")
 
     if is_plat("linux") then
         add_extsources("apt::vulkan-tools", "pacman::vulkan-tools")
-        add_deps("wayland", "libxrandr", "libxcb", "libxkbcommon")
+        add_deps("wayland", "libxrandr", "libxrender", "libxcb", "libxkbcommon")
     end
 
     on_load("windows|x64", "linux", function (package)
@@ -47,9 +47,6 @@ package("vulkan-tools")
         if not package.is_built or package:is_built() then
             package:add("deps", "cmake", "ninja")
         end
-        if package:is_plat("linux") then
-            package:add("deps", "libx11", "libxcb", "libxrandr", "libxrender", "wayland")
-        end
     end)
 
     on_install("windows|x64", "linux", function (package)
@@ -58,7 +55,7 @@ package("vulkan-tools")
         if package:is_plat("linux") then
             local includes = {}
             local linkdirs = {}
-            for _, lib in ipairs({"wayland", "libxrandr", "libxcb", "libxkbcommon"}) do
+            for _, lib in ipairs({"wayland", "libxrandr", "libxrender", "libxcb", "libxkbcommon"}) do
                 local fetchinfo = package:dep(lib):fetch()
                 for _, dir in ipairs(fetchinfo.sysincludedirs or fetchinfo.includedirs) do
                     table.insert(includes, dir)
@@ -84,11 +81,7 @@ package("vulkan-tools")
         table.insert(configs, "-DVULKAN_HEADERS_INSTALL_DIR=" .. vulkan_headers:installdir())
         table.insert(configs, "-DVULKAN_LOADER_INSTALL_DIR=" .. vulkan_loader:installdir())
         table.insert(configs, "-DGLSLANG_INSTALL_DIR=" .. glslang:installdir())
-        local opt = {cmake_generator = "Ninja", envs = envs}
-        if package:is_plat("linux") then
-            opt.packagedeps = {"libx11", "libxcb", "libxrandr", "libxrender", "wayland"}
-        end
-        cmake.install(package, configs, opt)
+        cmake.install(package, configs, {cmake_generator = "Ninja", envs = envs})
     end)
 
     on_test(function (package)
