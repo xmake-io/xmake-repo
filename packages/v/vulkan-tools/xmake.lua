@@ -47,6 +47,9 @@ package("vulkan-tools")
         if not package.is_built or package:is_built() then
             package:add("deps", "cmake", "ninja")
         end
+        if package:is_plat("linux") then
+            package:add("deps", "libx11", "libxcb", "libxrandr", "wayland")
+        end
     end)
 
     on_install("windows|x64", "linux", function (package)
