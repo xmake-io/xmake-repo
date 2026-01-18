@@ -18,7 +18,7 @@ package("geode-sdk-tuliphook")
         add_deps("capstone")
     end
 
-    on_install("!wasm and !cross and !bsd", function (package)
+    on_install("!wasm and !cross and !bsd and !iphoneos", function (package)
         io.writefile("xmake.lua", [[
             add_requires("geode-sdk-result")
             add_packages("geode-sdk-result")
