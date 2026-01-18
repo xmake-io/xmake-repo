@@ -16,6 +16,7 @@ package("ncnn")
     add_configs("c_api",         {description = "Build ncnn with C api", default = false, type = "boolean"})
 
     add_configs("simpleomp",     {description = "Enable minimal openmp runtime emulation", default = false, type = "boolean"})
+    add_configs("simpleocv",     {description = "Enable minimal opencv structure emulation", default = false, type = "boolean"})
     add_configs("simplestl",     {description = "Enable minimal cpp stl structure emulation", default = false, type = "boolean"})
     add_configs("simplemath",    {description = "Enable minimal cmath", default = false, type = "boolean"})
 
@@ -25,6 +26,8 @@ package("ncnn")
     add_configs("pixel_drawing", {description = "Enable pixel drawing", default = true, type = "boolean"})
 
     add_deps("cmake")
+
+    add_includedirs("include/ncnn")
 
     if is_plat("android") then
         add_syslinks("android")
@@ -45,12 +48,12 @@ package("ncnn")
             if package:is_plat("macosx", "iphoneos") then
                 if package:version() and package:version():lt("20260113") then
                     package:add("deps", "moltenvk", {configs = {shared = package:config("shared")}})
-                end
-                package:add("frameworks", "Metal", "Foundation", "QuartzCore", "CoreGraphics", "IOSurface")
-                if package:is_plat("macosx") then
-                    package:add("frameworks", "IOKit", "AppKit")
-                else
-                    package:add("frameworks", "UIKit")
+                    package:add("frameworks", "Metal", "Foundation", "QuartzCore", "CoreGraphics", "IOSurface")
+                    if package:is_plat("macosx") then
+                        package:add("frameworks", "IOKit", "AppKit")
+                    else
+                        package:add("frameworks", "UIKit")
+                    end
                 end
             end
         end
@@ -89,6 +92,7 @@ package("ncnn")
         table.insert(configs, "-DNCNN_THREADS=" .. (package:config("threads") and "ON" or "OFF"))
         table.insert(configs, "-DNCNN_C_API=" .. (package:config("c_api") and "ON" or "OFF"))
         table.insert(configs, "-DNCNN_SIMPLEOMP=" .. (package:config("simpleomp") and "ON" or "OFF"))
+        table.insert(configs, "-DNCNN_SIMPLEOCV=" .. (package:config("simpleocv") and "ON" or "OFF"))
         table.insert(configs, "-DNCNN_SIMPLESTL=" .. (package:config("simplestl") and "ON" or "OFF"))
         table.insert(configs, "-DNCNN_SIMPLEMATH=" .. (package:config("simplemath") and "ON" or "OFF"))
         table.insert(configs, "-DNCNN_PIXEL=" .. (package:config("pixel") and "ON" or "OFF"))
@@ -108,7 +112,7 @@ package("ncnn")
     on_test(function (package)
         if not package:config("c_api") then
             assert(package:check_cxxsnippets({test = [[
-                #include <ncnn/net.h>
+                #include <net.h>
                 void test() {
                     ncnn::Net net;
                     net.load_param("model.param");
@@ -116,7 +120,7 @@ package("ncnn")
             ]]}, {configs = package:config("vulkan") and {languages = "c++11"} or {}}))
         else
             assert(package:check_csnippets({test = [[
-                #include <ncnn/c_api.h>
+                #include <c_api.h>
                 void test() {
                     const char* ver = ncnn_version();
                 }
