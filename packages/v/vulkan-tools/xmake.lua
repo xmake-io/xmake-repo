@@ -84,7 +84,11 @@ package("vulkan-tools")
         table.insert(configs, "-DVULKAN_HEADERS_INSTALL_DIR=" .. vulkan_headers:installdir())
         table.insert(configs, "-DVULKAN_LOADER_INSTALL_DIR=" .. vulkan_loader:installdir())
         table.insert(configs, "-DGLSLANG_INSTALL_DIR=" .. glslang:installdir())
-        cmake.install(package, configs, {cmake_generator = "Ninja", envs = envs})
+        local opt = {cmake_generator = "Ninja", envs = envs}
+        if package:is_plat("linux") then
+            opt.packagedeps = {"libx11", "libxcb", "libxrandr", "libxrender", "wayland"}
+        end
+        cmake.install(package, configs, opt)
     end)
 
     on_test(function (package)
