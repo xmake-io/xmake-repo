@@ -18,7 +18,7 @@ package("geode-sdk-tuliphook")
         add_deps("capstone")
     end
 
-    on_install("!wasm", function (package)
+    on_install("!wasm and !cross and !bsd", function (package)
         io.writefile("xmake.lua", [[
             add_requires("geode-sdk-result")
             add_packages("geode-sdk-result")
@@ -92,7 +92,7 @@ package("geode-sdk-tuliphook")
                         "src/target/PosixArmV7Target.cpp",
                         "src/target/PosixArmV8Target.cpp"
                     )
-                elseif is_plat("linux", "bsd", "cross") then
+                elseif is_plat("linux") then
                     add_files(
                         "src/generator/X86Generator.cpp",
                         "src/generator/X64Generator.cpp",
