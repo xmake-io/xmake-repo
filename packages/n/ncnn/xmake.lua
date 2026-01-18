@@ -46,7 +46,27 @@ package("ncnn")
         if package:config("vulkan") then
             package:add("deps", "glslang-nihui " .. glslang_ver)
             if package:is_plat("macosx", "iphoneos") then
-                if package:version() and package:version():lt("20260113") then
+                local icd = os.getenv("VK_ICD_FILENAMES")
+                local vk_driver = os.getenv("NCNN_VULKAN_DRIVER")
+                if icd then
+                    package:addenv("VK_ICD_FILENAMES", icd)
+                end
+                if vk_driver then
+                    package:addenv("NCNN_VULKAN_DRIVER", vk_driver)
+                end
+                local has_moltenvk = package:getenv("VK_ICD_FILENAMES") or package:getenv("NCNN_VULKAN_DRIVER")
+                print("================================")
+                print("has_moltenvk value = %s", has_moltenvk)
+                print("--------------------------------")
+                print("Package env:")
+                print("VK_ICD_FILENAMES   = %s", package:getenv("VK_ICD_FILENAMES") or "nil")
+                print("NCNN_VULKAN_DRIVER = %s", package:getenv("NCNN_VULKAN_DRIVER") or "nil")
+                print("--------------------------------")
+                print("OS env:")
+                print("VK_ICD_FILENAMES   = %s", icd or "nil")
+                print("NCNN_VULKAN_DRIVER = %s", vk_driver or "nil")
+                print("================================")
+                if package:version() and package:version():lt("20260113") or not has_moltenvk then
                     package:add("deps", "moltenvk", {configs = {shared = package:config("shared")}})
                     package:add("frameworks", "Metal", "Foundation", "QuartzCore", "CoreGraphics", "IOSurface")
                     if package:is_plat("macosx") then
@@ -79,7 +99,6 @@ package("ncnn")
         local configs = {
             "-DNCNN_BUILD_EXAMPLES=OFF",
             "-DNCNN_BUILD_TOOLS=OFF",
-            "-DNCNN_SIMPLEOCV=OFF",
             "-DNCNN_BUILD_BENCHMARK=OFF",
             "-DNCNN_BUILD_TESTS=OFF",
             "-DNCNN_PYTHON=OFF",
@@ -101,8 +120,8 @@ package("ncnn")
         table.insert(configs, "-DNCNN_PIXEL_DRAWING=" .. (package:config("pixel_drawing") and "ON" or "OFF"))
         if package:config("vulkan") then
             table.insert(configs, "-DCMAKE_CXX_STANDARD=11")
-            if package:version() and package:version():lt("20260113") and package:is_plat("macosx", "iphoneos") then
-                local moltenvk = package:dep("moltenvk")
+            local moltenvk = package:dep("moltenvk")
+            if moltenvk then
                 table.insert(configs, "-DVulkan_LIBRARY=" .. path.join(moltenvk:installdir("lib"), "libMoltenVK." .. (moltenvk:config("shared") and "dylib" or "a")))
             end
         end
