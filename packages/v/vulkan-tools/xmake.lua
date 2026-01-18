@@ -48,7 +48,7 @@ package("vulkan-tools")
             package:add("deps", "cmake", "ninja")
         end
         if package:is_plat("linux") then
-            package:add("deps", "libx11", "libxcb", "libxrandr", "wayland")
+            package:add("deps", "libx11", "libxcb", "libxrandr", "libxrender", "wayland")
         end
     end)
 
