@@ -10,7 +10,7 @@ package("awk")
 
     add_deps("bison")
 
-    on_install("macosx", "linux", "bsd", "@msys", function (package)
+    on_install("macosx", "linux", "bsd", function (package)
         local configs = {}
         import("package.tools.make").make(package, configs)
         os.cp("a.out", path.join(package:installdir("bin"), "awk"))
