@@ -41,9 +41,11 @@ package("ncnn")
     end
 
     on_load(function (package)
-        local glslang_ver = package:version() and package:version() or "20260113"
+        local ncnn_ver = package:version()
+        local glslang = "glslang-nihui" .. (ncnn_ver and (" " .. ncnn_ver) or "")
+        print("---info---\nglslang = %s\n--------", glslang)
         if package:config("vulkan") then
-            package:add("deps", "glslang-nihui " .. glslang_ver)
+            package:add("deps", glslang)
             if package:is_plat("macosx", "iphoneos") then
                 local icd = os.getenv("VK_ICD_FILENAMES")
                 local vk_driver = os.getenv("NCNN_VULKAN_DRIVER")
@@ -65,7 +67,7 @@ package("ncnn")
                 print("VK_ICD_FILENAMES   = %s", icd or "nil")
                 print("NCNN_VULKAN_DRIVER = %s", vk_driver or "nil")
                 print("================================")
-                if package:version() and package:version():lt("20260113") or not has_moltenvk then
+                if ncnn_ver and ncnn_ver:lt("20260113") or not has_moltenvk then
                     package:add("deps", "moltenvk")
                     package:add("frameworks", "Metal", "Foundation", "QuartzCore", "CoreGraphics", "IOSurface")
                     if package:is_plat("macosx") then
@@ -95,6 +97,9 @@ package("ncnn")
     end)
 
     on_install(function (package)
+        io.replace("src/CMakeLists.txt", "if(NOT NCNN_SHARED_LIB AND APPLE)", "if(APPLE)", {plain = true})
+        local _, count = io.replace("src/CMakeLists.txt", "                if(NOT NCNN_SHARED_LIB)", "                if(1)", {plain = true})
+        print("---info---\nio.replace() count = %d\n--------", count)
         local configs = {
             "-DNCNN_BUILD_EXAMPLES=OFF",
             "-DNCNN_BUILD_TOOLS=OFF",
