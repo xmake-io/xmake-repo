@@ -12,17 +12,25 @@ package("cmake")
     end
 
     if add_schemes then
-        add_schemes("binary", "source")
+        if is_plat("bsd") then
+            add_schemes("source")
+        else
+            add_schemes("binary", "source")
+        end
     end
 
     on_source(function (package)
-        import("schemes.binary")
+        if not package:is_plat("bsd") then
+            import("schemes.binary")
+        end
         import("schemes.source")
         if package.current_scheme then
-            binary.add_urls(package, "binary")
+            if not package:is_plat("bsd") then
+                binary.add_urls(package, "binary")
+            end
             source.add_urls(package, "source")
         else
-            if binary.add_urls(package) then
+            if not package:is_plat("bsd") and binary.add_urls(package) then
                 package:data_set("scheme", "binary")
             else
                 source.add_urls(package)
@@ -42,10 +50,12 @@ package("cmake")
     end)
 
     on_install("@macosx", "@linux", "@windows", "@msys", "@cygwin", "@bsd", function (package)
-        import("schemes.binary")
+        if not package:is_plat("bsd") then
+            import("schemes.binary")
+        end
         import("schemes.source")
         local scheme_name = package.current_scheme and package:current_scheme():name() or package:data("scheme")
-        if scheme_name == "binary" then
+        if not package:is_plat("bsd") and scheme_name == "binary" then
             binary.install(package)
         else
             source.install(package)
