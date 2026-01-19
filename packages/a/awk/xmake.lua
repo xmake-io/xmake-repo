@@ -11,7 +11,7 @@ package("awk")
 
     add_deps("bison")
 
-    on_install("!windows", function (package)
+    on_install("@linux", "@macosx", "@bsd", function (package)
         os.vrun("bison -d awkgram.y")
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
