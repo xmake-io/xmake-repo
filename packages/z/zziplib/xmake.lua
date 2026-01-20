@@ -19,6 +19,8 @@ package("zziplib")
         add_patches("0.13.80", "patches/0.13.80/mingw-support.patch", "51f1e75249d7b493d269cce817e5e7ffa7aabffd28d72425381e11c1f256fe3d")
     end
 
+    add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
+
     add_deps("cmake")
     add_deps("zlib")
 
@@ -29,10 +31,21 @@ package("zziplib")
 
         io.replace("zzip/CMakeLists.txt", "include ( CodeCoverage )", "", {plain = true})
 
-        local configs = {"-DZZIPTEST=OFF", "-DZZIPDOCS=OFF", "-DZZIPWRAP=OFF", "-DZZIPSDL=OFF", "-DZZIPMMAPPED=OFF", "-DZZIPFSEEKO=OFF", "-DZZIPBINS=OFF"}
+        local configs = {
+            "-DZZIPTEST=OFF",
+            "-DZZIPDOCS=OFF",
+            "-DZZIPWRAP=OFF",
+            "-DZZIPSDL=OFF",
+            "-DZZIPMMAPPED=OFF",
+            "-DZZIPFSEEKO=OFF",
+            "-DZZIP_LIBLATEST=OFF",
+        }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
+        table.insert(configs, "-DZZIPBINS=" .. (package:config("tools") and "ON" or "OFF"))
+        table.insert(configs, "-DZZIPMMAPPED=" .. (package:config("tools") and "ON" or "OFF"))
+        table.insert(configs, "-DZZIPFSEEKO=" .. (package:config("tools") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
