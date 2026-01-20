@@ -1,5 +1,4 @@
 package("libxdamage")
-
     set_homepage("https://www.x.org/")
     set_description("X.Org: X Damage Extension library")
 
@@ -12,8 +11,12 @@ package("libxdamage")
     end
 
     if is_plat("macosx", "linux") then
-        add_deps("pkg-config", "libx11", "libxfixes", "xorgproto")
+        add_deps("pkg-config", "xorgproto")
     end
+
+    on_load(function (package)
+        package:add("deps", "libx11", "libxfixes", { configs = { shared = package:config("shared") } })
+    end)
 
     on_install("macosx", "linux", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),

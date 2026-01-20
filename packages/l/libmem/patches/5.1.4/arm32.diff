@@ -1,0 +1,74 @@
+diff --git a/src/common/arch/arm.c b/src/common/arch/arm.c
+new file mode 100644
+index 0000000..8eb7373
+--- /dev/null
++++ b/src/common/arch/arm.c
+@@ -0,0 +1,68 @@
++#include "arch.h"
++#include <libmem/libmem.h>
++#include <stdlib.h>
++#include <string.h>
++
++lm_arch_t
++get_architecture()
++{
++	return LM_ARCH_ARMV7;
++}
++
++lm_size_t
++get_max_hook_size()
++{
++	/* LDR PC, [PC, #-4] + 4-byte address */
++	return 8;
++}
++
++lm_size_t
++generate_hook_payload(lm_address_t from, lm_address_t to, lm_size_t bits, lm_byte_t **payload_out)
++{
++    lm_byte_t jump_abs[] = {
++        0x04, 0xF0, 0x1F, 0xE5, /* LDR pc, [pc, #-4] */
++        0x00, 0x00, 0x00, 0x00  /* <abs addr> */
++    };
++
++    /* Calculate signed relative offset in words */
++    int32_t rel = ((int32_t)to - (int32_t)from - 8) / 4;
++
++    lm_size_t size;
++    lm_byte_t *code;
++
++    if (rel >= -0x800000 && rel <= 0x7FFFFF) {
++        /* Fits in 24-bit signed branch */
++        uint32_t inst = 0xEA000000 | (rel & 0x00FFFFFF);
++
++        size = 4;
++        code = malloc(size);
++        if (!code) return 0;
++        memcpy(code, &inst, sizeof(inst));
++    } else {
++        /* Absolute via literal pool */
++        uint32_t addr = (uint32_t)to;
++        memcpy(&jump_abs[4], &addr, sizeof(addr));
++
++        size = sizeof(jump_abs);
++        code = malloc(size);
++        if (!code) return 0;
++        memcpy(code, jump_abs, size);
++    }
++
++    *payload_out = code;
++    return size;
++}
++
++lm_size_t
++generate_no_ops(lm_byte_t *buf, lm_size_t size)
++{
++	/* ARM 32-bit NOP is usually MOV r0, r0 -> 0xE1A00000 */
++	if ((size & 3) != 0)
++		return 0;
++
++	for (lm_size_t i = 0; i < size; i += 4) {
++		*(uint32_t *)&buf[i] = 0xE1A00000;
++	}
++
++	return size;
++}

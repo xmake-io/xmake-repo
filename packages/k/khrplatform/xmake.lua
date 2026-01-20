@@ -3,13 +3,12 @@ package("khrplatform")
     set_homepage("https://registry.khronos.org/EGL")
     set_description("Khronos Shared Platform Header (<KHR/khrplatform.h>)")
 
-    add_urls("https://registry.khronos.org/EGL/api/KHR/khrplatform.h")
+    add_urls("https://github.com/KhronosGroup/EGL-Registry.git")
 
-    add_versions("latest", "7b1e01aaa7ad8f6fc34b5c7bdf79ebf5189bb09e2c4d2e79fc5d350623d11e83")
+    add_versions("2023.12.16", "a03692eea13514d9aef01822b2bc6575fcabfac2")
 
     on_install(function (package)
-        os.mkdir(package:installdir("include") .. "/KHR")
-        os.cp("../khrplatform.h", package:installdir("include") .. "/KHR")
+        os.vcp("api/KHR", package:installdir("include"))
     end)
 
     on_test(function (package)

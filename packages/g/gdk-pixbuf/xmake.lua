@@ -8,10 +8,17 @@ package("gdk-pixbuf")
     end, excludes = "*/tests/*"})
     add_urls("https://gitlab.gnome.org/GNOME/gdk-pixbuf/-/archive/$(version)/gdk-pixbuf-$(version).tar.gz",
              "https://gitlab.gnome.org/GNOME/gdk-pixbuf.git")
+
+    add_versions("home:2.44.2", "ea4ed9930b10db0655fb24f7c35b3375a65c58afbc9d3eb7417a0fd112bb6b08")
     add_versions("home:2.42.10", "ee9b6c75d13ba096907a2e3c6b27b61bcd17f5c7ebeab5a5b439d2f2e39fe44b")
     add_versions("home:2.42.6", "c4a6b75b7ed8f58ca48da830b9fa00ed96d668d3ab4b1f723dcf902f78bde77f")
 
-    add_patches("2.42.6", path.join(os.scriptdir(), "patches", "2.42.6", "macosx.patch"), "ad2705a5a9aa4b90fb4588bb567e95f5d82fccb6a5d463cd07462180e2e418eb")
+    add_patches("2.44.2", "patches/2.44.2/docs-option.patch", "f6318b332941798d637e645afeb1750366af6ba863b9ca57a3c8b1be1b10478e")
+    add_patches("2.42.6", "patches/2.42.6/macosx.patch", "ad2705a5a9aa4b90fb4588bb567e95f5d82fccb6a5d463cd07462180e2e418eb")
+
+    if is_plat("linux") then
+        add_configs("gio_sniffing", {description = "Perform file type detection using GIO", default = true, type = "boolean"})
+    end
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::gdk-pixbuf2")
@@ -23,8 +30,21 @@ package("gdk-pixbuf")
 
     add_includedirs("include", "include/gdk-pixbuf-2.0")
 
+    if is_plat("windows") then
+        add_syslinks("iphlpapi", "dnsapi")
+    elseif is_plat("macosx") then
+        add_frameworks("Foundation", "CoreFoundation", "AppKit")
+        add_syslinks("resolv")
+    end
+
     add_deps("meson", "ninja")
-    add_deps("libpng", "libjpeg-turbo", "glib", "pcre2")
+    if is_subhost("windows") then
+        add_deps("pkgconf")
+    else
+        add_deps("pkg-config")
+    end
+
+    add_deps("libpng", "libjpeg-turbo", "glib")
 
     on_load(function (package)
         if package:config("shared") then
@@ -32,41 +52,59 @@ package("gdk-pixbuf")
         else
             package:add("deps", "libtiff")
         end
+        if package:config("gio_sniffing") then
+            package:add("deps", "shared-mime-info")
+        end
+        package:addenv("PATH", "bin")
     end)
 
-    if is_plat("windows") then
-        add_syslinks("iphlpapi", "dnsapi")
-        add_deps("pkgconf", "libintl")
-    elseif is_plat("macosx") then
-        add_frameworks("Foundation", "CoreFoundation", "AppKit")
-        add_deps("libiconv", {system = true})
-        add_syslinks("resolv")
-    elseif is_plat("linux") then
-        add_deps("libiconv")
-    end
+    on_install("windows", "macosx", "linux", "mingw", function (package)
+        import("package.tools.meson")
 
-    on_install("windows", "macosx", "linux", function (package)
         io.gsub("meson.build", "subdir%('tests'%)", "")
         io.gsub("meson.build", "subdir%('fuzzing'%)", "")
         io.gsub("meson.build", "subdir%('docs'%)", "")
 
-        local configs = {"-Dman=false",
-                         "-Ddocs=false",
-                         "-Dgtk_doc=false",
-                         "-Dpng=enabled",
-                         "-Dtiff=enabled",
-                         "-Djpeg=enabled",
-                         "-Dnative_windows_loaders=false",
-                         "-Dbuiltin_loaders=all",
-                         "-Dgio_sniffing=false",
-                         "-Drelocatable=true",
-                         "-Dintrospection=disabled",
-                         "-Dtests=false",
-                         "-Dinstalled_tests=false"}
+        if not package:is_plat("linux") then
+            io.replace("meson.build", "cc.find_library('intl', required: false)", "dependency('libintl')", {plain = true})
+        end
+
+        local configs = {
+            "-Dman=false",
+            "-Dgtk_doc=false",
+            "-Dpng=enabled",
+            "-Dtiff=enabled",
+            "-Djpeg=enabled",
+            "-Dnative_windows_loaders=false",
+            "-Dbuiltin_loaders=all",
+            "-Drelocatable=true",
+            "-Dintrospection=disabled",
+            "-Dtests=false",
+            "-Dinstalled_tests=false",
+        }
+        local version = package:version()
+        if version and version:gt("2.42.12") then
+            table.insert(configs, "-Ddocumentation=false")
+            table.insert(configs, "-Dglycin=disabled")
+        else
+            table.insert(configs, "-Ddocs=false")
+        end
+
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
 
-        package:addenv("PATH", "bin")
-        import("package.tools.meson").install(package, configs, {packagedeps = {"libjpeg-turbo", "libpng", "libtiff", "glib", "pcre2", "libintl", "libiconv"}})
+        local opt = {}
+        if package:config("gio_sniffing") then
+            table.insert(configs, "-Dgio_sniffing=true")
+            local envs = meson.buildenvs(package)
+            local pc_path = path.splitenv(envs.PKG_CONFIG_PATH)
+            table.insert(pc_path, path.join(package:dep("shared-mime-info"):installdir(), "share/pkgconfig"))
+
+            envs.PKG_CONFIG_PATH = path.joinenv(pc_path)
+            opt.envs = envs
+        else
+            table.insert(configs, "-Dgio_sniffing=false")
+        end
+        meson.install(package, configs, opt)
     end)
 
     on_test(function (package)

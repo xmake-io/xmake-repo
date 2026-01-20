@@ -6,6 +6,7 @@ package("kvazaar")
     add_urls("https://github.com/ultravideo/kvazaar/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ultravideo/kvazaar.git")
 
+    add_versions("v2.3.2", "ddd0038696631ca5368d8e40efee36d2bbb805854b9b1dda8b12ea9b397ea951")
     add_versions("v2.3.1", "c5a1699d0bd50bc6bdba485b3438a5681a43d7b2c4fd6311a144740bfa59c9cc")
 
     add_configs("cryptopp", {description = "Use crypto library", default = false, type = "boolean"})

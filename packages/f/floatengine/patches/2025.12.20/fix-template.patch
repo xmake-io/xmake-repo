@@ -1,0 +1,233 @@
+diff --git a/FloatEngine/FloatApi.h b/FloatEngine/FloatApi.h
+index cd2b34f..c46a48d 100644
+--- a/FloatEngine/FloatApi.h
++++ b/FloatEngine/FloatApi.h
+@@ -1370,19 +1370,27 @@ class F_Lua {
+ public:
+     /**
+      * @brief 类注册器，用于链式注册C++类到Lua环境
++     * 支持变长参数 Bases 用于处理继承关系
+      */
+-    template <typename T>
++    template <typename T, typename... Bases>
+     class ClassRegistrar {
+     public:
+-        ClassRegistrar(sol::state& lua, const std::string& name, bool is_derived = false)
+-            : lua_(lua), class_name_(name), is_derived_(is_derived) {
++        // 构造函数立即创建 usertype
++        ClassRegistrar(sol::state& lua, const std::string& name)
++            : lua_(lua), class_name_(name) {
++            usertype_ = lua_.new_usertype<T>(
++                name,
++                sol::base_classes, sol::bases<Bases...>()
++            );
+         }
+ 
+         /**
+          * @brief 启用std::shared_ptr智能指针管理
+          */
+-        ClassRegistrar<T>& enableSharedPtr() {
+-            use_shared_ptr_ = true;
++        ClassRegistrar& enableSharedPtr() {
++            lua_[class_name_]["create"] = [](auto&&... args) {
++                return std::make_shared<T>(std::forward<decltype(args)>(args)...);
++            };
+             return *this;
+         }
+ 
+@@ -1391,7 +1399,7 @@ public:
+          */
+         template <typename... Args>
+         ClassRegistrar& addConstructor() {
+-            constructors_ = std::make_tuple<Args...>();
++            usertype_.set(sol::call_constructor, sol::constructors<T(Args...)>());
+             return *this;
+         }
+ 
+@@ -1400,7 +1408,7 @@ public:
+          */
+         template <typename Func>
+         ClassRegistrar& addFunction(const std::string& name, Func func) {
+-            functions_[name] = func;
++            usertype_.set(name, func);
+             return *this;
+         }
+ 
+@@ -1409,7 +1417,7 @@ public:
+          */
+         template <typename Prop>
+         ClassRegistrar& addProperty(const std::string& name, Prop prop) {
+-            properties_[name] = prop;
++            usertype_.set(name, prop);
+             return *this;
+         }
+ 
+@@ -1418,7 +1426,7 @@ public:
+          */
+         template <typename Func>
+         ClassRegistrar& addStaticFunction(const std::string& name, Func func) {
+-            static_functions_[name] = func;
++            usertype_.set(name, func);
+             return *this;
+         }
+ 
+@@ -1427,87 +1435,21 @@ public:
+          */
+         template <typename Destructor>
+         ClassRegistrar& addDestructor(Destructor dtor) {
+-            destructor_ = dtor;
++            usertype_.set(sol::meta_function::garbage_collect, dtor);
+             return *this;
+         }
+ 
+         /**
+          * @brief 完成类注册
++         * 注册逻辑已移至构造函数，此处保持默认
+          */
+-        void endClass() {
+-            // 实际的注册逻辑在析构函数中执行
+-        }
+-
+-        ~ClassRegistrar() {
+-            registerClass();
+-        }
+-
+-    private:
+-        void registerClass() {
+-            if (is_derived_) {
+-                // 派生类注册
+-                auto usertype = lua_.new_usertype<T>(
+-                    class_name_,
+-                    sol::base_classes, sol::bases<std::remove_const_t<std::remove_pointer_t<decltype(getBaseClass<T>())>>>()...
+-                );
+-                setupUsertype(usertype);
+-            }
+-            else {
+-                // 基类注册
+-                auto usertype = lua_.new_usertype<T>(class_name_);
+-                setupUsertype(usertype);
+-            }
+-        }
+-
+-        template <typename U>
+-        void setupUsertype(sol::usertype<U>& usertype) {
+-            // 注册构造函数
+-            std::apply([&](auto... args) {
+-                usertype.set(sol::call_constructor, sol::constructors<args...>());
+-                }, constructors_);
+-
+-            // 注册成员函数
+-            for (const auto& [name, func] : functions_) {
+-                usertype.set(name, func);
+-            }
+-
+-            // 注册属性
+-            for (const auto& [name, prop] : properties_) {
+-                usertype.set(name, prop);
+-            }
+-
+-            // 注册静态函数
+-            for (const auto& [name, func] : static_functions_) {
+-                usertype.set(name, func);
+-            }
+-
+-            // 注册析构函数
+-            if (destructor_) {
+-                usertype.set(sol::meta_function::garbage_collect, destructor_);
+-            }
+-
+-            // 如果启用shared_ptr，添加相应的工厂函数
+-            if (use_shared_ptr_) {
+-                lua_[class_name_]["create"] = [](auto&&... args) {
+-                    return std::make_shared<T>(std::forward<decltype(args)>(args)...);
+-                    };
+-            }
+-        }
+-
+-        // 辅助函数用于获取基类类型
+-        template <typename U>
+-        static auto getBaseClass() -> void;
++        ~ClassRegistrar() = default;
+ 
+     private:
+         sol::state& lua_;
+         std::string class_name_;
+-        bool is_derived_;
+-        bool use_shared_ptr_ = false;
+-        std::tuple<> constructors_;
+-        std::unordered_map<std::string, std::function<void()>> functions_;
+-        std::unordered_map<std::string, std::function<void()>> properties_;
+-        std::unordered_map<std::string, std::function<void()>> static_functions_;
+-        std::function<void(T*)> destructor_;
++        // 直接持有 usertype 以便立即修改
++        sol::usertype<T> usertype_; 
+     };
+ 
+ public:
+@@ -1567,13 +1509,13 @@ public:
+     /**
+      * @brief 注册C++类到Lua环境
+      * @tparam T 要注册的类类型
++     * @tparam Bases 基类列表（可选）
+      * @param name 在Lua中使用的类名
+-     * @param is_derived 是否为派生类
+-     * @return ClassRegistrar<T> 用于链式添加成员的对象
++     * @return ClassRegistrar<T, Bases...> 用于链式添加成员的对象
+      */
+-    template <typename T>
+-    ClassRegistrar<T> RegisterClass(const std::string& name, bool is_derived = false) {
+-        return ClassRegistrar<T>(lua_, name, is_derived);
++    template <typename T, typename... Bases>
++    ClassRegistrar<T, Bases...> RegisterClass(const std::string& name) {
++        return ClassRegistrar<T, Bases...>(lua_, name);
+     }
+ 
+     /**
+@@ -1695,19 +1637,16 @@ public:
+     }
+ 
+     /**
+- * @brief 设置Lua内存管理参数
+- * @param limit_kb 内存限制提示（目前仅用于调整垃圾回收频率）
+- */
++     * @brief 设置Lua内存管理参数
++     * @param limit_kb 内存限制提示（目前仅用于调整垃圾回收频率）
++     */
+     void SetMemoryLimit(size_t limit_kb) {
+-        // 使用参数来调整垃圾回收策略
+         if (limit_kb > 0) {
+-            // 小内存限制：更频繁的垃圾回收
+             int pause = std::max(10, 100 - static_cast<int>(limit_kb / 100));
+             lua_["collectgarbage"]("setpause", pause);
+             lua_["collectgarbage"]("setstepmul", 500);
+         }
+         else {
+-            // 默认设置
+             lua_["collectgarbage"]("setpause", 100);
+             lua_["collectgarbage"]("setstepmul", 200);
+         }
+@@ -1759,12 +1698,9 @@ public:
+     template <typename Enum>
+     void RegisterEnum(const std::string& name, bool is_global = true) {
+         sol::table enum_table = lua_.create_table();
+-
+-        // 这里需要用户手动添加枚举值
+         if (is_global) {
+             lua_[name] = enum_table;
+         }
+-
+         enum_tables_[name] = enum_table;
+     }
+ 
+@@ -1845,11 +1781,6 @@ namespace F_Gui {
+ };
+ 
+ 
+-template<typename T>
+-template<typename U>
+-inline auto F_Lua::ClassRegistrar<T>::getBaseClass() -> void
+-{
+-}
+ 
+ 
+ 

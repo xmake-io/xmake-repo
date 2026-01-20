@@ -1,0 +1,13 @@
+diff --git a/aui.network/CMakeLists.txt b/aui.network/CMakeLists.txt
+index bb668703..93e354fb 100644
+--- a/aui.network/CMakeLists.txt
++++ b/aui.network/CMakeLists.txt
+@@ -5,7 +5,7 @@ aui_module(aui.network EXPORT aui)
+ aui_link(aui.network PRIVATE aui::core)
+ 
+ if(WIN32)
+-  aui_link(aui.network PRIVATE wsock32 ws2_32 Iphlpapi.lib)
++  aui_link(aui.network PRIVATE wsock32 ws2_32 Iphlpapi)
+   target_compile_definitions(aui.network PRIVATE PIO_APC_ROUTINE_DEFINED=1)
+ endif()
+ 

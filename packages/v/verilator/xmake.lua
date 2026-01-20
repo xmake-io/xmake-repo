@@ -7,11 +7,13 @@ package("verilator")
     add_urls("https://github.com/verilator/verilator/archive/refs/tags/$(version).tar.gz",
              "https://github.com/verilator/verilator.git")
 
+    add_versions("v5.044", "ded2a4a96e3b836ddc9fd5d01127999d981adee4d19133ff819b7129897d801a")
+    add_versions("v5.042", "bec14f17de724851b110b698f3bd25e22effaaced7265b26d2bc13075dbfb4bf")
+    add_versions("v5.038", "f8c03105224fa034095ba6c8a06443f61f6f59e1d72f76b718f89060e905a0d4")
     add_versions("v5.036", "4199964882d56cf6a19ce80c6a297ebe3b0c35ea81106cd4f722342594337c47")
     add_versions("v5.034", "002da98e316ca6eee40407f5deb7d7c43a0788847d39c90d4d31ddbbc03020e8")
     add_versions("v5.032", "5a262564b10be8bdb31ff4fb67d77bcf5f52fc1b4e6c88d5ca3264fb481f1e41")
     add_versions("v5.016", "66fc36f65033e5ec904481dd3d0df56500e90c0bfca23b2ae21b4a8d39e05ef1")
-    add_versions("v5.032", "5a262564b10be8bdb31ff4fb67d77bcf5f52fc1b4e6c88d5ca3264fb481f1e41")
 
     add_deps("cmake")
 
@@ -42,10 +44,14 @@ package("verilator")
 
         local version = package:version()
         if version then
+            if version:eq("5.042") and package:is_plat("bsd") then
+                io.replace("include/verilatedos_c.h", "#include \"verilatedos.h\"", "#include \"verilatedos.h\"\n#include <pthread_np.h>", {plain = true})
+            end
+
             if version:ge("5.024") then
                 io.replace("bin/verilator", "$verilator_root ne realpath($ENV{VERILATOR_ROOT})", "true")
             end
-            
+
             if version:ge("5.030") then
                 io.replace("src/CMakeLists.txt", "MSVC_RUNTIME_LIBRARY MultiThreaded$<IF:$<CONFIG:Release>,,DebugDLL>", "", {plain = true})
             else
@@ -80,6 +86,9 @@ package("verilator")
 
         local opt = {}
         opt.envs = cmake.buildenvs(package)
+        -- Set verilator version string, for example, "v5.044"
+        -- Otherwise, the `verilator --version` command will print "rev vUNKNOWN-built" if we build from source code tarball instead of a git repository.
+        opt.envs.VERILATOR_SRC_VERSION = package:version_str()
         local winflexbison = package:dep("winflexbison")
         if winflexbison then
             opt.envs.WIN_FLEX_BISON = winflexbison:installdir("include")

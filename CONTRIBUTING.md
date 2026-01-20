@@ -20,7 +20,7 @@ try to follow these guidelines when you do so.
 * Write good commit messages.
 * Use the same coding conventions as the rest of the project.
 * Ensure your edited codes with four spaces instead of TAB.
-* About how to make a package, please see [Create and Submit packages to the official repository](https://xmake.io/#/package/remote_package?id=submit-packages-to-the-official-repository)
+* About how to make a package, please see [Create and Submit packages to the official repository](https://xmake.io/guide/package-management/package-distribution.html#submit-package-to-the-official-repository)
 
 # Package maintainers
 
@@ -71,7 +71,7 @@ If you feel you meet the above requirements, you can apply to become a package m
 * 请使用与工程代码相同的代码规范
 * 确保提交的代码缩进是四个空格，而不是tab
 * 为了规范化提交日志的格式，commit消息，不要用中文，请用英文描述
-* 关于如何制作包，请参看文档：[制作和提交到官方仓库](https://xmake.io/#/zh-cn/package/remote_package?id=%e6%b7%bb%e5%8a%a0%e5%8c%85%e5%88%b0%e4%bb%93%e5%ba%93)
+* 关于如何制作包，请参看文档：[制作和提交到官方仓库](https://xmake.io/zh/guide/package-management/package-distribution.html#submit-package-to-official-repository)
 
 [1]: https://github.com/xmake-io/xmake-repo/issues
 

@@ -7,6 +7,7 @@ package("rapidfuzz")
     add_urls("https://github.com/rapidfuzz/rapidfuzz-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/rapidfuzz/rapidfuzz-cpp.git")
 
+    add_versions("v3.3.3", "fa0fbd40110df8134cf05bddbaa4e237dbc4fd915ab9a3029ff481a8d3e8b757")
     add_versions("v3.3.2", "cf619bb1e7a525472077e76287041d9cd89e97073a24095bcb97f81897b0c1d4")
     add_versions("v3.1.1", "5a72811a9f5a890c69cb479551c19517426fb793a10780f136eb482c426ec3c8")
     add_versions("v3.0.5", "e32936cc66333a12f659553b5fdd6d0c22257d32ac3b7a806ac9031db8dea5a1")

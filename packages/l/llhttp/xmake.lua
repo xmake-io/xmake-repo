@@ -10,13 +10,6 @@ package("llhttp")
     add_versions("v8.1.0", "9da0d23453e8e242cf3b2bc5d6fb70b1517b8a70520065fcbad6be787e86638e")
     add_versions("v3.0.0", "02931556e69f8d075edb5896127099e70a093c104a994a57b4d72c85b48d25b0")
 
-    if on_check then
-        on_check("cross", function (package)
-            if package:version():ge("9.3.0") then
-                raise("package(llhttp >=9.3.0) unsupported cross pltform")
-            end
-        end)
-    end
 
     on_load(function (package)
         if package:version():ge("9.2.1") then
@@ -35,10 +28,14 @@ package("llhttp")
         if package:version():ge("9.2.1") then
             -- Get cmake config file
             local configs = {}
+            local opt = {}
+            if package:is_plat("cross") then
+                opt.cflags = {"-flax-vector-conversions"}
+            end
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
             table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
-            import("package.tools.cmake").install(package, configs)
+            import("package.tools.cmake").install(package, configs, opt)
         else
             xmake_configs.export_symbol = true
         end

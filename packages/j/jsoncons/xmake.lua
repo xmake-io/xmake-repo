@@ -7,6 +7,8 @@ package("jsoncons")
     set_urls("https://github.com/danielaparker/jsoncons/archive/refs/tags/$(version).tar.gz",
              "https://github.com/danielaparker/jsoncons.git")
 
+    add_versions("v1.5.0", "956021e44e50639be766a4ad71aff9a95168da188005fc6bfa23ee5d6a53eb32")
+    add_versions("v1.4.3", "6cc79df3bf10f3ecd5fbdd0a64deaaad35beda2767f8697e261e1af11e1e3526")
     add_versions("v1.3.2", "f22fb163df1a12c2f9ee5f95cad9fc37c6cfbefe0ae6f30aba7440832ef70fbe")
     add_versions("v1.3.0", "7a485c2af0ff214b62bb00f5a1487e5a0c4997eadc6ee9155ce3e8c9d05b9d7a")
     add_versions("v1.2.0", "3bdc0c8ceba1943b5deb889559911ebe97377971453a11227ed0a51a05e5d5d8")
@@ -18,6 +20,14 @@ package("jsoncons")
     add_versions("v0.170.2", "0ff0cd407f6b27dea66a3202bc8bc2e043ec1614419e76840eda5b5f8045a43a")
 
     add_configs("cmake", {description = "Use cmake build system", default = true, type = "boolean"})
+
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 28, "package(jsoncons): require ndk api level >= 28")
+        end)
+    end
 
     on_load(function (package)
         if package:config("cmake") then

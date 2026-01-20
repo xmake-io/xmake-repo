@@ -38,7 +38,7 @@
     <a href="https://github.com/xmake-io/xmake-repo/blob/master/LICENSE.md">
       <img src="https://img.shields.io/github/license/xmake-io/xmake-repo.svg?colorB=f48041&style=flat-square" alt="license" />
     </a>
-    <a href="http://xmake.io/pages/donation.html#donate">
+    <a href="https://xmake.io/about/sponsor.html">
       <img src="https://img.shields.io/badge/donate-us-orange.svg?style=flat-square" alt="Donate" />
     </a>
   </div>
@@ -46,12 +46,9 @@
   <p>An official xmake package repository</p>
 </div>
 
-## Supporting the project
+## Support this project
 
-Support this project by [becoming a sponsor](https://xmake.io/#/about/sponsor). Your logo will show up here with a link to your website. 🙏
-
-<a href="https://opencollective.com/xmake#sponsors" target="_blank"><img src="https://opencollective.com/xmake/sponsors.svg?width=890"></a>
-<a href="https://opencollective.com/xmake#backers" target="_blank"><img src="https://opencollective.com/xmake/backers.svg?width=890"></a>
+Support this project by [becoming a sponsor](https://xmake.io/about/sponsor.html). Your logo will show up here with a link to your website. 🙏
 
 ## Introduction ([中文](/README_zh.md))
 
@@ -67,7 +64,7 @@ xmake-repo is an official xmake package repository.
 
 If you want to know more, please refer to the xmake documentation:
 
-* [Documents](https://xmake.io/#/package/remote_package)
+* [Documents](https://xmake.io/guide/project-configuration/add-packages.html)
 * [Github](https://github.com/xmake-io/xmake)
 * [HomePage](https://xmake.io)
 
@@ -79,7 +76,7 @@ It is based on the runtime provided by xmake, but it is a complete and independe
 
 If you want to know more, please refer to the xrepo documentation:
 
-* [Documents](https://xrepo.xmake.io/#/getting_started)
+* [Documents](https://xmake.io/guide/package-management/xrepo-cli.html)
 * [Github](https://github.com/xmake-io/xrepo)
 * [Gitee](https://gitee.com/tboox/xrepo)
 
@@ -91,7 +88,7 @@ Write a xmake.lua of new package in `packages/x/xxx/xmake.lua` and push a pull-r
 
 For example, [packages/z/zlib/xmake.lua](https://github.com/xmake-io/xmake-repo/blob/dev/packages/z/zlib/xmake.lua):
 
-If you want to known more, please see: [Create and Submit packages to the official repository](https://xmake.io/#/package/remote_package?id=submit-packages-to-the-official-repository)
+If you want to know more, please see: [Create and Submit packages to the official repository](https://xmake.io/guide/package-management/package-distribution.html#submit-package-to-the-official-repository)
 
 ## Create a package template from Github
 

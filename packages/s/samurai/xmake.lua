@@ -7,6 +7,9 @@ package("samurai")
     add_urls("https://github.com/hpc-maths/samurai/archive/refs/tags/$(version).tar.gz",
              "https://github.com/hpc-maths/samurai.git")
 
+    add_versions("v0.27.1", "5cb1ffb87a6a3defbde45037bd80e8277c31d577e20559c6cb2853b82bc989ba")
+    add_versions("v0.27.0", "23d3e6475fbc674a887af84333b49ff6ac68fa8326e9edfdb49fa47491c28f4f")
+    add_versions("v0.26.1", "07971b2c5359cc33f5e3fb3f4f7d156b6aed91441139a1ae133378ba25e46d7a")
     add_versions("v0.25.1", "6eb053138161d4823ad4e2d400add581b0a70402d59513fd855af6b625f48bfe")
     add_versions("v0.23.0", "7f0c626b5f5671e40dc2d35c520db69c30444083b247eba1a5dc026a519b4ce3")
     add_versions("v0.22.0", "65a087ba0eb461f75b3ee4cf7725432d8c92f2a1af42220d6b233279a432429b")
@@ -19,17 +22,26 @@ package("samurai")
     add_versions("v0.10.0", "06739ad6ddc6d62396669e8c0a3806a375c88f3a9345519ae1c1415666229c16")
     add_versions("v0.6.0", "bab96adac8e1553b79678a22de2248bec67c7c205b5fd35e9e1aaccaca41286e")
 
-    add_deps("xtensor <0.26.0", "highfive", "pugixml", "fmt")
+    add_deps("highfive", "pugixml", "fmt")
+
+    on_load(function (package)
+        if package:version() and package:version():ge("0.27.0") then
+            package:add("deps", "xtensor")
+        else
+            package:add("deps", "xtensor <=0.25.0")
+        end
+    end)
 
     on_install("windows|!arm64", "linux", "macosx|!arm64", function (package)
         os.cp("include", package:installdir())
     end)
 
     on_test(function (package)
+        local cpp_ver = (package:version() and package:version():ge("0.20.0")) and "c++20" or "c++17"
         assert(package:check_cxxsnippets({test = [[
             #include <samurai/cell_list.hpp>
             void test() {
                 samurai::CellList<2> cl;
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = {languages = cpp_ver}}))
     end)

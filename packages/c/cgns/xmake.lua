@@ -4,6 +4,7 @@ package("cgns")
     set_description("CFD General Notation System")
 
     add_urls("https://github.com/CGNS/CGNS/archive/refs/tags/$(version).tar.gz")
+    add_versions("v4.5.1", "ae63b0098764803dd42b7b2a6487cbfb3c0ae7b22eb01a2570dbce49316ad279")
     add_versions("v4.5.0", "c72355219318755ba0a8646a8e56ee1c138cf909c1d738d258d2774fa4b529e9")
     add_versions("v4.4.0", "3b0615d1e6b566aa8772616ba5fd9ca4eca1a600720e36eadd914be348925fe2")
     add_versions("v4.2.0", "090ec6cb0916d90c16790183fc7c2bd2bd7e9a5e3764b36c8196ba37bf1dc817")

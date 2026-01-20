@@ -7,6 +7,7 @@ package("crow")
     add_urls("https://github.com/CrowCpp/Crow/archive/refs/tags/$(version).zip", {version = function (version)
         return (version:gsub("%+", "."))
     end})
+    add_versions("v1.3.0", "da99fcf439a3725c5bd48a4d6c04a7994163e1c711003ec5aa881c2e4156763e")
     add_versions("v1.2.1+2", "eb52839043358830e09976198df5c1e8855a75730ccd3f1d8799eff0a79609b1")
     add_versions("v1.2.1+1", "d9f85d9df036336c9cb872ecd73c7744e493ed5d02e9aec8b3c1351c757c9707")
 

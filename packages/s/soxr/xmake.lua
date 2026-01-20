@@ -22,6 +22,9 @@ package("soxr")
     end
 
     on_load(function (package)
+        if package:config("lsr") then
+            package:add("links", "soxr-lsr", "soxr")
+        end
         if package:config("openmp") then
             package:add("deps", "openmp")
         end

@@ -6,6 +6,7 @@ package("zint")
     set_urls("https://github.com/zint/zint/archive/refs/tags/$(version).tar.gz",
              "https://github.com/zint/zint.git")
 
+    add_versions("2.16.0", "e1077fd5846bdd0128fef3ab8c3c28e93e450d2efaf1424d0aa96e0c9e514591")
     add_versions("2.15.0", "529ce50566f8421f1707333c201097c490273f93b5de45f4d21231a11d3722cf")
     add_versions("2.14.0", "affc3e334e8ee0fc5552aabbc5f1360d4d6d9c6f86285c1e138e3efbbdc4abcb")
 

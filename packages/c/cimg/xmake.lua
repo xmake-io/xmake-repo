@@ -9,6 +9,13 @@ package("cimg")
     end})
     add_urls("https://github.com/greyclab/cimg.git", {alias="git"})
 
+    add_versions("v3.6.6", "18606cfa9a03d0c9e58463f6f5f90db18d91ea7d17abf263d7fc16c1532ad3ac")
+    add_versions("v3.6.5", "ea5dbc4f7f7dc7138d964d75e75f7bf88869ff6cfd1f544367b6fdd7355d9739")
+    add_versions("v3.6.4", "50845fa3533d2a4e011b2f333a882b1ceaad3038a50b86308418e1b7320bb897")
+    add_versions("v3.6.3", "6dd5aabbf1edf56f39d09cdb9d361dd526db0b9c0991f7bf8b1b2b489fa043ae")
+    add_versions("v3.6.2", "e4ec8c103015903d5e66bc4d1cd39fb19e9d2f535c45917587668abc74226147")
+    add_versions("v3.6.1", "63bf760fd98bde151f8cbb78be595aaf2b1d370eafa36fbd41b4cac2aa6ddc47")
+    add_versions("v3.6.0", "95d623b36073519a1b4511601ede1abaa95127556ff83102e84db8bbde828569")
     add_versions("v3.5.5", "ffc8f0cf77e39cdae79d44de9aec7cf7edb83d787233388b5ad4b5c2475f4241")
     add_versions("v3.5.4", "f3102efc0803cb52693b43adf759579feb3dbc018506a8004af5e29b40649ffb")
     add_versions("v3.5.3", "4b45e413a76ede23cb164fea74b4adc92500a873cfd87dd66cf8c93ce57ab627")
@@ -22,6 +29,13 @@ package("cimg")
     add_versions("v3.3.6", "7bb6621c38458152f3d1cae3f020e4ca6a314076cb7b4b5d6bbf324ad3d0ab88")
     add_versions("v3.2.6", "1fcca9a7a453aa278660c10d54c6db9b4c614b6a29250adeb231e95a0be209e7")
 
+    add_versions("git:v3.6.6", "v.3.6.6")
+    add_versions("git:v3.6.5", "v.3.6.5")
+    add_versions("git:v3.6.4", "v.3.6.4")
+    add_versions("git:v3.6.3", "v.3.6.3")
+    add_versions("git:v3.6.2", "v.3.6.2")
+    add_versions("git:v3.6.1", "v.3.6.1")
+    add_versions("git:v3.6.0", "v.3.6.0")
     add_versions("git:v3.5.5", "v.3.5.5")
 
     if is_plat("windows") then
@@ -31,6 +45,12 @@ package("cimg")
     elseif is_plat("macosx") then
         add_syslinks("m", "pthread")
     end
+
+    on_load("macosx", "mingw@macosx", function (package)
+        if macos.version():lt("15") then
+            package:add("cxxflags", "-msse2") -- macOS 14 needs this flag to support fp16
+        end
+    end)
 
     on_install("windows", "linux", "macosx", "android", "mingw", "cygwin", "bsd", "cross", function (package)
         os.cp("CImg.h", package:installdir("include"))

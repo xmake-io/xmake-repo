@@ -1,0 +1,37 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 8d79820..7ae6021 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -99,20 +99,11 @@ if(ASAN AND CMAKE_C_COMPILER_ID MATCHES "AppleClang|GNU|Clang")
+     set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
+ endif()
+ 
+-## Static library target.
+-add_library(uvwasi_a STATIC ${uvwasi_sources})
+-set_target_properties(uvwasi_a PROPERTIES OUTPUT_NAME "uvwasi")
+-target_compile_definitions(uvwasi_a PRIVATE ${uvwasi_defines})
+-target_compile_options(uvwasi_a PRIVATE ${uvwasi_cflags})
+-target_include_directories(uvwasi_a PRIVATE ${PROJECT_SOURCE_DIR}/include)
+-if(CODE_COVERAGE)
+-    target_link_libraries(uvwasi_a PUBLIC ${LIBUV_LIBRARIES} coverage_config)
++if(BUILD_SHARED_LIBS)
++    add_library(uvwasi SHARED ${uvwasi_sources})
+ else()
+-    target_link_libraries(uvwasi_a PRIVATE ${LIBUV_LIBRARIES})
++    add_library(uvwasi STATIC ${uvwasi_sources})
+ endif()
+-
+-## Shared library target.
+-add_library(uvwasi SHARED ${uvwasi_sources})
+ target_compile_definitions(uvwasi PRIVATE ${uvwasi_defines})
+ target_compile_options(uvwasi PRIVATE ${uvwasi_cflags})
+ target_include_directories(uvwasi PRIVATE ${PROJECT_SOURCE_DIR}/include)
+@@ -162,7 +153,7 @@ if(INSTALL_UVWASI AND NOT CODE_COVERAGE)
+     configure_package_config_file(${PROJECT_SOURCE_DIR}/cmake/Config.cmake.in ${config_file} INSTALL_DESTINATION ${cmake_files_install_dir})
+ 
+     install(
+-        TARGETS uvwasi_a uvwasi
++        TARGETS uvwasi
+         EXPORT ${target_export_name}
+         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}

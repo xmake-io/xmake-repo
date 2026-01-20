@@ -6,6 +6,7 @@ package("snmalloc")
     add_urls("https://github.com/microsoft/snmalloc/archive/refs/tags/$(version).tar.gz",
              "https://github.com/microsoft/snmalloc.git")
 
+    add_versions("0.7.3", "a908b604a77213169b526ab96a64a79c222a03a41a87f13ac00adfeff379f0be")
     add_versions("0.7.1", "91824fdf553f03cf6ef8be57f29f1d4f79cd651667455e9fe4af8b7c09e705d3")
     add_versions("0.7.0", "9e6bd04e58d981218bd5bd3a853d93bbcb1a82dd914f912670f798e011e86746")
     add_versions("0.6.2", "e0486ccf03eac5dd8acbb66ea8ad33bec289572a51614acdf7117397e4f1af8c")
@@ -25,6 +26,16 @@ package("snmalloc")
         add_syslinks("pthread")
     end
 
+    if on_check then
+        on_check("android", function (package)
+            if package:version() and package:version():ge("0.7.2") then
+                local ndk = package:toolchain("ndk")
+                local ndk_sdkver = ndk:config("ndk_sdkver")
+                assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(snmalloc) require ndk api level > 21")
+            end
+        end)
+    end
+
     on_load(function (package)
         if package:config("header_only") then
             package:set("kind", "library", {headeronly = true})
@@ -34,6 +45,14 @@ package("snmalloc")
 
     on_install("!wasm and !iphoneos", function (package)
         io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
+        io.replace("CMakeLists.txt", "/WX", "", {plain = true})
+
+        if os.isfile("src/snmalloc/pal/pal_windows.h") and package:has_runtime("MT") then
+            -- duplicate symbol: public: static void * __cdecl snmalloc::PALWindows::reserve(unsigned __int64)
+            io.replace("src/snmalloc/pal/pal_windows.h",
+                "static void* reserve(size_t size) noexcept;",
+                "static inline void* reserve(size_t size) noexcept;", {plain = true})
+        end
 
         local configs = {"-DSNMALLOC_BUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))

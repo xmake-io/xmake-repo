@@ -1,0 +1,397 @@
+diff --git a/Source/include/slikenet/DS_BPlusTree.h b/Source/include/slikenet/DS_BPlusTree.h
+index 8de09b3e..11edc8c4 100644
+--- a/Source/include/slikenet/DS_BPlusTree.h
++++ b/Source/include/slikenet/DS_BPlusTree.h
+@@ -47,7 +47,7 @@ namespace DataStructures
+ 	/// Used in the BPlusTree.  Used for both leaf and index nodes.
+ 	/// Don't use a constructor or destructor, due to the memory pool I am using
+ 	template <class KeyType, class DataType, int order>
+-	struct RAK_DLL_EXPORT Page
++	struct Page
+ 	{
+ 		// We use the same data structure for both leaf and index nodes.  
+ 		// It uses a little more memory for index nodes but reduces
+@@ -74,7 +74,7 @@ namespace DataStructures
+ 	/// A BPlus tree
+ 	/// Written with efficiency and speed in mind.
+ 	template <class KeyType, class DataType, int order>
+-	class RAK_DLL_EXPORT BPlusTree
++	class BPlusTree
+ 	{
+ 	public:
+ 		struct ReturnAction
+diff --git a/Source/include/slikenet/DS_BinarySearchTree.h b/Source/include/slikenet/DS_BinarySearchTree.h
+index e878c4fc..3b14efb3 100644
+--- a/Source/include/slikenet/DS_BinarySearchTree.h
++++ b/Source/include/slikenet/DS_BinarySearchTree.h
+@@ -94,7 +94,7 @@ namespace DataStructures
+ 	 *
+ 	 */
+ 	template <class BinarySearchTreeType>
+-	class RAK_DLL_EXPORT BinarySearchTree
++	class BinarySearchTree
+ 	{
+ 	
+ 	public:
+@@ -141,7 +141,7 @@ namespace DataStructures
+ 	
+ 	/// An AVLBalancedBinarySearchTree is a binary tree that is always balanced
+ 	template <class BinarySearchTreeType>
+-	class RAK_DLL_EXPORT AVLBalancedBinarySearchTree : public BinarySearchTree<BinarySearchTreeType>
++	class AVLBalancedBinarySearchTree : public BinarySearchTree<BinarySearchTreeType>
+ 	{
+ 	
+ 	public:
+diff --git a/Source/include/slikenet/DS_Hash.h b/Source/include/slikenet/DS_Hash.h
+index 5b5559b1..2befc49c 100644
+--- a/Source/include/slikenet/DS_Hash.h
++++ b/Source/include/slikenet/DS_Hash.h
+@@ -41,7 +41,7 @@ namespace DataStructures
+ 
+ 	/// \brief Using a string as a identifier for a node, store an allocated pointer to that node
+ 	template <class key_type, class data_type, unsigned int HASH_SIZE, unsigned long (*hashFunction)(const key_type &) >
+-	class RAK_DLL_EXPORT Hash
++	class Hash
+ 	{	
+ 	public:
+ 		/// Default constructor
+diff --git a/Source/include/slikenet/DS_Heap.h b/Source/include/slikenet/DS_Heap.h
+index 3e08c51b..0fec282e 100644
+--- a/Source/include/slikenet/DS_Heap.h
++++ b/Source/include/slikenet/DS_Heap.h
+@@ -37,7 +37,7 @@
+ namespace DataStructures
+ {
+ 	template <class weight_type, class data_type, bool isMaxHeap>
+-	class RAK_DLL_EXPORT Heap
++	class Heap
+ 	{
+ 	public:
+ 		struct HeapNode
+diff --git a/Source/include/slikenet/DS_LinkedList.h b/Source/include/slikenet/DS_LinkedList.h
+index 80efc775..2f3b4cf7 100644
+--- a/Source/include/slikenet/DS_LinkedList.h
++++ b/Source/include/slikenet/DS_LinkedList.h
+@@ -31,7 +31,7 @@ namespace DataStructures
+ {
+ 	// Prototype to prevent error in CircularLinkedList class when a reference is made to a LinkedList class
+ 	template <class LinkedListType>
+-	class RAK_DLL_EXPORT LinkedList;
++	class LinkedList;
+ 
+ 	/**
+ 	* \brief (Circular) Linked List ADT (Doubly Linked Pointer to Node Style) - 
+diff --git a/Source/include/slikenet/DS_List.h b/Source/include/slikenet/DS_List.h
+index a14894dd..7cef7291 100644
+--- a/Source/include/slikenet/DS_List.h
++++ b/Source/include/slikenet/DS_List.h
+@@ -38,7 +38,7 @@ namespace DataStructures
+ 	/// \brief Array based implementation of a list.
+ 	/// \note ONLY USE THIS FOR SHALLOW COPIES.  I don't bother with operator= to improve performance.
+ 	template <class list_type>
+-	class RAK_DLL_EXPORT List
++	class List
+ 	{	
+ 	public:
+ 		/// Default constructor
+diff --git a/Source/include/slikenet/DS_Map.h b/Source/include/slikenet/DS_Map.h
+index 06581bb8..ef560a5d 100644
+--- a/Source/include/slikenet/DS_Map.h
++++ b/Source/include/slikenet/DS_Map.h
+@@ -44,7 +44,7 @@ namespace DataStructures
+ 
+ 	/// \note IMPORTANT! If you use defaultMapKeyComparison then call IMPLEMENT_DEFAULT_COMPARISON or you will get an unresolved external linker error.
+ 	template <class key_type, class data_type, int (*key_comparison_func)(const key_type&, const key_type&)=defaultMapKeyComparison<key_type> >
+-	class RAK_DLL_EXPORT Map
++	class Map
+ 	{
+ 	public:
+ 		static void IMPLEMENT_DEFAULT_COMPARISON(void) {DataStructures::defaultMapKeyComparison<key_type>(key_type(),key_type());}
+diff --git a/Source/include/slikenet/DS_MemoryPool.h b/Source/include/slikenet/DS_MemoryPool.h
+index 5b2e7c59..667bb32f 100644
+--- a/Source/include/slikenet/DS_MemoryPool.h
++++ b/Source/include/slikenet/DS_MemoryPool.h
+@@ -39,7 +39,7 @@ namespace DataStructures
+ 	/// Very fast memory pool for allocating and deallocating structures that don't have constructors or destructors.
+ 	/// Contains a list of pages, each of which has an array of the user structures
+ 	template <class MemoryBlockType>
+-	class RAK_DLL_EXPORT MemoryPool
++	class MemoryPool
+ 	{
+ 	public:
+ 		struct Page;
+diff --git a/Source/include/slikenet/DS_Multilist.h b/Source/include/slikenet/DS_Multilist.h
+index a7e122d9..1d5c7e6b 100644
+--- a/Source/include/slikenet/DS_Multilist.h
++++ b/Source/include/slikenet/DS_Multilist.h
+@@ -96,7 +96,7 @@ namespace DataStructures
+ 	/// \param[in] _KeyType If a function takes a key to sort on, what type of key this is. The comparison operator between _DataType and _KeyType must be defined
+ 	/// \param[in] _IndexType What variable type to use for indices
+ 	template <const MultilistType _MultilistType, class _DataType, class _KeyType=_DataType, class _IndexType=DefaultIndexType>
+-	class RAK_DLL_EXPORT Multilist
++	class Multilist
+ 	{
+ 	public:
+ 		Multilist();
+diff --git a/Source/include/slikenet/DS_OrderedChannelHeap.h b/Source/include/slikenet/DS_OrderedChannelHeap.h
+index 2c01ca70..86a2862e 100644
+--- a/Source/include/slikenet/DS_OrderedChannelHeap.h
++++ b/Source/include/slikenet/DS_OrderedChannelHeap.h
+@@ -34,7 +34,7 @@
+ namespace DataStructures
+ {
+ 	template <class channel_key_type, class heap_data_type, int (*channel_key_comparison_func)(const channel_key_type&, const channel_key_type&)=defaultMapKeyComparison<channel_key_type> >
+-	class RAK_DLL_EXPORT OrderedChannelHeap
++	class OrderedChannelHeap
+ 	{
+ 	public:
+ 		static void IMPLEMENT_DEFAULT_COMPARISON(void) {DataStructures::defaultMapKeyComparison<channel_key_type>(channel_key_type(),channel_key_type());}
+diff --git a/Source/include/slikenet/DS_OrderedList.h b/Source/include/slikenet/DS_OrderedList.h
+index b84a808d..047a0578 100644
+--- a/Source/include/slikenet/DS_OrderedList.h
++++ b/Source/include/slikenet/DS_OrderedList.h
+@@ -37,7 +37,7 @@ namespace DataStructures
+ 
+ 	/// \note IMPORTANT! If you use defaultOrderedListComparison then call IMPLEMENT_DEFAULT_COMPARISON or you will get an unresolved external linker error.
+ 	template <class key_type, class data_type, int (*default_comparison_function)(const key_type&, const data_type&)=defaultOrderedListComparison<key_type, data_type> >
+-	class RAK_DLL_EXPORT OrderedList
++	class OrderedList
+ 	{
+ 	public:
+ 		static void IMPLEMENT_DEFAULT_COMPARISON(void) {DataStructures::defaultOrderedListComparison<key_type, data_type>(key_type(),data_type());}
+diff --git a/Source/include/slikenet/DS_Queue.h b/Source/include/slikenet/DS_Queue.h
+index dd82bd1a..348e6845 100644
+--- a/Source/include/slikenet/DS_Queue.h
++++ b/Source/include/slikenet/DS_Queue.h
+@@ -33,7 +33,7 @@ namespace DataStructures
+ {
+ 	/// \brief A queue implemented as an array with a read and write index.
+ 	template <class queue_type>
+-	class RAK_DLL_EXPORT Queue
++	class Queue
+ 	{
+ 	public:
+ 		Queue();
+diff --git a/Source/include/slikenet/DS_QueueLinkedList.h b/Source/include/slikenet/DS_QueueLinkedList.h
+index b8f83c21..1e78e740 100644
+--- a/Source/include/slikenet/DS_QueueLinkedList.h
++++ b/Source/include/slikenet/DS_QueueLinkedList.h
+@@ -32,7 +32,7 @@ namespace DataStructures
+ {
+ 	/// \brief A queue implemented using a linked list.  Rarely used.
+ 	template <class QueueType>
+-	class RAK_DLL_EXPORT QueueLinkedList
++	class QueueLinkedList
+ 	{
+ 	
+ 	public:
+diff --git a/Source/include/slikenet/DS_RangeList.h b/Source/include/slikenet/DS_RangeList.h
+index 3202318f..bee6b0a3 100644
+--- a/Source/include/slikenet/DS_RangeList.h
++++ b/Source/include/slikenet/DS_RangeList.h
+@@ -53,7 +53,7 @@ namespace DataStructures
+     }
+ 
+ 	template <class range_type>
+-	class RAK_DLL_EXPORT RangeList
++	class RangeList
+ 	{
+ 	public:
+ 		RangeList();
+diff --git a/Source/include/slikenet/DS_ThreadsafeAllocatingQueue.h b/Source/include/slikenet/DS_ThreadsafeAllocatingQueue.h
+index 4df6dcaf..d37b0cb2 100644
+--- a/Source/include/slikenet/DS_ThreadsafeAllocatingQueue.h
++++ b/Source/include/slikenet/DS_ThreadsafeAllocatingQueue.h
+@@ -34,7 +34,7 @@ namespace DataStructures
+ {
+ 
+ template <class structureType>
+-class RAK_DLL_EXPORT ThreadsafeAllocatingQueue
++class ThreadsafeAllocatingQueue
+ {
+ public:
+ 	// Queue operations
+diff --git a/Source/include/slikenet/DS_Tree.h b/Source/include/slikenet/DS_Tree.h
+index 992698a0..30fb8df8 100644
+--- a/Source/include/slikenet/DS_Tree.h
++++ b/Source/include/slikenet/DS_Tree.h
+@@ -33,7 +33,7 @@
+ namespace DataStructures
+ {
+ 	template <class TreeType>
+-	class RAK_DLL_EXPORT Tree
++	class Tree
+ 	{
+ 	public:
+ 		Tree();
+diff --git a/Source/include/slikenet/DS_WeightedGraph.h b/Source/include/slikenet/DS_WeightedGraph.h
+index 91c321f6..9fa954db 100644
+--- a/Source/include/slikenet/DS_WeightedGraph.h
++++ b/Source/include/slikenet/DS_WeightedGraph.h
+@@ -43,7 +43,7 @@
+ namespace DataStructures
+ {
+ 	template <class node_type, class weight_type, bool allow_unlinkedNodes>
+-	class RAK_DLL_EXPORT WeightedGraph
++	class WeightedGraph
+ 	{
+ 	public:
+ 		static void IMPLEMENT_DEFAULT_COMPARISON(void) {DataStructures::defaultMapKeyComparison<node_type>(node_type(),node_type());}
+diff --git a/Source/include/slikenet/Export.h b/Source/include/slikenet/Export.h
+index 4487ef7e..67c057c3 100644
+--- a/Source/include/slikenet/Export.h
++++ b/Source/include/slikenet/Export.h
+@@ -15,10 +15,16 @@
+ 
+ #include "defines.h"
+ 
+-#if defined(_WIN32) && !(defined(__GNUC__)  || defined(__GCCXML__)) && !defined(_RAKNET_LIB) && defined(_RAKNET_DLL)
+-#define RAK_DLL_EXPORT __declspec(dllexport)
++#if defined(_WIN32) && !defined(_RAKNET_LIB)
++#   if defined(_RAKNET_DLL)
++#       define RAK_DLL_EXPORT __declspec(dllexport)
++#   elif defined(_RAKNET_DLL_IMPORT)
++#       define RAK_DLL_EXPORT __declspec(dllimport)
++#   else
++#       define RAK_DLL_EXPORT
++#   endif
+ #else
+-#define RAK_DLL_EXPORT  
++#   define RAK_DLL_EXPORT
+ #endif
+ 
+ #define STATIC_FACTORY_DECLARATIONS(x) static x* GetInstance(void); \
+diff --git a/Source/include/slikenet/SingleProducerConsumer.h b/Source/include/slikenet/SingleProducerConsumer.h
+index d9c6ed83..a9b6bc41 100644
+--- a/Source/include/slikenet/SingleProducerConsumer.h
++++ b/Source/include/slikenet/SingleProducerConsumer.h
+@@ -35,7 +35,7 @@ namespace DataStructures
+ {
+ 	/// \brief A single producer consumer implementation without critical sections.
+ 	template <class SingleProducerConsumerType>
+-	class RAK_DLL_EXPORT SingleProducerConsumer
++	class SingleProducerConsumer
+ 	{
+ 	public:
+ 		// Constructor
+diff --git a/Source/include/slikenet/ThreadPool.h b/Source/include/slikenet/ThreadPool.h
+index 67ea2695..d8f8b9be 100644
+--- a/Source/include/slikenet/ThreadPool.h
++++ b/Source/include/slikenet/ThreadPool.h
+@@ -37,7 +37,7 @@ public:
+ /// InputType and OutputType are stored directly in a queue.  For large structures, if you plan to delete from the middle of the queue,
+ /// you might wish to store pointers rather than the structures themselves so the array can shift efficiently.
+ template <class InputType, class OutputType>
+-struct RAK_DLL_EXPORT ThreadPool
++struct ThreadPool
+ {
+ 	ThreadPool();
+ 	~ThreadPool();
+diff --git a/Source/include/slikenet/memoryoverride.h b/Source/include/slikenet/memoryoverride.h
+index de132908..aebc556e 100644
+--- a/Source/include/slikenet/memoryoverride.h
++++ b/Source/include/slikenet/memoryoverride.h
+@@ -82,9 +82,17 @@ extern RAK_DLL_EXPORT int (*GetDLMallocMUnmap())(void* ptr, size_t size);
+ 
+ namespace SLNet
+ {
++	template <class Type> RAK_DLL_EXPORT Type* OP_NEW(const char *file, unsigned int line);
++	template <class Type, class P1> RAK_DLL_EXPORT Type* OP_NEW_1(const char *file, unsigned int line, const P1 &p1);
++	template <class Type, class P1, class P2> RAK_DLL_EXPORT Type* OP_NEW_2(const char *file, unsigned int line, const P1 &p1, const P2 &p2);
++	template <class Type, class P1, class P2, class P3> RAK_DLL_EXPORT Type* OP_NEW_3(const char *file, unsigned int line, const P1 &p1, const P2 &p2, const P3 &p3);
++	template <class Type, class P1, class P2, class P3, class P4> RAK_DLL_EXPORT Type* OP_NEW_4(const char *file, unsigned int line, const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4);
++	template <class Type> RAK_DLL_EXPORT Type* OP_NEW_ARRAY(const int count, const char *file, unsigned int line);
++	template <class Type> RAK_DLL_EXPORT void OP_DELETE(Type *buff, const char *file, unsigned int line);
++	template <class Type> RAK_DLL_EXPORT void OP_DELETE_ARRAY(Type *buff, const char *file, unsigned int line);
+ 
+ 	template <class Type>
+-	RAK_DLL_EXPORT Type* OP_NEW(const char *file, unsigned int line)
++	Type* OP_NEW(const char *file, unsigned int line)
+ 	{
+ #if _USE_RAK_MEMORY_OVERRIDE==1
+ 		char *buffer = (char *) (GetMalloc_Ex())(sizeof(Type), file, line);
+@@ -98,7 +106,7 @@ namespace SLNet
+ 	}
+ 
+ 	template <class Type, class P1>
+-	RAK_DLL_EXPORT Type* OP_NEW_1(const char *file, unsigned int line, const P1 &p1)
++	Type* OP_NEW_1(const char *file, unsigned int line, const P1 &p1)
+ 	{
+ #if _USE_RAK_MEMORY_OVERRIDE==1
+ 		char *buffer = (char *) (GetMalloc_Ex())(sizeof(Type), file, line);
+@@ -112,7 +120,7 @@ namespace SLNet
+ 	}
+ 
+ 	template <class Type, class P1, class P2>
+-	RAK_DLL_EXPORT Type* OP_NEW_2(const char *file, unsigned int line, const P1 &p1, const P2 &p2)
++	Type* OP_NEW_2(const char *file, unsigned int line, const P1 &p1, const P2 &p2)
+ 	{
+ #if _USE_RAK_MEMORY_OVERRIDE==1
+ 		char *buffer = (char *) (GetMalloc_Ex())(sizeof(Type), file, line);
+@@ -126,7 +134,7 @@ namespace SLNet
+ 	}
+ 
+ 	template <class Type, class P1, class P2, class P3>
+-	RAK_DLL_EXPORT Type* OP_NEW_3(const char *file, unsigned int line, const P1 &p1, const P2 &p2, const P3 &p3)
++	Type* OP_NEW_3(const char *file, unsigned int line, const P1 &p1, const P2 &p2, const P3 &p3)
+ 	{
+ #if _USE_RAK_MEMORY_OVERRIDE==1
+ 		char *buffer = (char *) (GetMalloc_Ex())(sizeof(Type), file, line);
+@@ -140,7 +148,7 @@ namespace SLNet
+ 	}
+ 
+ 	template <class Type, class P1, class P2, class P3, class P4>
+-	RAK_DLL_EXPORT Type* OP_NEW_4(const char *file, unsigned int line, const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4)
++	Type* OP_NEW_4(const char *file, unsigned int line, const P1 &p1, const P2 &p2, const P3 &p3, const P4 &p4)
+ 	{
+ #if _USE_RAK_MEMORY_OVERRIDE==1
+ 		char *buffer = (char *) (GetMalloc_Ex())(sizeof(Type), file, line);
+@@ -155,7 +163,7 @@ namespace SLNet
+ 
+ 
+ 	template <class Type>
+-	RAK_DLL_EXPORT Type* OP_NEW_ARRAY(const int count, const char *file, unsigned int line)
++	Type* OP_NEW_ARRAY(const int count, const char *file, unsigned int line)
+ 	{
+ 		if (count==0)
+ 			return 0;
+@@ -179,7 +187,7 @@ namespace SLNet
+ 	}
+ 
+ 	template <class Type>
+-	RAK_DLL_EXPORT void OP_DELETE(Type *buff, const char *file, unsigned int line)
++	void OP_DELETE(Type *buff, const char *file, unsigned int line)
+ 	{
+ #if _USE_RAK_MEMORY_OVERRIDE==1
+ 		if (buff==0) return;
+@@ -194,7 +202,7 @@ namespace SLNet
+ 	}
+ 
+ 	template <class Type>
+-	RAK_DLL_EXPORT void OP_DELETE_ARRAY(Type *buff, const char *file, unsigned int line)
++	void OP_DELETE_ARRAY(Type *buff, const char *file, unsigned int line)
+ 	{
+ #if _USE_RAK_MEMORY_OVERRIDE==1
+ 		if (buff==0)
+diff --git a/Source/include/slikenet/smartptr.h b/Source/include/slikenet/smartptr.h
+index 7d795df1..94aaa4fb 100644
+--- a/Source/include/slikenet/smartptr.h
++++ b/Source/include/slikenet/smartptr.h
+@@ -28,7 +28,7 @@
+ namespace SLNet
+ {
+ 
+-class RAK_DLL_EXPORT ReferenceCounter
++class ReferenceCounter
+ {
+ private:
+ 	int refCount;
+@@ -41,7 +41,7 @@ public:
+ 	int GetRefCount(void) const {return refCount;}
+ };
+ 
+-template < typename T > class RAK_DLL_EXPORT RakNetSmartPtr
++template < typename T > class RakNetSmartPtr
+ {
+ private:
+ 	T*    ptr;       // pointer

@@ -38,18 +38,28 @@ package("libcurl")
 
     -- we init all configurations in on_load, because package("curl") need it.
     on_load(function (package)
-        if package:is_plat("linux", "android", "cross") then
-            -- if no TLS backend has been enabled nor disabled, enable openssl by default
+        if package:is_plat("linux", "bsd", "android", "cross") then
+            -- if no TLS backend has been enabled nor disabled, prefer openssl3 on modern systems
             if package:config("openssl") == nil and package:config("openssl3") == nil and package:config("mbedtls") == nil then
-                package:config_set("openssl", true)
+                -- Default to OpenSSL 3.0+ on Linux systems (Ubuntu 22.04+, Fedora 36+, etc.)
+                -- This helps avoid conflicts with other packages like libgit2 that use OpenSSL 3.0+
+                if package:is_plat("linux") then
+                    package:config_set("openssl3", true)
+                else
+                    package:config_set("openssl", true)
+                end
             end
         end
 
         assert(not (package:config("openssl") and package:config("openssl3")), "OpenSSL and OpenSSL-3 cannot be enabled at the same time.")
 
+        if package:config("libssh2") then
+            package:config_set("zlib", true)
+        end
+
         if package:is_plat("macosx", "iphoneos") then
             package:add("frameworks", "Security", "CoreFoundation", "SystemConfiguration")
-        elseif package:is_plat("linux") then
+        elseif package:is_plat("linux", "bsd") then
             package:add("syslinks", "pthread")
         elseif package:is_plat("windows", "mingw") then
             package:add("syslinks", "advapi32", "crypt32", "wldap32", "winmm", "ws2_32", "user32")
@@ -57,7 +67,7 @@ package("libcurl")
 
         if package:is_plat("mingw") and is_subhost("msys") then
             package:add("extsources", "pacman::curl")
-        elseif package:is_plat("linux") then
+        elseif package:is_plat("linux", "bsd") then
             package:add("extsources", "pacman::curl", "apt::libcurl4-gnutls-dev", "apt::libcurl4-nss-dev", "apt::libcurl4-openssl-dev")
         elseif package:is_plat("macosx") then
             package:add("extsources", "brew::curl")
@@ -89,12 +99,12 @@ package("libcurl")
                 has_deps = true
             end
         end
-        if has_deps and package:is_plat("linux", "macosx") then
+        if has_deps and package:is_plat("linux", "bsd", "macosx") then
             package:add("deps", "pkg-config")
         end
     end)
 
-    on_install("windows", "mingw", "linux", "macosx", "iphoneos", "cross", "android", function (package)
+    on_install("windows", "mingw", "linux", "bsd", "macosx", "iphoneos", "cross", "android", function (package)
         local version = package:version()
 
         local configs = {"-DBUILD_TESTING=OFF", "-DENABLE_MANUAL=OFF", "-DENABLE_CURL_MANUAL=OFF"}
@@ -134,7 +144,7 @@ package("libcurl")
         if package:is_plat("mingw") and version:le("7.85.0") then
             io.replace("src/CMakeLists.txt", 'COMMAND ${CMAKE_COMMAND} -E echo "/* built-in manual is disabled, blank function */" > tool_hugehelp.c', "", {plain = true})
         end
-        if package:is_plat("linux", "cross") then
+        if package:is_plat("linux", "bsd", "cross") then
             io.replace("CMakeLists.txt", "list(APPEND CURL_LIBS OpenSSL::SSL OpenSSL::Crypto)", "list(APPEND CURL_LIBS OpenSSL::SSL OpenSSL::Crypto dl)", {plain = true})
             io.replace("CMakeLists.txt", "list(APPEND CURL_LIBS ${OPENSSL_LIBRARIES})", "list(APPEND CURL_LIBS ${OPENSSL_LIBRARIES} dl)", {plain = true})
         end
@@ -177,6 +187,29 @@ package("libcurl")
         handledependency("mbedtls", "mbedtls", "MBEDTLS_INCLUDE_DIRS", {MBEDTLS_LIBRARY = "mbedtls", MBEDX509_LIBRARY = "mbedx509", MBEDCRYPTO_LIBRARY = "mbedcrypto"})
         handledependency("zlib", "zlib", "ZLIB_INCLUDE_DIR", "ZLIB_LIBRARY")
         handledependency("zstd", "zstd", "Zstd_INCLUDE_DIR", "Zstd_LIBRARY")
+
+        local libssh2 = package:dep("libssh2")
+        if libssh2 then
+            local libssh2_deps = {"ZLIB::ZLIB"}
+            local backend = libssh2:config("backend")
+            if backend == "openssl" or backend == "openssl3" then
+                table.join2(libssh2_deps, {"OpenSSL::SSL", "OpenSSL::Crypto"})
+            elseif backend == "mbedtls" then
+                table.join2(libssh2_deps, {"${MBEDTLS_LIBRARIES}"})
+            end
+
+            if package:is_plat("windows", "mingw") then
+                table.join2(libssh2_deps, {"ws2_32", "user32", "crypt32", "advapi32"})
+            end
+            io.replace("CMakeLists.txt",
+                "list(APPEND CURL_LIBS ${LIBSSH2_LIBRARIES})",
+                format("list(APPEND CURL_LIBS ${LIBSSH2_LIBRARIES} %s)", table.concat(libssh2_deps, " ")), {plain = true})
+        end
+
+        local openssl = package:dep("openssl") or package:dep("openssl3")
+        if openssl and not openssl:is_system() then
+            table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
+        end
         import("package.tools.cmake").install(package, configs, {buildir = "build"})
     end)
 

@@ -19,6 +19,9 @@ package("libpcap")
     add_versions("github:1.10.1", "7b650c9e0ce246aa41ba5463fe8e903efc444c914a3ccb986547350bed077ed6")
     
     add_configs("remote", {description = "Enable remote capture support (requires openssl)", default = true, type = "boolean"})
+    if is_plat("linux") then
+        add_configs("libnl", {description = "Build with libnl", default = true, type = "boolean"})
+    end
 
     if is_plat("mingw", "msys") then
         add_patches("1.10.5", "patches/1.10.5/cmake-mingw.patch", "6b27886a5be489aa03150790330b5c78320cec3067ca62f3a2fde9565cbeb344")
@@ -35,6 +38,9 @@ package("libpcap")
             if package:is_plat("windows", "mingw", "msys") then
                 package:add("patches", "1.10.5", "patches/1.10.5/cmake-msvc.patch", "eeb6d0bf9eca935eb97c789cbb6752cbdaff7bf88b533e90b66ef086afbd26b0")
             end
+        end
+        if package:config("libnl") then
+            package:add("deps", "libnl")
         end
     end)
 
@@ -68,12 +74,13 @@ package("libpcap")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_REMOTE=" .. (package:config("remote") and "ON" or "OFF"))
+        table.insert(configs, "-DBUILD_WITH_LIBNL=" .. (package:config("libnl") and "ON" or "OFF"))
 
         local opt = {}
         if package:is_plat("windows") then
             os.mkdir(path.join(package:buildir(), "rpcapd/pdb"))
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = "libnl"})
 
         if package:config("shared") then
             if package:is_plat("mingw", "msys") then

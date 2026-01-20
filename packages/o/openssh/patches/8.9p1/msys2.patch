@@ -1,0 +1,43 @@
+From 3018c32948c66b246b1020dea40f4e8688fae61a Mon Sep 17 00:00:00 2001
+From: Johannes Schindelin <johannes.schindelin@gmx.de>
+Date: Mon, 22 Aug 2016 09:17:42 +0200
+Subject: [PATCH] Forward-port MSys2 patches
+
+Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
+---
+ config.guess                     |     3 +
+ configure.ac                     |     2 +-
+ contrib/cygwin/Makefile          |     2 +-
+ openbsd-compat/bsd-cygwin_util.c |     2 +-
+ regress/agent-ptrace.sh          |     2 +-
+ regress/reexec.sh                |     2 +-
+ regress/sftp-cmds.sh             |     4 +-
+ regress/test-exec.sh             |     7 +
+ 10 files changed, 13385 insertions(+), 30689 deletions(-)
+
+diff --git a/contrib/cygwin/Makefile b/contrib/cygwin/Makefile
+index a0261f4..2fdb676 100644
+--- a/contrib/cygwin/Makefile
++++ b/contrib/cygwin/Makefile
+@@ -7,7 +7,7 @@ datadir=$(prefix)/share
+ mandir=$(datadir)/man
+ docdir=$(datadir)/doc
+ sshdocdir=$(docdir)/openssh
+-cygdocdir=$(docdir)/Cygwin
++cygdocdir=$(docdir)/MSYS
+ sysconfdir=/etc
+ defaultsdir=$(sysconfdir)/defaults/etc
+ inetdefdir=$(defaultsdir)/inetd.d
+diff --git a/openbsd-compat/bsd-cygwin_util.c b/openbsd-compat/bsd-cygwin_util.c
+index 8672ccf..f36a207 100644
+--- a/openbsd-compat/bsd-cygwin_util.c
++++ b/openbsd-compat/bsd-cygwin_util.c
+@@ -83,7 +83,7 @@ static struct wenv {
+ 	{ NL("ALLUSERSPROFILE=") },
+ 	{ NL("COMPUTERNAME=") },
+ 	{ NL("COMSPEC=") },
+-	{ NL("CYGWIN=") },
++	{ NL("MSYS=") },
+ 	{ NL("OS=") },
+ 	{ NL("PATH=") },
+ 	{ NL("PATHEXT=") },

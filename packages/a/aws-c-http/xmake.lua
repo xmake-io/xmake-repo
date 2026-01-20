@@ -6,6 +6,9 @@ package("aws-c-http")
     add_urls("https://github.com/awslabs/aws-c-http/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-http.git")
 
+    add_versions("v0.10.9", "472653537a6c2e9dbf44a4e14991f65e61e65d43c120efe2c5f06b7f57363a2c")
+    add_versions("v0.10.7", "ce9e71c3eae67b1c6c0149278e0d0929a7d928c3547de64999430c8592864ad4")
+    add_versions("v0.10.6", "0e513d25bc49a7f583d9bb246dabbe64d23d8a2bd105026a8f914d05aa1df147")
     add_versions("v0.10.1", "1550f7bf9666bb8f86514db9e623f07249e3c53e868d2f36ff69b83bd3eadfec")
     add_versions("v0.10.0", "f7881e2f9af1a2e114b4147be80d70480f06af2b9cd195e8448afb750c74b1ae")
     add_versions("v0.9.5", "cbdb8411b439677f302d3a3b4691e2dc1852e69f406d3c2fced2be95ae2397f9")
@@ -20,7 +23,15 @@ package("aws-c-http")
     add_versions("v0.7.12", "0f92f295c96e10aa9c1e66ac73c038ee9d9c61e1be7551e721ee0dab9c89fc6f")
 
     add_deps("cmake")
-    add_deps("aws-c-io", "aws-c-compression")
+    add_deps("aws-c-compression")
+
+    on_load(function (package)
+        if package:version():le("0.10.7") then
+            package:add("deps", "aws-c-io <=0.23")
+        else
+            package:add("deps", "aws-c-io")
+        end
+    end)
 
     on_install("!wasm and (!mingw or mingw|!i386)", function (package)
         if package:is_plat("windows") and package:config("shared") then

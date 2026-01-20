@@ -2,7 +2,8 @@ package("libintl")
     set_homepage("https://www.gnu.org/software/gettext/")
     set_description("GNU gettext runtime")
 
-    add_urls("https://ftpmirror.gnu.org/gnu/gettext/gettext-$(version).tar.xz",
+    add_urls("https://mirrors.dotsrc.org/gnu/gettext/gettext-$(version).tar.xz",
+             "https://ftpmirror.gnu.org/gnu/gettext/gettext-$(version).tar.xz",
              "https://ftp.gnu.org/gnu/gettext/gettext-$(version).tar.xz")
     add_versions("0.21", "d20fcbb537e02dcf1383197ba05bd0734ef7bf5db06bdb241eb69b7d16b73192")
     add_versions("0.22.3", "b838228b3f8823a6c1eddf07297197c4db13f7e1b173b9ef93f3f945a63080b6")

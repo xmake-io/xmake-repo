@@ -1,13 +1,21 @@
 package("freerdp")
-    set_homepage("http://www.freerdp.com")
+    set_homepage("https://www.freerdp.com/")
     set_description("FreeRDP is a free remote desktop protocol library and clients ")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/FreeRDP/FreeRDP/releases/download/$(version)/freerdp-$(version).tar.gz",
              "https://github.com/FreeRDP/FreeRDP.git")
 
+    add_versions("3.20.0", "96631873b00c8a872c9fe4e668957c3e4e0808f81ccb71f6ac028096a2682806")
+    add_versions("3.19.1", "0886818968884464d72f8c363b633e97561bd438d84fce7331cb0df07b088919")
+    add_versions("3.18.0", "70e89fdc92e3c2a429a7e61015ffd55bda4f6fefd76bb2978a91134d94869462")
+    add_versions("3.17.2", "c42c712ad879bf06607b78b8c3fad98e08c82f73f4e0bc1693552900041e692a")
     add_versions("3.16.0", "385af54245560493698730b688b5e6e5d56d5c7ecf2fa7c1d7cedfde8a4ba456")
     add_versions("3.15.0", "e8cd58decef4c970faea2fbea675970eea60e440ebe8033c54889acb83787371")
+
+    if is_plat("mingw") then
+        add_patches(">=3.19.1", "patches/3.19.1/mingw-c11.patch", "84083315e41f8e2800c838ef9d36a7db3ea6470ae86c30ed691af30a017b5870")
+    end
 
     add_configs("client", {description = "Build client", default = false, type = "boolean"})
     add_configs("client_channels", {description = "Build virtual channel plugins", default = false, type = "boolean"})

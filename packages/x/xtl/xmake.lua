@@ -7,6 +7,7 @@ package("xtl")
     add_urls("https://github.com/xtensor-stack/xtl/archive/refs/tags/$(version).tar.gz",
              "https://github.com/xtensor-stack/xtl.git")
 
+    add_versions("0.8.1", "e69a696068ccffd2b435539d583665981b6c6abed596a72832bffbe3e13e1f49")
     add_versions("0.7.2", "95c221bdc6eaba592878090916383e5b9390a076828552256693d5d97f78357c")
     add_versions("0.7.3", "f4a81e3c9ca9ddb42bd4373967d4859ecfdca1aba60b9fa6ced6c84d8b9824ff")
     add_versions("0.7.4", "3c88be0e696b64150c4de7a70f9f09c00a335186b0b0b409771ef9f56bca7d9a")

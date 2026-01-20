@@ -6,6 +6,10 @@ package("croaring")
     add_urls("https://github.com/RoaringBitmap/CRoaring/archive/refs/tags/$(version).tar.gz",
              "https://github.com/RoaringBitmap/CRoaring.git")
 
+    add_versions("v4.5.0", "8f945ad82ce1be195c899c57e0734a5c0ea2685c3127bf9033d4391d054f94ab")
+    add_versions("v4.4.2", "11cc5d37b2d719e02936c71db83d3a5d1f3d27c59005348f4ee6417a63617b77")
+    add_versions("v4.4.0", "5fd485bfdb83261143e6d0ad8967bf779cf99eda6747ac198d861f3b8e4a1e46")
+    add_versions("v4.3.12", "9f1602d7ff83e84ce0a5928129bb957a1eeacd3b092b39e21f5f0b931682b8d6")
     add_versions("v4.3.6", "d9c63e6fa06630cd626be004a226bea15eb4acba6740a46f58c6b189fa5d49b3")
     add_versions("v4.3.5", "fd5afacb174322ce45bea333076440e615fb8cc2751b537c8051ac2d39f52b1e")
     add_versions("v4.1.7", "ea235796c074c3a8a8c3e5c84bb5f09619723b8e4913cf99cc349f626c193569")
@@ -26,6 +30,10 @@ package("croaring")
     add_deps("cmake")
 
     on_install(function (package)
+        if os.isfile("tools/cmake/FindOptions.cmake") and package:has_tool("cxx", "clang") then
+            io.replace("tools/cmake/FindOptions.cmake", "if(MSVC)\nadd_definitions", "if(0)\nadd_definitions", {plain = true})
+            io.replace("tools/cmake/FindOptions.cmake", "if(MSVC_VERSION GREATER 1910)", "if(0)", {plain = true})
+        end
         if package:is_plat("bsd") then
             -- https://man.freebsd.org/cgi/man.cgi?query=bswap64
             io.replace("include/roaring/portability.h", "byteswap.h", "sys/endian.h", {plain = true})

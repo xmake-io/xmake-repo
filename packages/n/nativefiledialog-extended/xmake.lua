@@ -6,6 +6,7 @@ package("nativefiledialog-extended")
     add_urls("https://github.com/btzy/nativefiledialog-extended/archive/refs/tags/$(version).zip",
              "https://github.com/btzy/nativefiledialog-extended.git")
 
+    add_versions("v1.3.0", "d865b7bf4363fa6aac095b6cfb3b29912054306a18c8c596328fb2e9141c5391")
     add_versions("v1.2.1", "fc359b212e56011931b90bf4241057eddec45308bb4d8b9aab4dfb2f70e3b211")
     add_versions("v1.2.0", "27dc13320816392d0d9905c60645aa684784c7c2559d656b504021edd40f07ed")
     add_versions("v1.1.1", "7003001d36235db2c2062cd992e61c59c77a5ad3ca5e5ed8175e56502513886e")

@@ -1,0 +1,257 @@
+diff --git a/src/internal.h b/src/internal.h
+index 28d3554..f8f1018 100644
+--- a/src/internal.h
++++ b/src/internal.h
+@@ -21,6 +21,55 @@
+  */
+ #pragma once
+ 
++#ifdef __MINGW32__
++
++#define EMIT(a) ".byte " #a "; "
++
++#define X64_Start_with_CS(_cs) \
++    EMIT(0x6A) EMIT(_cs)                         /*  push   _cs             */ \
++    EMIT(0xE8) EMIT(0) EMIT(0) EMIT(0) EMIT(0)   /*  call   $+5             */ \
++    EMIT(0x83) EMIT(4) EMIT(0x24) EMIT(5)        /*  add    dword [esp], 5  */ \
++    EMIT(0xCB)                                   /*  retf                   */
++
++#define X64_End_with_CS(_cs) \
++    EMIT(0xE8) EMIT(0) EMIT(0) EMIT(0) EMIT(0)                                 /*  call   $+5                   */ \
++    EMIT(0xC7) EMIT(0x44) EMIT(0x24) EMIT(4) EMIT(_cs) EMIT(0) EMIT(0) EMIT(0) /*  mov    dword [rsp + 4], _cs  */ \
++    EMIT(0x83) EMIT(4) EMIT(0x24) EMIT(0xD)                                    /*  add    dword [rsp], 0xD      */ \
++    EMIT(0xCB)                                                                 /*  retf                         */
++
++#define X64_Start() X64_Start_with_CS(0x33)
++#define X64_End() X64_End_with_CS(0x23)
++
++#define _RAX  0
++#define _RCX  1
++#define _RDX  2
++#define _RBX  3
++#define _RSP  4
++#define _RBP  5
++#define _RSI  6
++#define _RDI  7
++#define _R8   8
++#define _R9   9
++#define _R10 10
++#define _R11 11
++#define _R12 12
++#define _R13 13
++#define _R14 14
++#define _R15 15
++
++#define X64_Push(r) EMIT(0x48 | ((r) >> 3)) EMIT(0x50 | ((r) & 7))
++#define X64_Pop(r) EMIT(0x48 | ((r) >> 3)) EMIT(0x58 | ((r) & 7))
++
++#define REX_W EMIT(0x48)
++
++union reg64
++{
++    DWORD64 v;
++    DWORD dw[2];
++};
++
++#else
++
+ #define EMIT(a) __asm __emit (a)
+ 
+ #define X64_Start_with_CS(_cs) \
+@@ -71,3 +120,4 @@ union reg64
+     DWORD64 v;
+     DWORD dw[2];
+ };
++#endif
+diff --git a/src/wow64ext.cpp b/src/wow64ext.cpp
+index fbba809..1af6a0b 100644
+--- a/src/wow64ext.cpp
++++ b/src/wow64ext.cpp
+@@ -85,13 +85,63 @@ extern "C" __declspec(dllexport) DWORD64 __cdecl X64Call(DWORD64 func, int argC,
+     reg64 _r9 = { (argC > 0) ? argC--, va_arg(args, DWORD64) : 0 };
+     reg64 _rax = { 0 };
+ 
+-    reg64 restArgs = { (DWORD64)&va_arg(args, DWORD64) };
++    reg64 restArgs = { (DWORD64)args };
+     
+     // conversion to QWORD for easier use in inline assembly
+     reg64 _argC = { (DWORD64)argC };
+     DWORD back_esp = 0;
+ 	WORD back_fs = 0;
+ 
++#ifdef __MINGW32__
++    asm volatile (
++        "movw %%fs, %[back_fs];"
++        "movl $0x2B, %%eax;"
++        "movw %%ax, %%fs;"
++        "movl %%esp, %[back_esp];"
++        "andl $0xFFFFFFF0, %%esp;"
++        X64_Start()
++        REX_W "movl %[rcx_val], %%ecx;"
++        REX_W "movl %[rdx_val], %%edx;"
++        "pushl %[r8_val];"
++        X64_Pop(_R8)
++        "pushl %[r9_val];"
++        X64_Pop(_R9)
++        REX_W "movl %[argC_val], %%eax;"
++        "testb $1, %%al;"
++        "jnz _no_adjust%=;"
++        "subl $8, %%esp;"
++        "_no_adjust%=:;"
++        "pushl %%edi;"
++        REX_W "movl %[restArgs_val], %%edi;"
++        REX_W "testl %%eax, %%eax;"
++        "jz _ls_e%=;"
++        REX_W "leal -8(%%edi, %%eax, 8), %%edi;"
++        "_ls%=:;"
++        REX_W "testl %%eax, %%eax;"
++        "jz _ls_e%=;"
++        "pushl (%%edi);"
++        REX_W "subl $8, %%edi;"
++        REX_W "subl $1, %%eax;"
++        "jmp _ls%=;"
++        "_ls_e%=:;"
++        REX_W "subl $0x20, %%esp;"
++        "call *%[func_val];"
++        REX_W "movl %[argC_val], %%ecx;"
++        REX_W "leal 0x20(%%esp, %%ecx, 8), %%esp;"
++        "popl %%edi;"
++        REX_W "movl %%eax, %[rax_out];"
++        X64_End()
++        "movw %%ds, %%ax;"
++        "movw %%ax, %%ss;"
++        "movl %[back_esp], %%esp;"
++        "movw %[back_fs], %%ax;"
++        "movw %%ax, %%fs;"
++        : [rax_out] "=m" (_rax.v), [back_fs] "=m" (back_fs), [back_esp] "=m" (back_esp)
++        : [rcx_val] "m" (_rcx.v), [rdx_val] "m" (_rdx.v), [r8_val] "m" (_r8.v), [r9_val] "m" (_r9.v),
++          [argC_val] "m" (_argC.v), [restArgs_val] "m" (restArgs.v), [func_val] "m" (func)
++        : "eax", "ecx", "edx", "edi", "memory"
++    );
++#else
+     __asm
+     {
+         ;// reset FS segment, to properly handle RFG
+@@ -172,6 +222,7 @@ _ls_e:                                                  ;//
+         mov    ax, back_fs
+         mov    fs, ax
+     }
++#endif
+     return _rax.v;
+ }
+ #pragma warning(pop)
+@@ -183,6 +234,32 @@ void getMem64(void* dstMem, DWORD64 srcMem, size_t sz)
+ 
+     reg64 _src = { srcMem };
+ 
++#ifdef __MINGW32__
++    asm volatile (
++        X64_Start()
++        "movl %[dstMem], %%edi;"
++        REX_W "movl %[src], %%esi;"
++        "movl %[sz], %%ecx;"
++        "movl %%ecx, %%eax;"
++        "andl $3, %%eax;"
++        "shrl $2, %%ecx;"
++        "rep movsl;"
++        "testl %%eax, %%eax;"
++        "je _move_0%=;"
++        "cmpl $1, %%eax;"
++        "je _move_1%=;"
++        "movsw;"
++        "cmpl $2, %%eax;"
++        "je _move_0%=;"
++        "_move_1%=:;"
++        "movsb;"
++        "_move_0%=:;"
++        X64_End()
++        : 
++        : [dstMem] "m" (dstMem), [src] "m" (_src.v), [sz] "m" (sz)
++        : "eax", "ecx", "edi", "esi", "memory", "cc"
++    );
++#else
+     __asm
+     {
+         X64_Start();
+@@ -222,15 +299,47 @@ _move_0:                            ;//
+ 
+         X64_End();
+     }
++#endif
+ }
+ 
+-bool cmpMem64(void* dstMem, DWORD64 srcMem, size_t sz)
++bool cmpMem64(const void* dstMem, DWORD64 srcMem, size_t sz)
+ {
+     if ((nullptr == dstMem) || (0 == srcMem) || (0 == sz))
+         return false;
+ 
+     bool result = false;
+     reg64 _src = { srcMem };
++#ifdef __MINGW32__
++    asm volatile (
++        X64_Start()
++        "movl %[dstMem], %%edi;"
++        REX_W "movl %[src], %%esi;"
++        "movl %[sz], %%ecx;"
++        "movl %%ecx, %%eax;"
++        "andl $3, %%eax;"
++        "shrl $2, %%ecx;"
++        "repe cmpsl;"
++        "jnz _ret_false%=;"
++        "testl %%eax, %%eax;"
++        "je _move_0%=;"
++        "cmpl $1, %%eax;"
++        "je _move_1%=;"
++        "cmpsw;"
++        "jnz _ret_false%=;"
++        "cmpl $2, %%eax;"
++        "je _move_0%=;"
++        "_move_1%=:;"
++        "cmpsb;"
++        "jnz _ret_false%=;"
++        "_move_0%=:;"
++        "movb $1, %[result];"
++        "_ret_false%=:;"
++        X64_End()
++        : [result] "+m" (result)
++        : [dstMem] "m" (dstMem), [src] "m" (_src.v), [sz] "m" (sz)
++        : "eax", "ecx", "edi", "esi", "cc", "memory"
++    );
++#else
+     __asm
+     {
+         X64_Start();
+@@ -276,6 +385,7 @@ _ret_false:                         ;//
+ 
+         X64_End();
+     }
++#endif
+ 
+     return result;
+ }
+@@ -285,12 +395,24 @@ DWORD64 getTEB64()
+     reg64 reg;
+     reg.v = 0;
+     
++#ifdef __MINGW32__
++    asm volatile (
++        X64_Start()
++        X64_Push(_R12)
++        "popl %[reg];"
++        X64_End()
++        : [reg] "=m" (reg.v)
++        : 
++        : "memory"
++    );
++#else
+     X64_Start();
+     // R12 register should always contain pointer to TEB64 in WoW64 processes
+     X64_Push(_R12);
+     // below pop will pop QWORD from stack, as we're in x64 mode now
+     __asm pop reg.dw[0]
+     X64_End();
++#endif
+ 
+     return reg.v;
+ }

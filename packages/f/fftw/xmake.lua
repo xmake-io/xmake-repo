@@ -9,10 +9,24 @@ package("fftw")
     add_versions("3.3.9", "bf2c7ce40b04ae811af714deb512510cc2c17b9ab9d6ddcf49fe4487eea7af3d")
     add_versions("3.3.10", "56c932549852cddcfafdab3820b0200c7742675be92179e59e6215b340e26467")
 
-    add_configs("precision", {description = "Float number precision.", default = "double", type = "string", values = {"float", "double", "quad", "long"}})
+    local default_optimizations = {
+        float = {"sse", "avx"},
+        double = {"sse2", "avx"},
+        long = {},
+        quad = {}
+    }
+
+    add_configs("tools", {description = "Build tools.", default = false, type = "boolean"})
+
+    -- for backward compatibility
+    add_configs("precision", {description = "Float number precision. (deprecated)", default = nil, type = "string", values = {"float", "double", "quad", "long"}})
+    add_configs("simd", {description = "SIMD instruction sets used. (deprecated)", default = nil, type = "string", values = {"none", "sse", "sse2", "avx", "avx2", "avx512", "avx-128-fma", "kcvi", "altivec", "vsx", "neon", "generic-simd128", "generic-simd256"}})
+
+    add_configs("precisions", {description = "The floating point precision to enable. (float|double|quad|long)", default = {"float", "double"}, type = "table"})
+    add_configs("optimizations", {description = "Optimization options enabled for each precision target.", default = default_optimizations, type = "table"})
+
     add_configs("thread", {description = "Thread model used.", default = "fftw", type = "string", values = {"none", "fftw", "openmp"}})
     add_configs("enable_mpi", {description = "Enable MPI support.", default = false, type = "boolean"})
-    add_configs("simd", {description = "SIMD instruction sets used.", default = "avx2", type = "string", values = {"none", "sse", "sse2", "avx", "avx2", "avx512", "avx-128-fma", "kcvi", "altivec", "vsx", "neon", "generic-simd128", "generic-simd256"}})
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
@@ -34,75 +48,125 @@ package("fftw")
         if package:is_arch("arm.*") then
             package:config_set("simd", "none")
         end
+
+        -- for backward compatibility
+        if package:config("precision") then
+            local precs = package:config("precisions")
+            table.insert(precs, package:config("precision"))
+            package:config_set("precisions", precs)
+        end
+        if package:config("simd") then
+            local optis = package:config("optimizations")
+            for target, _ in pairs(package:config("optimizations")) do
+                table.insert(optis[target], package:config("simd"))
+            end
+            package:config_set("optimizations", optis)
+        end
     end)
 
     on_install(function (package)
-        local configs = {"-DBUILD_TESTS=OFF", "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DWITH_COMBINED_THREADS=" .. (package:config("shared") and "ON" or "OFF"))
-        if package:config("precision") == "float" then
-            table.insert(configs, "-DENABLE_FLOAT=ON")
-        elseif package:config("precision") == "quad" then
-            table.insert(configs, "-DENABLE_QUAD_PRECISION=ON")
-        elseif package:config("precision") == "long" then
-            table.insert(configs, "-DENABLE_LONG_DOUBLE=ON")
-        end
-        if package:config("thread") == "fftw" then
-            table.insert(configs, "-DENABLE_THREADS=ON")
-        elseif package:config("thread") == "openmp" then
-            table.insert(configs, "-DENABLE_OPENMP=ON")
-        end
+        for _, prec in ipairs(package:config("precisions")) do
+            local configs = {
+                "-DBUILD_TESTS=OFF",
+                "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
+                "--fresh"
+            }
 
-        local simds = import("core.base.hashset").of("sse", "sse2", "avx", "avx2")
-        local simd = package:config("simd")
-        if simd ~= "none" and simds:has(simd) then
-            table.insert(configs, "-DENABLE_" .. string.upper(simd) .. "=ON")
-        end
+            table.insert(configs, "-DWITH_COMBINED_THREADS=" .. (package:config("shared") and "ON" or "OFF"))
 
-        local opt = {}
-        if package:is_plat("mingw") then
-            opt.cxflags = "-DWITH_OUR_MALLOC"
-        end
-        import("package.tools.cmake").install(package, configs, opt)
+            if package:config("thread") == "fftw" then
+                table.insert(configs, "-DENABLE_THREADS=ON")
+            elseif package:config("thread") == "openmp" then
+                table.insert(configs, "-DENABLE_OPENMP=ON")
+            end
 
-        if package:is_plat("windows") and package:is_debug() then
-            local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.trycp(path.join(package:buildir(), "fftw3.pdb"), dir)
+            local opt = { builddir = "build" }
+            if package:is_plat("mingw") then
+                opt.cxflags = "-DWITH_OUR_MALLOC"
+            end
+
+            if prec == "float" then
+                table.insert(configs, "-DENABLE_FLOAT=ON")
+            elseif prec == "quad" then
+                table.insert(configs, "-DENABLE_QUAD_PRECISION=ON")
+            elseif prec == "long" then
+                table.insert(configs, "-DENABLE_LONG_DOUBLE=ON")
+            end
+
+            local simds = {"sse", "sse2", "avx", "avx2"}
+            for simd in ipairs(simds) do
+                if table.contains(package:config("optimizations")[prec], simd) then
+                    table.insert(configs, "-DENABLE_" .. string.upper(simd) .. "=ON")
+                end
+            end
+
+            import("package.tools.cmake").install(package, configs, opt)
+
+            if package:is_plat("windows") and package:is_debug() then
+                local dir = package:installdir(package:config("shared") and "bin" or "lib")
+                os.trycp(path.join(package:buildir(), "fftw3.pdb"), dir)
+                os.trycp(path.join(package:buildir(), "fftw3f.pdb"), dir)
+                os.trycp(path.join(package:buildir(), "fftw3l.pdb"), dir)
+                os.trycp(path.join(package:buildir(), "fftw3q.pdb"), dir)
+            end
         end
     end)
 
     on_install("linux", function (package)
-        local configs = {}
-        if package:config("shared") then
-            table.insert(configs, "--enable-shared")
-        end
-        if package:config("precision") == "float" then
-            table.insert(configs, "--enable-float")
-        elseif package:config("precision") == "quad" then
-            table.insert(configs, "--enable-quad-precision")
-        elseif package:config("precision") == "long" then
-            table.insert(configs, "--enable-long-double")
-        end
-        if package:config("thread") == "fftw" then
-            table.insert(configs, "--enable-threads")
-        elseif package:config("thread") == "openmp" then
-            table.insert(configs, "--enable-openmp")
-        end
-        if package:config("enable_mpi") then
-            table.insert(configs, "--enable-mpi")
-        end
-        if package:config("simd") ~= "none" then
-            table.insert(configs, "--enable-" .. package:config("simd"))
-        end
         import("lib.detect.find_tool")
-        local fortran = find_tool("gfortran")
-        if fortran then
-            table.insert(configs, "F77=" .. fortran.program)
-        else
-            table.insert(configs, "--disable-fortran")
+
+        for _, prec in ipairs(package:config("precisions")) do
+            local configs = {
+                "--disable-dependency-tracking",
+                "--disable-doc"
+            }
+
+            if package:config("thread") == "fftw" then
+                table.insert(configs, "--enable-threads")
+            elseif package:config("thread") == "openmp" then
+                table.insert(configs, "--enable-openmp")
+            end
+            if package:config("enable_mpi") then
+                table.insert(configs, "--enable-mpi")
+            end
+
+            local fortran = find_tool("gfortran")
+            if fortran then
+                table.insert(configs, "F77=" .. fortran.program)
+            else
+                table.insert(configs, "--disable-fortran")
+            end
+
+            if prec == "float" then
+                table.insert(configs, "--enable-float")
+            elseif prec == "quad" then
+                table.insert(configs, "--enable-quad-precision")
+            elseif prec == "long" then
+                table.insert(configs, "--enable-long-double")
+            end
+
+            local optis = {
+                "sse", "sse2", "avx", "avx2", "avx512", "avx-128-fma", 
+                "kcvi", "altivec", "vsx", "neon", 
+                "armv8-pmccntr-el0", "armv8-cntvct-el0", "armv7a-cntvct", "armv7a-pmccntr", 
+                "generic-simd128", "generic-simd256", 
+                "mips-zbus-timer", "fma"
+            }
+            for opti in ipairs(optis) do
+                if table.contains(package:config("optimizations")[prec], opti) then
+                    table.insert(configs, "--enable-" .. opti)
+                end
+            end
+
+            if not package:config("tools") then
+                io.replace("Makefile.in", "tools ", "", {plain = true})
+            end
+            io.replace("Makefile.in", "tests ", "", {plain = true})
+
+            import("package.tools.autoconf").install(package, configs)
+
+            os.vrunv("make distclean")
         end
-        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)
@@ -112,7 +176,9 @@ package("fftw")
             quad = "q",
         }
 
-        local name = precision_map[package:config("precision")] or ""
-        local fn = "fftw" .. name .. "_execute"
-        assert(package:has_cfuncs(fn, {includes = "fftw3.h"}))
+        for _, prec in ipairs(package:config("precisions")) do
+            local name = precision_map[prec] or ""
+            local fn = "fftw" .. name .. "_execute"
+            assert(package:has_cfuncs(fn, {includes = "fftw3.h"}))
+        end
     end)

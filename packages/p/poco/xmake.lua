@@ -15,8 +15,7 @@ package("poco")
     add_versions("1.12.4", "71ef96c35fced367d6da74da294510ad2c912563f12cd716ab02b6ed10a733ef")
     add_versions("1.12.5", "92b18eb0fcd2263069f03e7cc80f9feb43fb7ca23b8c822a48e42066b2cd17a6")
     add_versions("1.13.3", "9f074d230daf30f550c5bde5528037bdab6aa83b2a06c81a25e89dd3bcb7e419")
-    
-    add_configs("install_cpp_runtimes", {description = "Install c++ runtimes with Poco.", default = false, type = "boolean"})
+
     -- https://docs.pocoproject.org/current/00200-GettingStarted.html
     add_configs("foundation", {description = "Build Foundation support library.", default = true, type = "boolean", readonly = true})
     add_configs("xml", {description = "Build XML support library.", default = true, type = "boolean"})
@@ -61,7 +60,8 @@ package("poco")
 
     add_deps("cmake")
     add_deps("sqlite3", "expat", "zlib") -- required: sqlite3(No option sqlite, sqlite3 is also required), expat, zlib, pcre/pcre2
-    add_defines("POCO_NO_AUTOMATIC_LIBS")
+
+    add_defines("POCO_NO_AUTOMATIC_LIBS", "POCO_UNBUNDLED")
     if is_plat("windows") then
         add_syslinks("iphlpapi")
     end
@@ -97,9 +97,24 @@ package("poco")
             package:add("deps", "aprutil")
             package:add("deps", "apache2")
         end
+
+        if not package:config("shared") then
+            package:add("defines", "POCO_STATIC")
+        end
     end)
 
     on_check(function (package)
+        if package:is_plat("windows") then
+            if package:is_debug() and package:has_runtime("MT", "MD") then
+                raise("package(poco) unsupported debug build type with MT/MD runtimes")
+            end
+        elseif package:is_plat("android") then
+            if package:is_arch("armeabi-v7a") then
+                local ndk = package:toolchain("ndk")
+                local ndkver = ndk:config("ndkver")
+                assert(ndkver and tonumber(ndkver) > 22, "package(poco) dep(pcre2/armeabi-v7a): need ndk version > 22")
+            end
+        end
         assert(not (package:is_plat("mingw") and package:is_subhost("macos")), "Poco not support mingw@macos")
         assert(not (package:is_plat("wasm")), "Poco not support wasm")
 
@@ -158,21 +173,9 @@ package("poco")
     end)
 
     on_install(function (package)
-        local configs = {"-DPOCO_UNBUNDLED=ON"} -- Using external dependencies
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. ((package:debug() or package:has_runtime("MTd", "MDd")) and "Debug" or "Release"))
-        table.insert(configs, "-DPOCO_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        if package:is_plat("windows") then
-            table.insert(configs, "-DPOCO_MT=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
-        end
-
-        -- Todo: need to fix expat
-        -- expat has a partial problem with the static library, resulting in missing macros in poco's xml module; the shared library has no problems
-        if not package:dep("expat"):config("shared") then
-            io.replace("XML/CMakeLists.txt", "EXPAT REQUIRED", "EXPAT CONFIG REQUIRED")
-            io.replace("XML/CMakeLists.txt", "EXPAT::EXPAT", "expat::expat")
-            io.replace("XML/CMakeLists.txt", "PUBLIC POCO_UNBUNDLED", "PUBLIC POCO_UNBUNDLED XML_DTD XML_NS")
-        end
+        io.replace("CMakeLists.txt", 'include(InstallRequiredSystemLibraries)', '', {plain = true})
+        io.replace("XML/CMakeLists.txt", "EXPAT REQUIRED", "EXPAT CONFIG REQUIRED")
+        io.replace("XML/CMakeLists.txt", "EXPAT::EXPAT", "expat::expat")
         -- Todo: need to fix pcre2
         -- pcre2 has a partial problem with the static library, resulting in missing macros in poco's foundation module; the shared library has no problems
         if package:version():ge("1.12.0") and not package:dep("pcre2"):config("shared") then
@@ -182,8 +185,28 @@ package("poco")
             io.replace("cmake/FindPCRE2.cmake", "IMPORTED_LOCATION \"${PCRE2_LIBRARY}\"", "IMPORTED_LOCATION \"${PCRE2_LIBRARY}\"\nINTERFACE_COMPILE_DEFINITIONS PCRE2_STATIC", {plain = true})
         end
 
-        if not package:config("install_cpp_runtimes") then
-            io.replace("CMakeLists.txt", 'include(InstallRequiredSystemLibraries)', '', {plain = true})
+        if package:config("mariadb") then
+            for _, file in ipairs(os.files("Data/MySQL/include/**")) do
+                io.replace(file, '#include <mysql/mysql.h>', '#include <mariadb/mysql.h>', {plain = true})
+            end
+            for _, file in ipairs(os.files("Data/MySQL/src/**")) do
+                io.replace(file, '#include <mysql/mysql.h>', '#include <mariadb/mysql.h>', {plain = true})
+            end
+        end
+        if package:config("mysql") or package:config("mariadb") then
+            io.replace("Data/MySQL/include/Poco/Data/MySQL/MySQL.h", '#pragma comment(lib, "libmysql")', '', {plain = true})
+            io.replace("cmake/FindMySQL.cmake", 'find_path(MYSQL_INCLUDE_DIR mysql/mysql.h', 'find_path(MYSQL_INCLUDE_DIR mysql/mysql.h mariadb/mysql.h', {plain = true})
+            io.replace("cmake/FindMySQL.cmake", 'pkg_check_modules(PC_MARIADB QUIET mariadb)', 'pkg_check_modules(PC_MARIADB QUIET mariadb-connector-c)', {plain = true})
+            io.replace("cmake/FindMySQL.cmake", 'find_library(MYSQL_LIBRARY NAMES mysqlclient\n', 'find_library(MYSQL_LIBRARY NAMES mysqlclient libmariadb\n', {plain = true})
+        end
+
+        local configs = {"-DPOCO_UNBUNDLED=ON", "-DPOCO_MT=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DPOCO_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+
+        if package:config("netssl") or package:config("crypto") or package:config("jwt") then
+            table.insert(configs, "-DOPENSSL_USE_STATIC_LIBS=" .. (package:dep("openssl"):config("shared") and "OFF" or "ON"))
         end
 
         table.insert(configs, "-DENABLE_XML=" .. (package:config("xml") and "ON" or "OFF"))
@@ -220,21 +243,6 @@ package("poco")
 
         table.insert(configs, "-DENABLE_POCODOC=" .. (package:config("poco_doc") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_TESTS=" .. (package:config("poco_test") and "ON" or "OFF"))
-
-        if package:config("mariadb") then
-            for _, file in ipairs(os.files("Data/MySQL/include/**")) do
-                io.replace(file, '#include <mysql/mysql.h>', '#include <mariadb/mysql.h>', {plain = true})
-            end
-            for _, file in ipairs(os.files("Data/MySQL/src/**")) do
-                io.replace(file, '#include <mysql/mysql.h>', '#include <mariadb/mysql.h>', {plain = true})
-            end
-        end
-        if package:config("mysql") or package:config("mariadb") then
-            io.replace("Data/MySQL/include/Poco/Data/MySQL/MySQL.h", '#pragma comment(lib, "libmysql")', '', {plain = true})
-            io.replace("cmake/FindMySQL.cmake", 'find_path(MYSQL_INCLUDE_DIR mysql/mysql.h', 'find_path(MYSQL_INCLUDE_DIR mysql/mysql.h mariadb/mysql.h', {plain = true})
-            io.replace("cmake/FindMySQL.cmake", 'pkg_check_modules(PC_MARIADB QUIET mariadb)', 'pkg_check_modules(PC_MARIADB QUIET mariadb-connector-c)', {plain = true})
-            io.replace("cmake/FindMySQL.cmake", 'find_library(MYSQL_LIBRARY NAMES mysqlclient\n', 'find_library(MYSQL_LIBRARY NAMES mysqlclient libmariadb\n', {plain = true})
-        end
 
         import("package.tools.cmake").install(package, configs)
     end)

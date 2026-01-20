@@ -20,6 +20,14 @@ package("strawberry-perl")
 
     add_configs("mingw", {description = "Export built-in MinGW binaries.", default = false, type = "boolean"})
 
+    on_fetch("@windows", function (package, opt)
+        if opt.system then
+            return package:find_tool("perl", {check = function()
+                return os.iorunv("perl", {"-MFile::Spec::Functions=rel2abs", "-e", "print rel2abs('.')"})
+            end})
+        end
+    end)
+
     on_install("@windows", "@msys", "@cygwin", function (package)
         os.mv("perl", package:installdir())
         os.mv("c", package:installdir())

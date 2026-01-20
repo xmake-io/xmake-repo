@@ -10,7 +10,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-2022, windows-2025]
+        # https://github.com/xmake-io/xmake-repo/issues/8098
+        # os: [windows-2022, windows-2025]
+        os: [windows-2025]
         kind: [static, shared]
         arch: [x64, x86, arm64]
         runtimes: [MT, MD]

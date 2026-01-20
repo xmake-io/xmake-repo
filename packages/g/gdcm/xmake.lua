@@ -5,7 +5,9 @@ package("gdcm")
 
     add_urls("https://github.com/malaterre/GDCM/archive/refs/tags/$(version).tar.gz",
              "https://github.com/malaterre/GDCM.git")
+    add_versions("v3.2.1", "63d4fbbb487d450bc8004542892a45349bdc9f4400f7010c07170c127ef0f9e3")
     add_versions("v3.0.24", "d88519a094797c645ca34797a24a14efc10965829c4c3352c8ef33782a556336")
+    add_patches(">3.0", "patches/cmake.patch", "2583f0f0beb829f7c67bc2ee56f1d976245153aa006973f89e5bc42e659afea6")
 
     add_deps("cmake", "charls", "expat", "openjpeg", "pkgconf", "zlib")
 

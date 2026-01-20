@@ -146,7 +146,7 @@ target("imgui")
 
     if has_config("sdl3_gpu") then
         add_files("backends/imgui_impl_sdlgpu3.cpp")
-        add_headerfiles("backends/imgui_impl_sdlgpu3.h","backends/imgui_impl_sdlgpu3_shaders.h")
+        add_headerfiles("(backends/imgui_impl_sdlgpu3.h)", "(backends/imgui_impl_sdlgpu3_shaders.h)")
         add_packages("libsdl3")
     end
 

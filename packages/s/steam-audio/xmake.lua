@@ -6,6 +6,7 @@ package("steam-audio")
     add_urls("https://github.com/ValveSoftware/steam-audio/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ValveSoftware/steam-audio.git")
 
+    add_versions("v4.7.0", "f194f9c34d18a2a1b5f563bb39888e0eabdef1cd26ddfa959de3f95da4d263ea")
     add_versions("v4.6.1", "9965993d9df46d0585bd1dcb0acd3c5ae031656c75c87bbd49429db37757b65d")
     add_versions("v4.6.0", "b81479bf8fc55c3bbd49c1f9eb1356d7ff7a3a5efc553ba6653ed41715aaf368")
 
@@ -26,6 +27,12 @@ package("steam-audio")
     elseif is_plat("android") then
         add_syslinks("log", "android")
     end
+
+    on_check(function (package)
+        if package:version() and package:version():eq("4.7.0") and package:has_tool("cxx", "clang") then
+            raise("package(steam-audio >=4.7.0) unsupported clang")
+        end
+    end)
 
     on_load(function (package)
         package:add("deps", package:config("fft"))

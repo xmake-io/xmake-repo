@@ -11,8 +11,12 @@ package("libxext")
     end
 
     if is_plat("macosx", "linux", "bsd", "cross") then
-        add_deps("pkg-config", "libx11", "xorgproto")
+        add_deps("pkg-config", "xorgproto")
     end
+
+    on_load(function (package)
+        package:add("deps", "libx11", { configs = { shared = package:config("shared") } })
+    end)
 
     on_install("macosx", "linux", "bsd", "cross", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
@@ -25,7 +29,7 @@ package("libxext")
         if package:config("pic") then
             table.insert(configs, "--with-pic")
         end
-        if package:is_plat("cross") then
+        if package:is_cross() then
             table.insert(configs, "--disable-malloc0returnsnull")
         end
         import("package.tools.autoconf").install(package, configs)

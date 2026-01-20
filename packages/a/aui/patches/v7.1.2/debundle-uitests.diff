@@ -10,7 +10,7 @@ index 5070f0a3..e4188094 100644
 -  aui_link(aui.uitests PRIVATE GTest::gmock)
 -endif()
 +if (AUIB_DISABLE)
-+    aui_link(aui.uitests PRIVATE gmock::gmock)
++    aui_link(aui.uitests PRIVATE GTest::gtest GTest::gmock)
 +else ()
 +  if (TARGET GTest::gmock)
 +    aui_link(aui.uitests PRIVATE GTest::gmock)

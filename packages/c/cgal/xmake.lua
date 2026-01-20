@@ -5,6 +5,8 @@ package("cgal")
     set_license("LGPL-3.0")
 
     add_urls("https://github.com/CGAL/cgal/releases/download/v$(version)/CGAL-$(version)-library.zip")
+    add_versions("6.1", "d129a47329e7811b31b7343901fdb7b64d029b0cce262405fbebacd11f9b00dd")
+    add_versions("6.0.2", "5cda4d2490c9cc2cd8d7a4b87ca0ea2ef319724e728f761f55e09bc2394249b2")
     add_versions("6.0", "f4a66cf4e276a377d263ee3db627919d1000e29bf24664a5d0b8cb82081ef706")
     add_versions("5.6.1", "cf3900280d96847db8ac5e174d5e889f9764c7fa4e3d99f316f89910058335e6")
     add_versions("5.1.1", "ceca7ea896505941878f6c1fb7a7ae86653fdd9b3d87b276da72227f173a9cd2")

@@ -1,5 +1,4 @@
 package("libxt")
-
     set_homepage("https://gitlab.freedesktop.org/xorg/lib/libxt")
     set_description("X.Org: X Toolkit Intrinsics library")
 
@@ -11,7 +10,11 @@ package("libxt")
         add_extsources("apt::libxt-dev", "pacman::libxt")
     end
 
-    add_deps("libx11", "libsm")
+    add_deps("libsm")
+
+    on_load(function (package)
+        package:add("deps", "libx11", { configs = { shared = package:config("shared") } })
+    end)
 
     on_install("macosx", "linux", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),

@@ -1,11 +1,12 @@
 package("opencv")
-
     set_homepage("https://opencv.org/")
     set_description("A open source computer vision library.")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/opencv/opencv/archive/$(version).tar.gz",
              "https://github.com/opencv/opencv.git")
+    add_versions("4.13.0", "1d40ca017ea51c533cf9fd5cbde5b5fe7ae248291ddf2af99d4c17cf8e13017d")
+    add_versions("4.12.0", "44c106d5bb47efec04e531fd93008b3fcd1d27138985c5baf4eafac0e1ec9e9d")
     add_versions("4.11.0", "9a7c11f924eff5f8d8070e297b322ee68b9227e003fd600d4b8122198091665f")
     add_versions("4.10.0", "b2171af5be6b26f7a06b1229948bbb2bdaa74fcf5cd097e0af6378fce50a6eb9")
     add_versions("4.9.0", "ddf76f9dffd322c7c3cb1f721d0887f62d747b82059342213138dc190f28bc6c")
@@ -20,7 +21,10 @@ package("opencv")
     add_versions("3.4.9", "b7ea364de7273cfb3b771a0d9c111b8b8dfb42ff2bcd2d84681902fb8f49892a")
 
     add_patches("4.11.0", "https://github.com/opencv/opencv/commit/767dd838d3074409fd72a4d76c320b1370e95943.diff", "376dd90500ab7205084fd4298ff26137ce9678b00233ad20ca2189ef9eca3a58")
+    add_patches("4.12.0", "https://github.com/opencv/opencv/pull/27691/commits/90c444abd387ffa70b2e72a34922903a2f0f4f5a.patch", "4811cf490195a7b2952e075c4d713593326bc54fcfa42a33e19d7ed025bb5b6f")
 
+    add_resources("4.13.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.13.0.tar.gz", "1e0077a4fd2960a7d2f4c9e49d6ba7bb891cac2d1be36d7e8e47aa97a9d1039b")
+    add_resources("4.12.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.12.0.tar.gz", "4197722b4c5ed42b476d42e29beb29a52b6b25c34ec7b4d589c3ae5145fee98e")
     add_resources("4.11.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.11.0.tar.gz", "2dfc5957201de2aa785064711125af6abb2e80a64e2dc246aca4119b19687041")
     add_resources("4.10.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.10.0.tar.gz", "65597f8fb8dc2b876c1b45b928bbcc5f772ddbaf97539bf1b737623d0604cba1")
     add_resources("4.9.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.9.0.tar.gz", "8952c45a73b75676c522dd574229f563e43c271ae1d5bbbd26f8e2b6bc1a4dae")
@@ -54,8 +58,10 @@ package("opencv")
     elseif is_plat("linux") then
         add_extsources("pacman::opencv", "apt::libopencv-dev")
         add_syslinks("pthread", "dl")
-    elseif is_plat("windows", "mingw") then
-        add_syslinks("gdi32", "user32", "glu32", "opengl32", "advapi32", "comdlg32", "ws2_32")
+    elseif is_plat("windows") then
+        add_syslinks("gdi32", "user32", "glu32", "opengl32", "advapi32", "comdlg32", "ws2_32", "ole32")
+    elseif is_plat("mingw") then
+        add_syslinks("gdi32", "user32", "glu32", "opengl32", "advapi32", "comdlg32", "ws2_32", "pthread")
     end
 
     on_fetch("macosx", function (package, opt)
@@ -80,6 +86,14 @@ package("opencv")
         end
     end)
 
+    local vs_map = {
+        ["2015"] = "vc14",
+        ["2017"] = "vc15",
+        ["2019"] = "vc16",
+        ["2022"] = "vc17",
+        ["2026"] = "vc18"
+    }
+
     on_load("android", "linux", "macosx", "windows", "mingw@windows,msys", function (package)
         if package:is_plat("windows") then
             local arch = "x64"
@@ -88,12 +102,7 @@ package("opencv")
             end
             local linkdir = (package:config("shared") and "lib" or "staticlib")
             local vs = package:toolchain("msvc"):config("vs")
-            local vc_ver = "vc13"
-            if     vs == "2015" then vc_ver = "vc14"
-            elseif vs == "2017" then vc_ver = "vc15"
-            elseif vs == "2019" then vc_ver = "vc16"
-            elseif vs == "2022" then vc_ver = "vc17"
-            end
+            local vc_ver = vs_map[vs] or raise("Unknown Visual Studio version: " .. vs)
             package:add("linkdirs", linkdir) -- fix path for 4.9.0/vs2022
             package:add("linkdirs", path.join(arch, vc_ver, linkdir))
         elseif package:is_plat("mingw") then
@@ -233,7 +242,15 @@ package("opencv")
                 shflags = {"-Wl,-Bsymbolic"}
             end
         end
-        import("package.tools.cmake").install(package, configs, {buildir = "bd", shflags = shflags, ldflags = ldflags})
+        import("package.tools.cmake").install(package, configs, {builddir = "bd", shflags = shflags, ldflags = ldflags})
+
+        if not package:is_plat("windows", "android") then
+            local cmakefile = os.files(package:installdir("**/OpenCVModules.cmake"))
+            if cmakefile then
+                io.replace(cmakefile[1], "opencv_wechat_qrcode\n",
+                           "opencv_wechat_qrcode\ninclude(CMakeFindDependencyMacro)\nfind_dependency(Iconv)\n", {plain = true})
+            end
+        end
         for _, link in ipairs({"opencv_phase_unwrapping", "opencv_surface_matching", "opencv_saliency",
                                "opencv_wechat_qrcode", "opencv_mcc", "opencv_face",
                                "opencv_img_hash", "opencv_videostab", "opencv_structured_light", "opencv_intensity_transform",
@@ -246,7 +263,7 @@ package("opencv")
                                "opencv_cudabgsegm", "opencv_cudafeatures2d", "opencv_cudastereo", "opencv_cudaimgproc", "opencv_cudafilters",
                                "opencv_cudaarithm", "opencv_cudawarping", "opencv_cudacodec", "opencv_cudev", "opencv_gapi", "opencv_objdetect",
                                "opencv_highgui", "opencv_videoio", "opencv_video", "opencv_calib3d", "opencv_dnn", "opencv_features2d",
-                               "opencv_flann", "opencv_imgcodecs", "opencv_imgproc", "opencv_core"}) do
+                               "opencv_flann", "opencv_imgcodecs", "opencv_imgproc", "opencv_core", "kleidicv_hal", "kleidicv_thread", "kleidicv"}) do
             local reallink = link
             if package:is_plat("windows", "mingw") then
                 reallink = reallink .. package:version():gsub("%.", "")
@@ -272,13 +289,7 @@ package("opencv")
             end
             local linkdir = (package:config("shared") and "lib" or "staticlib")
             local vs = package:toolchain("msvc"):config("vs")
-            local vc_ver = "vc13"
-            if     vs == "2015" then vc_ver = "vc14"
-            elseif vs == "2017" then vc_ver = "vc15"
-            elseif vs == "2019" then vc_ver = "vc16"
-            elseif vs == "2022" then vc_ver = "vc17"
-            end
-
+            local vc_ver = vs_map[vs] or raise("Unknown Visual Studio version: " .. vs)
             local installdir = package:installdir(arch, vc_ver)
             local libfiles = {}
             table.join2(libfiles, os.files(path.join(package:installdir(), linkdir, "*.lib")))

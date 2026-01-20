@@ -1,7 +1,7 @@
 add_rules("mode.debug", "mode.release")
 
 if not is_plat("iphoneos") then
-    add_requires("openssl")
+    add_requires("openssl3")
 end
 
 option("encrypt")
@@ -28,7 +28,7 @@ target("sqlcipher")
         add_frameworks("Security")
         add_defines("SQLCIPHER_CRYPTO_CC")
     else
-        add_packages("openssl")
+        add_packages("openssl3")
         add_defines("SQLCIPHER_CRYPTO_OPENSSL")
     end
 
@@ -50,6 +50,8 @@ target("sqlcipher")
         add_syslinks("dl", "m", "z")
     end
 
+    add_defines("SQLITE_EXTRA_INIT=sqlcipher_extra_init")
+    add_defines("SQLITE_EXTRA_SHUTDOWN=sqlcipher_extra_shutdown")
     add_defines("SQLITE_THREADSAFE=$(threadsafe)")
     add_defines("SQLITE_TEMP_STORE=$(temp_store)")
     add_defines("NDEBUG", "SQLITE_ENABLE_EXPLAIN_COMMENTS", "SQLITE_ENABLE_DBPAGE_VTAB", "SQLITE_ENABLE_STMTVTAB", "SQLITE_ENABLE_DBSTAT_VTAB", "SQLITE_ENABLE_MATH_FUNCTIONS")

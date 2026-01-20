@@ -6,6 +6,8 @@ package("spdlog")
     add_urls("https://github.com/gabime/spdlog/archive/refs/tags/$(version).zip",
              "https://github.com/gabime/spdlog.git")
 
+    add_versions("v1.17.0", "b11912a82d149792fef33fabd0503b13d54aeac25c1464755461d4108ea71fc2")
+    add_versions("v1.16.0", "3d25808d2fc4db86621a46855800c99ab5734999b61c4cbf9470edf631555397")
     add_versions("v1.15.3", "b74274c32c8be5dba70b7006c1d41b7d3e5ff0dff8390c8b6390c1189424e094")
     add_versions("v1.15.2", "d91ab0e16964cedb826e65ba1bed5ed4851d15c7b9453609a52056a94068c020")
     add_versions("v1.15.1", "322c144e24abee5d0326ddbe5bbc0e0c39c85ac8c2cb3c90d10290a85428327a")
@@ -35,6 +37,8 @@ package("spdlog")
     add_configs("fmt_external",    {description = "Use external fmt library instead of bundled.", default = false, type = "boolean"})
     add_configs("fmt_external_ho", {description = "Use external fmt header-only library instead of bundled.", default = false, type = "boolean"})
     add_configs("noexcept",        {description = "Compile with -fno-exceptions. Call abort() on any spdlog exceptions.", default = false, type = "boolean"})
+    add_configs("tls",             {description = "Allow spdlog to using thread local storage.", default = true, type = "boolean"})
+    add_configs("thread_id",       {description = "Allow spdlog to querying the thread id on each log call if thread id is not needed.", default = true, type = "boolean"})
 
     if is_plat("windows") then
         add_configs("wchar",  {description = "Support wchar api.", default = false, type = "boolean"})
@@ -73,6 +77,12 @@ package("spdlog")
         if package:config("wchar_console") then
             package:add("defines", "SPDLOG_UTF8_TO_WCHAR_CONSOLE")
         end
+        if not package:config("tls") then
+            package:add("defines", "SPDLOG_NO_TLS")
+        end
+        if not package:config("thread_id") then
+            package:add("defines", "SPDLOG_NO_THREAD_ID")
+        end
     end)
 
     on_install(function (package)
@@ -96,7 +106,14 @@ package("spdlog")
         table.insert(configs, "-DSPDLOG_WCHAR_FILENAMES=" .. (package:config("wchar_filenames") and "ON" or "OFF"))
         table.insert(configs, "-DSPDLOG_UTF8_TO_WCHAR_CONSOLE=" .. (package:config("wchar_console") and "ON" or "OFF"))
         table.insert(configs, "-DSPDLOG_WCHAR_CONSOLE=" .. (package:config("wchar_console") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        table.insert(configs, "-DSPDLOG_NO_TLS=" .. (package:config("tls") and "OFF" or "ON"))
+        table.insert(configs, "-DSPDLOG_NO_THREAD_ID=" .. (package:config("thread_id") and "OFF" or "ON"))
+
+        local opt = {}
+        if not package:config("noexcept") and package:has_tool("cxx", "clang_cl")  then
+            opt.cxflags = {"/EHsc"}
+        end
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)

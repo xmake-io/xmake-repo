@@ -4,7 +4,7 @@ package("libhv")
     set_license("BSD-3-Clause")
 
     add_urls("https://github.com/ithewei/libhv.git")
-    add_urls("https://github.com/ithewei/libhv/archive/refs/$(version).zip", {excludes = {"*/html/*"}})
+    add_urls("https://github.com/ithewei/libhv/archive/refs/tags/$(version).zip", {excludes = {"*/html/*"}})
 
     add_versions("v1.0.0", "39adb77cc7addaba82b69fa9a433041c8288f3d9c773fa360162e3391dcf6a7b")
     add_versions("v1.1.0", "a753c268976d9c4f85dcc10be2377bebc36d4cb822ac30345cf13f2a7285dbe3")
@@ -18,6 +18,7 @@ package("libhv")
     add_versions("v1.3.1", "66fb17738bc51bee424b6ddb1e3b648091fafa80c8da6d75626d12b4188e0bdc")
     add_versions("v1.3.2", "61d6d5fadf13d81c111df4514e0e61062fead21c2a8b6c4caf7706f9b002fae1")
     add_versions("v1.3.3", "f78d1012ddf82506c28dda573ce303912e6cd5e707a358a249db1cc7e1e82238")
+    add_versions("v1.3.4", "966866873897ff4a7c526c3f6f1d00d7c13027aa5eef16270a5c5b4094dbdf95")
 
     add_configs("protocol",    {description = "compile protocol", default = false, type = "boolean"})
     add_configs("http",        {description = "compile http", default = true, type = "boolean"})
@@ -64,7 +65,7 @@ package("libhv")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "android", "iphoneos", "mingw@windows", function(package)
+    on_install("cross", "windows", "linux", "macosx", "android", "iphoneos", "mingw@windows", function(package)
         local configs = {"-DBUILD_EXAMPLES=OFF", "-DBUILD_UNITTEST=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
@@ -78,6 +79,18 @@ target_link_libraries(hv ${LIBS} nlohmann_json::nlohmann_json)]], {plain = true}
         io.replace("CMakeLists.txt", [[target_link_libraries(hv_static ${LIBS})]],
             [[find_package(nlohmann_json CONFIG REQUIRED)
 target_link_libraries(hv_static ${LIBS} nlohmann_json::nlohmann_json)]], {plain = true})
+
+        -- Fix PDB file installation issue for Windows static library builds
+        io.replace("CMakeLists.txt", 
+            [[if(WIN32 AND NOT MINGW)
+    install(FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION bin OPTIONAL)
+endif()]],
+            [[if(WIN32 AND NOT MINGW)
+    if(BUILD_SHARED)
+        install(FILES $<TARGET_PDB_FILE:hv> DESTINATION bin OPTIONAL)
+    endif()
+endif()]], {plain = true})
+
         for _, suffix in ipairs({"**.h", "**.cpp"}) do
             for _, file in ipairs(os.files(suffix)) do
                 io.replace(file, [[#include "json.hpp"]], [[#include <nlohmann/json.hpp>]], {plain = true})

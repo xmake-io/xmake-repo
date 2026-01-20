@@ -1,0 +1,45 @@
+diff --git a/Modules/ThirdParty/HDF5/CMakeLists.txt b/Modules/ThirdParty/HDF5/CMakeLists.txt
+index dcaa2fa..cc4d6ea 100644
+--- a/Modules/ThirdParty/HDF5/CMakeLists.txt
++++ b/Modules/ThirdParty/HDF5/CMakeLists.txt
+@@ -39,7 +39,6 @@ if(NOT ITK_BINARY_DIR)
+ endif()
+ ")
+ 
+-  if(BUILD_SHARED_LIBS)
+     if (TARGET hdf5-shared)
+       set(ITKHDF5_LIBRARIES hdf5_cpp-shared hdf5-shared hdf5_hl-shared)
+     elseif(TARGET hdf5::hdf5-shared)
+@@ -49,7 +48,6 @@ endif()
+     else()
+       set(ITKHDF5_LIBRARIES ${HDF5_C_SHARED_LIBRARY} ${HDF5_CXX_SHARED_LIBRARY} ${HDF5_CXX_LIBRARY_NAMES} ${HDF5_HL_SHARED_LIBRARY} ${HDF5_LIBRARIES})
+     endif()
+-  else()
+     if (TARGET hdf5-static)
+       set(ITKHDF5_LIBRARIES hdf5_cpp-static hdf5-static hdf5_hl-static)
+     elseif(TARGET hdf5::hdf5-static)
+@@ -59,7 +57,6 @@ endif()
+     else()
+       set(ITKHDF5_LIBRARIES ${HDF5_C_STATIC_LIBRARY} ${HDF5_CXX_STATIC_LIBRARY} ${HDF5_CXX_LIBRARY_NAMES} ${HDF5_HL_STATIC_LIBRARY} ${HDF5_LIBRARIES})
+     endif()
+-  endif()
+ 
+   set(ITKHDF5_INCLUDE_DIRS
+     ${ITKHDF5_BINARY_DIR}/src # itk_hdf5.h and itk_H5Cpp.h
+diff --git a/Modules/ThirdParty/HDF5/itk-module-init.cmake b/Modules/ThirdParty/HDF5/itk-module-init.cmake
+index 93604eb..74cc73c 100644
+--- a/Modules/ThirdParty/HDF5/itk-module-init.cmake
++++ b/Modules/ThirdParty/HDF5/itk-module-init.cmake
+@@ -3,11 +3,7 @@ mark_as_advanced(ITK_USE_SYSTEM_HDF5)
+ 
+ if(ITK_USE_SYSTEM_HDF5)
+   set(HDF5_NO_MODULE 1)
+-  if(ITK_BUILD_SHARED_LIBS)
+-    find_package(HDF5 QUIET NO_MODULE COMPONENTS CXX C HL shared)
+-  else()
+-    find_package(HDF5 QUIET NO_MODULE COMPONENTS CXX C HL static)
+-  endif()
++  find_package(HDF5 CONFIG REQUIRED)
+ 
+   if(NOT HDF5_FOUND)
+     find_package(HDF5 REQUIRED COMPONENTS CXX C HL)

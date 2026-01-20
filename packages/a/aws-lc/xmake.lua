@@ -5,6 +5,12 @@ package("aws-lc")
     add_urls("https://github.com/aws/aws-lc/archive/refs/tags/$(version).tar.gz",
              "https://github.com/aws/aws-lc.git")
 
+    add_versions("v1.66.2", "d64a46b4f75fa5362da412f1e96ff5b77eed76b3a95685651f81a558c5c9e126")
+    add_versions("v1.66.1", "44436ec404511e822c039acd903d4932e07d2a0a94a4f0cea4c545859fa2d922")
+    add_versions("v1.65.1", "d4cf3b19593fc7876b23741e8ca7c48e0043679cec393fe24b138c3f1ffd6254")
+    add_versions("v1.65.0", "27d2ac24a961888efb1fcc6443ea5e611942f783e017e0c178af95d05431b808")
+    add_versions("v1.64.0", "54646e5956f5394473ebe32741d2bf1509f2b556424899aed116647856f1e041")
+    add_versions("v1.63.0", "8cbfe34e49c9a8ab836a72173e8b919b12dc9605252f25c667358ddc3f2d9c6b")
     add_versions("v1.53.0", "b7c3a456df40c0d19621848e8c7b70c1fa333f9e8f5aa72755890fb50c9963de")
     add_versions("v1.51.2", "7df65427f92a4c3cd3db6923e1d395014e41b1fcc38671806c1e342cb6fa02f6")
     add_versions("v1.49.1", "2fa2e31efab7220b2e0aac581fc6d4f2a6e0e16a26b9e6037f5f137d5e57b4df")
@@ -43,6 +49,11 @@ package("aws-lc")
         on_check("wasm", function (target)
             if package:version() and package:version():eq("1.45.0") then
                 raise("package(aws-lc 1.45.0) unsupported version")
+            end
+        end)
+        on_check("mingw", function (target)
+            if package:version() and package:version():ge("1.52.0") then
+                raise("package(aws-lc >=1.52.0) unsupported version")
             end
         end)
     end

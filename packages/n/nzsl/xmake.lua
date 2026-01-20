@@ -6,6 +6,9 @@ package("nzsl")
     add_urls("https://github.com/NazaraEngine/ShaderLang/archive/refs/tags/$(version).tar.gz",
              "https://github.com/NazaraEngine/ShaderLang.git")
 
+    add_versions("v1.1.2", "48b3e5ce18f0c3d4bf22c0201ab41664b30c1d40f7df31b776d2d37a1559c0fb")
+    add_versions("v1.1.1", "e4e37d3274936d8f040d4ed29d2aa20b6cc93de755aa070309fd01cc17140525")
+    add_versions("v1.1.0", "8b401a199c6ee7b2cc3b24871bbec2857a70ff47a25f043e35db54fa1f4129ef")
     add_versions("v1.0.0", "ef434fec5d32ddf64f2f7c7691a4d96a6ac24cab4cc6c091d46a542c86825359")
 
     set_policy("package.strict_compatibility", true)
@@ -45,6 +48,7 @@ package("nzsl")
 
     on_install(function (package)
         local configs = {}
+        configs.asan = package:config("asan")
         configs.cbinding = package:config("cbinding")
         configs.fs_watcher = package:config("fs_watcher") or false
         configs.erronwarn = false

@@ -6,6 +6,8 @@ package("moltenvk")
     add_urls("https://github.com/KhronosGroup/MoltenVK/archive/refs/tags/$(version).tar.gz",
              "https://github.com/KhronosGroup/MoltenVK.git")
 
+    add_versions("v1.4.1", "9985f141902a17de818e264d17c1ce334b748e499ee02fcb4703e4dc0038f89c")
+    add_versions("v1.4.0", "fc74aef926ee3cd473fe260a93819c09fdc939bff669271a587e9ebaa43d4306")
     add_versions("v1.3.0", "9476033d49ef02776ebab288fffae3e28fd627a3e29b7ae5975a1e1c785bf912")
     add_versions("v1.2.11", "bfa115e283831e52d70ee5e13adf4d152de8f0045996cf2a33f0ac541be238b1")
     add_versions("v1.2.10", "3435d34ea2dafb043dd82ac5e9d2de7090462ab7cea6ad8bcc14d9c34ff99e9c")
@@ -21,7 +23,7 @@ package("moltenvk")
         add_extsources("brew::molten-vk")
     end
 
-    add_links("MoltenVKShaderConverter", "MoltenVK")
+    add_links("MoltenVK")
 
     if is_plat("macosx", "iphoneos") then
         add_frameworks("Metal", "Foundation", "QuartzCore", "CoreGraphics", "IOSurface")
@@ -45,23 +47,36 @@ package("moltenvk")
     on_install("macosx", "iphoneos", function (package)
         local plat = package:is_plat("iphoneos") and "iOS" or "macOS"
         local configs = {"--" .. plat:lower()}
-        if package:debug() then
+        if package:is_debug() then
             table.insert(configs, "--debug")
         end
         os.vrunv("./fetchDependencies", configs)
-        local conf = package:debug() and "Debug" or "Release"
-        os.vrun("xcodebuild build -quiet -project MoltenVKPackaging.xcodeproj -scheme \"MoltenVK Package (" ..plat .. " only)\" -configuration \"" .. conf)
-        os.mv("Package/" .. conf .. "/MoltenVK/include", package:installdir())
-        os.mv("Package/" .. conf .. "/MoltenVK/dylib/" ..plat .. "/*", package:installdir("lib"))
-        os.mv("Package/" .. conf .. "/MoltenVK/MoltenVK.xcframework/" .. plat:lower() .. "-*/*.a", package:installdir("lib"))
+        
+        local conf = package:is_debug() and "Debug" or "Release"
+        local moltenvk_rootdir = path.join("Package", conf, "MoltenVK")
+        local moltenvk_shader_rootdir = path.join("Package", conf, "MoltenVKShaderConverter")
+        
+        os.vrunv("xcodebuild", {
+            "build",
+            "-quiet",
+            "-project", "MoltenVKPackaging.xcodeproj", 
+            "-scheme", "MoltenVK Package (" .. plat .. " only)",
+            "-configuration", conf
+        })
+        
+        os.mv(path.join(moltenvk_rootdir, "include"), package:installdir())
+        os.mv(path.join(moltenvk_rootdir, "dylib", plat, "*"), package:installdir("lib"))
+        os.mv(path.join(moltenvk_rootdir, "MoltenVK.xcframework", plat:lower() .. "-*", "*.a"), package:installdir("lib"))
+        
         if package:config("shared") then
-            os.mv("Package/" .. conf .. "/MoltenVK/dynamic/dylib/" .. plat .. "/*.dylib", package:installdir("lib"))
+            os.mv(path.join(moltenvk_rootdir, "dynamic", "dylib", plat, "*.dylib"), package:installdir("lib"))
         else
-            os.mv("Package/" .. conf .. "/MoltenVK/static/MoltenVK.xcframework/" .. plat:lower() .. "-*/*.a", package:installdir("lib"))
+            os.mv(path.join(moltenvk_rootdir, "static", "MoltenVK.xcframework", plat:lower() .. "-*", "*.a"), package:installdir("lib"))
         end
-        os.mv("Package/" .. conf .. "/MoltenVKShaderConverter/Tools/*", package:installdir("bin"))
-        os.mv("Package/" .. conf .. "/MoltenVKShaderConverter/MoltenVKShaderConverter.xcframework/" .. plat:lower() .. "-*/*.a", package:installdir("lib"))
-        os.mv("Package/" .. conf .. "/MoltenVKShaderConverter/include/*.h", package:installdir("include"))
+        
+        os.mv(path.join(moltenvk_shader_rootdir, "Tools", "*"), package:installdir("bin"))
+        os.mv(path.join(moltenvk_shader_rootdir, "MoltenVKShaderConverter.xcframework", plat:lower() .. "-*", "*.a"), package:installdir("lib"))
+        os.mv(path.join(moltenvk_shader_rootdir, "include", "*.h"), package:installdir("include"))
         package:addenv("PATH", "bin")
     end)
 

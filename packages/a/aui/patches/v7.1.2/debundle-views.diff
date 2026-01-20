@@ -1,5 +1,5 @@
 diff --git a/aui.views/CMakeLists.txt b/aui.views/CMakeLists.txt
-index dfe6b18b..c5c1fb27 100644
+index dfe6b18b9..a0e2189b1 100644
 --- a/aui.views/CMakeLists.txt
 +++ b/aui.views/CMakeLists.txt
 @@ -9,10 +9,14 @@ find_package(OpenGL)
@@ -21,7 +21,7 @@ index dfe6b18b..c5c1fb27 100644
  
      if (NOT TARGET Freetype::Freetype)
          message(FATAL_ERROR "Freetype not imported")
-@@ -20,29 +24,40 @@ if (OPENGL_FOUND OR ANDROID OR IOS)
+@@ -20,29 +24,41 @@ if (OPENGL_FOUND OR ANDROID OR IOS)
  
  
      if (AUI_PLATFORM_WIN OR AUI_PLATFORM_LINUX OR AUI_PLATFORM_MACOS)
@@ -29,7 +29,8 @@ index dfe6b18b..c5c1fb27 100644
 -                CMAKE_WORKING_DIR "build/cmake"
 -                VERSION a80a1dc)
 +        if (AUIB_DISABLE)
-+            find_package(glew CONFIG REQUIRED)
++            include(FindPkgConfig)
++            pkg_check_modules(glew REQUIRED IMPORTED_TARGET glew)
 +        else ()
 +            auib_import(GLEW https://github.com/aui-framework/glew-cmake
 +                    CMAKE_WORKING_DIR "build/cmake"
@@ -75,7 +76,7 @@ index dfe6b18b..c5c1fb27 100644
      endif ()
  
      if (NOT AUI_PLATFORM_WINDOWS)
-@@ -92,17 +107,29 @@ if (OPENGL_FOUND OR ANDROID OR IOS)
+@@ -92,23 +108,35 @@ if (OPENGL_FOUND OR ANDROID OR IOS)
          aui_link(aui.views PRIVATE Freetype::Freetype)
          aui_link(aui.views PRIVATE OpenGL::GL)
  
@@ -84,14 +85,12 @@ index dfe6b18b..c5c1fb27 100644
 -            set_target_properties(GLEW::GLEW PROPERTIES INTERFACE_LINK_LIBRARIES "")
 +        if (AUIB_DISABLE)
 +            if (AUI_PLATFORM_LINUX)
-+                # glew defines unwanted dependencies to OpenGL which may vary from distro to distro; silence them
-+                set_target_properties(glew::glew PROPERTIES INTERFACE_LINK_LIBRARIES "")
 +                auib_use_system_libs_begin()
 +                find_package(X11 REQUIRED)
 +                find_package(Fontconfig REQUIRED)
 +                auib_use_system_libs_end()
 +            endif ()
-+            aui_link(aui.views PUBLIC glew::glew)
++            aui_link(aui.views PUBLIC PkgConfig::glew)
 +        else ()
 +            if (AUI_PLATFORM_LINUX)
 +                # glew defines unwanted dependencies to OpenGL which may vary from distro to distro; silence them
@@ -113,3 +112,12 @@ index dfe6b18b..c5c1fb27 100644
  
          if (WIN32)
              aui_link(aui.views PRIVATE dwmapi)
+             aui_link(aui.views PRIVATE winmm)
+-            aui_link(aui.views PRIVATE shlwapi.lib)
++            aui_link(aui.views PRIVATE shlwapi)
++            aui_link(aui.views PRIVATE gdi32 ole32 opengl32)
+             if (MINGW)
++                aui_link(aui.views PRIVATE uuid)
+                 find_package(ZLIB REQUIRED)
+                 aui_link(aui.views PRIVATE ZLIB::ZLIB)
+             endif ()

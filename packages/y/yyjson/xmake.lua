@@ -6,6 +6,7 @@ package("yyjson")
     add_urls("https://github.com/ibireme/yyjson/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ibireme/yyjson.git")
 
+    add_versions("0.12.0", "b16246f617b2a136c78d73e5e2647c6f1de1313e46678062985bdcf1f40bb75d")
     add_versions("0.11.1", "610a38a5e59192063f5f581ce0c3c1869971c458ea11b58dfe00d1c8269e255d")
     add_versions("0.10.0", "0d901cb2c45c5586e3f3a4245e58c2252d6b24bf4b402723f6179523d389b165")
     add_versions("0.9.0", "59902bea55585d870fd7681eabe6091fbfd1a8776d1950f859d2dbbd510c74bd")

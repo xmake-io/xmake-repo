@@ -108,6 +108,21 @@ function _update_version(instance, version, shasum)
     os.vexec("git checkout %s", branch_current)
 end
 
+function _report_issue(instance)
+    local package_name = instance:name()
+    local curr_open_issue = os.iorun("gh issue list --label \"help wanted\" --label \"auto-update\" --search \"in:title [auto-update] %s requires manual handling\" -R xmake-io/xmake-repo --json number",
+        package_name)
+    if curr_open_issue == "[]\n" then
+        local body = string.format("Failed to get tags of %s, which may be due to changes in repository visibility.",
+            package_name)
+        local title = "[auto-update] " .. package_name .. " requires manual handling."
+        os.vexec("gh issue create --title \"%s\" --body \"%s\" --label \"help wanted,auto-update\" -R xmake-io/xmake-repo",
+            title, body)
+    else
+        print("Found a known open issue #%s for package %s", curr_open_issue:trim(), package_name)
+    end
+end
+
 function main(pattern)
     local count = 0
     local maxcount = 5
@@ -127,7 +142,9 @@ function main(pattern)
         if os.isfile(checkupdate_filepath) then
             local checkupdate = import("checkupdate", {rootdir = path.directory(checkupdate_filepath), anonymous = true})
             local version, shasum = checkupdate(instance)
-            if version and shasum and not _is_pending(instance, version) then
+            if version == false then
+                _report_issue(instance)
+            elseif version and shasum and not _is_pending(instance, version) then
                 cprint("package(%s): new version ${bright}%s${clear} found, shasum: ${bright}%s", instance:name(), version, shasum)
                 _update_version(instance, version, shasum)
                 updated = true

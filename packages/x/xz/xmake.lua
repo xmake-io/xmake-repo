@@ -4,6 +4,7 @@ package("xz")
 
     set_urls("https://github.com/tukaani-project/xz/releases/download/v$(version)/xz-$(version).tar.gz",
              "https://downloads.sourceforge.net/project/lzmautils/xz-$(version).tar.gz")
+    add_versions("5.8.2", "ce09c50a5962786b83e5da389c90dd2c15ecd0980a258dd01f70f9e7ce58a8f1")
     add_versions("5.2.11", "0089d47b966bd9ab48f1d01baf7ce146a3b591716c7477866b807010de3d96ab")
     add_versions("5.2.12", "61bda930767dcb170a5328a895ec74cab0f5aac4558cdda561c83559db582a13")
     add_versions("5.2.13", "2942a1a8397cd37688f79df9584947d484dd658db088d51b790317eb3184827b")

@@ -1,5 +1,5 @@
 diff --git a/aui.core/CMakeLists.txt b/aui.core/CMakeLists.txt
-index 6aa1b07..a2f5149 100644
+index 6aa1b072..3b4d2726 100644
 --- a/aui.core/CMakeLists.txt
 +++ b/aui.core/CMakeLists.txt
 @@ -6,12 +6,18 @@ option(AUI_ENABLE_ASAN "Enable AddressSanitizer" OFF)
@@ -63,7 +63,7 @@ index 6aa1b07..a2f5149 100644
      target_compile_definitions(aui.core PRIVATE AUI_USE_UNWIND=1)
  elseif(WIN32)
 -    aui_link(aui.core PRIVATE dbghelp shlwapi.lib)
-+    aui_link(aui.core PRIVATE dbghelp shell32 shlwapi.lib)
++    aui_link(aui.core PRIVATE dbghelp shell32 shlwapi)
      message(STATUS "Stacktrace backend: dbghelp")
  else()
      message(STATUS "Stacktrace backend: none")

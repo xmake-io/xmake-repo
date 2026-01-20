@@ -6,6 +6,7 @@ package("qcbor")
     add_urls("https://github.com/laurencelundblade/QCBOR/archive/refs/tags/$(version).tar.gz",
              "https://github.com/laurencelundblade/QCBOR.git")
 
+    add_versions("v1.6", "652e0f7736df050d8a2976f8eb097335682c787030f25e2b69c5d974f0f0b29f")
     add_versions("v1.5.3", "ee29ba165d14f1f3491efee6aa3bce6dc0045e9789ef6661f33219cd1044bc92")
     add_versions("v1.5.1", "779b5137fc6c8b6f2322f429bf3a0b2865ed36ddd4c1b6c0d2bcd5802b8915c5")
     add_versions("v1.4.1", "c7ef031b60b23bf8ede47c66c9713982bba2608668b144280a65665bfcc94470")

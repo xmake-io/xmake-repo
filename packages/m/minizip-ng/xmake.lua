@@ -41,7 +41,7 @@ package("minizip-ng")
             if package:is_plat("macosx", "iphoneos") then
                 package:add("deps", "openssl")
             elseif package:is_plat("windows", "mingw") then
-                package:add("syslinks", "Bcrypt")
+                package:add("syslinks", "bcrypt")
             end
         end
         for name, enabled in pairs(package:configs()) do

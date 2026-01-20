@@ -7,6 +7,15 @@ package("glaze")
     add_urls("https://github.com/stephenberry/glaze/archive/refs/tags/$(version).tar.gz",
              "https://github.com/stephenberry/glaze.git")
 
+    add_versions("v7.0.0", "8a6c67d3b3320017100252ad7a84af4f7eb619421e011b3c860ad71f11f7fac9")
+    add_versions("v6.1.0", "4ec01e893363701735d1ef3842fa77a74c4a664edaf08d6a1da0e744900d4125")
+    add_versions("v6.0.3", "f73f70b813df0bf1536c4bb868aec7c0e55f9160b8798b6fc9d66735ab475ef4")
+    add_versions("v6.0.2", "639e058ba7b3be7acb709baf9330a1409383966b86513b33c27df6598053eb9d")
+    add_versions("v6.0.1", "fecf2b15c4f375f13d5c84e7b5da79d5f90a76edeeef9501a4d0519eb8a4d6c7")
+    add_versions("v6.0.0", "cf7450ceba973349130ce9526dec8b7726e20dd22b0ef1bda4d8eb24df7e103f")
+    add_versions("v5.7.1", "c896ec90927a93ea43d33113ca2fd7b62961b870cb7fc12586cc865f335992f7")
+    add_versions("v5.6.0", "6f21e4186ce14b5243a5d2e58419f45fda260da2c0fa9ef793a5c46eaa05b2b3")
+    add_versions("v5.5.5", "c2ae536d634aa12f49ac7521f169d2891af55b3376648cbb0053daadb78b6ef1")
     add_versions("v5.5.4", "309184e6cf046669f22b336b85a1ab92278a45ad05fce079be4c0f45e19dcbd2")
     add_versions("v5.5.2", "92382568999829a531db5a3800a36d8699674d640d3862fcb7e79ee2879d95ec")
     add_versions("v5.5.1", "a30fedaffca7a0afdfa8e7b6f570fbbdc5fed6b0c8146c7922c0e11252d12404")
@@ -40,7 +49,16 @@ package("glaze")
 
     add_patches("4.0.1", "https://github.com/stephenberry/glaze/commit/8f35df43bcb1210a0c1e07a68b99608e29ecea43.patch", "66eba4c0eea1469c1bf21b2b6ea31cb320391d1095ffe06c5a7ff3dfda796763")
 
+    add_configs("ssl", {description = "Enable SSL support for networking", default = false, type = "boolean"})
+
     add_deps("cmake")
+
+    on_load(function (package)
+        if package:config("ssl") then
+            package:add("deps", "openssl3")
+            package:add("defines", "GLZ_ENABLE_SSL")
+        end
+    end)
 
     if on_check then
         on_check(function (package)
@@ -85,7 +103,8 @@ package("glaze")
             import("package.tools.cmake").install(package, {
                 "-Dglaze_DEVELOPER_MODE=OFF",
                 "-DCMAKE_CXX_STANDARD=23",
-                "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release")
+                "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
+                "-Dglaze_ENABLE_SSL=" .. (package:config("ssl") and "ON" or "OFF")
             })
         else
             os.cp("include", package:installdir())

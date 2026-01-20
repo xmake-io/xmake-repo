@@ -6,6 +6,7 @@ package("srpc")
     add_urls("https://github.com/sogou/srpc/archive/refs/tags/$(version).tar.gz",
              "https://github.com/sogou/srpc.git")
 
+    add_versions("v0.10.4", "7fb90d40263b5fbabf616a963096ee70c8768722a534d55862dd4f50675a0024")
     add_versions("v0.10.3", "8fc8d5d0d0b0975ed4a5d266e82841c4e94eb041cb459357b92dba4e3b64ebb8")
     add_versions("v0.10.2", "da570f3522e9dfec9c396632044fcb51b5ddc5c854ba7824d1770de138f469fb")
 

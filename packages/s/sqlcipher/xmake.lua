@@ -1,11 +1,17 @@
 package("sqlcipher")
-
     set_homepage("https://www.zetetic.net/sqlcipher/")
     set_description("SQLCipher is a standalone fork of the SQLite database library that adds 256 bit AES encryption of database files and other security features")
+    set_license("BSD-3-Clause")
 
     set_urls("https://github.com/sqlcipher/sqlcipher/archive/refs/tags/v$(version).tar.gz")
+    add_versions("4.12.0", "151a1c618c7ae175dfd0f862a8d52e8abd4c5808d548072290e8656032bb0f12")
     add_versions("4.6.0", "879fb030c36bc5138029af6aa3ae3f36c28c58e920af05ac7ca78a5915b2fa3c")
     add_versions("4.5.3", "5c9d672eba6be4d05a9a8170f70170e537ae735a09c3de444a8ad629b595d5e2")
+
+    if not is_plat("windows") then
+        -- only for GCC 15
+        add_patches("4.12.0", path.join(os.scriptdir(), "patches", "4.12.0", "stdint.patch"), "608ea7c41855b26029f114ac5b0c9abf35656dec559b86939909813da6bb78ae")
+    end
 
     add_configs("encrypt",  { description = "enable encrypt", default = true, type = "boolean"})
     add_configs("temp_store",  { description = "use an in-ram database for temporary tables", default = "2", values = {"0", "1", "2" , "3"}})
@@ -14,7 +20,7 @@ package("sqlcipher")
     if is_plat("iphoneos") then
         add_frameworks("Security")
     else
-        add_deps("openssl")
+        add_deps("openssl3")
     end
     if is_host("linux", "macosx") then
         add_deps("tclsh")
@@ -24,6 +30,12 @@ package("sqlcipher")
         add_syslinks("pthread", "dl", "m")
     elseif is_plat("android") then
         add_syslinks("dl", "m", "z")
+    end
+
+    if on_check then
+        on_check("windows|arm64", function (package)
+            raise("package(sqlcipher): does not support windows-arm64")
+        end)
     end
 
     on_load(function (package)
@@ -37,8 +49,8 @@ package("sqlcipher")
     end)
 
     on_install("windows", function (package)
-        local openssl = package:dep("openssl"):fetch()
-        assert(openssl, "Failed fetch openssl library!")
+        local openssl = package:dep("openssl3"):fetch()
+        assert(openssl, "Failed fetch openssl3 library!")
 
         local rtcc_include = ""
         for _, dir in ipairs(openssl.sysincludedirs or openssl.includedirs) do
@@ -79,8 +91,28 @@ package("sqlcipher")
     end)
 
     on_install("linux", "macosx", "iphoneos", "cross", function (package)
-        os.vrunv("./configure", {"--with-crypto-lib=none"})
-        import("package.tools.make").build(package, {"sqlite3.c"})
+        local make_args = {}
+        local packagedeps = {}
+        if package:version():ge("4.7.0") then
+            if package:config("temp_store") ~= "0" then
+                table.insert(make_args, "--with-tempstore=yes")
+            end
+            if package:config("threadsafe") == "0" then
+                table.insert(make_args, "--disable-threadsafe")
+            end
+            if package:config("encrypt") then
+                if is_plat("iphoneos") then
+                    table.insert(make_args, [[CFLAGS="-DSQLITE_HAS_CODEC -DSQLITE_EXTRA_INIT=sqlcipher_extra_init -DSQLITE_EXTRA_SHUTDOWN=sqlcipher_extra_shutdown -DSQLCIPHER_CRYPTO_CC"]])
+                else
+                    table.insert(make_args, [[CFLAGS="-DSQLITE_HAS_CODEC -DSQLITE_EXTRA_INIT=sqlcipher_extra_init -DSQLITE_EXTRA_SHUTDOWN=sqlcipher_extra_shutdown -DSQLCIPHER_CRYPTO_OPENSSL"]])
+                    table.insert(packagedeps, "openssl3")
+                end
+            end
+        else
+            table.insert(make_args, "--with-crypto-lib=none")
+        end
+        os.vrunv("./configure", make_args)
+        import("package.tools.make").build(package, {"sqlite3.c"}, {packagedeps = packagedeps})
         local configs = {}
         if package:config("shared") then
             configs.kind = "shared"

@@ -1,11 +1,10 @@
 package("tetgen")
-
     set_homepage("https://www.wias-berlin.de/software/index.jsp?id=TetGen")
     set_description("A Quality Tetrahedral Mesh Generator and a 3D Delaunay Triangulator")
     set_license("AGPL-3.0")
 
-    add_urls("https://wias-berlin.de/software/tetgen/1.5/src/tetgen1.6.0.zip")
-    add_versions("1.6.0", "e7bbbb4fb8f47f0adc3b46b26ab172557ebb90808c06e21b902b2166717af582")
+    add_urls("https://github.com/libigl/tetgen.git")
+    add_versions("1.6.0", "4f3bfba3997f20aa1f96cfaff604313a8c2c85b6")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 

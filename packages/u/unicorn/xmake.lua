@@ -6,6 +6,7 @@ package("unicorn")
     add_urls("https://github.com/unicorn-engine/unicorn/archive/refs/tags/$(version).tar.gz",
              "https://github.com/unicorn-engine/unicorn.git")
 
+    add_versions("2.1.4", "ea8863f095a0136388694e5a6063afd9bb7650e30243dd6251af59c5ce5601f4")
     add_versions("2.1.3", "5572eecd903fff0e66694310ca438531243b18782ce331a4262eeb6f6ad675bc")
     add_versions("2.1.1", "8740b03053162c1ace651364c4c5e31859eeb6c522859aa00cb4c31fa9cbbed2")
 

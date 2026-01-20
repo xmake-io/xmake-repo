@@ -1,5 +1,4 @@
 package("libxaw")
-
     set_homepage("https://gitlab.freedesktop.org/xorg/lib/libxaw")
     set_description("X.Org: X Athena Widget Set")
 
@@ -7,13 +6,13 @@ package("libxaw")
     add_versions("1.0.14", "59cfed2712cc80bbfe62dd1aacf24f58d74a76dd08329a922077b134a8d8048f")
     add_versions("1.0.16", "012f90adf8739f2f023d63a5fee1528949cf2aba92ef7ac1abcfc2ae9cf28798")
 
-    if is_plat("macosx", "linux") then
-        add_deps("libxmu", "libxpm", "libx11", "libxt", "libxext", "libice", "libsm")
-    end
-
     if is_plat("linux") then
         add_extsources("apt::libxaw7-dev", "pacman::libxaw")
     end
+
+    on_load(function (package)
+        package:add("deps", "libxmu", "libxpm", "libx11", "libxt", "libxext", "libice", "libsm", { configs = { shared = package:config("shared") } })
+    end)
 
     on_install("macosx", "linux", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),

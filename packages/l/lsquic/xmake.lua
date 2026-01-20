@@ -6,6 +6,8 @@ package("lsquic")
     add_urls("https://github.com/litespeedtech/lsquic/archive/refs/tags/$(version).tar.gz",
              "https://github.com/litespeedtech/lsquic.git")
 
+    add_versions("v4.4.1", "0a9cdd758d1447c6936c1009f5f2e01f9ce6b5c3271f5358d3d04cf428e93b2f")
+    add_versions("v4.3.2", "fbd941446f1ef532c2063f68acf8e185d86997ccb49c9d00a91337796a9dc793")
     add_versions("v4.3.0", "f0bc55eb4f135d6edade4c495c5928b25c4b3198060377cc1840dffbd99fb310")
     add_versions("v4.2.0", "f91b8b365f8c64f47798c5f6ef67cf738b8c15b572356fa6ba165bcde90f6b17")
     add_versions("v4.0.12", "9dfbb5617059f6085c3d796dae3850c9e8a65f2e35582af12babeed633a22be7")
@@ -16,19 +18,27 @@ package("lsquic")
     add_patches(">=4.0.8", "patches/4.0.8/cmake.patch", "c9b8412fbd7df511dee4d57ea5dfa50bc527e015fc808270235b91abfd9baa89")
 
     add_configs("fiu", {description = "Use Fault Injection in Userspace (FIU)", default = false, type = "boolean"})
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     add_deps("cmake")
-    add_deps("zlib", "boringssl", "ls-qpack", "ls-hpack")
+    add_deps("zlib", "ls-qpack", "ls-hpack")
 
     add_includedirs("include/lsquic")
 
-    on_load("windows", function (package)
-        if not package:is_precompiled() then
+    on_load(function (package)
+        if not package:is_precompiled() and package:is_plat("windows") then
             package:add("deps", "strawberry-perl")
+        end
+        if package:version() and package:version():lt("4.3.2") then
+            package:add("deps", "boringssl <2024.09.13")
+        else
+            package:add("deps", "boringssl")
         end
     end)
 
-    on_install("windows|!arm64", "linux", "macosx", function (package)
+    on_install("!mingw and (!windows or windows|!arm64)", function (package)
         local opt = {}
         opt.packagedeps = {"ls-qpack", "ls-hpack"}
         if package:is_plat("windows") then
@@ -42,6 +52,15 @@ package("lsquic")
         io.replace("CMakeLists.txt",
             "lib${LIB_NAME}${LIB_SUFFIX}",
             "lib${LIB_NAME}" .. (boringssl:config("shared") and ".so" or ".a"), {plain = true})
+
+        io.replace("src/liblsquic/CMakeLists.txt",
+            "${SSLLIB_LIB_ssl} ${SSLLIB_LIB_crypto}",
+            "${LIBSSL_LIB_ssl} ${LIBSSL_LIB_crypto}", {plain = true})
+
+        -- boringssl requires C++ linker
+        local file = io.open("src/liblsquic/CMakeLists.txt", "a")
+        file:print("set_target_properties(lsquic PROPERTIES LINKER_LANGUAGE CXX)")
+        file:close()
 
         local configs = {
             "-DLSQUIC_BIN=OFF",

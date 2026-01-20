@@ -1,4 +1,9 @@
 function _fix_overlong_make_recipe(package)
+    -- Skip when OpenSSL version <= 1.1.0 as they don't have the `Configurations` directory
+    -- see: https://github.com/xmake-io/xmake-repo/issues/8282
+    if package:version():le("1.1.0") then
+        return
+    end
     -- In the MSYS environment, the make recipe can be too long to execute.
     -- This patch is adapted from OpenSSL 3.
     -- For more details, see: https://github.com/openssl/openssl/issues/12116

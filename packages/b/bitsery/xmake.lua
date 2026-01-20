@@ -6,6 +6,7 @@ package("bitsery")
 
     add_urls("https://github.com/fraillt/bitsery/archive/refs/tags/$(version).tar.gz",
              "https://github.com/fraillt/bitsery.git")
+    add_versions("v5.2.5", "22a6d92ac030e999b53d57a0c9afe28723766595c6d00c91ab9c5637d4ed0eec")
     add_versions("v5.2.4", "ff741a3fee5420b31af31c7a8cefbcc3aaaf6f7f8c3ac49aa020f99b21d96020")
     add_versions("v5.2.3", "896d82ab4ccea9899ff2098aa69ad6d25e524ee1d4c747ce3232d0afe3cd05a5")
 

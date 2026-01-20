@@ -5,6 +5,8 @@ package("nowide_standalone")
 
     add_urls("https://github.com/boostorg/nowide/releases/download/v$(version)/nowide_standalone_v$(version).tar.gz",
              "https://github.com/boostorg/nowide/tree/standalone")
+
+    add_versions("11.3.1", "eaec4d331e3961f5eeb10c46a11691d62047900a7a40765b0f23cdd3181e6ca6")
     add_versions("11.3.0", "153ac93173c8de9c08e7701e471fa750f84c27e51fe329570c5aa06016591f8c")
     add_versions("11.2.0", "1869d176a8af389e4f7416f42bdd15d6a5db3c6e4ae77269ecb071a232304e1d")
 
@@ -14,8 +16,15 @@ package("nowide_standalone")
         add_syslinks("shell32")
     end
 
-    on_install("windows", "macosx", "linux", "mingw", function (package)
-        import("package.tools.cmake").install(package)
+    on_install(function (package)
+        if package:config("shared") then
+            package:add("defines", "NOWIDE_DYN_LINK")
+        end
+
+        local configs = {"-DBUILD_TESTING=OFF", "-DNOWIDE_WERROR=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)

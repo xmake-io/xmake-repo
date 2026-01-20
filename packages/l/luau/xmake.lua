@@ -6,6 +6,11 @@ package("luau")
     add_urls("https://github.com/luau-lang/luau/archive/refs/tags/$(version).tar.gz",
              "https://github.com/luau-lang/luau.git")
     
+    add_versions("696", "95e5727b50547fd6021ef98234bd8b04410b7198d78d05e0faddee9c52b3602f")
+    add_versions("0.695", "15280abccdd81171236ee9f139dfd2189d2f5db10f6e50b9bf91148dae94591b")
+    add_versions("0.693", "8843dc7d0a961b289c7e71121ca12db7f2ee41b17d428c59f088789fda9632bf")
+    add_versions("0.691", "ac4d630d475b352f96ddc511773640a69f146e30f465922e8ce406bd9294df4c")
+    add_versions("0.689", "d03c79ee496b732c72f405283ffec07185050ed993347e45a0c4a1518c8cb886")
     add_versions("0.686", "34dd6a83e71a02f684707b7041674779c03961858a8ecefdd74cad36afc31177")
     add_versions("0.683", "a2c7aaf906d625e43ca468792acf8e47a9cbd1d4352623b5e62d2a4011faa15c")
     add_versions("0.643", "069702be7646917728ffcddcc72dae0c4191b95dfe455c8611cc5ad943878d3d")

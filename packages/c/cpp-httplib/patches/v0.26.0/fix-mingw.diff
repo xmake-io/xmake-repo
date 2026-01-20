@@ -1,0 +1,39 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index d39958a..ba21f3c 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -117,8 +117,14 @@ if(BUILD_SHARED_LIBS AND WIN32 AND HTTPLIB_COMPILE)
+ 	set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+ endif()
+ 
+-if(CMAKE_SYSTEM_NAME MATCHES "Windows" AND ${CMAKE_SYSTEM_VERSION} VERSION_LESS "10.0.0")
+-	message(SEND_ERROR "Windows ${CMAKE_SYSTEM_VERSION} or lower is not supported. Please use Windows 10 or later.")
++if(CMAKE_SYSTEM_NAME MATCHES "Windows")
++    if(CMAKE_SYSTEM_VERSION)
++        if(${CMAKE_SYSTEM_VERSION} VERSION_LESS "10.0.0")
++            message(SEND_ERROR "Windows ${CMAKE_SYSTEM_VERSION} or lower is not supported. Please use Windows 10 or later.")
++        endif()
++    else()
++        message(WARNING "Cross-compiling for Windows, but CMAKE_SYSTEM_VERSION is not specified. Assuming target is Windows 10 or later.")
++    endif()
+ endif()
+ if(CMAKE_SIZEOF_VOID_P LESS 8)
+ 	message(WARNING "Pointer size ${CMAKE_SIZEOF_VOID_P} is not supported. Please use a 64-bit compiler.")
+diff --git a/httplib.h b/httplib.h
+index e15ba44..728504a 100644
+--- a/httplib.h
++++ b/httplib.h
+@@ -3083,8 +3083,13 @@ inline bool mmap::open(const char *path) {
+   auto wpath = u8string_to_wstring(path);
+   if (wpath.empty()) { return false; }
+ 
++#if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) && (_WIN32_WINNT >= _WIN32_WINNT_WIN8)
+   hFile_ = ::CreateFile2(wpath.c_str(), GENERIC_READ, FILE_SHARE_READ,
+                          OPEN_EXISTING, NULL);
++#else
++  hFile_ = ::CreateFileW(wpath.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL,
++                        OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
++#endif
+ 
+   if (hFile_ == INVALID_HANDLE_VALUE) { return false; }
+ 

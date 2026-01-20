@@ -1,0 +1,58 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 18c1b45..e46eb56 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -3,19 +3,29 @@ cmake_minimum_required(VERSION 3.26)
+ project(omath VERSION 3.5.0 LANGUAGES CXX)
+ 
+ include(CMakePackageConfigHelpers)
++include(CheckCXXCompilerFlag)
+ 
++if (MSVC)
++    check_cxx_compiler_flag("/arch:AVX2" COMPILER_SUPPORTS_AVX2)
++else ()
++    check_cxx_compiler_flag("-mavx2" COMPILER_SUPPORTS_AVX2)
++endif ()
+ 
+ option(OMATH_BUILD_TESTS "Build unit tests" ${PROJECT_IS_TOP_LEVEL})
+ option(OMATH_BUILD_BENCHMARK "Build benchmarks" ${PROJECT_IS_TOP_LEVEL})
+ option(OMATH_THREAT_WARNING_AS_ERROR "Set highest level of warnings and force compiler to treat them as errors" ON)
+ option(OMATH_BUILD_AS_SHARED_LIBRARY "Build Omath as .so or .dll" OFF)
+-option(OMATH_USE_AVX2 "Omath will use AVX2 to boost performance" ON)
++option(OMATH_USE_AVX2 "Omath will use AVX2 to boost performance" ${COMPILER_SUPPORTS_AVX2})
+ option(OMATH_IMGUI_INTEGRATION "Omath will define method to convert omath types to imgui types" OFF)
+ option(OMATH_BUILD_EXAMPLES "Build example projects with you can learn & play" OFF)
+ option(OMATH_STATIC_MSVC_RUNTIME_LIBRARY "Force Omath to link static runtime" OFF)
+ option(OMATH_SUPRESS_SAFETY_CHECKS "Supress some safety checks in release build to improve general performance" ON)
+ option(OMATH_USE_UNITY_BUILD "Will enable unity build to speed up compilation" OFF)
+ option(OMATH_ENABLE_LEGACY "Will enable legacy classes that MUST be used ONLY for backward compatibility" OFF)
++if (OMATH_USE_AVX2 AND NOT COMPILER_SUPPORTS_AVX2)
++    message(WARNING "OMATH_USE_AVX2 requested, but compiler/target does not support AVX2. Disabling.")
++    set(OMATH_USE_AVX2 OFF CACHE BOOL "Omath will use AVX2 to boost performance" FORCE)
++endif ()
+ 
+ message(STATUS "[${PROJECT_NAME}]: Building on ${CMAKE_HOST_SYSTEM_NAME}, compiler ${CMAKE_CXX_COMPILER_ID}")
+ message(STATUS "[${PROJECT_NAME}]: Warnings as errors ${OMATH_THREAT_WARNING_AS_ERROR}")
+@@ -93,13 +103,18 @@ if (OMATH_STATIC_MSVC_RUNTIME_LIBRARY)
+     )
+ endif ()
+ 
+-if (OMATH_USE_AVX2 AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+-    target_compile_options(${PROJECT_NAME} PUBLIC -mavx2 -mavx -mfma)
+-endif ()
++if (OMATH_USE_AVX2)
++    if (MSVC)
++        target_compile_options(${PROJECT_NAME} PUBLIC /ARCH:AVX2)
++    elseif (EMSCRIPTEN)
++        target_compile_options(${PROJECT_NAME} PUBLIC -msimd128 -mavx2)
++    elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
++        target_compile_options(${PROJECT_NAME} PUBLIC -mfma -mavx2)
++    endif()
++endif()
+ 
+ target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_23)
+ 
+-add_subdirectory(extlibs)
+ 
+ 
+ if (OMATH_BUILD_TESTS)

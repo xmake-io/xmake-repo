@@ -6,6 +6,7 @@ package("asbind20")
     add_urls("https://github.com/HenryAWE/asbind20/archive/refs/tags/$(version).tar.gz",
              "https://github.com/HenryAWE/asbind20.git")
 
+    add_versions("1.8.0", "cbc4b68cfbd39c96225d2f1509d0f842678b98b0cafa682daef24dc773e5bbc9")
     add_versions("1.7.1", "076afaa81eb880440c8c83df1a54cff04c72d5b0633dbe93776882bdc02348e6")
     add_versions("1.7.0", "43d0cbb0edb64b35f4a847cf16dbb41bd94d13d2cb7cdc4187de2e1d03869652")
     add_versions("1.6.0", "e936b5c1c89d7e66165f34ba4f536faab9fea397c36172b3e455436d525da461")

@@ -1,5 +1,4 @@
 package("libxmu")
-
     set_homepage("https://gitlab.freedesktop.org/xorg/lib/libxmu")
     set_description("X.Org: X miscellaneous utility routines library")
 
@@ -11,7 +10,9 @@ package("libxmu")
         add_extsources("apt::libxmu-dev", "pacman::libxmu")
     end
 
-    add_deps("libxt", "libxext")
+    on_load(function (package)
+        package:add("deps", "libxt", "libxext", { configs = { shared = package:config("shared") } })
+    end)
 
     on_install("macosx", "linux", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),

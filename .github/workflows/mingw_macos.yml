@@ -9,7 +9,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [macOS-latest]
+        os: [macOS-14]
         kind: [static, shared]
         arch: [i386, x86_64]
 

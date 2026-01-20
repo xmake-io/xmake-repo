@@ -1,18 +1,16 @@
 package("tclap")
-    set_homepage("https://sourceforge.net/projects/tclap/")
-    set_description("This is a simple templatized C++ library for parsing command line arguments.")
+    set_kind("library", {headeronly = true})
+    set_homepage("https://tclap.sourceforge.net/")
+    set_description("Templatized C++ command-line parser library")
     set_license("MIT")
 
-    set_urls("https://netcologne.dl.sourceforge.net/project/tclap/tclap-$(version).tar.bz2")
-    add_versions("1.4.0-rc1", "33e18c7828f76a9e5f2a00afe575156520e383693059ca9bc34ff562927e20c6")
+    add_urls("https://github.com/mirror/tclap/archive/refs/tags/$(version).tar.gz",
+             "https://git.code.sf.net/p/tclap/code.git")
 
-    add_deps("cmake")
+    add_versions("v1.2.5", "7e87d13734076fa4f626f6144ce9a02717198b3f054341a6886e2107b048b235")
 
     on_install(function (package)
-        io.replace("CMakeLists.txt", "add_subdirectory(docs)", "", {plain = true})
-        io.replace("CMakeLists.txt", "add_subdirectory(examples)", "", {plain = true})
-        io.replace("CMakeLists.txt", "add_subdirectory(tests)", "", {plain = true})
-        import("package.tools.cmake").install(package)
+        os.cp("include/tclap", package:installdir("include"))
     end)
 
     on_test(function (package)

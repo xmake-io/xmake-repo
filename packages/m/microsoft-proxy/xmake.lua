@@ -6,7 +6,9 @@ package("microsoft-proxy")
 
     add_urls("https://github.com/microsoft/proxy/archive/refs/tags/$(version).tar.gz",
              "https://github.com/microsoft/proxy.git")
-    
+
+    add_versions("4.0.1", "78e1d88c36d2e7ee8f8dc47f112cdb96b8838dfd4177e104b53d9b64ed9b2357")
+    add_versions("4.0.0", "b51f07f315a3cd7ecfbbaa86fa8fae2b9bc99c148c16f41cddd9c06dcb8eb58b")
     add_versions("3.4.0", "ca13bdc2b67a246a22ccda43690345daeb25bc3bb5c2c3ed1f6e4e466e9361aa")
     add_versions("3.3.0", "9a5e89e70082cbdd937e80f5113f4ceb47bf6361cf7b88cb52782906a1b655cc")
     add_versions("3.2.1", "83df61c6ef762df14b4f803a1dde76c6e96261ac7f821976478354c0cc2417a8")
@@ -17,6 +19,8 @@ package("microsoft-proxy")
     add_versions("2.3.0", "ff6f17c5360895776d29ce2b1235de7b42912468b52729810506431e352a78d0")
     add_versions("2.2.1", "096f0b2d793dffc54d41def2bca0ced594b6b8efe35ac5ae27db35802e742b96")
     add_versions("1.1.1", "6852b135f0bb6de4dc723f76724794cff4e3d0d5706d09d0b2a4f749f309055d")
+
+    add_configs("cmake", {description = "Use cmake buildsystem", default = true, type = "boolean"})
 
     if on_check then
         on_check(function (package)
@@ -39,19 +43,30 @@ package("microsoft-proxy")
         end)
     end
 
-    on_install(function (package)
+    on_load(function (package)
+        if package:config("cmake") then
+            package:add("deps", "cmake")
+        end
+    end)
 
-        if package:version():le("3.3.0") then
-            os.cp("proxy.h", package:installdir("include"))
+    on_install(function (package)
+        if package:config("cmake") then
+            local configs = {"-DBUILD_TESTING=OFF"}
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+            import("package.tools.cmake").install(package, configs)
         else
-            -- version > 3.3.0, copy the entire 'repo/include' folder into 'include'
-            -- for downstream cmake compability.
-            os.cp("include/*", package:installdir("include"))
+            if package:version() and package:version():le("3.3.0") then
+                os.vcp("proxy.h", package:installdir("include"))
+            else
+                -- version > 3.3.0, copy the entire 'repo/include' folder into 'include'
+                -- for downstream cmake compability.
+                os.vcp("include/*", package:installdir("include"))
+            end
         end
     end)
 
     on_test(function (package)
-        if package:version():le("3.3.0") then
+        if package:version() and package:version():le("3.3.0") and not package:config("cmake") then
             assert(package:has_cxxincludes("proxy.h", {configs = {languages = "c++20"}}))
         else
             assert(package:has_cxxincludes("proxy/proxy.h", {configs = {languages = "c++20"}}))

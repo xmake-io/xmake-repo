@@ -34,6 +34,7 @@ package("libgit2")
     end
 
     add_deps("pcre2", "llhttp")
+
     if not is_plat("macosx", "iphoneos") then
         add_deps("zlib")
     end
@@ -106,7 +107,7 @@ package("libgit2")
                 if package:is_plat("windows", "mingw", "msys") then
                     table.join2(links, {"ws2_32", "advapi32", "bcrypt"})
                 end
-    
+
                 io.replace("cmake/FindmbedTLS.cmake",
                     [["-L${MBEDTLS_LIBRARY_DIR} -l${MBEDTLS_LIBRARY_FILE} -l${MBEDX509_LIBRARY_FILE} -l${MBEDCRYPTO_LIBRARY_FILE}"]],
                     table.concat(links, " "), {plain = true})
@@ -122,22 +123,31 @@ package("libgit2")
             "-DUSE_HTTP_PARSER=llhttp",
             "-DUSE_GSSAPI=OFF"
         }
+
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_SSH=" .. (package:config("ssh") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_CLI=" .. (package:config("tools") and "ON" or "OFF"))
         local opt = {}
         opt.packagedeps = {"pcre2"}
+
+        -- Fix OpenSSL 3.0+ compatibility on Linux
+        if package:is_plat("linux") and package:config("https") == "openssl3" then
+            opt.cxflags = {"-DOPENSSL_API_COMPAT=0x10100000L"}
+        end
+
+        -- Fix WASM Emscripten size_t/unsigned int pointer type conflicts
+        if package:is_plat("wasm") then
+            opt.cxflags = opt.cxflags or {}
+            table.insert(opt.cxflags, "-Wno-incompatible-pointer-types")
+        end
+
         if package:is_plat("mingw") then
             local mingw = import("detect.sdks.find_mingw")()
             local dlltool = assert(os.files(path.join(mingw.bindir, "*dlltool*"))[1], "dlltool not found!")
             table.insert(configs, "-DDLLTOOL=" .. dlltool)
         end
         import("package.tools.cmake").install(package, configs, opt)
-        if package:is_plat("linux") and linuxos.name() == "fedora" then
-            io.replace(path.join(package:installdir("lib/pkgconfig"), "libgit2.pc"), 
-                "Requires.private: openssl ", "Requires.private: openssl3 ", {plain = true})
-        end
     end)
 
     on_test(function (package)

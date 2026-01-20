@@ -7,6 +7,8 @@ package("cpp-httplib")
     set_urls("https://github.com/yhirose/cpp-httplib/archive/refs/tags/$(version).tar.gz",
              "https://github.com/yhirose/cpp-httplib.git")
 
+    add_versions("v0.28.0", "ccb32f9832c906d571f61794f453223dbb724ba738265551e3cd28ca325b529d")
+    add_versions("v0.26.0", "a66f908f50ccb119769adce44fe1eac75f81b6ffab7c4ac0211bb663ffeb2688")
     add_versions("v0.23.1", "410a1347ed6bcbcc4a19af8ed8ad3873fe9fa97731d52db845c4c78f3f9c31e6")
     add_versions("v0.22.0", "fcfea48c8f2c386e7085ef8545c8a4875efa30fa6d5cf9dd31f03c6ad038da9d")
     add_versions("v0.21.0", "99cfbce46981994d8f34ed21836510d7d408ffac91315bb22c9584a83e220e60")
@@ -21,20 +23,22 @@ package("cpp-httplib")
     add_versions("v0.17.3", "95bd6dba4241656c59d6f0854d408d14c220f7c71e673319ee27d30aee741aaa")
     add_versions("v0.17.0", "dd3ba355b6aa74b7a0bff982ad0de7af6d9672fd83af30aa84eb707974d2a903")
     add_versions("v0.16.3", "c1742fc7179aaae2a67ad9bba0740b7e9ffaf4f5e62feef53101ecdef1478716")
-    add_versions("v0.8.5", "b353f3e7c124a08940d9425aeb7206183fa29857a8f720c162f8fd820cc18f0e")
-    add_versions("v0.9.2", "bfef2587a2aa31c85fb361df71c720be97076f8083e4f3881da8572f6a58054f")
-    add_versions("v0.12.1", "0e56c25c63e730ebd42e2beda6e7cb1b950131d8fc00d3158b1443a8d76f41ca")
-    add_versions("v0.12.6", "24bc594a9efcc08a5a6f3928e848d046d411a88b07bcd6f7f3851227a1f0133e")
-    add_versions("v0.14.0", "3a92248ef8cf2c32ad07f910b8e3052ff2427022b2adb871cf326fb620d2438e")
-    add_versions("v0.14.1", "2d4fb5544da643e5d0a82585555d8b7502b4137eb321a4abbb075e21d2f00e96")
-    add_versions("v0.14.2", "dbcf5590e8ed35c6745c2ad659a5ebec92f05187d1506eec24449d6db95e5084")
-    add_versions("v0.14.3", "dcf6486d9030937636d8a4f820ca9531808fd7edb283893dddbaa05f99357e63")
-    add_versions("v0.15.0", "b658e625e283e2c81437a485a95f3acf8b1d32c53d8147b1ccecc8f630e1f7bb")
-    add_versions("v0.15.1", "8d6a4a40ee8fd3f553b7e895882e60e674bd910883fc1857587dbbabee3cdb91")
-    add_versions("v0.15.2", "4afbcf4203249d2cbcb698e46e1f6fb61b479013a84844d6bb1c044e233cab6a")
-    add_versions("v0.15.3", "2121bbf38871bb2aafb5f7f2b9b94705366170909f434428352187cb0216124e")
     add_versions("v0.16.2", "75565bcdf12522929a26fb57a2c7f8cc0e175e27a9ecf51616075f3ea960da44")
+    add_versions("v0.15.3", "2121bbf38871bb2aafb5f7f2b9b94705366170909f434428352187cb0216124e")
+    add_versions("v0.15.2", "4afbcf4203249d2cbcb698e46e1f6fb61b479013a84844d6bb1c044e233cab6a")
+    add_versions("v0.15.1", "8d6a4a40ee8fd3f553b7e895882e60e674bd910883fc1857587dbbabee3cdb91")
+    add_versions("v0.15.0", "b658e625e283e2c81437a485a95f3acf8b1d32c53d8147b1ccecc8f630e1f7bb")
+    add_versions("v0.14.3", "dcf6486d9030937636d8a4f820ca9531808fd7edb283893dddbaa05f99357e63")
+    add_versions("v0.14.2", "dbcf5590e8ed35c6745c2ad659a5ebec92f05187d1506eec24449d6db95e5084")
+    add_versions("v0.14.1", "2d4fb5544da643e5d0a82585555d8b7502b4137eb321a4abbb075e21d2f00e96")
+    add_versions("v0.14.0", "3a92248ef8cf2c32ad07f910b8e3052ff2427022b2adb871cf326fb620d2438e")
+    add_versions("v0.12.6", "24bc594a9efcc08a5a6f3928e848d046d411a88b07bcd6f7f3851227a1f0133e")
+    add_versions("v0.12.1", "0e56c25c63e730ebd42e2beda6e7cb1b950131d8fc00d3158b1443a8d76f41ca")
+    add_versions("v0.9.2", "bfef2587a2aa31c85fb361df71c720be97076f8083e4f3881da8572f6a58054f")
+    add_versions("v0.8.5", "b353f3e7c124a08940d9425aeb7206183fa29857a8f720c162f8fd820cc18f0e")
 
+    add_patches(">=0.28.0", "patches/v0.23.1/fix-mingw.diff", "d2d8a4c16de3a00d9872526a187257c7ad344eba2a9f109d10b58eadce1c4059")
+    add_patches("v0.26.0", "patches/v0.26.0/fix-mingw.diff", "f7b704e86abd8fd04217056e3ffb01427185e0bae72999246a3b8d13ba23c56a")
     add_patches("v0.23.1", "patches/v0.23.1/fix-mingw.diff", "d2d8a4c16de3a00d9872526a187257c7ad344eba2a9f109d10b58eadce1c4059")
 
     add_configs("ssl",  { description = "Requires OpenSSL", default = false, type = "boolean"})
@@ -46,14 +50,28 @@ package("cpp-httplib")
 
     if on_check then
         on_check(function (package)
+            local pkg_ver = package:version()
+            if package:is_plat("windows") then
+                local winver = winos.version()
+                local vs = package:toolchain("msvc"):config("vs")
+                assert(winver and winver:gt("win8"), "package(httplib): Windows 8 or lower is neither supported nor tested.")
+                if pkg_ver and pkg_ver:ge("0.19.0") then
+                    assert(vs and tonumber(vs) > 2015, "package(httplib >= 0.19.0): VS 2015 or lower is neither supported nor tested.")
+                elseif pkg_ver and pkg_ver:ge("0.11.0") then
+                    assert(vs and tonumber(vs) > 2013, "package(httplib >= 0.11.0): VS 2013 or lower is neither supported nor tested.")
+                end
+            end
+            if pkg_ver and pkg_ver:ge("0.15.0") and package:is_plat("msys", "mingw") then
+                wprint("package(httplib): MSYS2 (including MinGW) is not officially supported or tested by httplib.")
+            end
             if package:is_plat("android") then
                 local ndk = package:toolchain("ndk")
                 local ndk_sdkver = ndk:config("ndk_sdkver")
                 assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(httplib): need ndk api level >= 24 for android")
             end
-            if package:version() and package:version():ge("0.23.0") then
+            if pkg_ver and pkg_ver:ge("0.23.0") then
                 if package:check_sizeof("void*") == "4" then
-                    raise("package(cpp-httplib >=0.23.0) unsupported 32-bit")
+                    raise("package(cpp-httplib >=0.23.0) does not support 32-bit")
                 end
             end
         end)
@@ -74,13 +92,7 @@ package("cpp-httplib")
         end
     end)
 
-    on_install(function (package)
-        if package:is_plat("android") then
-            import("core.tool.toolchain")
-            local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
-            local ndk_sdkver = ndk:config("ndk_sdkver")
-            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(httplib): need ndk api level >= 24 for android")
-        end
+    on_install("!cygwin", function (package)
         local configs = {"-DHTTPLIB_COMPILE=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))

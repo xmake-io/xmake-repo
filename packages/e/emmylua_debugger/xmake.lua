@@ -6,6 +6,7 @@ package("emmylua_debugger")
     add_urls("https://github.com/EmmyLua/EmmyLuaDebugger/archive/refs/tags/$(version).tar.gz",
              "https://github.com/EmmyLua/EmmyLuaDebugger.git")
 
+    add_versions("1.8.7", "971684c7a344eedd3cc1a1c1faa52b6a8f3d2361acb2c39797dd7dc6e6453690")
     add_versions("1.8.6", "41e053856b4cf6641a22d43d64c78a25dfbbe8eaa4a8c90e87b20b76193f1af8")
     add_versions("1.8.5", "3262b90978ac3c4d825008e1658b03cb03db547d9bb05ff7f843b05c7092a668")
     add_versions("1.8.4", "e94590ae2ad6ad3ec6d238d6e5991b4d2a7f5942fc329f8f627e1d24315bdb88")

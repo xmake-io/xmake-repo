@@ -5,6 +5,8 @@ package("joltphysics")
 
     add_urls("https://github.com/jrouwe/JoltPhysics/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jrouwe/JoltPhysics.git")
+    add_versions("v5.5.0", "3dae862a32c9092fca5b17f8e5d32cd57e035d30c3145c00040f13ca58a866df")
+    add_versions("v5.4.0", "1d2fdc33ef9a2da69efd704adc0a97da7c6ed698c2bded04b0c36f31207b0829")
     add_versions("v5.3.0", "e7f9621e480646c434150e1fbe3a9410f4ec4b04ffe54791e0678326b741b918")
     add_versions("v5.2.0", "f478afe3050c885e21403748e10ab18e3e8df8b0982c540e75f1e078ef8b2c88")
     add_versions("v5.1.0", "525c9d6fb79471b3995f9d621c9f843e71470aed286872c4d4065c1f7b7d049a")

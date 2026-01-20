@@ -6,6 +6,9 @@ package("flecs")
     add_urls("https://github.com/SanderMertens/flecs/archive/refs/tags/$(version).tar.gz",
              "https://github.com/SanderMertens/flecs.git")
 
+    add_versions("v4.1.4", "1ecd4b2b463388d1243c15a900dd62096b28cebba48ad76c204b562304945f0d")
+    add_versions("v4.1.2", "9820e965339cca4659dc3b4547059d56889c707e9947e7cdae71847b00dafa9c")
+    add_versions("v4.1.1", "4b3f2c073dcdbd2a62ce3e9fc5409504ab65acedacd9e3e650fd9a64ceac5881")
     add_versions("v4.1.0", "6eef84204d87f6eb2afc62fa6d11abece0cc051ba7a56d6775346ef8d9ebc88c")
     add_versions("v4.0.5", "9a129284b2e79d61bf855e8aa627fe04464aa58a4fb3ce92bd47f7080dbc878d")
     add_versions("v4.0.4", "a3b6238a913f65d90db18759ab5442393901da914e4a9bfe30aa8823687dce86")
@@ -30,7 +33,7 @@ package("flecs")
     add_deps("cmake")
 
     if is_plat("windows", "mingw") then
-        add_syslinks("wsock32", "ws2_32")
+        add_syslinks("wsock32", "ws2_32", "Dbghelp")
     elseif is_plat("linux") then
         add_syslinks("pthread")
     elseif is_plat("bsd") then
@@ -60,5 +63,5 @@ package("flecs")
             void test() {
                 flecs::world ecs;
             }
-        ]]}, {configs = {languages = "c++14"}, includes = "flecs.h"}))
+        ]]}, {configs = {languages = "c++17"}, includes = "flecs.h"}))
     end)

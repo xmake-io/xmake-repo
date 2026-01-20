@@ -6,6 +6,7 @@ package("kahip")
 
     add_urls("https://github.com/KaHIP/KaHIP/archive/refs/tags/$(version).tar.gz",
              "https://github.com/KaHIP/KaHIP.git")
+    add_versions("v3.22", "3cbadfbf8d503351d921531413d3b66ad347a6d6e213120db87462093bb66b7c")
     add_versions("v3.19", "ab128104d198061b4dcad76f760aca240b96de781c1b586235ee4f12fd6829c6")
     add_versions("v3.18", "e5003fa324362255d837899186cd0c3e42d376664f0d555e7e7a1d51334817c9")
     add_versions("v3.17", "3aa5fedf5a69fd3771ac97b4dbcc40f6f8a45f6c8b64e30d85c95cee124e38c3")

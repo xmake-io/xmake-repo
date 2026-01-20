@@ -141,7 +141,13 @@ package("drogon")
         if not openssl:is_system() then
             table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
         end
-        import("package.tools.cmake").install(package, configs)
+
+        local opt = {}
+        local trantor_version = package:dep("trantor"):version()
+        if trantor_version and trantor_version:ge("v1.5.25") then
+            opt.cxflags = "-DMICRO_SECONDS_PRE_SEC=1000000"
+        end
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)

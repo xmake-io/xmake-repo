@@ -8,6 +8,8 @@ package("mongoose")
     add_urls("https://github.com/cesanta/mongoose/archive/refs/tags/$(version).tar.gz",
              "https://github.com/cesanta/mongoose.git")
 
+    add_versions("7.20", "ede2371ff4e41e95fd7b2de83a7df727388307a64d3706046ead320defe35e7e")
+    add_versions("7.19", "7ae38c9d673559d1d9c1bd72c0bdd4a98a2cae995e87cae98b4604d5951762b8")
     add_versions("7.18", "8b661e8aceb00528fc21993afe218b1da0f0154575a61b63ce0791ad8b66b112")
     add_versions("7.17", "b6a6f69912c2cd0c67f85633c6b578d4dcdf385c3628acdcd21de28787c676e5")
     add_versions("7.16", "f2c42135f7bc34b3d10b6401e9326a20ba5dd42d4721b6a526826ba31c1679fd")

@@ -6,9 +6,14 @@ package("platformfolders")
     add_urls("https://github.com/sago007/PlatformFolders/archive/refs/tags/$(version).tar.gz",
              "https://github.com/sago007/PlatformFolders.git")
 
+    add_versions("4.3.0", "4d1c3139882c55f4f1206d89157a699224476e17fbeda68d891ddfb61f901ffd")
     add_versions("4.2.0", "31bb0f64a27315aec8994f226332aaafe9888d00bb69a2ff2dff9912e2f4ccf4")
 
-    add_patches("4.2.0", "patches/4.2.0/cmake-install.patch", "a38850ff7e9b91034f226685af7633ff692de3aea4798cb3dddecc6b055a7601")
+    add_patches(">=4.2.0", "patches/4.2.0/cmake-install.patch", "a38850ff7e9b91034f226685af7633ff692de3aea4798cb3dddecc6b055a7601")
+
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     if is_plat("windows", "mingw") then
         add_syslinks("ole32", "shell32", "uuid")

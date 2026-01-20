@@ -38,7 +38,7 @@ package("dlib")
         if package:config("png") then
             package:add("deps", "libpng")
         end
-        if package:config("png") then
+        if package:config("jpg") then
             package:add("deps", "libjpeg")
         end
         if package:config("gif") then

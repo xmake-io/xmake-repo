@@ -6,6 +6,7 @@ package("libntl")
 
     add_urls("https://github.com/libntl/ntl/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libntl/ntl.git")
+    add_versions("v11.6.0", "30e29eb21c5da6db031fc7dc5b1a6c728f226c7128e922421247157bc89ecd86")
     add_versions("v11.5.1", "ef578fa8b6c0c64edd1183c4c303b534468b58dd3eb8df8c9a5633f984888de5")
 
     add_deps("gmp")

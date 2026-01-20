@@ -4,6 +4,8 @@ package("objfw")
     set_license("LGPL-3.0")
 
     add_urls("https://objfw.nil.im/downloads/objfw-$(version).tar.gz")
+    add_urls("https://git.nil.im/ObjFW/ObjFW.git")
+
     add_versions("1.0.0",   "a6aa3bf590c6a7ae21cf13dbaa94a72926e67af5c7d5aef4a2b172543d1f26a3")
     add_versions("1.0.1",   "953fd8a7819fdbfa3b3092b06ac7f43a74bac736c120a40f2e3724f218d215f1")
     add_versions("1.0.2",   "b680be08bfade376d17958f3ceadaf223ac5d08df71a4bd787a42640a86db7cb")
@@ -33,14 +35,19 @@ package("objfw")
     add_versions("1.3",     "de9e8a84437c01dacb9e83d7de0e3f7add3152165707d51a4caec640e4f56ba6")
     add_versions("1.3.1",   "a3bdf28c2e166f97680601c29f204670a8c4c8e43d393321a7d1f64fe1d2f513")
     add_versions("1.3.2",   "8148df0d55d1a3218fe9965144b5c3ee2a7f4d8e43e430a6107e294043872cab")
+    add_versions("1.4.1",   "e223b1cae37453f02ea98f085c3c1f4b78dcf7c16b43d35b05d9ad4480e175b2")
+    add_versions("1.4.2",   "8e6d0cd39271130a0b6c2789fa08f2598c77d9b88acbd0e2c15c8eb1144baa08")
+    add_versions("1.4.3",   "0e987c82bd482a957360a1cd7e8d14716442f9bfba68f58fef9b81750db301d9")
 
     if is_host("linux", "macosx") then
         add_deps("autoconf", "automake", "libtool")
+        add_syslinks("pthread", "dl")
     end
 
     if is_plat("macosx") then
         add_syslinks("objc")
         add_frameworks("CoreFoundation")
+
     end
 
     add_configs("tls", { description = "Enable TLS support.", default = (is_plat("macosx") and "securetransport" or "openssl"), values = { true, false, "openssl", "gnutls", "securetransport", "mbedtls" } })
@@ -50,6 +57,8 @@ package("objfw")
     add_configs("unicode_tables", { description = "Enable Unicode tables.", default = true, type = "boolean" })
 
     add_configs("codepage_437", { description = "Enable codepage 437 support.", default = true, type = "boolean" })
+    
+
     add_configs("codepage_850", { description = "Enable codepage 850 support.", default = true, type = "boolean" })
     add_configs("codepage-858", { description = "Enable codepage 858 support.", default = true, type = "boolean" })
     add_configs("iso_8859_2", { description = "Enable ISO-8859-2 support.", default = true, type = "boolean" })

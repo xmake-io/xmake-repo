@@ -12,10 +12,14 @@ package("boost")
             return version .. "/boost_" .. (version:gsub("%.", "_"))
         end})
 
+    add_versions("cmake:1.90.0", "913ca43d49e93d1b158c9862009add1518a4c665e7853b349a6492d158b036d4")
+    add_versions("cmake:1.89.0", "954a01219bf818c7fb850fa610c2c8c71a4fa28fa32a1900056bcb6ff58cf908")
     add_versions("cmake:1.88.0", "dcea50f40ba1ecfc448fdf886c0165cf3e525fef2c9e3e080b9804e8117b9694")
     add_versions("cmake:1.87.0", "78fbf579e3caf0f47517d3fb4d9301852c3154bfecdc5eeebd9b2b0292366f5b")
     add_versions("cmake:1.86.0", "c62ce6e64d34414864fef946363db91cea89c1b90360eabed0515f0eda74c75c")
 
+    add_versions("1.90.0", "e848446c6fec62d8a96b44ed7352238b3de040b8b9facd4d6963b32f541e00f5")
+    add_versions("1.89.0", "aa25e7b9c227c21abb8a681efd4fe6e54823815ffc12394c9339de998eb503fb")
     add_versions("1.88.0", "85138e4a185a7e7535e82b011179c5b5fb72185bea9f59fe8e2d76939b2f5c51")
     add_versions("1.87.0", "d6c69e4459eb5d6ec208250291221e7ff4a2affde9af6e49c9303b89c687461f")
     add_versions("1.86.0", "2128a4c96862b5c0970c1e34d76b1d57e4a1016b80df85ad39667f30b1deba26")
@@ -64,12 +68,6 @@ package("boost")
         add_extsources("brew::boost")
     end
 
-    if is_plat("linux", "bsd") then
-        add_syslinks("pthread", "dl")
-    elseif is_plat("windows", "mingw") then
-        add_syslinks("ntdll", "shell32", "advapi32", "user32", "ws2_32")
-    end
-
     on_fetch("fetch")
 
     if on_check then
@@ -83,6 +81,12 @@ package("boost")
     end
 
     on_load(function (package)
+        if package:is_plat("linux", "bsd") then
+            package:add("syslinks", "pthread", "dl")
+        elseif package:is_plat("windows", "mingw") then
+            package:add("syslinks", "ntdll", "shell32", "advapi32", "user32", "ws2_32")
+        end
+
         local version = package:version()
         if package:config("cmake") and version:lt("1.86") then
             -- Don't break old version

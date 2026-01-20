@@ -7,6 +7,7 @@ package("inja")
     add_urls("https://github.com/pantor/inja/archive/refs/tags/$(version).tar.gz",
              "https://github.com/pantor/inja.git")
 
+    add_versions("v3.5.0", "a5f0266673c59028eab6ceeddd8b862c70abfeb32fb7a5387c16bf46f3269ab2")
     add_versions("v3.4.0", "7155f944553ca6064b26e88e6cae8b71f8be764832c9c7c6d5998e0d5fd60c55")
     add_versions("v2.1.0", "038ecde8f6dbad5d3cedb6ceb0853fd0e488d5dc57593a869633ecb30b0dfa6e")
 

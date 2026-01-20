@@ -6,6 +6,9 @@ package("abseil")
     add_urls("https://github.com/abseil/abseil-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/abseil/abseil-cpp.git")
 
+    add_versions("20260107.0", "4c124408da902be896a2f368042729655709db5e3004ec99f57e3e14439bc1b2")
+    add_versions("20250814.1", "1692f77d1739bacf3f94337188b78583cf09bab7e420d2dc6c5605a4f86785a1")
+    add_versions("20250814.0", "9b2b72d4e8367c0b843fa2bcfa2b08debbe3cee34f7aaa27de55a6cbb3e843db")
     add_versions("20250512.1", "9b7a064305e9fd94d124ffa6cc358592eb42b5da588fb4e07d09254aa40086db")
     add_versions("20250512.0", "7262daa7c1711406248c10f41026d685e88223bc92817d16fb93c19adb57f669")
     add_versions("20250127.1", "b396401fd29e2e679cace77867481d388c807671dc2acc602a0259eeb79b7811")
@@ -43,22 +46,23 @@ package("abseil")
     end)
 
     on_install(function (package)
-        if package:version() and package:version():eq("20230802.1") and package:is_plat("mingw") then
+        local version = package:version()
+        if version and version:eq("20230802.1") and package:is_plat("mingw") then
             io.replace(path.join("absl", "synchronization", "internal", "pthread_waiter.h"), "#ifndef _WIN32", "#if !defined(_WIN32) && !defined(__MINGW32__)", {plain = true})
             io.replace(path.join("absl", "synchronization", "internal", "win32_waiter.h"), "#if defined(_WIN32) && _WIN32_WINNT >= _WIN32_WINNT_VISTA", "#if defined(_WIN32) && !defined(__MINGW32__) && _WIN32_WINNT >= _WIN32_WINNT_VISTA", {plain = true})
         end
         io.replace("CMakeLists.txt", [[set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")]], "", {plain = true})
         io.replace("CMakeLists.txt", [[set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")]], "", {plain = true})
-        if package:version() and package:is_plat("macosx") then
+        if version and package:is_plat("macosx") then
             local file_path = path.join("absl", "time", "internal", "cctz", "src", "time_zone_format.cc")
-            if  package:version():ge("20240116.1") and package:version():le("20250512.1") then
+            if version:ge("20240116.1") and version:le("20260107.0") then
                 io.replace(
                     file_path,
                     "#if !defined(_XOPEN_SOURCE) && !defined(__FreeBSD__) && !defined(__OpenBSD__)", 
                     "#if !defined(_XOPEN_SOURCE) && !defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__APPLE__)",
                     {plain = true}
                 )
-            elseif package:version():eq("20230802.1") then
+            elseif version:eq("20230802.1") then
                 io.replace(
                     file_path,
                     "#if !defined(_XOPEN_SOURCE) && !defined(__OpenBSD__)", 
@@ -75,7 +79,7 @@ package("abseil")
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs, {buildir = os.tmpfile() .. ".dir"})
+        import("package.tools.cmake").install(package, configs, {builddir = os.tmpfile() .. ".dir"})
 
         -- get links and ensure link order
         import("core.base.graph")

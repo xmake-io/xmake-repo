@@ -7,18 +7,46 @@ package("ntkernel-error-category")
              "https://github.com/ned14/ntkernel-error-category.git")
     add_versions("v1.0.0", "481b60ac0b1d2c179120b3e6589884217508b6b5025a25dd6bf47399aa5d2cc5")
 
-    add_configs("headeronly", {description = "Use header only version.", default = true, type = "boolean"})
+    add_configs("cmake", {description = "Use cmake build system", default = true, type = "boolean"})
+    add_configs("headeronly", {description = "Use header only version.", default = false, type = "boolean"})
 
-    on_install(function (package)
-        local configs = {}
+    on_load(function (package)
+        if package:config("cmake") then
+            package:add("deps", "cmake")
+            package:config_set("headeronly", false)
+        end
+
         if package:config("headeronly") then
-            configs.kind = "headeronly"
+            package:set("kind", "library", {headeronly = true})
             package:add("defines", "NTKERNEL_ERROR_CATEGORY_INLINE")
-        elseif not package:config("configs.shared") then
+        elseif not package:config("shared") then
             package:add("defines", "NTKERNEL_ERROR_CATEGORY_STATIC")
         end
-        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        import("package.tools.xmake").install(package, configs)
+    end)
+
+    on_install(function (package)
+        if package:config("cmake") then
+            io.replace("CMakeLists.txt", "if(NOT PROJECT_IS_DEPENDENCY)", "if(0)", {plain = true})
+
+            local configs = {"-DBUILD_TESTING=OFF"}
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+            import("package.tools.cmake").install(package, configs)
+
+            if package:config("shared") then
+                os.tryrm(package:installdir("lib/*ntkernel-error-category_sl*"))
+            else
+                os.tryrm(package:installdir("bin/*.dll"))
+                os.tryrm(package:installdir("lib/*ntkernel-error-category_dl*"))
+            end
+        else
+            local configs = {}
+            if package:config("headeronly") then
+                configs.kind = "headeronly"
+            end
+            os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+            import("package.tools.xmake").install(package, configs)
+        end
     end)
 
     on_test(function (package)

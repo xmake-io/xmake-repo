@@ -1,0 +1,17 @@
+diff --git a/CMake/ExportConfiguration/GDCMConfig.cmake.in b/CMake/ExportConfiguration/GDCMConfig.cmake.in
+index f8e9d0b..74ddaa6 100644
+--- a/CMake/ExportConfiguration/GDCMConfig.cmake.in
++++ b/CMake/ExportConfiguration/GDCMConfig.cmake.in
+@@ -10,6 +10,12 @@ set(GDCM_MAJOR_VERSION "@GDCM_MAJOR_VERSION@")
+ set(GDCM_MINOR_VERSION "@GDCM_MINOR_VERSION@")
+ set(GDCM_BUILD_VERSION "@GDCM_BUILD_VERSION@")
+ 
++include(CMakeFindDependencyMacro)
++find_dependency(charls CONFIG)
++find_dependency(expat CONFIG)
++find_dependency(OpenJPEG CONFIG)
++find_dependency(ZLIB)
++
+ # The libraries.
+ set(GDCM_LIBRARIES "@GDCM_LIBRARIES@")
+ 

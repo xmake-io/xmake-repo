@@ -1,0 +1,12 @@
+diff --git a/libelf/libelf.map b/libelf/libelf.map
+index 10dc5059..25760bc4 100644
+--- a/libelf/libelf.map
++++ b/libelf/libelf.map
+@@ -50,7 +50,6 @@ ELFUTILS_1.0 {
+     elf_rand;
+     elf_rawdata;
+     elf_rawfile;
+-    elf_scncnt;
+     elf_strptr;
+     elf_update;
+     elf_version;

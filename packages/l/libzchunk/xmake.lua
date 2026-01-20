@@ -6,6 +6,8 @@ package("libzchunk")
     add_urls("https://github.com/zchunk/zchunk/archive/refs/tags/$(version).tar.gz",
              "https://github.com/zchunk/zchunk.git")
 
+    add_versions("1.5.3", "832381dafe192109742c141ab90a6bc0a9d7e9926a4bafbdf98f596680da2a95")
+    add_versions("1.5.2", "b7346d950fec2e0c72761f2a9148b0ece84574c49076585abf4bebd369cd4c60")
     add_versions("1.5.1", "2c187055e2206e62cef4559845e7c2ec6ec5a07ce1e0a6044e4342e0c5d7771d")
 
     add_patches("<=1.5.1", "patches/fix-cdecl.patch", "7ca1cbabe8516152e5d4e5cd5dc7c14b2fd0134f8ad7a8fa64159e07998ebeb4")

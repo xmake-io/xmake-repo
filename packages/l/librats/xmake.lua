@@ -6,6 +6,11 @@ package("librats")
     set_urls("https://github.com/DEgITx/librats/archive/refs/tags/$(version).tar.gz",
              "https://github.com/DEgITx/librats.git")
 
+    add_versions("0.5.4", "1abf6aca56add96311a7e99490bc966180e2e919b4a8a581f0c068aed7eff91d")
+    add_versions("0.4.0", "df1cc354d960a9cf6fd88c4b72939b975d67a1da5513f7a59aa38c1129b81b25")
+    add_versions("0.3.1", "6a368a5d17a3ee9b97825ed6ee8df2ef46d7dde1c27937ce78c2b90a32b49148")
+    add_versions("0.3.0", "01e7e323e75ef7ef3b93a3025c7c2f31e37a42ebe414ec707cd500e054754e4b")
+    add_versions("0.2.1", "32cc19dde006a54efdf642f54053d3506cb78815ca5b2db5c4d2c30104d33fc8")
     add_versions("0.1.5", "6e026e66c8a339f383a15ad1243d48acea601d91e584e146b8472cfc17709946")
 
     if is_plat("windows") then

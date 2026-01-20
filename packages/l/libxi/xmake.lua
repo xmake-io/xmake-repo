@@ -1,5 +1,4 @@
 package("libxi")
-
     set_homepage("https://www.x.org/")
     set_description("X.Org: Library for the X Input Extension")
 
@@ -13,11 +12,15 @@ package("libxi")
         add_extsources("apt::libxi-dev")
     end
 
-    if is_plat("macosx", "linux") then
-        add_deps("pkg-config", "libx11", "libxext", "libxfixes", "xorgproto")
+    if is_plat("macosx", "linux", "bsd", "cross") then
+        add_deps("pkg-config", "xorgproto")
     end
 
-    on_install("macosx", "linux", function (package)
+    on_load(function (package)
+        package:add("deps", "libx11", "libxext", "libxfixes", { configs = { shared = package:config("shared") } })
+    end)
+
+    on_install("macosx", "linux", "bsd", "cross", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
                          "--localstatedir=" .. package:installdir("var"),
                          "--disable-dependency-tracking",
@@ -28,6 +31,9 @@ package("libxi")
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         if package:config("pic") then
             table.insert(configs, "--with-pic")
+        end
+        if package:is_cross() then
+            table.insert(configs, "--disable-malloc0returnsnull")
         end
         import("package.tools.autoconf").install(package, configs)
     end)

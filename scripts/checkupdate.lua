@@ -61,7 +61,10 @@ function _check_version_from_github_tags(package, url)
     if repourl then
         print("checking version from github tags %s ..", repourl)
         local version_latest
-        local tags = git.tags(repourl)
+        local tags = try {function() return git.tags(repourl) end}
+        if not tags then
+            return false  -- failed to get tags
+        end
         for _, tag in ipairs(tags) do
             if _is_valid_version(tag) and (not version_latest or semver.compare(tag, version_latest) > 0) then
                 version_latest = tag
@@ -79,7 +82,10 @@ function _check_version_from_github_releases(package, url)
         print("checking version from github releases %s ..", repourl)
         local list = try {function() return os.iorunv("gh", {"release", "list", "--exclude-drafts", "--exclude-pre-releases", "-R", repourl}) end}
         if not list then
-            list = os.iorunv("gh", {"release", "list", "-R", repourl})
+            list = try {function() return os.iorunv("gh", {"release", "list", "-R", repourl}) end}
+        end
+        if not list then
+            return false  -- failed to get tags
         end
         if list then
             local version_latest

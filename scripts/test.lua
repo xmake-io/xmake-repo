@@ -94,11 +94,7 @@ function _config_packages(argv, packages)
     end
     local runtimes = argv.runtimes or argv.vs_runtime
     if runtimes then
-        if is_host("windows") then
-            table.insert(config_argv, "--vs_runtime=" .. runtimes)
-        else
-            table.insert(config_argv, "--runtimes=" .. runtimes)
-        end
+        table.insert(config_argv, "--runtimes=" .. runtimes)
     end
     if argv.xcode_sdkver then
         table.insert(config_argv, "--xcode_sdkver=" .. argv.xcode_sdkver)
@@ -261,8 +257,23 @@ function _package_is_supported(argv, packagename)
     end
 end
 
+function append_package_version(packages, line)
+    local version = line:match("add_versions%(['\"](.-)['\"]") or line:match("package:add%(['\"]versions['\"],%s*['\"](.-)['\"]")
+    if version then
+        if version:find(":", 1, true) then
+            version = version:split(":")[2]
+        end
+        if #packages > 0 and version then
+            local lastpackage = packages[#packages]
+            local splitinfo = lastpackage:split("%s+")
+            table.insert(packages, splitinfo[1] .. " " .. version)
+        end
+    end
+end
+
 function get_modified_packages()
-    local packages = {}
+    local new_packages = {}
+    local old_packages = {}
     local diff = os.iorun("git --no-pager diff HEAD^")
     for _, line in ipairs(diff:split("\n")) do
         if line:startswith("+++ b/") then
@@ -270,35 +281,39 @@ function get_modified_packages()
             if file:startswith("packages") then
                 assert(file == file:lower(), "%s must be lower case!", file)
                 local package = file:match("packages/%w/(%S-)/")
-                table.insert(packages, package)
+                table.insert(new_packages, package)
+                table.insert(old_packages, package)
             end
-        elseif line:startswith("+") and line:find("add_versions") then
-            local version = line:match("add_versions%(\"(.-)\"")
-            if version:find(":", 1, true) then
-                version = version:split(":")[2]
-            end
-            if #packages > 0 and version then
-                local lastpackage = packages[#packages]
-                local splitinfo = lastpackage:split("%s+")
-                table.insert(packages, splitinfo[1] .. " " .. version)
+        elseif line:startswith("+") and (line:find("add_versions", 1, true) or line:find("package:add%((['\"])versions%1")) then
+            append_package_version(new_packages, line)
+        elseif line:startswith("-") and (line:find("add_versions", 1, true) or line:find("package:add%((['\"])versions%1")) then
+            append_package_version(old_packages, line)
+        end
+    end
+    if #old_packages > 0 then
+        table.remove_if(old_packages, function (_, package)
+            local splitinfo = package:split("%s+")
+            return #splitinfo == 1
+        end)
+        table.remove_if(new_packages, function (_, package)
+            return table.contains(old_packages, package)
+        end)
+        -- {
+        --     "pkgname", <-- remove this
+        --     "pkgname pkgver"
+        -- }
+        for i = #new_packages - 1, 1, -1 do
+            if new_packages[i + 1]:startswith(new_packages[i] .. " ") then
+                table.remove(new_packages, i)
             end
         end
     end
-    return table.unique(packages)
+    return table.unique(new_packages)
 end
 
 -- @see https://github.com/xmake-io/xmake-repo/issues/6940
 function _lock_packages(packages)
-    local locked_packages = {
-        "flashlight",
-        "telegram-bot-api",
-        "systemd",
-        "libxcrypt",
-        "libselinux",
-        "libxls",
-        "openssh",
-        "hashcat"
-    }
+    local locked_packages = {}
     for _, package in ipairs(packages) do
         if table.contains(locked_packages, package) then
             raise("package(%s) has been locked, please do not submit it, @see https://github.com/xmake-io/xmake-repo/issues/6940", package)
@@ -371,7 +386,7 @@ function main(...)
     end
 
     -- lock packages
-    _lock_packages(packages)
+    -- _lock_packages(packages)
 
     -- require packages
     _require_packages(argv, packages)

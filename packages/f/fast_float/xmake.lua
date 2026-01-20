@@ -22,6 +22,9 @@ package("fast_float")
     add_versions("v7.0.0", "d2a08e722f461fe699ba61392cd29e6b23be013d0f56e50c7786d0954bffcb17")
     add_versions("v8.0.0", "f312f2dc34c61e665f4b132c0307d6f70ad9420185fa831911bc24408acf625d")
     add_versions("v8.0.2", "e14a33089712b681d74d94e2a11362643bd7d769ae8f7e7caefe955f57f7eacd")
+    add_versions("v8.1.0", "4bfabb5979716995090ce68dce83f88f99629bc17ae280eae79311c5340143e1")
+    add_versions("v8.2.1", "e18b59feaff3aca8e9426e6969f18a86b291e6ec6553744aa6b5a033a21d62ba")
+    add_versions("v8.2.2", "e64b5fff88e04959154adbd5fb83331d91f2e04ac06454671cdfcbdff172b158")
 
     if is_plat("wasm") then
         add_patches("v3.4.0", path.join(os.scriptdir(), "patches", "emscripten_fix.patch"), "482705431f67e6f0a375ed7bfe87d6856e7d13f071db6157e1d5659834b0eb50")

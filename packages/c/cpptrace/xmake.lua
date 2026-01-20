@@ -31,6 +31,8 @@ package("cpptrace")
 
     add_patches("0.5.2", "https://github.com/jeremy-rifkin/cpptrace/commit/599d6abd6cc74e80e8429fc309247be5f7edd5d7.patch", "977e6c17400ff2f85362ca1d6959038fdb5d9e5b402cfdd705b422c566e8e87a")
 
+    add_configs("libunwind", {description = "Enable libunwind for stack unwinding", default = false, type = "boolean"})
+
     if is_plat("windows", "mingw") then
         add_syslinks("dbghelp")
     elseif is_plat("linux", "cross") then
@@ -41,6 +43,12 @@ package("cpptrace")
     if not is_plat("windows") then
         add_deps("libdwarf")
     end
+
+    on_load(function (package)
+        if package:config("libunwind") then
+            package:add("deps", "libunwind")
+        end
+    end)
 
     on_install("linux", "macosx", "windows", "mingw", "cross", function (package)
         if not package:config("shared") then
@@ -55,6 +63,7 @@ package("cpptrace")
             "-DCPPTRACE_USE_EXTERNAL_ZSTD=ON",
             "-DCPPTRACE_VCPKG=ON",
         }
+        table.insert(configs, "-DCPPTRACE_UNWIND_WITH_LIBUNWIND=" .. (package:config("libunwind") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
@@ -76,5 +85,9 @@ package("cpptrace")
             ]]
         end
 
-        assert(package:check_cxxsnippets({test = code}, {configs = {languages = "c++11"}, includes = {"cpptrace/cpptrace.hpp"}}))
+        local languages = "c++11"
+        if package:is_plat("windows") and package:has_tool("cxx", "clang", "clangxx") then
+            languages = "c++14"
+        end
+        assert(package:check_cxxsnippets({test = code}, {configs = {languages = languages}, includes = {"cpptrace/cpptrace.hpp"}}))
     end)

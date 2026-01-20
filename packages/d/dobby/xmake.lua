@@ -10,32 +10,25 @@ package("dobby")
     add_patches("2023.4.14", path.join(os.scriptdir(), "patches", "fix-compile-on-lower-version-of-gcc.patch"), "632aad7d79e2afd9587089a39c3eb2b64a3750ab3c8954f04672c13abcddbbae")
 
     add_configs("symbol_resolver", {description = "Enable symbol resolver plugin.", default = true,  type = "boolean"})
-    add_configs("import_table_replacer", {description = "Enable import table replacer plugin.", default = false, type = "boolean"})
-    add_configs("android_bionic_linker_utils", {description = "Enable android bionic linker utils.",  default = false, type = "boolean"})
+    add_configs("import_table_replacer", {description = "Enable import table replacer plugin.", default = false, type = "boolean", readonly = not is_plat("macosx", "iphoneos")})
+    add_configs("android_bionic_linker_utils", {description = "Enable android bionic linker utils.",  default = false, type = "boolean", readonly = not is_plat("android")})
 
     add_configs("near_branch", {description = "Enable near branch trampoline.", default = true,  type = "boolean"})
     add_configs("full_floating_point_register_pack", {description = "Enables saving and packing of all floating-point registers.", default = false, type = "boolean"})
-
-    if is_plat("macosx") then
-        -- @see https://github.com/xmake-io/xmake-repo/pull/5920#issuecomment-2522876049
-        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-    end
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
 
     add_deps("cmake")
-
     on_install("linux", "macosx", "android", "iphoneos", function (package)
         local configs = {"-DDOBBY_BUILD_EXAMPLE=OFF", "-DDOBBY_BUILD_TEST=OFF"}
-        table.insert(configs, "-DDOBBY_DEBUG=" .. (package:debug() and "ON" or "OFF"))
+        table.insert(configs, "-DDOBBY_DEBUG=" .. (package:is_debug() and "ON" or "OFF"))
         table.insert(configs, "-DPlugin.SymbolResolver=" .. (package:config("symbol_resolver") and "ON" or "OFF"))
         table.insert(configs, "-DPlugin.ImportTableReplace=" .. (package:config("import_table_replacer") and "ON" or "OFF"))
         table.insert(configs, "-DPlugin.Android.BionicLinkerUtil=" .. (package:config("android_bionic_linker_utils") and "ON" or "OFF"))
         table.insert(configs, "-DNearBranch=" .. (package:config("near_branch") and "ON" or "OFF"))
         table.insert(configs, "-DFullFloatingPointRegisterPack=" .. (package:config("full_floating_point_register_pack") and "ON" or "OFF"))
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
 
         if package:is_plat("android") then
             local ndk = package:toolchain("ndk")
@@ -48,18 +41,41 @@ package("dobby")
             table.insert(configs, "-DCMAKE_SYSTEM_VERSION=" .. sdkver)
         elseif package:is_plat("iphoneos") then
             table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. package:arch())
-            table.insert(configs, "-DCMAKE_OSX_DEPLOYMENT_TARGET=9.3") -- @from scripts/platform_builder.py:158
+            table.insert(configs, "-DCMAKE_OSX_DEPLOYMENT_TARGET=9.3") -- from scripts/platform_builder.py:158
         end
 
-        import("package.tools.cmake").install(package, configs, {buildir = "build"})
-        os.trycp("include", package:installdir())
-        os.trycp(package:config("shared") and "build/**.so" or "build/**.a", package:installdir("lib"))
+        local cxflags = {}
+        if not package:is_debug() then
+            io.replace("CMakeLists.txt", "add_subdirectory(external/logging)", "", {plain = true})
+            io.replace("CMakeLists.txt", "get_target_property(logging.SOURCE_FILE_LIST logging SOURCES)", "", {plain = true})
+            io.replace("CMakeLists.txt", "${logging.SOURCE_FILE_LIST}", "", {plain = true})
+            table.insert(cxflags, "-DDOBBY_LOGGING_DISABLE")
+        end
+
+        import("package.tools.cmake").build(package, configs, {buildir = "build", cxflags = cxflags})
+        os.cp("include/dobby.h", package:installdir("include"))
+        if package:config("android_bionic_linker_utils") then
+            os.cp("builtin-plugin/BionicLinkerUtil/bionic_linker_util.h", package:installdir("include"))
+        end
+        local so_extname = "so"
+        if package:is_plat("macosx", "iphoneos") then
+            so_extname = "dylib"
+        end
+        os.cp(package:config("shared") and "build/libdobby." .. so_extname or "build/libdobby.a", package:installdir("lib"))
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            void test() {
-                DobbyGetVersion();
-            }
-        ]]}, {configs = {languages = "c++11"}, includes = "dobby.h"}))
+        local check_funcs = {"DobbyGetVersion"}
+        if package:config("symbol_resolver") then
+            table.insert(check_funcs, "DobbySymbolResolver")
+        end
+        if package:config("import_table_replacer") then
+            table.insert(check_funcs, "DobbyImportTableReplace")
+        end
+        if package:config("android_bionic_linker_utils") then
+            table.insert(check_funcs, "linker_dlopen")
+        end
+        for _, func in ipairs(check_funcs) do
+            assert(package:has_cxxfuncs(func, {configs = {languages = "c++11"}, includes = "dobby.h"}))
+        end
     end)
