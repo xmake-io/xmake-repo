@@ -223,7 +223,6 @@ package("openssl3")
 
         local target = target_plat .. "-" .. target_arch
         local configs = {target,
-                         "-DOPENSSL_NO_HEARTBEATS",
                          package:config("shared") and "shared" or "no-shared",
                          "--libdir=lib",
                          "--openssldir=" .. package:installdir():gsub("\\", "/"),
