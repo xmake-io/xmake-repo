@@ -15,6 +15,10 @@ package("zziplib")
     add_versions("v0.13.72", "93ef44bf1f1ea24fc66080426a469df82fa631d13ca3b2e4abaeab89538518dc")
     add_versions("v0.13.73", "2aa9d317f70060101064863e4e8fe698c32301e2d293d2b4964608cf2d5b2d8b")
 
+    if is_plat("mingw") then
+        add_patches("0.13.80", "patches/0.13.80/mingw-support.patch", "51f1e75249d7b493d269cce817e5e7ffa7aabffd28d72425381e11c1f256fe3d")
+    end
+
     add_deps("cmake")
     add_deps("zlib")
 
