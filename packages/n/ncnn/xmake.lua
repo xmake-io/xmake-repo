@@ -6,6 +6,7 @@ package("ncnn")
     add_urls("https://github.com/Tencent/ncnn/archive/refs/tags/$(version).tar.gz",
             "https://github.com/Tencent/ncnn.git", { submodules = false })
 
+    add_versions("20260113", "2fdc5c6e37f8552921a9daad498a1be54a6fa6edd32c1a9e3030b27fab253b47")
     add_versions("20250916", "7d463f1e5061facd02b8af5e792e059088695cdcfcc152c8f4892f6ffe5eab1a")
     add_versions("20250503", "3afea4cf092ce97d06305b72c6affbcfb3530f536ae8e81a4f22007d82b729e9")
 
@@ -97,9 +98,12 @@ package("ncnn")
     end)
 
     on_install(function (package)
-        io.replace("src/CMakeLists.txt", "if(NOT NCNN_SHARED_LIB AND APPLE)", "if(APPLE)", {plain = true})
-        local _, count = io.replace("src/CMakeLists.txt", "                if(NOT NCNN_SHARED_LIB)", "                if(1)", {plain = true})
-        print("---info---\nio.replace() count = %d\n--------", count)
+        local moltenvk = package:dep("moltenvk")
+        if moltenvk and moltenvk:config("shared") then
+            io.replace("src/CMakeLists.txt", "if(NOT NCNN_SHARED_LIB AND APPLE)", "if(APPLE)", {plain = true})
+            local _, count = io.replace("src/CMakeLists.txt", "                if(NOT NCNN_SHARED_LIB)", "                if(1)", {plain = true})
+            print("---info---\nio.replace() count = %d\n--------", count)
+        end
         local configs = {
             "-DNCNN_BUILD_EXAMPLES=OFF",
             "-DNCNN_BUILD_TOOLS=OFF",
@@ -124,7 +128,6 @@ package("ncnn")
         table.insert(configs, "-DNCNN_PIXEL_DRAWING=" .. (package:config("pixel_drawing") and "ON" or "OFF"))
         if package:config("vulkan") then
             table.insert(configs, "-DCMAKE_CXX_STANDARD=11")
-            local moltenvk = package:dep("moltenvk")
             if moltenvk then
                 table.insert(configs, "-DVulkan_LIBRARY=" .. path.join(moltenvk:installdir("lib"), "libMoltenVK." .. (moltenvk:config("shared") and "dylib" or "a")))
             end
