@@ -6,6 +6,7 @@ package("osqp")
     add_urls("https://github.com/osqp/osqp/releases/download/$(version)/osqp-$(version)-src.tar.gz",
              "https://github.com/osqp/osqp.git")
 
+    add_versions("v1.0.0", "ec0bb8fd34625d0ea44274ab3e991aa56e3e360ba30935ae62476557b101c646")
     add_versions("v0.6.3", "285b2a60f68d113a1090767ec8a9c81a65b3af2d258f8c78a31cc3f98ba58456")
 
     add_patches("0.6.3", "patches/0.6.3/cmake.patch", "ffe3809019eebae7559e8c4016431e9d3e9bc35776d9affe65b83904dd753999")
