@@ -6,6 +6,7 @@ package("h5cpp")
     add_urls("https://github.com/ess-dmsc/h5cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ess-dmsc/h5cpp.git")
 
+    add_versions("v0.6.1", "ee8e8b867d4b5018e4035b0c9bc91f11da9f81dc013554ada339c04ac3398a07")
     add_versions("v0.6.0", "72b459c92670628d730b3386fe6f4ac61218885afa904f234a181c2022a9f56f")
     add_versions("v0.5.1", "8fcab57ffbc2d799fe315875cd8fcf67e8b059cccc441ea45a001c03f6a9fd25")
 
