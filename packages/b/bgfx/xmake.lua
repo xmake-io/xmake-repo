@@ -22,7 +22,7 @@ package("bgfx")
     if is_plat("windows") then
         add_syslinks("user32", "gdi32", "psapi")
         add_includedirs("include", "include/compat/msvc")
-        add_cxxflags("/Zc:__cplusplus")
+        add_cxxflags("/Zc:__cplusplus", {tools = {"msvc", "cl", "clang_cl", "clang-cl"}})
     elseif is_plat("macosx") then
         add_frameworks("Metal", "QuartzCore", "Cocoa", "IOKit")
     elseif is_plat("iphoneos") then
