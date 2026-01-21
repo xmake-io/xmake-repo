@@ -7,6 +7,7 @@ package("xtensor-blas")
 
     add_urls("https://github.com/xtensor-stack/xtensor-blas/archive/refs/tags/$(version).tar.gz",
              "https://github.com/xtensor-stack/xtensor-blas.git")
+    add_versions("0.22.0", "4cda5ed77ba4b78fdd913a70ccfdf53d86185f61da5713f9edd935488d5db828")
     add_versions("0.21.0", "89ce6eceb47018f3b557945468502593e0bf0e5a816548aad8ac22247c8198b1")
     add_versions("0.19.1", "c77cc4e2297ebd22d0d1c6e8d0a6cf0975176afa8cb99dbfd5fb2be625a0248f")
     add_versions("0.20.0", "272f5d99bb7511a616bfe41b13a000e63de46420f0b32a25fa4fb935b462c7ff")
