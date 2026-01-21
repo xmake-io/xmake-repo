@@ -4,6 +4,7 @@ package("pdcursesmod")
 
     add_urls("https://github.com/Bill-Gray/PDCursesMod/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Bill-Gray/PDCursesMod.git")
+    add_versions("v4.5.4", "d5efc7f2b7107abe382bdf8bac0a9bfd8e716facbca2bb9cf12dfeb8e1122c4b")
     add_versions("v4.5.3", "5be1c4a1ba42c958deb219e6fe45fd3315444bc47cfe0c89f5ac0d8c00cc5930")
     add_versions("v4.5.2", "bd61d0026826b40ac43265c1f9a462a1903fef76f3ee231265ba22d528cf5ae3")
     add_versions("v4.4.0", "a53bf776623decb9e4b2c2ffe43e52d83fe4455ffd20229b4ba36c92918f67dd")
