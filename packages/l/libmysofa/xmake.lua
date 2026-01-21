@@ -6,6 +6,7 @@ package("libmysofa")
     add_urls("https://github.com/hoene/libmysofa/archive/refs/tags/$(version).tar.gz",
              "https://github.com/hoene/libmysofa.git")
 
+    add_versions("v1.3.3", "a15f7236a2b492f8d8da69f6c71b5bde1ef1bac0ef428b94dfca1cabcb24c84f")
     add_versions("v1.3.2", "6c5224562895977e87698a64cb7031361803d136057bba35ed4979b69ab4ba76")
 
     add_patches("v1.3.2", "patches/v1.3.2/fix-build.patch", "a28aed4c5e766081ff90a7aed74c58b77927432a80385f6aad9f3278cde6bb59")
