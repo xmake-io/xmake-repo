@@ -7,6 +7,7 @@ package("mlpack")
     add_urls("https://github.com/mlpack/mlpack/archive/refs/tags/$(version).tar.gz",
              "https://github.com/mlpack/mlpack.git")
 
+    add_versions("4.6.0", "8b90c18b25f94319c5969796e63fea96f3f85d9eff41323f12e9964706935632")
     add_versions("4.3.0", "08cd54f711fde66fc3b6c9db89dc26776f9abf1a6256c77cfa3556e2a56f1a3d")
 
     if is_plat("linux") then
