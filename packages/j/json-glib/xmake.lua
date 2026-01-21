@@ -5,6 +5,7 @@ package("json-glib")
     set_license("LGPL-2.1")
 
     add_urls("https://github.com/GNOME/json-glib/archive/refs/tags/$(version).tar.gz")
+    add_versions("1.10.8", "7a114bdac0b2611a7207e981c37fa9b1e70d9cb642470cd9e967b135428cec52")
     add_versions("1.10.6", "d23cbd4094a32cc05cf22cd87a83da1f799e182e286133b49fde3c9241a32006")
     add_versions("1.10.0", "447890f9de2a04c312871768208f6c8aeec4069392af7605bc77e61165dcb374")
     add_versions("1.9.2", "277c3b7fc98712e30115ee3a60c3eac8acc34570cb98d3ff78de85ed804e0c80")
