@@ -6,6 +6,7 @@ package("open3d")
 
     add_urls("https://github.com/isl-org/Open3D/archive/refs/tags/$(version).tar.gz",
              "https://github.com/isl-org/Open3D.git")
+    add_versions("v0.19.0", "5cedb0e093c6baceab801b903eb8e2558bc2b3999ac57762bf78a39d5e15394a")
     add_versions("v0.15.1", "4bcfbaa6fcbcc14fba46a4d719b9256fffac09b23f8344a7d561b26394159660")
     add_versions("v0.17.0", "a7526efaf54434c4d54276fa0ddc63a1555401c30fb10fec9efa3241326bdd27")
 
