@@ -7,6 +7,7 @@ package("functionalplus")
     add_urls("https://github.com/Dobiasd/FunctionalPlus/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Dobiasd/FunctionalPlus.git")
 
+    add_versions("v0.2.27", "7852a3507e10153b3efb72d1eb6d252ceb8204bd89759b0af5420bbc57eefbae")
     add_versions("v0.2.26", "119894b4ab521d22e7dbd4692c364dc911cf206fca011071575658d4053e61f2")
     add_versions("v0.2.25", "9b5e24bbc92f43b977dc83efbc173bcf07dbe07f8718fc2670093655b56fcee3")
     add_versions("v0.2.24", "446c63ac3f2045e7587f694501882a3d7c7b962b70bcc08deacf5777bdaaff8c")
