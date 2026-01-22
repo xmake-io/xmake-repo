@@ -6,6 +6,7 @@ package("ginkgo")
 
     add_urls("https://github.com/ginkgo-project/ginkgo/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ginkgo-project/ginkgo.git")
+    add_versions("v1.11.0", "8052c3d5994e1c996ebabe50a169deb565965da4f1c6c02e814ff0c7146c0378")
     add_versions("v1.9.0", "18271e99f81a89cf27102f9d4e84653ae7a0cc745fcda9a7ed486c455553780b")
     add_versions("v1.8.0", "421efaed1be2ef11d230b79fc68bcf7e264a2c57ae52aff6dec7bd90f8d4ae30")
     add_versions("v1.7.0", "f4b362bcb046bc53fbe2e578662b939222d0c44b96449101829e73ecce02bcb3")
