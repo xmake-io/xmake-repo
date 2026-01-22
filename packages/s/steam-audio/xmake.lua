@@ -30,7 +30,7 @@ package("steam-audio")
     end
 
     on_check(function (package)
-        if package:version() and package:version():eq("4.7.0") and package:has_tool("cxx", "clang") then
+        if package:version() and package:version():ge("4.7.0") and package:has_tool("cxx", "clang") then
             raise("package(steam-audio >=4.7.0) unsupported clang")
         end
     end)
