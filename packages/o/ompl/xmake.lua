@@ -9,7 +9,7 @@ package("ompl")
     add_versions("1.7.0", "e2e2700dfb0b4c2d86e216736754dd1b316bd6a46cc8818e1ffcbce4a388aca9")
 
     add_configs("vamp", {description = "Build VAMP", default = false, type = "boolean", readonly = true})
-    add_configs("python", {description = "Build Python bindings", default = true, type = "boolean"})
+    add_configs("python", {description = "Build Python bindings", default = false, type = "boolean"})
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
@@ -24,29 +24,21 @@ package("ompl")
 
     add_deps("cmake")
     add_deps("eigen")
-    add_deps("boost >=1.68", {configs = {
-        math = true,
-        graph = true,
-        program_options = true,
-        serialization = true,
-        regex = true,
-        thread = true,
-    }})
 
     on_load(function (package)
+        local boost_configs = {
+            math = true,
+            graph = true,
+            program_options = true,
+            serialization = true,
+            regex = true,
+            thread = true,
+        }
         if package:config("python") then
             package:add("deps", "python 3.x")
-            package:add("deps", "boost >=1.68", {configs = {
-                math = true,
-                graph = true,
-                program_options = true,
-                serialization = true,
-                regex = true,
-                thread = true,
-
-                python = true,
-            }})
+            boost_configs.python = true
         end
+        package:add("deps", "boost >=1.68", {configs = boost_configs})
     end)
 
     on_install(function (package)
