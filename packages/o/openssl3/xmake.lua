@@ -34,6 +34,8 @@ package("openssl3")
 
     -- https://security.stackexchange.com/questions/173425/how-do-i-calculate-md2-hash-with-openssl
     add_configs("md2", {description = "Enable MD2 on OpenSSl3 or not", default = false, type = "boolean"})
+    add_configs("multi-threading", {description = "Enable multi-threading support.", default = true, type = "boolean"})
+
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
@@ -72,7 +74,10 @@ package("openssl3")
         if package:is_plat("windows", "mingw", "msys") then
             package:add("syslinks", "ws2_32", "user32", "crypt32", "advapi32")
         elseif package:is_plat("linux", "bsd", "cross") then
-            package:add("syslinks", "pthread", "dl")
+            package:add("syslinks", "dl")
+            if (package:config("multi-threading")) then
+                package:add("syslinks", "pthread")
+            end
         end
         if package:is_plat("linux") then
             package:add("extsources", "apt::libssl-dev")
@@ -101,6 +106,7 @@ package("openssl3")
         if package:config("md2") then
             table.insert(configs, "enable-md2")
         end
+        table.insert(configs, package:config("multi-threading") and "threads" or "no-threads")
 
         if package:config("jom") and jom then
             table.insert(configs, "no-makedepend")
@@ -144,6 +150,7 @@ package("openssl3")
         if package:config("md2") then
             table.insert(configs, "enable-md2")
         end
+        table.insert(configs, package:config("multi-threading") and "threads" or "no-threads")
 
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
         buildenvs.RC = package:build_getenv("mrc")
@@ -177,6 +184,7 @@ package("openssl3")
         if package:config("md2") then
             table.insert(configs, "enable-md2")
         end
+        table.insert(configs, package:config("multi-threading") and "threads" or "no-threads")
 
         os.vrunv("./config", configs, {envs = buildenvs})
         local makeconfigs = {CFLAGS = buildenvs.CFLAGS, ASFLAGS = buildenvs.ASFLAGS}
@@ -231,6 +239,8 @@ package("openssl3")
         if package:config("md2") then
             table.insert(configs, "enable-md2")
         end
+        table.insert(configs, package:config("multi-threading") and "threads" or "no-threads")
+
         if package:is_plat("wasm") then
             -- @see https://github.com/openssl/openssl/issues/12174
             table.insert(configs, "no-afalgeng")
