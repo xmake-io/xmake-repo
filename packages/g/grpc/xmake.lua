@@ -6,6 +6,7 @@ package("grpc")
     add_urls("https://github.com/grpc/grpc/archive/refs/tags/$(version).zip",
              "https://github.com/grpc/grpc.git")
 
+    add_versions("v1.74.0", "1f6ef5bb3cfaec416ef3c8cc19b26eb83c669f131400c2460671d50ff5784920")
     add_versions("v1.69.0", "987763312292c8a6088108173ccde2b336a40f35ae22b5b7b3744e44929aaf9f")
     add_versions("v1.51.3", "17720fd0a690e904a468b4b3dae6fa5ec40b0d1f4d418e2ca092e2f92f06fce0")
     add_versions("v1.62.1", "f672a3a3b370f2853869745110dabfb6c13af93e17ffad4676a0b95b5ec204af")
@@ -59,6 +60,8 @@ package("grpc")
     end)
 
     on_install("!wasm", function (package)
+        -- Fix ucrt
+        io.replace("CMakeLists.txt", "include(cmake/msvc_static_runtime.cmake)", "", {plain = true})
         -- @see https://github.com/grpc/grpc/issues/36654#issuecomment-2228569158
         if package:is_plat("macosx") and package:config("shared") then
             io.replace("CMakeLists.txt", "target_compile_features(upb_textformat_lib PUBLIC cxx_std_14)",
