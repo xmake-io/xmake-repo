@@ -6,6 +6,7 @@ package("dpp")
     add_urls("https://github.com/brainboxdotcc/DPP/archive/refs/tags/$(version).tar.gz",
              "https://github.com/brainboxdotcc/DPP.git")
 
+    add_versions("v10.1.4", "f11b6d3fc5cc8febcf672b573ca74293ead6c6ea48a66ac0316ab9a5cbd09441")
     add_versions("v10.0.31", "3e392868c0dc3d0f13a00cfa190a925a20bde62bea58fd87d4acf14de11062bf")
     add_versions("v10.0.30", "fb7019770bd5c5f0539523536250da387ee1fa9c92e59c0bcff6c9adaf3d77e8")
     add_versions("v10.0.29", "a37e91fbdabee20cb0313700588db4077abf0ebabafe386457d999d22d2d0682")
