@@ -55,7 +55,7 @@ package("ginkgo")
             opt.cmake_generator = "Ninja"
         end
         if package:is_plat("windows") then
-            opt.cxflags = "/bigobj"
+            opt.cxflags = "/bigobj /Gy"
         end
         import("package.tools.cmake").install(package, configs, opt)
     end)
