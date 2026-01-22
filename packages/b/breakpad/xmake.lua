@@ -6,6 +6,7 @@ package("breakpad")
              "https://github.com/google/breakpad.git",
              "https://chromium.googlesource.com/breakpad/breakpad.git")
 
+    add_versions("v2024.02.16", "b1940cd9231822f1d332d1776456afa8d452e59799cbeef70641885c39547b28")
     add_versions("v2023.06.01", "81555be3595e25e8be0fe6dd34e9490beba224296e0a8a858341e7bced67674d")
     add_versions("v2023.01.27", "f187e8c203bd506689ce4b32596ba821e1e2f034a83b8e07c2c635db4de3cc0b")
 
