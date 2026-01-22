@@ -42,7 +42,10 @@ package("ompl")
     end)
 
     on_install(function (package)
+        -- support static build
         io.replace("src/ompl/CMakeLists.txt", "add_library(ompl SHARED ${OMPL_SOURCE_CODE})", "add_library(ompl ${OMPL_SOURCE_CODE})", {plain = true})
+        -- fix mingw
+        io.replace("src/ompl/CMakeLists.txt", "target_link_libraries(ompl psapi ws2_32)", "target_link_libraries(ompl PRIVATE psapi ws2_32)", {plain = true})
 
         local configs = {
             "-DOMPL_VERSIONED_INSTALL=OFF",
