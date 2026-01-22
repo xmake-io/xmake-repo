@@ -78,7 +78,7 @@ package("ncnn")
                     print("================================")
                     print("moltenvk_dir: %s", moltenvk_dir)
                     print("================================")
-                    package:add("linkdirs", path.join("lib"), moltenvk_dir)
+                    package:add("linkdirs", package:installdir("lib"), moltenvk_dir)
                     package:add("links", "ncnn" .. (package:is_debug() and "d" or ""), "MoltenVK")
                 end
                 package:add("frameworks", "Metal", "Foundation", "QuartzCore", "CoreGraphics", "IOSurface")
