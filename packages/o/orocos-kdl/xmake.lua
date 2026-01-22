@@ -1,5 +1,5 @@
 package("orocos-kdl")
-    set_homepage("http://www.orocos.org/")
+    set_homepage("https://www.orocos.org/")
     set_description("Orocos Kinematics and Dynamics C++ library")
 
     add_urls("https://github.com/orocos/orocos_kinematics_dynamics/archive/refs/tags/$(version).tar.gz",
@@ -8,6 +8,9 @@ package("orocos-kdl")
     add_versions("1.5.3", "3895eed1b51a6803c79e7ac4acd6a2243d621b887ac26a1a6b82a86a1131c3b6")
 
     add_configs("models", {description = "Build models for some well known robots", default = false, type = "boolean"})
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     add_links("orocos-kdl-models", "orocos-kdl")
 
@@ -20,6 +23,7 @@ package("orocos-kdl")
         local configs = {
             "-DENABLE_TESTS=OFF",
             "-DENABLE_EXAMPLES=OFF",
+            "-DCMAKE_CXX_STANDARD=14",
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
