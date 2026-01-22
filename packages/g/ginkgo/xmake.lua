@@ -22,8 +22,14 @@ package("ginkgo")
 
     if on_check then
         on_check("windows", function(package)
-            if package:version():ge("1.10.0") and package:is_arch("x86") then
-                raise("package(ginkgo >= v1.10.0): not support windows|x86")
+            if package:version():ge("1.10.0") then
+                if package:is_arch("x86") then
+                    raise("package(ginkgo >= v1.10.0): not support windows|x86")
+                end
+                -- Temporarily disabled due to too many symbols exported on arm64.
+                if package:is_arch("arm64") and package:config("shared") then
+                    raise("package(ginkgo >= v1.10.0): not support windows|arm64 shared")
+                end
             end
         end)
     end
