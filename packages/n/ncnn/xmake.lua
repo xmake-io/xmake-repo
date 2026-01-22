@@ -44,7 +44,6 @@ package("ncnn")
     on_load(function (package)
         local ncnn_ver = package:version()
         local glslang = "glslang-nihui" .. (ncnn_ver and (" " .. ncnn_ver) or "")
-        print("---info---\nglslang = %s\n--------", glslang)
         if package:config("vulkan") then
             package:add("deps", glslang)
             if package:is_plat("macosx", "iphoneos") then
@@ -56,7 +55,7 @@ package("ncnn")
                 if vk_driver then
                     package:addenv("NCNN_VULKAN_DRIVER", vk_driver)
                 end
-                local has_moltenvk = package:getenv("VK_ICD_FILENAMES") or package:getenv("NCNN_VULKAN_DRIVER")
+                local has_moltenvk = icd or vk_driver
                 print("================================")
                 print("has_moltenvk value = %s", has_moltenvk)
                 print("--------------------------------")
@@ -76,6 +75,13 @@ package("ncnn")
                     else
                         package:add("frameworks", "UIKit")
                     end
+                else
+                    local moltenvk_dir = path.directory(has_moltenvk)
+                    print("================================")
+                    print("moltenvk_dir: %s", moltenvk_dir)
+                    print("================================")
+                    package:add("linkdirs", moltenvk_dir)
+                    package:add("links", "MoltenVK")
                 end
             end
         end
@@ -99,7 +105,7 @@ package("ncnn")
 
     on_install(function (package)
         local moltenvk = package:dep("moltenvk")
-        if moltenvk and moltenvk:config("shared") then
+        if moltenvk and not moltenvk:config("shared") then
             io.replace("src/CMakeLists.txt", "if(NOT NCNN_SHARED_LIB AND APPLE)", "if(APPLE)", {plain = true})
             local _, count = io.replace("src/CMakeLists.txt", "                if(NOT NCNN_SHARED_LIB)", "                if(1)", {plain = true})
             print("---info---\nio.replace() count = %d\n--------", count)
