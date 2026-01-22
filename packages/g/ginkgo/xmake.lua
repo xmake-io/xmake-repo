@@ -1,5 +1,4 @@
 package("ginkgo")
-
     set_homepage("https://ginkgo-project.github.io/")
     set_description("Ginkgo is a high-performance linear algebra library for manycore systems, with a focus on solution of sparse linear systems.")
     set_license("BSD-3-Clause")
@@ -20,6 +19,15 @@ package("ginkgo")
     set_policy("package.cmake_generator.ninja", false)
 
     add_deps("cmake")
+
+    if on_check then
+        on_check("windows", function(package)
+            if package:version():ge("1.10.0") and package:is_arch("x86") then
+                raise("package(ginkgo >= v1.10.0): not support windows|x86")
+            end
+        end)
+    end
+
     on_load("windows", "macosx", "linux", function (package)
         if package:config("openmp") then
             package:add("deps", "openmp")
@@ -45,6 +53,9 @@ package("ginkgo")
         local opt = {}
         if not (package:is_plat("windows") and package:config("shared")) then
             opt.cmake_generator = "Ninja"
+        end
+        if package:is_plat("windows") then
+            opt.cxflags = "/bigobj"
         end
         import("package.tools.cmake").install(package, configs, opt)
     end)
