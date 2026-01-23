@@ -5,6 +5,7 @@ package("quantlib")
     add_urls("https://github.com/lballabio/QuantLib/releases/download/v$(version)/QuantLib-$(version).tar.gz",
              "https://github.com/lballabio/QuantLib.git")
 
+    add_versions("1.41", "c5e9a30fce129660932e643647eb9a14e19ec24344d6b813c57c054187b03bdd")
     add_versions("1.40", "5d6b971b998b8b47e5694dfc4851e9c8809624ff24c620579efc7fedef9dc149")
     add_versions("1.39", "0126dac9fab908ca3df411ec8eb888ea1932c1044b1036d6df2f8159451fb700")
     add_versions("1.35", "fd83657bbc69d8692065256699b7424d5a606dff03e7136a820b6e9675016c89")
