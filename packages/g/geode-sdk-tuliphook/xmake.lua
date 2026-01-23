@@ -10,9 +10,6 @@ package("geode-sdk-tuliphook")
 
     add_deps("geode-sdk-result")
 
-    if not is_plat("windows", "mingw") then
-        add_deps("dobby")
-    end
 
     if not is_plat("android") then
         add_deps("capstone")
@@ -23,14 +20,39 @@ package("geode-sdk-tuliphook")
             add_requires("geode-sdk-result")
             add_packages("geode-sdk-result")
 
-            if not is_plat("windows", "mingw") then
-                add_requires("dobby")
-                add_packages("dobby")
-            end
-
             if not is_plat("android") then
                 add_requires("capstone")
                 add_packages("capstone")
+            end
+
+            if not is_plat("windows", "mingw") then
+                target("dobby")
+                    set_kind("static")
+                    set_languages("c++20")
+
+                    add_includedirs(
+                        "libraries/dobby/external", 
+                        "libraries/dobby/include",
+                        "libraries/dobby/source",
+                        "libraries/dobby/source/dobby"
+                    )
+
+                    add_files(
+                        "libraries/dobby/source/core/arch/**.cc",
+                        "libraries/dobby/source/core/assembler/**.cc",
+                        "libraries/dobby/source/core/codegen/**.cc",
+                        "libraries/dobby/source/InstructionRelocation/arm/**.cc",
+                        "libraries/dobby/source/MemoryAllocator/**.cc",
+                        "libraries/dobby/source/MemoryAllocator/CodeBuffer/**.cc"
+                    )
+
+                    add_headerfiles(
+                        "libraries/dobby/include/(**.h)"
+                    )
+                    add_headerfiles(
+                        "libraries/dobby/source/InstructionRelocation/(**.h)",
+                        {prefixdir = "InstructionRelocation"}
+                    )
             end
 
             target("tuliphook")
@@ -38,9 +60,8 @@ package("geode-sdk-tuliphook")
                 set_languages("c++20")
 
                 add_includedirs(
-                    "include", "include/tulip",
-                    "libraries/dobby/source",
-                    "libraries/dobby/external"
+                    "include",
+                    "include/tulip"
                 )
 
                 add_headerfiles("include/tulip/(**.hpp)", {prefixdir = "tulip"})
@@ -109,6 +130,14 @@ package("geode-sdk-tuliphook")
 
                 if is_kind("shared") then
                     add_defines("TULIP_HOOK_DYNAMIC")
+                end
+                if not is_plat("windows", "mingw") then
+                    add_deps("dobby")
+                    add_includedirs(
+                        "libraries/dobby/source",
+                        "libraries/dobby/include",
+                        "libraries/dobby/external"
+                    )
                 end
         ]])
         import("package.tools.xmake").install(package)
