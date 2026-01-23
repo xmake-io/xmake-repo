@@ -67,6 +67,11 @@ package("pinocchio")
         io.replace("CMakeLists.txt", "set_boost_default_options()", "", {plain = true})
         io.replace("CMakeLists.txt", "set_boost_default_options()", "", {plain = true})
         io.replace("src/CMakeLists.txt", "add_library(${LIB_NAME} ${LIBRARY_TYPE})", "add_library(${LIB_NAME})", {plain = true})
+        if package:is_plat("mingw", "msys") then
+            io.replace("include/pinocchio/macros.hpp",
+                "#if WIN32\n  #define PINOCCHIO_PRETTY_FUNCTION __FUNCSIG__",
+                "#if defined(_MSC_VER)\n  #define PINOCCHIO_PRETTY_FUNCTION __FUNCSIG__", {plain = true})
+        end
         if package:config("urdf") then
             io.replace("CMakeLists.txt", "if(BUILD_WITH_URDF_SUPPORT)", [[if(BUILD_WITH_URDF_SUPPORT)
                     add_project_dependency(console_bridge REQUIRED)
