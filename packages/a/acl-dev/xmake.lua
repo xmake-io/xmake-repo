@@ -145,6 +145,9 @@ list(APPEND CMAKE_MODULE_PATH cmake)]], {plain = true})
                         io.replace("lib_fiber/c/CMakeLists.txt",
                             [[${src}/fiber/boost/jump_gas.S)]],
                             [[${src}/fiber/boost/jump_arm64_aapcs_pe_armasm.asm)]], {plain = true})
+                        io.replace("lib_fiber/c/CMakeLists.txt",
+                            [[add_definitions("-DFIBER_DLL -DFIBER_EXPORTS")]],
+                            [[add_definitions("-D FIBER_DLL -D FIBER_EXPORTS")]], {plain = true})
                     else
                         io.replace("lib_fiber/c/CMakeLists.txt",
                             [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]],
