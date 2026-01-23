@@ -105,12 +105,16 @@ package("acl-dev")
                 "add_library(acl_cpp_static STATIC ${lib_src})\ntarget_precompile_headers(acl_cpp_static PRIVATE src/acl_stdafx.hpp)", {plain = true})
             io.replace("lib_acl_cpp/CMakeLists.txt", [[add_library(acl_cpp_shared SHARED ${lib_src})]],
                 "add_library(acl_cpp_shared SHARED ${lib_src})\ntarget_precompile_headers(acl_cpp_shared PRIVATE src/acl_stdafx.hpp)", {plain = true})
+            if package:config("shared") then
+                io.replace("lib_fiber/c/CMakeLists.txt", [["-D_WINSOCK_DEPRECATED_NO_WARNINGS"]], [[BOOST_CONTEXT_DYN_LINK= BOOST_CONTEXT_EXPORT=EXPORT
+"-D_WINSOCK_DEPRECATED_NO_WARNINGS"]], {plain = true})
+            else
+                io.replace("lib_fiber/c/CMakeLists.txt", [["-D_WINSOCK_DEPRECATED_NO_WARNINGS"]], [[BOOST_CONTEXT_STATIC_LINK= BOOST_CONTEXT_EXPORT=
+"-D_WINSOCK_DEPRECATED_NO_WARNINGS"]], {plain = true})
             if package:is_plat("windows") then
                 -- Do not build .gas on windows
                 if not package:is_arch("arm.*") then
                     io.replace("lib_fiber/c/CMakeLists.txt", [[enable_language(C CXX ASM)]], [[enable_language(C CXX ASM_MASM)]], {plain = true})
-                    io.replace("lib_fiber/c/CMakeLists.txt", [["-D_WINSOCK_DEPRECATED_NO_WARNINGS"]], [["-DBOOST_CONTEXT_EXPORT="
-"-D_WINSOCK_DEPRECATED_NO_WARNINGS"]], {plain = true})
                     if package:check_sizeof("void*") == "8" then
                         io.replace("lib_fiber/c/CMakeLists.txt",
                             [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]],
@@ -127,13 +131,6 @@ package("acl-dev")
                             [[${src}/fiber/boost/jump_i386_ms_pe_masm.asm)]], {plain = true})
                     end
                 else
-                    os.mkdir("cmake")
-                    os.cp(path.join(package:scriptdir(), "port", "cmakeasm_armasminformation.cmake"), "cmake/CMakeASM_MARMASMInformation.cmake")
-                    os.cp(path.join(package:scriptdir(), "port", "cmakedetermineasm_armasmcompiler.cmake"), "cmake/CMakeDetermineASM_MARMASMCompiler.cmake")
-                    os.cp(path.join(package:scriptdir(), "port", "cmaketestasm_armasmcompiler.cmake"), "cmake/CMakeTestASM_MARMASMCompiler.cmake")
-                    io.replace("CMakeLists.txt", [[cmake_minimum_required(VERSION 2.8.0)]], [[cmake_minimum_required(VERSION 3.16)]], {plain = true})
-                    io.replace("CMakeLists.txt", [[project(acl)]], [[project(acl)
-list(APPEND CMAKE_MODULE_PATH cmake)]], {plain = true})
                     io.replace("lib_fiber/c/CMakeLists.txt", [[enable_language(C CXX ASM)]], [[enable_language(C CXX ASM_MARMASM)]], {plain = true})
                     if package:check_sizeof("void*") == "8" then
                         os.cp(path.join(package:scriptdir(), "port", "ontop_arm64_aapcs_pe_armasm.asm"), "lib_fiber/c/src/fiber/boost/ontop_arm64_aapcs_pe_armasm.asm")
@@ -145,9 +142,6 @@ list(APPEND CMAKE_MODULE_PATH cmake)]], {plain = true})
                         io.replace("lib_fiber/c/CMakeLists.txt",
                             [[${src}/fiber/boost/jump_gas.S)]],
                             [[${src}/fiber/boost/jump_arm64_aapcs_pe_armasm.asm)]], {plain = true})
-                        io.replace("lib_fiber/c/CMakeLists.txt",
-                            [[add_definitions("-DFIBER_DLL -DFIBER_EXPORTS")]],
-                            [[add_definitions("-D FIBER_DLL -D FIBER_EXPORTS")]], {plain = true})
                     else
                         io.replace("lib_fiber/c/CMakeLists.txt",
                             [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]],
