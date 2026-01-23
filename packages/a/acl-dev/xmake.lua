@@ -111,6 +111,7 @@ package("acl-dev")
             else
                 io.replace("lib_fiber/c/CMakeLists.txt", [["-D_WINSOCK_DEPRECATED_NO_WARNINGS"]], [[BOOST_CONTEXT_STATIC_LINK= BOOST_CONTEXT_EXPORT=
 "-D_WINSOCK_DEPRECATED_NO_WARNINGS"]], {plain = true})
+            end
             if package:is_plat("windows") then
                 -- Do not build .gas on windows
                 if not package:is_arch("arm.*") then
