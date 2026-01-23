@@ -2,7 +2,7 @@ package("jrl-cmakemodules")
     set_kind("binary")
     set_homepage("https://jrl-cmakemodules.readthedocs.io/en/master/")
     set_description("CMake utility toolbox")
-    set_license("LGPL-3.0")
+    set_license("LGPL-3.0-or-later")
 
     add_urls("https://github.com/jrl-umi3218/jrl-cmakemodules/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jrl-umi3218/jrl-cmakemodules.git")
@@ -17,4 +17,7 @@ package("jrl-cmakemodules")
 
     on_test(function (package)
         assert(os.isfile(path.join(package:installdir(), "share/cmake/jrl-cmakemodules/jrl-cmakemodulesConfig.cmake")))
+        if package.check_importfiles then
+            package:check_importfiles("cmake::jrl-cmakemodules")
+        end
     end)
