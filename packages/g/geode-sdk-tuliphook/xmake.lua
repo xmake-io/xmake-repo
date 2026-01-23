@@ -15,6 +15,12 @@ package("geode-sdk-tuliphook")
         add_deps("capstone")
     end
 
+    on_load(function (package)
+        if package:config("shared") then
+            package:add("defines", "TULIP_HOOK_DLL=")
+        end
+    end)
+
     on_install("!wasm and !cross and !bsd and !iphoneos", function (package)
         io.writefile("xmake.lua", [[
             add_requires("geode-sdk-result")
@@ -145,8 +151,16 @@ package("geode-sdk-tuliphook")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+            #include <tulip/TulipHook.hpp>
             void test() {
-                geode::Result<void*, std::string> res = tulip::hook::followJumps(nullptr);
+                static constexpr uint8_t patch1[] = {
+                    0x48, 0x83, 0xEC, 0x68,             // sub     rsp, 68h
+                    0x66, 0x0F, 0x7F, 0x04, 0x24,       // movdqa  xmmword ptr [rsp], xmm0
+                    0x66, 0x0F, 0x7F, 0x4C, 0x24, 0x30, // movdqa  xmmword ptr [rsp+30h], xmm1
+                    0x66, 0x0F, 0x7F, 0x54, 0x24, 0x40, // movdqa  xmmword ptr [rsp+40h], xmm2
+                    0x66, 0x0F, 0x7F, 0x5C, 0x24, 0x50, // movdqa  xmmword ptr [rsp+50h], xmm3
+                };
+                auto res = tulip::hook::writeMemory(nullptr, patch1, sizeof(patch1));
             }
-        ]]}, {configs = {languages = "c++20"}, includes = "tulip/TulipHook.hpp"}))
+        ]]}, {configs = {languages = "c++20"}}))
     end)
