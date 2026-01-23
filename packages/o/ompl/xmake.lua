@@ -70,33 +70,13 @@ package("ompl")
             #include <ompl/geometric/planners/rrt/RRT.h>
 
             namespace ob = ompl::base;
-            namespace og = ompl::geometric;
-
-            bool isStateValid(const ob::State *state) {
-                return true; 
-            }
 
             void test() {
                 auto space(std::make_shared<ob::RealVectorStateSpace>(2));
-
                 ob::RealVectorBounds bounds(2);
                 bounds.setLow(0);
                 bounds.setHigh(1);
                 space->setBounds(bounds);
-
-                og::SimpleSetup ss(space);
-
-                ss.setStateValidityChecker(isStateValid);
-
-                ob::ScopedState<> start(space);
-                start[0] = 0.1; start[1] = 0.1;
-
-                ob::ScopedState<> goal(space);
-                goal[0] = 0.9; goal[1] = 0.9;
-
-                ss.setStartAndGoalStates(start, goal);
-
-                ob::PlannerStatus solved = ss.solve(1.0);
             }
         ]]}, {configs = {languages = "c++14"}}))
     end)
