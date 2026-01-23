@@ -107,7 +107,7 @@ package("pinocchio")
         end
         if package:has_tool("cxx", "cl") then
             table.insert(cxflags, "/bigobj")
-        elseif package:has_tool("cxx", "gcc", "gxx") then
+        elseif package:is_plat("mingw", "msys") then
             table.insert(cxflags, "-Wa,-mbig-obj")
         end
         import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
@@ -117,7 +117,7 @@ package("pinocchio")
         local cxflags
         if package:has_tool("cxx", "cl") then
             cxflags = {"/bigobj"}
-        elseif package:has_tool("cxx", "gcc", "gxx") then
+        elseif package:is_plat("mingw", "msys") then
             cxflags = {"-Wa,-mbig-obj"}
         end
         assert(package:check_cxxsnippets({test = [[
