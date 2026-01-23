@@ -63,9 +63,10 @@ package("pinocchio")
         end
     end)
 
-    on_install(function (package)
+    -- failed to link
+    on_install("!mingw", function (package)
         io.replace("CMakeLists.txt", "set_boost_default_options()", "", {plain = true})
-        io.replace("CMakeLists.txt", "set_boost_default_options()", "", {plain = true})
+        io.replace("CMakeLists.txt", "export_boost_default_options()", "", {plain = true})
         io.replace("src/CMakeLists.txt", "add_library(${LIB_NAME} ${LIBRARY_TYPE})", "add_library(${LIB_NAME})", {plain = true})
         if package:is_plat("mingw", "msys") then
             io.replace("include/pinocchio/macros.hpp",
@@ -99,15 +100,26 @@ package("pinocchio")
             end
         end
 
-        local opt = {}
+        local cxflags = {}
         if package:is_plat("windows") then
             -- workaround clang
-            opt.cxflags = {"-DWIN32", "-DNOMINMAX"}
+            table.join2(cxflags, {"-DWIN32", "-DNOMINMAX"})
         end
-        import("package.tools.cmake").install(package, configs, opt)
+        if package:has_tool("cxx", "cl") then
+            table.insert(cxflags, "/bigobj")
+        elseif package:has_tool("cxx", "gcc", "gxx") then
+            table.insert(cxflags, "-Wa,-mbig-obj")
+        end
+        import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
     end)
 
     on_test(function (package)
+        local cxflags
+        if package:has_tool("cxx", "cl") then
+            cxflags = {"/bigobj"}
+        elseif package:has_tool("cxx", "gcc", "gxx") then
+            cxflags = {"-Wa,-mbig-obj"}
+        end
         assert(package:check_cxxsnippets({test = [[
             #include <iostream>
  
@@ -127,5 +139,5 @@ package("pinocchio")
                 const Eigen::VectorXd & tau = pinocchio::rnea(model, data, q, v, a);
                 std::cout << "tau = " << tau.transpose() << std::endl;
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = {languages = "c++17", cxflags = cxflags}}))
     end)
