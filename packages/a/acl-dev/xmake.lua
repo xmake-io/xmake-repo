@@ -105,6 +105,19 @@ package("acl-dev")
                 "add_library(acl_cpp_static STATIC ${lib_src})\ntarget_precompile_headers(acl_cpp_static PRIVATE src/acl_stdafx.hpp)", {plain = true})
             io.replace("lib_acl_cpp/CMakeLists.txt", [[add_library(acl_cpp_shared SHARED ${lib_src})]],
                 "add_library(acl_cpp_shared SHARED ${lib_src})\ntarget_precompile_headers(acl_cpp_shared PRIVATE src/acl_stdafx.hpp)", {plain = true})
+            -- Remove global FIBER_DLL definitions to fix armasm64 build
+            io.replace("lib_fiber/c/CMakeLists.txt", [[add_definitions("-DFIBER_DLL -DFIBER_EXPORTS")]], [[]], {plain = true})
+            io.replace("lib_fiber/c/CMakeLists.txt", "VERSION 2.8.0", "VERSION 3.15.0", {plain = true})
+
+            if package:config("shared") then
+                -- Add FIBER_DLL only for C/C++ sources
+                io.replace("lib_fiber/c/CMakeLists.txt", [[add_library(fiber_shared SHARED ${lib_src})]],
+                    [[add_library(fiber_shared SHARED ${lib_src})
+                      if(MSVC)
+                          target_compile_definitions(fiber_shared PRIVATE $<$<OR:$<COMPILE_LANGUAGE:C>,$<COMPILE_LANGUAGE:CXX>>:FIBER_DLL> $<$<OR:$<COMPILE_LANGUAGE:C>,$<COMPILE_LANGUAGE:CXX>>:FIBER_EXPORTS>)
+                      endif()]], {plain = true})
+            end
+
             if package:config("shared") then
                 io.replace("lib_fiber/c/CMakeLists.txt", [["-D_WINSOCK_DEPRECATED_NO_WARNINGS"]], [["-DBOOST_CONTEXT_DYN_LINK" "-DBOOST_CONTEXT_EXPORT=EXPORT"
 "-D_WINSOCK_DEPRECATED_NO_WARNINGS"]], {plain = true})
@@ -137,6 +150,17 @@ package("acl-dev")
                         os.cp(path.join(package:scriptdir(), "port", "ontop_arm64_aapcs_pe_armasm.asm"), "lib_fiber/c/src/fiber/boost/ontop_arm64_aapcs_pe_armasm.asm")
                         os.cp(path.join(package:scriptdir(), "port", "jump_arm64_aapcs_pe_armasm.asm"), "lib_fiber/c/src/fiber/boost/jump_arm64_aapcs_pe_armasm.asm")
                         os.cp(path.join(package:scriptdir(), "port", "make_arm64_aapcs_pe_armasm.asm"), "lib_fiber/c/src/fiber/boost/make_arm64_aapcs_pe_armasm.asm")
+                        local defines = ""
+                        if package:config("shared") then
+                            defines = "#define BOOST_CONTEXT_DYN_LINK\n#define BOOST_CONTEXT_EXPORT EXPORT\n"
+                        else
+                            defines = "#define BOOST_CONTEXT_STATIC_LINK\n#define BOOST_CONTEXT_EXPORT\n"
+                        end
+                        for _, f in ipairs({"lib_fiber/c/src/fiber/boost/make_arm64_aapcs_pe_armasm.asm", 
+                                            "lib_fiber/c/src/fiber/boost/jump_arm64_aapcs_pe_armasm.asm", 
+                                            "lib_fiber/c/src/fiber/boost/ontop_arm64_aapcs_pe_armasm.asm"}) do
+                            io.writefile(f, defines .. io.readfile(f))
+                        end
                         io.replace("lib_fiber/c/CMakeLists.txt",
                             [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]],
                             [[list(APPEND lib_src ${src}/fiber/boost/make_arm64_aapcs_pe_armasm.asm]], {plain = true})
