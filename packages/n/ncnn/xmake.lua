@@ -47,6 +47,7 @@ package("ncnn")
         if package:config("vulkan") then
             package:add("deps", glslang)
             if package:is_plat("macosx", "iphoneos") then
+                local vk_driver
                 if ncnn_ver and ncnn_ver:ge("20260113") then
                     local icd = os.getenv("VK_ICD_FILENAMES")
                     local ncnn_vk_driver = os.getenv("NCNN_VULKAN_DRIVER")
@@ -58,7 +59,7 @@ package("ncnn")
                         package:addenv("NCNN_VULKAN_DRIVER", ncnn_vk_driver)
                         wprint("package(ncnn): Environment variable '%s' detected.", "NCNN_VULKAN_DRIVER")
                     end
-                    local vk_driver = icd or ncnn_vk_driver
+                    vk_driver = icd or ncnn_vk_driver
                 end
                 package:add("deps", "moltenvk", {configs = {vk_driver = vk_driver}})
                 wprint("               Xmake will use your MoltenVK as dependency.")
