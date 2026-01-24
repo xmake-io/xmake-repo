@@ -1,7 +1,17 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 0b9b367..9429588 100644
+index 0b9b367..3bac799 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
+@@ -99,7 +99,7 @@ target_include_directories(
+ if (SQLGEN_DUCKDB OR SQLGEN_CHECK_HEADERS)
+     list(APPEND SQLGEN_SOURCES src/sqlgen_duckdb.cpp)
+     if (NOT TARGET DuckDB)
+-        find_package(DuckDB REQUIRED)
++        find_package(duckdb REQUIRED)
+     endif()
+-    target_link_libraries(sqlgen PUBLIC $<IF:$<TARGET_EXISTS:duckdb>,duckdb,duckdb_static>)
++    target_link_libraries(sqlgen PUBLIC duckdb::duckdb)
+ endif()
 @@ -137,8 +137,8 @@ if (SQLGEN_SQLITE3 OR SQLGEN_CHECK_HEADERS)
          endif()
          target_link_libraries(sqlgen PUBLIC unofficial::sqlite3::sqlite3)
