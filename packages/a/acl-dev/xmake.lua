@@ -108,10 +108,10 @@ package("acl-dev")
             io.replace("lib_fiber/c/CMakeLists.txt",
                 [[add_definitions("-DFIBER_DLL -DFIBER_EXPORTS")]], [[]], {plain = true})
             if package:config("shared") then
-                io.replace("lib_fiber/c/CMakeLists.txt", [["-D_WINSOCK_DEPRECATED_NO_WARNINGS"]], [[BOOST_CONTEXT_DYN_LINK="" BOOST_CONTEXT_EXPORT="EXPORT"
+                io.replace("lib_fiber/c/CMakeLists.txt", [["-D_WINSOCK_DEPRECATED_NO_WARNINGS"]], [["-DBOOST_CONTEXT_DYN_LINK" "-DBOOST_CONTEXT_EXPORT=EXPORT"
 "-D_WINSOCK_DEPRECATED_NO_WARNINGS"]], {plain = true})
             else
-                io.replace("lib_fiber/c/CMakeLists.txt", [["-D_WINSOCK_DEPRECATED_NO_WARNINGS"]], [[BOOST_CONTEXT_STATIC_LINK="" BOOST_CONTEXT_EXPORT=""
+                io.replace("lib_fiber/c/CMakeLists.txt", [["-D_WINSOCK_DEPRECATED_NO_WARNINGS"]], [["-DBOOST_CONTEXT_STATIC_LINK" "-DBOOST_CONTEXT_EXPORT="
 "-D_WINSOCK_DEPRECATED_NO_WARNINGS"]], {plain = true})
             end
             if package:is_plat("windows") then
