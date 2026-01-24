@@ -10,7 +10,7 @@ package("ncnn")
     add_versions("20250916", "7d463f1e5061facd02b8af5e792e059088695cdcfcc152c8f4892f6ffe5eab1a")
     add_versions("20250503", "3afea4cf092ce97d06305b72c6affbcfb3530f536ae8e81a4f22007d82b729e9")
 
-    add_configs("vulkan",        {description = "Enable Vulkan support", default = true, type = "boolean"})
+    add_configs("vulkan",        {description = "Enable Vulkan support", default = false, type = "boolean"})
     add_configs("openmp",        {description = "Enable OpenMP support", default = true, type = "boolean"})
     add_configs("threads",       {description = "Enable threads support", default = true, type = "boolean"})
     add_configs("c_api",         {description = "Build ncnn with C api", default = false, type = "boolean"})
@@ -53,17 +53,15 @@ package("ncnn")
                     local ncnn_vk_driver = os.getenv("NCNN_VULKAN_DRIVER")
                     if icd then
                         package:addenv("VK_ICD_FILENAMES", icd)
-                        wprint("package(ncnn): Environment variable '%s' detected.", "VK_ICD_FILENAMES")
+                        wprint("package(ncnn): Environment variable '%s' detected. If ncnn fails to build, please unset this variable and retry.", "VK_ICD_FILENAMES")
                     end
                     if ncnn_vk_driver then
                         package:addenv("NCNN_VULKAN_DRIVER", ncnn_vk_driver)
-                        wprint("package(ncnn): Environment variable '%s' detected.", "NCNN_VULKAN_DRIVER")
+                        wprint("package(ncnn): Environment variable '%s' detected. If ncnn fails to build, please unset this variable and retry.", "NCNN_VULKAN_DRIVER")
                     end
                     vk_driver = icd or ncnn_vk_driver
                 end
                 package:add("deps", "moltenvk", {configs = {vk_driver = vk_driver}})
-                wprint("               Xmake will use your MoltenVK as dependency.")
-                wprint("               If ncnn fails to build, please unset this variable and retry")
                 package:add("frameworks", "Metal", "Foundation", "QuartzCore", "CoreGraphics", "IOSurface")
                 if package:is_plat("macosx") then
                     package:add("frameworks", "IOKit", "AppKit")

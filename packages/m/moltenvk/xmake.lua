@@ -38,7 +38,6 @@ package("moltenvk")
 
     on_fetch("macosx", function (package, opt)
         import("lib.detect.find_path")
-        import("lib.detect.find_file")
         local vk_driver = package:config("vk_driver")
         if vk_driver then
             -- This value can be a dir or a file(dylib, a or json) path
