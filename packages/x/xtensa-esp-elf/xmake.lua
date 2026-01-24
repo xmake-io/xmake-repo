@@ -49,17 +49,17 @@ package("xtensa-esp-elf")
         }
     }
 
-
+    local arch = os.arch()
     local plat
     if is_host("windows") then
         plat = "windows"
+        arch = arch == "x64" and "x86_64" or arch
     elseif is_host("linux") then
         plat = "linux"
     elseif is_host("macosx") then
         plat = "macosx"
     end
 
-    local arch = os.arch()
     if plat and variants[plat] and variants[plat][arch] then
         local variant = variants[plat][arch]
         set_urls("https://github.com/espressif/crosstool-NG/releases/download/esp-$(version)/xtensa-esp-elf-$(version)-" .. variant.suffix, {
