@@ -37,36 +37,38 @@ package("moltenvk")
     end
 
     on_fetch("macosx", function (package, opt)
-        import("lib.detect.find_path")
-        local vk_driver = package:config("vk_driver")
-        if vk_driver then
-            -- This value can be a dir or a file(dylib, a or json) path
-            -- e.g. /home/xxx/dev/MoltenVK/MoltenVK/dynamic/dylib/macOS/libMoltenVK.dylib
-            --      /home/xxx/dev/MoltenVK/MoltenVK/dynamic/dylib/macOS/MoltenVK_icd.json
-            --      /home/xxx/dev/MoltenVK/MoltenVK
-            local moltenvk_dir
-            if os.isfile(vk_driver) then
-                local _, e = vk_driver:find("MoltenVK.framework", 1, true)
-                if not e then
-                    _, e = vk_driver:find("MoltenVK", 1, true)
-                end
-                if e then
-                    moltenvk_dir = vk_driver:sub(1, e)
-                end
-            end
-            if os.isdir(vk_driver) then
-                moltenvk_dir = vk_driver
-            end
-
-            if moltenvk_dir then
-                local frameworkdir = find_path("**/MoltenVK.framework", moltenvk_dir)
-                if frameworkdir then
-                    return { frameworkdirs = frameworkdir, frameworks = "MoltenVK", rpathdirs = frameworkdir }
-                end
-            end
-        end
-
         if opt.system then
+            import("lib.detect.find_path")
+            local vk_driver = package:config("vk_driver")
+            if vk_driver then
+                -- This value can be a dir or a file(dylib, a or json) path
+                -- e.g. /home/xxx/dev/MoltenVK/MoltenVK/dynamic/dylib/macOS/libMoltenVK.dylib
+                --      /home/xxx/dev/MoltenVK/MoltenVK/dynamic/dylib/macOS/MoltenVK_icd.json
+                --      /home/xxx/dev/MoltenVK/MoltenVK
+                local moltenvk_dir
+                if os.isfile(vk_driver) then
+                    local _, e = vk_driver:find("MoltenVK.framework", 1, true)
+                    if not e then
+                        _, e = vk_driver:find("MoltenVK", 1, true)
+                    end
+                    if e then
+                        moltenvk_dir = vk_driver:sub(1, e)
+                    end
+                end
+                if os.isdir(vk_driver) then
+                    moltenvk_dir = vk_driver
+                end
+
+                if moltenvk_dir then
+                    local frameworkdir = find_path("**/macos*/MoltenVK.framework", moltenvk_dir)
+                    frameworkdir = os.dirs(path.join(frameworkdir, "macos*"))
+                    if frameworkdir and #frameworkdir > 0 then
+                        frameworkdir = frameworkdir[1]
+                        return { frameworkdirs = frameworkdir, frameworks = "MoltenVK", rpathdirs = frameworkdir }
+                    end
+                end
+            end
+
             local frameworkdir = find_path("vulkan.framework", "~/VulkanSDK/*/macOS/Frameworks")
             if frameworkdir then
                 return { frameworkdirs = frameworkdir, frameworks = "vulkan", rpathdirs = frameworkdir }
