@@ -1,0 +1,34 @@
+diff --git a/src/liblsquic/CMakeLists.txt b/src/liblsquic/CMakeLists.txt
+index 335c70f..a03f9e7 100644
+--- a/src/liblsquic/CMakeLists.txt
++++ b/src/liblsquic/CMakeLists.txt
+@@ -1,6 +1,5 @@
+ # Copyright (c) 2017 - 2026 LiteSpeed Technologies Inc.  See LICENSE.
+ SET(lsquic_STAT_SRCS
+-    ls-qpack/lsqpack.c
+     lsquic_adaptive_cc.c
+     lsquic_alarmset.c
+     lsquic_arr.c
+@@ -102,7 +101,6 @@ ELSE()
+     INCLUDE_DIRECTORIES(../lshpack)
+     SET(lsquic_STAT_SRCS ${lsquic_STAT_SRCS}
+         lsquic_xxhash.c
+-        ../lshpack/lshpack.c
+     )
+ ENDIF()
+ 
+@@ -133,12 +131,13 @@ IF(LSQUIC_SHARED_LIB)
+ ELSE()
+   add_library(lsquic STATIC ${lsquic_STAT_SRCS})
+ ENDIF()
+-
++target_link_libraries(lsquic PRIVATE ls-hpack ls-qpack)
+ target_include_directories(
+     lsquic PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/lsquic>)
+ 
+ install(TARGETS lsquic
+     EXPORT lsquic-targets
++    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+ )

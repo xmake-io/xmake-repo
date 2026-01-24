@@ -6,6 +6,7 @@ package("lsquic")
     add_urls("https://github.com/litespeedtech/lsquic/archive/refs/tags/$(version).tar.gz",
              "https://github.com/litespeedtech/lsquic.git")
 
+    add_versions("v4.5.0", "49caf526269842bcb4d52fc1243b3fca9ecbbf92d275ba61430bf985b77b27bf")
     add_versions("v4.4.1", "0a9cdd758d1447c6936c1009f5f2e01f9ce6b5c3271f5358d3d04cf428e93b2f")
     add_versions("v4.3.2", "fbd941446f1ef532c2063f68acf8e185d86997ccb49c9d00a91337796a9dc793")
     add_versions("v4.3.0", "f0bc55eb4f135d6edade4c495c5928b25c4b3198060377cc1840dffbd99fb310")
@@ -15,7 +16,8 @@ package("lsquic")
     add_versions("v4.0.9", "bebb6e687138368d89ff3f67768692ac55b06925d63b011d000ce134b6ec98f1")
     add_versions("v4.0.8", "f18ff2fa0addc1c51833304b3d3ff0979ecf5f53f54f96bcd3442a40cfcd440b")
 
-    add_patches(">=4.0.8", "patches/4.0.8/cmake.patch", "c9b8412fbd7df511dee4d57ea5dfa50bc527e015fc808270235b91abfd9baa89")
+    add_patches(">=4.0.8 <4.5.0", "patches/4.0.8/cmake.patch", "c9b8412fbd7df511dee4d57ea5dfa50bc527e015fc808270235b91abfd9baa89")
+    add_patches(">=4.5.0", "patches/4.5.0/cmake.patch", "de37a5b5e13873a9af92fb69725e2dac60ca75354811e434cab52da50f8f694b")
 
     add_configs("fiu", {description = "Use Fault Injection in Userspace (FIU)", default = false, type = "boolean"})
     if is_plat("wasm") then
@@ -31,7 +33,8 @@ package("lsquic")
         if not package:is_precompiled() and package:is_plat("windows") then
             package:add("deps", "strawberry-perl")
         end
-        if package:version() and package:version():lt("4.3.2") then
+        local version = package:version()
+        if version and version:lt("4.3.2") then
             package:add("deps", "boringssl <2024.09.13")
         else
             package:add("deps", "boringssl")
