@@ -1,0 +1,14 @@
+diff --git a/src/target/Windows32Target.cpp b/src/target/Windows32Target.cpp
+index 298765d..85db661 100644
+--- a/src/target/Windows32Target.cpp
++++ b/src/target/Windows32Target.cpp
+@@ -17,6 +17,9 @@ Target& Target::get() {
+ 
+ #define WIN32_LEAN_AND_MEAN
+ #include <Windows.h>
++#ifdef __MINGW32__
++#include <cstring> // std::memcpy
++#endif
+ 
+ #include "../generator/X86Generator.hpp"
+ #include "../Pool.hpp"

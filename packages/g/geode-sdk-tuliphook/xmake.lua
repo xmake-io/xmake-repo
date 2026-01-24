@@ -8,8 +8,9 @@ package("geode-sdk-tuliphook")
 
     add_versions("v3.1.7", "83f200a43002a343a17f57f861532d64018f8e7691a3c0097356df3dc1743543")
 
-    add_deps("geode-sdk-result")
+    add_patches("v3.1.7", "patches/v3.1.7/fix-mingw.patch", "22592dc5afbbf87fb36fd89cb9a2f3b9af41e23b98a22f7eebf748423bff6295")
 
+    add_deps("geode-sdk-result")
 
     if not is_plat("android") then
         add_deps("capstone")
