@@ -47,40 +47,22 @@ package("ncnn")
         if package:config("vulkan") then
             package:add("deps", glslang)
             if package:is_plat("macosx", "iphoneos") then
-                local icd = os.getenv("VK_ICD_FILENAMES")
-                local vk_driver = os.getenv("NCNN_VULKAN_DRIVER")
-                if icd then
-                    package:addenv("VK_ICD_FILENAMES", icd)
-                    wprint("package(ncnn): Environment variable '%s' detected.", "VK_ICD_FILENAMES")
+                if ncnn_ver and ncnn_ver:ge("20260113") then
+                    local icd = os.getenv("VK_ICD_FILENAMES")
+                    local ncnn_vk_driver = os.getenv("NCNN_VULKAN_DRIVER")
+                    if icd then
+                        package:addenv("VK_ICD_FILENAMES", icd)
+                        wprint("package(ncnn): Environment variable '%s' detected.", "VK_ICD_FILENAMES")
+                    end
+                    if ncnn_vk_driver then
+                        package:addenv("NCNN_VULKAN_DRIVER", ncnn_vk_driver)
+                        wprint("package(ncnn): Environment variable '%s' detected.", "NCNN_VULKAN_DRIVER")
+                    end
+                    local vk_driver = icd or ncnn_vk_driver
                 end
-                if vk_driver then
-                    package:addenv("NCNN_VULKAN_DRIVER", vk_driver)
-                    wprint("package(ncnn): Environment variable '%s' detected.", "NCNN_VULKAN_DRIVER")
-                end
-                local has_moltenvk = icd or vk_driver
-                print("================================")
-                print("has_moltenvk value = %s", has_moltenvk)
-                print("--------------------------------")
-                print("Package env:")
-                print("VK_ICD_FILENAMES   = %s", package:getenv("VK_ICD_FILENAMES") or "nil")
-                print("NCNN_VULKAN_DRIVER = %s", package:getenv("NCNN_VULKAN_DRIVER") or "nil")
-                print("--------------------------------")
-                print("OS env:")
-                print("VK_ICD_FILENAMES   = %s", icd or "nil")
-                print("NCNN_VULKAN_DRIVER = %s", vk_driver or "nil")
-                print("================================")
-                if ncnn_ver and ncnn_ver:lt("20260113") or not has_moltenvk then
-                    package:add("deps", "moltenvk")
-                else
-                    wprint("               Xmake will use your MoltenVK as dependency.")
-                    wprint("               If ncnn fails to build, please unset this variable and retry")
-                    local moltenvk_dir = path.directory(has_moltenvk)
-                    print("================================")
-                    print("moltenvk_dir: %s", moltenvk_dir)
-                    print("================================")
-                    package:add("linkdirs", package:installdir("lib"), moltenvk_dir)
-                    package:add("links", "ncnn" .. (package:is_debug() and "d" or ""), "MoltenVK")
-                end
+                package:add("deps", "moltenvk", {configs = {vk_driver = vk_driver}})
+                wprint("               Xmake will use your MoltenVK as dependency.")
+                wprint("               If ncnn fails to build, please unset this variable and retry")
                 package:add("frameworks", "Metal", "Foundation", "QuartzCore", "CoreGraphics", "IOSurface")
                 if package:is_plat("macosx") then
                     package:add("frameworks", "IOKit", "AppKit")
@@ -137,7 +119,7 @@ package("ncnn")
         table.insert(configs, "-DNCNN_PIXEL_DRAWING=" .. (package:config("pixel_drawing") and "ON" or "OFF"))
         if package:config("vulkan") then
             table.insert(configs, "-DCMAKE_CXX_STANDARD=11")
-            if moltenvk then
+            if package:version() and package:version():lt("20260113") then
                 table.insert(configs, "-DVulkan_LIBRARY=" .. path.join(moltenvk:installdir("lib"), "libMoltenVK." .. (moltenvk:config("shared") and "dylib" or "a")))
             end
         end

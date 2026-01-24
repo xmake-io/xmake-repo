@@ -67,7 +67,7 @@ package("moltenvk")
 
                 local lib_path = find_file("libMoltenVK.dylib", vk_driver)
                 if lib_path then
-                     return { linkdirs = path.directory(lib_path), links = "MoltenVK" }
+                    return { linkdirs = path.directory(lib_path), links = "MoltenVK" }
                 end
             end
         end
