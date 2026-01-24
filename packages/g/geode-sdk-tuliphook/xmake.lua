@@ -99,7 +99,7 @@ package("geode-sdk-tuliphook")
                     add_files("src/generator/X86Generator.cpp")
                     if is_arch("i386", "x86") then
                         add_files("src/target/Windows32Target.cpp")
-                    elseif is_arch("x64", "x86_64") then
+                    elseif is_arch("x64", "x86_64", "arm64") then
                         add_files("src/generator/X64Generator.cpp", "src/target/Windows64Target.cpp")
                     end
                 elseif is_plat("macosx", "iphoneos") then
