@@ -96,12 +96,12 @@ package("geode-sdk-tuliphook")
                 )
 
                 if is_plat("windows", "mingw") then
-                    add_files("src/generator/X86Generator.cpp")
-                    if is_arch("i386", "x86") then
-                        add_files("src/target/Windows32Target.cpp")
-                    elseif is_arch("x64", "x86_64", "arm64") then
-                        add_files("src/generator/X64Generator.cpp", "src/target/Windows64Target.cpp")
-                    end
+                    add_files(
+                        "src/generator/X86Generator.cpp",
+                        "src/generator/X64Generator.cpp",
+                        "src/target/Windows32Target.cpp",
+                        "src/target/Windows64Target.cpp"
+                    )
                 elseif is_plat("macosx", "iphoneos") then
                     add_files("src/target/DarwinTarget.cpp")
                     if is_arch("i386", "x86") then
