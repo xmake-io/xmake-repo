@@ -16,8 +16,8 @@ package("geode-sdk-tuliphook")
     end
 
     on_load(function (package)
-        if package:config("shared") then
-            package:add("defines", "TULIP_HOOK_DLL=")
+        if not package:is_plat("windows", "mingw") then
+            package:add("links", "tuliphook", "dobby")
         end
     end)
 
@@ -95,41 +95,48 @@ package("geode-sdk-tuliphook")
                 )
 
                 if is_plat("windows", "mingw") then
-                    add_files(
-                        "src/generator/X86Generator.cpp",
-                        "src/generator/X64Generator.cpp",
-                        "src/target/Windows32Target.cpp",
-                        "src/target/Windows64Target.cpp"
-                    )
+                    add_files("src/generator/X86Generator.cpp")
+                    if is_arch("i386", "x86", "x64", "x86_64") and package:check_sizeof("void*") == "4" then
+                        add_files("src/target/Windows32Target.cpp")
+                    elseif is_arch("i386", "x86", "x64", "x86_64") and package:check_sizeof("void*") == "8" then
+                        add_files("src/generator/X64Generator.cpp", "src/target/Windows64Target.cpp")
+                    end
                 elseif is_plat("macosx", "iphoneos") then
-                    add_files(
-                        "src/generator/X86Generator.cpp",
-                        "src/generator/X64Generator.cpp",
-                        "src/generator/ArmV8Generator.cpp",
-                        "src/target/DarwinTarget.cpp",
-                        "src/target/MacosIntelTarget.cpp",
-                        "src/target/MacosM1Target.cpp",
-                        "src/target/iOSTarget.cpp"
-                    )
+                    add_files("src/target/DarwinTarget.cpp")
+                    if is_arch("i386", "x86", "x64", "x86_64") and package:check_sizeof("void*") == "4" then
+                        add_files("src/generator/X86Generator.cpp")
+                    elseif is_arch("i386", "x86", "x64", "x86_64") and package:check_sizeof("void*") == "8" then
+                        add_files("src/generator/X86Generator.cpp", "src/generator/X64Generator.cpp")
+                    elseif is_arch("arm.*") and package:check_sizeof("void*") == "8" then
+                        add_files("src/generator/ArmV8Generator.cpp")
+                    end
+                    if package:is_plat("macosx") then
+                        if package:is_arch("arm.*") then
+                            add_files("src/target/MacosM1Target.cpp")
+                        else
+                            add_files("src/target/MacosIntelTarget.cpp")
+                        end
+                    elseif package:is_plat("iphoneos") then
+                        add_files("src/target/iOSTarget.cpp")
+                    end
                 elseif is_plat("android") then
-                    add_files(
-                        "src/generator/ArmV7Generator.cpp",
-                        "src/generator/ArmV8Generator.cpp",
-                        "src/target/PosixTarget.cpp",
-                        "src/target/PosixArmV7Target.cpp",
-                        "src/target/PosixArmV8Target.cpp"
-                    )
+                    add_files("src/target/PosixTarget.cpp")
+                    if is_arch("arm.*") and package:check_sizeof("void*") == "4" then
+                        add_files("src/generator/ArmV7Generator.cpp", "src/target/PosixArmV7Target.cpp")
+                    elseif is_arch("arm.*") and package:check_sizeof("void*") == "8" then
+                        add_files("src/generator/ArmV8Generator.cpp", "src/target/PosixArmV8Target.cpp")
+                    end
                 elseif is_plat("linux") then
-                    add_files(
-                        "src/generator/X86Generator.cpp",
-                        "src/generator/X64Generator.cpp",
-                        "src/generator/ArmV7Generator.cpp",
-                        "src/generator/ArmV8Generator.cpp",
-                        "src/target/PosixTarget.cpp",
-                        "src/target/PosixX64Target.cpp",
-                        "src/target/PosixArmV7Target.cpp",
-                        "src/target/PosixArmV8Target.cpp"
-                    )
+                    add_files("src/target/PosixTarget.cpp")
+                    if is_arch("i386", "x86", "x64", "x86_64") and package:check_sizeof("void*") == "4" then
+                        add_files("src/generator/X86Generator.cpp")
+                    elseif is_arch("i386", "x86", "x64", "x86_64") and package:check_sizeof("void*") == "8" then
+                        add_files("src/generator/X64Generator.cpp", "src/target/PosixX64Target.cpp", "src/generator/X86Generator.cpp")
+                    elseif is_arch("arm.*") and package:check_sizeof("void*") == "4" then
+                        add_files("src/generator/ArmV7Generator.cpp", "src/target/PosixArmV7Target.cpp")
+                    elseif is_arch("arm.*") and package:check_sizeof("void*") == "8" then
+                        add_files("src/generator/ArmV8Generator.cpp", "src/target/PosixArmV8Target.cpp")
+                    end
                 end
 
                 add_defines("TULIP_HOOK_EXPORTING")
