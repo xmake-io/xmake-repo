@@ -1,0 +1,15 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 0b9b367..9429588 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -137,8 +137,8 @@ if (SQLGEN_SQLITE3 OR SQLGEN_CHECK_HEADERS)
+         endif()
+         target_link_libraries(sqlgen PUBLIC unofficial::sqlite3::sqlite3)
+     else()
+-        if (NOT TARGET unofficial-sqlite3)
+-            find_package(SQLite3 CONFIG REQUIRED)
++        if (NOT TARGET SQLite3)
++            find_package(SQLite3 REQUIRED)
+         endif()
+         target_link_libraries(sqlgen PUBLIC SQLite::SQLite3)
+     endif()
