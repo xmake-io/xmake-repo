@@ -16,6 +16,18 @@ package("geode-sdk-tuliphook")
         add_deps("capstone")
     end
 
+    if on_check then
+        on_check(function (package)
+            assert(package:check_cxxsnippets({test = [[
+                #include <concepts>
+                void test() {
+                    static_assert(std::constructible_from<int, int>);
+                    static_assert(std::constructible_from<double, float>);
+                }
+            ]]}, {configs = {languages = "c++20"}}), "package(geode-sdk-tuliphook) Require at least C++20 (supports std::constructible_from).")
+        end)
+    end
+
     on_load(function (package)
         if not package:is_plat("windows", "mingw") then
             package:add("links", "tuliphook", "dobby")
