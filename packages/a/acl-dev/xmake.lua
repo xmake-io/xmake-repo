@@ -150,17 +150,6 @@ package("acl-dev")
                         os.cp(path.join(package:scriptdir(), "port", "ontop_arm64_aapcs_pe_armasm.asm"), "lib_fiber/c/src/fiber/boost/ontop_arm64_aapcs_pe_armasm.asm")
                         os.cp(path.join(package:scriptdir(), "port", "jump_arm64_aapcs_pe_armasm.asm"), "lib_fiber/c/src/fiber/boost/jump_arm64_aapcs_pe_armasm.asm")
                         os.cp(path.join(package:scriptdir(), "port", "make_arm64_aapcs_pe_armasm.asm"), "lib_fiber/c/src/fiber/boost/make_arm64_aapcs_pe_armasm.asm")
-                        local defines = ""
-                        if package:config("shared") then
-                            defines = "#define BOOST_CONTEXT_DYN_LINK\n#define BOOST_CONTEXT_EXPORT EXPORT\n"
-                        else
-                            defines = "#define BOOST_CONTEXT_STATIC_LINK\n#define BOOST_CONTEXT_EXPORT\n"
-                        end
-                        for _, f in ipairs({"lib_fiber/c/src/fiber/boost/make_arm64_aapcs_pe_armasm.asm", 
-                                            "lib_fiber/c/src/fiber/boost/jump_arm64_aapcs_pe_armasm.asm", 
-                                            "lib_fiber/c/src/fiber/boost/ontop_arm64_aapcs_pe_armasm.asm"}) do
-                            io.writefile(f, defines .. io.readfile(f))
-                        end
                         io.replace("lib_fiber/c/CMakeLists.txt",
                             [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]],
                             [[list(APPEND lib_src ${src}/fiber/boost/make_arm64_aapcs_pe_armasm.asm]], {plain = true})
