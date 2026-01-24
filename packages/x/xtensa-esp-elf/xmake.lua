@@ -76,7 +76,7 @@ package("xtensa-esp-elf")
         end
     end
 
-    on_install("@windows", "@linux", "@macosx", function(package)
+    on_install("windows|!arm*", "@linux", "@macosx", function(package)
         os.cp("*", package:installdir())
     end)
 
