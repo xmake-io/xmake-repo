@@ -6,6 +6,7 @@ package("libvips")
     add_urls("https://github.com/libvips/libvips/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libvips/libvips.git")
 
+    add_versions("v8.18.0", "33bf7fad3d775389a2bfbae4b391196ffedcfa1f3fed258ec506d9c0241b0612")
     add_versions("v8.17.3", "c1180d13f33742685c513ac42c0556dd1ce9e2b79cdb248a807576e2d8b63b32")
     add_versions("v8.17.2", "66e2c8f0a716a08cf99e46a27535ef4938f1cae110dd9207cf8e992616b36ba7")
     add_versions("v8.17.1", "79f54d367a485507c1421408ae13768e4734f473edc71af511472645f46dbd08")
