@@ -96,18 +96,18 @@ package("geode-sdk-tuliphook")
 
                 if is_plat("windows", "mingw") then
                     add_files("src/generator/X86Generator.cpp")
-                    if is_arch("i386", "x86", "x64", "x86_64") and check_sizeof("void*") == "4" then
+                    if is_arch("i386", "x86") then
                         add_files("src/target/Windows32Target.cpp")
-                    elseif is_arch("i386", "x86", "x64", "x86_64") and check_sizeof("void*") == "8" then
+                    elseif is_arch("x64", "x86_64") then
                         add_files("src/generator/X64Generator.cpp", "src/target/Windows64Target.cpp")
                     end
                 elseif is_plat("macosx", "iphoneos") then
                     add_files("src/target/DarwinTarget.cpp")
-                    if is_arch("i386", "x86", "x64", "x86_64") and check_sizeof("void*") == "4" then
+                    if is_arch("i386", "x86") then
                         add_files("src/generator/X86Generator.cpp")
-                    elseif is_arch("i386", "x86", "x64", "x86_64") and check_sizeof("void*") == "8" then
+                    elseif is_arch("x64", "x86_64") then
                         add_files("src/generator/X86Generator.cpp", "src/generator/X64Generator.cpp")
-                    elseif is_arch("arm.*") and check_sizeof("void*") == "8" then
+                    elseif is_arch("arm.*") then
                         add_files("src/generator/ArmV8Generator.cpp")
                     end
                     if is_plat("macosx") then
@@ -121,21 +121,21 @@ package("geode-sdk-tuliphook")
                     end
                 elseif is_plat("android") then
                     add_files("src/target/PosixTarget.cpp")
-                    if is_arch("arm.*") and check_sizeof("void*") == "4" then
-                        add_files("src/generator/ArmV7Generator.cpp", "src/target/PosixArmV7Target.cpp")
-                    elseif is_arch("arm.*") and check_sizeof("void*") == "8" then
+                    if is_arch("arm64.*") then
                         add_files("src/generator/ArmV8Generator.cpp", "src/target/PosixArmV8Target.cpp")
+                    elseif is_arch("arm.*") then
+                        add_files("src/generator/ArmV7Generator.cpp", "src/target/PosixArmV7Target.cpp")
                     end
                 elseif is_plat("linux") then
                     add_files("src/target/PosixTarget.cpp")
-                    if is_arch("i386", "x86", "x64", "x86_64") and check_sizeof("void*") == "4" then
+                    if is_arch("i386", "x86") then
                         add_files("src/generator/X86Generator.cpp")
-                    elseif is_arch("i386", "x86", "x64", "x86_64") and check_sizeof("void*") == "8" then
+                    elseif is_arch("x64", "x86_64") then
                         add_files("src/generator/X64Generator.cpp", "src/target/PosixX64Target.cpp", "src/generator/X86Generator.cpp")
-                    elseif is_arch("arm.*") and check_sizeof("void*") == "4" then
-                        add_files("src/generator/ArmV7Generator.cpp", "src/target/PosixArmV7Target.cpp")
-                    elseif is_arch("arm.*") and check_sizeof("void*") == "8" then
+                    elseif is_arch("arm64.*") then
                         add_files("src/generator/ArmV8Generator.cpp", "src/target/PosixArmV8Target.cpp")
+                    elseif is_arch("arm.*") then
+                        add_files("src/generator/ArmV7Generator.cpp", "src/target/PosixArmV7Target.cpp")
                     end
                 end
 
