@@ -19,6 +19,8 @@ package("moltenvk")
     add_versions("v1.1.4", "f9bba6d3bf3648e7685c247cb6d126d62508af614bc549cedd5859a7da64967e")
     add_versions("v1.1.0", "0538fa1c23ddae495c7f82ccd0db90790a90b7017a258ca7575fbae8021f3058")
 
+    add_configs("vk_driver", {description = "Path to MoltenVK", default = nil, type = "string"})
+
     if is_plat("macosx") then
         add_extsources("brew::molten-vk")
     end
@@ -35,11 +37,45 @@ package("moltenvk")
     end
 
     on_fetch("macosx", function (package, opt)
+        import("lib.detect.find_path")
+        import("lib.detect.find_file")
+        local vk_driver = package:config("vk_driver")
+        if vk_driver then
+            -- This value can be a dir or a file(dylib, a or json) path
+            -- e.g. /home/xxx/dev/MoltenVK/MoltenVK/dynamic/dylib/macOS/libMoltenVK.dylib
+            --      /home/xxx/dev/MoltenVK/MoltenVK/dynamic/dylib/macOS/MoltenVK_icd.json
+            --      /home/xxx/dev/MoltenVK/MoltenVK
+            if os.isfile(vk_driver) then
+                local dir = path.directory(vk_driver)
+                local name = path.filename(vk_driver)
+
+                if name == "libMoltenVK.dylib" or name == "libMoltenVK.a" then
+                    return { linkdirs = dir, links = "MoltenVK" }
+                end
+                if name:endswith(".json") then
+                    if os.isfile(path.join(dir, "libMoltenVK.dylib")) then
+                        return { linkdirs = dir, links = "MoltenVK" }
+                    end
+                end
+            end
+
+            if os.isdir(vk_driver) then
+                local frameworkdir = find_path("MoltenVK.framework", vk_driver)
+                if frameworkdir then
+                    return { frameworkdirs = frameworkdir, frameworks = "MoltenVK", rpathdirs = frameworkdir }
+                end
+
+                local lib_path = find_file("libMoltenVK.dylib", vk_driver)
+                if lib_path then
+                     return { linkdirs = path.directory(lib_path), links = "MoltenVK" }
+                end
+            end
+        end
+
         if opt.system then
-            import("lib.detect.find_path")
             local frameworkdir = find_path("vulkan.framework", "~/VulkanSDK/*/macOS/Frameworks")
             if frameworkdir then
-                return {frameworkdirs = frameworkdir, frameworks = "vulkan", rpathdirs = frameworkdir}
+                return { frameworkdirs = frameworkdir, frameworks = "vulkan", rpathdirs = frameworkdir }
             end
         end
     end)
