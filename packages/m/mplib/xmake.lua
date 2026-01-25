@@ -14,6 +14,14 @@ package("mplib")
     add_deps("pinocchio v2.7.1", {configs = {urdf = true}})
     add_deps("fcl", {configs = {octomap = true}})
 
+    if on_check then
+        on_check(function (package)
+            if not package:is_plat("windows", "linux", "macosx") then
+                raise("deps octomap is only supported on windows, macosx and linux")
+            end
+        end)
+    end
+
     on_install(function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, {python = package:config("python")})
