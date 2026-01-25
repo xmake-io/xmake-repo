@@ -1,6 +1,7 @@
-option("python", {default = false, description = "Build with Python bindings."})
+option("python", {default = false})
 
-add_requires("ompl", "fcl", "pinocchio", "assimp", "orocos-kdl", "urdfdom")
+add_requires("ompl", "fcl", "assimp", "orocos-kdl", "urdfdom")
+add_requires("pinocchio", {configs = {urdf = true}})
 if has_config("python") then
     add_requires("pybind11")
 end
