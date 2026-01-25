@@ -99,6 +99,7 @@ package("pinocchio")
         end
 
         local configs = {
+            "-DINSTALL_DOCUMENTATION=OFF",
             "-DBUILD_BENCHMARK=OFF",
             "-DBUILD_EXAMPLES=OFF",
             "-DBUILD_TESTING=OFF",
