@@ -4,7 +4,7 @@ package("protoc")
     set_description("Google's data interchange format compiler")
 
     if is_plat("android") then
-        add_deps("protobuf-cpp", {configs = {tools = true}})
+        add_deps("protobuf-cpp", {configs = {tools = true, upb = true}})
     else
         add_deps("protobuf-cpp")
     end

@@ -183,7 +183,6 @@ package("protobuf-cpp")
             "-Dprotobuf_LOCAL_DEPENDENCIES_ONLY=ON",
             "-Dprotobuf_DEBUG_POSTFIX=''",
         }
-        table.insert(configs, "-Dprotobuf_BUILD_LIBUPB=" .. (package:config("tools") and "ON" or "OFF"))
         table.insert(configs, "-Dprotobuf_BUILD_PROTOC_BINARIES=" .. (package:config("tools") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
