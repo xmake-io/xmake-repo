@@ -9,7 +9,7 @@ package("protoc")
         add_deps("protobuf-cpp")
     end
 
-    on_install("@windows", "@linux", "@macosx", "@bsd", function (package) end)
+    on_install("@windows", "@linux", "@macosx", "@bsd", "@msys", function (package) end)
 
     on_test(function (package)
         os.vrun("protoc --version")
