@@ -6,6 +6,7 @@ package("node-api-headers")
 
     set_urls("https://github.com/nodejs/node-api-headers/archive/refs/tags/$(version).tar.gz",
              "https://github.com/nodejs/node-api-headers.git")
+    add_versions("v1.8.0", "e2337d314fbff54ddc3923893704596944ea922b141ac550803526e552a62193")
     add_versions("v1.7.0", "2f964cac4f90b4379ea6db4ac9635b39cd29ba63a0a1f892b0075871ff6d0216")
     add_versions("v1.6.0", "199b465efd4276b85f6b6132745aba1804c2372c848247aca3a5a6895799d9ae")
     add_versions("v1.5.0", "c31ce81b98b034d6daaa2b97112ba83b51b6e4454bea00696bbc7881e851a29c")
