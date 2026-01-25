@@ -10,8 +10,9 @@ package("mplib")
 
     add_configs("python", {description = "Build Python bindings.", default = false, type = "boolean"})
 
-    add_deps("ompl", "fcl", "assimp", "orocos-kdl", "urdfdom")
+    add_deps("ompl", "assimp", "orocos-kdl", "urdfdom")
     add_deps("pinocchio", {configs = {urdf = true}})
+    add_deps("fcl", {configs = {octomap = true}})
 
     on_install(function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
