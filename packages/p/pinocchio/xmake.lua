@@ -22,7 +22,11 @@ package("pinocchio")
         add_defines("WIN32", "NOMINMAX")
     end
 
-    add_links("pinocchio_visualizers", "pinocchio_parsers", "pinocchio_default")
+    add_links(
+        "pinocchio_visualizers", "pinocchio_parsers", "pinocchio_default",
+        -- backward compatibility 2.x version
+        "pinocchio"
+    )
 
     add_deps("cmake", "jrl-cmakemodules")
     add_deps("eigen >=3.0.5")
@@ -65,6 +69,20 @@ package("pinocchio")
 
     -- failed to link
     on_install("!mingw", function (package)
+        -- 2.x version
+        io.replace("CMakeLists.txt", "CMAKE_MINIMUM_REQUIRED(VERSION 3.10)", "CMAKE_MINIMUM_REQUIRED(VERSION 3.22)", {plain = true}) -- jrl-cmakemodules require
+        io.replace("CMakeLists.txt", "SET_BOOST_DEFAULT_OPTIONS()", "", {plain = true})
+        io.replace("CMakeLists.txt", "EXPORT_BOOST_DEFAULT_OPTIONS()", "", {plain = true})
+        io.replace("src/CMakeLists.txt", "ADD_LIBRARY(${PROJECT_NAME} SHARED", "add_library(${PROJECT_NAME}", {plain = true})
+        if package:config("urdf") then
+            io.replace("CMakeLists.txt", "IF(BUILD_WITH_URDF_SUPPORT)\n  ADD_PROJECT_DEPENDENCY(urdfdom_headers REQUIRED)",
+            [[if(BUILD_WITH_URDF_SUPPORT)
+                    add_project_dependency(urdfdom_headers REQUIRED)
+                    add_project_dependency(console_bridge REQUIRED)
+                    add_project_dependency(tinyxml2 REQUIRED)
+                ]], {plain = true})
+        end
+        -- 3.x version
         io.replace("CMakeLists.txt", "set_boost_default_options()", "", {plain = true})
         io.replace("CMakeLists.txt", "export_boost_default_options()", "", {plain = true})
         io.replace("src/CMakeLists.txt", "add_library(${LIB_NAME} ${LIBRARY_TYPE})", "add_library(${LIB_NAME})", {plain = true})
@@ -123,7 +141,11 @@ package("pinocchio")
         assert(package:check_cxxsnippets({test = [[
             #include <iostream>
  
-            #include <pinocchio/multibody/sample-models.hpp>
+            #if __has_include(<pinocchio/multibody/sample-models.hpp>)
+                #include <pinocchio/multibody/sample-models.hpp>
+            #else
+                #include <pinocchio/parsers/sample-models.hpp>
+            #endif
             #include <pinocchio/algorithm/joint-configuration.hpp>
             #include <pinocchio/algorithm/rnea.hpp>
 

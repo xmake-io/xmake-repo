@@ -1,7 +1,7 @@
 option("python", {default = false})
 
 add_requires("ompl", "assimp", "orocos-kdl", "urdfdom")
-add_requires("pinocchio", {configs = {urdf = true}})
+add_requires("pinocchio v2.7.1", {configs = {urdf = true}})
 add_requires("fcl", {configs = {octomap = true}})
 if has_config("python") then
     add_requires("pybind11")
@@ -12,9 +12,10 @@ set_languages("c++17")
 target("mp")
     set_kind("$(kind)")
     add_files("src/**.cpp")
-    add_includedirs("include")
+    add_includedirs("include", {public = true})
+    add_headerfiles("include/(**.h)")
 
-    add_packages("ompl", "fcl", "pinocchio", "assimp", "orocos-kdl", "urdfdom")
+    add_packages("ompl", "fcl", "pinocchio", "assimp", "orocos-kdl", "urdfdom", {public = true})
 
 target("pymp")
     set_default(has_config("python"))
