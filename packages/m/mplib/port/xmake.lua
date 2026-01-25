@@ -18,8 +18,11 @@ target("mp")
     add_packages("ompl", "fcl", "pinocchio", "assimp", "orocos-kdl", "urdfdom", {public = true})
 
 target("pymp")
-    set_default(has_config("python"))
-    add_rules("python.library", {soabi = true})
+    if has_config("python") then
+        add_rules("python.library", {soabi = true})
+    else
+        set_default(false)
+    end
     add_files("pybind/**.cpp")
     add_includedirs("pybind")
 
