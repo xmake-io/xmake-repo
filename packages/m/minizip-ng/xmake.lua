@@ -16,6 +16,8 @@ package("minizip-ng")
     add_versions("3.0.3", "5f1dd0d38adbe9785cb9c4e6e47738c109d73a0afa86e58c4025ce3e2cc504ed")
     add_versions("3.0.5", "1a248c378fdf4ef6c517024bb65577603d5146cffaebe81900bec9c0a5035d4d")
 
+    add_patches("4.1.0", "patches/4.1.0/fix-bsd.patch", "e70384e66967bb6c75ac7c7b610ea53b0ef3b35289359a4d7118d9310a4a3994")
+
     add_configs("zlib",  {description = "Enable zlib compression library.", default = true, type = "boolean"})
     add_configs("lzma",  {description = "Enable liblzma compression library.", default = false, type = "boolean"})
     add_configs("bzip2", {description = "Enable bzip2 comppressression library.", default = false, type = "boolean"})
@@ -57,6 +59,7 @@ package("minizip-ng")
     on_install(function (package)
         -- TODO: add new config for zlib-ng?
         io.replace("CMakeLists.txt", "find_package(ZLIBNG QUIET)", "", {plain = true})
+        io.replace("CMakeLists.txt", "find_package(ZLIB-NG QUIET)", "", {plain = true}) -- 4.1.0 version
 
         local configs = {"-DMZ_LIBCOMP=OFF", "-DMZ_FETCH_LIBS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
