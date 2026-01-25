@@ -5,6 +5,7 @@ package("glslang-nihui")
 
     add_urls("https://github.com/nihui/glslang.git")
 
+    add_versions("20260113", "fe88f421038e1bb0a25cd5c1b2dfe505db82d08f")
     add_versions("20250916", "8cd77a808d0bffa442ae9462d5e3a8141892ba5a")
     add_versions("20250503", "a9ac7d5f307e5db5b8c4fbf904bdba8fca6283bc")
 
