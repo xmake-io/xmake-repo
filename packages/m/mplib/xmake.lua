@@ -9,6 +9,9 @@ package("mplib")
     add_versions("v0.2.1", "ea5b549965994ab7794c73f9c95f49590e473e76513f48e6feb4b37c53e5c4da")
 
     add_configs("python", {description = "Build Python bindings.", default = false, type = "boolean"})
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     add_deps("ompl", "assimp", "orocos-kdl", "urdfdom")
     add_deps("pinocchio v2.7.1", {configs = {urdf = true}})
