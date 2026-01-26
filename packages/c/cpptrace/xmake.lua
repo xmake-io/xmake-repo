@@ -60,6 +60,7 @@ package("cpptrace")
         local configs = {
             "-DBUILD_TESTING=OFF",
             "-DCPPTRACE_USE_EXTERNAL_LIBDWARF=ON",
+            "-DCPPTRACE_FIND_LIBDWARF_WITH_PKGCONFIG=ON",
             "-DCPPTRACE_USE_EXTERNAL_ZSTD=ON",
             "-DCPPTRACE_VCPKG=ON",
         }
