@@ -90,34 +90,24 @@ package("wgpu-native")
 
     add_includedirs("include", "include/webgpu")
 
-    if on_check then
-        on_check(function (package)
-            if package:is_plat("mingw") and not package:is_arch("x86_64") then
-                raise("package(wgpu-native): not saupport platform")
+    on_load(function (package)
+        if package:is_plat("windows", "mingw") then
+            if not package:config("shared") then
+                package:add("syslinks", "advapi32", "bcrypt", "d3dcompiler", "ntdll", "user32", "userenv", "ws2_32", "gdi32", "opengl32", "propsys", "oleaut32", "ole32", "runtimeobject")
             end
-        end)
-    end
-
-    on_load("windows", "mingw", function (package)
-        if not package:config("shared") then
-            package:add("syslinks", "advapi32", "bcrypt", "d3dcompiler", "ntdll", "user32", "userenv", "ws2_32", "gdi32", "opengl32", "propsys", "oleaut32", "ole32", "runtimeobject")
+        elseif package:is_plat("linux") then
+            if not package:config("shared") then
+                package:add("syslinks", "dl", "pthread")
+            end
+        elseif package:is_plat("macosx") then
+            if not package:config("shared") then
+                package:add("syslinks", "objc")
+                package:add("frameworks", "Metal", "QuartzCore", "Foundation")
+            end
         end
     end)
 
-    on_load("linux", function (package)
-        if not package:config("shared") then
-            package:add("syslinks", "dl", "pthread")
-        end
-    end)
-
-    on_load("macosx", function (package)
-        if not package:config("shared") then
-            package:add("syslinks", "objc")
-            package:add("frameworks", "Metal", "QuartzCore", "Foundation")
-        end
-    end)
-
-    on_install("windows", "mingw", "linux", "macosx", function (package)
+    on_install("windows", "mingw|x86_64", "linux", "macosx", function (package)
         os.cp("**.h", package:installdir("include", "webgpu"))
         local lib_path = ""
         if os.exists("lib") then
