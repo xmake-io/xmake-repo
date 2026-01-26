@@ -29,6 +29,17 @@ package("criterion")
     end
     add_deps("debugbreak", "klib", "libffi", "nanopb", "nanomsg", "libgit2")
 
+
+    if on_check then
+        on_check("android", function (package)
+            if package:is_arch("armeabi-v7a") then
+                local ndk = package:toolchain("ndk")
+                local ndkver = ndk:config("ndkver")
+                assert(ndkver and tonumber(ndkver) > 22, "package(criterion/armeabi-v7a): need ndk version > 22")
+            end
+        end)
+    end
+
     on_load(function (package)
         if package:is_plat("bsd") and package:config("shared") then
             package:add("deps", "boxfort", {configs = {shared = true}})
