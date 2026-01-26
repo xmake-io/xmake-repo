@@ -32,11 +32,14 @@ package("criterion")
 
     if on_check then
         on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
+            -- pcre2 requires ndk version for armeabi-v7a arch > 22
             if package:is_arch("armeabi-v7a") then
-                local ndk = package:toolchain("ndk")
                 local ndkver = ndk:config("ndkver")
                 assert(ndkver and tonumber(ndkver) > 22, "package(criterion/armeabi-v7a): need ndk version > 22")
             end
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) > 22, "package(criterion): need ndk api level > 22")
         end)
     end
 
