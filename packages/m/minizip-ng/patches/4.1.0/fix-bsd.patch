@@ -1,0 +1,16 @@
+diff --git a/mz_strm_os_posix.c b/mz_strm_os_posix.c
+index b6ae8021..c2ebe5f3 100644
+--- a/mz_strm_os_posix.c
++++ b/mz_strm_os_posix.c
+@@ -19,8 +19,9 @@
+ 
+ #include <stdio.h> /* fopen, fread.. */
+ #include <errno.h>
+-#include <unistd.h>  // open, close, ...
+-#include <fcntl.h>   // O_NOFOLLOW, ...
++#include <sys/stat.h>  // S_IWUSR, ...
++#include <unistd.h>    // open, close, ...
++#include <fcntl.h>     // O_NOFOLLOW, ...
+ 
+ /***************************************************************************/
+ 

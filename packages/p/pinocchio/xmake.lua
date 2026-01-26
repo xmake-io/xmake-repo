@@ -7,6 +7,7 @@ package("pinocchio")
              "https://github.com/stack-of-tasks/pinocchio.git", {submodules = false})
 
     add_versions("v3.9.0", "721cf3e08956146856a9c9de914788bac4076536620bd7264722d6a7cfb50500")
+    add_versions("v2.7.1", "b1b9016560263cfc70a4f5fc58c64d239a816437cf200fb8507ad4e46eaa833d")
 
     add_configs("urdf", {description = "Build the library with the URDF format support", default = false, type = "boolean"})
     add_configs("sdf", {description = "Build the library with the SDF format support", default = false, type = "boolean"})
@@ -69,6 +70,8 @@ package("pinocchio")
 
     -- failed to link
     on_install("!mingw", function (package)
+        import("utils.ci.is_running", {alias = "ci_is_running"})
+
         -- 2.x version
         io.replace("CMakeLists.txt", "CMAKE_MINIMUM_REQUIRED(VERSION 3.10)", "CMAKE_MINIMUM_REQUIRED(VERSION 3.22)", {plain = true}) -- jrl-cmakemodules require
         io.replace("CMakeLists.txt", "SET_BOOST_DEFAULT_OPTIONS()", "", {plain = true})
@@ -99,7 +102,7 @@ package("pinocchio")
         end
 
         local configs = {
-            "-DINSTALL_DOCUMENTATION=OFF",
+            "-DBUILD_DOCUMENTATION=OFF",
             "-DBUILD_BENCHMARK=OFF",
             "-DBUILD_EXAMPLES=OFF",
             "-DBUILD_TESTING=OFF",
@@ -129,7 +132,13 @@ package("pinocchio")
         elseif package:is_plat("mingw", "msys") then
             table.insert(cxflags, "-Wa,-mbig-obj")
         end
-        import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
+
+        local opt = {}
+        opt.cxflags = cxflags
+        if ci_is_running() and is_host("linux") then
+            opt.jobs = "4"
+        end
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
