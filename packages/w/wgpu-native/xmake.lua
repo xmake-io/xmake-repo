@@ -90,6 +90,14 @@ package("wgpu-native")
 
     add_includedirs("include", "include/webgpu")
 
+    if on_check then
+        on_check(function (package)
+            if package:is_plat("mingw") and not package:is_arch("x86_64") then
+                raise("package(wgpu-native): not saupport platform")
+            end
+        end)
+    end
+
     on_load("windows", "mingw", function (package)
         if not package:config("shared") then
             package:add("syslinks", "advapi32", "bcrypt", "d3dcompiler", "ntdll", "user32", "userenv", "ws2_32", "gdi32", "opengl32", "propsys", "oleaut32", "ole32", "runtimeobject")
@@ -109,7 +117,7 @@ package("wgpu-native")
         end
     end)
 
-    on_install("windows|x64", "windows|x86", "windows|arm64", "mingw|x86_64", "linux|arm64", "linux|x86_64", "macosx|x86_64", "macosx|arm64", function (package)
+    on_install("windows", "mingw", "linux", "macosx", function (package)
         os.cp("**.h", package:installdir("include", "webgpu"))
         local lib_path = ""
         if os.exists("lib") then
