@@ -52,6 +52,7 @@ package("vk-bootstrap")
                 add_files("src/VkBootstrap.cpp")
                 add_headerfiles("src/VkBootstrap.h")
                 add_headerfiles("src/VkBootstrapDispatch.h")
+                add_headerfiles("src/VkBootstrapFeatureChain.h")
                 add_packages("vulkan-headers")
                 if is_plat("linux") then
                     add_syslinks("dl")
