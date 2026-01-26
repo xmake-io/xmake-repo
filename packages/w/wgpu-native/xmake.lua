@@ -8,6 +8,7 @@ package("wgpu-native")
             local build = version:ge("v24.0.0+1") and "-msvc" or ""
             return version:gsub("%+", ".") .. "/wgpu-windows-x86_64" .. build .. "-release"
         end})
+        add_versions("v27.0.4+0", "f14ca334b4d253881bde2605bd147f332178d705f56fbd74f81458797c77fce1")
         add_versions("v27.0.2+0", "0df0231284cd9ab59dfc382f435caf1275f4372ae0635ef1261d6fe1d58c5a0e")
         add_versions("v25.0.2+1", "e0cdcec5e7601117bb0e457e55d1729199d6f203857c72b432b406493c7434f7")
         add_versions("v24.0.3+1", "72d3abf74e0b55f9474602e2ce7f20fd0f9b9c46be8405b45a697ec1ee343436")
@@ -19,6 +20,7 @@ package("wgpu-native")
             local build = version:ge("v24.0.0+1") and "-msvc" or ""
             return version:gsub("%+", ".") .. "/wgpu-windows-i686" .. build .. "-release"
         end})
+        add_versions("v27.0.4+0", "23399f2c9743a2c5396a146a02d8f5dc34b018c7c8826367d172d7a58cea7036")
         add_versions("v27.0.2+0", "542fe3a3e88e617acad2f34d129f0203132b6b175af015cba977dfbee75ccbff")
         add_versions("v25.0.2+1", "0ed7711ded45228ba63405a61746a6b8443b7f257d284726281129850a9ef41d")
         add_versions("v24.0.3+1", "226e196ba4b65a29a1f08e236ad53787f066e4677a8e62382af5a049d07787b2")
@@ -27,18 +29,21 @@ package("wgpu-native")
         add_versions("v0.17.0+2", "098037ca18c1a3fbf25f061f822762d5eab1cd4ecf8e7d039f9ccbd357322a54")
     elseif is_plat("windows") and is_arch("arm64") then
         add_urls("https://github.com/gfx-rs/wgpu-native/releases/download/$(version)/wgpu-windows-aarch64-msvc-release.zip", {version = function(version) return version:gsub("%+", ".") end})
+        add_versions("v27.0.4+0", "71271c3671bbcbb8935211dc18bfc1f765326d72f6d1710c93afb0d597000aa9")
         add_versions("v27.0.2+0", "85510bebf7c8c8183b7fd508994b34cc2762612e9c534689dea62b6e30d7d76f")
         add_versions("v25.0.2+1", "039ad9033ae43f478697a7090e16dc9a9b87f171288ff3d0c9f1a41ed10f4e59")
         add_versions("v24.0.3+1", "b2adb3c0e7ffaccb9373b1b4156892dcec6b40778b06d88fb4d62fa386676881")
         add_versions("v24.0.0+1", "0cfc9023dbc2f0ff3ec2b219907b1dd7b46ad83c9a2089e5300ae925ad40664d")
     elseif is_plat("mingw") and is_arch("x86_64") then
         add_urls("https://github.com/gfx-rs/wgpu-native/releases/download/$(version)/wgpu-windows-x86_64-gnu-release.zip", {version = function(version) return version:gsub("%+", ".") end})
+        add_versions("v27.0.4+0", "c0c2dbcef3c6a9933a1a1bf7cbdaaebed61a33c833bacb0269662f91536be8bd")
         add_versions("v27.0.2+0", "7ff026f39b79d2c48c696c4a21ebb86f7a12634f8921205a27a55ebdbc89567e")
         add_versions("v25.0.2+1", "29eef7a49b0906fef2fe103cf34c7f325b4e53591e16d362d633d0b5994de6be")
         add_versions("v24.0.3+1", "fb3efad0ca05c2eda61ee54349709f05ff28290308b4b80b01f1bad574ce19f7")
         add_versions("v24.0.0+1", "830d9c7d7324f0f3ffb0c71fbbb21549b347f06a5eb5f2802aaa12c809d40fd6")
     elseif is_plat("linux") and is_arch("x86_64") then
         add_urls("https://github.com/gfx-rs/wgpu-native/releases/download/$(version)/wgpu-linux-x86_64-release.zip", {version = function(version) return version:gsub("%+", ".") end})
+        add_versions("v27.0.4+0", "271481ef76fbf3ea09631a6079e9493636ecf813cd9c92306c44a1a452991ba1")
         add_versions("v27.0.2+0", "4264ba136c0ea3b654f756ba34320f7d868d41716bb8cb7d36ccad4a2c48cdb2")
         add_versions("v25.0.2+1", "74ea0fed0aadc9b353b56db812081a1620d1d72003d7592c449ca39d5f5b61bb")
         add_versions("v24.0.3+1", "86f3eb9f74d7f1ac82ee52d9b2ab15e366ef86a932759c750b7472652836ee59")
@@ -50,6 +55,7 @@ package("wgpu-native")
             local arch = version:ge("v24.0.0+1") and "aarch64" or "x86_64"
             return version:gsub("%+", ".") .. "/wgpu-linux-" .. arch .. "-release"
         end})
+        add_versions("v27.0.4+0", "a2f22248200997b69373273b10d50a58164f6ed840877289f3e46bff317b134e")
         add_versions("v27.0.2+0", "76f1f493716d5e67b80c08850471f2ac6d1a45cb694d68c8e56537ed115d29f0")
         add_versions("v25.0.2+1", "ab048ddfcd0274d09c62db793b7dde39f1e8dc8a1135ecfbe2fe102f5cfa9943")
         add_versions("v24.0.3+1", "97786f622d6d4f9aaa87c27d165de8db65daf1d391e0bcc32a2dd9bb45fcd299")
@@ -57,6 +63,7 @@ package("wgpu-native")
         add_versions("v0.19.4+1", "6e53aa3f0aec4b2b65cb0d7635000cf39bddd672bcb6138a593bf8cb8134f621")
     elseif is_plat("macosx") and is_arch("x86_64") then
         add_urls("https://github.com/gfx-rs/wgpu-native/releases/download/$(version)/wgpu-macos-x86_64-release.zip", {version = function(version) return version:gsub("%+", ".") end})
+        add_versions("v27.0.4+0", "660fe9be59b555ec1d7c839e5cf8b6c71762938af61ab444a7a58dd87970dba2")
         add_versions("v27.0.2+0", "e2a2951d087d51f902d764bb667f67460f26f57f8fe2d7c834d819b91b893525")
         add_versions("v25.0.2+1", "64df075f30a7714daf49fa21728e5a3554c5a5254ea6372da5e7b790bc60903c")
         add_versions("v24.0.3+1", "1fbc6930e2811b7fde7f046e5300ae5dc20c451d0c3e42a10ff71efae1f565ac")
@@ -68,6 +75,7 @@ package("wgpu-native")
             local arch = version:ge("v0.18.1+3") and "aarch64" or "arm64"
             return version:gsub("%+", ".") .. "/wgpu-macos-" .. arch .. "-release"
         end})
+        add_versions("v27.0.4+0", "15367c26fdbe6892db35007d39f3883593384e777360b70e6bd704cb5dedde53")
         add_versions("v27.0.2+0", "5233eea32720936c0757d8fd91ca2fb5336f4c90297d76541b2975146df50876")
         add_versions("v25.0.2+1", "df4f35417047e0f88ed6facd2cfa42d7a88bdc367bf1c7aa10c462bc8b3a2117")
         add_versions("v24.0.3+1", "f140ff27234ebfa9fcca2b492d0cb499f2e197424b9edc45134bcbad0f8d3a78")
@@ -84,7 +92,7 @@ package("wgpu-native")
 
     on_load("windows", "mingw", function (package)
         if not package:config("shared") then
-            package:add("syslinks", "Advapi32", "bcrypt", "d3dcompiler", "NtDll", "User32", "Userenv", "WS2_32", "Gdi32", "Opengl32", "propsys", "OleAut32", "Ole32", "RuntimeObject")
+            package:add("syslinks", "advapi32", "bcrypt", "d3dcompiler", "ntdll", "user32", "userenv", "ws2_32", "gdi32", "opengl32", "propsys", "oleaut32", "ole32", "runtimeobject")
         end
     end)
 
