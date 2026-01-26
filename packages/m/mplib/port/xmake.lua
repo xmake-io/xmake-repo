@@ -1,7 +1,7 @@
 option("python", {default = false})
 
 add_requires("ompl", "assimp", "orocos-kdl", "urdfdom")
-add_requires("pinocchio v2.7.1", {configs = {urdf = true}})
+add_requires("pinocchio 2.x", {configs = {urdf = true}})
 add_requires("fcl", {configs = {octomap = true}})
 if has_config("python") then
     add_requires("pybind11")

@@ -14,7 +14,7 @@ package("mplib")
     end
 
     add_deps("ompl", "assimp", "orocos-kdl", "urdfdom")
-    add_deps("pinocchio v2.7.1", {configs = {urdf = true}})
+    add_deps("pinocchio 2.x", {configs = {urdf = true}})
     add_deps("fcl", {configs = {octomap = true}})
 
     if on_check then
@@ -34,12 +34,12 @@ package("mplib")
         assert(package:check_cxxsnippets({test = [[
             #include <mplib/core/articulated_model.h>
 
-            using ArticulatedModel = mplib::ArticulatedModelTpl<double>;
+            using ArticulatedModel = mplib::ArticulatedModelTpl<float>;
 
             void test() {
                 std::string urdf_filename = "../data/panda/panda.urdf";
                 std::string srdf_filename = "../data/panda/panda.srdf";
-                Eigen::Vector3d gravity = Eigen::Vector3d(0, 0, -9.81);
+                auto gravity = Eigen::Vector3f(0, 0, -9.81);
                 ArticulatedModel articulated_model(urdf_filename, srdf_filename, {}, gravity, {}, {},
                                      false, false);
             }
