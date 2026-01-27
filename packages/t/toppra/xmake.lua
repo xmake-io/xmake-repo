@@ -35,9 +35,16 @@ package("toppra")
     end)
 
     on_install(function (package)
+        io.replace("cpp/src/CMakeLists.txt", "set_property(TARGET toppra PROPERTY POSITION_INDEPENDENT_CODE ON)", "", {plain = true})
+        io.replace("cpp/src/toppra/toppra.hpp", "#include <vector>", "#include <vector>\n#include <cassert>", {plain = true})
+
         local configs = {"-DBUILD_TESTS=OFF", "-DEIGEN3_VERSION_STRING=" .. package:dep("eigen"):version_str()}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:config("shared") and package:is_plat("windows") then
+            table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
+        end
+
         table.insert(configs, "-DBUILD_WITH_PINOCCHIO=" .. (package:config("pinocchio") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_WITH_qpOASES=" .. (package:config("qpoases") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_WITH_GLPK=" .. (package:config("glpk") and "ON" or "OFF"))
