@@ -172,21 +172,19 @@ target("ffi")
         add_headerfiles("src/wasm32/ffitarget.h")
     end
 
-    on_config(function (target)
-        if target:is_plat("android") and target:is_arch("arm.*") then
-            if target:is_arch64() then
-                target:add("files", "src/aarch64/ffi.c")
-                target:add("files", is_plat("windows") and "src/aarch64/win64_armasm.S" or "src/aarch64/sysv.S")
-                target:add("includedirs", "src/aarch64")
-                target:add("headerfiles", "src/aarch64/ffitarget.h")
-            else
-                target:add("files", "src/arm/ffi.c")
-                target:add("files", is_plat("windows") and "src/arm/sysv_msvc_arm32.S" or "src/arm/sysv.S")
-                target:add("includedirs", "src/arm")
-                target:add("headerfiles", "src/arm/ffitarget.h")
-            end
+    if is_plat("android") and is_arch("arm.*") then
+        if is_arch("arm64.*") then
+            add_files("src/aarch64/ffi.c")
+            add_files(is_plat("windows") and "src/aarch64/win64_armasm.S" or "src/aarch64/sysv.S")
+            add_includedirs("src/aarch64")
+            add_headerfiles("src/aarch64/ffitarget.h")
+        else
+            add_files("src/arm/ffi.c")
+            add_files(is_plat("windows") and "src/arm/sysv_msvc_arm32.S" or "src/arm/sysv.S")
+            add_includedirs("src/arm")
+            add_headerfiles("src/arm/ffitarget.h")
         end
-    end)
+    end
 
     before_build(function (target)
         import("core.base.semver")
