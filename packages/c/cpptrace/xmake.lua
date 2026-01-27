@@ -61,8 +61,7 @@ package("cpptrace")
             "-DBUILD_TESTING=OFF",
             "-DCPPTRACE_USE_EXTERNAL_LIBDWARF=ON",
             "-DCPPTRACE_FIND_LIBDWARF_WITH_PKGCONFIG=ON",
-            "-DCPPTRACE_USE_EXTERNAL_ZSTD=ON",
-            "-DCPPTRACE_VCPKG=ON",
+            "-DCPPTRACE_USE_EXTERNAL_ZSTD=ON"
         }
         table.insert(configs, "-DCPPTRACE_UNWIND_WITH_LIBUNWIND=" .. (package:config("libunwind") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
