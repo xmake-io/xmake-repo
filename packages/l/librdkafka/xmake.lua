@@ -30,6 +30,12 @@ package("librdkafka")
 
     add_links("rdkafka++", "rdkafka")
 
+    if on_check then
+        on_check("iphoneos", function (package)
+            assert(package:version():lt("2.13.0"), "package(librdkafka >= v2.13.0): unsupport iOS")
+        end)
+    end
+
     -- These syslinks come from PKG_CONFIG_LIBS_PRIVATE in librdkafka/src/CMakeLists.txt
     if is_plat("linux") or is_plat("bsd") then
         add_syslinks("pthread", "dl")
