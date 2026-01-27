@@ -5,6 +5,7 @@ package("librdkafka")
 
     add_urls("https://github.com/confluentinc/librdkafka/archive/refs/tags/$(version).tar.gz",
              "https://github.com/confluentinc/librdkafka.git")
+    add_versions("v2.13.0", "3bd351601d8ebcbc99b9a1316cae1b83b00edbcf9411c34287edf1791c507600")
     add_versions("v2.12.1", "ec103fa05cb0f251e375f6ea0b6112cfc9d0acd977dc5b69fdc54242ba38a16f")
     add_versions("v2.11.1", "a2c87186b081e2705bb7d5338d5a01bc88d43273619b372ccb7bb0d264d0ca9f")
     add_versions("v1.6.2", "b9be26c632265a7db2fdd5ab439f2583d14be08ab44dc2e33138323af60c39db")
@@ -28,6 +29,12 @@ package("librdkafka")
     add_deps("cmake")
 
     add_links("rdkafka++", "rdkafka")
+
+    if on_check then
+        on_check("iphoneos", function (package)
+            assert(package:version():lt("2.13.0"), "package(librdkafka >= v2.13.0): unsupport iOS")
+        end)
+    end
 
     -- These syslinks come from PKG_CONFIG_LIBS_PRIVATE in librdkafka/src/CMakeLists.txt
     if is_plat("linux") or is_plat("bsd") then
