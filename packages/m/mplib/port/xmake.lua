@@ -9,6 +9,8 @@ end
 
 set_languages("c++17")
 
+add_rules("mode.debug", "mode.release")
+
 target("mp")
     set_kind("$(kind)")
     add_files("src/**.cpp")
