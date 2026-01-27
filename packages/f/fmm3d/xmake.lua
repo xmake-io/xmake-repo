@@ -5,6 +5,7 @@ package("fmm3d")
 
     set_urls("https://github.com/flatironinstitute/FMM3D/archive/refs/tags/$(version).zip",
              "https://github.com/flatironinstitute/FMM3D.git")
+    add_versions("v2.1.0", "45974f21df0c9b2f9054bf729d7425715bb2a1ee2309d90852678fd50a69e80d")
     add_versions("v1.0.4", "59fa04965cd46cd564ba4784d91f00f8b0d24e0a08967a7b90f076dd5eb30faf")
 
     if is_plat("windows") then
