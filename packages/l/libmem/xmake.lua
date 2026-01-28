@@ -43,7 +43,7 @@ package("libmem")
         end
     end)
 
-    on_install("!wasm and !iphoneos", function (package)
+    on_install("!wasm and !iphoneos and !macosx", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)
     end)
