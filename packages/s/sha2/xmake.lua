@@ -9,7 +9,6 @@ package("sha2")
     on_install(function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
-            add_rules("utils.install.pkgconfig_importfiles", {filename = "libsha2.pc"})
             target("sha2")
                 set_kind("$(kind)")
                 if is_plat("windows") and is_kind("shared") then 
