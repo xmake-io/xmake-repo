@@ -86,7 +86,7 @@ target("libmem")
         }
         local ptrace_arch = ptrace_arch_map[LIBMEM_ARCH] or "generic"
 
-        if is_plat("cross") then
+        if is_plat("cross") and is_arch("arm.*") then
             -- Not yet implemented by upstream
             ptrace_arch = "aarch64"
         end
