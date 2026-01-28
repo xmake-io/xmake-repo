@@ -16,7 +16,7 @@ package("plotlypp")
         assert(ndk and tonumber(ndk) > 22, "package(plotlypp >=3.0.0) require ndk version > 22")
     end)
 
-    on_install("!wasm and !bsd", function (package)
+    on_install("!wasm and !bsd and !iphoneos", function (package)
         import("package.tools.cmake").install(package, {
             "-DPLOTLYPP_BUILD_EXAMPLES=OFF",
         })
