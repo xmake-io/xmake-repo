@@ -12,7 +12,9 @@ package("sha2")
             add_rules("utils.install.pkgconfig_importfiles", {filename = "libsha2.pc"})
             target("sha2")
                 set_kind("$(kind)")
-                add_rules("utils.symbols.export_all")
+                if is_plat("windows") and is_kind("shared") then 
+                    add_rules("utils.symbols.export_all") 
+                end 
                 add_files("sha2.c")
                 add_headerfiles("sha2.h")
         ]])
