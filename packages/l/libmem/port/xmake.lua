@@ -86,9 +86,9 @@ target("libmem")
         }
         local ptrace_arch = ptrace_arch_map[LIBMEM_ARCH] or "generic"
 
-        if is_plat("android") then
+        if is_plat("cross") then
             -- Not yet implemented by upstream
-            ptrace_arch = "generic"
+            ptrace_arch = "aarch64"
         end
 
         add_files("src/linux/ptrace/" .. ptrace_arch .. "/*.c")
