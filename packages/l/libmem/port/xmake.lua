@@ -73,7 +73,7 @@ target("libmem")
             add_cflags("-Wno-int-conversion", "-Wno-incompatible-pointer-types")
         end
 
-    elseif is_plat("linux", "android") then
+    elseif is_plat("linux", "android", "cross") then
         add_files("internal/posixutils/*.c")
         add_files("internal/elfutils/*.c")
         add_files("src/linux/*.c")
@@ -93,8 +93,8 @@ target("libmem")
 
         add_files("src/linux/ptrace/" .. ptrace_arch .. "/*.c")
 
-        if is_plat("linux") then
-            add_syslinks("dl", "stdc++", "m")
+        if is_plat("linux", "cross") then
+            add_syslinks("dl", "m")
         end
     
     elseif is_plat("bsd") then        

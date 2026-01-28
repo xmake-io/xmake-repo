@@ -25,7 +25,7 @@ package("libmem")
         if is_plat("mingw") then
             add_syslinks("uuid")
         end
-    elseif is_plat("linux") then
+    elseif is_plat("linux", "cross") then
         add_syslinks("dl", "m")
     elseif is_plat("bsd") then
         add_syslinks("dl", "kvm", "procstat", "elf", "m")
@@ -43,7 +43,7 @@ package("libmem")
         end
     end)
 
-    on_install("windows", "linux|!arm64", "bsd", "mingw", "msys", "android", function (package)
+    on_install("!wasm and !iphoneos", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)
     end)
