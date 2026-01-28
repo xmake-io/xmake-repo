@@ -11,7 +11,12 @@ package("plotlypp")
     add_deps("cmake")
     add_deps("nlohmann_json", {configs = {cmake = true}})
 
-    on_install(function (package)
+    on_check("android", function (package)
+        local ndk = package:toolchain("ndk"):config("ndkver")
+        assert(ndk and tonumber(ndk) > 22, "package(plotlypp >=3.0.0) require ndk version > 22")
+    end)
+
+    on_install("!wasm and !bsd", function (package)
         import("package.tools.cmake").install(package, {
             "-DPLOTLYPP_BUILD_EXAMPLES=OFF",
         })
