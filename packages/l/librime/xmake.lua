@@ -6,6 +6,7 @@ package("librime")
     add_urls("https://github.com/rime/librime/archive/refs/tags/$(version).tar.gz",
              "https://github.com/rime/librime.git", {submodules = false})
 
+    add_versions("1.16.1", "944909b5d9fb81171b044b7f2ea89922bd73457fcc5105798a259173288cd2d9")
     add_versions("1.16.0", "9d6469246d3f0c3b94ebc05a5299fb2e65fdd3600179617df15eacafa1085788")
     add_versions("1.15.0", "a6283cb6a9fa9445dbd7fac58f614884edd662486fa79809ca63686c8f59c6da")
     add_versions("1.14.0", "b2b29c3551eec6b45af1ba8fd3fcffb99e2b7451aa974c1c9ce107e69ce3ea68")
