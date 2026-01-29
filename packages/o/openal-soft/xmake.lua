@@ -1,5 +1,4 @@
 package("openal-soft")
-
     set_homepage("https://openal-soft.org")
     set_description("OpenAL Soft is a software implementation of the OpenAL 3D audio API.")
     set_license("LGPL-2.0")
@@ -9,6 +8,7 @@ package("openal-soft")
     end})
     add_urls("https://github.com/kcat/openal-soft.git")
 
+    add_versions("1.25.1", "5f8efe8dfba5e9307a50251ba615ace857c7fa9dddfe34130b83e213d7f7cf24")
     add_versions("1.24.3", "7e1fecdeb45e7f78722b776c5cf30bd33934b961d7fd2a11e0494e064cc631ce")
     add_versions("1.23.1", "dfddf3a1f61059853c625b7bb03de8433b455f2f79f89548cbcbd5edca3d4a4a")
     add_versions("1.22.2", "3e58f3d4458f5ee850039b1a6b4dac2343b3a5985a6a2e7ae2d143369c5b8135")
@@ -53,6 +53,10 @@ package("openal-soft")
         -- https://github.com/kcat/openal-soft/issues/864
         io.replace("CMakeLists.txt", "if(HAVE_GCC_PROTECTED_VISIBILITY)", "if(0)", { plain = true })
         local configs = {"-DALSOFT_EXAMPLES=OFF", "-DALSOFT_UTILS=OFF"}
+        if package:version():ge("1.25.0") then
+            -- modules currently cause compiler errors on Clang and MinGW, so it is temporarily disabled.
+            table.insert(configs, "-DALSOFT_ENABLE_MODULES=OFF")
+        end
         if package:config("shared") then
             table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
             table.insert(configs, "-DLIBTYPE=SHARED")
