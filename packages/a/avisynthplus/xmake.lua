@@ -11,11 +11,27 @@ package("avisynthplus")
     add_deps("cmake")
     add_deps("ghc_filesystem")
 
-    on_install(function (package)
-        local configs = {"-DENABLE_PLUGINS=OFF"}
-        if package:is_plat("wasm") then
-            io.replace("CMakeLists.txt", "-msse2", "-msimd128 -msse2", {plain = true})
+    add_links("AviSynth")
+
+    if on_check then
+        on_check("android", function (package)
+            assert(package:check_cxxsnippets({test = [[
+                #include <cstdlib>
+                void test() {
+                    auto ptr = std::aligned_alloc(128, 128);
+                }
+            ]]}, {configs = {languages = "c++17"}}), "package(avisynthplus) Require at least C++17 (supports std::aligned_alloc).")
+        end)
+    end
+
+    on_load("windows", "mingw", function (package)
+        if not package:config("shared") then
+            package:add("defines", "NOMINMAX")
         end
+    end)
+
+    on_install("!wasm", function (package)
+        local configs = {"-DENABLE_PLUGINS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
