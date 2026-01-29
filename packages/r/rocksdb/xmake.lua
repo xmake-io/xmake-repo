@@ -59,12 +59,14 @@ package("rocksdb")
     end)
 
     on_install("linux", "windows|arm64", "windows|x64", "macosx", "mingw|x86_64", function (package)
+        io.replace("tools/CMakeLists.txt", "if(WITH_TOOLS)", "if(0)")
         local configs = {
             "-DWITH_ALL_TESTS=OFF",
             "-DWITH_TESTS=OFF",
             "-DWITH_BENCHMARK_TOOLS=OFF",
             "-DWITH_CORE_TOOLS=OFF",
             "-DWITH_TOOLS=OFF",
+            "-DWITH_TRACE_TOOLS=OFF",
             "-DFAIL_ON_WARNINGS=OFF",
             "-DROCKSDB_INSTALL_ON_WINDOWS=ON",
         }
