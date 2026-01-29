@@ -6,6 +6,7 @@ package("libass")
     add_urls("https://github.com/libass/libass/releases/download/$(version)/libass-$(version).tar.gz",
              "https://github.com/libass/libass.git")
 
+    add_versions("0.17.3", "da7c348deb6fa6c24507afab2dee7545ba5dd5bbf90a137bfe9e738f7df68537")
     add_versions("0.15.2", "1b2a54dda819ef84fa2dee3069cf99748a886363d2adb630fde87fe046e2d1d5")
     add_versions("0.16.0", "fea8019b1887cab9ab00c1e58614b4ec2b1cee339b3f7e446f5fab01b032d430")
     add_versions("0.17.0", "72b9ba5d9dd1ac6d30b5962f38cbe7aefb180174f71d8b65c5e3c3060dbc403f")
