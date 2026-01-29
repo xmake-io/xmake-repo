@@ -33,7 +33,7 @@ package("libffi")
         end
     end)
 
-    on_install("windows", "iphoneos", "cross", function (package)
+    on_install("windows", "iphoneos", "cross", "android", function (package)
         io.gsub("fficonfig.h.in", "# *undef (.-)\n", "${define %1}\n")
         os.cp(path.join(os.scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, {
