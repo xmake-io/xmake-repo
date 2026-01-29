@@ -59,7 +59,6 @@ package("rocksdb")
     end)
 
     on_install("linux", "windows|arm64", "windows|x64", "macosx", "mingw|x86_64", function (package)
-        io.replace("tools/CMakeLists.txt", "if(WITH_TOOLS)", "if(0)")
         local configs = {
             "-DWITH_ALL_TESTS=OFF",
             "-DWITH_TESTS=OFF",
