@@ -25,9 +25,9 @@ jobs:
 
       - name: Installation
         run: |
-          wget https://developer.arm.com/-/media/Files/downloads/gnu/13.3.rel1/binrel/arm-gnu-toolchain-13.3.rel1-x86_64-${{ matrix.cross }}.tar.xz
-          tar -xvf arm-gnu-toolchain-13.3.rel1-x86_64-${{ matrix.cross }}.tar.xz
+          wget https://developer.arm.com/-/media/Files/downloads/gnu/14.3.rel1/binrel/arm-gnu-toolchain-14.3.rel1-x86_64-${{ matrix.cross }}.tar.xz
+          tar -xvf arm-gnu-toolchain-14.3.rel1-x86_64-${{ matrix.cross }}.tar.xz
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D -p cross --sdk=`pwd`/arm-gnu-toolchain-13.3.rel1-x86_64-${{ matrix.cross }}
+          xmake l ./scripts/test.lua -D -p cross --sdk=`pwd`/arm-gnu-toolchain-14.3.rel1-x86_64-${{ matrix.cross }}

@@ -86,15 +86,10 @@ target("libmem")
         }
         local ptrace_arch = ptrace_arch_map[LIBMEM_ARCH] or "generic"
 
-        if is_plat("android") then
-            -- Not yet implemented by upstream
-            ptrace_arch = "generic"
-        end
-
         add_files("src/linux/ptrace/" .. ptrace_arch .. "/*.c")
 
         if is_plat("linux") then
-            add_syslinks("dl", "stdc++", "m")
+            add_syslinks("dl", "m")
         end
     
     elseif is_plat("bsd") then        
