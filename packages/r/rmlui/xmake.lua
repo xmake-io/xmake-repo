@@ -6,6 +6,7 @@ package("rmlui")
     add_urls("https://github.com/mikke89/RmlUi/archive/refs/tags/$(version).tar.gz",
              "https://github.com/mikke89/RmlUi.git")
 
+    add_versions("6.2", "814c3ff7b9666280338d8f0dda85979f5daf028d01c85fc8975431d1e2fd8e8b")
     add_versions("6.1", "b6088bf31858d31bfe657caecf49fd12d5a34f9a37fa1c3061757410c4eb0089")
     add_versions("6.0", "aba3d4b8691076750eee6bf52d722db7880dfe74c18aebd8c6d676e43175fb78")
     add_versions("5.1", "0d28177118f0777e42864b2b7ddfc2937e81eb0dc4c52fc034c71a0c93516626")
