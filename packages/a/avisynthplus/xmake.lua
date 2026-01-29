@@ -3,8 +3,7 @@ package("avisynthplus")
     set_description("AviSynth with improvements")
     set_license("GPL-2.0")
 
-    add_urls("https://github.com/AviSynth/AviSynthPlus/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/AviSynth/AviSynthPlus.git")
+    add_urls("https://github.com/AviSynth/AviSynthPlus.git")
 
     add_versions("2026.01.01", "f2f4e318a5ba161d4945185f11c6a27e7aafa92b")
 
