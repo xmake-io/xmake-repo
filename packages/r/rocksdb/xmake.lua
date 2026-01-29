@@ -65,6 +65,7 @@ package("rocksdb")
             "-DWITH_BENCHMARK_TOOLS=OFF",
             "-DWITH_CORE_TOOLS=OFF",
             "-DWITH_TOOLS=OFF",
+            "-DWITH_TRACE_TOOLS=OFF",
             "-DFAIL_ON_WARNINGS=OFF",
             "-DROCKSDB_INSTALL_ON_WINDOWS=ON",
         }
