@@ -24,14 +24,29 @@ package("dispenso")
     add_deps("cmake")
     add_deps("concurrentqueue")
 
-    on_install("windows|x64", "linux", "macosx", "bsd", "mingw", "msys", "android", "iphoneos", "cross", "wasm", function (package)
-        local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DDISPENSO_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
+    on_install(function (package)
+        if package:config("shared") then
+            package:add("defines", "DISPENSO_SHARED_LIB")
+        end
 
         io.replace("dispenso/CMakeLists.txt", "-Werror", "", {plain = true})
         io.replace("dispenso/CMakeLists.txt", "/WX", "", {plain = true})
         io.replace("dispenso/CMakeLists.txt", "Synchronization", "Synchronization winmm", {plain = true})
+        io.replace("dispenso/CMakeLists.txt", "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/third-party/moodycamel>", "", {plain = true})
+        io.replace("dispenso/CMakeLists.txt", "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/dispenso/third-party/moodycamel>", "", {plain = true})
+        -- 1.4.1
+        io.replace("dispenso/CMakeLists.txt", "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/third-party>", "", {plain = true})
+        io.replace("dispenso/CMakeLists.txt", "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/dispenso/third-party>", "", {plain = true})
+        io.replace("dispenso/thread_pool.h", "#include <moodycamel/concurrentqueue.h>", "#include <concurrentqueue.h>", {plain = true})
+
+        local file = io.open("dispenso/CMakeLists.txt", "a")
+        file:print("find_package(concurrentqueue CONFIG REQUIRED)")
+        file:print("target_link_libraries(dispenso PRIVATE concurrentqueue::concurrentqueue)")
+        file:close()
+
+        local configs = {}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DDISPENSO_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
 
         os.tryrm(package:installdir("include/dispenso/third-party"))
