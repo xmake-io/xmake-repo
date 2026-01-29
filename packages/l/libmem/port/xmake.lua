@@ -73,7 +73,7 @@ target("libmem")
             add_cflags("-Wno-int-conversion", "-Wno-incompatible-pointer-types")
         end
 
-    elseif is_plat("linux", "android", "cross") then
+    elseif is_plat("linux", "android") then
         add_files("internal/posixutils/*.c")
         add_files("internal/elfutils/*.c")
         add_files("src/linux/*.c")
@@ -86,14 +86,9 @@ target("libmem")
         }
         local ptrace_arch = ptrace_arch_map[LIBMEM_ARCH] or "generic"
 
-        if is_plat("cross") and is_arch("arm.*") then
-            -- Not yet implemented by upstream
-            ptrace_arch = "aarch64"
-        end
-
         add_files("src/linux/ptrace/" .. ptrace_arch .. "/*.c")
 
-        if is_plat("linux", "cross") then
+        if is_plat("linux") then
             add_syslinks("dl", "m")
         end
     
