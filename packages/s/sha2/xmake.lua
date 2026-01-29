@@ -6,6 +6,10 @@ package("sha2")
 
     add_versions("2024.05.23", "b90991f90967a46d0955dc981e9e3cd53c13b061")
 
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     on_install(function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
