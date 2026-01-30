@@ -8,7 +8,7 @@ package("fluxent")
 
     add_deps("xent-core", "tl_expected")
 
-    on_install("windows", "mingw", function (package)
+    on_install("windows", function (package)
         io.replace("include/fluxent/types.hpp", [[#include "../../third_party/tl/expected.hpp"]], [[#include <tl/expected.hpp>]], {plain = true})
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
