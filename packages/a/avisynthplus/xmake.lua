@@ -27,7 +27,7 @@ package("avisynthplus")
 
     on_load("windows", "mingw", function (package)
         if not package:config("shared") then
-            package:add("defines", "NOMINMAX")
+            package:add("defines", "AVS_STATIC_LIB")
         end
     end)
 
@@ -41,7 +41,7 @@ package("avisynthplus")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             void test() {
-                IScriptEnvironment *env = CreateScriptEnvironment();
+                AvisynthError("test");
             }
         ]]}, {configs = {languages = "c++17"}, includes = "avisynth/avisynth.h"}))
     end)
