@@ -26,6 +26,33 @@ package("mplib")
     end
 
     on_install(function (package)
+        if package:has_tool("cxx", "clang", "clang_cl") then
+            for _, filepath in ipairs(os.files("src/**.cpp") ) do
+                local content = io.readfile(filepath)
+                
+                local moved_lines = {}
+                local found_any = false
+
+                local pattern = "([ \t]*DEFINE_TEMPLATE_[%w_]+%s*%b();[\r\n]*)"
+                local clean_content = content:gsub(pattern, function(match)
+                    found_any = true
+                    table.insert(moved_lines, match:trim())
+                    return ""
+                end)
+
+                if found_any then
+                    local pre_brace, brace, post_brace = clean_content:match("^(.*)(})(.*)$")
+
+                    if pre_brace and brace then
+                        local insertion = "\n" .. table.concat(moved_lines, "\n") .. "\n"
+                        local new_content = pre_brace .. insertion .. brace .. post_brace
+                        
+                        io.writefile(filepath, new_content)
+                    end
+                end
+            end
+        end
+
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, {python = package:config("python")})
     end)
