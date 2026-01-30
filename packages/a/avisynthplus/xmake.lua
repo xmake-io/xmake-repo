@@ -10,10 +10,6 @@ package("avisynthplus")
     add_deps("cmake")
     add_deps("ghc_filesystem")
 
-    if is_plat("windows", "mingw") then
-        add_links("avisynth", "AviSynth")
-    end
-
     if on_check then
         on_check("android", function (package)
             assert(package:check_cxxsnippets({test = [[
@@ -32,6 +28,7 @@ package("avisynthplus")
     end)
 
     on_install("!wasm and !android and !cross", function (package)
+        io.replace("avs_core/CMakeLists.txt", "if (MINGW)", "if (0)", {plain = true})
         local configs = {"-DENABLE_PLUGINS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
