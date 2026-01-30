@@ -10,17 +10,6 @@ package("avisynthplus")
     add_deps("cmake")
     add_deps("ghc_filesystem")
 
-    if on_check then
-        on_check("android", function (package)
-            assert(package:check_cxxsnippets({test = [[
-                #include <cstdlib>
-                void test() {
-                    auto ptr = std::aligned_alloc(128, 128);
-                }
-            ]]}, {configs = {languages = "c++17"}}), "package(avisynthplus) Require at least C++17 (supports std::aligned_alloc).")
-        end)
-    end
-
     on_load("windows", "mingw", function (package)
         if not package:config("shared") then
             package:add("defines", "AVS_STATIC_LIB")
@@ -29,7 +18,9 @@ package("avisynthplus")
 
     on_install("!wasm and !android and !cross", function (package)
         io.replace("avs_core/CMakeLists.txt", "if (MINGW)", "if (0)", {plain = true})
-        local configs = {"-DENABLE_PLUGINS=OFF"}
+        local configs = {
+            "-DENABLE_PLUGINS=OFF"
+        }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
