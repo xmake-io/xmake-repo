@@ -25,6 +25,9 @@ package("fluxent")
                 if is_plat("windows", "mingw") then
                     add_syslinks("user32", "gdi32", "dcomp", "d2d1", "d3d11", "dxgi", "dwrite", "dwmapi", "ole32", "uuid", "uxtheme")
                 end
+                if is_plat("windows") and is_kind("shared") then
+                    add_rules("utils.symbols.export_all", {export_classes = true})
+                end
         ]])
         import("package.tools.xmake").install(package)
     end)
