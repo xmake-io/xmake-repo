@@ -10,7 +10,9 @@ package("avisynthplus")
     add_deps("cmake")
     add_deps("ghc_filesystem")
 
-    add_links("AviSynth")
+    if is_plat("windows", "mingw") then
+        add_links("avisynth", "AviSynth")
+    end
 
     if on_check then
         on_check("android", function (package)
