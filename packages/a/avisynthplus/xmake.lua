@@ -29,7 +29,7 @@ package("avisynthplus")
         end
     end)
 
-    on_install("!wasm", function (package)
+    on_install("!wasm and !android and !cross", function (package)
         local configs = {"-DENABLE_PLUGINS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
