@@ -10,6 +10,12 @@ package("avisynthplus")
     add_deps("cmake")
     add_deps("ghc_filesystem")
 
+    if on_check then
+        on_check("mingw", function (package)
+            assert(package:check_sizeof("void*") == "8", "package(avisynthplus) MinGW requires to be 64-bit, 32-bit is not supported.")
+        end)
+    end
+
     on_load("windows", "mingw", function (package)
         if not package:config("shared") then
             package:add("defines", "AVS_STATIC_LIB")
