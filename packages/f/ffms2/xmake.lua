@@ -12,7 +12,17 @@ package("ffms2")
 
     add_deps("zlib", "ffmpeg")
 
-    on_install(function (package)
+    on_check("windows|arm64", function (package)
+        if not package:is_cross() then
+            raise("package(ffms2) dep(ffmpeg) unsupported windows arm64 native build, because it require arm64 msys2")
+        end
+    end)
+
+    on_install("windows", "mingw@windows,linux,cygwin,msys", "linux", "macosx", "android", "iphoneos", function (package)
+        if not package:config("shared") then
+            package:add("defines", "FFMS_STATIC")
+        end
+
         io.writefile("xmake.lua", [[
             option("tools", {default = false})
             add_rules("mode.debug", "mode.release")
@@ -46,5 +56,5 @@ package("ffms2")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("FFMS_Init", {includes = "ffms2.h"}))
+        assert(package:has_cfuncs("FFMS_Init", {includes = "ffms.h"}))
     end)
