@@ -21,7 +21,7 @@ package("gamenetworkingsockets")
 
     add_configs("webrtc", {description = "Enable p2p.", default = false, type = "boolean"})
 
-    on_load("windows", "linux", function(package)
+    on_load("windows", "linux", "macosx", function(package)
         if not package:config("shared") then
             package:add("defines", "STEAMNETWORKINGSOCKETS_STATIC_LINK")
             package:add("deps", "protobuf-cpp")
@@ -34,7 +34,7 @@ package("gamenetworkingsockets")
         end
     end)
 
-    on_install("windows|x86", "windows|x64", "linux", function (package)
+    on_install("windows|x86", "windows|x64", "linux", "macosx", function (package)
         -- We need copy source codes to the working directory with short path on windows
         --
         -- Because the target name and source file path of this project are too long,
