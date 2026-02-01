@@ -39,7 +39,9 @@ package("openmvs")
         if package:config("cuda") then package:add("deps", "cuda") end
         if package:config("openmp") then package:add("deps", "openmp") end
         if package:config("python") then package:add("deps", "python") end
-        if package:version():ge("2.4.0") then package:add("deps", "nanoflann") end
+        if package:version():ge("2.4.0") then
+            package:add("deps", "nanoflann", "libjxl")
+        end
     end)
 
     on_install("windows|!arm64", "linux", function (package)
