@@ -28,6 +28,7 @@ package("libp2p")
                 end
                 if has_config("simd") then
                     add_defines("P2P_SIMD")
+                    add_cxflags("gxx::-msse4.2")
                 end
         ]])
         import("package.tools.xmake").install(package, {simd = package:config("simd")})
