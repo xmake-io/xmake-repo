@@ -30,23 +30,29 @@ package("xent-core")
 
     on_install(function (package)
         local configs = {}
-        if package:config("shared") then configs.kind = "shared" end
-        local rt = package:config("runtimes") or "MD"
+        if package:is_kind("shared") then
+            configs.kind = "shared"
+        end
+        local rt = package:config("runtimes")
         configs.runtimes = rt
 
-        io.writefile("xmake.lua", string.format([[
+        local content = string.format([[
             add_rules("mode.debug", "mode.release")
             set_languages("c++20")
             set_runtimes("%s")
-            add_requires("yoga", {configs = {runtimes = "%s"}})
+            add_requires("yoga")
             target("xent-core")
-                set_kind("%s")
+                set_kind("$(kind)")
                 add_includedirs("include")
                 add_files("src/*.cpp")
                 add_headerfiles("include/xent/(**.hpp)", {prefixdir = "xent"})
                 add_packages("yoga")
-        ]], rt, rt, configs.kind or "static"))
-        
+                if is_plat("windows") and is_kind("shared") then
+                    add_rules("utils.symbols.export_all", {export_classes = true})
+                end
+        ]], rt)
+        io.writefile("xmake.lua", content)
+
         import("package.tools.xmake").install(package, configs)
     end)
 
