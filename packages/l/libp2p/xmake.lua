@@ -9,6 +9,9 @@ package("libp2p")
     if is_arch("x64", "x86", "x86_64", "i386") then
         add_configs("simd", {description = "Enable SIMD", default = true, type = "boolean"})
     end
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     on_install(function (package)
         if package:config("simd") then
@@ -28,7 +31,7 @@ package("libp2p")
                 end
                 if has_config("simd") then
                     add_defines("P2P_SIMD")
-                    add_cxflags("gxx::-msse4.2")
+                    add_vectorexts("sse4.2")
                 end
         ]])
         import("package.tools.xmake").install(package, {simd = package:config("simd")})
