@@ -6,6 +6,7 @@ package("nri")
     add_urls("https://github.com/NVIDIA-RTX/NRI/archive/refs/tags/$(version).tar.gz",
              "https://github.com/NVIDIA-RTX/NRI.git")
 
+    add_versions("v177", "3e031984f94586cea73ed351c45324736e2b9160ec825f3e6b315c2fa4d73107")
     add_versions("v176", "fddb596caca75af684af368b83a12f476263f6646b65cde57b52674668922943")
 
     add_configs("none",    {description = "Enable NONE backend.", default = false, type = "boolean"})
