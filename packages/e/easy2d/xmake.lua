@@ -16,9 +16,6 @@ package("easy2d")
         type = "boolean"
     })
 
-    -- 限定支持平台（和原生一致）
-    add_platforms("windows", "mingw")
-
     -- 系统链接库（拆分通用+MinGW专属）
     local win_base_libs = {"user32", "gdi32", "shell32", "winmm", "imm32", "version", "ole32", "comdlg32", "dinput8", "d2d1", "dwrite", "dxguid"}
     local mingw_extra_libs = {"windowscodecs", "mfplat", "mfreadwrite", "shlwapi", "xaudio2_8"}
