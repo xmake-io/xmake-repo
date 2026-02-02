@@ -4,7 +4,7 @@ package("easy2d")
     set_license("MIT")
 
     set_urls("https://github.com/ChestnutYueyue/Easy2D.git")
-    add_versions("v2.1.27")
+    add_versions("v2.1.27", "v2.1.27")
 
     add_configs("shared", {
         description = "Build shared library.",
