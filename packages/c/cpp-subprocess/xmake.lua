@@ -6,12 +6,11 @@ package("cpp-subprocess")
 
     set_urls("https://github.com/arun11299/cpp-subprocess.git")
     add_versions("2025.11.10", "8d93da7a9e10cae3ce5888af92f26fbd7871d61e")
-    add_versions("2024.01.25", "4025693decacaceb9420efedbf4967a04cb028e7")
 
     add_links("cpp-subprocess")
 
     on_install(function (package)
-        os.cp("subprocess.hpp", package:installdir("include"))
+        os.cp("cpp-subprocess/subprocess.hpp", package:installdir("include"))
     end)
 
     on_test(function (package)
