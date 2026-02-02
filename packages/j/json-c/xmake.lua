@@ -8,7 +8,7 @@ package("json-c")
         version = function (version)
         local list =  {
             ["0.17"] = "20230812",
-	        ["0.18"] = "20240915",
+            ["0.18"] = "20240915",
         }
         return version .. "-" .. list[tostring(version)]
     end})
