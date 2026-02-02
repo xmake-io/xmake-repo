@@ -17,8 +17,7 @@ package("cpp-subprocess")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <subprocess.hpp>
-            #include <cstring>
-            #include <thread>
+            #include <iostream>
             namespace sp = subprocess;
             int main() {
                 auto obuf = sp::check_output({"ls", "-l"});
