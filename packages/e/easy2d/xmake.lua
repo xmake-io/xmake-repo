@@ -4,10 +4,8 @@ package("easy2d")
     set_license("MIT")
 
     -- 支持tag压缩包和git仓库拉取
-    set_urls("https://github.com/ChestnutYueyue/Easy2D/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/ChestnutYueyue/Easy2D.git")
-             
-    add_versions("v2.1.27", "C6360616B035992CEECD9C64048398AEE0EA691E233C5600F2726C34071B32B9")
+    set_urls("https://github.com/ChestnutYueyue/Easy2D.git")
+    add_versions("master", "DD3F648557454D8DAA00A76A3F05E57F98CC2DFF2005112252D278D431265685")
 
     -- 配置项：是否编译为动态库（原生默认静态）
     add_configs("shared", {
@@ -43,24 +41,24 @@ package("easy2d")
             configs.kind = "static"
         end
         -- 传递C++17语言标准（原生要求）
-        configs.cxflags = "/std:c++17"
-        
+        configs.cxxflags = "/std:c++17 /utf-8"
+                
         -- 调用xmake工具链安装（复用原生xmake.lua的编译逻辑）
         import("package.tools.xmake").install(package, configs)
 
         -- 核心修正：按真实目录结构复制头文件
-        -- 原目录：easy2d/Easy2D/include/easy2d/  → 安装后：installdir/include/easy2d/
-        -- 原目录：easy2d/Easy2D/include/spdlog/  → 安装后：installdir/include/spdlog/
-        os.cp("easy2d/Easy2D/include/easy2d", package:installdir("include"))
-        os.cp("easy2d/Easy2D/include/spdlog", package:installdir("include"))
+        -- 原目录：Easy2D/include/easy2d/  → 安装后：installdir/include/easy2d/
+        -- 原目录：Easy2D/include/spdlog/  → 安装后：installdir/include/spdlog/
+        os.cp("Easy2D/include/easy2d", package:installdir("include/easy2d"))
+        os.cp("Easy2D/include/spdlog", package:installdir("include/spdlog"))
     end)
 
     -- 测试逻辑（适配修正后的头文件路径）
     on_test(function(package)
         -- 验证核心头文件存在（路径：include/easy2d/easy2d.h）
-        assert(package:has_cxxincludes("easy2d/easy2d.h", {configs = {languages = "c++17"}}))
+        assert(package:has_cxxincludes("easy2d/easy2d.h", {configs = {languages = "c++17", cxflags = "/utf-8"}}))
         -- 验证spdlog头文件（可选，确保依赖头文件也安装成功）
-        assert(package:has_cxxincludes("spdlog/spdlog.h", {configs = {languages = "c++17"}}))
+        assert(package:has_cxxincludes("spdlog/spdlog.h", {configs = {languages = "c++17", cxflags = "/utf-8"}}))
         
         -- 验证代码片段编译（路径匹配真实的头文件层级）
         assert(package:check_cxxsnippets({test = [[
@@ -69,7 +67,7 @@ package("easy2d")
                 easy2d::Window::create(L"Test Window", 800, 600);
             }
         ]]}, {
-            configs = {languages = "c++17"},
+            configs = {languages = "c++17", cxflags = "/utf-8"},
             includes = "easy2d/easy2d.h"
         }))
 
