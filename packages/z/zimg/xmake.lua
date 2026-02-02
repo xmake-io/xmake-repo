@@ -6,12 +6,13 @@ package("zimg")
     add_urls("https://github.com/sekrit-twc/zimg/archive/refs/tags/release-$(version).tar.gz")
     add_urls("https://github.com/sekrit-twc/zimg.git", {alias = "git", submodules = false})
 
+    add_versions("3.0.6", "be89390f13a5c9b2388ce0f44a5e89364a20c1c57ce46d382b1fcc3967057577")
     add_versions("3.0.5", "a9a0226bf85e0d83c41a8ebe4e3e690e1348682f6a2a7838f1b8cbff1b799bcf")
     add_versions("3.0.3", "5e002992bfe8b9d2867fdc9266dc84faca46f0bfd931acc2ae0124972b6170a7")
 
     add_versions("git:3.0.6", "release-3.0.6")
 
-    add_configs("simd", {description = "Enable SIMD", default = true, type = "boolean"})
+    add_configs("simd", {description = "Enable SIMD", default = not is_plat("wasm"), type = "boolean"})
 
     if not is_subhost("windows") and not is_plat("windows") then
         add_deps("autotools")
@@ -38,7 +39,7 @@ package("zimg")
         import("package.tools.xmake").install(package, {simd = package:config("simd")})
 
         if package:config("shared") and package:is_plat("windows") then
-            io.replace("src/zimg/api/zimg.h", "__declspec(dllexport)", "#define ZIMG_VISIBILITY __declspec(dllimport)", {plain = true})
+            io.replace(package:installdir("include/zimg.h"), "__declspec(dllexport)", "__declspec(dllimport)", {plain = true})
         end
     end)
 
