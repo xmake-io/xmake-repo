@@ -13,11 +13,7 @@ package("easy2d")
     })
 
     local win_base_libs = {"user32", "gdi32", "shell32", "winmm", "imm32", "version", "ole32", "comdlg32", "dinput8", "d2d1", "dwrite", "dxguid"}
-    local mingw_extra_libs = {"windowscodecs", "mfplat", "mfreadwrite", "shlwapi", "xaudio2_8"}
     add_syslinks(win_base_libs)
-    on_load("mingw", function(package)
-        package:add("syslinks", mingw_extra_libs)
-    end)
 
     on_load("windows", "mingw", function(package)
         if package:config("shared") then
@@ -33,12 +29,14 @@ package("easy2d")
         else
             configs.kind = "static"
         end
-        if  package:is_plat("windows") then
-            configs.cxxflags = "/std:c++17 /utf-8"
-        else 
-            configs.cxxflags = "-finput-charset=UTF-8 -fexec-charset=UTF-8"
+        if package:is_plat("windows") then
+            configs.cxxflags = "/std:c++17 /utf-8 /O2"
+            configs.ldflags = "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup"
+        else
+            configs.cxxflags = "-finput-charset=UTF-8 -fexec-charset=UTF-8 -O2"
+            configs.ldflags = "-mwindows"
         end
-        
+
         import("package.tools.xmake").install(package, configs)
 
         os.cp("Easy2D/include/easy2d/*", package:installdir("include/easy2d"))
