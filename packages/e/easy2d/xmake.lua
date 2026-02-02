@@ -7,7 +7,7 @@ package("easy2d")
     set_urls("https://github.com/ChestnutYueyue/Easy2D/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ChestnutYueyue/Easy2D.git")
              
-    add_versions("v2.1.27", "B6E968B03EA1A4547FE61D2E7873205507501998D4E22C7FF9C04333FBE70E81")
+    add_versions("v2.1.27", "C6360616B035992CEECD9C64048398AEE0EA691E233C5600F2726C34071B32B9")
 
     -- 配置项：是否编译为动态库（原生默认静态）
     add_configs("shared", {
