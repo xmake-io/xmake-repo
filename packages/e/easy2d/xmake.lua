@@ -43,7 +43,7 @@ package("easy2d")
             configs.kind = "static"
         end
         -- 传递C++17语言标准（原生要求）
-        configs.languages = "c++17"
+        configs.cxflags = "/std:c++17"
         
         -- 调用xmake工具链安装（复用原生xmake.lua的编译逻辑）
         import("package.tools.xmake").install(package, configs)
