@@ -30,11 +30,17 @@ package("easy2d")
             configs.kind = "static"
         end
         if package:is_plat("windows") then
-            configs.cxxflags = "/std:c++17 /utf-8 /O2"
-            configs.ldflags = "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup"
+            configs.cxxflags = "/std:c++17 /utf-8"
+            if not package:is_debug() then
+                configs.cxxflags = configs.cxxflags .. " /O2"
+                configs.ldflags = "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup"
+            end
         else
-            configs.cxxflags = "-finput-charset=UTF-8 -fexec-charset=UTF-8 -O2"
-            configs.ldflags = "-mwindows"
+            configs.cxxflags = "-finput-charset=UTF-8 -fexec-charset=UTF-8"
+            if not package:is_debug() then
+                configs.cxxflags = configs.cxxflags .. " -O2"
+                configs.ldflags = "-mwindows"
+            end
         end
 
         import("package.tools.xmake").install(package, configs)
