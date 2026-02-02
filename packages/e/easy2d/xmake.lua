@@ -33,7 +33,7 @@ package("easy2d")
         else
             configs.kind = "static"
         end
-        if  is_plat("windows") then
+        if  package:is_plat("windows") then
             configs.cxxflags = "/std:c++17 /utf-8"
         else 
             configs.cxxflags = "-finput-charset=UTF-8 -fexec-charset=UTF-8"
