@@ -4,7 +4,7 @@ package("easy2d")
     set_license("MIT")
 
     set_urls("https://github.com/ChestnutYueyue/Easy2D.git")
-    add_versions("master")
+    add_versions("v2.1.27")
 
     add_configs("shared", {
         description = "Build shared library.",
@@ -33,22 +33,20 @@ package("easy2d")
             configs.cxxflags = "/std:c++17 /utf-8"
             if not package:is_debug() then
                 configs.cxxflags = configs.cxxflags .. " /O2"
-                configs.ldflags = "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup"
             end
         else
             configs.cxxflags = "-finput-charset=UTF-8 -fexec-charset=UTF-8"
             if not package:is_debug() then
                 configs.cxxflags = configs.cxxflags .. " -O2"
-                configs.ldflags = "-mwindows"
             end
         end
 
         import("package.tools.xmake").install(package, configs)
 
-        os.cp("Easy2D/include/easy2d/*", package:installdir("include/easy2d"))
-        os.cp("Easy2D/include/spdlog/*", package:installdir("include/spdlog"))
+        os.cp("Easy2D/include/easy2d", package:installdir("include"))
+        os.cp("Easy2D/include/spdlog", package:installdir("include"))
     end)
 
     on_test(function(package)
-        assert(package:has_cxxincludes("easy2d/easy2d.h", {configs = {languages = "c++17", cxxflags = "/utf-8"}}))
+        assert(package:has_cxxincludes("easy2d/easy2d.h", {configs = {languages = "c++17", cxxflags = package:is_plat("windows") and "/utf-8" or "-finput-charset=UTF-8 -fexec-charset=UTF-8"}}))
     end)
