@@ -49,10 +49,10 @@ package("easy2d")
         import("package.tools.xmake").install(package, configs)
 
         -- 核心修正：按真实目录结构复制头文件
-        -- 原目录：include/easy2d/  → 安装后：installdir/include/easy2d/
-        -- 原目录：include/spdlog/  → 安装后：installdir/include/spdlog/
-        os.cp("include/easy2d", package:installdir("include"))
-        os.cp("include/spdlog", package:installdir("include"))
+        -- 原目录：easy2d/Easy2D/include/easy2d/  → 安装后：installdir/include/easy2d/
+        -- 原目录：easy2d/Easy2D/include/spdlog/  → 安装后：installdir/include/spdlog/
+        os.cp("easy2d/Easy2D/include/easy2d", package:installdir("include"))
+        os.cp("easy2d/Easy2D/include/spdlog", package:installdir("include"))
     end)
 
     -- 测试逻辑（适配修正后的头文件路径）
