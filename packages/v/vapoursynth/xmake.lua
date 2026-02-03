@@ -10,13 +10,20 @@ package("vapoursynth")
 
     add_versions("git:73", "R73")
 
-    add_configs("python", {description = "Build the Python module", default = false, type = "boolean"})
+    add_configs("vsscript", {description = "Build VSScript. Requires Python 3", default = false, type = "boolean"})
+    add_configs("vspipe", {description = "Build vspipe. Requires VSScript", default = false, type = "boolean"})
+    add_configs("python", {description = "Build the Python module. Requires Python and Cython", default = false, type = "boolean"})
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
 
     add_deps("meson", "ninja")
+    if is_subhost("windows") then
+        add_deps("pkgconf")
+    else
+        add_deps("pkg-config")
+    end
     add_deps("zimg")
 
     on_install(function (package)
@@ -30,6 +37,8 @@ package("vapoursynth")
 
         local configs = {}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
+        table.insert(configs, "-Denable_vsscript=" .. (package:config("vsscript") and "true" or "false"))
+        table.insert(configs, "-Denable_vspipe=" .. (package:config("vspipe") and "true" or "false"))
         table.insert(configs, "-Denable_python_module=" .. (package:config("python") and "true" or "false"))
         import("package.tools.meson").install(package, configs)
     end)
