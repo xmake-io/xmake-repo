@@ -3,17 +3,13 @@ package("easy2d")
     set_description("A lightweight 2D game engine for Windows")
     set_license("MIT")
 
-    set_urls("https://github.com/ChestnutYueyue/Easy2D.git")
-    add_versions("v2.1.27", "v2.1.27")
+    add_urls("https://github.com/ChestnutYueyue/Easy2D/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/ChestnutYueyue/Easy2D.git")
+    add_versions("v2.1.27", "787B792C80C9BCD091D5E7B36A3E8707D7230D7EE183A318190E33A71B328622")
 
-    add_configs("shared", {
-        description = "Build shared library.",
-        default = false,
-        type = "boolean"
-    })
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean"})
 
-    local win_base_libs = {"user32", "gdi32", "shell32", "winmm", "imm32", "version", "ole32", "comdlg32", "dinput8", "d2d1", "dwrite", "dxguid"}
-    add_syslinks(win_base_libs)
+    add_syslinks("user32", "gdi32", "shell32", "winmm", "imm32", "version", "ole32", "comdlg32", "dinput8", "d2d1", "dwrite", "dxguid")
 
     on_load("windows", "mingw", function(package)
         if package:config("shared") then
@@ -29,19 +25,20 @@ package("easy2d")
         else
             configs.kind = "static"
         end
+
+        local libcxxflags = {}
         if package:is_plat("windows") then
-            configs.cxxflags = "/std:c++17 /utf-8"
+            table.insert(libcxxflags, "/std:c++17")
             if not package:is_debug() then
-                configs.cxxflags = configs.cxxflags .. " /O2"
+                table.insert(libcxxflags, "/O2")
             end
         else
-            configs.cxxflags = "-finput-charset=UTF-8 -fexec-charset=UTF-8"
             if not package:is_debug() then
-                configs.cxxflags = configs.cxxflags .. " -O2"
+                table.insert(libcxxflags, "-O2")
             end
         end
 
-        import("package.tools.xmake").install(package, configs)
+        import("package.tools.xmake").install(package, configs, {cxxflags = libcxxflags})
 
         os.cp("Easy2D/include/easy2d", package:installdir("include"))
         os.cp("Easy2D/include/spdlog", package:installdir("include"))
