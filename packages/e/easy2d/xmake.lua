@@ -12,29 +12,15 @@ package("easy2d")
     add_syslinks("user32", "gdi32", "shell32", "winmm", "imm32", "version", "ole32", "comdlg32", "dinput8", "d2d1", "dwrite", "dxguid")
 
     on_install("windows", "mingw", function(package)
-        local configs = {
-            mode = package:is_debug() and "debug" or "release",
-            kind = package:config("shared") and "shared" or "static",
-            cxxflags = package:is_plat("windows") and "/utf-8" or "-finput-charset=UTF-8 -fexec-charset=UTF-8",
-            flags = {
-                "-Wall",
-                "-Wextra",
-                "-Wpedantic",
-            },
-            definesflags = {
-                "-D_EASY2D_SHARED",
-            },
-        }
-        import("package.tools.xmake").install(package, configs)
+        import("package.tools.xmake").install(package)
 
         os.cp("Easy2D/include/easy2d", package:installdir("include"))
         os.cp("Easy2D/include/spdlog", package:installdir("include"))
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            void test() {
-                EASY_FUNCTION();
-            }
-        ]]}, {configs = {languages = "c++17"}, includes = {"easy2d/easy2d.h"}}))
+        local configs = {
+            cxxflags = package:is_plat("windows") and "/utf-8" or "-finput-charset=UTF-8 -fexec-charset=UTF-8",
+        }
+        assert(package:has_cxxincludes("easy2d/easy2d.h", {configs = configs, includes = {"easy2d/easy2d.h"}}))
     end)
