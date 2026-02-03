@@ -34,6 +34,12 @@ package("bestsource")
         io.replace("src/audiosource.cpp", "../libp2p/p2p_api.h", "libp2p/p2p_api.h", {plain = true})
         io.replace("src/videosource.cpp", "../libp2p/p2p_api.h", "libp2p/p2p_api.h", {plain = true})
         io.replace("src/avisynth.cpp", "../AviSynthPlus/avs_core/include/avisynth.h", "avisynth/avisynth.h", {plain = true})
+        if package:config("plugin") then
+            io.replace("src/synthshared.cpp", '#include "VSHelper4.h"', " #include <vapoursynth/VSHelper4.h>", {plain = true})
+            io.replace("src/avisynth.cpp", "VSHelper4.h", "vapoursynth/VSHelper4.h", {plain = true})
+            io.replace("src/vapoursynth.cpp", "VSHelper4.h", "vapoursynth/VSHelper4.h", {plain = true})
+            io.replace("src/vapoursynth.cpp", "VapourSynth4.h", "vapoursynth/VapourSynth4.h", {plain = true})
+        end
 
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, {plugin = package:config("plugin")})

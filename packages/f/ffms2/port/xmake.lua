@@ -14,6 +14,8 @@ if has_config("vapoursynth") then
     add_requires("vapoursynth")
 end
 
+add_defines("__STDC_CONSTANT_MACROS")
+
 target("ffms2")
     set_kind("$(kind)")
     add_includedirs("include", {public = true})
@@ -40,5 +42,8 @@ target("ffms2")
 target("ffmsindex")
     set_enabled(has_config("tools"))
     set_kind("binary")
-    add_files("src/index/ffmsindex.cpp", "src/index/ffmsindex.manifest")
+    add_files("src/index/ffmsindex.cpp")
+    if is_plat("windows") then
+        add_files("src/index/ffmsindex.manifest")
+    end
     add_deps("ffms2")
