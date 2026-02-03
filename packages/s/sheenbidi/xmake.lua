@@ -13,6 +13,9 @@ package("sheenbidi")
     add_versions("v2.6", "f538f51a7861dd95fb9e3f4ad885f39204b5c670867019b5adb7c4b410c8e0d9")
 
     add_configs("cmake", {description = "Use cmake build system", default = false, type = "boolean"})
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     on_load(function (package)
         if package:version() and package:version():ge("3.0.0") then
