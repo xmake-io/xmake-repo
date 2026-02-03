@@ -12,30 +12,56 @@ package("sheenbidi")
     add_versions("v2.7", "620f732141fd62354361f921a67ba932c44d94e73f127379a0c73ad40c7fa6e0")
     add_versions("v2.6", "f538f51a7861dd95fb9e3f4ad885f39204b5c670867019b5adb7c4b410c8e0d9")
 
-    on_install(function (package)
-        local version = package:version()
-        local header_files = "Headers/*.h"
-        if version:ge("2.9.0") then
-            header_files = "Headers/SheenBidi/*.h"
-        end
-        io.writefile("xmake.lua", string.format([[
-            add_rules("mode.debug", "mode.release")
-            add_rules("utils.install.cmake_importfiles")
-            set_version("%s")
-            set_languages("c11")
-            set_encodings("utf-8")
+    add_configs("cmake", {description = "Use cmake build system", default = false, type = "boolean"})
 
-            target("sheenbidi")
-                set_kind("$(kind)")
-                add_files("Source/SheenBidi.c")
-                add_defines("SB_CONFIG_UNITY")
-                add_includedirs("Headers", "Source")
-                add_headerfiles("%s", {prefixdir = "SheenBidi"})
+    on_load(function (package)
+        if package:version() and package:version():ge("3.0.0") then
+            if package:config("cmake") then
+                package:add("deps", "cmake")
+            end
+        end
+
+        if package:config("shared") and package:is_plat("windows") then
+            package:add("defines", "SB_CONFIG_DLL_IMPORT")
+        end
+    end)
+
+    on_install(function (package)
+        if package:config("cmake") then
+            local configs = {"-DBUILD_TESTING=OFF"}
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+            import("package.tools.cmake").install(package, configs)
+        else
+            local dll_code = [[
                 if is_plat("windows") and is_kind("shared") then
                     add_rules("utils.symbols.export_all", {export_classes = true})
                 end
-            ]], version, header_files))
-        import("package.tools.xmake").install(package)
+            ]]
+            if package:version() and package:version():ge("2.9.0") then
+                dll_code = [[
+                    if is_plat("windows") then
+                        if is_kind("shared") then
+                            add_defines("SB_CONFIG_DLL_EXPORT")
+                            add_defines("SB_CONFIG_DLL_IMPORT", {interface = true})
+                        end
+                    end
+                ]]
+            end
+            io.writefile("xmake.lua", [[
+                add_rules("mode.debug", "mode.release", "utils.install.cmake_importfiles")
+                set_languages("c11")
+                set_encodings("utf-8")
+
+                target("sheenbidi")
+                    set_kind("$(kind)")
+                    add_files("Source/SheenBidi.c")
+                    add_defines("SB_CONFIG_UNITY")
+                    add_includedirs("Headers", "Source")
+                    add_headerfiles("Headers/*.h", "Headers/SheenBidi/*.h", {prefixdir = "SheenBidi"})
+                ]] .. dll_code)
+            import("package.tools.xmake").install(package)
+        end
     end)
 
     on_test(function (package)
