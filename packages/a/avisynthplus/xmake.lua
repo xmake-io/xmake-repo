@@ -3,9 +3,13 @@ package("avisynthplus")
     set_description("AviSynth with improvements")
     set_license("GPL-2.0")
 
-    add_urls("https://github.com/AviSynth/AviSynthPlus.git")
+    add_urls("https://github.com/AviSynth/AviSynthPlus.git", {submodules = false})
 
     add_versions("2026.01.01", "f2f4e318a5ba161d4945185f11c6a27e7aafa92b")
+
+    if is_plat("windows", "mingw") then
+        add_syslinks("user32", "gdi32", "advapi32", "ole32", "vfw32", "winmm", "msacm32", "imagehlp")
+    end
 
     add_deps("cmake")
     add_deps("ghc_filesystem")

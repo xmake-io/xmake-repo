@@ -8,6 +8,8 @@ package("ffms2")
 
     add_versions("5.0", "7770af0bbc0063f9580a6a5c8e7c51f1788f171d7da0b352e48a1e60943a8c3c")
 
+    add_configs("avisynth", {description = "Enable avisynth support", default = false, type = "boolean"})
+    add_configs("vapoursynth", {description = "Enable vapoursynth support", default = false, type = "boolean"})
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
 
     add_deps("zlib", "ffmpeg")
@@ -18,41 +20,27 @@ package("ffms2")
         end
     end)
 
-    on_install("windows", "mingw@windows,linux,cygwin,msys", "linux", "macosx", "android", "iphoneos", function (package)
+    on_load(function (package)
+        if package:config("avisynth") then
+            package:add("deps", "avisynthplus")
+        end
+        if package:config("vapoursynth") then
+            package:add("deps", "vapoursynth")
+        end
         if not package:config("shared") then
             package:add("defines", "FFMS_STATIC")
         end
+    end)
 
-        io.writefile("xmake.lua", [[
-            option("tools", {default = false})
-            add_rules("mode.debug", "mode.release")
+    on_install("windows", "mingw@windows,linux,cygwin,msys", "linux", "macosx", "android", "iphoneos", function (package)
+        io.replace("src/avisynth/avssources.h", "avisynth.h", "avisynth/avisynth.h", {plain = true})
 
-            add_languages("c++11")
-
-            add_requires("zlib", "ffmpeg")
-
-            target("ffms2")
-                set_kind("$(kind)")
-                add_includedirs("include", {public = true})
-                add_files("src/core/*.cpp")
-                add_headerfiles("include/*.h")
-
-                if is_kind("static") then
-                    add_defines("FFMS_STATIC", {public = true})
-                elseif is_kind("shared") then
-                    add_defines("FFMS_EXPORTS")
-                end
-
-                add_packages("zlib")
-                add_packages("ffmpeg", {public = true})
-
-            target("ffmsindex")
-                set_enabled(has_config("tools"))
-                set_kind("binary")
-                add_files("src/index/ffmsindex.cpp", "src/index/ffmsindex.manifest")
-                add_deps("ffms2")
-        ]])
-        import("package.tools.xmake").install(package, {tools = package:config("tools")})
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        import("package.tools.xmake").install(package, {
+            avisynth = package:config("avisynth"),
+            vapoursynth = package:config("vapoursynth"),
+            tools = package:config("tools"),
+        })
     end)
 
     on_test(function (package)
