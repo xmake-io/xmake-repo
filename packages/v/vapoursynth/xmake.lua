@@ -1,0 +1,39 @@
+package("vapoursynth")
+    set_homepage("http://www.vapoursynth.com/")
+    set_description("A video processing framework with simplicity in mind")
+    set_license("LGPL-2.1")
+
+    add_urls("https://github.com/vapoursynth/vapoursynth/archive/refs/tags/R$(version).tar.gz")
+    add_urls("https://github.com/vapoursynth/vapoursynth.git", {alias = "git"})
+
+    add_versions("73", "1bb8ffe31348eaf46d8f541b138f0136d10edaef0c130c1e5a13aa4a4b057280")
+
+    add_versions("git:73", "R73")
+
+    add_configs("python", {description = "Build the Python module", default = false, type = "boolean"})
+
+    if is_plat("linux", "bsd") then
+        add_syslinks("pthread")
+    end
+
+    add_deps("meson", "ninja")
+    add_deps("zimg")
+
+    on_install(function (package)
+        if package:is_plat("windows") and package:config("shared") then
+            package:add("defines", "VS_CORE_EXPORTS")
+        end
+
+        if not package:config("python") then
+            io.replace("meson.build", ", 'cython'", "", {plain = true})
+        end
+
+        local configs = {}
+        table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
+        table.insert(configs, "-Denable_python_module=" .. (package:config("python") and "true" or "false"))
+        import("package.tools.meson").install(package, configs)
+    end)
+
+    on_test(function (package)
+        assert(package:has_cfuncs("getVapourSynthAPI", {includes = "vapoursynth/VapourSynth4.h"}))
+    end)
