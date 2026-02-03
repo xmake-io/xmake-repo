@@ -71,6 +71,8 @@ package("vapoursynth")
         local opt = {}
         if package:is_plat("windows") then
             opt.cxflags = "-DNOMINMAX"
+        elseif package:is_plat("mingw") and package:is_arch("i386") then
+            opt.cxflags = {"-msse", "-msse2"}
         elseif package:is_plat("linux", "bsd") then
             opt.cxflags = "-pthread"
             opt.shflags = "-pthread"
