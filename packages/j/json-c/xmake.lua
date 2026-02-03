@@ -8,11 +8,13 @@ package("json-c")
         version = function (version)
         local list =  {
             ["0.17"] = "20230812",
+            ["0.18"] = "20240915",
         }
         return version .. "-" .. list[tostring(version)]
     end})
 
     add_versions("0.17", "024d302a3aadcbf9f78735320a6d5aedf8b77876c8ac8bbb95081ca55054c7eb")
+    add_versions("0.18", "3112c1f25d39eca661fe3fc663431e130cc6e2f900c081738317fba49d29e298")
 
     add_deps("cmake")
 
