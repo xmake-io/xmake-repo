@@ -17,7 +17,9 @@ package("vapoursynth")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    if is_plat("linux", "bsd") then
+    if is_plat("windows", "mingw") then
+        add_syslinks("advapi32", "shell32")
+    elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
 
@@ -34,17 +36,29 @@ package("vapoursynth")
         assert(ndk and tonumber(ndk) > 22, "package(vapoursynth) require ndk version > 22")
     end)
 
-    on_install(function (package)
-        if package:is_plat("windows", "mingw") and package:config("shared") then
-            package:add("defines", "VS_CORE_EXPORTS")
+    on_load("@windows", function (package)
+        local has_cat = try { function()
+            os.vrun("cat --version")
+            os.vrun("grep --version")
+            return true
+        end }
+        if not has_cat and os.arch() == "x64" then
+            local msystem = "MINGW" .. (package:is_arch64() and "64" or "32")
+            package:add("deps", "msys2", {configs = {msystem = msystem, base_devel = true}})
         end
+    end)
 
+    on_install(function (package)
         if package:has_tool("cxx", "cl") then
             io.replace("meson.build", "-Wno-ignored-attributes", "", {plain = true})
             io.replace("meson.build", "add_project_arguments(['-fno-math-errno', '-fno-trapping-math'], language: lang)", "", {plain = true})
         end
         if not package:config("python") then
             io.replace("meson.build", ", 'cython'", "", {plain = true})
+        end
+        if not package:config("shared") and package:is_plat("windows", "mingw") then
+            io.replace("include/VapourSynth.h", "__declspec(dllexport)", "", {plain = true})
+            io.replace("include/VapourSynth4.h", "__declspec(dllexport)", "", {plain = true})
         end
 
         local configs = {}
@@ -55,10 +69,18 @@ package("vapoursynth")
         table.insert(configs, "-Denable_python_module=" .. (package:config("python") and "true" or "false"))
 
         local opt = {}
-        if package:is_plat("linux", "bsd") then
+        if package:is_plat("windows") then
+            opt.cxflags = "-DNOMINMAX"
+        elseif package:is_plat("linux", "bsd") then
+            opt.cxflags = "-pthread"
             opt.shflags = "-pthread"
         end
         import("package.tools.meson").install(package, configs, opt)
+
+        if not package:config("shared") and package:is_plat("windows", "mingw") then
+            io.replace(path.join(package:installdir("include"), "vapoursynth/VapourSynth.h"), "__declspec(dllimport)", "", {plain = true})
+            io.replace(path.join(package:installdir("include"), "vapoursynth/VapourSynth4.h"), "__declspec(dllimport)", "", {plain = true})
+        end
     end)
 
     on_test(function (package)
