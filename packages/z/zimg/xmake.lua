@@ -4,21 +4,43 @@ package("zimg")
     set_license("WTFPL")
 
     add_urls("https://github.com/sekrit-twc/zimg/archive/refs/tags/release-$(version).tar.gz")
-    add_versions("3.0.3", "5e002992bfe8b9d2867fdc9266dc84faca46f0bfd931acc2ae0124972b6170a7")
+    add_urls("https://github.com/sekrit-twc/zimg.git", {alias = "git", submodules = false})
+
+    add_versions("3.0.6", "be89390f13a5c9b2388ce0f44a5e89364a20c1c57ce46d382b1fcc3967057577")
     add_versions("3.0.5", "a9a0226bf85e0d83c41a8ebe4e3e690e1348682f6a2a7838f1b8cbff1b799bcf")
+    add_versions("3.0.3", "5e002992bfe8b9d2867fdc9266dc84faca46f0bfd931acc2ae0124972b6170a7")
 
-    add_deps("autoconf", "automake", "libtool")
+    add_versions("git:3.0.6", "release-3.0.6")
 
-    on_install("macosx", "linux", "bsd", function (package)
+    add_configs("simd", {description = "Enable SIMD", default = not is_plat("wasm"), type = "boolean"})
+
+    if not is_subhost("windows") and not is_plat("windows") then
+        add_deps("autotools")
+    end
+
+    on_install(function (package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
-        if package:debug() then
+        if package:is_debug() then
             table.insert(configs, "--enable-debug")
         end
-        if package:is_plat("linux") and package:config("pic") ~= false then
-            table.insert(configs, "--with-pic")
+        if not package:config("simd") then
+            table.insert(configs, "--disable-simd")
         end
         import("package.tools.autoconf").install(package, configs)
+    end)
+
+    on_install("windows or @windows", function (package)
+        if package:config("shared") and package:is_plat("windows") then
+            io.replace("src/zimg/api/zimg.h", "#define ZIMG_VISIBILITY", "#define ZIMG_VISIBILITY __declspec(dllexport)", {plain = true})
+        end
+
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        import("package.tools.xmake").install(package, {simd = package:config("simd")})
+
+        if package:config("shared") and package:is_plat("windows") then
+            io.replace(package:installdir("include/zimg.h"), "__declspec(dllexport)", "__declspec(dllimport)", {plain = true})
+        end
     end)
 
     on_test(function (package)
