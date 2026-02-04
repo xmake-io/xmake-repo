@@ -76,6 +76,7 @@ package("libdatachannel")
         io.replace("CMakeLists.txt", "set(CMAKE_POSITION_INDEPENDENT_CODE ON)", "", {plain = true})
         -- add -DJUICE_STATIC from config mode 
         io.replace("CMakeLists.txt", "find_package(LibJuice REQUIRED)", "find_package(LibJuice CONFIG REQUIRED)", {plain = true})
+        io.replace("CMakeLists.txt", "find_package(LibJuice 1.7.0 REQUIRED)", "find_package(LibJuice CONFIG REQUIRED)", {plain = true}) -- 0.24.0
         -- Error evaluating generator expression: $<TARGET_PDB_FILE:datachannel>
         -- TARGET_PDB_FILE is allowed only for targets with linker created artifacts.
         if package:is_plat("windows") then
