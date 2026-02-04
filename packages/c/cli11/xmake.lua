@@ -6,6 +6,7 @@ package("cli11")
 
     add_urls("https://github.com/CLIUtils/CLI11/archive/refs/tags/$(version).tar.gz",
              "https://github.com/CLIUtils/CLI11.git")
+
     add_versions("v2.6.1", "377691f3fac2b340f12a2f79f523c780564578ba3d6eaf5238e9f35895d5ba95")
     add_versions("v2.5.0", "17e02b4cddc2fa348e5dbdbb582c59a3486fa2b2433e70a0c3bacb871334fd55")
     add_versions("v2.4.2", "f2d893a65c3b1324c50d4e682c0cdc021dd0477ae2c048544f39eed6654b699a")
@@ -17,10 +18,11 @@ package("cli11")
         add_extsources("pkgconfig::CLI11")
     end
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("shell32")
     end
-    on_install("windows", "linux", "macosx", function (package)
+
+    on_install(function (package)
         os.cp("include", package:installdir())
     end)
 
