@@ -8,8 +8,6 @@ package("mmkv")
 
     add_versions("v2.3.0", "99ee71b937cc4c8fe7600babdf4b452e34b36d3899f7c9154ad464b9aab21a5d")
 
-    add_versions("v1.3.16", "fc65c5897b6482fd28d1c957abea49fe0f7cecade61129fd98ed0f2d19188677")
-
     add_links("mmkv", "core")
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
@@ -70,7 +68,11 @@ package("mmkv")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             void test() {
-                auto mmkv = MMKV_NAMESPACE_PREFIX::MMKV::defaultMMKV();
+                #ifdef MMKV_APPLE
+                    auto mmkv = mmkv::defaultMMKV();
+                #else
+                    auto mmkv = MMKV::defaultMMKV();
+                #endif
             }
         ]]}, {configs = {languages = "c++20"}, includes = "MMKV/MMKV.h"}))
     end)
