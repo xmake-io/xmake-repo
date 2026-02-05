@@ -18,7 +18,7 @@ package("node_crunch2")
         end
 
         if package:is_debug() then
-            table.insert(configs, "--enable-debug")
+            configs.debug = true
         end
 
         import("package.tools.xmake").install(package, configs)
@@ -38,5 +38,5 @@ package("node_crunch2")
                 NCConfiguration config = NCConfiguration(key1);
             }
         ]]
-    }, {configs = {languages = "c++23"}, includes = {"nc_message.hpp", "nc_config.hpp"}}))
+    }, {configs = {languages = "c++20"}, includes = {"nc_message.hpp", "nc_config.hpp"}}))
     end)
