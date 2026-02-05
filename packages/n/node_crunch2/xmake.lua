@@ -6,7 +6,7 @@ package("node_crunch2")
     add_deps("spdlog", "asio", "lz4", "openssl", "taocpp-json")
 
     add_urls("https://github.com/willi-kappler/node_crunch2/archive/refs/tags/$(version).tar.gz")
-    add_versions("v0.1.0", "da214286d1a163359972ac3de021998fac4844fa903cc96e788d43831936d4ea")
+    add_versions("v0.1.0", "875fd1552abdf0262c89a45772cebae52c048014b107d64912beb8ab1bb78436")
 
     on_install(function (package)
         local configs = {}
