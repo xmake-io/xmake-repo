@@ -25,7 +25,7 @@ package("mmkv")
         assert(ndk and tonumber(ndk) > 22, "package(mmkv) require ndk version > 22")
     end)
 
-    on_install(function (package)
+    on_install("!mingw and !android|armeabi-v7a", function (package)
         io.replace("Core/CMakeLists.txt", "STATIC", "", {plain = true})
         io.replace("Core/CMakeLists.txt", "POSITION_INDEPENDENT_CODE ON", "", {plain = true})
         io.replace("Core/CMakeLists.txt",
@@ -68,11 +68,7 @@ package("mmkv")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             void test() {
-                #ifdef MMKV_APPLE
-                    auto mmkv = mmkv::defaultMMKV();
-                #else
-                    auto mmkv = MMKV::defaultMMKV();
-                #endif
+                auto mmkv = MMKV_NAMESPACE_PREFIX::MMKV::defaultMMKV();
             }
         ]]}, {configs = {languages = "c++20"}, includes = "MMKV/MMKV.h"}))
     end)
