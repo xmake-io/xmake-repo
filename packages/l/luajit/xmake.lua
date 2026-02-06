@@ -5,7 +5,7 @@ package("luajit")
 
     set_urls("https://github.com/LuaJIT/LuaJIT.git")
 
-    add_versions("v2.1.0-09012026", "707c12bf00dafdfd3899b1a6c36435dbbf6c7022")
+    add_versions("v2.1.0-20260109", "707c12bf00dafdfd3899b1a6c36435dbbf6c7022")
     add_versions("v2.1.0-beta3", "8271c643c21d1b2f344e339f559f2de6f3663191")
 
     add_configs("nojit", { description = "Disable JIT.", default = false, type = "boolean"})
@@ -19,9 +19,15 @@ package("luajit")
 
     if on_check then
         on_check(function (package)
-            if package:version() and package:version():le("v2.1.0-beta3") then
-                if package:is_arch("arm.*") then
-                    raise("package(luajit/arm64) unsupported arch")
+            if package:version() then
+                if package:version():le("v2.1.0-beta3") then
+                    if package:is_arch("arm.*") then
+                        raise("package(luajit/arm64) unsupported arch")
+                    end
+                else
+                    if package:is_plat("iphoneos") then
+                        raise("package(luajit): iphoneos is not supported")
+                    end
                 end
             end
         end)

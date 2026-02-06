@@ -20,6 +20,14 @@ option("fpu")
 option("gc64")
     set_default(false)
     set_showmenu(true)
+    on_check(function (option)
+        -- src/lj_arch.h:219:2: error: "macOS requires GC64 -- don't disable it"
+        if not option:enabled() then
+            if is_plat("macosx") then
+                option:enable(true)
+            end
+        end
+    end)
 
 rule("dasc")
     set_extensions(".dasc")
@@ -255,7 +263,11 @@ target("luajit_bin")
     elseif is_plat("android") then
         add_syslinks("m", "c")
     elseif is_plat("macosx") then
-        add_ldflags("-all_load", "-pagezero_size 10000", "-image_base 100000000")
+        if is_arch("arm.*") then
+            add_ldflags("-all_load")
+        else
+            add_ldflags("-all_load", "-pagezero_size 10000", "-image_base 100000000")
+        end
     elseif is_plat("mingw") then
         add_ldflags("-static-libgcc", {force = true})
     else
