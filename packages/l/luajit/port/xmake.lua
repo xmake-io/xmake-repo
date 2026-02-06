@@ -235,7 +235,7 @@ target("luajit")
     add_undefines("_FORTIFY_SOURCE", {public = true})
     add_headerfiles("src/*.h", {prefixdir = "luajit"})
     add_headerfiles("src/lua.hpp", {prefixdir = "luajit"})
-    -- add_files("src/ljamalg.c") -- Try without this file
+    add_files("src/ljamalg.c")
     add_files("src/lib_base.c",
               "src/lib_math.c",
               "src/lib_bit.c",
@@ -259,8 +259,10 @@ target("luajit_bin")
         add_syslinks("advapi32", "shell32")
         if is_arch("x86") then
             add_ldflags("/subsystem:console,5.01")
-        else
+        elseif is_arch("x64", "x86_64") then
             add_ldflags("/subsystem:console,5.02")
+        else
+            add_ldflags("/subsystem:console")
         end
     elseif is_plat("android") then
         add_syslinks("m", "c")
