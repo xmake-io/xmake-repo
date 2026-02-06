@@ -48,7 +48,7 @@ package("luajit")
         configs.nojit   = package:config("nojit")
         configs.gc64    = package:config("gc64")
         if package:is_plat("windows") and package:is_arch("arm64") then
-            configs.fpu = true
+            configs.gc64 = true
         end
         if package:is_plat("macosx") and not is_arch("arm.*") then
             configs.gc64 = true
