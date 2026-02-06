@@ -14,6 +14,8 @@ package("cli11")
     add_versions("v2.3.2", "aac0ab42108131ac5d3344a9db0fdf25c4db652296641955720a4fbe52334e22")
     add_versions("v2.2.0", "d60440dc4d43255f872d174e416705f56ba40589f6eb07727f76376fb8378fd6")
 
+    add_configs("cmake", {description = "Use cmake build system", default = true, type = "boolean"})
+
     if not is_host("windows") then
         add_extsources("pkgconfig::CLI11")
     end
@@ -22,8 +24,22 @@ package("cli11")
         add_syslinks("shell32")
     end
 
+    on_load(function (package)
+        if package:config("cmake") then
+            package:add("deps", "cmake")
+        end
+    end)
+
     on_install(function (package)
-        os.cp("include", package:installdir())
+        if package:config("cmake") then
+            import("package.tools.cmake").install(package, {
+                "-DBUILD_TESTING=OFF",
+                "-DCLI11_BUILD_EXAMPLES=OFF",
+                "-DCLI11_INSTALL=ON",
+            })
+        else
+            os.cp("include", package:installdir())
+        end
     end)
 
     on_test(function (package)
