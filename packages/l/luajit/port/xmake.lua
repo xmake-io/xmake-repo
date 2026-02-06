@@ -30,6 +30,10 @@ rule("dasc")
             os.mkdir(outputdir)
         end
         local argv = {"dynasm/dynasm.lua", "-LN"}
+        if is_arch("arm64.*") or (is_plat("windows") and is_arch("x64", "x86_64", "x86", "i386")) then
+             table.insert(argv, "-D")
+             table.insert(argv, "ENDIAN_LE")
+        end
         if is_arch("x64", "x86_64", "arm64", "arm64-v8a", "mips64") then
             -- 64bits pointer
             table.insert(argv, "-D")
