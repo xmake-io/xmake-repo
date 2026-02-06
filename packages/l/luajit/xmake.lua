@@ -20,7 +20,7 @@ package("luajit")
     if on_check then
         on_check(function (package)
             if package:version() then
-                if package:version():le("v2.1.0-beta3") then
+                if package:version():eq("v2.1.0-beta3") then
                     if package:is_arch("arm.*") then
                         raise("package(luajit/arm64) unsupported arch")
                     end
