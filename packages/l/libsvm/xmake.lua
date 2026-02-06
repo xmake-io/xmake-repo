@@ -14,6 +14,10 @@ package("libsvm")
     add_versions("v332", "e1d7d316112d199ebd69c9695f79226d236b86e2c8d88e70cfe35fd383954ed8")
     add_versions("v325", "1f587ec0df6fd422dfe50f942f8836ac179b0723b768fe9d2fabdfd1601a0963")
 
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     on_install(function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
