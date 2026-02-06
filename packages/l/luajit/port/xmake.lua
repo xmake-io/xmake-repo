@@ -102,7 +102,7 @@ function set_host_toolchains()
         return
     end
     local arch
-    if is_host("windows") and is_arch("arm64") then
+    if is_host("windows") and os.arch() == "arm64" then
         arch = "arm64"
     elseif is_arch("arm64", "arm64-v8a", "mips64", "x86_64") then
         arch = is_host("windows") and "x64" or "x86_64"
