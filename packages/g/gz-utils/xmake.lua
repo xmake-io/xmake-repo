@@ -17,7 +17,7 @@ package("gz-utils")
     add_deps("spdlog", {configs = {header_only = false}})
 
     on_install(function (package)
-        if package:config("shared") then
+        if not package:config("shared") then
             package:add("defines", "GZ_UTILS_STATIC_DEFINE")
         end
 
