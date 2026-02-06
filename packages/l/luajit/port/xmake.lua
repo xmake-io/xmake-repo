@@ -98,11 +98,13 @@ rule("buildvm")
 
 function set_host_toolchains()
     -- only for cross-compliation
-    if is_plat(os.host()) then
+    if is_plat(os.host()) and is_arch(os.arch()) then
         return
     end
     local arch
-    if is_arch("arm64", "arm64-v8a", "mips64", "x86_64") then
+    if is_host("windows") and is_arch("arm64") then
+        arch = "arm64"
+    elseif is_arch("arm64", "arm64-v8a", "mips64", "x86_64") then
         arch = is_host("windows") and "x64" or "x86_64"
     else
         arch = is_host("windows") and "x86" or "i386"
