@@ -3,7 +3,7 @@ package("node_crunch2")
     set_description("A C++ library for distributed computing.")
     set_license("MIT")
 
-    add_urls("https://github.com/willi-kappler/node_crunch2/archive/refs/tags/$(version).tar.gz"，
+    add_urls("https://github.com/willi-kappler/node_crunch2/archive/refs/tags/$(version).tar.gz",
              "https://github.com/willi-kappler/node_crunch2.git")
 
     add_versions("v0.1.0", "875fd1552abdf0262c89a45772cebae52c048014b107d64912beb8ab1bb78436")
