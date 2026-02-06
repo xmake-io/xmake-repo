@@ -45,6 +45,9 @@ package("luajit")
         configs.fpu     = package:config("fpu")
         configs.nojit   = package:config("nojit")
         configs.gc64    = package:config("gc64")
+        if package:is_plat("macosx") and not is_arch("arm.*") then
+            configs.gc64 = true
+        end
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
     end)

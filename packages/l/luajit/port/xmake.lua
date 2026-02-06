@@ -20,14 +20,6 @@ option("fpu")
 option("gc64")
     set_default(false)
     set_showmenu(true)
-    on_check(function (option)
-        -- src/lj_arch.h:219:2: error: "macOS requires GC64 -- don't disable it"
-        if not option:enabled() then
-            if is_plat("macosx") then
-                option:enable(true)
-            end
-        end
-    end)
 
 rule("dasc")
     set_extensions(".dasc")
@@ -157,6 +149,11 @@ target("buildvm")
             os.vrunv(path.absolute(minilua, olddir), {"host/genversion.lua"})
             os.cd(olddir)
         end
+        if is_plat("windows", "msys","cygwin") and not is_arch("x86", "x64", "mips", "mips64") then
+            -- @note we need fix `illegal zero-sized array` errors for msvc
+            io.gsub("src/lj_jit.h", "  LJ_K32__MAX\n", "  LJ_K32__MAX=1\n")
+            io.gsub("src/lj_jit.h", "  LJ_K64__MAX,\n", "  LJ_K64__MAX=1\n")
+        end
     end)
     add_rules("dasc")
     add_options("nojit", "fpu")
@@ -210,13 +207,6 @@ target("buildvm")
     else
         add_defines("LUAJIT_OS=LUAJIT_OS_OTHER", {public = true})
     end
-    before_build("@windows", "@msys", "@cygwin", function (target)
-        if not is_arch("x86", "x64", "mips", "mips64") then
-            -- @note we need fix `illegal zero-sized array` errors for msvc
-            io.gsub("src/lj_jit.h", "  LJ_K32__MAX\n", "  LJ_K32__MAX=1\n")
-            io.gsub("src/lj_jit.h", "  LJ_K64__MAX,\n", "  LJ_K64__MAX=1\n")
-        end
-    end)
 
 target("luajit")
     set_kind("$(kind)")
