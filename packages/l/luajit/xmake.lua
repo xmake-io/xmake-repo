@@ -47,6 +47,9 @@ package("luajit")
         configs.fpu     = package:config("fpu")
         configs.nojit   = package:config("nojit")
         configs.gc64    = package:config("gc64")
+        if package:is_plat("windows") and package:is_arch("arm64") then
+            configs.fpu = true
+        end
         if package:is_plat("macosx") and not is_arch("arm.*") then
             configs.gc64 = true
         end
@@ -55,7 +58,7 @@ package("luajit")
     end)
 
     on_test(function (package)
-        if package:is_plat(os.host()) then
+        if package:is_plat(os.host()) and not package:is_cross() then
             os.vrun("luajit -e \"print('hello xmake!')\"")
         end
         assert(package:has_cfuncs("lua_pcall", {includes = "luajit.h"}))
