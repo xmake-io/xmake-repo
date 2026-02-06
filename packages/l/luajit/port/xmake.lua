@@ -186,9 +186,6 @@ target("buildvm")
     elseif is_arch("arm64", "arm64-v8a") then
         add_files("src/vm_arm64.dasc")
         add_defines("LUAJIT_TARGET=LUAJIT_ARCH_ARM64", {public = true})
-        if is_plat("windows") then
-            add_defines("LUAJIT_ENABLE_GC64", {public = true})
-        end
     elseif is_arch("arm.*") then
         add_files("src/vm_arm.dasc")
         add_defines("LUAJIT_TARGET=LUAJIT_ARCH_ARM", {public = true})
@@ -229,6 +226,9 @@ target("luajit")
     end
     if is_kind("shared") and is_plat("windows") then
         add_defines("LUA_BUILD_AS_DLL")
+    end
+    if is_plat("windows") and is_arch("arm64") then
+        add_defines("LUAJIT_ENABLE_GC64", {public = true})
     end
     add_defines("LUAJIT_ENABLE_LUA52COMPAT", {public = true})
     add_defines("_FILE_OFFSET_BITS=64", "LARGEFILE_SOURCE", {public = true})
