@@ -124,6 +124,32 @@ target("buildvm")
     set_kind("binary")
     set_default(false)
     add_deps("minilua")
+    before_build(function (target)
+        if os.isfile("src/host/genversion.lua") then
+            local minilua = target:dep("minilua"):targetfile()
+            local olddir = os.cd("src")
+            if not os.isfile("luajit_relver.txt") then
+                local version
+                if os.isdir("../.git") then
+                    try { function ()
+                        version = os.iorunv("git", {"show", "-s", "--format=%ct"})
+                    end }
+                end
+                if version then
+                    version = version:match("^%s*(.-)%s*$")
+                end
+                if not version and os.isfile("../.relver") then
+                    version = io.readfile("../.relver"):match("^%s*(.-)%s*$")
+                end
+                if not version then
+                    version = os.time()
+                end
+                io.writefile("luajit_relver.txt", "" .. version)
+            end
+            os.vrunv(path.absolute(minilua, olddir), {"host/genversion.lua"})
+            os.cd(olddir)
+        end
+    end)
     add_rules("dasc")
     add_options("nojit", "fpu")
     add_includedirs("src")
@@ -142,6 +168,7 @@ target("buildvm")
             add_files("src/vm_x64.dasc")
         else
             -- @see https://github.com/xmake-io/xmake-repo/issues/1264
+            add_defines("LUAJIT_DISABLE_GC64", {public = true})
             add_files("src/vm_x86.dasc")
         end
         add_defines("LUAJIT_TARGET=LUAJIT_ARCH_X64", {public = true})
@@ -167,6 +194,9 @@ target("buildvm")
         add_defines("LUAJIT_OS=LUAJIT_OS_WINDOWS", {public = true})
     elseif is_plat("linux", "android") then
         add_defines("LUAJIT_OS=LUAJIT_OS_LINUX", {public = true})
+        if is_arch("x64", "x86_64") then
+            add_defines("LUAJIT_UNWIND_EXTERNAL", {public = true})
+        end
     elseif is_plat("bsd") then
         add_defines("LUAJIT_OS=LUAJIT_OS_BSD", {public = true})
     else
