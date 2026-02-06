@@ -235,7 +235,7 @@ target("luajit")
     add_undefines("_FORTIFY_SOURCE", {public = true})
     add_headerfiles("src/*.h", {prefixdir = "luajit"})
     add_headerfiles("src/lua.hpp", {prefixdir = "luajit"})
-    add_files("src/ljamalg.c")
+    -- add_files("src/ljamalg.c") -- Try without this file
     add_files("src/lib_base.c",
               "src/lib_math.c",
               "src/lib_bit.c",
