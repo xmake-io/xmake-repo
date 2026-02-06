@@ -186,6 +186,9 @@ target("buildvm")
     elseif is_arch("arm64", "arm64-v8a") then
         add_files("src/vm_arm64.dasc")
         add_defines("LUAJIT_TARGET=LUAJIT_ARCH_ARM64", {public = true})
+        if is_plat("windows") then
+            add_defines("LUAJIT_ENABLE_GC64", {public = true})
+        end
     elseif is_arch("arm.*") then
         add_files("src/vm_arm.dasc")
         add_defines("LUAJIT_TARGET=LUAJIT_ARCH_ARM", {public = true})
