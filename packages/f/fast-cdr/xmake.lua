@@ -6,6 +6,7 @@ package("fast-cdr")
     add_urls("https://github.com/eProsima/Fast-CDR/archive/refs/tags/$(version).tar.gz",
              "https://github.com/eProsima/Fast-CDR.git")
 
+    add_versions("v2.3.5", "e0af6cde06c4a43d90fa905c6d15721435520a26f0ba168ed13dfda45d164001")
     add_versions("v2.3.4", "5b96e85680bd105138202eb734e02545b3e0a06bff8eb55f1f06b692087ed9ef")
     add_versions("v2.3.3", "d48c33aca3ed805383f9a1c6210b6141a5e8044f260c831c1ca03be3a801fdb8")
     add_versions("v2.3.1", "a8703fa3209c7e33dcb6950447a5269dfd4f36d59d74e857bbbfffcdafd97d3f")
