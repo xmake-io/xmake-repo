@@ -210,7 +210,9 @@ target("luajit_headers")
         else
             local lj_vm_asm = path.join(outputdir, "lj_vm.S")
             local mode = "elfasm"
-            if target:is_plat("macosx", "iphoneos") then mode = "machasm" end
+            if target:is_plat("macosx", "iphoneos") then
+                mode = "machasm"
+            end
             os.vrunv(buildvm, {"-m", mode, "-o", lj_vm_asm})
         end
     end)
@@ -241,7 +243,7 @@ target("luajit")
         
         if target:is_plat("macosx", "iphoneos", "watchos") then
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_OSX")
-            if is_plat("iphoneos") then
+            if target:is_plat("iphoneos") then
                 target:add("defines", "TARGET_OS_IPHONE=1")
             end
         elseif target:is_plat("windows", "mingw") then
