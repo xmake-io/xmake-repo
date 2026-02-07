@@ -235,7 +235,7 @@ target("luajit")
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_X86")
         elseif target:is_arch("arm64", "arm64-v8a") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_ARM64")
-        elseif target:is_arch("arm") then
+        elseif target:is_arch("arm.*") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_ARM")
         elseif target:is_arch("mips64") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_MIPS64")
