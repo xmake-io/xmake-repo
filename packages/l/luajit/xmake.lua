@@ -26,10 +26,6 @@ package("luajit")
                     if package:is_arch("arm.*") then
                         raise("package(luajit/arm64) unsupported arch")
                     end
-                else
-                    if package:is_plat("iphoneos") then
-                        raise("package(luajit): iphoneos is not supported")
-                    end
                 end
             end
         end)

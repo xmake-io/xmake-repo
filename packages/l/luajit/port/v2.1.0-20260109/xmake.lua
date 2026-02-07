@@ -20,10 +20,10 @@ option("gc64")
 target("minilua")
     set_kind("binary")
     set_plat(os.host())
-    if is_arch("x86", "i386") then
-        set_arch("x86")
-    else
+    if is_arch("x64", "x86_64", "arm64", "arm64-v8a", "mips64") then
         set_arch(os.arch())
+    else
+        set_arch("x86")
     end
     add_files("src/host/minilua.c")
     if is_host("windows") then
@@ -132,10 +132,10 @@ target("buildvm_headers")
 target("buildvm")
     set_kind("binary")
     set_plat(os.host())
-    if is_arch("x86", "i386") then
-        set_arch("x86")
-    else
+    if is_arch("x64", "x86_64", "arm64", "arm64-v8a", "mips64") then
         set_arch(os.arch())
+    else
+        set_arch("x86")
     end
     add_deps("minilua", "buildvm_headers")
     add_files("src/host/buildvm*.c")
@@ -166,6 +166,9 @@ target("buildvm")
 
         if is_plat("macosx", "iphoneos", "watchos") then
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_OSX")
+            if is_plat("iphoneos") then
+                target:add("defines", "TARGET_OS_IPHONE=1")
+            end
         elseif is_plat("windows", "mingw") then
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_WINDOWS")
         elseif is_plat("linux", "android") then
@@ -246,6 +249,9 @@ target("luajit")
         
         if target:is_plat("macosx", "iphoneos", "watchos") then
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_OSX")
+            if is_plat("iphoneos") then
+                target:add("defines", "TARGET_OS_IPHONE=1")
+            end
         elseif target:is_plat("windows", "mingw") then
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_WINDOWS")
         elseif target:is_plat("linux", "android") then
