@@ -40,14 +40,18 @@ package("nettle")
     on_test(function (package)
         assert(package:check_csnippets([[
             void sha1_test(void) {
-                struct sha1_ctx ctx;
-                sha1_init(&ctx);
+                struct sha256_ctx ctx;
+                sha256_init(&ctx);
                 uint8_t const buffer[] = "test";
-                sha1_update(&ctx, sizeof(buffer), buffer);
-                uint8_t digest[SHA1_DIGEST_SIZE];
-                sha1_digest(&ctx, SHA1_DIGEST_SIZE, digest);
+                sha256_update(&ctx, sizeof(buffer), buffer);
+                uint8_t digest[SHA256_DIGEST_SIZE];
+                #if defined(NETTLE_VERSION_MAJOR) && (NETTLE_VERSION_MAJOR <= 3)
+                    sha256_digest(&ctx, SHA256_DIGEST_SIZE, digest);
+                #else
+                    sha256_digest(&ctx, digest);
+                #endif
             }
-        ]], {includes = "nettle/sha1.h"}))
+        ]], {includes = {"nettle/sha2.h", "nettle/version.h"}}))
         assert(package:check_csnippets([[
             void rsa_test(void) {
                 struct rsa_public_key pub;
