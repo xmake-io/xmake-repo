@@ -157,7 +157,6 @@ target("buildvm")
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_ARM64")
         elseif is_arch("arm.*") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_ARM")
-            target:add("defines", "LUAJIT_NUMMODE=2")
         elseif is_arch("mips64") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_MIPS64")
         elseif is_arch("mips") then
@@ -235,7 +234,6 @@ target("luajit")
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_ARM64")
         elseif target:is_arch("arm.*") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_ARM")
-            target:add("defines", "LUAJIT_NUMMODE=2")
         elseif target:is_arch("mips64") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_MIPS64")
         elseif target:is_arch("mips") then
