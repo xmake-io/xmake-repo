@@ -53,5 +53,5 @@ package("or-tools")
                 InitGoogle(argv[0], &argc, &argv, true);
             }
         ]]
-        }, {configs = {languages = "c++20"}, includes = "ortools/base/init_google.h"}))
+        }, {configs = {languages = "c++17"}, includes = "ortools/base/init_google.h"}))
     end)
