@@ -16,10 +16,10 @@ option("gc64", {default = false})
 target("minilua")
     set_kind("binary")
     set_plat(os.host())
-    if is_arch("x64", "x86_64", "arm.*", "mips64") then
+    if is_arch("x64", "x86_64", "arm64.*", "mips64") then
         set_arch(os.arch())
     else
-        set_arch("x86")
+        set_arch(is_host("windows") and "x86" or "i386")
     end
     add_files("src/host/minilua.c")
     if is_host("windows") then
@@ -132,10 +132,10 @@ target("buildvm_headers")
 target("buildvm")
     set_kind("binary")
     set_plat(os.host())
-    if is_arch("x64", "x86_64", "arm.*", "mips64") then
+    if is_arch("x64", "x86_64", "arm64.*", "mips64") then
         set_arch(os.arch())
     else
-        set_arch("x86")
+        set_arch(is_host("windows") and "x86" or "i386")
     end
     add_deps("minilua", "buildvm_headers")
     add_files("src/host/buildvm*.c")
@@ -157,6 +157,7 @@ target("buildvm")
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_ARM64")
         elseif is_arch("arm.*") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_ARM")
+            target:add("defines", "LUAJIT_NUMMODE=2")
         elseif is_arch("mips64") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_MIPS64")
         elseif is_arch("mips") then
@@ -234,6 +235,7 @@ target("luajit")
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_ARM64")
         elseif target:is_arch("arm.*") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_ARM")
+            target:add("defines", "LUAJIT_NUMMODE=2")
         elseif target:is_arch("mips64") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_MIPS64")
         elseif target:is_arch("mips") then
