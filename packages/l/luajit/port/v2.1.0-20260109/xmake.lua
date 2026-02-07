@@ -10,8 +10,7 @@ option("fpu")
     set_default(true)
     add_defines("LJ_ARCH_HASFPU=1", "LJ_ABI_SOFTFP=0")
 
-option("gc64")
-    set_default(false)
+option("gc64", {default = false})
 
 -- Host Target: minilua
 target("minilua")
