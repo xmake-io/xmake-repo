@@ -1,6 +1,6 @@
 set_xmakever("2.5.5")
 
-set_policy("build.fence", false)
+set_policy("build.fence", true)
 
 option("nojit")
     set_default(false)
@@ -34,72 +34,75 @@ target("buildvm_headers")
     add_deps("minilua")
 
     on_build(function (target)
-        local minilua = target:dep("minilua"):targetfile()
-        if not path.is_absolute(minilua) then minilua = path.absolute(minilua) end
-
-        local outputdir = target:objectdir()
-        if not path.is_absolute(outputdir) then outputdir = path.absolute(outputdir) end
-        if not os.isdir(outputdir) then os.mkdir(outputdir) end
-
+        local minilua = path.absolute(target:dep("minilua"):targetfile())
+        local outputdir = path.absolute(target:objectdir())
+        if not os.isdir(outputdir) then
+            os.mkdir(outputdir)
+        end
         local defines = {}
         if target:is_plat("windows", "mingw") then
-            table.insert(defines, "-D"); table.insert(defines, "WIN")
+            table.insert(defines, "-D")
+            table.insert(defines, "WIN")
         end
-
         local dasc = "src/vm_x86.dasc"
         if target:is_arch("x64", "x86_64") then
             dasc = "src/vm_x64.dasc"
-            table.insert(defines, "-D"); table.insert(defines, "P64")
+            table.insert(defines, "-D")
+            table.insert(defines, "P64")
             if has_config("gc64") then
-                table.insert(defines, "-D"); table.insert(defines, "JIT")
-                table.insert(defines, "-D"); table.insert(defines, "FFI")
+                table.insert(defines, "-D")
+                table.insert(defines, "JIT")
+                table.insert(defines, "-D")
+                table.insert(defines, "FFI")
             end
         elseif target:is_arch("arm64", "arm64-v8a") then
             dasc = "src/vm_arm64.dasc"
-            table.insert(defines, "-D"); table.insert(defines, "P64")
-            table.insert(defines, "-D"); table.insert(defines, "FPU")
+            table.insert(defines, "-D")
+            table.insert(defines, "P64")
+            table.insert(defines, "-D")
+            table.insert(defines, "FPU")
             if target:is_plat("windows", "mingw") then
-                table.insert(defines, "-D"); table.insert(defines, "ENDIAN_LE")
+                table.insert(defines, "-D")
+                table.insert(defines, "ENDIAN_LE")
             end
         elseif target:is_arch("arm.*") then
             dasc = "src/vm_arm.dasc"
             if target:opt("fpu") then
-                table.insert(defines, "-D"); table.insert(defines, "FPU")
-                table.insert(defines, "-D"); table.insert(defines, "HFABI")
+                table.insert(defines, "-D")
+                table.insert(defines, "FPU")
+                table.insert(defines, "-D")
+                table.insert(defines, "HFABI")
             end
         elseif target:is_arch("mips64") then
             dasc = "src/vm_mips64.dasc"
-            table.insert(defines, "-D"); table.insert(defines, "P64")
+            table.insert(defines, "-D")
+            table.insert(defines, "P64")
         elseif target:is_arch("mips") then
             dasc = "src/vm_mips.dasc"
         elseif target:is_arch("ppc") then
             dasc = "src/vm_ppc.dasc"
         end
-        
-        if not target:opt("nojit") and not target:is_plat("iphoneos", "watchos") then
-            table.insert(defines, "-D"); table.insert(defines, "JIT")
-            table.insert(defines, "-D"); table.insert(defines, "FFI")
+        if not has_config("nojit") and not target:is_plat("iphoneos", "watchos") then
+            table.insert(defines, "-D")
+            table.insert(defines, "JIT")
+            table.insert(defines, "-D")
+            table.insert(defines, "FFI")
         end
-        
         local buildvm_arch_h = path.join(outputdir, "buildvm_arch.h")
         local flags = {"dynasm/dynasm.lua", "-LN"}
-        for _, d in ipairs(defines) do table.insert(flags, d) end
+        for _, d in ipairs(defines) do
+            table.insert(flags, d)
+        end
         table.insert(flags, "-o")
         table.insert(flags, buildvm_arch_h)
         table.insert(flags, dasc)
-        
         os.vrunv(minilua, flags)
-
-        
         if not os.isfile(buildvm_arch_h) then
             raise("Failed to generate buildvm_arch.h")
         end
-        
         if os.isfile("src/host/genversion.lua") then
-            local luajit_h = path.join(outputdir, "luajit.h")
-            if not path.is_absolute(luajit_h) then luajit_h = path.absolute(luajit_h) end
+            local luajit_h = path.absolute(path.join(outputdir, "luajit.h"))            
             local olddir = os.cd("src")
-            
             if not os.isfile("luajit_relver.txt") then
                 local version
                 if os.isdir("../.git") then
@@ -118,7 +121,6 @@ target("buildvm_headers")
                 end
                 io.writefile("luajit_relver.txt", "" .. version)
             end
-
             os.vrunv(path.absolute(minilua, olddir), {"host/genversion.lua", "luajit_rolling.h", "luajit_relver.txt", luajit_h})
             os.cd(olddir)
         end
@@ -144,32 +146,32 @@ target("buildvm")
     add_options("nojit", "fpu")
     
     on_load(function (target)
-        if is_arch("x64", "x86_64") then
+        if target:is_arch("x64", "x86_64") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_X64")
-        elseif is_arch("x86", "i386") then
+        elseif target:is_arch("x86", "i386") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_X86")
-        elseif is_arch("arm64", "arm64-v8a") then
+        elseif target:is_arch("arm64", "arm64-v8a") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_ARM64")
-        elseif is_arch("arm.*") then
+        elseif target:is_arch("arm.*") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_ARM")
-        elseif is_arch("mips64") then
+        elseif target:is_arch("mips64") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_MIPS64")
-        elseif is_arch("mips") then
+        elseif target:is_arch("mips") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_MIPS")
-        elseif is_arch("ppc") then
+        elseif target:is_arch("ppc") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_PPC")
         end
 
-        if is_plat("macosx", "iphoneos", "watchos") then
+        if target:is_plat("macosx", "iphoneos", "watchos") then
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_OSX")
-            if is_plat("iphoneos") then
+            if target:is_plat("iphoneos") then
                 target:add("defines", "TARGET_OS_IPHONE=1")
             end
-        elseif is_plat("windows", "mingw") then
+        elseif target:is_plat("windows", "mingw") then
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_WINDOWS")
-        elseif is_plat("linux", "android") then
+        elseif target:is_plat("linux", "android") then
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_LINUX")
-        elseif is_plat("bsd") then
+        elseif target:is_plat("bsd") then
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_BSD")
         else
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_OTHER")
@@ -192,20 +194,15 @@ target("luajit_headers")
     add_deps("buildvm")
     
     on_build(function (target)
-        local buildvm = target:dep("buildvm"):targetfile()
-        if not path.is_absolute(buildvm) then buildvm = path.absolute(buildvm) end
-        
+        local buildvm = path.absolute(target:dep("buildvm"):targetfile())
         local outputdir = target:objectdir()
         if not os.isdir(outputdir) then os.mkdir(outputdir) end
-        
         local headers = {"bcdef", "ffdef", "libdef", "recdef", "vmdef"}
         for _, m in ipairs(headers) do
             os.vrunv(buildvm, {"-m", m, "-o", path.join(outputdir, "lj_"..m..".h"), "src/lib_base.c", "src/lib_math.c", "src/lib_bit.c", "src/lib_string.c", "src/lib_table.c", "src/lib_io.c", "src/lib_os.c", "src/lib_package.c", "src/lib_debug.c", "src/lib_jit.c", "src/lib_ffi.c", "src/lib_buffer.c"})
         end
-        
         -- lj_folddef.h
         os.vrunv(buildvm, {"-m", "folddef", "-o", path.join(outputdir, "lj_folddef.h"), "src/lj_opt_fold.c"})
-
         -- Generate VM assembly/obj
         if target:is_plat("windows", "mingw") then
             local lj_vm_obj = path.join(outputdir, "lj_vm.obj")
@@ -223,7 +220,6 @@ target("luajit_headers")
 target("luajit")
     set_kind("$(kind)")
     add_deps("luajit_headers", "buildvm_headers")
-    set_policy("build.fence", true)
     set_basename("luajit")
     
     on_load(function (target)

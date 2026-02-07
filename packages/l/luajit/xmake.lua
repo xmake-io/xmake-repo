@@ -47,7 +47,7 @@ package("luajit")
         configs.fpu     = package:config("fpu")
         configs.nojit   = package:config("nojit")
         configs.gc64    = package:config("gc64")
-        if package:is_plat("macosx") and not is_arch("arm.*") then
+        if package:is_plat("macosx") and not package:is_arch("arm.*") then
             configs.gc64 = true
         end
         if package:version():eq("v2.1.0-beta3") then
