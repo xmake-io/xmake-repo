@@ -20,8 +20,7 @@ option("gc64")
 target("minilua")
     set_kind("binary")
     set_plat(os.host())
-    local arch = get_config("arch")
-    if arch and (arch == "x86" or arch == "i386") then
+    if is_arch("x86", "i386") then
         set_arch("x86")
     else
         set_arch(os.arch())
@@ -48,46 +47,42 @@ target("buildvm_headers")
         if not path.is_absolute(outputdir) then outputdir = path.absolute(outputdir) end
         if not os.isdir(outputdir) then os.mkdir(outputdir) end
 
-        -- Re-calculate dasc and defines here to avoid xmake set/get dedup issues
-        local arch = get_config("arch") or os.arch()
-        local plat = get_config("plat") or os.host()
-
         local defines = {}
-        if plat == "windows" or plat == "mingw" then
+        if target:is_plat("windows", "mingw") then
             table.insert(defines, "-D"); table.insert(defines, "WIN")
         end
 
         local dasc = "src/vm_x86.dasc"
-        if arch and (arch == "x64" or arch == "x86_64") then
+        if target:is_arch("x64", "x86_64") then
             dasc = "src/vm_x64.dasc"
             table.insert(defines, "-D"); table.insert(defines, "P64")
             if has_config("gc64") then
                 table.insert(defines, "-D"); table.insert(defines, "JIT")
                 table.insert(defines, "-D"); table.insert(defines, "FFI")
             end
-        elseif arch and (arch == "arm64" or arch == "arm64-v8a") then
+        elseif target:is_arch("arm64", "arm64-v8a") then
             dasc = "src/vm_arm64.dasc"
             table.insert(defines, "-D"); table.insert(defines, "P64")
             table.insert(defines, "-D"); table.insert(defines, "FPU")
-            if plat == "windows" or plat == "mingw" then
+            if target:is_plat("windows", "mingw") then
                 table.insert(defines, "-D"); table.insert(defines, "ENDIAN_LE")
             end
-        elseif arch and arch:match("^arm") then
+        elseif target:is_arch("arm") then
             dasc = "src/vm_arm.dasc"
             if target:opt("fpu") then
                 table.insert(defines, "-D"); table.insert(defines, "FPU")
                 table.insert(defines, "-D"); table.insert(defines, "HFABI")
             end
-        elseif arch and arch == "mips64" then
+        elseif target:is_arch("mips64") then
             dasc = "src/vm_mips64.dasc"
             table.insert(defines, "-D"); table.insert(defines, "P64")
-        elseif arch and arch == "mips" then
+        elseif target:is_arch("mips") then
             dasc = "src/vm_mips.dasc"
-        elseif arch and arch == "ppc" then
+        elseif target:is_arch("ppc") then
             dasc = "src/vm_ppc.dasc"
         end
         
-        if not target:opt("nojit") and not (plat == "iphoneos" or plat == "watchos") then
+        if not target:opt("nojit") and not target:is_plat("iphoneos", "watchos") then
             table.insert(defines, "-D"); table.insert(defines, "JIT")
             table.insert(defines, "-D"); table.insert(defines, "FFI")
         end
@@ -99,17 +94,14 @@ target("buildvm_headers")
         table.insert(flags, buildvm_arch_h)
         table.insert(flags, dasc)
         
-        print("xmake-repo: generating buildvm_arch.h to " .. buildvm_arch_h .. " using " .. dasc)
         os.vrunv(minilua, flags)
 
         
         if not os.isfile(buildvm_arch_h) then
-            print("xmake-repo: Error: buildvm_arch.h was not generated!")
             raise("Failed to generate buildvm_arch.h")
         end
         
         if os.isfile("src/host/genversion.lua") then
-            print("xmake-repo: generating luajit.h...")
             local luajit_h = path.join(outputdir, "luajit.h")
             if not path.is_absolute(luajit_h) then luajit_h = path.absolute(luajit_h) end
             local olddir = os.cd("src")
@@ -142,8 +134,7 @@ target("buildvm_headers")
 target("buildvm")
     set_kind("binary")
     set_plat(os.host())
-    local arch = get_config("arch")
-    if arch and (arch == "x86" or arch == "i386") then
+    if is_arch("x86", "i386") then
         set_arch("x86")
     else
         set_arch(os.arch())
@@ -159,31 +150,29 @@ target("buildvm")
     add_options("nojit", "fpu")
     
     on_load(function (target)
-        local arch = get_config("arch") or os.arch()
-        if arch == "x64" or arch == "x86_64" then
+        if target:is_arch("x64", "x86_64") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_X64")
-        elseif arch == "x86" or arch == "i386" then
+        elseif target:is_arch("x86", "i386") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_X86")
-        elseif arch == "arm64" or arch == "arm64-v8a" then
+        elseif target:is_arch("arm64", "arm64-v8a") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_ARM64")
-        elseif arch:match("^arm") then
+        elseif target:is_arch("arm") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_ARM")
-        elseif arch == "mips64" then
+        elseif target:is_arch("mips64") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_MIPS64")
-        elseif arch == "mips" then
+        elseif target:is_arch("mips") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_MIPS")
-        elseif arch == "ppc" then
+        elseif target:is_arch("ppc") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_PPC")
         end
-        
-        local plat = get_config("plat") or os.host()
-        if plat == "macosx" or plat == "iphoneos" or plat == "watchos" then
+
+        if target:is_plat("macosx", "iphoneos", "watchos") then
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_OSX")
-        elseif plat == "windows" or plat == "mingw" then
+        elseif target:is_plat("windows", "mingw") then
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_WINDOWS")
-        elseif plat == "linux" or plat == "android" then
+        elseif target:is_plat("linux", "android") then
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_LINUX")
-        elseif plat == "bsd" then
+        elseif target:is_plat("bsd") then
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_BSD")
         else
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_OTHER")
@@ -212,7 +201,6 @@ target("luajit_headers")
         local outputdir = target:objectdir()
         if not os.isdir(outputdir) then os.mkdir(outputdir) end
         
-        print("xmake-repo: generating luajit headers with " .. buildvm)
         local headers = {"bcdef", "ffdef", "libdef", "recdef", "vmdef"}
         for _, m in ipairs(headers) do
             os.vrunv(buildvm, {"-m", m, "-o", path.join(outputdir, "lj_"..m..".h"), "src/lib_base.c", "src/lib_math.c", "src/lib_bit.c", "src/lib_string.c", "src/lib_table.c", "src/lib_io.c", "src/lib_os.c", "src/lib_package.c", "src/lib_debug.c", "src/lib_jit.c", "src/lib_ffi.c", "src/lib_buffer.c"})
@@ -222,14 +210,13 @@ target("luajit_headers")
         os.vrunv(buildvm, {"-m", "folddef", "-o", path.join(outputdir, "lj_folddef.h"), "src/lj_opt_fold.c"})
 
         -- Generate VM assembly/obj
-        local plat = get_config("plat") or os.host()
-        if plat == "windows" or plat == "mingw" then
+        if target:is_plat("windows", "mingw") then
             local lj_vm_obj = path.join(outputdir, "lj_vm.obj")
             os.vrunv(buildvm, {"-m", "peobj", "-o", lj_vm_obj})
         else
             local lj_vm_asm = path.join(outputdir, "lj_vm.S")
             local mode = "elfasm"
-            if plat == "macosx" or plat == "iphoneos" then mode = "machasm" end
+            if target:is_plat("macosx", "iphoneos") then mode = "machasm" end
             os.vrunv(buildvm, {"-m", mode, "-o", lj_vm_asm})
         end
     end)
@@ -243,31 +230,29 @@ target("luajit")
     set_basename("luajit")
     
     on_load(function (target)
-        local arch = get_config("arch") or os.arch()
-        if arch == "x64" or arch == "x86_64" then
+        if target:is_arch("x64", "x86_64") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_X64")
-        elseif arch == "x86" or arch == "i386" then
+        elseif target:is_arch("x86", "i386") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_X86")
-        elseif arch == "arm64" or arch == "arm64-v8a" then
+        elseif target:is_arch("arm64", "arm64-v8a") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_ARM64")
-        elseif arch:match("^arm") then
+        elseif target:is_arch("arm") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_ARM")
-        elseif arch == "mips64" then
+        elseif target:is_arch("mips64") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_MIPS64")
-        elseif arch == "mips" then
+        elseif target:is_arch("mips") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_MIPS")
-        elseif arch == "ppc" then
+        elseif target:is_arch("ppc") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_PPC")
         end
         
-        local plat = get_config("plat") or os.host()
-        if plat == "macosx" or plat == "iphoneos" or plat == "watchos" then
+        if target:is_plat("macosx", "iphoneos", "watchos") then
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_OSX")
-        elseif plat == "windows" or plat == "mingw" then
+        elseif target:is_plat("windows", "mingw") then
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_WINDOWS")
-        elseif plat == "linux" or plat == "android" then
+        elseif target:is_plat("linux", "android") then
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_LINUX")
-        elseif plat == "bsd" then
+        elseif target:is_plat("bsd") then
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_BSD")
         else
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_OTHER")
@@ -314,12 +299,9 @@ target("luajit")
             local vm_s = path.join(hdir, "lj_vm.S")
             local vm_o = path.join(hdir, "lj_vm.o")
             if os.isfile(vm_s) then
-                print("xmake-repo: compiling " .. vm_s .. " to " .. vm_o)
                 -- Force -fPIC for the assembly file to ensure it works in shared libs
                 compiler.compile(vm_s, vm_o, {target = target, asflags = "-fPIC"})
                 table.insert(target:objectfiles(), vm_o)
-            else
-                print("xmake-repo: warning: " .. vm_s .. " not found during before_build!")
             end
         else
             local vm_o = path.join(hdir, "lj_vm.obj")
