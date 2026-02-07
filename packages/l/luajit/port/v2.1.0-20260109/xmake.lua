@@ -132,10 +132,10 @@ target("buildvm_headers")
 target("buildvm")
     set_kind("binary")
     set_plat(os.host())
-    if is_arch("x86", "i386") then
-        set_arch("x86")
-    else
+    if is_arch("x64", "x86_64", "arm64", "arm64-v8a", "mips64") then
         set_arch(os.arch())
+    else
+        set_arch("x86")
     end
     add_deps("minilua", "buildvm_headers")
     add_files("src/host/buildvm*.c")
