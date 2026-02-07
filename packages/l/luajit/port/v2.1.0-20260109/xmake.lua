@@ -82,7 +82,7 @@ target("buildvm_headers")
         elseif target:is_arch("ppc") then
             dasc = "src/vm_ppc.dasc"
         end
-        if not has_config("nojit") and not target:is_plat("iphoneos", "watchos") then
+        if not has_config("nojit") then
             table.insert(defines, "-D")
             table.insert(defines, "JIT")
             table.insert(defines, "-D")
