@@ -30,10 +30,6 @@ rule("dasc")
             os.mkdir(outputdir)
         end
         local argv = {"dynasm/dynasm.lua", "-LN"}
-        if is_arch("arm64.*") or (is_plat("windows") and is_arch("x64", "x86_64", "x86", "i386")) then
-             table.insert(argv, "-D")
-             table.insert(argv, "ENDIAN_LE")
-        end
         if is_arch("x64", "x86_64", "arm64", "arm64-v8a", "mips64") then
             -- 64bits pointer
             table.insert(argv, "-D")
@@ -102,13 +98,11 @@ rule("buildvm")
 
 function set_host_toolchains()
     -- only for cross-compliation
-    if is_plat(os.host()) and is_arch(os.arch()) then
+    if is_plat(os.host()) then
         return
     end
     local arch
-    if is_host("windows") and os.arch() == "arm64" then
-        arch = "arm64"
-    elseif is_arch("arm64", "arm64-v8a", "mips64", "x86_64") then
+    if is_arch("arm64", "arm64-v8a", "mips64", "x86_64") then
         arch = is_host("windows") and "x64" or "x86_64"
     else
         arch = is_host("windows") and "x86" or "i386"
@@ -130,37 +124,6 @@ target("buildvm")
     set_kind("binary")
     set_default(false)
     add_deps("minilua")
-    before_build(function (target)
-        if os.isfile("src/host/genversion.lua") then
-            local minilua = target:dep("minilua"):targetfile()
-            local olddir = os.cd("src")
-            if not os.isfile("luajit_relver.txt") then
-                local version
-                if os.isdir("../.git") then
-                    try { function ()
-                        version = os.iorunv("git", {"show", "-s", "--format=%ct"})
-                    end }
-                end
-                if version then
-                    version = version:match("^%s*(.-)%s*$")
-                end
-                if not version and os.isfile("../.relver") then
-                    version = io.readfile("../.relver"):match("^%s*(.-)%s*$")
-                end
-                if not version then
-                    version = os.time()
-                end
-                io.writefile("luajit_relver.txt", "" .. version)
-            end
-            os.vrunv(path.absolute(minilua, olddir), {"host/genversion.lua"})
-            os.cd(olddir)
-        end
-        if is_plat("windows", "msys","cygwin") and not is_arch("x86", "x64", "mips", "mips64") then
-            -- @note we need fix `illegal zero-sized array` errors for msvc
-            io.gsub("src/lj_jit.h", "  LJ_K32__MAX\n", "  LJ_K32__MAX=1\n")
-            io.gsub("src/lj_jit.h", "  LJ_K64__MAX,\n", "  LJ_K64__MAX=1\n")
-        end
-    end)
     add_rules("dasc")
     add_options("nojit", "fpu")
     add_includedirs("src")
@@ -179,7 +142,6 @@ target("buildvm")
             add_files("src/vm_x64.dasc")
         else
             -- @see https://github.com/xmake-io/xmake-repo/issues/1264
-            add_defines("LUAJIT_DISABLE_GC64", {public = true})
             add_files("src/vm_x86.dasc")
         end
         add_defines("LUAJIT_TARGET=LUAJIT_ARCH_X64", {public = true})
@@ -201,21 +163,22 @@ target("buildvm")
     end
     if is_plat("macosx", "iphoneos", "watchos") then
         add_defines("LUAJIT_OS=LUAJIT_OS_OSX", {public = true})
-        if is_arch("x64", "x86_64") then
-            add_defines("LUAJIT_UNWIND_EXTERNAL", {public = true})
-        end
     elseif is_plat("windows") then
         add_defines("LUAJIT_OS=LUAJIT_OS_WINDOWS", {public = true})
     elseif is_plat("linux", "android") then
         add_defines("LUAJIT_OS=LUAJIT_OS_LINUX", {public = true})
-        if is_arch("x64", "x86_64") then
-            add_defines("LUAJIT_UNWIND_EXTERNAL", {public = true})
-        end
     elseif is_plat("bsd") then
         add_defines("LUAJIT_OS=LUAJIT_OS_BSD", {public = true})
     else
         add_defines("LUAJIT_OS=LUAJIT_OS_OTHER", {public = true})
     end
+    before_build("@windows", "@msys", "@cygwin", function (target)
+        if not is_arch("x86", "x64", "mips", "mips64") then
+            -- @note we need fix `illegal zero-sized array` errors for msvc
+            io.gsub("src/lj_jit.h", "  LJ_K32__MAX\n", "  LJ_K32__MAX=1\n")
+            io.gsub("src/lj_jit.h", "  LJ_K64__MAX,\n", "  LJ_K64__MAX=1\n")
+        end
+    end)
 
 target("luajit")
     set_kind("$(kind)")
@@ -226,9 +189,6 @@ target("luajit")
     end
     if is_kind("shared") and is_plat("windows") then
         add_defines("LUA_BUILD_AS_DLL")
-    end
-    if is_plat("windows") and is_arch("arm64") then
-        add_defines("LUAJIT_ENABLE_GC64", {public = true})
     end
     add_defines("LUAJIT_ENABLE_LUA52COMPAT", {public = true})
     add_defines("_FILE_OFFSET_BITS=64", "LARGEFILE_SOURCE", {public = true})
@@ -259,19 +219,13 @@ target("luajit_bin")
         add_syslinks("advapi32", "shell32")
         if is_arch("x86") then
             add_ldflags("/subsystem:console,5.01")
-        elseif is_arch("x64", "x86_64") then
-            add_ldflags("/subsystem:console,5.02")
         else
-            add_ldflags("/subsystem:console")
+            add_ldflags("/subsystem:console,5.02")
         end
     elseif is_plat("android") then
         add_syslinks("m", "c")
     elseif is_plat("macosx") then
-        if is_arch("arm.*") then
-            add_ldflags("-all_load")
-        else
-            add_ldflags("-all_load", "-pagezero_size 10000", "-image_base 100000000")
-        end
+        add_ldflags("-all_load", "-pagezero_size 10000", "-image_base 100000000")
     elseif is_plat("mingw") then
         add_ldflags("-static-libgcc", {force = true})
     else
