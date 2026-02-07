@@ -1,20 +1,17 @@
 set_xmakever("2.5.5")
 
-set_policy("build.across_targets_in_parallel", false)
+set_policy("build.fence", true)
 
 option("nojit")
     set_default(false)
-    set_showmenu(true)
     add_defines("LUAJIT_DISABLE_JIT", "LUAJIT_DISABLE_FFI")
 
 option("fpu")
     set_default(true)
-    set_showmenu(true)
     add_defines("LJ_ARCH_HASFPU=1", "LJ_ABI_SOFTFP=0")
 
 option("gc64")
     set_default(false)
-    set_showmenu(true)
 
 -- Host Target: minilua
 target("minilua")
