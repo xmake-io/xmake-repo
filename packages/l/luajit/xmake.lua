@@ -27,10 +27,6 @@ package("luajit")
                         raise("package(luajit/arm64) unsupported arch")
                     end
                 end
-            else
-                if package:is_plat("android") and package:is_arch("arm.*") and package:check_sizeof("void*") == "4" and is_host("windows") then
-                    raise("package(luajit/armeabi-v7a): Windows OS host is unsupported for android cross-compilation")
-                end
             end
         end)
     end

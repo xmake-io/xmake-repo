@@ -32,6 +32,7 @@ target("minilua")
 target("buildvm_headers")
     set_kind("phony")
     add_deps("minilua")
+    add_options("fpu")
 
     on_build(function (target)
         local minilua = path.absolute(target:dep("minilua"):targetfile())
