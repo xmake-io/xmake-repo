@@ -14,6 +14,8 @@ package("gz-cmake")
     add_deps("cmake")
 
     on_install(function (package)
+        -- Fix for x86 ARM RISC-V
+        io.replace("CMakeLists.txt", "COMPATIBILITY SameMajorVersion)", "COMPATIBILITY SameMajorVersion\nARCH_INDEPENDENT)", {plain = true})
         import("package.tools.cmake").install(package, {"-DBUILD_TESTING=OFF"})
     end)
 
