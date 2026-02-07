@@ -226,7 +226,7 @@ target("luajit")
     set_kind("$(kind)")
     add_deps("luajit_headers", "buildvm_headers")
     set_basename("luajit")
-    
+
     on_load(function (target)
         if target:is_arch("x64", "x86_64") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_X64")
@@ -243,7 +243,7 @@ target("luajit")
         elseif target:is_arch("ppc") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_PPC")
         end
-        
+
         if target:is_plat("macosx", "iphoneos", "watchos") then
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_OSX")
             if target:is_plat("iphoneos") then
@@ -266,7 +266,7 @@ target("luajit")
 
     add_options("nojit", "fpu")
     add_defines("LUAJIT_ENABLE_LUA52COMPAT")
-    
+
     if is_plat("windows") then 
         add_defines("_CRT_SECURE_NO_DEPRECATE")
         if is_arch("arm64") then
@@ -281,7 +281,7 @@ target("luajit")
     if is_plat("linux", "macosx", "bsd") and is_arch("x86_64", "mips64") then
         add_defines("LUAJIT_UNWIND_EXTERNAL")
     end
-    
+
     after_install(function (target)
         local htag = target:dep("buildvm_headers")
         local hdir = htag:objectdir()
@@ -295,7 +295,7 @@ target("luajit")
         import("core.tool.compiler")
         local htag = target:dep("luajit_headers")
         local hdir = htag:objectdir()
-        
+
         if not target:is_plat("windows", "mingw") then
             local vm_s = path.join(hdir, "lj_vm.S")
             local vm_o = path.join(hdir, "lj_vm.o")
