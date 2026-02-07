@@ -1,6 +1,6 @@
 set_xmakever("2.5.5")
 
-set_policy("build.fence", true)
+set_policy("build.fence", false)
 
 option("nojit")
     set_default(false)
