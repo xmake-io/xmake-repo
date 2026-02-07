@@ -35,8 +35,6 @@ target("minilua")
 -- Phony Target: buildvm_headers (Generate buildvm_arch.h and luajit.h)
 target("buildvm_headers")
     set_kind("phony")
-    set_plat(os.host())
-    set_arch(os.arch())
     add_deps("minilua")
 
     on_build(function (target)
@@ -67,7 +65,7 @@ target("buildvm_headers")
             if target:is_plat("windows", "mingw") then
                 table.insert(defines, "-D"); table.insert(defines, "ENDIAN_LE")
             end
-        elseif target:is_arch("arm") then
+        elseif target:is_arch("arm.*") then
             dasc = "src/vm_arm.dasc"
             if target:opt("fpu") then
                 table.insert(defines, "-D"); table.insert(defines, "FPU")
