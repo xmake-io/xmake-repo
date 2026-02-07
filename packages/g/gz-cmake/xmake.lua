@@ -14,6 +14,9 @@ package("gz-cmake")
     add_deps("cmake")
 
     on_install(function (package)
+        io.replace("cmake/GzPackaging.cmake", "include(InstallRequiredSystemLibraries)", "", {plain = true})
+        -- fix ios build
+        io.replace("cmake/GzSetCompilerFlags.cmake", "if(APPLE)", "if(APPLE AND NOT IOS)", {plain = true})
         -- Fix for x86 ARM RISC-V
         io.replace("CMakeLists.txt", "COMPATIBILITY SameMajorVersion)", "COMPATIBILITY SameMajorVersion\nARCH_INDEPENDENT)", {plain = true})
         import("package.tools.cmake").install(package, {"-DBUILD_TESTING=OFF"})
