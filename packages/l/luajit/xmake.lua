@@ -29,8 +29,6 @@ package("luajit")
                 else
                     if package:is_plat("iphoneos") then
                         raise("package(luajit): iphoneos is not supported")
-                    elseif package:is_plat("android") and package:is_arch("arm.*") and package:check_sizeof("void*") == "4" then
-                        raise("package(luajit/armeabi-v7a): unsupported arch for android OS")
                     end
                 end
             end
