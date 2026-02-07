@@ -16,7 +16,7 @@ option("gc64", {default = false})
 target("minilua")
     set_kind("binary")
     set_plat(os.host())
-    if is_arch("x64", "x86_64", "arm64", "arm64-v8a", "mips64") then
+    if is_arch("x64", "x86_64", "arm.*", "mips64") then
         set_arch(os.arch())
     else
         set_arch("x86")
@@ -132,14 +132,13 @@ target("buildvm_headers")
 target("buildvm")
     set_kind("binary")
     set_plat(os.host())
-    if is_arch("x64", "x86_64", "arm64", "arm64-v8a", "mips64") then
+    if is_arch("x64", "x86_64", "arm.*", "mips64") then
         set_arch(os.arch())
     else
         set_arch("x86")
     end
     add_deps("minilua", "buildvm_headers")
     add_files("src/host/buildvm*.c")
-    
     if is_host("windows") then
         add_defines("_CRT_SECURE_NO_DEPRECATE")
     else
@@ -196,7 +195,6 @@ target("buildvm")
 target("luajit_headers")
     set_kind("phony")
     add_deps("buildvm")
-    
     on_build(function (target)
         local buildvm = path.absolute(target:dep("buildvm"):targetfile())
         local outputdir = target:objectdir()
@@ -227,7 +225,6 @@ target("luajit")
     set_kind("$(kind)")
     add_deps("luajit_headers", "buildvm_headers")
     set_basename("luajit")
-
     on_load(function (target)
         if target:is_arch("x64", "x86_64") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_X64")
@@ -244,7 +241,6 @@ target("luajit")
         elseif target:is_arch("ppc") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_PPC")
         end
-
         if target:is_plat("macosx", "iphoneos", "watchos") then
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_OSX")
             if target:is_plat("iphoneos") then
@@ -268,7 +264,7 @@ target("luajit")
     add_options("nojit", "fpu")
     add_defines("LUAJIT_ENABLE_LUA52COMPAT")
 
-    if is_plat("windows") then 
+    if is_plat("windows") then
         add_defines("_CRT_SECURE_NO_DEPRECATE")
         if is_arch("arm64") then
              add_defines("LUAJIT_ENABLE_GC64")
@@ -296,7 +292,6 @@ target("luajit")
         import("core.tool.compiler")
         local htag = target:dep("luajit_headers")
         local hdir = htag:objectdir()
-
         if not target:is_plat("windows", "mingw") then
             local vm_s = path.join(hdir, "lj_vm.S")
             local vm_o = path.join(hdir, "lj_vm.o")
@@ -317,7 +312,6 @@ target("luajit")
         local htag = target:dep("luajit_headers")
         local hdir = htag:objectdir()
         target:add("includedirs", path.absolute(hdir))
-
         local bhtag = target:dep("buildvm_headers")
         local bhdir = bhtag:objectdir()
         target:add("includedirs", path.absolute(bhdir))
