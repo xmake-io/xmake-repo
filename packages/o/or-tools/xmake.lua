@@ -20,14 +20,18 @@ package("or-tools")
     add_configs("cplex", {description = "Enable CPLEX support", default = false, type = "boolean", readonly = true})
 
     on_install(function (package)
-        local configs = {"-DBUILD_CXX=ON", "-DBUILD_SAMPLES=OFF", "-DBUILD_TESTING=OFF"}
-        table.insert(configs, "-DUSE_COINOR=" .. (package:config("coin-or") and "ON" or "OFF"))
-        table.insert(configs, "-DUSE_GLPK=" .. (package:config("glpk") and "ON" or "OFF"))
-        table.insert(configs, "-DUSE_HIGHS=" .. (package:config("highs") and "ON" or "OFF"))
-        table.insert(configs, "-DUSE_SCIP=" .. (package:config("scip") and "ON" or "OFF"))
-        table.insert(configs, "-DUSE_CPLEX=" .. (package:config("cplex") and "ON" or "OFF"))
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        local configs = {
+            "-DBUILD_CXX=ON",
+            "-DBUILD_SAMPLES=OFF",
+            "-DBUILD_TESTING=OFF",
+            "-DUSE_COINOR=" .. (package:config("coin-or") and "ON" or "OFF"),
+            "-DUSE_GLPK=" .. (package:config("glpk") and "ON" or "OFF"),
+            "-DUSE_HIGHS=" .. (package:config("highs") and "ON" or "OFF"),
+            "-DUSE_SCIP=" .. (package:config("scip") and "ON" or "OFF"),
+            "-DUSE_CPLEX=" .. (package:config("cplex") and "ON" or "OFF"),
+            "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
+            "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF")
+        }
         import("package.tools.cmake").install(package, configs)
     end)
 
