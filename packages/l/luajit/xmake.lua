@@ -26,6 +26,10 @@ package("luajit")
                     if package:is_arch("arm.*") then
                         raise("package(luajit/arm64) unsupported arch")
                     end
+                else
+                    if package:is_plat("android") and package:is_arch("arm.*") and package:check_sizeof("void*") == "4" then
+                        raise("package(luajit/armeabi-v7a): unsupported arch for android OS")
+                    end
                 end
             end
         end)

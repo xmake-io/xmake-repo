@@ -20,10 +20,10 @@ option("gc64")
 target("minilua")
     set_kind("binary")
     set_plat(os.host())
-    if is_arch("x64", "x86_64", "arm64", "arm64-v8a", "mips64") then
-        set_arch(os.arch())
-    else
+    if is_arch("x86", "i386") then
         set_arch("x86")
+    else
+        set_arch(os.arch())
     end
     add_files("src/host/minilua.c")
     if is_host("windows") then
@@ -132,10 +132,10 @@ target("buildvm_headers")
 target("buildvm")
     set_kind("binary")
     set_plat(os.host())
-    if is_arch("x64", "x86_64", "arm64", "arm64-v8a", "mips64") then
-        set_arch(os.arch())
-    else
+    if is_arch("x86", "i386") then
         set_arch("x86")
+    else
+        set_arch(os.arch())
     end
     add_deps("minilua", "buildvm_headers")
     add_files("src/host/buildvm*.c")
