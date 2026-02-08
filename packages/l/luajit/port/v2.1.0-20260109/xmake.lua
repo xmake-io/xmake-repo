@@ -134,32 +134,32 @@ target("buildvm")
     on_load(function (target)
         -- NOTE: buildvm runs on host, but needs to know the TARGET platform definitions
         -- to generate correct headers. We use global is_arch/is_plat to check target config.
-        if target:is_arch("x64", "x86_64") then
+        if is_arch("x64", "x86_64") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_X64")
-        elseif target:is_arch("x86", "i386") then
+        elseif is_arch("x86", "i386") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_X86")
-        elseif target:is_arch("arm64", "arm64-v8a") then
+        elseif is_arch("arm64", "arm64-v8a") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_ARM64")
-        elseif target:is_arch("arm.*") then
+        elseif is_arch("arm.*") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_ARM")
-        elseif target:is_arch("mips64") then
+        elseif is_arch("mips64") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_MIPS64")
-        elseif target:is_arch("mips") then
+        elseif is_arch("mips") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_MIPS")
-        elseif target:is_arch("ppc") then
+        elseif is_arch("ppc") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_PPC")
         end
 
-        if target:is_plat("macosx", "iphoneos", "watchos") then
+        if is_plat("macosx", "iphoneos", "watchos") then
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_OSX")
-            if target:is_plat("iphoneos") then
+            if is_plat("iphoneos") then
                 target:add("defines", "TARGET_OS_IPHONE=1")
             end
-        elseif target:is_plat("windows", "mingw") then
+        elseif is_plat("windows", "mingw") then
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_WINDOWS")
-        elseif target:is_plat("linux", "android") then
+        elseif is_plat("linux", "android") then
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_LINUX")
-        elseif target:is_plat("bsd") then
+        elseif is_plat("bsd") then
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_BSD")
         else
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_OTHER")
