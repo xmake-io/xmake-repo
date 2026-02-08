@@ -20,11 +20,14 @@ package("sdformat")
             package:add("defines", "GZ_SDFORMAT_STATIC_DEFINE")
         end
 
-        -- io.replace("src/CMakeLists.txt", "add_subdirectory(cmd)", [[
-        --     find_package(console_bridge CONFIG REQUIRED)
-        --     target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME} PRIVATE GzURDFDOM::GzURDFDOM -Wl,--whole-archive console_bridge::console_bridge -Wl,--no-whole-archive)
-        --     add_subdirectory(cmd)
-        -- ]], {plain = true})
+        -- fix undefined reference to `console_bridge::log(char const*, int, console_bridge::LogLevel, char const*, ...)
+        if not package:has_tool("cxx", "cl") then
+            io.replace("src/CMakeLists.txt", "add_subdirectory(cmd)", [[
+                find_package(console_bridge CONFIG REQUIRED)
+                target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME} PRIVATE GzURDFDOM::GzURDFDOM -Wl,--whole-archive console_bridge::console_bridge -Wl,--no-whole-archive)
+                add_subdirectory(cmd)
+            ]], {plain = true})
+        end
 
         local configs = {"-DBUILD_TESTING=OFF", "-DSKIP_PYBIND11=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
