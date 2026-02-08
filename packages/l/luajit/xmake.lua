@@ -5,10 +5,10 @@ package("luajit")
 
     set_urls("https://github.com/LuaJIT/LuaJIT.git")
 
-    add_versions("v2.1.0-20260109", "707c12bf00dafdfd3899b1a6c36435dbbf6c7022")
+    add_versions("v2.1.0-beta4.20260109", "707c12bf00dafdfd3899b1a6c36435dbbf6c7022")
     add_versions("v2.1.0-beta3", "8271c643c21d1b2f344e339f559f2de6f3663191")
 
-    add_patches("v2.1.0-20260109", "patches/v2.1.0-20260109/fix-bsd.patch", "e60b6f1ddeaaf503123c025433d1906b3bd3cefbd0237c9170f33a3d535ffb05")
+    add_patches("v2.1.0-beta4.20260109", "patches/v2.1.0-beta4.20260109/fix-bsd.patch", "e60b6f1ddeaaf503123c025433d1906b3bd3cefbd0237c9170f33a3d535ffb05")
 
     add_configs("nojit", { description = "Disable JIT.", default = false, type = "boolean"})
     add_configs("fpu",   { description = "Enable FPU.", default = true, type = "boolean"})
@@ -25,10 +25,6 @@ package("luajit")
                 if package:version():eq("v2.1.0-beta3") then
                     if package:is_arch("arm.*") then
                         raise("package(luajit/arm64) unsupported arch")
-                    end
-                else
-                    if package:is_plat("android") and package:is_arch("arm.*") and package:check_sizeof("void*") == "4" and is_host("windows") then
-                        raise("package(luajit/armeabi-v7a): Windows OS host is unsupported for android cross-compilation")
                     end
                 end
             end
