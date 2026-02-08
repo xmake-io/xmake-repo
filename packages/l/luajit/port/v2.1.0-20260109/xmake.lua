@@ -103,7 +103,7 @@ target("buildvm_headers")
             raise("Failed to generate buildvm_arch.h")
         end
         if os.isfile("src/host/genversion.lua") then
-            local luajit_h = path.absolute(path.join(outputdir, "luajit.h"))            
+            local luajit_h = path.absolute(path.join(outputdir, "luajit.h"))
             local olddir = os.cd("src")
             if not os.isfile("luajit_relver.txt") then
                 local version
@@ -145,41 +145,41 @@ target("buildvm")
         add_syslinks("m", "dl")
     end
     add_options("nojit", "fpu")
-    
+
     on_load(function (target)
         -- NOTE: buildvm runs on host, but needs to know the TARGET platform definitions
         -- to generate correct headers. We use global is_arch/is_plat to check target config.
-        if is_arch("x64", "x86_64") then
+        if target:is_arch("x64", "x86_64") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_X64")
-        elseif is_arch("x86", "i386") then
+        elseif target:is_arch("x86", "i386") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_X86")
-        elseif is_arch("arm64", "arm64-v8a") then
+        elseif target:is_arch("arm64", "arm64-v8a") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_ARM64")
-        elseif is_arch("arm.*") then
+        elseif target:is_arch("arm.*") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_ARM")
-        elseif is_arch("mips64") then
+        elseif target:is_arch("mips64") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_MIPS64")
-        elseif is_arch("mips") then
+        elseif target:is_arch("mips") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_MIPS")
-        elseif is_arch("ppc") then
+        elseif target:is_arch("ppc") then
             target:add("defines", "LUAJIT_TARGET=LUAJIT_ARCH_PPC")
         end
 
-        if is_plat("macosx", "iphoneos", "watchos") then
+        if target:is_plat("macosx", "iphoneos", "watchos") then
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_OSX")
-            if is_plat("iphoneos") then
+            if target:is_plat("iphoneos") then
                 target:add("defines", "TARGET_OS_IPHONE=1")
             end
-        elseif is_plat("windows", "mingw") then
+        elseif target:is_plat("windows", "mingw") then
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_WINDOWS")
-        elseif is_plat("linux", "android") then
+        elseif target:is_plat("linux", "android") then
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_LINUX")
-        elseif is_plat("bsd") then
+        elseif target:is_plat("bsd") then
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_BSD")
         else
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_OTHER")
         end
-        
+
         target:add("includedirs", "src")
     end)
 
@@ -198,7 +198,9 @@ target("luajit_headers")
     on_build(function (target)
         local buildvm = path.absolute(target:dep("buildvm"):targetfile())
         local outputdir = target:objectdir()
-        if not os.isdir(outputdir) then os.mkdir(outputdir) end
+        if not os.isdir(outputdir) then
+            os.mkdir(outputdir)
+        end
         local headers = {"bcdef", "ffdef", "libdef", "recdef", "vmdef"}
         for _, m in ipairs(headers) do
             os.vrunv(buildvm, {"-m", m, "-o", path.join(outputdir, "lj_"..m..".h"), "src/lib_base.c", "src/lib_math.c", "src/lib_bit.c", "src/lib_string.c", "src/lib_table.c", "src/lib_io.c", "src/lib_os.c", "src/lib_package.c", "src/lib_debug.c", "src/lib_jit.c", "src/lib_ffi.c", "src/lib_buffer.c"})
@@ -255,8 +257,8 @@ target("luajit")
         else
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_OTHER")
         end
-        
-        if target:is_plat("windows") and target:kind() == "shared" then
+
+        if target:is_plat("windows") and target:is_shared() then
             target:add("defines", "LUA_BUILD_AS_DLL", "_CRT_STDIO_INLINE=__declspec(dllexport)__inline")
         end
     end)
