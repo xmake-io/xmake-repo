@@ -316,6 +316,23 @@ target("luajit_bin")
         end
         add_ldflags("-Wl,-E")
     end
+    if is_plat("windows") then
+        add_syslinks("advapi32", "shell32")
+        if is_arch("x86") then
+            add_ldflags("/subsystem:console,5.01")
+        else
+            add_ldflags("/subsystem:console,5.02")
+        end
+    elseif is_plat("android") then
+        add_syslinks("m", "c")
+    elseif is_plat("macosx") then
+        add_ldflags("-all_load", "-pagezero_size 10000", "-image_base 100000000")
+    elseif is_plat("mingw") then
+        add_ldflags("-static-libgcc", {force = true})
+    else
+        add_syslinks("pthread", "dl", "m", "c")
+    end
+
     after_load(function (target)
         local lib = target:dep("luajit")
         -- Add includedirs from headers target
