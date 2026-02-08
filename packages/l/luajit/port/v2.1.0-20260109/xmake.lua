@@ -167,7 +167,7 @@ target("buildvm")
 
         if is_plat("macosx", "iphoneos", "watchos") then
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_OSX")
-            if is_plat("iphoneos") then
+            if target:is_plat("iphoneos") then
                 target:add("defines", "TARGET_OS_IPHONE=1")
             end
         elseif is_plat("windows", "mingw") then
