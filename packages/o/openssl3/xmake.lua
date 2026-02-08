@@ -170,7 +170,7 @@ package("openssl3")
         import("package.tools.make").make(package, {"install_sw"})
     end)
 
-    on_install("linux", "macosx", "bsd", function (package)
+    on_install("linux", "macosx", "iphoneos", "bsd", function (package)
         -- https://wiki.openssl.org/index.php/Compilation_and_Installation#PREFIX_and_OPENSSLDIR
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
         local configs = {"--openssldir=" .. package:installdir(),
