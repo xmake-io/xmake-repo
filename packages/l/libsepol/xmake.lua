@@ -4,6 +4,7 @@ package("libsepol")
     set_license("LGPL-2.1")
 
     add_urls("https://github.com/SELinuxProject/selinux/releases/download/$(version)/libsepol-$(version).tar.gz")
+    add_versions("3.10", "d555586797fa9f38344496d2a7ec1147b6caaf3fcc44c42d8d5173edd7a79a71")
     add_versions("3.9", "ba630b59e50c5fbf9e9dd45eb3734f373cf78d689d8c10c537114c9bd769fa2e")
 
     add_configs("cil",   {description = "Build with CIL support.", default = true, type = "boolean"})
