@@ -20,7 +20,7 @@ package("gz-math")
             package:add("defines", "GZ_MATH_STATIC_DEFINE")
         end
 
-        local configs = {"-DBUILD_TESTING=OFF"}
+        local configs = {"-DBUILD_TESTING=OFF", "-DSKIP_PYBIND11=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
