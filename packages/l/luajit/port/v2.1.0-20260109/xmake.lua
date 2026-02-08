@@ -42,42 +42,29 @@ target("buildvm_headers")
         end
         local defines = {}
         if target:is_plat("windows", "mingw") then
-            table.insert(defines, "-D")
-            table.insert(defines, "WIN")
+            table.join2(defines, "-D", "WIN")
         end
         local dasc = "src/vm_x86.dasc"
         if target:is_arch("x64", "x86_64") then
             dasc = "src/vm_x64.dasc"
-            table.insert(defines, "-D")
-            table.insert(defines, "P64")
+            table.join2(defines, "-D", "P64")
             if has_config("gc64") then
-                table.insert(defines, "-D")
-                table.insert(defines, "JIT")
-                table.insert(defines, "-D")
-                table.insert(defines, "FFI")
+                table.join2(defines, "-D", "JIT", "-D", "FFI")
             end
         elseif target:is_arch("arm64", "arm64-v8a") then
             dasc = "src/vm_arm64.dasc"
-            table.insert(defines, "-D")
-            table.insert(defines, "P64")
-            table.insert(defines, "-D")
-            table.insert(defines, "FPU")
+            table.join2(defines, "-D", "P64", "-D", "FPU")
             if target:is_plat("windows", "mingw") then
-                table.insert(defines, "-D")
-                table.insert(defines, "ENDIAN_LE")
+                table.join2(defines, "-D", "ENDIAN_LE")
             end
         elseif target:is_arch("arm.*") then
             dasc = "src/vm_arm.dasc"
             if target:opt("fpu") then
-                table.insert(defines, "-D")
-                table.insert(defines, "FPU")
-                table.insert(defines, "-D")
-                table.insert(defines, "HFABI")
+                table.join2(defines, "-D", "FPU", "-D", "HFABI")
             end
         elseif target:is_arch("mips64") then
             dasc = "src/vm_mips64.dasc"
-            table.insert(defines, "-D")
-            table.insert(defines, "P64")
+            table.join2(defines, "-D", "P64")
         elseif target:is_arch("mips") then
             dasc = "src/vm_mips.dasc"
         elseif target:is_arch("ppc") then
@@ -85,10 +72,7 @@ target("buildvm_headers")
         end
         -- Disable JIT by default on iOS/WatchOS to match lj_arch.h defaults
         if not has_config("nojit") and not target:is_plat("iphoneos", "watchos") then
-            table.insert(defines, "-D")
-            table.insert(defines, "JIT")
-            table.insert(defines, "-D")
-            table.insert(defines, "FFI")
+            table.join2(defines, "-D", "JIT", "-D", "FFI")
         end
         local buildvm_arch_h = path.join(outputdir, "buildvm_arch.h")
         local flags = {"dynasm/dynasm.lua", "-LN"}
@@ -113,10 +97,10 @@ target("buildvm_headers")
                     end }
                 end
                 if version then
-                    version = version:match("^%s*(.-)%s*$")
+                    version = version:trim()
                 end
                 if not version and os.isfile("../.relver") then
-                    version = io.readfile("../.relver"):match("^%s*(.-)%s*$")
+                    version = io.readfile("../.relver"):trim()
                 end
                 if not version then
                     version = os.time()
@@ -137,6 +121,7 @@ target("buildvm")
     else
         set_arch(is_host("windows") and "x86" or "i386")
     end
+    add_defines("LUAJIT_ENABLE_LUA52COMPAT", {public = true})
     add_deps("minilua", "buildvm_headers")
     add_files("src/host/buildvm*.c")
     if is_host("windows") then
@@ -264,7 +249,7 @@ target("luajit")
     end)
 
     add_options("nojit", "fpu")
-    add_defines("LUAJIT_ENABLE_LUA52COMPAT")
+    add_defines("LUAJIT_ENABLE_LUA52COMPAT", {public = true})
 
     if is_plat("windows") then
         add_defines("_CRT_SECURE_NO_DEPRECATE")
