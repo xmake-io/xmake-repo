@@ -19,7 +19,7 @@ package("or-tools")
     add_configs("scip", {description = "Enable SCIP support", default = false, type = "boolean", readonly = true})
     add_configs("cplex", {description = "Enable CPLEX support", default = false, type = "boolean", readonly = true})
 
-    on_install(function (package)
+    on_install("linux", "macosx", "bsd", function (package)
         local configs = {
             "-DBUILD_CXX=ON",
             "-DBUILD_SAMPLES=OFF",
