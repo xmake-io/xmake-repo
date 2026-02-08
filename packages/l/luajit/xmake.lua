@@ -49,7 +49,7 @@ package("luajit")
         if package:version():eq("v2.1.0-beta3") then
             os.cp(path.join(package:scriptdir(), "port", "v2.1.0-beta3", "xmake.lua"), "xmake.lua")
         else
-            os.cp(path.join(package:scriptdir(), "port", "v2.1.0-20260109", "xmake.lua"), "xmake.lua")
+            os.cp(path.join(package:scriptdir(), "port", "v2.1.0-beta4.20260109", "xmake.lua"), "xmake.lua")
         end
         import("package.tools.xmake").install(package, configs)
     end)
