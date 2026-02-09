@@ -32,15 +32,14 @@ package("sdformat")
             package:add("defines", "GZ_SDFORMAT_STATIC_DEFINE")
         end
 
-        -- fix undefined reference to `console_bridge::log(char const*, int, console_bridge::LogLevel, char const*, ...)
+        -- Remove gz-cmake find_package, it will be broken on some platform.
+        io.replace("src/CMakeLists.txt", "GzURDFDOM::GzURDFDOM", "", {plain = true})
         if not package:has_tool("cxx", "cl") then
             io.replace("src/CMakeLists.txt", "add_subdirectory(cmd)", [[
+                find_package(urdfdom CONFIG REQUIRED)
                 find_package(console_bridge CONFIG REQUIRED)
-                if(APPLE)
-                    target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME} PRIVATE GzURDFDOM::GzURDFDOM -Wl,-all_load console_bridge::console_bridge)
-                else()
-                    target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME} PRIVATE GzURDFDOM::GzURDFDOM -Wl,--whole-archive console_bridge::console_bridge -Wl,--no-whole-archive)
-                endif()
+                find_package(tinyxml2 CONFIG REQUIRED)
+                target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME} PRIVATE urdfdom::urdfdom_model urdfdom::urdfdom_world)
                 add_subdirectory(cmd)
             ]], {plain = true})
         end
