@@ -8,7 +8,7 @@ package("node_crunch2")
 
     add_versions("v0.1.0", "875fd1552abdf0262c89a45772cebae52c048014b107d64912beb8ab1bb78436")
 
-    add_patches("v0.1.0", "patches/v0.1.0/nowarn.patch", "3fb6449aee7667163f608bb94e5217788d59e3ec497b08e4d3345f66142ef4b5")
+    add_patches("v0.1.0", "patches/v0.1.0/nowarn.patch", "65028d054112b190649f832e57ab985e0971d198d98a64e8694493bdfc90c818")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
