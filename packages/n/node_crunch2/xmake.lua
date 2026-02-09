@@ -13,6 +13,7 @@ package("node_crunch2")
     add_deps("spdlog", "asio", "lz4", "openssl", "taocpp-json")
 
     on_install(function (package)
+        io.replace("xmake.lua", [[, "error]], [[]], {plain = true})
         import("package.tools.xmake").install(package)
     end)
 
