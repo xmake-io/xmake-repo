@@ -6,6 +6,7 @@ package("opentelemetry-cpp")
     add_urls("https://github.com/open-telemetry/opentelemetry-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/open-telemetry/opentelemetry-cpp.git", {submodules = false})
 
+    add_versions("v1.25.0", "a0c944a9de981fe1874b31d1fe44b830fc30ee030efa27ee23fc73012a3a13e9")
     add_versions("v1.24.0", "7b8e966affca1daf1906272f4d983631cad85fb6ea60fb6f55dcd1811a730604")
     add_versions("v1.23.0", "148ef298a4ef9e016228d53d7208ab9359d4fdf87f55649d60d07ffacc093b33")
     add_versions("v1.22.0", "3428f433f4b435ed1fad64cbdbe75b7288c06f6297786a7036d65d5b9a1d215b")
