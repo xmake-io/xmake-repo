@@ -14,7 +14,7 @@ package("node_crunch2")
 
     add_deps("spdlog", "asio", "lz4", "openssl", "taocpp-json")
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         import("package.tools.xmake").install(package)
     end)
 
