@@ -40,8 +40,9 @@ package("or-tools")
 
     on_install("windows", "linux", "macosx", "bsd", function (package)
         -- Fix for RHEL/CentOS/Fedora system zlib
-        io.replace("cmake/system_deps.cmake", "find_package(ZLIB REQUIRED)", "find_package(ZLIB REQUIRED MODULE)", {plain = true})
-
+        if not package:is_plat("windows") then
+            io.replace("cmake/system_deps.cmake", "find_package(ZLIB REQUIRED)", "find_package(ZLIB REQUIRED MODULE)", {plain = true})
+        end
         local configs = {
             "-DBUILD_TESTING=OFF",
             "-DBUILD_EXAMPLES=OFF",
