@@ -1,0 +1,16 @@
+diff --git a/xmake.lua b/xmake.lua
+index a6324fa..97b399c 100644
+--- a/xmake.lua
++++ b/xmake.lua
+@@ -20,11 +20,6 @@ add_rules("mode.debug", "mode.release")
+ -- xmake clean
+ -- xmake -a -r
+ 
+-set_warnings("error", "everything", "extra", "pedantic", "all")
+-add_cxxflags("-Wconversion", "-Wshadow", "-Wsign-conversion", "-Wdouble-promotion", "-Wformat=2")
+-add_cxxflags("-Wundef", "-Wcast-qual", "-Wcast-align=strict", "-Wnon-virtual-dtor", "-Wold-style-cast")
+-add_cxxflags("-Woverloaded-virtual", "-Wunused", "-Wuninitialized", "-Winit-self")
+-add_cxxflags("-Wredundant-decls", "-Wsuggest-override", "-Wimplicit-fallthrough=5", "-Walloca")
+ -- add_cxxflags("-Wnull-dereference", "-Wswitch-enum")
+ 
+ 
