@@ -7,6 +7,7 @@ package("geode-sdk-result")
     add_urls("https://github.com/geode-sdk/result/archive/refs/tags/$(version).tar.gz",
              "https://github.com/geode-sdk/result.git")
 
+    add_versions("v1.4.1", "c4b91b3a7b6a82eb09f52b5b3e01ab50aa7c465f603c7afcf4ba7ef18d08edf5")
     add_versions("v1.3.5", "62bd9cc3abe98640d673c95571eb9978434a22351dfff4efef6cfdc3f94af36a")
 
     if on_check then
