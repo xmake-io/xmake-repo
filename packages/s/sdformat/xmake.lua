@@ -12,8 +12,20 @@ package("sdformat")
 
     add_includedirs("include", "include/gz/sdformat16")
 
-    add_deps("cmake", "gz-cmake 5.x")
+    add_deps("cmake", "python 3.x", "gz-cmake 5.x", {kind = "binary"})
     add_deps("gz-math 9.x", "urdfdom")
+
+    on_check("mingw", "iphoneos", function (package)
+        raise("package(sdformat) dep(urdfdom) unsupported this platform")
+    end)
+
+    on_check("android|armeabi-v7a", function (package)
+        local ndk = package:toolchain("ndk")
+        local ndk_sdkver = ndk:config("ndk_sdkver")
+        if tonumber(ndk_sdkver) < 24 then
+            raise("package(sdformat) dep(urdfdom) unsupported this platform")
+        end
+    end)
 
     on_install(function (package)
         if package:config("shared") then
@@ -24,7 +36,11 @@ package("sdformat")
         if not package:has_tool("cxx", "cl") then
             io.replace("src/CMakeLists.txt", "add_subdirectory(cmd)", [[
                 find_package(console_bridge CONFIG REQUIRED)
-                target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME} PRIVATE GzURDFDOM::GzURDFDOM -Wl,--whole-archive console_bridge::console_bridge -Wl,--no-whole-archive)
+                if(APPLE)
+                    target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME} PRIVATE GzURDFDOM::GzURDFDOM -Wl,-all_load console_bridge::console_bridge)
+                else()
+                    target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME} PRIVATE GzURDFDOM::GzURDFDOM -Wl,--whole-archive console_bridge::console_bridge -Wl,--no-whole-archive)
+                endif()
                 add_subdirectory(cmd)
             ]], {plain = true})
         end
