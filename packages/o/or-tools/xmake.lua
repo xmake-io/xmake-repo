@@ -24,6 +24,10 @@ package("or-tools")
     add_deps("protobuf-cpp", {configs = {zlib = true}})
 
     on_load(function (package)
+        if package:is_plat("windows") then
+            package:add("deps", "ninja")
+            package:set("policy", "package.cmake_generator.ninja", true)
+        end
         if package:config("coin-or") then
             package:add("deps", "coin-or-osi", "coin-or-clp", "coin-or-asl", "coin-or-coinutils")
         end
