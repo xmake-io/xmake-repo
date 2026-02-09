@@ -34,15 +34,13 @@ package("sdformat")
 
         -- Remove gz-cmake find_package, it will be broken on some platform.
         io.replace("src/CMakeLists.txt", "GzURDFDOM::GzURDFDOM", "", {plain = true})
-        if not package:has_tool("cxx", "cl") then
-            io.replace("src/CMakeLists.txt", "add_subdirectory(cmd)", [[
-                find_package(urdfdom CONFIG REQUIRED)
-                find_package(console_bridge CONFIG REQUIRED)
-                find_package(tinyxml2 CONFIG REQUIRED)
-                target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME} PRIVATE urdfdom::urdfdom_model urdfdom::urdfdom_world)
-                add_subdirectory(cmd)
-            ]], {plain = true})
-        end
+        io.replace("src/CMakeLists.txt", "add_subdirectory(cmd)", [[
+            find_package(urdfdom CONFIG REQUIRED)
+            find_package(console_bridge CONFIG REQUIRED)
+            find_package(tinyxml2 CONFIG REQUIRED)
+            target_link_libraries(${PROJECT_LIBRARY_TARGET_NAME} PRIVATE urdfdom::urdfdom_model urdfdom::urdfdom_world)
+            add_subdirectory(cmd)
+        ]], {plain = true})
 
         local configs = {"-DBUILD_TESTING=OFF", "-DSKIP_PYBIND11=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
