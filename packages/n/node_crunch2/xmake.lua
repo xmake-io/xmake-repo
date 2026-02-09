@@ -14,6 +14,8 @@ package("node_crunch2")
 
     on_install(function (package)
         io.replace("xmake.lua", [[, "error]], [[]], {plain = true})
+        io.replace("xmake.lua", [[-Wcast-align=strict]], [[-Wcast-align]], {plain = true})
+        io.replace("xmake.lua", [[-Wimplicit-fallthrough=5]], [[-Wimplicit-fallthrough]], {plain = true})
         import("package.tools.xmake").install(package)
     end)
 
