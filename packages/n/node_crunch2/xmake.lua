@@ -8,21 +8,24 @@ package("node_crunch2")
 
     add_versions("v0.1.0", "875fd1552abdf0262c89a45772cebae52c048014b107d64912beb8ab1bb78436")
 
+    add_patches("v0.1.0", "patches/v0.1.0/nowarn.patch", "3fb6449aee7667163f608bb94e5217788d59e3ec497b08e4d3345f66142ef4b5")
+
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
     add_deps("spdlog", "asio", "lz4", "openssl", "taocpp-json")
 
     on_install(function (package)
-        io.replace("xmake.lua", [[set_warnings("error", "everything", "extra", "pedantic", "all")]], [[]], {plain = true})
-        io.replace("xmake.lua", [[add_cxxflags(]], [[-- add_cxxflags(]], {plain = true})
         import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
+        local package_std = "c++20"
+        if package:is_plat("windows") then
+            package_std = "c++23"
+        end
         assert(package:check_cxxsnippets({
             test = [[
                 using namespace NodeCrunch2;
-
                 void test() {
                     NCNodeMessageType const message_type = NCNodeMessageType::Init;
                     NCNodeID const node_id = NCNodeID();
@@ -32,5 +35,5 @@ package("node_crunch2")
                     NCConfiguration config = NCConfiguration(key1);
                 }
             ]]
-        }, {configs = {languages = "c++20"}, includes = {"nc_message.hpp", "nc_config.hpp"}}))
+        }, {configs = {languages = package_std}, includes = {"nc_message.hpp", "nc_config.hpp"}}))
     end)
