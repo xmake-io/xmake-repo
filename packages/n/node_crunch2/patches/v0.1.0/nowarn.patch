@@ -1,5 +1,5 @@
 diff --git a/xmake.lua b/xmake.lua
-index a6324fa..97b399c 100644
+index a6324fa..0ff5b33 100644
 --- a/xmake.lua
 +++ b/xmake.lua
 @@ -20,11 +20,6 @@ add_rules("mode.debug", "mode.release")
@@ -14,3 +14,13 @@ index a6324fa..97b399c 100644
  -- add_cxxflags("-Wnull-dereference", "-Wswitch-enum")
  
  
+@@ -46,6 +41,9 @@ add_requires("argparse")
+ 
+ target("node_crunch2")
+     set_kind("shared")
++    if is_plat("windows") and is_kind("shared") then
++        add_rules("utils.symbols.export_all", {export_classes = true})
++    end
+     add_files("src/*.cpp")
+     add_packages("taocpp-json")
+     add_packages("lz4")
