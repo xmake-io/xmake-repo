@@ -14,6 +14,21 @@ package("node_crunch2")
 
     add_deps("spdlog", "asio", "lz4", "openssl", "taocpp-json")
 
+    if on_check then
+        on_check(function (package)
+            assert(package:check_cxxsnippets({test = [[
+                #include <expected>
+                void test() {
+                    std::expected<int, const char*> result = 42;
+                    if (result) {
+                        int value = *result;
+                    }
+                }
+            ]]}, {configs = {languages = "c++20"}}), 
+            "package(node_crunch2) requires a compiler supporting C++20 with <expected> header.")
+        end)
+    end
+
     on_install("!wasm", function (package)
         import("package.tools.xmake").install(package)
     end)
