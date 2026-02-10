@@ -1,0 +1,26 @@
+diff --git a/xmake.lua b/xmake.lua
+index a6324fa..0ff5b33 100644
+--- a/xmake.lua
++++ b/xmake.lua
+@@ -20,11 +20,6 @@ add_rules("mode.debug", "mode.release")
+ -- xmake clean
+ -- xmake -a -r
+ 
+-set_warnings("error", "everything", "extra", "pedantic", "all")
+-add_cxxflags("-Wconversion", "-Wshadow", "-Wsign-conversion", "-Wdouble-promotion", "-Wformat=2")
+-add_cxxflags("-Wundef", "-Wcast-qual", "-Wcast-align=strict", "-Wnon-virtual-dtor", "-Wold-style-cast")
+-add_cxxflags("-Woverloaded-virtual", "-Wunused", "-Wuninitialized", "-Winit-self")
+-add_cxxflags("-Wredundant-decls", "-Wsuggest-override", "-Wimplicit-fallthrough=5", "-Walloca")
+ -- add_cxxflags("-Wnull-dereference", "-Wswitch-enum")
+ 
+ 
+@@ -46,6 +41,9 @@ add_requires("argparse")
+ 
+ target("node_crunch2")
+     set_kind("shared")
++    if is_plat("windows") and is_kind("shared") then
++        add_rules("utils.symbols.export_all", {export_classes = true})
++    end
+     add_files("src/*.cpp")
+     add_packages("taocpp-json")
+     add_packages("lz4")
