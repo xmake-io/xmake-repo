@@ -40,7 +40,7 @@ package("or-tools")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows|!x86", "linux", "macosx", "bsd", "cross", function (package)
         if not package:is_plat("windows") then
             -- Fix for RHEL/CentOS/Fedora system zlib
             io.replace("cmake/system_deps.cmake", "find_package(ZLIB REQUIRED)", "find_package(ZLIB REQUIRED MODULE)", {plain = true})
