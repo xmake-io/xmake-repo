@@ -78,7 +78,7 @@ package("tbox")
         end
         import("package.tools.xmake").install(package, configs)
         if package:has_tool("cc", "cosmocc") then
-            os.trycp(path.join(package:buildir(), "**", ".aarch64"), package:installdir("lib"))
+            os.trycp(path.join(package:builddir(), "**", ".aarch64"), package:installdir("lib"))
         end
     end)
 
