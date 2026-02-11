@@ -9,11 +9,18 @@ package("coal")
     add_versions("v3.0.2", "86d47608d748762b343990095b6a7c79ee20182e3193da92c17545c5aae780b7")
 
     add_configs("logging", {description = "Activate logging for warnings or error messages. Turned on by default in Debug.", default = false, type = "boolean"})
+    add_configs("hpp_fcl", {description = "Make Coal retro-compatible with HPP-FCL.", default = false, type = "boolean"})
     add_configs("float", {description = "Use float precision (32-bit) instead of the default double precision (64-bit)", default = false, type = "boolean"})
     add_configs("qhull", {description = "use qhull library to compute convex hulls.", default = false, type = "boolean"})
 
     add_deps("cmake", "jrl-cmakemodules")
     add_deps("eigen", "assimp")
+
+    on_check("android", function (package)
+        local ndk = package:toolchain("ndk")
+        local ndk_sdkver = ndk:config("ndk_sdkver")
+        assert(ndk_sdkver and tonumber(ndk_sdkver) >= 23, "package(coal) dep(assimp -> minizip) require ndk api level >= 23")
+    end)
 
     on_load(function (package)
         local boost_configs = {
@@ -43,14 +50,26 @@ package("coal")
     on_install(function (package)
         io.replace("CMakeLists.txt", "SET_BOOST_DEFAULT_OPTIONS()", "", {plain = true})
         io.replace("CMakeLists.txt", "EXPORT_BOOST_DEFAULT_OPTIONS()", "", {plain = true})
+        io.replace("src/CMakeLists.txt", "SHARED", "", {plain = true})
+        if package:is_plat("mingw", "msys") then
+            io.replace("include/coal/fwd.hh",
+                "#if WIN32\n#define COAL_PRETTY_FUNCTION __FUNCSIG__",
+                "#if defined(_MSC_VER)\n#define COAL_PRETTY_FUNCTION __FUNCSIG__", {plain = true})
+        end
 
         local configs = {"-DBUILD_TESTING=OFF", "-DBUILD_PYTHON_INTERFACE=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCOAL_ENABLE_LOGGING=" .. (package:config("logging") and "ON" or "OFF"))
+        table.insert(configs, "-DCOAL_BACKWARD_COMPATIBILITY_WITH_HPP_FCL=" .. (package:config("hpp_fcl") and "ON" or "OFF"))
         table.insert(configs, "-DCOAL_USE_FLOAT_PRECISION=" .. (package:config("float") and "ON" or "OFF"))
         table.insert(configs, "-DCOAL_HAS_QHULL=" .. (package:config("qhull") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+
+        local opt = {}
+        if not package:config("shared") then
+            opt.cxflags = "-DCOAL_STATIC"
+        end
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
