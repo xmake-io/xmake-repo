@@ -9,6 +9,7 @@ package("x265")
     add_urls("https://github.com/videolan/x265/archive/refs/tags/$(version).tar.gz", {alias = "github"})
     add_urls("https://bitbucket.org/multicoreware/x265_git/downloads/x265_$(version).tar.gz", {alias = "bitbucket"})
 
+    add_versions("bitbucket:4.1", "a31699c6a89806b74b0151e5e6a7df65de4b49050482fe5ebf8a4379d7af8f29")
     add_versions("bitbucket:4.0", "75b4d05629e365913de3100b38a459b04e2a217a8f30efaa91b572d8e6d71282")
 
     add_versions("github:3.4", "544d147bf146f8994a7bf8521ed878c93067ea1c7c6e93ab602389be3117eaaf")
@@ -41,7 +42,7 @@ package("x265")
     if on_check then
         on_check("cross", function (package)
             if package:version():ge("4.0") then
-                raise("package(x265 >=4.0) unsupported cross pltform")
+                raise("package(x265 >=4.0) unsupported cross platform")
             end
         end)
     end
@@ -56,6 +57,13 @@ package("x265")
     end)
 
     on_install(function (package)
+        -- Workaround for CMake 4.0+
+        for _, source in ipairs(os.files("**.txt")) do
+            io.replace(source, [[VERSION 2.8.8]], [[VERSION 2.8.8...3.10]], {plain = true})
+        end
+        io.replace("source/CMakeLists.txt", [[if(POLICY CMP0025)]], [[if(APPLE AND POLICY CMP0025)]], {plain = true})
+        io.replace("source/CMakeLists.txt", [[if(POLICY CMP0054)]], [[if(0)]], {plain = true})
+
         os.cd("source")
         -- Let xmake cp pdb
         io.replace("CMakeLists.txt", "if((WIN32 AND ENABLE_CLI) OR (WIN32 AND ENABLE_SHARED))", "if(0)", {plain = true})
