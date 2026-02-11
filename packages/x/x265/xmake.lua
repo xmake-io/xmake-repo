@@ -37,7 +37,7 @@ package("x265")
 
     set_policy("package.cmake_generator.ninja", true)
 
-    add_deps("cmake >=3.21.0", "ninja", "nasm >=2.13")
+    add_deps("cmake <=3.21.0", "ninja", "nasm >=2.13")
 
     if on_check then
         on_check("cross", function (package)
