@@ -66,7 +66,7 @@ package("pcre2")
             table.insert(configs, "-DINSTALL_MSVC_PDB=ON")
         end
         if package:is_plat("windows") then
-            table.insert(configs, "-DPCRE2_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DPCRE2_STATIC_RUNTIME=" .. (package:has_runtime("MT") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
 

@@ -39,7 +39,7 @@ package("expat")
         table.insert(configs, "-DEXPAT_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DEXPAT_CHAR_TYPE=" .. package:config("char_type"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DEXPAT_MSVC_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DEXPAT_MSVC_STATIC_CRT=" .. (package:has_runtime("MT") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
     end)
