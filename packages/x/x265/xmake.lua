@@ -64,7 +64,7 @@ package("x265")
         io.replace("source/CMakeLists.txt", [[if(POLICY CMP0025)]], [[if(0)]], {plain = true})
         io.replace("source/CMakeLists.txt", [[if(POLICY CMP0054)]], [[if(0)]], {plain = true})
         -- Fix appleclang
-        io.replaace("source/CMakeLists.txt", [[if(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")]], [[if(${CMAKE_CXX_COMPILER_ID} MATCHES "AppleClang|Clang")]], {plain = true})
+        io.replace("source/CMakeLists.txt", [[if(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")]], [[if(${CMAKE_CXX_COMPILER_ID} MATCHES "AppleClang|Clang")]], {plain = true})
 
         os.cd("source")
         -- Let xmake cp pdb
