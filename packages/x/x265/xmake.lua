@@ -61,7 +61,7 @@ package("x265")
         for _, source in ipairs(os.files("**.txt")) do
             io.replace(source, [[VERSION 2.8.8]], [[VERSION 2.8.8...3.10]], {plain = true})
         end
-        io.replace("source/CMakeLists.txt", [[if(POLICY CMP0025)]], [[if((APPLE) AND (POLICY CMP0025))]], {plain = true})
+        io.replace("source/CMakeLists.txt", [[if(POLICY CMP0025)]], [[if(0)]], {plain = true})
         io.replace("source/CMakeLists.txt", [[if(POLICY CMP0054)]], [[if(0)]], {plain = true})
 
         os.cd("source")
