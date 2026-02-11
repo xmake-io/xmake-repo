@@ -48,6 +48,8 @@ package("libevent")
         if package:is_plat("windows") then
             table.insert(configs, "-DEVENT__MSVC_STATIC_RUNTIME=" .. (package:has_runtime("MT") and "ON" or "OFF"))
             table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
+        elseif package:is_plat("mingw") then
+            table.insert(configs, "-DCMAKE_C_FLAGS=-D_WIN32_WINNT=0x0600")
         end
         import("package.tools.cmake").install(package, configs)
     end)
