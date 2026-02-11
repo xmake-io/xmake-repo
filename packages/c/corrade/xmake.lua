@@ -24,6 +24,7 @@ package("corrade")
 
     on_install("windows", "linux", "macosx", function (package)
         io.replace("src/Corrade/Utility/StlForwardTuple.h", "__tuple", "tuple")
+        io.replace("src/Corrade/Utility/Directory.h", "#include <string>", "#include <string>\n#include <vector>\n#include <utility>", {plain = true})
 
         local configs = {"-DBUILD_TESTS=OFF", "-DLIB_SUFFIX="}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
