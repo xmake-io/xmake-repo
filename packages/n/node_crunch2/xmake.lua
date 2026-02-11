@@ -24,7 +24,7 @@ package("node_crunch2")
                         int value = *result;
                     }
                 }
-            ]]}, {configs = {languages = "c++20"}}), 
+            ]]}, {configs = {languages = "c++23"}}), 
             "package(node_crunch2) requires a compiler supporting C++20 with <expected> header.")
         end)
     end
@@ -34,10 +34,6 @@ package("node_crunch2")
     end)
 
     on_test(function (package)
-        local package_std = "c++20"
-        if package:is_plat("windows") then
-            package_std = "c++23"
-        end
         assert(package:check_cxxsnippets({
             test = [[
                 using namespace NodeCrunch2;
@@ -50,5 +46,5 @@ package("node_crunch2")
                     NCConfiguration config = NCConfiguration(key1);
                 }
             ]]
-        }, {configs = {languages = package_std}, includes = {"nc_message.hpp", "nc_config.hpp"}}))
+        }, {configs = {languages = "c++23"}, includes = {"nc_message.hpp", "nc_config.hpp"}}))
     end)
