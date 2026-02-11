@@ -25,7 +25,19 @@ package("node_crunch2")
                     }
                 }
             ]]}, {configs = {languages = "c++23"}}), 
-            "package(node_crunch2) requires a compiler supporting C++20 with <expected> header.")
+            "package(node_crunch2) requires a compiler supporting C++23 with <expected> header.")
+            assert(package:check_cxxsnippets({test = [[
+                #include <vector>
+                #include <cstdint>
+                struct NCCompressedMessage {
+                    std::vector<uint8_t> data = {};
+                };
+                void test() {
+                    std::vector<uint8_t> compressed_data;
+                    auto msg = NCCompressedMessage(compressed_data);
+                }
+            ]]}, {configs = {languages = "c++23"}}), 
+            "package(node_crunch2) requires a compiler supporting parenthesized aggregate initialization.")
         end)
     end
 
