@@ -16,10 +16,14 @@ package("cppad")
     end
     add_deps("eigen")
 
-    on_install(function (package)
+    -- require system function
+    on_install("!iphoneos", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-Dcppad_static_lib=" .. (package:config("shared") and "false" or "true"))
+        if package:config("shared") and package:is_plat("windows") then
+            table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
