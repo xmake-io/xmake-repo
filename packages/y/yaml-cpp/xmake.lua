@@ -26,7 +26,7 @@ package("yaml-cpp")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DYAML_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DYAML_MSVC_SHARED_RT=" .. (package:config("vs_runtime"):startswith("MT") and "OFF" or "ON"))
+            table.insert(configs, "-DYAML_MSVC_SHARED_RT=" .. (package:has_runtime("MT") and "OFF" or "ON"))
         end
         import("package.tools.cmake").install(package, configs, {buildir = os.tmpfile() .. ".dir"})
         package:addenv("PATH", "bin")
