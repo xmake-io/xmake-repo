@@ -37,7 +37,7 @@ package("x265")
 
     set_policy("package.cmake_generator.ninja", true)
 
-    add_deps("cmake <=3.21.0", "ninja", "nasm >=2.13")
+    add_deps("cmake", "ninja", "nasm >=2.13")
 
     if on_check then
         on_check("cross", function (package)
@@ -63,6 +63,8 @@ package("x265")
         end
         io.replace("source/CMakeLists.txt", [[if(POLICY CMP0025)]], [[if(0)]], {plain = true})
         io.replace("source/CMakeLists.txt", [[if(POLICY CMP0054)]], [[if(0)]], {plain = true})
+        -- Fix appleclang
+        io.replaace("source/CMakeLists.txt", [[if(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")]], [[if(${CMAKE_CXX_COMPILER_ID} MATCHES "AppleClang|Clang")]], {plain = true})
 
         os.cd("source")
         -- Let xmake cp pdb
