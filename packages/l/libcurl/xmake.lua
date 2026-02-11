@@ -139,7 +139,7 @@ package("libcurl")
             table.insert(configs, (version:ge("7.65") and "-DCURL_USE_SECTRANSP=ON" or "-DCMAKE_USE_DARWINSSL=ON"))
         end
         if package:is_plat("windows") then
-            table.insert(configs, "-DCURL_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DCURL_STATIC_CRT=" .. (package:has_runtime("MT") and "ON" or "OFF"))
         end
         if package:is_plat("mingw") and version:le("7.85.0") then
             io.replace("src/CMakeLists.txt", 'COMMAND ${CMAKE_COMMAND} -E echo "/* built-in manual is disabled, blank function */" > tool_hugehelp.c', "", {plain = true})
@@ -210,7 +210,7 @@ package("libcurl")
         if openssl and not openssl:is_system() then
             table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
         end
-        import("package.tools.cmake").install(package, configs, {buildir = "build"})
+        import("package.tools.cmake").install(package, configs, {builddir = "build"})
     end)
 
     on_test(function (package)
