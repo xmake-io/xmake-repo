@@ -26,3 +26,18 @@ package("qt6quickcontrols2")
             includes = {"QQuickStyle"}
         }))
     end)
+
+    on_install("windows|x64,linux|x86_64,linux|arm64,macosx,mingw|x86_64@windows,linux,macosx", function (package)
+        local qt = package:dep("qt6base"):data("qt")
+        assert(qt, "qt6base is required")
+    end)
+
+    on_install("android|arm64-v8a,armeabi-v7a,armeabi,x86_64,x86@windows,linux,macosx", function (package)
+        local qt = package:dep("qt6base"):data("qt")
+        assert(qt, "qt6base is required")
+    end)
+
+    on_install("iphoneos,wasm@windows,linux,macosx", function (package)
+        local qt = package:dep("qt6base"):data("qt")
+        assert(qt, "qt6base is required")
+    end)
