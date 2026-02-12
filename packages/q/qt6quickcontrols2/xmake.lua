@@ -37,7 +37,3 @@ package("qt6quickcontrols2")
         assert(qt, "qt6base is required")
     end)
 
-    on_install("iphoneos,wasm@windows,linux,macosx", function (package)
-        local qt = package:dep("qt6base"):data("qt")
-        assert(qt, "qt6base is required")
-    end)
