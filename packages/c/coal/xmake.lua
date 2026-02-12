@@ -53,8 +53,8 @@ package("coal")
         io.replace("src/CMakeLists.txt", "SHARED", "", {plain = true})
         if package:is_plat("mingw", "msys") then
             io.replace("include/coal/fwd.hh",
-                "#if WIN32\n#define COAL_PRETTY_FUNCTION __FUNCSIG__",
-                "#if defined(_MSC_VER)\n#define COAL_PRETTY_FUNCTION __FUNCSIG__", {plain = true})
+                "#if _WIN32\n#define COAL_PRETTY_FUNCTION __FUNCSIG__",
+                "#if _MSC_VER\n#define COAL_PRETTY_FUNCTION __FUNCSIG__", {plain = true})
         end
 
         local configs = {"-DBUILD_TESTING=OFF", "-DBUILD_PYTHON_INTERFACE=OFF"}
@@ -65,11 +65,17 @@ package("coal")
         table.insert(configs, "-DCOAL_USE_FLOAT_PRECISION=" .. (package:config("float") and "ON" or "OFF"))
         table.insert(configs, "-DCOAL_HAS_QHULL=" .. (package:config("qhull") and "ON" or "OFF"))
 
-        local opt = {}
-        if not package:config("shared") then
-            opt.cxflags = "-DCOAL_STATIC"
+        local cxflags = {}
+        if package:has_tool("cxx", "cl") then
+            table.insert(cxflags, "/bigobj")
+        elseif package:is_plat("mingw", "msys") then
+            table.insert(cxflags, "-Wa,-mbig-obj")
         end
-        import("package.tools.cmake").install(package, configs, opt)
+
+        if not package:config("shared") then
+            cxflags = "-DCOAL_STATIC"
+        end
+        import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
     end)
 
     on_test(function (package)
