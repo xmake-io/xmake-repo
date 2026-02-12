@@ -13,8 +13,9 @@ package("simple_http")
     add_versions("v0.2.0", "1c2ab7c2be317f95e34bdbe6c753293495b6743828ec4115b5f3c383c8c95adc")
 
     add_deps("cmake")
-    add_deps("boost", {configs = {cmake = false}})
-    add_deps("nghttp2", "openssl")
+    add_deps("boost")
+    add_deps("openssl")
+    add_deps("nghttp2")
 
     on_install("linux", "cross", "bsd", function (package)
         import("package.tools.cmake").install(package)
