@@ -24,6 +24,5 @@ package("ia32-doc")
         import("lib.detect.find_file")
         local src_file = "out/" .. selected_file
         
-        os.cp(src_file, package:installdir("include/ia32.h"))
+        io.writefile(package:installdir("include") .. "/ia32.h", io.readfile(src_file))
     end)
-
