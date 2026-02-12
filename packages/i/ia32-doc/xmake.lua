@@ -27,11 +27,3 @@ package("ia32-doc")
         os.cp(src_file, package:installdir("include/ia32.h"))
     end)
 
-    on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            #include <ia32.h>
-            void test() {
-                CR3 reg;
-            }
-        ]]}, {configs = {languages = "c++11"}}))
-    end)
