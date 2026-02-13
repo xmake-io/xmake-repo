@@ -6,6 +6,7 @@ package("libvips")
     add_urls("https://github.com/libvips/libvips/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libvips/libvips.git")
 
+    add_versions("v8.18.0", "33bf7fad3d775389a2bfbae4b391196ffedcfa1f3fed258ec506d9c0241b0612")
     add_versions("v8.17.3", "c1180d13f33742685c513ac42c0556dd1ce9e2b79cdb248a807576e2d8b63b32")
     add_versions("v8.17.2", "66e2c8f0a716a08cf99e46a27535ef4938f1cae110dd9207cf8e992616b36ba7")
     add_versions("v8.17.1", "79f54d367a485507c1421408ae13768e4734f473edc71af511472645f46dbd08")
@@ -17,6 +18,8 @@ package("libvips")
     add_versions("v8.15.2", "8c3ece7be367636fd676573a8ff22170c07e95e81fd94f2d1eb9966800522e1f")
     add_versions("v8.15.1", "5701445a076465a3402a135d13c0660d909beb8efc4f00fbbe82392e243497f2")
 
+    add_patches("8.18.0", "patches/8.18.0/fix-macro.patch", "9a3273e0280d5f3efb81a371d3990c4b6f29f88e0db42694d0f31b75feb5e050")
+    add_patches("8.18.0", "patches/8.18.0/windows-build.patch", "32aa8555c0300170af2f50ab29a2862aaff71fe646ef1b37371bdcc14da97602")
     add_patches("8.15.3", "patches/8.15.3/msvc-ssize_t.patch", "1995af657dfd2f4e4f8edec685f67bd473537ff33c42d8329a0df0e0477408b9")
 
     add_configs("c++", { description = "Build C++ API", default = true, type = "boolean" })
@@ -102,7 +105,7 @@ package("libvips")
         end
     end)
 
-    on_install("windows", "macosx", "linux", "cross", function (package)
+    on_install("windows", "macosx", "linux", "cross", "mingw", function (package)
         io.replace("meson.build", "subdir('tools')", "", {plain = true})
         io.replace("meson.build", "subdir('test')", "", {plain = true})
         io.replace("meson.build", "subdir('fuzz')", "", {plain = true})
@@ -146,7 +149,6 @@ package("libvips")
         end
 
         import("package.tools.meson").install(package, configs, {
-            packagedeps = {"libintl", "libiconv"},
             prefix = path.unix(package:installdir()) -- after xmake v2.9.1
         })
     end)
