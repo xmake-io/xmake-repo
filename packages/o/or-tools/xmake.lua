@@ -10,9 +10,7 @@ package("or-tools")
 
     add_configs("glpk", {description = "Enable GLPK support", default = false, type = "boolean"})
     add_configs("highs", {description = "Enable HiGHS support", default = false, type = "boolean"})
-
-    -- NOT IMPLEMENTED YET
-    add_configs("coin-or", {description = "Enable Coin-OR support", default = false, type = "boolean", readonly = true})
+    add_configs("coin_or", {description = "Enable Coin-OR support", default = false, type = "boolean", readonly = true})
     add_configs("scip", {description = "Enable SCIP support", default = false, type = "boolean", readonly = true})
     add_configs("cplex", {description = "Enable CPLEX support", default = false, type = "boolean", readonly = true})
     if is_plat("windows") then
@@ -26,7 +24,7 @@ package("or-tools")
     add_deps("protobuf-cpp", {configs = {zlib = true}})
 
     on_load(function (package)
-        if package:config("coin-or") then
+        if package:config("coin_or") then
             package:add("deps", "coin-or-osi", "coin-or-clp", "coin-or-asl", "coin-or-coinutils")
         end
         if package:config("glpk") then
@@ -59,10 +57,10 @@ package("or-tools")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_cross() then
-            table.insert(configs, "-DOR_TOOLS_PROTOC_EXECUTABLE=" .. path.unix(package:dep("protoc"):dep("protobuf-cpp"):installdir("bin/protoc")))
+            table.insert(configs, "-DOR_TOOLS_PROTOC_EXECUTABLE=" .. path.unix(package:dep("protobuf-cpp"):installdir("bin/protoc")))
         end
 
-        table.insert(configs, "-DUSE_COINOR=" .. (package:config("coin-or") and "ON" or "OFF"))
+        table.insert(configs, "-DUSE_COINOR=" .. (package:config("coin_or") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_GLPK=" .. (package:config("glpk") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_HIGHS=" .. (package:config("highs") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_SCIP=" .. (package:config("scip") and "ON" or "OFF"))
