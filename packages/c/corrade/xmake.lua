@@ -1,11 +1,11 @@
 package("corrade")
-
     set_homepage("https://magnum.graphics/corrade/")
     set_description("Corrade is a multiplatform utility library written in C++11/C++14.")
     set_license("MIT")
 
-    add_urls("https://github.com/mosra/corrade/archive/refs/tags/$(version).zip",
-             "https://github.com/mosra/corrade.git")
+    add_urls("https://github.com/mosra/corrade/archive/refs/tags/$(version).zip", {
+        excludes = {"**/TestSuite/**", "**/Test/**"}})
+    add_urls("https://github.com/mosra/corrade.git")
     add_versions("v2020.06", "d89a06128c334920d91fecf23cc1df48fd6be26543dc0ed81b2f819a92d70e72")
 
     add_patches("2020.06", "patches/2020.06/msvc.patch", "af90c9bad846a2cbe834fe270860446f6329636f9b9b7ad23454cf479c1dc05f")
@@ -26,7 +26,10 @@ package("corrade")
         io.replace("src/Corrade/Utility/StlForwardTuple.h", "__tuple", "tuple")
         io.replace("src/Corrade/Utility/Directory.h", "namespace Corrade", "#include <utility>\n#include <vector>\nnamespace Corrade", {plain = true})
 
-        local configs = {"-DBUILD_TESTS=OFF", "-DLIB_SUFFIX="}
+        local configs = {
+            "-DBUILD_TESTS=OFF",
+            "-DWITH_TESTSUITE=OFF",
+            "-DLIB_SUFFIX="}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DCORRADE_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DBUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
