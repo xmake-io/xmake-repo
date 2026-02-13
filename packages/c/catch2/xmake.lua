@@ -92,7 +92,7 @@ package("catch2")
                 elseif package:has_tool("cxx", "clang", "clangxx") then
                     main_component:add("ldflags", "-Wl,/subsystem:console")
                 end
-                os.mkdir(path.join(package:buildir(), "src/pdb"))
+                os.mkdir(path.join(package:builddir(), "src/pdb"))
             end
 
             local configs = {"-DCATCH_INSTALL_DOCS=OFF", "-DCATCH_BUILD_TESTING=OFF", "-DCATCH_BUILD_EXAMPLES=OFF"}
@@ -108,7 +108,7 @@ package("catch2")
 
         if package:is_plat("windows") and package:is_debug() then
             local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.cp(path.join(package:buildir(), "src/*.pdb"), dir)
+            os.cp(path.join(package:builddir(), "src/*.pdb"), dir)
         end
     end)
 

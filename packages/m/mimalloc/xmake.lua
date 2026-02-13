@@ -90,10 +90,10 @@ package("mimalloc")
 
             if package:is_plat("windows") and package:is_debug() then
                 local dir = package:installdir(package:config("shared") and "bin" or "lib")
-                os.cp(path.join(package:buildir(), "mimalloc-debug.pdb"), dir)
+                os.cp(path.join(package:builddir(), "mimalloc-debug.pdb"), dir)
             end
         else
-            import("package.tools.cmake").build(package, configs, {buildir = "build", cxflags = cxflags})
+            import("package.tools.cmake").build(package, configs, {builddir = "build", cxflags = cxflags})
 
             if package:is_plat("windows") then
                 os.trycp("build/**.dll", package:installdir("bin"))

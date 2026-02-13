@@ -99,7 +99,7 @@ package("magnum")
         for _, utility in ipairs(utilities) do
             table.insert(configs, "-DWITH_" .. utility:upper() .. "=" .. (package:config(utility) and "ON" or "OFF"))
         end
-        import("package.tools.cmake").install(package, configs, {buildir = os.tmpfile() .. ".dir"})
+        import("package.tools.cmake").install(package, configs, {builddir = os.tmpfile() .. ".dir"})
     end)
 
     on_test(function (package)
