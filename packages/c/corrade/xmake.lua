@@ -24,8 +24,8 @@ package("corrade")
 
     on_install("windows", "linux", "macosx", function (package)
         io.replace("src/Corrade/Utility/StlForwardTuple.h", "__tuple", "tuple")
-        io.replace("src/Corrade/Utility/Directory.h", "#include <utility>",
-            "#include <utility>\n#include <vector>\n", {plain = true})
+        io.replace("src/Corrade/Utility/Directory.h", "#include <initializer_list>",
+            "#include <initializer_list>\n#include <vector>\n", {plain = true})
 
         local configs = {
             "-DBUILD_TESTS=OFF",
