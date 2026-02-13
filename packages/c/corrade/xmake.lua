@@ -30,6 +30,8 @@ package("corrade")
             "#include <utility>\n#include <vector>\n", {plain = true})
         io.replace("src/Corrade/Utility/Arguments.h", "#include <utility>",
             "#include <utility>\n#include <vector>\n", {plain = true})
+        io.replace("src/Corrade/Utility/Utility.h", "#include <cstddef>",
+            "#include <cstddef>\n#include <vector>\n", {plain = true})
 
         local configs = {
             "-DBUILD_TESTS=OFF",
