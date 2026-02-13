@@ -6,6 +6,7 @@ package("steam-audio")
     add_urls("https://github.com/ValveSoftware/steam-audio/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ValveSoftware/steam-audio.git")
 
+    add_versions("v4.8.1", "a685cc0eedc45a58aa2a994b6597387babdc67cb1e31d9a5d3ba298238ab08d5")
     add_versions("v4.8.0", "8be6a14747b731c6ec63e6917dabff0481d7266cc28743cbec661e49fead58d3")
     add_versions("v4.7.0", "f194f9c34d18a2a1b5f563bb39888e0eabdef1cd26ddfa959de3f95da4d263ea")
     add_versions("v4.6.1", "9965993d9df46d0585bd1dcb0acd3c5ae031656c75c87bbd49429db37757b65d")
