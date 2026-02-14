@@ -28,9 +28,6 @@ package("libjxl")
     add_configs("tcmalloc", {description = "Build JPEGXL using gperftools (tcmalloc) allocator.", default = false, type = "boolean"})
     add_configs("jni", {description = "Build JPEGXL JNI Java wrapper.", default = false, type = "boolean"})
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
-    if is_plat("wasm") then
-        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-    end
 
     add_links("jxl", "jxl_threads", "jxl_cms")
     
@@ -49,7 +46,7 @@ package("libjxl")
         end
     end)
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         io.replace("CMakeLists.txt", "set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)", "", {plain = true})
         if (package:is_plat("macosx") and not package:config("shared")) or package:is_plat("iphoneos") or package:is_plat("bsd") then
             io.replace("CMakeLists.txt", "find_package(Atomics REQUIRED)", "find_package(Atomics)", {plain = true})
