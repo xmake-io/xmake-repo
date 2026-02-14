@@ -1,8 +1,8 @@
 package("ia32-doc")
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/ia32-doc/ia32-doc")
     set_description("C/C++ headers for Intel Architecture Software Developer's Manual")
     set_license("MIT")
-    set_kind("headeronly")
     add_urls("https://github.com/ia32-doc/ia32-doc.git")
     add_versions("2025.01.31", "2bc5284e04ff862220def160517bc72baf3d1a03")
 
