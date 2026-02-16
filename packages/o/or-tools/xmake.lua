@@ -57,7 +57,7 @@ package("or-tools")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_cross() then
-            table.insert(configs, "-DOR_TOOLS_PROTOC_EXECUTABLE=" .. path.unix(package:dep("protobuf-cpp"):installdir("bin/protoc")))
+            table.insert(configs, "-DOR_TOOLS_PROTOC_EXECUTABLE=" .. path.unix(package:dep("protoc"):dep("protobuf-cpp"):installdir("bin/protoc")))
         end
 
         table.insert(configs, "-DUSE_COINOR=" .. (package:config("coin_or") and "ON" or "OFF"))
