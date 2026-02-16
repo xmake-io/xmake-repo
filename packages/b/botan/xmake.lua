@@ -6,6 +6,7 @@ package("botan")
     set_urls("https://github.com/randombit/botan/archive/refs/tags/$(version).tar.gz",
              "https://github.com/randombit/botan.git")
 
+    add_versions("3.9.0", "89dabf2e9bdb889242f73e579ac7e25e095e28e549bf83a00357602bc47f2618")
     add_versions("3.8.1", "8eb79a49c1a3f7e5e7563c13752a37557de935cdac48d9221ea4b580158e8965")
     add_versions("3.7.1", "8d2a072c7cdca6cadd16f89bb966fce1b3ec77cb4614bf1d87dec1337a3d2330")
     add_versions("3.7.0", "ebd1b965ed2afa12dfaf47650187142cbe870b99528185c88ca7c0ac19307c6c")
