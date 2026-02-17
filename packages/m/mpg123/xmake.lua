@@ -28,6 +28,13 @@ package("mpg123")
             package:add("defines", "LINK_MPG123_DLL")
         end
 
+        -- fix detect error
+        if package:is_arch("arm.*") then
+            io.replace("ports/cmake/src/CMakeLists.txt",
+                "cmake_host_system_information(RESULT HAVE_FPU QUERY HAS_FPU)",
+                "set(HAVE_FPU 1)", {plain = true})
+        end
+
         local configs = {"-DBUILD_PROGRAMS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
