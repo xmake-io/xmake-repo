@@ -6,6 +6,7 @@ package("faker-cxx")
     add_urls("https://github.com/cieslarmichal/faker-cxx/archive/refs/tags/$(version).tar.gz",
              "https://github.com/cieslarmichal/faker-cxx.git", {submodules = false})
 
+    add_versions("v4.3.1", "1fb0d21719097fe2a46ad3c068012e2fe6dcce4b06640e388b9ecdee6fc87f81")
     add_versions("v4.1.0", "e5b8d4b77d82947652d1a1b282573491208ed71b35c2d875084994486962b0fe")
     add_versions("v4.0.1", "ebeac25780878905d0e73cd6a5211bd0b5ce065d06961570f0de7f1a25ec7d9d")
     add_versions("v3.0.0", "63d6846376593e05da690136cabe8e7bf42ddcdd4edad3ae9b48696f86d80468")
@@ -32,11 +33,12 @@ package("faker-cxx")
                 #include <concepts>
                 #include <ranges>
                 #include <format>
+                #include <iostream>
                 static_assert(std::integral<bool>);
                 void test() {
                     const auto v = {4, 1, 3, 2};
                     auto it = std::ranges::find(v, 3);
-                    std::format("Hello {}!\n", "world");
+                    std::cout << std::format("Hello {}!\n", "world");
                 }
             ]]}, {configs = {languages = "c++20"}}), "package(faker-cxx) Require at least C++20.")
         end)
@@ -53,7 +55,13 @@ package("faker-cxx")
             package:add("defines", "FAKER_CXX_STATIC_DEFINE")
         end
 
-        local configs = {"-DBUILD_TESTING=OFF", "-DUSE_SYSTEM_DEPENDENCIES=ON", "-DUSE_STD_FORMAT=OFF"}
+        local configs = {"-DUSE_SYSTEM_DEPENDENCIES=ON", "-DUSE_STD_FORMAT=OFF"}
+        if package:version():lt("4.3.0") then
+            table.insert(configs, "-DBUILD_TESTING=OFF")
+        else
+            table.insert(configs, "-DFAKER_BUILD_TESTING=OFF")
+            table.insert(configs, "-DFAKER_CODE_COVERAGE=OFF")
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
