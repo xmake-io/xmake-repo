@@ -24,7 +24,8 @@ package("mosquitto")
     add_configs("ec", {description = "Include Elliptic Curve support (requires WITH_TLS)", default = true, type = "boolean"})
     add_configs("unix_sockets", {description = "Include Unix Domain Socket support", default = true, type = "boolean"})
     add_configs("socks", {description = "Include SOCKS5 support", default = true, type = "boolean"})
-    add_configs("threading", {description = "Include client library threading support", default = true, type = "boolean"})
+    -- disabled because pthreads4w has poor support
+    add_configs("threading", {description = "Include client library threading support", default = false, type = "boolean"})
     if is_plat("linux") then
         add_configs("srv", {description = "Include SRV lookup support", default = true, type = "boolean"})
     end
@@ -41,7 +42,7 @@ package("mosquitto")
 
     local deps_map =
     {
-        tls             = "openssl",
+        tls             = "openssl3",
         cjson           = "cjson",
         bundled_deps    = "uthash",
         srv             = "c-ares",
@@ -67,7 +68,7 @@ package("mosquitto")
         end
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows|!arm*", "linux", "macosx", function (package)
         if package:version():ge("2.0.18") and package:is_plat("windows") then
             io.replace("CMakeLists.txt", 'add_definitions("-D_CRT_SECURE_NO_WARNINGS")', 'add_definitions("-D_CRT_SECURE_NO_WARNINGS")\nadd_definitions("-DWIN32")\nadd_definitions("-D_WIN32")', {plain = true})
         end
