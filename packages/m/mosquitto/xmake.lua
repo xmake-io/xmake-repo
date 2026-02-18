@@ -6,6 +6,7 @@ package("mosquitto")
     add_urls("https://github.com/eclipse/mosquitto/archive/refs/tags/$(version).tar.gz",
              "https://github.com/eclipse/mosquitto.git")
  
+    add_versions("v2.1.2", "20e998aae86d1629e787a924c044bb912d21ac8f5d1c1b707f2af06eb4c6016d")
     add_versions("v2.0.15", "547f98acd2e4668c8f3b86ef61e71c755366d180565b6e7537813876467d04d9")
     add_versions("v2.0.18", "25499231664bc5338f9f05eb1815f4d5878f0c6c97e03afb3463a7b139a7e775")
 
