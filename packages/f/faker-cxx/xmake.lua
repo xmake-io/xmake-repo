@@ -6,6 +6,7 @@ package("faker-cxx")
     add_urls("https://github.com/cieslarmichal/faker-cxx/archive/refs/tags/$(version).tar.gz",
              "https://github.com/cieslarmichal/faker-cxx.git", {submodules = false})
 
+    add_versions("v4.3.1", "1fb0d21719097fe2a46ad3c068012e2fe6dcce4b06640e388b9ecdee6fc87f81")
     add_versions("v4.1.0", "e5b8d4b77d82947652d1a1b282573491208ed71b35c2d875084994486962b0fe")
     add_versions("v4.0.1", "ebeac25780878905d0e73cd6a5211bd0b5ce065d06961570f0de7f1a25ec7d9d")
     add_versions("v3.0.0", "63d6846376593e05da690136cabe8e7bf42ddcdd4edad3ae9b48696f86d80468")
