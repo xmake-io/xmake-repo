@@ -25,7 +25,7 @@ package("nvrhi")
         add_syslinks("d3d11", "d3d12", "dxguid")
     end
 
-    on_load("linux", "windows|x86_64", function (package)
+    on_load("linux", "windows", function (package)
         if package:config("rtxmu") then
             package:add("deps", "rtxmu")
         end
@@ -34,7 +34,7 @@ package("nvrhi")
         end
     end)
 
-    on_install("linux", "windows|x86_64", function (package)
+    on_install("linux", "windows|!arm*", function (package)
         local configs = { "-DNVRHI_INSTALL=ON" }
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
