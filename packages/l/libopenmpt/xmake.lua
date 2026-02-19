@@ -14,6 +14,10 @@ package("libopenmpt")
 
     on_install(function (package)
         io.replace("libopenmpt/libopenmpt_config.h", "defined(LIBOPENMPT_USE_DLL)", package:config("shared") and "1" or "0", {plain = true})
+        if package:is_plat("windows") then
+            io.replace("libopenmpt/libopenmpt_config.h", "#if defined(_MSC_VER) && !defined(_DLL)", "#if 0", {plain = true})
+        end
+
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
     end)
