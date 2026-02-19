@@ -115,4 +115,3 @@ package("nvrhi")
             }
         ]]}, {configs = {languages = "c++17"}}))
     end)
-package_end()
