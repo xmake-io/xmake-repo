@@ -10,8 +10,6 @@ package("nvrhi")
     add_configs("vulkan",     { description = "Build the Vulkan backend",                        default = true,  type = "boolean" })
     add_configs("rtxmu",      { description = "Use RTXMU for acceleration structure management", default = false, type = "boolean" })
     add_configs("aftermath",  { description = "Include Aftermath support",                       default = false, type = "boolean" })
-    add_configs("shared",     { description = "Build as shared library",                         default = false, type = "boolean" })
-
         
     if is_plat("windows") then
         add_configs("d3d11",                  { description = "Build the D3D11 backend",                         default = true,  type = "boolean" })
@@ -27,9 +25,7 @@ package("nvrhi")
         add_syslinks("d3d11", "d3d12", "dxguid")
     end
 
-    on_load(function (package)
-        if package:config("vulkan") then
-        end
+    on_load("linux", "windows|x86_64", function (package)
         if package:config("rtxmu") then
             package:add("deps", "rtxmu")
         end
@@ -38,7 +34,7 @@ package("nvrhi")
         end
     end)
 
-    on_install(function (package)
+    on_install("linux", "windows|x86_64", function (package)
         local configs = { "-DNVRHI_INSTALL=ON" }
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
