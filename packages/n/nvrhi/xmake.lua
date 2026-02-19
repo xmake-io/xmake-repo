@@ -34,7 +34,7 @@ package("nvrhi")
         end
     end)
 
-    on_install("linux", "windows|!arm*", function (package)
+    on_install("linux", "windows|x64", function (package)
         local configs = { "-DNVRHI_INSTALL=ON" }
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
