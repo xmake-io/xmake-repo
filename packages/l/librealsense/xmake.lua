@@ -1,15 +1,17 @@
 package("librealsense")
-    set_homepage("https://www.intelrealsense.com/")
-    set_description("Intel® RealSense™ SDK")
+    set_homepage("https://www.realsenseai.com/")
+    set_description("RealSense SDK")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/IntelRealSense/librealsense/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/IntelRealSense/librealsense.git", {submodules = false})
+    add_urls("https://github.com/realsenseai/librealsense/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/realsenseai/librealsense.git", {submodules = false})
 
+    add_versions("v2.57.6", "4c5eeafe004422e564df4ba74cab0e89a4b32282d0e0d6c1e9b33382bb5ed767")
     add_versions("v2.57.5", "6fe337090becb668289178b20dfce07d553d4a71fd54ffbfee18b45847bcdee4")
     add_versions("v2.57.4", "3e82f9b545d9345fd544bb65f8bf7943969fb40bcfc73d983e7c2ffcdc05eaeb")
 
-    add_patches(">=2.57.3", "patches/2.57.3/missing-headers.patch", "13834e38528e5009cdffc653515602f32a72e042497457c424de684ff5c69723")
+    add_patches(">=2.57.3 <2.57.6", "patches/2.57.3/missing-headers.patch", "13834e38528e5009cdffc653515602f32a72e042497457c424de684ff5c69723")
+    add_patches(">=2.57.6", "patches/2.57.6/missing-headers.patch", "78f33ee8eabf443d18028235ceacd22c0d661249a0904600179b78cafcf182a8")
 
     add_configs("cuda", {description = "Enable CUDA", default = false, type = "boolean"})
     add_configs("openmp", {description = "Use OpenMP", default = false, type = "boolean"})
@@ -31,6 +33,9 @@ package("librealsense")
     on_check("iphoneos", "bsd", function (package)
         raise("package(librealsense) dep(libusb) unsupported platform!")
     end)
+    on_check("mingw", "cross", "wasm", function (package)
+        raise("package(librealsense) unsupported platform!")
+    end)
 
     on_load(function (package)
         if package:config("cuda") then
@@ -44,7 +49,7 @@ package("librealsense")
         end
     end)
 
-    on_install("!cross and !wasm and !mingw and (!windows or windows|!arm*)", function (package)
+    on_install("!windows or windows|!arm*", function (package)
         -- nlohmann_json
         io.replace("third-party/CMakeLists.txt", "include(CMake/external_json.cmake)", "", {plain = true})
         io.replace("third-party/rsutils/CMakeLists.txt", "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/third-party/json/include>", "", {plain = true})

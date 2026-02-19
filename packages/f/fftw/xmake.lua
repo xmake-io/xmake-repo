@@ -104,10 +104,10 @@ package("fftw")
 
             if package:is_plat("windows") and package:is_debug() then
                 local dir = package:installdir(package:config("shared") and "bin" or "lib")
-                os.trycp(path.join(package:buildir(), "fftw3.pdb"), dir)
-                os.trycp(path.join(package:buildir(), "fftw3f.pdb"), dir)
-                os.trycp(path.join(package:buildir(), "fftw3l.pdb"), dir)
-                os.trycp(path.join(package:buildir(), "fftw3q.pdb"), dir)
+                os.trycp(path.join(package:builddir(), "fftw3.pdb"), dir)
+                os.trycp(path.join(package:builddir(), "fftw3f.pdb"), dir)
+                os.trycp(path.join(package:builddir(), "fftw3l.pdb"), dir)
+                os.trycp(path.join(package:builddir(), "fftw3q.pdb"), dir)
             end
         end
     end)

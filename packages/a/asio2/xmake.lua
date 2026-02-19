@@ -7,6 +7,7 @@ package("asio2")
     add_urls("https://github.com/zhllxt/asio2/archive/refs/tags/$(version).tar.gz",
              "https://github.com/zhllxt/asio2.git")
 
+    add_versions("v3.0", "1f47a9f5d945424250cd35303f4ac84266f778612524a2058b49bfff8fbbb984")
     add_versions("v2.9", "d173e83a22f6d4ec8697ac533f4cf71051b7aa5c550d24997d991610206dd534")
 
     add_configs("ssl", {description = "Build OpenSSL module", default = false, type = "boolean"})

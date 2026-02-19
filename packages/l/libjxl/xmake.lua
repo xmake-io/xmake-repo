@@ -7,6 +7,7 @@ package("libjxl")
              "https://github.com/libjxl/libjxl.git",
              "https://gitlab.com/wg1/jpeg-xl.git", {submodules = false})
 
+    add_versions("v0.11.2", "ab38928f7f6248e2a98cc184956021acb927b16a0dee71b4d260dc040a4320ea")
     add_versions("v0.11.1", "1492dfef8dd6c3036446ac3b340005d92ab92f7d48ee3271b5dac1d36945d3d9")
 
     if is_plat("linux", "bsd") then
@@ -45,9 +46,9 @@ package("libjxl")
         end
     end)
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         io.replace("CMakeLists.txt", "set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)", "", {plain = true})
-        if (package:is_plat("macosx") and not package:config("shared")) or package:is_plat("iphoneos") then
+        if (package:is_plat("macosx") and not package:config("shared")) or package:is_plat("iphoneos") or package:is_plat("bsd") then
             io.replace("CMakeLists.txt", "find_package(Atomics REQUIRED)", "find_package(Atomics)", {plain = true})
             io.replace("CMakeLists.txt", "find_package(Threads REQUIRED)", "find_package(Threads)", {plain = true})
             io.replace("lib/jxl_threads.cmake", "find_package(Threads REQUIRED)", "find_package(Threads)", {plain = true})

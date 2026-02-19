@@ -1,10 +1,12 @@
 package("sentry-native")
-    set_homepage("https://sentry.io")
+    set_homepage("https://sentry.io/welcome/")
     set_description("Sentry SDK for C, C++ and native applications.")
+    set_license("MIT")
 
     set_urls("https://github.com/getsentry/sentry-native/releases/download/$(version)/sentry-native.zip",
              "https://github.com/getsentry/sentry-native.git")
 
+    add_versions("0.12.8", "d668da4c13052d98b3920e3731c7d2166f9b0b7113b603c751c660eb567f3248")
     add_versions("0.12.2", "d265d26e761dfdfc3ce3b2f1916c48da316fe2147981e23182ce933e4b0835b6")
     add_versions("0.12.0", "3bf6eebb7dcc9c99267746324734a15164ba0058d67f690e315d47ee0bd8e953")
     add_versions("0.11.3", "6a4ccd2bf91320ca84169b322cbbfe5a0d13f0b4ee45bb4adf93bd1c4c59a08a")
@@ -34,8 +36,6 @@ package("sentry-native")
     add_versions("0.6.3", "6b515c17a9b860ea47c6a5fd7abdfdc89b4b8cbc654c23a8bb42a39bfcb87ad9")
     add_versions("0.5.0", "87e67ad783a7ec4476b0eb4742bd40fe5a1e2435")
     add_versions("0.4.15", "ae3ac4efa76d431d8734d7b0b1bf9bbedaf2cbdb18dfc5c95e2411a67808cf29")
-    add_versions("0.4.4", "fe6c711d42861e66e53bfd7ee0b2b226027c64446857f0d1bbb239ca824a3d8d")
-    add_patches("0.4.4", path.join(os.scriptdir(), "patches", "0.4.4", "zlib_fix.patch"), "1a6ac711b7824112a9062ec1716a316facce5055498d1f87090d2cad031b865b")
 
     add_deps("cmake")
 
@@ -80,6 +80,9 @@ package("sentry-native")
 
         if backend == "crashpad" then
             package:add("links", "sentry", "crashpad_client", "crashpad_util", "crashpad_minidump", "crashpad_handler_lib", "mini_chromium", "crashpad_tools", "crashpad_compat", "crashpad_snapshot")
+            if package:version():ge("0.12.8") then
+                package:add("links", "crashpad_mpack")
+            end
             package:add("deps", "zlib")
         elseif backend == "breadpad" then
             package:add("links", "sentry", "breakpad_client")
@@ -117,7 +120,7 @@ package("sentry-native")
             void test(int args, char** argv) {
                 sentry_options_t* options = sentry_options_new();
                 sentry_init(options);
-                sentry_shutdown();
+                sentry_close();
             }
         ]]}, {includes = {"sentry.h"}}))
     end)

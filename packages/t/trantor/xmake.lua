@@ -62,6 +62,7 @@ package("trantor")
     end)
 
     on_install(function (package)
+        io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
         io.replace("CMakeLists.txt", "\"${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules/Findc-ares.cmake\"", "", {plain = true})
         io.replace("CMakeLists.txt", "find_package(c-ares)", "find_package(c-ares CONFIG)", {plain = true})
         io.replace("CMakeLists.txt", "c-ares_lib", "c-ares::cares", {plain = true})
