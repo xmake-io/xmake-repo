@@ -6,6 +6,7 @@ package("zxing-cpp")
     add_urls("https://github.com/zxing-cpp/zxing-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/zxing-cpp/zxing-cpp.git", {submodules = false})
 
+    add_versions("v3.0.2", "b063dacf384c7bb93ab2c3eea247cc06b4525330f0efa631907aa3029f7e2144")
     add_versions("v2.3.0", "64e4139103fdbc57752698ee15b5f0b0f7af9a0331ecbdc492047e0772c417ba")
     add_versions("v2.2.1", "02078ae15f19f9d423a441f205b1d1bee32349ddda7467e2c84e8f08876f8635")
 
