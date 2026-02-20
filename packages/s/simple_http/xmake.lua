@@ -14,8 +14,15 @@ package("simple_http")
 
     add_deps("cmake")
     add_deps("boost", {configs = {asio = true}})
-    add_deps("openssl")
     add_deps("nghttp2")
+
+    on_load(function (package)
+        if package:gitref() or package:version():gt("0.5.0") then
+            package:add("deps", "openssl3")
+        else
+            package:add("deps", "openssl")
+        end
+    end)
 
     on_install("linux", "cross", "bsd", function (package)
         import("package.tools.cmake").install(package)
