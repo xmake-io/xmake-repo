@@ -24,6 +24,10 @@ package("libsdl2_mixer_x")
     end)
 
     on_install(function (package)
+        if package:is_plat("bsd") then
+            io.replace("src/codecs/music_cmd.cmake", "-D_POSIX_C_SOURCE=1", "", {plain = true})
+        end
+
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
