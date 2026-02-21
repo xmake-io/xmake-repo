@@ -9,7 +9,7 @@ package("libmodbus")
     add_versions("v3.1.11", "8a750452ef86a53de6cec6fbca67bd5be08d0a1e87278a422fbce3003fd42d99")
     add_versions("v3.1.10", "e93503749cd89fda4c8cf1ee6371a3a9cc1f0a921c165afbbc4fd96d4813fa1a")
 
-    add_patches(">=v3.1.11 <=v3.1.12", "https://github.com/stephane/libmodbus/pull/800.patch", "431cb44fa96d3afe54f4839c6dfddd2516edce424ac9fa93c09bdf2c3c085a6c")
+    add_patches(">=3.1.11 <=3.1.12", "https://github.com/stephane/libmodbus/pull/800.patch", "431cb44fa96d3afe54f4839c6dfddd2516edce424ac9fa93c09bdf2c3c085a6c")
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::libmodbus")
