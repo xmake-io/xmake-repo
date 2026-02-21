@@ -14,7 +14,6 @@ package("nvapi")
         else
             os.cp("x86/nvapi.lib", package:installdir("lib"))
         end
-        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
