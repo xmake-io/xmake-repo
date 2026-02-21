@@ -6,6 +6,7 @@ package("vulkanscenegraph")
     add_urls("https://github.com/vsg-dev/VulkanSceneGraph/archive/refs/tags/$(version).tar.gz",
              "https://github.com/vsg-dev/VulkanSceneGraph.git")
 
+    add_versions("v1.1.13", "653af399405e8a024d3254f9d8862aaaea0ac71ce832a0c09ef5e57d3def2ef3")
     add_versions("v1.1.10", "b430132ba5454e0616ff5334a7cb9196c0e8f10a925c2106e80a78d6f24ae4b5")
     add_versions("1.0.2", "526acd58d6e3a3bd3c3169996e0616d5c4a01e793dc064e8d20217791743bab5")
 
