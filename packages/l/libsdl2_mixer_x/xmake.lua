@@ -36,7 +36,12 @@ package("libsdl2_mixer_x")
         table.insert(configs, "-DUSE_MIDI=" .. (package:config("midi") and "ON" or "OFF"))
         table.insert(configs, "-DMIXERX_ENABLE_LGPL=" .. (package:config("lgpl") and "ON" or "OFF"))
         table.insert(configs, "-DMIXERX_ENABLE_GPL=" .. (package:config("gpl") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+
+        local opt = {cxflags = {}}
+        if package:is_plat("bsd") then
+            table.insert(opt.cxflags, "-D_BSD_SOURCE")
+        end
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
