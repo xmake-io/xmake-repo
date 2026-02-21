@@ -4,8 +4,8 @@ package("nvrhi")
     set_license("MIT")
     
     add_urls("https://github.com/NVIDIA-RTX/NVRHI.git")
+    add_versions("2022.01.23", "2ac4b58c355f53827c2e1d0740849ce4d09d5dd6")
 
-    add_configs("shared",     { description = "Build NVRHI as a shared library (DLL or .so)",    default = false, type = "boolean" })
     add_configs("validation", { description = "Build the validation layer",                      default = true,  type = "boolean" })
     add_configs("vulkan",     { description = "Build the Vulkan backend",                        default = true,  type = "boolean" })
     add_configs("rtxmu",      { description = "Use RTXMU for acceleration structure management", default = false, type = "boolean" })
@@ -36,30 +36,25 @@ package("nvrhi")
 
     on_install("linux", "windows|x64", function (package)
         local configs = { "-DNVRHI_INSTALL=ON" }
-
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DNVRHI_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DNVRHI_WITH_VALIDATION=" .. (package:config("validation") and "ON" or "OFF"))
         table.insert(configs, "-DNVRHI_WITH_VULKAN=" .. (package:config("vulkan") and "ON" or "OFF"))
         table.insert(configs, "-DNVRHI_WITH_RTXMU=" .. (package:config("rtxmu") and "ON" or "OFF"))
         table.insert(configs, "-DNVRHI_WITH_AFTERMATH=" .. (package:config("aftermath") and "ON" or "OFF"))
-        
         if package:config("aftermath") then
             local aftermath_dir = package:config("aftermath_dir")
             if aftermath_dir then
                 table.insert(configs, "-DAFTERMATH_SEARCH_PATHS=" .. aftermath_dir)
             end
         end
-
         if package:is_plat("windows") then
             table.insert(configs, "-DNVRHI_WITH_DX11=" .. (package:config("d3d11") and "ON" or "OFF"))
             table.insert(configs, "-DNVRHI_WITH_DX12=" .. (package:config("d3d12") and "ON" or "OFF"))
             table.insert(configs, "-DNVRHI_WITH_NVAPI=" .. (package:config("nvapi") and "ON" or "OFF"))
-
             if package:config("d3d12") then
                 table.insert(configs, "-DNVRHI_D3D12_WITH_DXR12_OPACITY_MICROMAP=" .. (package:config("dxr12_opacity_micromap") and "ON" or "OFF"))
             end
-
             if package:config("nvapi") then
                 local nvapi_dir = package:config("nvapi_dir")
                 if nvapi_dir then
@@ -71,16 +66,12 @@ package("nvrhi")
             table.insert(configs, "-DNVRHI_WITH_DX12=OFF")
             table.insert(configs, "-DNVRHI_WITH_NVAPI=OFF")
         end
-
         import("package.tools.cmake").install(package, configs)
-
-        
         if package:config("aftermath") then
             local aftermath_root = package:config("aftermath_dir")
             if not aftermath_root then
                 aftermath_root = package:buildir()
             end
-
             if package:is_plat("windows") then
                 local dll_files = os.files(path.join(aftermath_root, "**", "GFSDK_Aftermath_Lib.x64.dll"))
                 if dll_files and #dll_files > 0 then
@@ -97,7 +88,6 @@ package("nvrhi")
                     os.cp(so_files[1], package:installdir("lib"))
                 end
             end
-
             local aftermath_include = os.files(path.join(aftermath_root, "**", "GFSDK_Aftermath.h"))
             if aftermath_include and #aftermath_include > 0 then
                 local include_dir = path.directory(aftermath_include[1])
