@@ -1,0 +1,55 @@
+diff --git a/python/CMakeLists.txt b/python/CMakeLists.txt
+index 6e0bc50..5a98c61 100644
+--- a/python/CMakeLists.txt
++++ b/python/CMakeLists.txt
+@@ -22,13 +22,7 @@ if(DART_USE_SYSTEM_PYBIND11)
+   endif()
+   find_package(pybind11 CONFIG REQUIRED)
+ else()
+-  include(FetchContent)
+-  FetchContent_Declare(
+-    pybind11
+-    GIT_REPOSITORY https://github.com/pybind/pybind11
+-    GIT_TAG v2.13.6
+-  )
+-  FetchContent_MakeAvailable(pybind11)
++  find_package(pybind11 CONFIG)
+ endif()
+ 
+ if(NOT pybind11_FOUND)
+@@ -40,9 +34,6 @@ set(DART_PYTHON_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+ set(DART_DARTPY_BUILD_DIR "${DART_PYTHON_BUILD_DIR}/dartpy")
+ 
+ add_subdirectory(dartpy)
+-add_subdirectory(tests)
+-add_subdirectory(examples)
+-add_subdirectory(tutorials)
+ 
+ message(STATUS "")
+ message(STATUS "[ dartpy ]")
+diff --git a/python/dartpy/CMakeLists.txt b/python/dartpy/CMakeLists.txt
+index 3bf9b80..dd9b0c7 100644
+--- a/python/dartpy/CMakeLists.txt
++++ b/python/dartpy/CMakeLists.txt
+@@ -6,12 +6,7 @@
+ #
+ # This file is provided under the "BSD-style" License
+ 
+-execute_process(COMMAND ${Python3_EXECUTABLE} -c
+-  "from distutils.sysconfig import get_python_lib;\
+-  print(get_python_lib(plat_specific=True))"
+-  OUTPUT_VARIABLE PYTHON_SITE_PACKAGES
+-  OUTPUT_STRIP_TRAILING_WHITESPACE
+-)
++set(PYTHON_SITE_PACKAGES "lib/site-packages")
+ if(NOT IS_ABSOLUTE ${PYTHON_SITE_PACKAGES})
+   set(PYTHON_SITE_PACKAGES "${CMAKE_INSTALL_PREFIX}/${PYTHON_SITE_PACKAGES}")
+ endif()
+@@ -29,7 +24,6 @@ set(pybind_module dartpy)
+ #
+ pybind11_add_module(${pybind_module}
+   MODULE
+-  EXCLUDE_FROM_ALL
+   ${dartpy_headers}
+   ${dartpy_sources}
+ )
