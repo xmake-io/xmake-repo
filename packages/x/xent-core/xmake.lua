@@ -4,13 +4,12 @@ package("xent-core")
     set_license("BSD-3-Clause")
 
     add_urls("https://github.com/Project-Xent/xent-core.git")
+    add_versions("2026.02.01", "cf6a1c8adea508b418e82360f32b58ee140b6644")
     add_versions("2026.01.30", "cb485c8dc62c33fbdcf188385222193f39be3f1f")
 
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
-
-    add_deps("yoga")
 
     if on_check then
         on_check(function (package)
@@ -24,11 +23,23 @@ package("xent-core")
             ]]}, {configs = {languages = "c++20"}}), "package(xent-core) Require at least C++20.")
         end)
     end
+    
+    add_configs("runtimes", {description = "Set the compiler runtime library.", default = "MD"})
+
+    add_deps("yoga")
 
     on_install(function (package)
-        io.writefile("xmake.lua", [[
+        local configs = {}
+        if package:is_kind("shared") then
+            configs.kind = "shared"
+        end
+        local rt = package:config("runtimes")
+        configs.runtimes = rt
+
+        local content = string.format([[
             add_rules("mode.debug", "mode.release")
             set_languages("c++20")
+            set_runtimes("%s")
             add_requires("yoga")
             target("xent-core")
                 set_kind("$(kind)")
@@ -39,8 +50,10 @@ package("xent-core")
                 if is_plat("windows") and is_kind("shared") then
                     add_rules("utils.symbols.export_all", {export_classes = true})
                 end
-        ]])
-        import("package.tools.xmake").install(package)
+        ]], rt)
+        io.writefile("xmake.lua", content)
+
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
