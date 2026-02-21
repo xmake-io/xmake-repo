@@ -7,6 +7,7 @@ package("stlab")
 
     add_urls("https://github.com/stlab/libraries/archive/refs/tags/$(version).tar.gz",
              "https://github.com/stlab/libraries.git")
+    add_versions("v2.2.0", "5ada2db5216d733657c981917778a137a1c34d711d2a96d7958038bdb475c041")
     add_versions("v1.6.2", "d0369d889c7bf78068d0c4f4b5125d7e9fe9abb0ad7a3be35bf13b6e2c271676")
 
     add_deps("cmake")
