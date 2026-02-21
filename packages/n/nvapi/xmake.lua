@@ -17,5 +17,5 @@ package("nvapi")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxfuncs("NvAPI_Initialize", {includes = "nvapi.h"}))
+        assert(package:has_cxxfuncs("NvAPI_Initialize", {includes = {"windows.h", "nvapi.h"}}))
     end)
