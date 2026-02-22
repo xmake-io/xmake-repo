@@ -19,16 +19,33 @@ package("xproperty")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            #include <xproperty/xobserved.hpp>
-            struct Foo : public xp::xobserved<Foo>
-            {
-                XPROPERTY(double, Foo, bar);
-                XPROPERTY(double, Foo, baz);
-            };
-            void test() {
-                Foo foo;
-                XOBSERVE(foo, bar, [](Foo& f){});
-            }
-        ]]}, {configs = {languages = "c++17"}}))
+        local test
+        if package:version():ge("0.13.0") then
+            test = [[
+                #include <xproperty/xobserved.hpp>
+                struct Foo : public xp::xobserved
+                {
+                    XPROPERTY(double, Foo, bar);
+                    XPROPERTY(double, Foo, baz);
+                };
+                void test() {
+                    Foo foo;
+                    foo.observe<Foo>(foo.bar.name(), [](Foo&) {});
+                }
+            ]]
+        else
+            test = [[
+                #include <xproperty/xobserved.hpp>
+                struct Foo : public xp::xobserved<Foo>
+                {
+                    XPROPERTY(double, Foo, bar);
+                    XPROPERTY(double, Foo, baz);
+                };
+                void test() {
+                    Foo foo;
+                    XOBSERVE(foo, bar, [](Foo& f){});
+                }
+            ]]
+        end
+        assert(package:check_cxxsnippets({test = test}, {configs = {languages = "c++17"}}))
     end)
