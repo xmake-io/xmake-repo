@@ -11,7 +11,7 @@ package("sqlcipher")
 
     if not is_plat("windows") then
         -- only for GCC 15
-        add_patches("4.12.0", path.join(os.scriptdir(), "patches", "4.12.0", "stdint.patch"), "608ea7c41855b26029f114ac5b0c9abf35656dec559b86939909813da6bb78ae")
+        add_patches(">=4.12.0", path.join(os.scriptdir(), "patches", "4.12.0", "stdint.patch"), "608ea7c41855b26029f114ac5b0c9abf35656dec559b86939909813da6bb78ae")
     end
 
     add_configs("encrypt",  { description = "enable encrypt", default = true, type = "boolean"})
