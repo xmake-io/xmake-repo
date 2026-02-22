@@ -27,6 +27,10 @@ package("openexr")
     add_versions("v2.5.5", "59e98361cb31456a9634378d0f653a2b9554b8900f233450f2396ff495ea76b3")
     add_versions("v2.5.3", "6a6525e6e3907715c6a55887716d7e42d09b54d2457323fcee35a0376960bebf")
 
+    if is_plat("linux") then
+        -- GCC15 includes once_flag.h in pthread.h which causes name conflicts, so just use std if possible
+        add_patches(">=3.4.5", "patches/3.4.5/threads.patch", "9161afa1f79e6d2af9021659007ed6388f67d1fcb2e16c307677c04479408170")
+    end
     add_patches("3.4.0", "patches/3.4.0/openjph-include.patch", "d8eb99fd9f064821134ee61c4bfb0e5dff4be557a21698365361250f13e82e53")
     add_patches("3.3.3", "patches/3.3.3/mingw32.patch", "17cbe9d0cbc0c670a846454893c1a427590789cf6bf052a4d800d1263e0faa9a")
 
