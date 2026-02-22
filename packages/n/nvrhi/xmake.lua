@@ -32,6 +32,12 @@ package("nvrhi")
         if package:config("shared") then
             package:add("defines", "NVRHI_SHARED_LIBRARY_IMPORT=1")
         end
+        if package:config("d3d12") then
+            package:add("deps", "directx-headers")
+        end
+        if package:config("vulkan") then
+            package:add("deps", "vulkan-headers")
+        end
     end)
 
     on_install("linux", "windows|x64", function (package)
