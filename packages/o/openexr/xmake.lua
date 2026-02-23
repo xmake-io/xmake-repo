@@ -6,6 +6,7 @@ package("openexr")
     add_urls("https://github.com/AcademySoftwareFoundation/openexr/archive/refs/tags/$(version).tar.gz",
              "https://github.com/AcademySoftwareFoundation/openexr.git")
 
+    add_versions("v3.4.5", "b10f21d3f8ff3211eb1687a2e2bf7a79d361aec8dfaca1f9b79f3d70755b4f48")
     add_versions("v3.4.4", "7c663c3c41da9354b5af277bc2fd1d2360788050b4e0751a32bcd50e8abaef8f")
     add_versions("v3.4.0", "d7b31637d7adc359f5e5a7517ba918cb5997bc1a4ae7a808ec874cdf91da93c0")
     add_versions("v3.3.5", "cb0c88710c906c9bfc59027eb147e780d508c7be1a90b43af3ec9e3c2987b70d")
@@ -26,6 +27,10 @@ package("openexr")
     add_versions("v2.5.5", "59e98361cb31456a9634378d0f653a2b9554b8900f233450f2396ff495ea76b3")
     add_versions("v2.5.3", "6a6525e6e3907715c6a55887716d7e42d09b54d2457323fcee35a0376960bebf")
 
+    if is_plat("linux") then
+        -- GCC15 includes once_flag.h in pthread.h which causes name conflicts, so just use std if possible
+        add_patches(">=3.4.5", "patches/3.4.5/threads.patch", "9161afa1f79e6d2af9021659007ed6388f67d1fcb2e16c307677c04479408170")
+    end
     add_patches("3.4.0", "patches/3.4.0/openjph-include.patch", "d8eb99fd9f064821134ee61c4bfb0e5dff4be557a21698365361250f13e82e53")
     add_patches("3.3.3", "patches/3.3.3/mingw32.patch", "17cbe9d0cbc0c670a846454893c1a427590789cf6bf052a4d800d1263e0faa9a")
 
