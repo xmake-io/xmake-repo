@@ -6,6 +6,7 @@ package("bddisasm")
     add_urls("https://github.com/bitdefender/bddisasm/archive/refs/tags/$(version).tar.gz",
              "https://github.com/bitdefender/bddisasm.git")
 
+    add_versions("v3.0.1", "9b54446e79fbd76312784dbe527af109135e55ee568369752e02bdee201c7661")
     add_versions("v3.0.0", "3d02d63af2e0571427fcb3842de37916f7ded83f95b938028eff7a45af03725e")
     add_versions("v2.2.0", "b1aa8749ef1d61ecdc4e5469a823b40e06cf1d077a518995bf86bcac09ba530d")
 
