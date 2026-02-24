@@ -40,8 +40,8 @@ package("zxing-cpp")
     end)
 
     on_install(function (package)
-        if package:config("writer") then
-            local zint = package:dep("zint")
+        local zint = package:dep("zint")
+        if zint then
             if not zint:config("shared") then
                 io.replace("core/CMakeLists.txt",
                     "target_link_libraries (ZXing PRIVATE zint)",
@@ -66,6 +66,9 @@ package("zxing-cpp")
         table.insert(configs, "-DBUILD_EXPERIMENTAL_API=" .. (package:config("experimental") and "ON" or "OFF"))
         table.insert(configs, "-DZXING_EXPERIMENTAL_API=" .. (package:config("experimental") and "ON" or "OFF"))
         table.insert(configs, "-DZXING_C_API=" .. (package:config("c_api") and "ON" or "OFF"))
+        if zint then
+            table.insert(configs, "-DZINT_STATIC=" .. (zint:config("shared") and "OFF" or "ON"))
+        end
 
         local opt = {cxflags = {}}
         if package:has_tool("cxx", "cl") then
