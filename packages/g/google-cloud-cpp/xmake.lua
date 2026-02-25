@@ -126,12 +126,13 @@ package("google-cloud-cpp")
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
 
-        local openssl = package:dep("openssl")
+        local openssl = package:dep("openssl") or package:dep("openssl3")
         if openssl then
             if not openssl:is_system() then
                 table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
             end
         end
+        table.insert(configs, "-DGOOGLE_CLOUD_CPP_ENABLE_GRPC=" .. (package:dep("grpc") and "ON" or "OFF"))
 
         local libraries = package:config("libraries")
         if libraries then
