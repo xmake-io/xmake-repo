@@ -1,6 +1,6 @@
 package("liblsl")
     set_homepage("https://github.com/sccn/liblsl")
-    set_description("Lab Streaming Layer C/C++ library")
+    set_description("C++ lsl library for multi-modal time-synched data transmission over the local network.")
     set_license("MIT")
 
     add_urls("https://github.com/sccn/liblsl/archive/refs/tags/$(version).tar.gz",

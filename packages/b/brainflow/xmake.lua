@@ -1,6 +1,6 @@
 package("brainflow")
     set_homepage("https://github.com/brainflow-dev/brainflow")
-    set_description("BrainFlow SDK for EEG and biosensors")
+    set_description("BrainFlow is a library intended to obtain, parse and analyze EEG, EMG, ECG and other kinds of data from biosensors.")
     set_license("MIT")
 
     add_urls("https://github.com/brainflow-dev/brainflow/archive/refs/tags/$(version).tar.gz",
