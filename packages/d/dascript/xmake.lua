@@ -53,5 +53,8 @@ package("dascript")
         if package:is_plat("windows") then
             name = "daslang.exe"
         end
-        os.runv(package:installdir("bin", name))
+        -- Workaround as returned value is all time -1
+        local outdata, errdata = os.iorun(package:installdir("bin", name))
+        print(outdata)
+        assert(outdata:find("daslang version ", 1, true))
     end)
