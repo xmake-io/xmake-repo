@@ -2,7 +2,7 @@ package("dascript")
     set_homepage("https://github.com/GaijinEntertainment/daScript")
     set_description("Daslang - high-performance statically strongly typed programming language")
     set_license("BSD-3-Clause")
-    -- TODO : add compilation from source for old linux systems 
+
     if is_host("windows") then
         if is_arch("x64", "x86_64") then
             add_urls("https://github.com/GaijinEntertainment/daScript/releases/download/v0.5.9.2.1/daslang-bundle-windows-x86_64.zip")
@@ -53,5 +53,5 @@ package("dascript")
         if package:is_plat("windows") then
             name = "daslang.exe"
         end
-        os.runv(package:installdir("bin", name), {"--version"})
+        os.runv(package:installdir("bin", name))
     end)
