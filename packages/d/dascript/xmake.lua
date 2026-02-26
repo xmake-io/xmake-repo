@@ -40,8 +40,8 @@ package("dascript")
     on_install("windows", "linux", "macosx", function (package)
         os.cp("bin", package:installdir())
         os.cp("lib", package:installdir())
-        os.cp("exemples",package:installdir())
-        os.cp("modules",package:installdir())
+        os.cp("examples", package:installdir())
+        os.cp("modules", package:installdir())
         if not package:is_plat("windows") then
             os.vrunv("chmod", {"+x", package:installdir("bin/daslang")})
         end
