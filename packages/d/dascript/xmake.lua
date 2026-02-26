@@ -38,7 +38,6 @@ package("dascript")
     end
 
     on_install("windows", "linux", "macosx", function (package)
-        os.cd("daslang_bundle")
         os.cp("bin", package:installdir())
         os.cp("lib", package:installdir())
         os.cp("exemples",package:installdir())
