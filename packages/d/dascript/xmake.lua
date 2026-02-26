@@ -44,7 +44,7 @@ package("dascript")
         os.cp("daslang_bundle/modules/*",package:installdir("modules"))
         -- add execution autorisation on posix system
         if not package:is_plat("windows") then
-            os.vrunv("chmod", {"+x", "./bin/daslang")
+            os.vrunv("chmod", {"+x", "./bin/daslang"})
         end
         package:addenv("PATH", "bin")
     end)
