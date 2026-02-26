@@ -5,6 +5,7 @@ package("catch2")
 
     add_urls("https://github.com/catchorg/Catch2/archive/refs/tags/$(version).zip",
              "https://github.com/catchorg/Catch2.git")
+    add_versions("v3.12.0", "e1e1592dbc971d9196b379aef1882f7d427ceaf0ecf6cae40b575d580dd83648")
     add_versions("v3.11.0", "faa38e0b3899151d5c1b1d81f15ba7b6d25c6c27d060094212392e8f6bc1dce3")
     add_versions("v3.10.0", "e128e267ac17a7af61f57f65c31923a7b494cfe443aa7493e61033677cb7a0d3")
     add_versions("v3.9.0", "44d0c52a218d21da40800dc2d4e77f79ee6f8165ce9274fce52fa00608083912")
@@ -91,7 +92,7 @@ package("catch2")
                 elseif package:has_tool("cxx", "clang", "clangxx") then
                     main_component:add("ldflags", "-Wl,/subsystem:console")
                 end
-                os.mkdir(path.join(package:buildir(), "src/pdb"))
+                os.mkdir(path.join(package:builddir(), "src/pdb"))
             end
 
             local configs = {"-DCATCH_INSTALL_DOCS=OFF", "-DCATCH_BUILD_TESTING=OFF", "-DCATCH_BUILD_EXAMPLES=OFF"}
@@ -107,7 +108,7 @@ package("catch2")
 
         if package:is_plat("windows") and package:is_debug() then
             local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.cp(path.join(package:buildir(), "src/*.pdb"), dir)
+            os.cp(path.join(package:builddir(), "src/*.pdb"), dir)
         end
     end)
 

@@ -7,6 +7,7 @@ package("sse2neon")
     add_urls("https://github.com/DLTcollab/sse2neon/archive/refs/tags/$(version).tar.gz",
              "https://github.com/DLTcollab/sse2neon.git")
 
+    add_versions("v1.9.1", "6b70e7cb8c5ce4641002b85deaafe97efdf9ade9b49884edeaf678b35f0e132f")
     add_versions("v1.8.0", "e251746e3b761f3f0de1ad462b1efe53532341b6b0498d394765fceb85ce8a46")
     add_versions("v1.7.0", "cee6d54922dbc9d4fa57749e3e4b46161b7f435a22e592db9da008051806812a")
 

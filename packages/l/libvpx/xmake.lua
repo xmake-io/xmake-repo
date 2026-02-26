@@ -6,6 +6,7 @@ package("libvpx")
     add_urls("https://github.com/webmproject/libvpx/archive/refs/tags/$(version).tar.gz",
              "https://github.com/webmproject/libvpx.git",
              "https://chromium.googlesource.com/webm/libvpx.git")
+    add_versions("v1.16.0", "7a479a3c66b9f5d5542a4c6a1b7d3768a983b1e5c14c60a9396edc9b649e015c")
     add_versions("v1.15.2", "26fcd3db88045dee380e581862a6ef106f49b74b6396ee95c2993a260b4636aa")
     add_versions("v1.15.1", "6cba661b22a552bad729bd2b52df5f0d57d14b9789219d46d38f73c821d3a990")
     add_versions("v1.15.0", "e935eded7d81631a538bfae703fd1e293aad1c7fd3407ba00440c95105d2011e")

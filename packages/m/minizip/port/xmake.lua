@@ -3,7 +3,6 @@ option("bzip2", {default = false})
 add_rules("mode.debug", "mode.release")
 
 add_rules("utils.install.cmake_importfiles")
-add_rules("utils.install.pkgconfig_importfiles")
 
 add_requires("zlib")
 if has_config("bzip2") then
@@ -23,7 +22,7 @@ target("minizip")
 
     if is_plat("windows") then
         add_files("iowin32.c")
-        add_headerfiles("iowin32.h")
+        add_headerfiles("iowin32.h", {prefixdir = "minizip"})
     else
         add_defines("_LARGEFILE64_SOURCE=1", "_FILE_OFFSET_BITS=64")
     end

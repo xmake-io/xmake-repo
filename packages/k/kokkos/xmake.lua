@@ -6,6 +6,10 @@ package("kokkos")
     add_urls("https://github.com/kokkos/kokkos/archive/refs/tags/$(version).tar.gz",
              "https://github.com/kokkos/kokkos.git")
 
+    add_versions("5.0.2", "d826f2e0bf1bc3515b4887e3a2594c7fb7a2b5b005dd8798242a8fd1953a9a21")
+    add_versions("5.0.1", "d8d2669870b84c3c58543dd165962385042f7325ba228b2b6f02769187324d01")
+    add_versions("5.0.0", "b028b797ba8ef3b439ddccf4aa3d651f2fa225cc2195bf1c1aaf096831b611c7")
+    add_versions("4.7.01", "cebf6daeb99c95e3d4116ea0d97c94b6a521c0cff1f5e613f127f6beea960ac7")
     add_versions("4.6.02", "a4e6a39f34a0ffec8de0b23959a9866721363b581adb60554263bcfc15a10734")
     add_versions("4.6.01", "43190b118d0cf108b39a28f985058eecdc73370be57082a1d961c1d978ede104")
     add_versions("4.6.00", "348b2d860046fc3ddef5ca3a128317be1a6f3fa35196f268338a180fcae52264")
@@ -49,5 +53,5 @@ package("kokkos")
                 Kokkos::initialize(argc, argv);
                 Kokkos::finalize();
             }
-        ]]}, {configs = {languages = "c++17"}, includes = "Kokkos_Core.hpp"}))
+        ]]}, {configs = {languages = package:version():ge("4.7.0") and "c++20" or "c++17"}, includes = "Kokkos_Core.hpp"}))
     end)

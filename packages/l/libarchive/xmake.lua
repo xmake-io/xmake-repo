@@ -1,11 +1,12 @@
 package("libarchive")
-
     set_homepage("https://libarchive.org/")
     set_description("Multi-format archive and compression library")
     set_license("BSD-2-Clause")
 
     add_urls("https://libarchive.org/downloads/libarchive-$(version).tar.gz")
 
+    add_versions("3.8.5", "8a60f3a7bfd59c54ce82ae805a93dba65defd04148c3333b7eaa2102f03b7ffd")
+    add_versions("3.8.4", "b2c75b132a0ec43274d2867221befcb425034cd038e465afbfad09911abb1abb")
     add_versions("3.7.7", "4cc540a3e9a1eebdefa1045d2e4184831100667e6d7d5b315bb1cbc951f8ddff")
     add_versions("3.7.2", "df404eb7222cf30b4f8f93828677890a2986b66ff8bf39dac32a804e96ddf104")
     add_versions("3.6.2", "ba6d02f15ba04aba9c23fd5f236bb234eab9d5209e95d1c4df85c44d5f19b9b3")

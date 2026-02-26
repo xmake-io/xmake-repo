@@ -1,6 +1,7 @@
 package("libx11")
     set_homepage("https://www.x.org/")
     set_description("X.Org: Core X11 protocol client library")
+    set_license("X11")
 
     set_urls("https://www.x.org/archive/individual/lib/libX11-$(version).tar.gz")
     add_versions("1.6.9", "b8c0930a9b25de15f3d773288cacd5e2f0a4158e194935615c52aeceafd1107b")
@@ -9,6 +10,7 @@ package("libx11")
     add_versions("1.8.1", "d52f0a7c02a45449f37b0831d99ff936d92eb4ce8b4c97dc17a63cea79ce5a76")
     add_versions("1.8.7", "793ebebf569f12c864b77401798d38814b51790fce206e01a431e5feb982e20b")
     add_versions("1.8.12", "220fbcf54b6e4d8dc40076ff4ab87954358019982490b33c7802190b62d89ce1")
+    add_versions("1.8.13", "acf0e7cd7541110e6330ecb539441a2d53061f386ec7be6906dfde0de2598470")
 
     if is_plat("linux") then
         add_extsources("apt::libx11-dev", "pacman::libx11")
@@ -23,12 +25,16 @@ package("libx11")
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"})
 
     if is_plat("macosx", "linux", "bsd", "cross") then
-        add_deps("pkg-config", "util-macros", "xtrans", "libxcb", "xorgproto")
+        add_deps("pkg-config", "util-macros", "xtrans", "xorgproto")
     end
     if is_plat("macosx") then
         -- fix sed: RE error: illegal byte sequence
         add_deps("gnu-sed")
     end
+
+    on_load(function (package)
+        package:add("deps", "libxcb", { configs = { shared = package:config("shared") } })
+    end)
 
     on_install("macosx", "linux", "bsd", "cross", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
@@ -46,7 +52,7 @@ package("libx11")
         if package:config("pic") then
             table.insert(configs, "--with-pic")
         end
-        if package:is_plat("cross") then
+        if package:is_cross() then
             table.insert(configs, "--disable-malloc0returnsnull")
         end
         import("package.tools.autoconf").install(package, configs)

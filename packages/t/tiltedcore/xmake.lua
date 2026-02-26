@@ -1,11 +1,11 @@
 package("tiltedcore")
-
     set_homepage("https://github.com/tiltedphoques/TiltedCore")
     set_description("Core library from Tilted Phoques")
 
     add_urls("https://github.com/tiltedphoques/TiltedCore/archive/$(version).zip")
     add_urls("https://github.com/tiltedphoques/TiltedCore.git")
 
+    add_versions("v0.2.8", "d805c58c9f2f1b093e6523b196da6f14e1048082b9111c68fb604ef4dc795379")
     add_versions("v0.2.7", "dbc9fcee3706e91a9fbe00648c3593c8b8f0ae9208fb510e756ae6bee8931b93")
     add_versions("v0.2.6", "b5e323c579395689cabccd24b87ef0ff74e448a4d3088f25596334ccbcd634ba")
     add_versions("v0.2.5", "60cffe615bc5817b85ce6dbef92d08a80f76347464f8604a0b344bc3417aa3d6")
@@ -19,15 +19,21 @@ package("tiltedcore")
     add_versions("v0.1.4", "c50213b6814267ccfa24212ca0fbc922c162ac97d234ff50de2e05463115e9b4")
     add_versions("v0.1.3", "e6bc279a436e32c187341af9a47a64977d00d354eda66237804aada51d1884e3")
 
+    add_patches("v0.2.8", "patches/0.2.8/include-mutex.patch", "3d9b87a95f9bafea72758507027ea737668eb8efa05e8dea98dc4f101701e810")
+
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+
     add_deps("mimalloc", {configs = {rltgenrandom = true}})
 
-    on_install("windows", "msys", "linux", function (package)
-        if package:is_plat("windows") then
-            local vs = import("core.tool.toolchain").load("msvc"):config("vs")
-            if tonumber(vs) < 2019 then
-                raise("Your compiler is too old to use this library, it need c++17 support above vs2019.")
-            end
+    on_check("windows", function (package)
+        local msvc = package:toolchain("msvc")
+        local vs = msvc:config("vs")
+        if vs and tonumber(vs) < 2019 then
+            raise("package(tiltedcore): VS2019 or newer is required.")
         end
+    end)
+
+    on_install("windows", "mingw", "linux", "cross", "android", "macosx|!arm*", function (package)
         import("package.tools.xmake").install(package)
     end)
 

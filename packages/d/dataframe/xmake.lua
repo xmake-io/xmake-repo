@@ -6,6 +6,8 @@ package("dataframe")
     add_urls("https://github.com/hosseinmoein/DataFrame/archive/refs/tags/$(version).tar.gz",
              "https://github.com/hosseinmoein/DataFrame.git")
 
+    add_versions("3.7.0", "bd3bb9f45bb0ac092e4ff9052d565d8d6eed8f8029a1a7de7424b4190b797345")
+    add_versions("3.6.0", "23366522d8e0f0d4f8405bfda435be0d408782b3309a46be522b060b7393ef4f")
     add_versions("3.4.0", "84aafa6bd1bf2000232e380f12eea0de01b2d0da88930aa4416aee524a8736aa")
     add_versions("3.3.0", "57a722592a29ee8fca902983411c78e7f4179c402a8b0b905f96916c9694672a")
     add_versions("3.2.0", "44c513ef7956976738c2ca37384a220c5383e95fc363ad933541c6f3eef9d294")
@@ -46,8 +48,9 @@ package("dataframe")
                     std::vector<int> x, y;
                     std::ranges::fill(x, 10);
                     for (auto&& [a, b] : std::views::zip(x, y)) {}
+                    bool _ = std::ranges::contains(x, 10);
                 }
-            ]]}, {configs = {languages = "c++23"}}), "package(dataframe) require c++23")
+            ]]}, {configs = {languages = "c++23"}}), "package(dataframe) require fully support for c++23")
         end)
     end
 

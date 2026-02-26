@@ -6,6 +6,8 @@ package("trantor")
     add_urls("https://github.com/an-tao/trantor/archive/refs/tags/$(version).tar.gz",
              "https://github.com/an-tao/trantor.git")
 
+    add_versions("v1.5.26", "e47092938aaf53d51c8bc72d8f54ebdcf537e6e4ac9c8276f3539413d6dfeddf")
+    add_versions("v1.5.25", "2147b745ebcaf83a9a5d4b45d00a7e6811cf07b29d3fd6979fd2871f6edbb7f4")
     add_versions("v1.5.24", "3ffe8f6eeeef841b5550540edbed8cb3b3fda2bc5a1d536cc9c6f1809b7cb164")
     add_versions("v1.5.23", "eeb54b096129e89355b578d1d1c730123458ed1b64deab5531481e35476ece13")
     add_versions("v1.5.22", "2f870b016a592228d617ef51eec4e9a9ab7dc56c066923af9bf6dd42fefb63de")
@@ -60,6 +62,7 @@ package("trantor")
     end)
 
     on_install(function (package)
+        io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
         io.replace("CMakeLists.txt", "\"${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules/Findc-ares.cmake\"", "", {plain = true})
         io.replace("CMakeLists.txt", "find_package(c-ares)", "find_package(c-ares CONFIG)", {plain = true})
         io.replace("CMakeLists.txt", "c-ares_lib", "c-ares::cares", {plain = true})

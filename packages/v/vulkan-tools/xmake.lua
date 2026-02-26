@@ -16,12 +16,14 @@ package("vulkan-tools")
     add_urls("https://github.com/KhronosGroup/Vulkan-Tools.git", {alias = "git"})
 
     -- when adding a new sdk version, please ensure vulkan-headers, vulkan-hpp, vulkan-loader, vulkan-tools, vulkan-validationlayers, vulkan-utility-libraries, spirv-headers, spirv-reflect, spirv-tools, glslang and volk packages are updated simultaneously
+    add_versions("archive:1.4.335+0", "85bf51a54271c87925711f7159ea66cc6c5abf6afd5f2bbf452d444fd7deccf3")
     add_versions("archive:1.4.309+0", "d854ff4324b519ff4a1cf5d9e9c333e5244ea7870fad6eadd73efd7b04aedcb0")
     add_versions("archive:1.2.198+0", "06e174bca7834df73dc6ce3c2a72ab3bc34b63e16fdb9a486bf1315f02768032")
     add_versions("archive:1.2.189+1", "ef5db0934ff7192657bbfc675f6e3e1ee009f2ad34aab915d2bd9993a59add81")
     add_versions("archive:1.2.162+0", "8324a6dfd1bc20d4fad45c4ea56357d8354fc03e3e4529d0a4919f124d9e6106")
     add_versions("archive:1.2.154+0", "c7d66ec1f5fe5c0a13e487fe5c6eefd3a954522c0b05f06bd2ae41792aeea272")
 
+    add_versions("git:1.4.335+0", "vulkan-sdk-1.4.335.0")
     add_versions("git:1.4.309+0", "vulkan-sdk-1.4.309.0")
     add_versions("git:1.2.198+0", "sdk-1.2.198.0")
     add_versions("git:1.2.189+1", "sdk-1.2.189.1")
@@ -32,7 +34,7 @@ package("vulkan-tools")
 
     if is_plat("linux") then
         add_extsources("apt::vulkan-tools", "pacman::vulkan-tools")
-        add_deps("wayland", "libxrandr", "libxcb", "libxkbcommon")
+        add_deps("wayland", "libxrandr", "libxrender", "libxcb", "libxkbcommon")
     end
 
     on_load("windows|x64", "linux", function (package)
@@ -53,7 +55,7 @@ package("vulkan-tools")
         if package:is_plat("linux") then
             local includes = {}
             local linkdirs = {}
-            for _, lib in ipairs({"wayland", "libxrandr", "libxcb", "libxkbcommon"}) do
+            for _, lib in ipairs({"wayland", "libxrandr", "libxrender", "libxcb", "libxkbcommon"}) do
                 local fetchinfo = package:dep(lib):fetch()
                 for _, dir in ipairs(fetchinfo.sysincludedirs or fetchinfo.includedirs) do
                     table.insert(includes, dir)

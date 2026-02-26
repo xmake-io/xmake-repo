@@ -11,6 +11,7 @@ package("c-ares")
         end
     end})
 
+    add_versions("1.34.6", "912dd7cc3b3e8a79c52fd7fb9c0f4ecf0aaa73e45efda880266a2d6e26b84ef5")
     add_versions("1.34.5", "7d935790e9af081c25c495fd13c2cfcda4792983418e96358ef6e7320ee06346")
     add_versions("1.34.4", "fa38dbed659ee4cc5a32df5e27deda575fa6852c79a72ba1af85de35a6ae222f")
     add_versions("1.34.3", "26e1f7771da23e42a18fdf1e58912a396629e53a2ac71b130af93bbcfb90adbe")

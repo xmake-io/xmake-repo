@@ -23,7 +23,7 @@ package("gtest")
     add_versions("v1.16.0", "a9607c9215866bd425a725610c5e0f739eeb50887a57903df48891446ce6fb3c")
     add_versions("v1.17.0", "40d4ec942217dcc84a9ebe2a68584ada7d4a33a8ee958755763278ea1c5e18ff")
 
-    add_configs("main",  {description = "Link to the gtest_main entry point.", default = false, type = "boolean"})
+    add_configs("main",  {description = "Link to the gmock/gtest_main entry point.", default = false, type = "boolean"})
     add_configs("gmock", {description = "Link to the googlemock library.", default = true, type = "boolean"})
     add_configs("cmake", {description = "Use cmake build system", default = true, type = "boolean"})
 
@@ -39,6 +39,16 @@ package("gtest")
         if package:config("shared") and package:is_plat("windows") then
             package:add("defines", "GTEST_LINKED_AS_SHARED_LIBRARY=1")
         end
+
+        if package:config("gmock") then
+            if package:config("main") then
+                package:add("links", "gmock_main")
+            end
+            package:add("links", "gmock")
+        elseif package:config("main") then
+            package:add("links", "gtest_main")
+        end
+        package:add("links", "gtest")
     end)
 
     on_install(function (package)
@@ -82,6 +92,13 @@ package("gtest")
                         add_defines("GTEST_CREATE_SHARED_LIBRARY=1")
                     end
                     add_deps("gtest")
+
+                target("gmock_main")
+                    set_kind("$(kind)")
+                    set_default(]] .. tostring(package:config("main")) .. [[)
+                    add_files("googlemock/src/gmock_main.cc")
+                    add_includedirs("googlemock/include", "googlemock", "googletest/include", "googletest")
+                    add_deps("gmock")
             ]], std))
             import("package.tools.xmake").install(package)
         end

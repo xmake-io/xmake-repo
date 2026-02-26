@@ -5,6 +5,7 @@ package("libpam")
     add_urls("https://github.com/linux-pam/linux-pam/archive/refs/tags/$(version).tar.gz",
              "https://github.com/linux-pam/linux-pam.git")
 
+    add_versions("v1.7.2", "d7ce5cb6e07ee8603d8af41a672bcb515b9d27079ee309fb3f729a8020166694")
     add_versions("v1.7.1", "82aadd97eb697965b577069c12046a4dd1be68361a9978c708698d2a1ee9b6d1")
 
     add_configs("i18n",  {description = "Enable i18n support.", default = true, type = "boolean"})

@@ -1,0 +1,46 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 70d88c3..c560abf 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -15,7 +15,7 @@ else ()
+ endif ()
+ 
+ # Some builds need position-independent code.
+-set (CMAKE_POSITION_INDEPENDENT_CODE ON)
++
+ 
+ # Allow nsync users to turn the tests on or off.
+ option (NSYNC_ENABLE_TESTS "Enable for building tests" ON)
+@@ -90,7 +90,9 @@ endif ()
+ # Pick the include directory for the operating system.
+ if ("${CMAKE_SYSTEM_NAME}X" STREQUAL "WindowsX")
+ 	include_directories ("${PROJECT_SOURCE_DIR}/platform/win32")
+-	set (NSYNC_CPP_FLAGS "/TP")
++	if (MSVC)
++		set (NSYNC_CPP_FLAGS "/TP")
++	endif ()
+ 
+ 	set (NSYNC_OS_SRC
+ 		${NSYNC_POSIX_SRC}
+@@ -397,15 +399,17 @@ if (NSYNC_ENABLE_TESTS)
+ 	endforeach (t)
+ endif ()
+ 
+-set (CMAKE_SKIP_INSTALL_ALL_DEPENDENCY ON)
++
+ 
+ install (TARGETS nsync EXPORT nsync
+ 	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT RuntimeLibraries
+-	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development)
++	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development
++	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+ 
+ install (TARGETS nsync_cpp EXPORT nsync_cpp OPTIONAL
+ 	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT RuntimeLibraries
+-	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development)
++	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development
++	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+ 
+ set (NSYNC_INCLUDES
+ 	"public/nsync.h"
+ 

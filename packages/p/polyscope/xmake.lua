@@ -23,7 +23,7 @@ package("polyscope")
     end
 
     add_deps("cmake")
-    add_deps("glad", "glfw", "glm", "nlohmann_json", "stb")
+    add_deps("glad", "glfw", "glm <=1.0.1", "nlohmann_json", "stb")
     on_load("windows", "macosx", "linux", function (package)
         local version = package:version()
         local cfgs = {glfw = true, opengl3 = true}

@@ -6,6 +6,7 @@ package("xxmlxx")
 
     add_urls("https://github.com/luckydu-henry/xxmlxx.git")
 
+    add_versions("2025.09.30", "8439462a3eb59d4f3f2b83f4ddeb724e9e2bbd18")
     add_versions("2025.09.14", "8e290102820b75aacc60d5419ff955aea52d6514")
 
     if on_check then

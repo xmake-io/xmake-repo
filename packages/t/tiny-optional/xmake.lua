@@ -7,6 +7,7 @@ package("tiny-optional")
     add_urls("https://github.com/Sedeniono/tiny-optional/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Sedeniono/tiny-optional.git")
 
+    add_versions("v1.5.3", "159974ea51fc1273cb4e642666d4f00b3bb1adbf15c0a35ec7315fec67e7c9ac")
     add_versions("v1.5.2", "df67c6311a03282d892aa0539131696b8c66eaccf080d68f96a030aa690ea334")
     add_versions("v1.4.0", "e09f164b7a73f96d1e925b8f450749885b192b54ccce4f27f43bdf88a0021e33")
     add_versions("v1.3.1", "ae82a5116970c1c541bfaf73c9c99a61aa61031916a64cb069f776b0e893ff84")

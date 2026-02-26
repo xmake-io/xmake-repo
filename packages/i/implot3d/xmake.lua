@@ -6,6 +6,7 @@ package("implot3d")
     add_urls("https://github.com/brenocq/implot3d/archive/refs/tags/$(version).tar.gz",
              "https://github.com/brenocq/implot3d.git")
 
+    add_versions("v0.3", "8f0012043ea4ea56cb5ca9fc44731ad005637f0d3515a5ed3bead27f3096fb55")
     add_versions("v0.2", "9b526ce01a9e9028e7d516b0699eee3c3b19d91d2dd6b546985e6a4b0bf700d4")
 
     add_deps("imgui")

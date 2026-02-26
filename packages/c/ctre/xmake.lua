@@ -13,6 +13,7 @@ package("ctre")
     add_versions("v3.7.2", "1dbcd96d279b5be27e9c90d2952533db10bc0e5d8ff6224a3c6d538fd94ab18f")
     add_versions("v3.8.1", "7c7a936145defe56e886bac7731ea16a52de65d73bda2b56702d0d0a61101c76")
     add_versions("v3.9.0", "8d0c061faf6b41c6913cac39af1d8cc8272e693b442c32f4fa762b505490fb36")
+    add_versions("v3.10.0", "23585680a282658abe3557cf112d79edddb5fdfd8947f450b279fe63940a1fa7")
 
     add_configs("cmake", {description = "Use cmake build system", default = false, type = "boolean"})
 

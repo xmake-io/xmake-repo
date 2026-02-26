@@ -4,6 +4,7 @@ package("policycoreutils")
     set_description("SELinux policy core utilities.")
 
     add_urls("https://github.com/SELinuxProject/selinux/releases/download/$(version)/policycoreutils-$(version).tar.gz")
+    add_versions("3.10", "8dbd50d868acbfae9d1a972f6bbb2587f06c9ec73308d11af6acb3a401de9832")
     add_versions("3.9", "44a294139876cf4c7969cb6a75d1932cb42543d74a7661760ded44a20bf7ebe8")
 
     add_deps("gettext")

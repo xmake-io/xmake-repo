@@ -1,0 +1,183 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 1e4e1b6..c919063 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 4.1.1)
++cmake_minimum_required(VERSION 3.5)
+ 
+ project(
+     cppli
+@@ -7,7 +7,7 @@ project(
+     LANGUAGES CXX
+ )
+ 
+-set(CMAKE_CXX_STANDARD 23)
++set(CMAKE_CXX_STANDARD 20)
+ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ set(CMAKE_CXX_EXTENSIONS OFF)
+ 
+@@ -31,7 +31,7 @@ target_include_directories(
+         $<INSTALL_INTERFACE:include>
+ )
+ 
+-target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_23)
++target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
+ 
+ #if(MSVC)
+ #    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
+@@ -78,7 +78,7 @@ if(CPPLI_BUILD_TESTS)
+         PRIVATE ${PROJECT_NAME} Catch2::Catch2WithMain
+     )
+ 
+-    target_compile_features(cppli_tests PRIVATE cxx_std_23)
++    target_compile_features(cppli_tests PRIVATE cxx_std_20)
+ 
+     include(CTest)
+     include(Catch)
+diff --git a/src/cppli_types.cpp b/src/cppli_types.cpp
+index 91f17c3..d8f4ba0 100644
+--- a/src/cppli_types.cpp
++++ b/src/cppli_types.cpp
+@@ -1,57 +1,102 @@
+-#include <charconv>
+ #include <cppli_error.hpp>
+ #include <cppli_types.hpp>
+ #include <string>
+ #include <system_error>
+ 
++#if __cpp_lib_charconv >= 201606L && !defined(__GNUC__) || __GNUC__ >= 8
++    #define USE_FROM_CHARS
++#endif
++
++#if defined(USE_FROM_CHARS)
++    #include <charconv>
++#else
++    #include <sstream>
++#endif
++
+ namespace cli {
+-	Result<int> ValueConverter<int>::from_string(std::string_view str) {
+-		int value{};
+-		auto [ptr, ec] = std::from_chars(str.data(), str.data() + str.size(), value);
++#ifdef USE_FROM_CHARS
++    Result<int> ValueConverter<int>::from_string(std::string_view str) {
++        int value{};
++        auto [ptr, ec] = std::from_chars(str.data(), str.data() + str.size(), value);
++
++        if (ec == std::errc()) {
++            return Result<int>::ok(value);
++        }
+ 
+-		if (ec == std::errc()) {
+-			return Result<int>::ok(value);
+-		}
++        if (ec == std::errc::invalid_argument) {
++            return Result<int>::err(Error(ErrorCode::InvalidFlagValue, "Invalid integer format"));
++        }
+ 
+-		if (ec == std::errc::invalid_argument) {
+-			return Result<int>::err(Error(ErrorCode::InvalidFlagValue, "Invalid integer format"));
+-		}
++        if (ec == std::errc::result_out_of_range) {
++            return Result<int>::err(Error(ErrorCode::InvalidFlagValue, "Integer out of range"));
++        }
+ 
+-		if (ec == std::errc::result_out_of_range) {
+-			return Result<int>::err(Error(ErrorCode::InvalidFlagValue, "Integer out of range"));
+-		}
++        return Result<int>::err(Error(ErrorCode::InvalidFlagValue, "Unknown conversion error"));
++    }
+ 
+-		return Result<int>::err(Error(ErrorCode::InvalidFlagValue, "Unknown conversion error"));
+-	}
++    Result<double> ValueConverter<double>::from_string(std::string_view str) {
++        double value{};
++        auto [ptr, ec] = std::from_chars(str.data(), str.data() + str.size(), value);
+ 
+-	Result<double> ValueConverter<double>::from_string(std::string_view str) {
+-		double value{};
+-		auto [ptr, ec] = std::from_chars(str.data(), str.data() + str.size(), value);
++        if (ec == std::errc()) {
++            return Result<double>::ok(value);
++        }
+ 
+-		if (ec == std::errc()) {
+-			return Result<double>::ok(value);
+-		}
++        if (ec == std::errc::invalid_argument) {
++            return Result<double>::err(Error(ErrorCode::InvalidFlagValue, "Invalid floating-point format"));
++        }
+ 
+-		if (ec == std::errc::invalid_argument) {
+-			return Result<double>::err(Error(ErrorCode::InvalidFlagValue, "Invalid floating-point format"));
+-		}
++        if (ec == std::errc::result_out_of_range) {
++            return Result<double>::err(Error(ErrorCode::InvalidFlagValue, "Floating-point out of range"));
++        }
+ 
+-		if (ec == std::errc::result_out_of_range) {
+-			return Result<double>::err(Error(ErrorCode::InvalidFlagValue, "Floating-point out of range"));
+-		}
++        return Result<double>::err(Error(ErrorCode::InvalidFlagValue, "Unknown conversion error"));
++    }
++#else
++    Result<int> ValueConverter<int>::from_string(std::string_view str) {
++        try {
++            std::string str_copy(str);
++            std::istringstream iss(str_copy);
++            int value{};
++            iss >> value;
++            
++            if (iss.fail() || !iss.eof()) {
++                return Result<int>::err(Error(ErrorCode::InvalidFlagValue, "Invalid integer format"));
++            }
++            
++            return Result<int>::ok(value);
++        } catch (const std::exception&) {
++            return Result<int>::err(Error(ErrorCode::InvalidFlagValue, "Invalid integer format"));
++        }
++    }
+ 
+-		return Result<double>::err(Error(ErrorCode::InvalidFlagValue, "Unknown conversion error"));
+-	}
++    Result<double> ValueConverter<double>::from_string(std::string_view str) {
++        try {
++            std::string str_copy(str);
++            std::istringstream iss(str_copy);
++            double value{};
++            iss >> value;
++            
++            if (iss.fail() || !iss.eof()) {
++                return Result<double>::err(Error(ErrorCode::InvalidFlagValue, "Invalid floating-point format"));
++            }
++            
++            return Result<double>::ok(value);
++        } catch (const std::exception&) {
++            return Result<double>::err(Error(ErrorCode::InvalidFlagValue, "Invalid floating-point format"));
++        }
++    }
++#endif
+ 
+-	Result<bool> ValueConverter<bool>::from_string(std::string_view str) {
+-		if (str == "true" || str == "1" || str == "yes" || str == "on") {
+-			return Result<bool>::ok(true);
+-		}
++    Result<bool> ValueConverter<bool>::from_string(std::string_view str) {
++        if (str == "true" || str == "1" || str == "yes" || str == "on") {
++            return Result<bool>::ok(true);
++        }
+ 
+-		if (str == "false" || str == "0" || str == "no" || str == "off") {
+-			return Result<bool>::ok(false);
+-		}
++        if (str == "false" || str == "0" || str == "no" || str == "off") {
++            return Result<bool>::ok(false);
++        }
+ 
+-		return Result<bool>::err(Error(ErrorCode::InvalidFlagValue, "Invalid boolean value (expected: true/false, 1/0, yes/no, on/off)"));
+-	}
+-}// namespace cli
++        return Result<bool>::err(Error(ErrorCode::InvalidFlagValue, "Invalid boolean value (expected: true/false, 1/0, yes/no, on/off)"));
++    }
++} // namespace cli

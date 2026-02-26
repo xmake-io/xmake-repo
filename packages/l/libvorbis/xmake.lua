@@ -70,11 +70,7 @@ package("libvorbis")
         package:add("links", "vorbis" .. ext)
     end)
 
-    on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", "wasm", function (package)
-        local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
-        table.insert(configs, "-DBUILD_TESTING=OFF")
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+    on_install(function (package)
         if not package:config("vorbisenc") then
             io.replace("CMakeLists.txt", "${CMAKE_CURRENT_BINARY_DIR}/vorbisenc.pc", "", {plain = true})
         end
@@ -94,6 +90,11 @@ package("libvorbis")
     list(APPEND VORBISENC_SOURCES ../win32/vorbisenc.def)
     list(APPEND VORBISFILE_SOURCES ../win32/vorbisfile.def)]], "", {plain = true})
         end
+
+        local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
+        table.insert(configs, "-DBUILD_TESTING=OFF")
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, {packagedeps = "libogg"})
     end)
 

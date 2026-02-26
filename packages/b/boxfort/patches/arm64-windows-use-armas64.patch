@@ -1,0 +1,55 @@
+diff --git a/src/meson.build b/src/meson.build
+index e181ec7..16efb5f 100644
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -28,24 +28,41 @@ endif
+ asm = files('asm/trampoline-@0@@1@'.format(arch, asm_extension))
+ 
+ if cc.get_id() == 'msvc'
+-	if bitness == 32
++	if arch == 'aarch64'
++		masm = find_program('armasm64')
++		masm_args = [
++			'-i', '@CURRENT_SOURCE_DIR@/asm/',
++			'-i', '@0@/'.format(meson.current_build_dir()),
++			'@EXTRA_ARGS@',
++			'-o', '@OUTPUT@',
++			'@INPUT@',
++		]
++	elif bitness == 32
+ 		masm = find_program('ml')
++		masm_args = [
++			'/I', '@CURRENT_SOURCE_DIR@/asm/',
++			'/I', '@0@/'.format(meson.current_build_dir()),
++			'/safeseh',
++			'@EXTRA_ARGS@',
++			'/Fo', '@OUTPUT@',
++			'/c',
++			'@INPUT@',
++		]
+ 	else
+ 		masm = find_program('ml64')
+-	endif
+-
+-	masm_gen = generator(masm,
+-		output: '@BASENAME@.obj',
+-		depfile: '@BASENAME@.obj.ndep',
+-		arguments: [
++		masm_args = [
+ 			'/I', '@CURRENT_SOURCE_DIR@/asm/',
+ 			'/I', '@0@/'.format(meson.current_build_dir()),
+-			'/safeseh',
+ 			'@EXTRA_ARGS@',
+ 			'/Fo', '@OUTPUT@',
+ 			'/c',
+ 			'@INPUT@',
+-		])
++		]
++	endif
++
++	masm_gen = generator(masm,
++		output: '@BASENAME@.obj',
++		arguments: masm_args)
+ 
+ 	asm += 'asm/setjmp-@0@@1@'.format(arch, asm_extension)
+ 

@@ -1,0 +1,18 @@
+diff --git a/include/omath/linear_algebra/mat.hpp b/include/omath/linear_algebra/mat.hpp
+index 3ec43ead..e86a57f6 100644
+--- a/include/omath/linear_algebra/mat.hpp
++++ b/include/omath/linear_algebra/mat.hpp
+@@ -17,6 +17,13 @@
+ 
+ #undef near
+ #undef far
++// Undefine FreeBSD/BSD system macros that conflict with method names
++#ifdef minor
++#undef minor
++#endif
++#ifdef major
++#undef major
++#endif
+ namespace omath
+ {
+     struct MatSize

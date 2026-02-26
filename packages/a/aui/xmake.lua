@@ -24,6 +24,7 @@ package("aui")
     add_patches("v7.1.2", "patches/v7.1.2/fix-msvc-pretty-function.diff", "268f66f42594f0188fe50d33f5783e66f66024087097ebfdfef60c9768e151fd")
     add_patches("v7.1.2", "patches/v7.1.2/fix-osx-enforce-cpp-template.diff", "599e1e9ec9beec581258db67af8c9fe9dd2351eb169a538890c65422b5052659")
     add_patches("v7.1.2", "patches/v7.1.2/fixup-network.diff", "888c1ed0e96f21bd842de72f8f9fe933261c5f76c99be55cf8e83f424bd1f79e")
+    add_patches("v7.1.2", "patches/v7.1.2/fix-glm.diff", "9b0f2e3000ea2cea92d3e3641a9db74274bc746e13ddacf6ffeddebb229e1c6d")
 
     add_deps("cmake")
     if is_subhost("windows") then

@@ -6,6 +6,7 @@ package("workflow")
     add_urls("https://github.com/sogou/workflow/archive/refs/tags/$(version).tar.gz",
              "https://github.com/sogou/workflow.git")
     
+    add_versions("v1.0.0", "e163bcdde05e5bf0708d44995a7b8579a947acb8fef9a26e3b6da9b6df63e822")
     add_versions("v0.11.11", "5b526cdd6c2c38c89b1966afca481b54b1342ac1f53b150f2ca0353659ac7efa")
     add_versions("v0.10.6", "5701ef31518a7927e61b26cd6cc1d699cb43393bf1ffc77fa61e73e64d2dd28e")
     add_versions("v0.10.7", "aa9806983f32174597549db4a129e2ee8a3d1f005923fcbb924906bc70c0e123")

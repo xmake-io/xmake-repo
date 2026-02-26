@@ -1,0 +1,47 @@
+diff --git a/zzip/plugin.c b/zzip/plugin.c
+index d211c6e..0de211a 100644
+--- a/zzip/plugin.c
++++ b/zzip/plugin.c
+@@ -51,6 +51,42 @@ zzip_filesize(int fd)
+     return st.st_size;
+ }
+ 
++#if defined(_WIN32) && ! defined(__CYGWIN__) && ! defined(__MSYS__)
++/** On native Windows (MSVC/MSVCRT), low-level I/O functions differ from POSIX
++ * semantics and headers.
++ * 
++ * MSVC/MSVCRT provides:
++ *   int read(int _FileHandle,void *_DstBuf,unsigned int _MaxCharCount);
++ *   int write(int _Filehandle,const void *_Buf,unsigned int _MaxCharCount);
++ * 
++ * instead of POSIX:
++ *   ssize_t read(int fd, void* buf, size_t len);
++ *   ssize_t write(int fd, const void* buf, size_t len);
++ *
++ * Cygwin/MSYS already provide POSIX-compatible layers. We do NOT apply this fix
++ * there to avoid overriding their working POSIX shims.
++ */
++
++static zzip_ssize_t
++posix_write(int fd, _zzip_const void* buf, zzip_size_t len)
++{
++    return _zzip_write(fd, buf, len);
++}
++
++static zzip_ssize_t
++posix_read(int fd, void* buf, zzip_size_t len)
++{
++    return _zzip_read(fd, buf, len);
++}
++
++#undef _zzip_read
++#define _zzip_read posix_read
++
++#undef _zzip_write
++#define _zzip_write posix_write
++
++#endif /* _WIN32 && !__CYGWIN__ && !__MSYS__ */
++
+ /* clang-format off */
+ static const struct zzip_plugin_io default_io = {
+     &open,
