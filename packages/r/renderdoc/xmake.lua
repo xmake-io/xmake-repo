@@ -1,4 +1,4 @@
-package("renderdoc-in-app-api")
+package("renderdoc")
     set_homepage("https://renderdoc.org/")
     set_description("RenderDoc In-Application API")
     set_license("MIT")
