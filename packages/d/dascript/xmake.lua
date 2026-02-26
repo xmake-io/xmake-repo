@@ -7,13 +7,12 @@ package("dascript")
         if is_arch("x64", "x86_64") then
             add_urls("https://github.com/GaijinEntertainment/daScript/releases/download/v0.5.9.2.1/daslang-bundle-windows-x86_64.zip")
             add_versions("0.5.9.2.1", "9ea32c7f0aee2c84fe5d652b627964c74772422f1e0fde235536d72936669f60")
-        elseif is_arch("x86", "i386", "x32") then
+        elseif is_arch("x86", "i386") then
             add_urls("https://github.com/GaijinEntertainment/daScript/releases/download/v0.5.9.2.1/daslang-bundle-windows-x86.zip")
             add_versions("0.5.9.2.1", "f6545b310c73463334b31625adc3587cf4930ef71fcee1caf0fe0b35df1df313")
         else
             raise("package(dascript 0.5.9.2.1): Windows architecture %s is unsupported", os.arch())
         end
-
     elseif is_host("macosx") then
         if is_arch("arm64") then
             add_urls("https://github.com/GaijinEntertainment/daScript/releases/download/v0.5.9.2.1/daslang-bundle-darwin26-arm64.zip")
@@ -24,7 +23,6 @@ package("dascript")
         else
             raise("package(dascript 0.5.9.2.1): MacOS architecture %s is unsupported", os.arch())
         end
-
     elseif is_host("linux") then
         if is_arch("arm64", "aarch64") then
             add_urls("https://github.com/GaijinEntertainment/daScript/releases/download/v0.5.9.2.1/daslang-bundle-linux-arm64.zip")
@@ -39,15 +37,16 @@ package("dascript")
         raise("package(dascript 0.5.9.2.1): Unsupported host platform %s", os.host())
     end
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", function (package)
         os.cp("daslang_bundle/bin/*", package:installdir("bin"))
         os.cp("daslang_bundle/lib/*", package:installdir("lib"))
         os.cp("daslang_bundle/exemples/*",package:installdir("exemples"))
         os.cp("daslang_bundle/modules/*",package:installdir("modules"))
-        -- add execution autorisation on posx system
+        -- add execution autorisation on posix system
         if not package:is_plat("windows") then
             os.chmod(package:installdir("bin/daslang"),777)
         end
+        package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)
