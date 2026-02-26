@@ -34,7 +34,7 @@ package("renderdoc")
         assert(package:check_cxxsnippets({test = [[
             #include <renderdoc_app.h>
 
-            #ifdef _WIN64 || defined(_WIN32)
+            #ifdef defined(_WIN64) || defined(_WIN32)
                 #include <windows.h>
             #else
                 #include <dlfcn.h>
