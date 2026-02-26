@@ -38,13 +38,12 @@ package("dascript")
     end
 
     on_install("windows", "linux", "macosx", function (package)
-        os.cp("daslang_bundle/bin/*", package:installdir("bin"))
-        os.cp("daslang_bundle/lib/*", package:installdir("lib"))
-        os.cp("daslang_bundle/exemples/*",package:installdir("exemples"))
-        os.cp("daslang_bundle/modules/*",package:installdir("modules"))
-        -- add execution autorisation on posix system
+        os.cp("daslang_bundle/bin", package:installdir())
+        os.cp("daslang_bundle/lib", package:installdir())
+        os.cp("daslang_bundle/exemples",package:installdir())
+        os.cp("daslang_bundle/modules",package:installdir())
         if not package:is_plat("windows") then
-            os.vrunv("chmod", {"+x", "./bin/daslang"})
+            os.vrunv("chmod", {"+x", package:installdir("bin/daslang")})
         end
         package:addenv("PATH", "bin")
     end)
