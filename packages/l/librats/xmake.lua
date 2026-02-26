@@ -6,6 +6,7 @@ package("librats")
     set_urls("https://github.com/DEgITx/librats/archive/refs/tags/$(version).tar.gz",
              "https://github.com/DEgITx/librats.git")
 
+    add_versions("0.8.0", "6223839f884eea16ed10128e0b88bc96374397cce3f24e5ee35324a0e2c4d3c7")
     add_versions("0.5.4", "1abf6aca56add96311a7e99490bc966180e2e919b4a8a581f0c068aed7eff91d")
     add_versions("0.4.0", "df1cc354d960a9cf6fd88c4b72939b975d67a1da5513f7a59aa38c1129b81b25")
     add_versions("0.3.1", "6a368a5d17a3ee9b97825ed6ee8df2ef46d7dde1c27937ce78c2b90a32b49148")
