@@ -5,6 +5,7 @@ package("libffi")
 
     set_urls("https://github.com/libffi/libffi/releases/download/v$(version)/libffi-$(version).tar.gz",
              "https://github.com/libffi/libffi.git")
+    add_versions("3.5.1", "f99eb68a67c7d54866b7706af245e87ba060d419a062474b456d3bc8d4abdbd1")
     add_versions("3.4.8", "bc9842a18898bfacb0ed1252c4febcc7e78fa139fd27fdc7a3e30d9d9356119b")
     add_versions("3.4.7", "138607dee268bdecf374adf9144c00e839e38541f75f24a1fcf18b78fda48b2d")
     add_versions("3.2.1", "d06ebb8e1d9a22d19e38d63fdb83954253f39bedc5d46232a05645685722ca37")
