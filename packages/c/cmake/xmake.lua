@@ -2,6 +2,7 @@ package("cmake")
     set_kind("binary")
     set_homepage("https://cmake.org")
     set_description("A cross-platform family of tools designed to build, test and package software")
+    set_license("BSD-3-Clause")
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::cmake")
