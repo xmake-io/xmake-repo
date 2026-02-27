@@ -17,9 +17,6 @@ package("librats")
     add_configs("bindings", {description = "Enable C API bindings for FFI support.", default = false, type = "boolean"})
     add_configs("search", {description = "Enable Rats Search feature (like Bittorrent / DHT spider algorithm).", default = false, type = "boolean"})
     add_configs("storage", {description = "Enable distributed key-value storage with P2P synchronization.", default = false, type = "boolean"})
-    if is_plat("windows") then
-        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-    end
 
     add_deps("cmake")
 
@@ -34,12 +31,19 @@ package("librats")
     on_load(function (package)
         if package:is_plat("windows", "mingw") then
             package:add("syslinks", "ws2_32", "iphlpapi", "bcrypt")
-        elseif package:is_plat("linux", "bsd") then
+        elseif package:is_plat("linux") then
             package:add("syslinks", "pthread")
+        end
+        if package:is_plat("windows") then
+            local version = package:version()
+            if version and version:lt("0.3.1") then
+                package:config_set("shared", false)
+                wprint("package(librats <0.3.1) only support static library on windows.")
+            end
         end
     end)
 
-    on_install(function (package)
+    on_install("!wasm and !bsd and (!windows or windows|!arm64)", function (package)
         local file = io.open("CMakeLists.txt", "a")
         file:write([[
 
