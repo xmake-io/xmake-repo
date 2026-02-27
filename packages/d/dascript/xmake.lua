@@ -53,7 +53,7 @@ package("dascript")
         if package:is_plat("windows") then
             name = "daslang.exe"
         end
-        local outfile = os.tmpfile()
+        local outfile = "logs.txt"
         os.exec("%s/bin/%s > %s 2>&1", package:installdir(), name, outfile)
         local outdata = io.readfile(outfile)
         os.tryrm(outfile)
