@@ -54,7 +54,8 @@ package("dascript")
             name = "daslang.exe"
         end
         local outfile = "logs.txt"
-        os.vrunv(package:installdir() .. "/bin/" .. name .." > " .. outfile .. " 2>&1", {shell = true})
+        os.touch(outfile)
+        os.vrunv(package:installdir() .. "/bin/" .. name .." > " .. outfile, {shell = true})
         local outdata = io.readfile(outfile)
         os.tryrm(outfile)
         print(outdata)
