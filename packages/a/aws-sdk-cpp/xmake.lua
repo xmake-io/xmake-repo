@@ -28,7 +28,7 @@ package("aws-sdk-cpp")
 
     on_load(function (package)
         if package:config("http_client") then
-            package:add("deps", "libcurl")
+            package:add("deps", "libcurl", {configs = {openssl = true, zlib = true}})
             if package:is_plat("macosx") then
                 package:add("frameworks", "Foundation", "CoreFoundation", "Security", "SystemConfiguration")
             end
@@ -39,7 +39,7 @@ package("aws-sdk-cpp")
     end)
 
     on_install("linux", "macosx", function (package)
-        local configs = {"-DBUILD_DEPS=OFF", "-DENABLE_TESTING=OFF", "-DAUTORUN_UNIT_TESTS=OFF", "-DAWS_SDK_WARNINGS_ARE_ERRORS=OFF"}
+        local configs = {"-DBUILD_DEPS=OFF", "-DUSE_OPENSSL=ON", "-DENABLE_TESTING=OFF", "-DAUTORUN_UNIT_TESTS=OFF", "-DAWS_SDK_WARNINGS_ARE_ERRORS=OFF"}
         table.insert(configs, "-DMINIMIZE_SIZE=ON")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
