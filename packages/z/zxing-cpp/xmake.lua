@@ -22,6 +22,15 @@ package("zxing-cpp")
 
     add_deps("cmake")
 
+    if on_check then
+        on_check("android", function (package)
+            if package:version() and package:version():ge("3.0.2") then
+                local ndk = package:toolchain("ndk"):config("ndkver")
+                assert(ndk and tonumber(ndk) > 22, "package(zxing-cpp >=3.0.2) require ndk version > 22")
+            end
+        end)
+    end
+
     on_load(function (package)
         if package:config("c_api") or package:config("writer") then
             if is_subhost("windows") then
@@ -40,6 +49,12 @@ package("zxing-cpp")
     end)
 
     on_install(function (package)
+        if package:version() and package:version():ge("3.0.2") then
+            io.replace("core/src/CreateBarcode.cpp",
+                "std::make_unique<Data>(format, std::move(options))",
+                "std::make_unique<Data>(Data{format, std::move(options)})", {plain = true})
+        end
+
         local zint = package:dep("zint")
         if zint then
             if not zint:config("shared") then
