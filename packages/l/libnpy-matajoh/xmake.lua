@@ -17,12 +17,12 @@ package("libnpy-matajoh")
     add_deps("cmake")
     add_deps("miniz")
 
-    on_load(function (package)
-        if package:is_plat("android") then
+    on_check(function (package)
+        if package:is_plat("android") and package:version() and package:version():eq("2.1.0") then
             local ndk = package:toolchain("ndk")
             local ndkver = ndk and ndk:config("ndkver")
             if ndkver and tonumber(ndkver) == 27 then
-                package:add("patches", "v2.1.0", "patches/v2.1.0/fix-r27.diff", "390c20cea1349e5675d5029dcbae69f88d63ed98c7e4e088fea4c19852080644")
+                raise("package(libnpy-matajoh v2.1.0) unsupported with r27")
             end
         end
     end)
