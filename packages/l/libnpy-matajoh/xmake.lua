@@ -22,7 +22,7 @@ package("libnpy-matajoh")
             local ndk = package:toolchain("ndk")
             local ndkver = ndk and ndk:config("ndkver")
             if ndkver and tonumber(ndkver) == 27 then
-                package:add("patches", "v2.1.0", "patches/v2.1.0/fix-r27.diff", "3c2144fd9d591e137722f72992a341c0cd33dfddee32348edb7d629da5d4e5db")
+                package:add("patches", "v2.1.0", "patches/v2.1.0/fix-r27.diff", "390c20cea1349e5675d5029dcbae69f88d63ed98c7e4e088fea4c19852080644")
             end
         end
     end)
