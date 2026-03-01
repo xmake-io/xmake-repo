@@ -39,12 +39,13 @@ package("aws-sdk-cpp")
     end)
 
     on_install("linux", "macosx|arm64", function (package)
-        local configs = {"-DBUILD_DEPS=OFF", "-DUSE_OPENSSL=ON", "-DENABLE_TESTING=OFF", "-DAUTORUN_UNIT_TESTS=OFF", "-DAWS_SDK_WARNINGS_ARE_ERRORS=OFF"}
+        local configs = {"-DBUILD_DEPS=OFF", "-DENABLE_TESTING=OFF", "-DAUTORUN_UNIT_TESTS=OFF", "-DAWS_SDK_WARNINGS_ARE_ERRORS=OFF"}
         table.insert(configs, "-DMINIMIZE_SIZE=ON")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DNO_HTTP_CLIENT=" .. (package:config("http_client") and "OFF" or "ON"))
         table.insert(configs, "-DNO_ENCRYPTION=" .. (package:config("encryption") and "OFF" or "ON"))
+        table.insert(configs, "-DUSE_OPENSSL=" .. (package:config("encryption") and "ON" or "OFF"))
         if package:config("build_only") then
             table.insert(configs, "-DBUILD_ONLY=" .. package:config("build_only"))
         end
