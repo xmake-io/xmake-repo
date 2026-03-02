@@ -47,6 +47,14 @@ package("dascript")
         if is_host("windows") then
             name = "daslang.exe"
         end
-        local content, err = try {function () return os.iorunv(name, {}) end}
-        assert(content:find("daslang version", 1, true))
+
+        local test_file = os.tmpfile() .. ".das"
+        local test_content = [[
+[export]
+def main() {
+    print("hello\n")
+}
+]]
+        io.writefile(test_file, test_content)
+        os.runv(name, {test_file})
     end)
