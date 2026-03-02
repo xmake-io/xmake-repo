@@ -47,6 +47,6 @@ package("dascript")
         if is_host("windows") then
             name = "daslang.exe"
         end
-        local content = try {function () return os.iorunv(name, {}) end}
+        local content, err = try {function () return os.iorunv(name, {}) end}
         assert(content:find("daslang version", 1, true))
     end)
