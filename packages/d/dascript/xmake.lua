@@ -41,11 +41,6 @@ package("dascript")
         if package:is_plat("windows") then
             name = "daslang.exe"
         end
-        os.touch("output.txt")
-        local outfile = io.open("output.txt", "w")
-        os.execv(name, {}, {try = true, stdout = outfile, stderr = os.nuldev()})
-        outfile:close()
-        local content = io.readfile("output.txt")
-        print(content)
+        local content = try {function () return os.iorunv(name) end}
         assert(content:find("daslang version", 1, true))
     end)
