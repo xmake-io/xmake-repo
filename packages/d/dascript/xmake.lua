@@ -33,7 +33,6 @@ package("dascript")
     on_install("windows|!arm64", "linux", "macosx", function (package)
         os.cp("bin", package:installdir())
         os.cp("lib", package:installdir())
-        os.cp("examples", package:installdir())
         os.cp("modules", package:installdir())
     end)
 
