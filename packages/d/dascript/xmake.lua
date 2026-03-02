@@ -30,7 +30,13 @@ package("dascript")
         end
     end
 
-    on_install("windows|!arm64", "linux", "macosx", function (package)
+    on_check("windows", function (package)
+        if package:is_arch("arm64") then
+            assert(false, "package(dascript): doesn't support Windows arm64.")
+        end
+    end)
+
+    on_install("@windows", "@linux", "@macosx", function (package)
         os.cp("bin", package:installdir())
         os.cp("lib", package:installdir())
         os.cp("modules", package:installdir())
@@ -38,9 +44,9 @@ package("dascript")
 
     on_test(function (package)
         local name = "daslang"
-        if package:is_plat("windows") then
+        if is_host("windows") then
             name = "daslang.exe"
         end
-        local content = try {function () return os.iorunv(name) end}
+        local content = try {function () return os.iorunv(name, {}) end}
         assert(content:find("daslang version", 1, true))
     end)
