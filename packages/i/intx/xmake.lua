@@ -7,6 +7,7 @@ package("intx")
     add_urls("https://github.com/chfast/intx/archive/refs/tags/$(version).tar.gz",
              "https://github.com/chfast/intx.git")
 
+    add_versions("v0.15.0", "7db5d37ae5e9c3787a12c27e53a28be840a35ee51101c3ac15412ce259191600")
     add_versions("v0.14.0", "63b1ba7834c6a85d0dde5140cc2aa91bbdbb6cc56e7cb5f4380f43bef90bff3d")
     add_versions("v0.13.0", "849577814e6feb9d4fc3f66f99698eee51dc4b7e3e035c1a2cb76e0d9c52c2e5")
     add_versions("v0.12.1", "279a9aa1e46e60f72eb0eb4ea92fec786e02b35069942ed161be7dcfb6700dd8")
