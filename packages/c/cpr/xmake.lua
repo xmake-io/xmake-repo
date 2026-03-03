@@ -18,7 +18,7 @@ package("cpr")
     add_versions("1.7.2", "aa38a414fe2ffc49af13a08b6ab34df825fdd2e7a1213d032d835a779e14176f")
     add_versions("1.6.2", "c45f9c55797380c6ba44060f0c73713fbd7989eeb1147aedb8723aa14f3afaa3")
 
-    add_configs("ssl", {description = "Enable SSL.", default = false, type = "boolean"})
+    add_configs("downgrade_openssl", {description = "openssl package instead of openssl3", default = false, type = "boolean"})
 
     add_deps("cmake")
     if is_plat("linux") then
@@ -28,7 +28,7 @@ package("cpr")
 
     if on_check then
         on_check(function (package)
-            -- Require to fIX cmake try run
+            -- Require to fix cmake try run
             if package:version() and package:version():eq("1.6.2") then
                 if package:is_cross() then
                     raise("package(cpr 1.6.2) unsupported cross-compilation")
@@ -38,9 +38,10 @@ package("cpr")
     end
 
     on_load(function (package)
-        if package:config("ssl") then
-            package:add("deps", "libcurl", {configs = {libssh2 = true, zlib = true}})
-            package:add("deps", "libssh2")
+        if package:is_plat("linux", "bsd", "android", "cross") then
+            local downgrade_ssl = package:config("downgrade_openssl")
+            package:add("deps", "libcurl", {configs = {openssl = downgrade_ssl, openssl3 = not downgrade_ssl}})
+            package:add("deps", downgrade_ssl and "openssl" or "openssl3")
         else
             package:add("deps", "libcurl")
         end
@@ -60,12 +61,11 @@ package("cpr")
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DCPR_ENABLE_SSL=" .. (package:config("ssl") and "ON" or "OFF"))
 
         local opt = {}
         opt.packagedeps = {"libcurl"}
-        if package:config("ssl") then
-            table.insert(opt.packagedeps, "libssh2")
+        if package:is_plat("linux", "bsd", "android", "cross") then
+            table.insert(opt.packagedeps, package:config("downgrade_ssl") and "openssl" or "openssl3")
         end
         if package:is_plat("windows") and package:has_tool("cxx", "cl", "clang_cl") then
             opt.cxflags = {"/EHsc"}
