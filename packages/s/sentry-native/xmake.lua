@@ -6,6 +6,7 @@ package("sentry-native")
     set_urls("https://github.com/getsentry/sentry-native/releases/download/$(version)/sentry-native.zip",
              "https://github.com/getsentry/sentry-native.git")
 
+    add_versions("0.13.1", "430bcf38465f29b5b167c4bbeb1d955cda0e40efb73da224b52675e89c7a984e")
     add_versions("0.12.8", "d668da4c13052d98b3920e3731c7d2166f9b0b7113b603c751c660eb567f3248")
     add_versions("0.12.2", "d265d26e761dfdfc3ce3b2f1916c48da316fe2147981e23182ce933e4b0835b6")
     add_versions("0.12.0", "3bf6eebb7dcc9c99267746324734a15164ba0058d67f690e315d47ee0bd8e953")
@@ -86,6 +87,10 @@ package("sentry-native")
             package:add("deps", "zlib")
         elseif backend == "breadpad" then
             package:add("links", "sentry", "breakpad_client")
+        end
+
+        if package:is_plat("linux") and package:version():ge("0.13.0") then
+            package:add("deps", "libunwind")
         end
     end)
 
