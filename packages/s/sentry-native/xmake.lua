@@ -88,6 +88,10 @@ package("sentry-native")
         elseif backend == "breadpad" then
             package:add("links", "sentry", "breakpad_client")
         end
+
+        if package:is_plat("linux") and package:version():ge("0.13.0") then
+            package:add("deps", "libunwind")
+        end
     end)
 
     on_install("windows|x86", "windows|x64", "linux", "macosx|x86_64", function (package) -- TODO: to enable android you will need to figure out the order of libs
