@@ -278,7 +278,7 @@ function get_modified_packages()
     for _, line in ipairs(diff:split("\n")) do
         if line:startswith("+++ b/") then
             local file = line:sub(7)
-            if file:startswith("packages") then
+            if file:startswith("packages") and not file:endswith("README.md") then
                 assert(file == file:lower(), "%s must be lower case!", file)
                 local package = file:match("packages/%w/(%S-)/")
                 table.insert(new_packages, package)
