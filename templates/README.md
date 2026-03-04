@@ -21,3 +21,7 @@ You can use these templates when creating a new project via `xmake create`:
 ```bash
 xmake create -l c++ -t console myproject
 ```
+
+## Contribution
+
+We only accept general-purpose, lightweight, and basic project templates. Templates that are specific to a particular business logic or project type will be rejected.
