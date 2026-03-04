@@ -13,6 +13,10 @@ package("hypre")
     add_versions("v2.20.0", "5be77b28ddf945c92cde4b52a272d16fb5e9a7dc05e714fc5765948cba802c01")
     add_versions("v2.23.0", "8a9f9fb6f65531b77e4c319bf35bfc9d34bf529c36afe08837f56b635ac052e2")
 
+    if is_plat("windows") then
+        add_patches("2.33.0", "https://github.com/hypre-space/hypre/commit/ab5b8ba2b3a148807aec781646dcc5486b98e20a.patch", "e3d27232b45e070dd8e292b88fb9a88223b912c255d0f671f9250069f39c238a")
+    end
+
     add_configs("blas", {description = "Choose BLAS library to use.", default = "openblas", type = "string", values = {"mkl", "openblas"}})
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
