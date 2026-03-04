@@ -29,6 +29,7 @@ package("ucx")
 
         local configs = {
             "--disable-doxygen-doc",
+            "--disable-profiling",
             "--without-go",
             "--without-java",
             "--without-rte",
