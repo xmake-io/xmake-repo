@@ -26,7 +26,7 @@ package("orc")
     end
 
     add_deps("cmake")
-    add_deps("protobuf-cpp", "lz4", "snappy", "zlib", "zstd")
+    add_deps("protobuf-cpp", "lz4", "snappy", "zlib", "zstd", "abseil")
 
     on_check(function (package)
         if package:is_arch("arm.*") then
@@ -39,6 +39,24 @@ package("orc")
 
     on_install("windows", "linux", "macosx", "bsd", function (package)
         io.replace("c++/src/CMakeLists.txt", [[(orc STATIC ${SOURCE_FILES})]], [[(orc ${SOURCE_FILES})]], {plain = true})
+        io.replace("cmake_modules/FindProtobufAlt.cmake",
+            [[    find_library (PROTOBUF_LIBRARY NAMES protobuf libprotobuf HINTS]],
+            [[    find_library (UTF8_RANGE_LIBRARY NAMES utf8_range libutf8_range HINTS ${_protobuf_path} PATH_SUFFIXES "lib")
+    find_library (UTF8_VALIDITY_LIBRARY NAMES utf8_validity libutf8_validity HINTS ${_protobuf_path} PATH_SUFFIXES "lib")
+    find_library (PROTOBUF_LIBRARY NAMES protobuf libprotobuf HINTS]], {plain = true})
+
+        io.replace("cmake_modules/ThirdpartyToolchain.cmake",
+            [[orc_add_resolved_library (orc_protobuf ${PROTOBUF_LIBRARY} ${PROTOBUF_INCLUDE_DIR})]],
+            [[orc_add_resolved_library (orc_protobuf ${PROTOBUF_LIBRARY} ${PROTOBUF_INCLUDE_DIR})
+  if (UTF8_RANGE_LIBRARY AND UTF8_VALIDITY_LIBRARY)
+    target_link_libraries(orc_protobuf INTERFACE ${UTF8_RANGE_LIBRARY} ${UTF8_VALIDITY_LIBRARY})
+  endif ()]], {plain = true})
+
+        io.replace("c++/src/ColumnReader.cc",
+            [[std::min(numValues, static_cast<size_t>(bufferEnd_ - bufferPointer_) / bytesPerValue_)]],
+            [[std::min(numValues, static_cast<uint64_t>(bufferEnd_ - bufferPointer_) / bytesPerValue_)]],
+            {plain = true})
+
         local configs = {
             "-DBUILD_JAVA=OFF",
             "-DBUILD_CPP_TESTS=OFF",
@@ -65,7 +83,7 @@ package("orc")
         table.insert(configs, "-DHAS_PRE_2038=" .. (package:is_plat("windows") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_ENABLE_AVX512=" .. (package:config("avx512") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs, {packagedeps = "abseil"})
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"abseil", "utf8_range"}})
     end)
 
     on_test(function (package)
