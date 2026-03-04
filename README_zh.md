@@ -52,7 +52,7 @@
 
 ## 简介
 
-xmake-repo是一个官方的xmake包管理仓库，收录了常用的c/c++开发包，提供跨平台支持。
+xmake-repo是一个官方的xmake包管理仓库，收录了常用的c/c++开发包，提供跨平台支持。它同时也包含了官方的工程模板。
 
 ## 包依赖描述
 
@@ -129,3 +129,15 @@ $ xmake l scripts/test.lua --shallow -vD -p iphoneos zlib
 $ xmake l scripts/test.lua --shallow -vD -k shared -m debug zlib
 $ xmake l scripts/test.lua --shallow -vD --runtimes=MD zlib
 ```
+
+## 工程模板
+
+此仓库也提供了 `xmake create` 的官方工程模板。
+
+你可以使用这些模板快速创建新项目：
+
+```console
+$ xmake create -l c++ -t console myproject
+```
+
+这些模板位于 `templates` 目录下。
