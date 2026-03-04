@@ -6,6 +6,7 @@ package("hypre")
     add_urls("https://github.com/hypre-space/hypre/archive/refs/tags/$(version).tar.gz",
              "https://github.com/hypre-space/hypre.git")
     add_versions("v3.1.0", "a6879ae9375d95c26afd97141d61e7a8092807333bf40cd180b385aed7351b2d")
+    add_versions("v2.33.0", "0f9103c34bce7a5dcbdb79a502720fc8aab4db9fd0146e0791cde7ec878f27da")
     add_versions("v2.32.0", "2277b6f01de4a7d0b01cfe12615255d9640eaa02268565a7ce1a769beab25fa1")
     add_versions("v2.31.0", "9a7916e2ac6615399de5010eb39c604417bb3ea3109ac90e199c5c63b0cb4334")
     add_versions("v2.30.0", "8e2af97d9a25bf44801c6427779f823ebc6f306438066bba7fcbc2a5f9b78421")
@@ -25,9 +26,20 @@ package("hypre")
 
     on_install("windows|x86", "windows|x64", "linux", "macosx", function (package)
         os.cd("src")
-        local configs = {"-DHYPRE_WITH_MPI=OFF", "-DHYPRE_BUILD_EXAMPLES=OFF", "-DHYPRE_BUILD_TESTS=OFF", "-DHYPRE_USING_HYPRE_BLAS=OFF", "-DHYPRE_USING_HYPRE_LAPACK=OFF"}
-        table.insert(configs, "-DHYPRE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DHYPRE_ENABLE_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
+        local configs = {"-DHYPRE_BUILD_EXAMPLES=OFF", "-DHYPRE_BUILD_TESTS=OFF"}
+        if package:version():ge("2.33.0") then
+            table.insert(configs, "-DHYPRE_ENABLE_MPI=OFF")
+            table.insert(configs, "-DHYPRE_ENABLE_HYPRE_BLAS=OFF")
+            table.insert(configs, "-DHYPRE_ENABLE_HYPRE_LAPACK=OFF")
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        else
+            table.insert(configs, "-DHYPRE_WITH_MPI=OFF")
+            table.insert(configs, "-DHYPRE_USING_HYPRE_BLAS=OFF")
+            table.insert(configs, "-DHYPRE_USING_HYPRE_LAPACK=OFF")
+            table.insert(configs, "-DHYPRE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+            table.insert(configs, "-DHYPRE_ENABLE_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
