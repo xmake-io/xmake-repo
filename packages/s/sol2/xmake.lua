@@ -29,9 +29,9 @@ package("sol2")
         if package:config("includes_lua") then
             local version = package:version()
             if version then
-                if version:gt("3.3") then
+                if version:gt("3.5") then
                     package:add("deps", "lua >=5.4")
-                elseif version:eq("3.3") then
+                elseif version:ge("3.3") then
                     package:add("deps", "lua 5.4")
                 else
                     package:add("deps", "lua")
