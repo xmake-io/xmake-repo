@@ -27,8 +27,15 @@ package("sol2")
 
     on_load(function (package)
         if package:config("includes_lua") then
-            if package:version() and package:version():ge("3.3") then
-                package:add("deps", "lua >=5.4")
+            local version = package:version()
+            if version then
+                if version:gt("3.5") then
+                    package:add("deps", "lua >=5.4")
+                elseif version:ge("3.3") then
+                    package:add("deps", "lua 5.4")
+                else
+                    package:add("deps", "lua")
+                end
             else
                 package:add("deps", "lua")
             end
