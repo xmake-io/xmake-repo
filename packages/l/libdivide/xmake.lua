@@ -6,6 +6,7 @@ package("libdivide")
 
     add_urls("https://github.com/ridiculousfish/libdivide/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ridiculousfish/libdivide.git")
+    add_versions("v5.3.0", "de3933bf2fd21300d99fcc6460a8a4a1343ae90b965d6893f044c350bac68c6e")
     add_versions("5.0", "01ffdf90bc475e42170741d381eb9cfb631d9d7ddac7337368bcd80df8c98356")
     add_versions("v5.2.0", "73ae910c4cdbda823b7df2c1e0e1e7427464ebc43fc770b1a30bb598cb703f49")
 
