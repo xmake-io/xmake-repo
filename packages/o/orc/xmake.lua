@@ -39,23 +39,24 @@ package("orc")
 
     on_install("windows", "linux", "macosx", "bsd", function (package)
         io.replace("c++/src/CMakeLists.txt", [[(orc STATIC ${SOURCE_FILES})]], [[(orc ${SOURCE_FILES})]], {plain = true})
+
+        -- fix win since v2.3.0
+        io.replace("c++/src/ColumnReader.cc",
+            "std::min(numValues, static_cast<size_t>(bufferEnd_ - bufferPointer_) / bytesPerValue_)",
+            "std::min(numValues, static_cast<uint64_t>(bufferEnd_ - bufferPointer_) / bytesPerValue_)",
+            {plain = true})
         io.replace("cmake_modules/FindProtobufAlt.cmake",
             [[    find_library (PROTOBUF_LIBRARY NAMES protobuf libprotobuf HINTS]],
             [[    find_library (UTF8_RANGE_LIBRARY NAMES utf8_range libutf8_range HINTS ${_protobuf_path} PATH_SUFFIXES "lib")
     find_library (UTF8_VALIDITY_LIBRARY NAMES utf8_validity libutf8_validity HINTS ${_protobuf_path} PATH_SUFFIXES "lib")
     find_library (PROTOBUF_LIBRARY NAMES protobuf libprotobuf HINTS]], {plain = true})
-
         io.replace("cmake_modules/ThirdpartyToolchain.cmake",
-            [[orc_add_resolved_library (orc_protobuf ${PROTOBUF_LIBRARY} ${PROTOBUF_INCLUDE_DIR})]],
+            "orc_add_resolved_library (orc_protobuf ${PROTOBUF_LIBRARY} ${PROTOBUF_INCLUDE_DIR})\n  endif ()",
             [[orc_add_resolved_library (orc_protobuf ${PROTOBUF_LIBRARY} ${PROTOBUF_INCLUDE_DIR})
+  endif ()
   if (UTF8_RANGE_LIBRARY AND UTF8_VALIDITY_LIBRARY)
     target_link_libraries(orc_protobuf INTERFACE ${UTF8_RANGE_LIBRARY} ${UTF8_VALIDITY_LIBRARY})
   endif ()]], {plain = true})
-
-        io.replace("c++/src/ColumnReader.cc",
-            [[std::min(numValues, static_cast<size_t>(bufferEnd_ - bufferPointer_) / bytesPerValue_)]],
-            [[std::min(numValues, static_cast<uint64_t>(bufferEnd_ - bufferPointer_) / bytesPerValue_)]],
-            {plain = true})
 
         local configs = {
             "-DBUILD_JAVA=OFF",
