@@ -180,12 +180,11 @@ package("imgui")
         if package:config("sdl3") or package:config("sdl3_renderer") or package:config("sdl3_gpu") then
             package:add("deps", "libsdl3")
         end
-        if package:config("vulkan") then
-            package:add("deps", "vulkan-headers")
-        end
         if package:config("vulkan_no_proto") then
             package:add("deps", "vulkan-headers")
             package:add("defines", "IMGUI_IMPL_VULKAN_NO_PROTOTYPES")
+        elseif package:config("vulkan") then
+            package:add("deps", "vulkan-headers")
         end
         if package:config("volk") then
             package:add("deps", "volk")

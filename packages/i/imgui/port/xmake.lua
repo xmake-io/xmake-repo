@@ -151,24 +151,19 @@ target("imgui")
         add_packages("libsdl3")
     end
 
-    if has_config("vulkan") then
+    if has_config("volk") or has_config("vulkan_no_proto") or has_config("vulkan") then
         add_files("backends/imgui_impl_vulkan.cpp")
         add_headerfiles("(backends/imgui_impl_vulkan.h)")
-        add_packages("vulkan-headers")
-    end
-
-    if has_config("vulkan_no_proto") then
-        add_files("backends/imgui_impl_vulkan.cpp")
-        add_headerfiles("(backends/imgui_impl_vulkan.h)")
-        add_packages("vulkan-headers")
-        add_defines("IMGUI_IMPL_VULKAN_NO_PROTOTYPES")
-    end
-
-    if has_config("volk") then
-        add_files("backends/imgui_impl_vulkan.cpp")
-        add_headerfiles("(backends/imgui_impl_vulkan.h)")
-        add_packages("volk")
-        add_defines("IMGUI_IMPL_VULKAN_USE_VOLK")
+        
+        if has_config("volk") then
+            add_packages("volk")
+            add_defines("IMGUI_IMPL_VULKAN_USE_VOLK")
+        elseif has_config("vulkan_no_proto") then
+            add_packages("vulkan-headers")
+            add_defines("IMGUI_IMPL_VULKAN_NO_PROTOTYPES")
+        elseif has_config("vulkan") then
+            add_packages("vulkan-headers")
+        end
     end
 
     if has_config("win32") then
