@@ -26,6 +26,7 @@ package("ucx")
     on_install("linux", function (package)
         io.replace("configure", "-Werror", "", {plain = true})
         io.replace("src/tools/profile/Makefile.in", "bin_PROGRAMS = ucx_read_profile", "bin_PROGRAMS =", {plain = true})
+        io.replace("test/apps/profiling/Makefile.in", "bin_PROGRAMS = ucx_profiling", "bin_PROGRAMS =", {plain = true})
 
         local configs = {
             "--disable-doxygen-doc",
