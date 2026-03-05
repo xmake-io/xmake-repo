@@ -118,6 +118,7 @@ package("imgui")
     add_configs("sdl3_renderer",    {description = "Enable the sdl3 renderer backend", default = false, type = "boolean"})
     add_configs("sdl3_gpu",         {description = "Enable the sdl3 gpu backend", default = false, type = "boolean"})
     add_configs("vulkan",           {description = "Enable the vulkan backend", default = false, type = "boolean"})
+    add_configs("vulkan_no_proto",  {description = "Enable the vulkan backend with no vulkan function prototypes", default = false, type = "boolean"})
     add_configs("volk",             {description = "Enable the vulkan backend, and use volk to load Vulkan functions", default = false, type = "boolean"})
     add_configs("win32",            {description = "Enable the win32 backend", default = false, type = "boolean"})
     add_configs("osx",              {description = "Enable the OS X backend", default = false, type = "boolean"})
@@ -182,6 +183,10 @@ package("imgui")
         if package:config("vulkan") then
             package:add("deps", "vulkan-headers")
         end
+        if package:config("vulkan_no_proto") then
+            package:add("deps", "vulkan-headers")
+            package:add("defines", "IMGUI_IMPL_VULKAN_NO_PROTOTYPES")
+        end
         if package:config("volk") then
             package:add("deps", "volk")
         end
@@ -215,6 +220,7 @@ package("imgui")
             sdl3_renderer    = package:config("sdl3_renderer"),
             sdl3_gpu         = package:config("sdl3_gpu"),
             vulkan           = package:config("vulkan"),
+            vulkan_no_proto  = package:config("vulkan_no_proto"),
             volk             = package:config("volk"),
             win32            = package:config("win32"),
             osx              = package:config("osx"),
