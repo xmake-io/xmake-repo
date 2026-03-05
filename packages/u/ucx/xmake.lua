@@ -17,6 +17,8 @@ package("ucx")
 
     add_configs("cuda", {description = "Enable CUDA support.", default = false, type = "boolean"})
 
+    add_links("ucm", "ucp", "ucs", "ucs_signal", "uct")
+
     on_load(function (package)
         if package:config("cuda") then
             package:add("deps", "cuda")
