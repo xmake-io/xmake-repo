@@ -29,6 +29,9 @@ package("pdfhummus")
     if is_plat("linux") then
         add_syslinks("m")
     end
+    if is_plat("windows", "mingw") then
+        add_syslinks("iphlpapi", "ws2_32", "user32", "crypt32", "advapi32")
+    end
 
     on_load(function (package)
         for _, dep in ipairs({"libtiff", "libpng", "libjpeg", "openssl3"}) do
