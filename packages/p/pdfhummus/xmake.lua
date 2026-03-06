@@ -24,7 +24,7 @@ package("pdfhummus")
     add_configs("libtiff", {description = "Supporting tiff image", default = false, type = "boolean"})
     add_configs("libjpeg", {description = "Support DCT encoding", default = false, type = "boolean"})
     add_configs("libpng", {description = "Support png image", default = false, type = "boolean"})
-    add_configs("openssl3", {description = "Support PDF2.0 encryption", default = true, type = "boolean"})
+    add_configs("openssl", {description = "Support PDF2.0 encryption", default = true, type = "boolean"})
 
     if is_plat("linux") then
         add_syslinks("m")
@@ -34,7 +34,7 @@ package("pdfhummus")
     end
 
     on_load(function (package)
-        for _, dep in ipairs({"libtiff", "libpng", "libjpeg", "openssl3"}) do
+        for _, dep in ipairs({"libtiff", "libpng", "libjpeg", "openssl"}) do
             if package:config(dep) then
                 package:add("deps", dep)
             end
@@ -47,7 +47,7 @@ package("pdfhummus")
         table.insert(configs, "-DPDFHUMMUS_NO_DCT=" .. (package:config("libjpeg") and "OFF" or "ON"))
         table.insert(configs, "-DPDFHUMMUS_NO_TIFF=" .. (package:config("libtiff") and "OFF" or "ON"))
         table.insert(configs, "-DPDFHUMMUS_NO_PNG=" .. (package:config("libpng") and "OFF" or "ON"))
-        table.insert(configs, "-DPDFHUMMUS_NO_OPENSSL=" .. (package:config("openssl3") and "OFF" or "ON"))
+        table.insert(configs, "-DPDFHUMMUS_NO_OPENSSL=" .. (package:config("openssl") and "OFF" or "ON"))
         import("package.tools.cmake").install(package, configs)
     end)
 
