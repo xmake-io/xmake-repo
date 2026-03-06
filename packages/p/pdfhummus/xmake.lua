@@ -24,7 +24,7 @@ package("pdfhummus")
     add_configs("libtiff", {description = "Supporting tiff image", default = false, type = "boolean"})
     add_configs("libjpeg", {description = "Support DCT encoding", default = false, type = "boolean"})
     add_configs("libpng", {description = "Support png image", default = false, type = "boolean"})
-    add_configs("openssl", {description = "Support PDF2.0 encryption", default = true, type = "boolean"})
+    add_configs("openssl", {description = "Support PDF2.0 encryption", default = not is_plat("windows", "mingw"), type = "boolean"}) -- needs fix for library path on Windows
 
     if is_plat("linux") then
         add_syslinks("m")
