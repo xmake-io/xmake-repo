@@ -9,6 +9,10 @@ package("jnif")
     add_deps("cmake")
     add_deps("openjdk")
 
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     if on_check then
         on_check(function (package)
             if not package:is_arch64() then
