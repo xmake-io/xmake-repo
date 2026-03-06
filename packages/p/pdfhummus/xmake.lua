@@ -24,12 +24,12 @@ package("pdfhummus")
     add_configs("libtiff", {description = "Supporting tiff image", default = false, type = "boolean"})
     add_configs("libjpeg", {description = "Support DCT encoding", default = false, type = "boolean"})
     add_configs("libpng", {description = "Support png image", default = false, type = "boolean"})
-    add_configs("openssl", {description = "Support PDF2.0 encryption", default = not is_plat("windows", "mingw"), type = "boolean"}) -- needs fix for library path on Windows
+    add_configs("openssl", {description = "Support PDF2.0 encryption", default = not is_plat("windows"), type = "boolean"}) -- needs fix for library path on Windows
 
     if is_plat("linux") then
         add_syslinks("m")
     end
-    if is_plat("windows", "mingw") then
+    if is_plat("windows") then
         add_syslinks("iphlpapi", "ws2_32", "user32", "crypt32", "advapi32")
     end
 
@@ -40,7 +40,7 @@ package("pdfhummus")
             end
         end
     end)
-    on_install("linux", "windows", "mingw", "macosx", function (package)
+    on_install("linux", "windows", "macosx", function (package)
         local configs = {"-DUSE_BUNDLED=FALSE"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
