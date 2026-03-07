@@ -6,6 +6,7 @@ package("simdjson")
 
     add_urls("https://github.com/simdjson/simdjson/archive/refs/tags/$(version).tar.gz",
              "https://github.com/simdjson/simdjson.git")
+    add_versions("v4.3.1", "84e4653ad290080b816f6488e19431ebf29cdf89d4ec58ded691943e545aa44d")
     add_versions("v4.2.4", "6f942d018561a6c30838651a386a17e6e4abbfc396afd0f62740dea1810dedea")
     add_versions("v4.2.2", "3efae22cb41f83299fe0b2e8a187af543d3dda93abbb910586f897df670f9eaa")
     add_versions("v4.2.1", "72c60a0fa6871073a4a458e80947dd75894fa1ff69550c7c77f9f4e695dff7f1")
