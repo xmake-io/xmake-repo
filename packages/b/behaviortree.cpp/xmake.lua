@@ -25,7 +25,7 @@ package("behaviortree.cpp")
     })
     add_configs("vendored", {
         description = "Use vendored third-party libraries.",
-        default = false, 
+        default = false,
         type = "boolean"
     })
 
@@ -39,16 +39,19 @@ package("behaviortree.cpp")
     on_load(function (package)
         if not package:config("vendored") then
             package:add("deps", "tinyxml2")
-            package:add("deps", "cppzmq")
             package:add("deps", "minitrace")
         end
         if package:config("groot2_interface") then
             package:add("deps", "zeromq")
+            if not package:config("vendored") then
+                package:add("deps", "cppzmq")
+            end
         end
         if package:config("sqlite_logging") then
             package:add("deps", "sqlite3")
         end
     end)
+
 
     on_install(function (package)
         local configs = {
@@ -58,17 +61,16 @@ package("behaviortree.cpp")
             "-DBTCPP_EXAMPLES=OFF",
             "-DUSE_VENDORED_FLATBUFFERS=ON", -- vendored flatbuffers only includes base.h
             "-DUSE_VENDORED_MINICORO=ON",
+            "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
+            "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"),
+            "-DBTCPP_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"),
+            "-DBTCPP_GROOT_INTERFACE=" .. (package:config("groot2_interface") and "ON" or "OFF"),
+            "-DBTCPP_SQLITE_LOGGING=" .. (package:config("sqlite_logging") and "ON" or "OFF"),
+            "-DBTCPP_BUILD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"),
+            "-DUSE_VENDORED_MINITRACE=" .. (package:config("vendored") and "ON" or "OFF"),
+            "-DUSE_VENDORED_TINYXML2=" .. (package:config("vendored") and "ON" or "OFF"),
+            "-DUSE_VENDORED_CPPZMQ=" .. (package:config("vendored") and "ON" or "OFF")
         }
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DBTCPP_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DBTCPP_GROOT_INTERFACE=" .. (package:config("groot2_interface") and "ON" or "OFF"))
-        table.insert(configs, "-DBTCPP_SQLITE_LOGGING=" .. (package:config("sqlite_logging") and "ON" or "OFF"))
-        table.insert(configs, "-DBTCPP_BUILD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
-        table.insert(configs, "-DUSE_VENDORED_MINITRACE=" .. (package:config("vendored") and "ON" or "OFF"))
-        table.insert(configs, "-DUSE_VENDORED_TINYXML2=" .. (package:config("vendored") and "ON" or "OFF"))
-        table.insert(configs, "-DUSE_VENDORED_CPPZMQ=" .. (package:config("vendored") and "ON" or "OFF"))
-        
         import("package.tools.cmake").install(package, configs)
     end)
 
