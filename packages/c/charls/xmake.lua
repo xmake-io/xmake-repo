@@ -6,6 +6,7 @@ package("charls")
     add_urls("https://github.com/team-charls/charls/archive/refs/tags/$(version).tar.gz",
              "https://github.com/team-charls/charls.git")
 
+    add_versions("2.4.3", "bbf67d51446a98eb8fc98c9c6de49a2605c709d3a14ba39f09a09f8e57527099")
     add_versions("2.4.2", "d1c2c35664976f1e43fec7764d72755e6a50a80f38eca70fcc7553cad4fe19d9")
 
     add_deps("cmake")
