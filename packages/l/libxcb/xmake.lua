@@ -81,7 +81,22 @@ package("libxcb")
         if package:is_plat("macosx") and package:is_cross() then
             import("package.tools.autoconf").install(package, configs, {cflags = "-arch " .. package:arch(), shflags = "-arch " .. package:arch()})
         else
-            import("package.tools.autoconf").install(package, configs)
+            local c_link_args
+            -- fix undefined reference to XauGetBestAuthByAddr on linux
+            if package:config("x11") then
+                for _, dep in ipairs(package:orderdeps()) do
+                    local fetchinfo = dep:fetch()
+                    if fetchinfo then
+                        for _, linkdir in ipairs(fetchinfo.linkdirs) do
+                            c_link_args = c_link_args .. " -L" .. linkdir
+                        end
+                        for _, link in ipairs(fetchinfo.links) do
+                            c_link_args = c_link_args .. " -l" .. link
+                        end
+                    end
+                end
+            end
+            import("package.tools.autoconf").install(package, configs, {ldflags = c_link_args, shflags = c_link_args})
         end
     end)
 
