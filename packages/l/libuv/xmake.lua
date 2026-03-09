@@ -85,6 +85,10 @@ package("libuv")
         if package:is_plat("mingw") then
             io.replace("CMakeLists.txt", "CYGWIN OR MSYS", "FALSE", {plain = true})
         end
+        if package:version():eq("1.52.1") and package:is_plat("mingw") then
+            -- fix mingw const compiler errors
+            io.replace("src/win/util.c", "&(cpu_info->model));", "(char**) &(cpu_info->model));", {plain = true})
+        end
 
         local version = package:version()
         if version:ge("1.42.0") or is_host("windows") then
