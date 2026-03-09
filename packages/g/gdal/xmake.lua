@@ -4,6 +4,7 @@ package("gdal")
     set_license("MIT")
 
     add_urls("https://github.com/OSGeo/gdal/releases/download/v$(version)/gdal-$(version).tar.gz")
+    add_versions("3.12.2", "458a899feea38000258144517fedc6662ebba255971669d2901ba77e9e8fbf79")
     add_versions("3.12.1", "266cbadf8534d1de831db8834374afd95603e0a6af4f53d0547ae0d46bd3d2d1")
     add_versions("3.11.3", "54638f6990f84c16142d93c9daaafaf1eab0a6a61538162095c334de086ef91f")
     add_versions("3.11.1", "21f1806070ccff697946ba5df5a0ec9ee9ecfcbb7e7e6163f2c61466883e23f8")
