@@ -1,6 +1,7 @@
 package("tracy")
     set_homepage("https://github.com/wolfpld/tracy")
     set_description("C++ frame profiler")
+    set_license("BSD-3-Clause")
 
     add_urls("https://github.com/wolfpld/tracy/archive/refs/tags/$(version).tar.gz",
              "https://github.com/wolfpld/tracy.git")
