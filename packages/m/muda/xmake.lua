@@ -9,17 +9,15 @@ package("muda")
 
     add_versions("2025.12.25", "09f8a0beca898b5325c7b0c1e4cf67ea4781f3b9")
 
-    add_configs("with_check", {description = "Enable muda check", default = true})
-    add_configs("with_compute_graph", {description = "Enable muda compute graph", default = false})
+    add_configs("check", {description = "Enable muda check", default = true, type = "boolean"})
+    add_configs("compute_graph", {description = "Enable muda compute graph", default = false, type = "boolean"})
 
-    add_cuflags("--extended-lambda", "--expt-relaxed-constexpr","-rdc=true",{public = true})
-
+    add_cuflags("--extended-lambda", "--expt-relaxed-constexpr", "-rdc=true")
 
     on_install(function (package)
-        local check_val = package:config("with_check") and "1" or "0"
-        package:add('defines', 'MUDA_CHECK_ON=' .. check_val, {public = true})
-        local compute_graph_val = package:config("with_compute_graph") and "1" or "0"
-        package:add('defines', 'MUDA_COMPUTE_GRAPH_ON=' .. compute_graph_val, {public = true})
+        package:add("defines", "MUDA_CHECK_ON=" .. (package:config("check") and "1" or "0"))
+        package:add("defines", "MUDA_COMPUTE_GRAPH_ON=" .. (package:config("compute_graph") and "1" or "0"))
+
         os.cp("src/muda", package:installdir("include"))
     end)
 
