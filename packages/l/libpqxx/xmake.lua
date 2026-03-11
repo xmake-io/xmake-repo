@@ -25,16 +25,17 @@ package("libpqxx")
         if package:is_plat("windows") and package:version():eq("7.10.2") then
             io.replace("include/pqxx/internal/header-pre.hxx", "#if PQXX_CPLUSPLUS < 201703L && __has_include(<ciso646>)", "#if defined(_MSC_VER) && PQXX_CPLUSPLUS <= 201703L && __has_include(<ciso646>)", {plain=true})
         end
-        local configs = {"-DSKIP_BUILD_TEST=ON"}
+        local configs = {"-DSKIP_BUILD_TEST=ON", "-DSKIP_BUILD_EXAMPLES=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
+        local languages = package:version():ge("8.0.0") and "c++20" or "c++17"
         assert(package:check_cxxsnippets({test = [[
             void test() {
               pqxx::connection con;
             }
-        ]]}, {configs = {languages = "c++17"}, includes = "pqxx/pqxx"}))
+        ]]}, {configs = {languages = languages}, includes = "pqxx/pqxx"}))
     end)
