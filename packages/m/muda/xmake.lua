@@ -4,8 +4,7 @@ package("muda")
     set_description("μ-Cuda, COVER THE LAST MILE OF CUDA. With features: intellisense-friendly, structured launch, automatic cuda graph generation and updating.")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/MuGdxy/muda/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/MuGdxy/muda.git", {includes = "src"})
+    add_urls("https://github.com/MuGdxy/muda.git", {includes = "src"})
 
     add_versions("2025.12.25", "09f8a0beca898b5325c7b0c1e4cf67ea4781f3b9")
 
