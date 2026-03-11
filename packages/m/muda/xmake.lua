@@ -4,19 +4,27 @@ package("muda")
     set_description("μ-Cuda, COVER THE LAST MILE OF CUDA. With features: intellisense-friendly, structured launch, automatic cuda graph generation and updating.")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/MuGdxy/muda/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/MuGdxy/muda.git", {includes = "src"})
+    add_urls("https://github.com/MuGdxy/muda.git")
 
-    add_versions("2025.10.9", "8bce036e931ef3d46ac473d13ff684ac65f40b2d2d4caa8d5c81a1d721fd5251")
+    set_policy("package.install_locally", true)
 
-    add_deps("cuda")
+    add_configs("with_check", {description = "Enable muda check", default = true})
+    add_configs("with_compute_graph", {description = "Enable muda compute graph", default = false})
 
-    add_cuflags("--extended-lambda", "--expt-relaxed-constexpr")
+    add_cuflags("--extended-lambda", "--expt-relaxed-constexpr","-rdc=true",{public = true})
+
 
     on_install(function (package)
-        os.vcp("src/muda", package:installdir("include"))
-    end)
-
-    on_test(function (package)
-        assert(os.isfile(path.join(package:installdir("include"), "muda/muda.h")))
+        -- package:add('defines', 'MUDA_CHECK_ON=1', {public = true})
+        if package:config("with_check") then
+            package:add('defines', 'MUDA_CHECK_ON=1', {public = true})
+        else
+            package:add('defines', 'MUDA_CHECK_ON=0', {public = true})
+        end
+        if package:config("with_compute_graph") then
+            package:add('defines', 'MUDA_COMPUTE_GRAPH_ON=1', {public = true})
+        else
+            package:add('defines', 'MUDA_COMPUTE_GRAPH_ON=0', {public = true})
+        end
+        os.cp("src/muda", package:installdir("include"))
     end)
