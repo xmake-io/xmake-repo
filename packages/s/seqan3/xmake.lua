@@ -48,10 +48,12 @@ package("seqan3")
                 assert(ndk and tonumber(ndk) >= 27, "package(seqan3) require ndk version >= 27")
             end
 
+            local check_gcc12_clang17 = { gcc = ">=12.0", clang = ">=17.0" }
             local check_map = {
                 ["3.2.0"] = { gcc = ">=10.0", clang = "unsupported" },
                 ["3.3.0"] = { gcc = ">=11.0", clang = "unsupported" },
-                ["3.4.0"] = { gcc = ">=12.0", clang = ">=17.0" },
+                ["3.4.0"] = check_gcc12_clang17,
+                ["3.4.1"] = check_gcc12_clang17,
             }
 
             local info
