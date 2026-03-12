@@ -1,5 +1,5 @@
 package("dataframe")
-    set_homepage("https://github.com/hosseinmoein/DataFrame")
+    set_homepage("https://hosseinmoein.github.io/DataFrame/")
     set_description("This is a C++ analytical library that provides interface and functionality similar to packages/libraries in Python and R.")
     set_license("MIT")
 
@@ -59,7 +59,7 @@ package("dataframe")
         if package:config("shared") then
             package:add("defines", "HMDF_SHARED")
         end
-        if package:has_tool("cxx", "cl") then
+        if package:is_plat("mingw") or package:has_tool("cxx", "cl") then
             package:add("defines", "_USE_MATH_DEFINES")
         end
 
