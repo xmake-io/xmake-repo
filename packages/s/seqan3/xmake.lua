@@ -7,6 +7,7 @@ package("seqan3")
     add_urls("https://github.com/seqan/seqan3/archive/refs/tags/$(version).tar.gz",
              "https://github.com/seqan/seqan3.git")
 
+    add_versions("3.4.1", "9618d75143de8b511266410406234557fa498a1d08dbce3a51b4515e4855269b")
     add_versions("3.4.0", "8e000e6788f1e2ada071b36f64231d56f18e2d687ab4122d86cd3aefc6c87743")
     add_versions("3.3.0", "96975406445c8a5974803eefa146ee2f85206f6d2c2bccf45171ee0b1a653fb8")
     add_versions("3.2.0", "80d41dd035407cfec83eb3a4466d0421adc27129af684290c0c4da31421e7276")
