@@ -44,13 +44,9 @@ package("simsimd")
         end)
     end
 
-    on_load("mingw@macosx", function (package)
-        package:add("cxxflags", "-msse2")
-    end)
-
     on_install(function (package)
         os.cp("include", package:installdir())
-        if not package:has_ctypes("_Float16") then
+        if not package:has_ctypes("_Float16") or package:is_plat("mingw@macosx") then
             package:add("defines", "SIMSIMD_NATIVE_F16=0")
         end
         if not package:has_ctypes("bfloat16_t") then
