@@ -6,6 +6,7 @@ package("openmvs")
     add_urls("https://github.com/cdcseacave/openMVS/archive/refs/tags/$(version).tar.gz",
              "https://github.com/cdcseacave/openMVS.git")
 
+    add_versions("v2.4.0", "1668a991fa1fdd3540ee47fdba282a7579ed876af713e8fa907625be1cf8dfc8")
     add_versions("v2.3.0", "ac7312fb71dbab18c5b2755ad9ac3caa40ec689f6f369c330ca73c87c1f34258")
 
     if is_plat("windows") then
@@ -38,6 +39,9 @@ package("openmvs")
         if package:config("cuda") then package:add("deps", "cuda") end
         if package:config("openmp") then package:add("deps", "openmp") end
         if package:config("python") then package:add("deps", "python") end
+        if package:version():ge("2.4.0") then
+            package:add("deps", "nanoflann", "libjxl")
+        end
     end)
 
     on_install("windows|!arm64", "linux", function (package)
@@ -55,6 +59,7 @@ package("openmvs")
             "-DCGAL_DISABLE_GMP=ON",
             "-DOpenMVS_BUILD_TOOLS=OFF",
             "-DOpenMVS_ENABLE_TESTS=OFF",
+            "-DOpenMVS_BUILD_VIEWER=OFF",
         }
         import("package.tools.cmake").install(package, configs)
     end)
