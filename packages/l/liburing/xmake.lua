@@ -23,8 +23,14 @@ package("liburing")
 
     on_install("linux|native", function (package)
         local configs = {}
-        if package:version() and package:version():ge("2.5") then
+        if package:version() and package:version():ge("2.5") and not package:config("nolibc") then
             table.insert(configs, "--use-libc")
+        end
+        if package:config("sanitizer") or package:config("asan") then
+            table.insert(configs, "--enable-sanitizer")
+        end
+        if package:config("tsan") then
+            table.insert(configs, "--enable-tsan")
         end
         import("package.tools.autoconf").install(package, configs)
 
