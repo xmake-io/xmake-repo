@@ -7,6 +7,7 @@ package("simple_http")
     add_urls("https://github.com/fantasy-peak/simple_http/archive/refs/tags/$(version).tar.gz",
              "https://github.com/fantasy-peak/simple_http.git")
 
+    add_versions("v0.6.2", "ffe93846c583a9951c209550101486e2437c123b095c8b00dbed3b9bb594abc9")
     add_versions("v0.6.1", "1772bf750adb04e430b4275385b6d65230830181b93574dba178a854526247ff")
     add_versions("v0.6.0", "6d4649184b4023d2dc45d253a44a6296d14e86999e424c846da8c17211f827ed")
     add_versions("v0.5.0", "56be1a264382022f180a18ce318eb2d44c0dcda9a21e173dcce44d4074bc58f7")
