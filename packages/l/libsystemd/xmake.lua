@@ -5,6 +5,7 @@ package("libsystemd")
     add_urls("https://github.com/systemd/systemd/archive/refs/tags/$(version).tar.gz",
              "https://github.com/systemd/systemd.git")
 
+    add_versions("v259.4", "3ea6c8bf43f12827d1ab9f39b23e1df5d960a715996ee09b920fdd1971bb73fd")
     add_versions("v258.2", "05208e76bf1f9b369b1a8159e6631ef67c82f2d27c21e931962026a79bf4ba64")
     add_versions("v258.1", "8eb34eaf2f78330217280bd7a923578f37e28d3f3ac5168e336ebc9cad84a34d")
     add_versions("v258", "07a580cf21856f468f82b77b82973a926f42ccc696462459b53f8b88893dff8e")
