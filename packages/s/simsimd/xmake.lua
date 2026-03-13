@@ -46,7 +46,7 @@ package("simsimd")
 
     on_install(function (package)
         os.cp("include", package:installdir())
-        if not package:has_ctypes("_Float16") or package:is_plat("mingw@macosx") then
+        if not package:has_ctypes("_Float16") or (package:is_plat("mingw") and is_subhost("macosx")) then
             package:add("defines", "SIMSIMD_NATIVE_F16=0")
         end
         if not package:has_ctypes("bfloat16_t") then
