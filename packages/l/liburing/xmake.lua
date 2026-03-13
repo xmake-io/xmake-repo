@@ -21,15 +21,21 @@ package("liburing")
     add_versions("2.2",  "e092624af6aa244ade2d52181cc07751ac5caba2f3d63e9240790db9ed130bbc")
     add_versions("2.1",  "f1e0500cb3934b0b61c5020c3999a973c9c93b618faff1eba75aadc95bb03e07")
 
+    add_configs("nolibc", {description = "Build liburing without libc dependency", default = false, type = "boolean"})
+    add_configs("tsan",   {description = "Enable thread sanitizer", default = false, type = "boolean"})
+
     on_install("linux|native", function (package)
         local configs = {}
         if package:version() and package:version():ge("2.5") and not package:config("nolibc") then
             table.insert(configs, "--use-libc")
         end
         if package:config("asan") then
+            assert(package:version() and package:version():ge("2.8"), "asan requires liburing >= 2.8")
             table.insert(configs, "--enable-sanitizer")
         end
         if package:config("tsan") then
+            assert(package:version() and package:version():ge("2.13"), "tsan requires liburing >= 2.13")
+            assert(not package:config("asan"), "tsan and asan cannot be enabled at the same time")
             table.insert(configs, "--enable-tsan")
         end
         import("package.tools.autoconf").install(package, configs)
