@@ -26,7 +26,7 @@ package("liburing")
         if package:version() and package:version():ge("2.5") and not package:config("nolibc") then
             table.insert(configs, "--use-libc")
         end
-        if package:config("sanitizer") or package:config("asan") then
+        if package:config("asan") then
             table.insert(configs, "--enable-sanitizer")
         end
         if package:config("tsan") then
