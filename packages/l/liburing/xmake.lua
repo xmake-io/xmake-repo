@@ -25,16 +25,17 @@ package("liburing")
     add_configs("tsan",   {description = "Enable thread sanitizer", default = false, type = "boolean"})
 
     on_install("linux|native", function (package)
+        local version = package:version()
         local configs = {}
-        if package:version() and package:version():ge("2.5") and not package:config("nolibc") then
+        if version and version:ge("2.5") and not package:config("nolibc") then
             table.insert(configs, "--use-libc")
         end
         if package:config("asan") then
-            assert(package:version() and package:version():ge("2.8"), "asan requires liburing >= 2.8")
+            assert(version and version:ge("2.8"), "asan requires liburing >= 2.8")
             table.insert(configs, "--enable-sanitizer")
         end
         if package:config("tsan") then
-            assert(package:version() and package:version():ge("2.13"), "tsan requires liburing >= 2.13")
+            assert(version and version:ge("2.13"), "tsan requires liburing >= 2.13")
             assert(not package:config("asan"), "tsan and asan cannot be enabled at the same time")
             table.insert(configs, "--enable-tsan")
         end
@@ -50,9 +51,10 @@ package("liburing")
     on_test(function (package)
         local opt = {includes = "liburing.h"}
         if package:config("tsan") then
-            opt.configs = opt.configs or {}
-            opt.configs.cxflags = "-fsanitize=thread"
-            opt.configs.ldflags = "-fsanitize=thread"
+            opt.configs = {
+                cxflags = "-fsanitize=thread",
+                ldflags = "-fsanitize=thread"
+            }
         end
         assert(package:has_cfuncs("io_uring_submit", opt))
     end)
