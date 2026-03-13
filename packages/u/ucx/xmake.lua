@@ -6,6 +6,7 @@ package("ucx")
     add_urls("https://github.com/openucx/ucx/releases/download/v$(version)/ucx-$(version).tar.gz",
              "https://github.com/openucx/ucx.git")
 
+    add_versions("1.20.0", "7c8a6093cada179aa1d851b83625e3b25ed5658966e309de5118c27a038c7ef9")
     add_versions("1.18.0", "fa75070f5fa7442731b4ef5fc9549391e147ed3d859afeb1dad2d4513b39dc33")
     add_versions("1.17.0", "34658e282f99f89ce7a991c542e9727552734ac6ad408c52f22b4c2653b04276")
     add_versions("1.16.0", "f73770d3b583c91aba5fb07557e655ead0786e057018bfe42f0ebe8716e9d28c")
@@ -16,6 +17,8 @@ package("ucx")
 
     add_configs("cuda", {description = "Enable CUDA support.", default = false, type = "boolean"})
 
+    add_links("ucm", "ucp", "ucs", "ucs_signal", "uct")
+
     on_load(function (package)
         if package:config("cuda") then
             package:add("deps", "cuda")
@@ -23,7 +26,23 @@ package("ucx")
     end)
 
     on_install("linux", function (package)
-        local configs = {"--disable-doxygen-doc", "--without-go", "--without-java", "--without-rte", "--without-fuse3", "--without-gdrcopy", "--without-rdmacm", "--without-knem", "--without-xpmem", "--without-ugni"}
+        io.replace("configure", "-Werror", "", {plain = true})
+        io.replace("src/tools/profile/Makefile.in", "bin_PROGRAMS = ucx_read_profile", "bin_PROGRAMS =", {plain = true})
+        io.replace("test/apps/profiling/Makefile.in", "bin_PROGRAMS = ucx_profiling", "bin_PROGRAMS =", {plain = true})
+
+        local configs = {
+            "--disable-doxygen-doc",
+            "--disable-profiling",
+            "--without-go",
+            "--without-java",
+            "--without-rte",
+            "--without-fuse3",
+            "--without-gdrcopy",
+            "--without-rdmacm",
+            "--without-knem",
+            "--without-xpmem",
+            "--without-ugni"
+        }
         if package:config("cuda") then
             local cuda = package:dep("cuda"):fetch()
             table.insert(configs, "--with-cuda=" .. path.directory(cuda.sysincludedirs[1]))
