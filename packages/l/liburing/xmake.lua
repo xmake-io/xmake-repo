@@ -48,5 +48,11 @@ package("liburing")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("io_uring_submit", {includes = "liburing.h"}))
+        local opt = {includes = "liburing.h"}
+        if package:config("tsan") then
+            opt.configs = opt.configs or {}
+            opt.configs.cxflags = "-fsanitize=thread"
+            opt.configs.ldflags = "-fsanitize=thread"
+        end
+        assert(package:has_cfuncs("io_uring_submit", opt))
     end)
