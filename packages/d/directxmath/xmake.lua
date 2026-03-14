@@ -19,7 +19,9 @@ package("directxmath")
     add_versions("2025.04", "cef977ceb1ddb07cd864ba8498e4b205ce2ba9b45a215aad32e9d1a1e7bf00ae")
 
     if is_plat("linux", "macosx") then
-        add_resources(">=2022.12", "headers", "https://raw.githubusercontent.com/dotnet/runtime/main/src/coreclr/pal/inc/rt/sal.h")
+        add_resources(">=2022.12", "headers",
+            "https://raw.githubusercontent.com/dotnet/runtime/5c4e2a301ec1dd8ef75a3ba98e5be1ff2cea0130/src/coreclr/pal/inc/rt/sal.h",
+            "e26ee611231a859b5a800eb2e1606e7ca03b8e3981d7c98cf1ca20c89b658b68")
     end
 
     add_deps("cmake")
