@@ -7,6 +7,7 @@ package("boost_sml")
     add_urls("https://github.com/boost-ext/sml/archive/refs/tags/$(version).tar.gz",
              "https://github.com/boost-ext/sml.git")
 
+    add_versions("v1.1.13", "383b1d6868a29319694e5e2ed5934062de21c6e4920ad2ccb8e552f2892b922c")
     add_versions("v1.1.12", "65b53b3b839881512a5bf5bd443afd7dd64a406c706aab469f2e7cfd1d0a6012")
     add_versions("v1.1.11", "8773efd639ce9649dc449135c8c53232e1cb5f4037d44be02c1b9ccc343f246d")
     add_versions("v1.1.8", "d2626b2fd249fa0788ca364a2f8dcb4762dd72195f86d43370e4cad4c02262c5")

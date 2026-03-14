@@ -1,0 +1,289 @@
+diff --git a/taskflow/core/executor.hpp b/taskflow/core/executor.hpp
+index 59bfafa7b..85b86a8f0 100644
+--- a/taskflow/core/executor.hpp
++++ b/taskflow/core/executor.hpp
+@@ -1563,7 +1563,7 @@ void Executor::_bulk_schedule(Worker& worker, I first, size_t num_nodes) {
+   // which cause the last ++first to fail. This problem is specific to MSVC which has a stricter
+   // iterator implementation in std::vector than GCC/Clang.
+   if(auto n = worker._wsq.try_bulk_push(first, num_nodes); n != num_nodes) {
+-    _bulk_spill(first + n, num_nodes - n);
++    _bulk_spill(first, num_nodes - n);
+   }
+   _notifier.notify_n(num_nodes);
+     
+diff --git a/taskflow/core/wsq.hpp b/taskflow/core/wsq.hpp
+index d02e3a16c..78e45aa07 100644
+--- a/taskflow/core/wsq.hpp
++++ b/taskflow/core/wsq.hpp
+@@ -224,21 +224,25 @@ class UnboundedWSQ {
+   This method pushes up to @p N items from the range `[first, first + N)` into the queue. 
+   The operation can trigger the queue to resize its capacity 
+   if more space is required.
++  The iterator `first` is updated in place and will point to the next uninserted element after the call.
++
+   Bulk insertion is often faster than inserting elements one by one because it requires fewer atomic operations.
+ 
+   @code{.cpp}
+   tf::UnboundedWSQ<int> wsq(10);  
+   assert(wsq.capacity() == 1024);
+   std::vector<int> vec(1025, 1);
+-  wsq.bulk_push(vec.data(), vec.size()); 
++  auto first = vec.data();
++  wsq.bulk_push(first, vec.size()); 
+   assert(wsq.capacity() == 2048);
+   assert(wsq.size() == vec.size());
++  assert(std::distance(vec.begin(), first) == 1025);
+   @endcode
+   
+   Only the owner thread can insert an item to the queue.
+   */
+   template <typename I>
+-  void bulk_push(I first, size_t N);
++  void bulk_push(I& first, size_t N);
+ 
+   /**
+   @brief pops out an item from the queue
+@@ -397,7 +401,7 @@ void UnboundedWSQ<T>::push(T o) {
+ // Function: bulk_push
+ template <typename T>
+ template <typename I>
+-void UnboundedWSQ<T>::bulk_push(I first, size_t N) {
++void UnboundedWSQ<T>::bulk_push(I& first, size_t N) {
+ 
+   if(N == 0) return;
+ 
+@@ -411,7 +415,7 @@ void UnboundedWSQ<T>::bulk_push(I first, size_t N) {
+   }
+ 
+   for(size_t i=0; i<N; ++i) {
+-    a->push(b++, first[i]);
++    a->push(b++, *first++);
+   }
+   std::atomic_thread_fence(std::memory_order_release);
+ 
+@@ -681,20 +685,23 @@ class BoundedWSQ {
+   This method attempts to push up to @p N items from the range
+   `[first, first + N)` into the queue. Insertion stops early if the
+   queue becomes full. 
++  The iterator `first` is updated in place and will point to the next uninserted element after the call.
++
+   Bulk insertion is often faster than inserting elements one by one because it requires fewer atomic operations.
+   
+   @code{.cpp}
+   tf::BoundedWSQ<int, 10> wsq;  
+   static_assert(wsq.capacity() == 1024);
+   std::vector<int> vec(1030, 1);
+-  assert(wsq.try_bulk_push(vec.data(), vec.size()) == wsq.capacity());
+-  assert(wsq.try_bulk_push(vec.data(), vec.size()) == 0);
++  auto first = vec.begin();
++  assert(wsq.try_bulk_push(first, vec.size()) == wsq.capacity());
++  assert(std::distance(vec.begin(), first) == wsq.capacity());
+   @endcode
+ 
+   Only the owner thread can insert items into the queue.
+   */
+   template <typename I>
+-  size_t try_bulk_push(I first, size_t N);
++  size_t try_bulk_push(I& first, size_t N);
+   
+   /**
+   @brief pops out an item from the queue
+@@ -832,7 +839,7 @@ bool BoundedWSQ<T, LogSize>::try_push(O&& o) {
+ // Function: try_bulk_push
+ template <typename T, size_t LogSize>
+ template <typename I>
+-size_t BoundedWSQ<T, LogSize>::try_bulk_push(I first, size_t N) {
++size_t BoundedWSQ<T, LogSize>::try_bulk_push(I& first, size_t N) {
+ 
+   if(N == 0) return 0;
+ 
+@@ -845,7 +852,7 @@ size_t BoundedWSQ<T, LogSize>::try_bulk_push(I first, size_t N) {
+   if(n > 0) {
+     // push n elements into the queue
+     for(size_t i=0; i<n; ++i) {
+-      _buffer[b++ & BufferMask].store(first[i], std::memory_order_relaxed);
++      _buffer[b++ & BufferMask].store(*first++, std::memory_order_relaxed);
+     }
+     std::atomic_thread_fence(std::memory_order_release);
+     // original paper uses relaxed here but tsa complains
+diff --git a/taskflow/utility/os.hpp b/taskflow/utility/os.hpp
+index 04fd1934a..4a59fcf28 100644
+--- a/taskflow/utility/os.hpp
++++ b/taskflow/utility/os.hpp
+@@ -91,23 +91,6 @@
+ #define TF_OS_UNIX 1
+ #endif
+ 
+-// ----------------------------------------------------------------------------
+-// cpu pause implementation
+-// ----------------------------------------------------------------------------
+-
+-#if defined(_MSC_VER)
+-    #include <intrin.h>
+-    #define TF_CPU_PAUSE() _mm_pause()
+-#elif defined(__i386__) || defined(__x86_64__)
+-    #include <immintrin.h>
+-    #define TF_CPU_PAUSE() _mm_pause()
+-#elif defined(__arm__) || defined(__aarch64__)
+-    #define TF_CPU_PAUSE() __asm__ __volatile__("yield" ::: "memory")
+-#else
+-    #define TF_CPU_PAUSE() std::this_thread::yield()
+-#endif
+-
+-
+ //-----------------------------------------------------------------------------
+ // Cache line alignment
+ //-----------------------------------------------------------------------------
+@@ -245,23 +228,6 @@ inline bool has_env(const std::string& str) {
+ #endif
+ }
+ 
+-/**
+-@fn pause
+-
+-This function is used in spin-wait loops to hint the CPU that the current 
+-thread is in a busy-wait state. 
+-It helps reduce power consumption and improves performance on hyper-threaded processors 
+-by preventing the CPU from consuming unnecessary cycles while waiting. 
+-It is particularly useful in low-contention scenarios, where the thread 
+-is likely to quickly acquire the lock or condition it's waiting for, 
+-avoiding an expensive context switch. 
+-On modern x86 processors, this instruction can be invoked using @c __builtin_ia32_pause() 
+-in GCC/Clang or @c _mm_pause() in MSVC. 
+-In non-x86 architectures, alternative mechanisms such as yielding the CPU may be used instead.
+-
+-*/
+-inline void pause() { TF_CPU_PAUSE(); }
+-
+ 
+ }  // end of namespace tf -----------------------------------------------------
+ 
+diff --git a/unittests/test_wsq.cpp b/unittests/test_wsq.cpp
+index b2eb60b30..121b980f4 100644
+--- a/unittests/test_wsq.cpp
++++ b/unittests/test_wsq.cpp
+@@ -129,22 +129,26 @@ TEST_CASE("UnboundedWSQ.Resize") {
+   std::vector<void*> data(2048);
+ 
+   // insert an element
+-  queue.bulk_push(data.data(), 1);
++  auto first = data.data();
++  queue.bulk_push(first, 1);
+   REQUIRE(queue.size() == 1);
+   REQUIRE(queue.capacity() == 2);
+   
+   // insert 2 elements
+-  queue.bulk_push(data.data(), 2);
++  first = data.data();
++  queue.bulk_push(first, 2);
+   REQUIRE(queue.size() == 3);
+   REQUIRE(queue.capacity() == 4);
+   
+   // insert 10 elements
+-  queue.bulk_push(data.data(), 10);
++  first = data.data();
++  queue.bulk_push(first, 10);
+   REQUIRE(queue.size() == 13);
+   REQUIRE(queue.capacity() == 16);
+   
+   // insert 1200 elements
+-  queue.bulk_push(data.data(), 1200);
++  first = data.data();
++  queue.bulk_push(first, 1200);
+   REQUIRE(queue.size() == 1213);
+   REQUIRE(queue.capacity() == 2048);
+   
+@@ -156,22 +160,26 @@ TEST_CASE("UnboundedWSQ.Resize") {
+   REQUIRE(queue.empty() == true);
+ 
+   // insert an element
+-  queue.bulk_push(data.data(), 1);
++  first = data.data();
++  queue.bulk_push(first, 1);
+   REQUIRE(queue.size() == 1);
+   REQUIRE(queue.capacity() == 2048);
+   
+   // insert 2 elements
+-  queue.bulk_push(data.data(), 2);
++  first = data.data();
++  queue.bulk_push(first, 2);
+   REQUIRE(queue.size() == 3);
+   REQUIRE(queue.capacity() == 2048);
+   
+   // insert 10 elements
+-  queue.bulk_push(data.data(), 10);
++  first = data.data();
++  queue.bulk_push(first, 10);
+   REQUIRE(queue.size() == 13);
+   REQUIRE(queue.capacity() == 2048);
+   
+   // insert 1200 elements
+-  queue.bulk_push(data.data(), 1200);
++  first = data.data();
++  queue.bulk_push(first, 1200);
+   REQUIRE(queue.size() == 1213);
+   REQUIRE(queue.capacity() == 2048);
+ }
+@@ -349,8 +357,9 @@ void bounded_tsq_n_consumers_bulk_push(size_t M) {
+     size_t capacity = queue.capacity();
+     REQUIRE((size == 0 && capacity > 0));
+     const size_t num_pushable_elements = std::min(capacity, N);
+-
+-    REQUIRE(num_pushable_elements == queue.try_bulk_push(gold.data(), N));
++    
++    auto first = gold.data();
++    REQUIRE(num_pushable_elements == queue.try_bulk_push(first, N));
+     REQUIRE(queue.size() == num_pushable_elements);
+     for(size_t i=0; i<num_pushable_elements; i++) {
+       REQUIRE(queue.pop() == gold[num_pushable_elements - i - 1]);
+@@ -358,7 +367,8 @@ void bounded_tsq_n_consumers_bulk_push(size_t M) {
+     REQUIRE(queue.empty() == true);
+ 
+     // master bulk push and steal
+-    REQUIRE(num_pushable_elements == queue.try_bulk_push(gold.data(), N));
++    first = gold.data();
++    REQUIRE(num_pushable_elements == queue.try_bulk_push(first, N));
+     REQUIRE(queue.size() == num_pushable_elements);
+     for(size_t i=0; i<num_pushable_elements; i++) {
+       REQUIRE(queue.steal() == gold[i]);
+@@ -383,8 +393,9 @@ void bounded_tsq_n_consumers_bulk_push(size_t M) {
+     }
+ 
+     // master thread
++    first = gold.data();
+     for(size_t n=0; n<N;) {
+-      n += queue.try_bulk_push(gold.data() + n, N-n);
++      n += queue.try_bulk_push(first, N-n);
+     }
+ 
+     std::vector<void*> items;
+@@ -648,7 +659,8 @@ void unbounded_tsq_n_consumers_bulk_push(size_t M) {
+     size_t capacity = queue.capacity();
+     REQUIRE((size == 0 && capacity > 0));
+ 
+-    queue.bulk_push(gold.data(), N);
++    auto first = gold.data();
++    queue.bulk_push(first, N);
+     REQUIRE(queue.size() == N);
+     for(size_t i=0; i<N; i++) {
+       REQUIRE(queue.pop() == gold[N - i - 1]);
+@@ -656,7 +668,8 @@ void unbounded_tsq_n_consumers_bulk_push(size_t M) {
+     REQUIRE(queue.empty() == true);
+ 
+     // master bulk push and steal
+-    queue.bulk_push(gold.data(), N);
++    first = gold.data();
++    queue.bulk_push(first, N);
+     REQUIRE(queue.size() == N);
+     for(size_t i=0; i<N; i++) {
+       REQUIRE(queue.steal() == gold[i]);
+@@ -680,7 +693,8 @@ void unbounded_tsq_n_consumers_bulk_push(size_t M) {
+     }
+ 
+     // master thread
+-    queue.bulk_push(gold.data(), N);
++    first = gold.data();
++    queue.bulk_push(first, N);
+ 
+     std::vector<void*> items;
+     while(consumed != N) {

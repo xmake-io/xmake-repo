@@ -1,0 +1,63 @@
+;
+; driver.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318}
+Provider=%ManufacturerName%
+DriverVer=
+CatalogFile=driver.cat
+
+[DestinationDirs]
+DefaultDestDir = 12
+UMDriverCopy=12,UMDF
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+driver.dll  = 1,,
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%driver.DeviceDesc%=driver_Device, Root\driver
+
+[driver_Device.NT]
+CopyFiles=UMDriverCopy
+
+[driver_Device.NT.Services]
+AddService=WUDFRd,0x000001fa,WUDFRd_ServiceInstall
+
+[driver_Device.NT.Wdf]
+UmdfService=driver,driver_Install
+UmdfServiceOrder=driver
+
+[driver_Install]
+UmdfLibraryVersion=$UMDF_VERSION_MAJOR$.$UMDF_VERSION_MINOR$.0
+ServiceBinary=%12%\UMDF\driver.dll
+
+[WUDFRd_ServiceInstall]
+DisplayName = %WudfRdDisplayName%
+ServiceType = 1
+StartType = 3
+ErrorControl = 1
+ServiceBinary = %12%\WUDFRd.sys
+
+[UMDriverCopy]
+driver.dll
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="<Your manufacturer name>" 
+DiskName = "driver Installation Disk"
+driver.DeviceDesc = "driver Device"
+driver.SVCDESC = "driver Service"
+WudfRdDisplayName="Windows Driver Foundation - User-mode Driver Framework Reflector"

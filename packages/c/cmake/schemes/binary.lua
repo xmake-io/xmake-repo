@@ -30,6 +30,7 @@ function add_urls(package, scheme_name)
         scheme:add("versions", "4.0.3",  "4e85de4daf1c3e82d7dc6b8ba5683972944b466343aeb9c327a742437bb3ce9a")
         scheme:add("versions", "4.1.4",  "7fc64e989af34201acff6d16628d6a8d1f72cfb74d5bd9342ab332c8c00e69ab")
         scheme:add("versions", "4.2.1",  "0bb18f295e52d7e9309980e361e79e76a1d8da67a1587255cbe3696ea998f597")
+        scheme:add("versions", "4.2.3",  "c2302d3e9c48daabee5ea7c4db4b2b93b989bcc89dae8b760880e00120641b5b")
         return true
     elseif is_host("linux") and linuxos.name() ~= "alpine" then
         if os.arch():find("arm64.*") then
@@ -52,6 +53,7 @@ function add_urls(package, scheme_name)
             scheme:add("versions", "4.0.3",  "391da1544ef50ac31300841caaf11db4de3976cdc4468643272e44b3f4644713")
             scheme:add("versions", "4.1.4",  "efe4dfc830fbf4d897af8e210f5a0632ad2b93c015a37c9305d40a57b0e4c538")
             scheme:add("versions", "4.2.1",  "3e178207a2c42af4cd4883127f8800b6faf99f3f5187dccc68bfb2cc7808f5f7")
+            scheme:add("versions", "4.2.3",  "e529c75f18f27ba27c52b329efe7b1f98dc32ccc0c6d193c7ab343f888962672")
             return true
         else
             scheme:add("urls", "https://cmake.org/files/v$(version)-x86_64.tar.gz", {version = function (version)
@@ -79,6 +81,7 @@ function add_urls(package, scheme_name)
             scheme:add("versions", "4.0.3",  "585ae9e013107bc8e7c7c9ce872cbdcbdff569e675b07ef57aacfb88c886faac")
             scheme:add("versions", "4.1.4",  "af5c72ce7ce61607d70ff80445130f6278204aa46c45127edc0dc36e26a687b2")
             scheme:add("versions", "4.2.1",  "c059bff1e97a2b6b5b0c0872263627486345ad0ed083298cb21cff2eda883980")
+            scheme:add("versions", "4.2.3",  "5bb505d5e0cca0480a330f7f27ccf52c2b8b5214c5bba97df08899f5ef650c23")
             return true
         end
     elseif is_host("windows") then
@@ -108,6 +111,7 @@ function add_urls(package, scheme_name)
             scheme:add("versions", "4.0.3",  "b59a31dfbfa376a4aaea9ff560ff2b29f78ee5f9fb15447fc71ae7bf9fea9379")
             scheme:add("versions", "4.1.4",  "8c31aabdf2223a7bb5759209ada56a9a72c6a1c605c221f23967130d1989e171")
             scheme:add("versions", "4.2.1",  "dfc2b2afac257555e3b9ce375b12b2883964283a366c17fec96cf4d17e4f1677")
+            scheme:add("versions", "4.2.3",  "eb4ebf5155dbb05436d675706b2a08189430df58904257ae5e91bcba4c86933c")
             return true
         elseif os.arch() == "x86" then
             scheme:add("urls", "https://cmake.org/files/v$(version).zip", {excludes = {"*/doc/*"}, version = function (version)
@@ -135,6 +139,7 @@ function add_urls(package, scheme_name)
             scheme:add("versions", "4.0.3",  "9f71df30cf0194f7214d135afb277017bd4a58baba2ae14e6ae8b0533b5a3dbf")
             scheme:add("versions", "4.1.4",  "661f09c60febe401a73de7abd5030332973d44a6d163e22bba0866a7d90116c9")
             scheme:add("versions", "4.2.1",  "696129556482da90293f9d64c1fa68dbe06b0ede80331d7da9aaa03aada6aecf")
+            scheme:add("versions", "4.2.3",  "ad46d82c99a818a2cdd694fe82bec99f0cb557d864dc5fff5d54d347c7cdd98f")
             return true
         elseif os.arch() == "arm64" then
             scheme:add("urls", "https://cmake.org/files/v$(version).zip", {excludes = {"*/doc/*"}, version = function (version)
@@ -154,6 +159,7 @@ function add_urls(package, scheme_name)
             scheme:add("versions", "4.0.3",  "86ccd6485bbd4bb41a1a858db397be5bca5e0de96858bf8dbba7a64407bd6c00")
             scheme:add("versions", "4.1.4",  "82967cb4f33bd56c0d3dbceb13aa887156deac31f5b3a3db07bdfa96b11a7229")
             scheme:add("versions", "4.2.1",  "96b097ca3a019cd62839d4805958ad0163dd1adedcfbe578730d57c098aaf667")
+            scheme:add("versions", "4.2.3",  "751b206b1cf65151b72c525d26267c1d9beebf8fafc365ae00286571d9fd3ed9")
             return true
         end
     end

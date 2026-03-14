@@ -5,6 +5,7 @@ package("checkpolicy")
     set_license("GPL-2.0")
 
     add_urls("https://github.com/SELinuxProject/selinux/releases/download/$(version)/checkpolicy-$(version).tar.gz")
+    add_versions("3.10", "2d92951dfcb090d6179e7a23856622e0fcbc32be03bf1e60ace9dc9cbda11e59")
     add_versions("3.9", "dd85b0173ca6e96b22ebf472bcbccf04eb10e1aa07add8f1b7e0e9e8e995e027")
 
     add_deps("flex", "bison")

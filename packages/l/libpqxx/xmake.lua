@@ -6,6 +6,7 @@ package("libpqxx")
     add_urls("https://github.com/jtv/libpqxx/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jtv/libpqxx.git")
 
+    add_versions("8.0.0", "f467c8133b31941324e40eb21f05db0b52e0fcfa070fd1a08490967c1f129977")
     add_versions("7.10.5", "aa214df8b98672a43a39b68a37da87af1415a44965f6e484f85ca0eb4f151367")
     add_versions("7.10.3", "c5ba455e4f28901297c18a76e533c466cbe8908d4b2ff6313235954bb37cef25")
     add_versions("7.10.2", "9e109ffe12daa7b689da41dac05509f41b803f8405e38b1687b54e09df19000f")
@@ -24,16 +25,17 @@ package("libpqxx")
         if package:is_plat("windows") and package:version():eq("7.10.2") then
             io.replace("include/pqxx/internal/header-pre.hxx", "#if PQXX_CPLUSPLUS < 201703L && __has_include(<ciso646>)", "#if defined(_MSC_VER) && PQXX_CPLUSPLUS <= 201703L && __has_include(<ciso646>)", {plain=true})
         end
-        local configs = {"-DSKIP_BUILD_TEST=ON"}
+        local configs = {"-DSKIP_BUILD_TEST=ON", "-DSKIP_BUILD_EXAMPLES=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
+        local languages = package:version():ge("8.0.0") and "c++20" or "c++17"
         assert(package:check_cxxsnippets({test = [[
             void test() {
               pqxx::connection con;
             }
-        ]]}, {configs = {languages = "c++17"}, includes = "pqxx/pqxx"}))
+        ]]}, {configs = {languages = languages}, includes = "pqxx/pqxx"}))
     end)
