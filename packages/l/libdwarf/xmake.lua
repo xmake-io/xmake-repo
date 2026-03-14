@@ -6,6 +6,7 @@ package("libdwarf")
     add_urls("https://github.com/davea42/libdwarf-code/releases/download/v$(version)/libdwarf-$(version).tar.xz",
              "https://github.com/davea42/libdwarf-code.git")
 
+    add_versions("2.3.1", "28cf9a5d27aceff5c1f906244a4fe7ae208e41d20a6d8fc7e091c633a40b6e97")
     add_versions("2.3.0", "a153e8101828a478f88d18341267b59c19a3fc794bea47388347ce994ba90c17")
     add_versions("2.2.0", "54c0abbbeb4190bd1babb5d28574d2b20c2309343ec764cc7ca611e527ee4a42")
     add_versions("2.1.0", "461bd29cbb9a41c26a25b0e527c3736c772bb7a89f6260d1edb39ab105226e06")

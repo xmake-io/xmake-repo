@@ -52,7 +52,7 @@ Support this project by [becoming a sponsor](https://xmake.io/about/sponsor.html
 
 ## Introduction ([中文](/README_zh.md))
 
-xmake-repo is an official xmake package repository.
+xmake-repo is an official xmake package repository and project templates collection.
 
 ## Package dependences
 
@@ -133,3 +133,15 @@ $ xmake l scripts/test.lua --shallow -vD -p iphoneos zlib
 $ xmake l scripts/test.lua --shallow -vD -k shared -m debug zlib
 $ xmake l scripts/test.lua --shallow -vD --runtimes=MD zlib
 ```
+
+## Project Templates
+
+This repository also provides official project templates for `xmake create`.
+
+You can use these templates to create new projects quickly:
+
+```console
+$ xmake create -l c++ -t console myproject
+```
+
+The templates are located in the `templates` directory.

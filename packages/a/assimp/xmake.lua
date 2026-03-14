@@ -5,6 +5,7 @@ package("assimp")
 
     set_urls("https://github.com/assimp/assimp/archive/refs/tags/$(version).zip",
              "https://github.com/assimp/assimp.git")
+
     add_versions("v6.0.4", "1eeb63f3e6f6c9d820cc52f7d44fa6b6557256330f45ddaa903aa658c47fece5")
     add_versions("v6.0.3", "e9b3208513aa4566955a45cc085e031f7053e28f2e6a0e33d1657450bd0519c5")
     add_versions("v6.0.2", "699b455b92ce2b6b39aa06a957e59f9d83e8652c8b51364e811660a4acb9ee49")
@@ -188,10 +189,14 @@ package("assimp")
     end)
 
     on_test(function (package)
+        local language = "c++17"
+        if package:version() and package:version():lt("v5.2.5") then
+            language = "c++11"
+        end
         assert(package:check_cxxsnippets({test = [[
             #include <cassert>
             void test() {
                 Assimp::Importer importer;
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "assimp/Importer.hpp"}))
+        ]]}, {configs = {languages = language}, includes = "assimp/Importer.hpp"}))
     end)
