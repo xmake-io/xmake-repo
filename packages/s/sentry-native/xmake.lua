@@ -6,6 +6,7 @@ package("sentry-native")
     set_urls("https://github.com/getsentry/sentry-native/releases/download/$(version)/sentry-native.zip",
              "https://github.com/getsentry/sentry-native.git")
 
+    add_versions("0.13.2", "357f60edee5385dbad1c8ae629deda3843ccec4f244e752d52c957cc78eda57f")
     add_versions("0.13.1", "430bcf38465f29b5b167c4bbeb1d955cda0e40efb73da224b52675e89c7a984e")
     add_versions("0.12.8", "d668da4c13052d98b3920e3731c7d2166f9b0b7113b603c751c660eb567f3248")
     add_versions("0.12.2", "d265d26e761dfdfc3ce3b2f1916c48da316fe2147981e23182ce933e4b0835b6")
@@ -43,7 +44,7 @@ package("sentry-native")
     add_configs("backend", {description = "Set the backend of sentry to use", type = "string"})
 
     if is_plat("windows") then
-        add_syslinks("dbghelp", "winhttp", "shlwapi", "advapi32", "version")
+        add_syslinks("dbghelp", "synchronization", "winhttp", "shlwapi", "advapi32", "version")
     elseif is_plat("linux") then
         add_deps("libcurl")
         add_syslinks("dl", "pthread", "rt")
