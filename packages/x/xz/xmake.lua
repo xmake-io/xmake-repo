@@ -53,7 +53,7 @@ package("xz")
             table.insert(configs,  "-DXZ_SANDBOX=no")
         end
         local cxflags
-        if not package:is_plat("windows") and package:is_arch("arm.*") then
+        if not package:is_plat("windows") and package:is_arch("arm64.*") then
             cxflags = "-march=armv8-a+crc+crypto"
         end
         import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
