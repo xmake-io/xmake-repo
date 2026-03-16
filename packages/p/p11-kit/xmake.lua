@@ -6,6 +6,7 @@ package("p11-kit")
     add_urls("https://github.com/p11-glue/p11-kit/releases/download/$(version)/p11-kit-$(version).tar.xz",
              "https://github.com/p11-glue/p11-kit.git")
 
+    add_versions("0.26.2", "09fd9f44da4813a3141e73d5e7cf7008e5660d0405f13d56c15e1da9dcecf828")
     add_versions("0.26.1", "4769f81483a28040cce1dac09a99599f787a8e0dc239a3089d4b0f676b7c4561")
     add_versions("0.25.10", "a62a137a966fb3a9bbfa670b4422161e369ddea216be51425e3be0ab2096e408")
     add_versions("0.25.9", "98a96f6602a70206f8073deb5e894b1c8efd76ef53c629ab88815d58273f2561")
