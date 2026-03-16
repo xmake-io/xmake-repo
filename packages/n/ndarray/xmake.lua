@@ -4,6 +4,7 @@ package("ndarray")
     set_description("NumPy-friendly multidimensional arrays in C++")
 
     set_urls("https://github.com/ndarray/ndarray/archive/refs/tags/$(version).tar.gz")
+    add_versions("1.6.5", "d499fcddbb750040f2e55e0fc700cb1681a45ff3751ec25f45835c787cb2dca2")
     add_versions("1.6.4", "a125dfcb3c5bdfd1ef9055cd4f2c3de60ad02abc53279dd25e28d155e786ebe0")
 
     add_deps("boost")
