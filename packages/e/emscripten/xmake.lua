@@ -16,6 +16,18 @@ package("emscripten")
 
     add_deps("python")
 
+    on_check("macosx|arm64", "linux|arm64", function (package)
+        local package_ver = package:version()
+        if package:is_plat("macosx") and package_ver and package_ver:lt("2.0.21") then
+            -- https://github.com/emscripten-core/emsdk/issues/671
+            raise("toolchain(emscripten): macOS arm64 is only supported for emscripten >= 2.0.21")
+        end
+        if package:is_plat("linux") and package_ver and package_ver:lt("3.1.58") then
+            -- https://github.com/emscripten-core/emsdk/issues/1500
+            raise("toolchain(emscripten): Linux arm64 is not fully supported for emscripten < 3.1.58.")
+        end
+    end)
+
     on_load(function (package)
         package:addenv("PATH", "upstream/emscripten")
         package:addenv("PATH", ".")
@@ -66,8 +78,8 @@ package("emscripten")
             -- if python3 and low version emscripten, we need to change the shebang
             local py_major_ver = python_dep:version():major()
             if py_major_ver and py_major_ver == 3 then
-                -- change shebang from python->python3
-                for _, filepath in ipairs(table.join(os.files(path.join(installdir, "upstream", "emscripten", "*")))) do
+                -- change shebang: python->python3
+                for _, filepath in ipairs(os.files(path.join(installdir, "upstream", "emscripten", "*"))) do
                     io.replace(filepath, "#!/usr/bin/env python\n", "#!/usr/bin/env python3\n", {plain = true})
                 end
             end
