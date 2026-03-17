@@ -20,14 +20,15 @@ fragmentation avoidance and scalable concurrency support]])
         if package:gitref() then
             package:add("deps", "automake", "autoconf")
         end
-        if package:is_plat("linux") and package:config("pic") ~= false then
+
+        if package:config("pic") ~= false then
             package:add("links", "jemalloc_pic")
         else
             package:add("links", "jemalloc")
         end
     end)
 
-    on_install("linux", "macosx", "mingw@macosx", function(package)
+    on_install("linux", "macosx", function(package)
         local configs = {"--disable-debug",
                          "--with-jemalloc-prefix="}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
