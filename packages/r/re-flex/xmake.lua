@@ -15,6 +15,10 @@ package("re-flex")
     add_versions("v4.4.0", "3b34d0c88f91db6b5387355a64a84bfa6464d90fb182aab05c367605db28d2e8")
     add_versions("v4.3.0", "1658c1be9fa95bf948a657d75d2cef0df81b614bc6052284935774d4d8551d95")
 
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     if is_plat("windows", "mingw", "msys") then
         add_syslinks("ws2_32")
     end
