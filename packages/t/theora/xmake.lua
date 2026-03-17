@@ -4,7 +4,7 @@ package("theora")
     set_license("BSD-3-Clause")
 
     add_urls("https://gitlab.xiph.org/xiph/theora.git",
-             "https://gitlab.xiph.org/xiph/theora/-/archive/v$(version)/theora-$(version).tar.gz",
+             "https://gitlab.xiph.org/xiph/theora/-/archive/$(version)/theora-$(version).tar.gz",
              "https://github.com/xiph/theora.git")
 
     add_versions("v1.0", "bfaaa9dc04b57b44a3152c2132372c72a20d69e5fc6c9cc8f651cc1bc2434006")

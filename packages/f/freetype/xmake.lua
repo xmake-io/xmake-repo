@@ -8,6 +8,7 @@ package("freetype")
     add_urls("https://gitlab.freedesktop.org/freetype/freetype.git",
              "https://github.com/freetype/freetype.git", {alias = "git"})
 
+    add_versions("archive:2.14.1", "174d9e53402e1bf9ec7277e22ec199ba3e55a6be2c0740cb18c0ee9850fc8c34")
     add_versions("archive:2.13.3", "5c3a8e78f7b24c20b25b54ee575d6daa40007a5f4eea2845861c3409b3021747")
     add_versions("archive:2.13.1", "0b109c59914f25b4411a8de2a506fdd18fa8457eb86eca6c7b15c19110a92fa5")
     add_versions("archive:2.13.0", "a7aca0e532a276ea8d85bd31149f0a74c33d19c8d287116ef8f5f8357b4f1f80")
@@ -16,6 +17,7 @@ package("freetype")
     add_versions("archive:2.11.0", "a45c6b403413abd5706f3582f04c8339d26397c4304b78fa552f2215df64101f")
     add_versions("archive:2.10.4", "5eab795ebb23ac77001cfb68b7d4d50b5d6c7469247b0b01b2c953269f658dac")
     add_versions("archive:2.9.1",  "ec391504e55498adceb30baceebd147a6e963f636eb617424bcfc47a169898ce")
+    add_versions("git:2.14.1", "VER-2-14-1")
     add_versions("git:2.13.3", "VER-2-13-3")
     add_versions("git:2.13.1", "VER-2-13-1")
     add_versions("git:2.13.0", "VER-2-13-0")
@@ -56,17 +58,17 @@ package("freetype")
     add_includedirs("include/freetype2")
 
     on_load(function (package)
-        local function add_dep(conf, pkg)
+        local function add_configdep(conf, pkg, depconf)
             if package:config(conf) then
-                package:add("deps", pkg or conf)
+                package:add("deps", pkg or conf, depconf)
             end
         end
 
-        add_dep("bzip2")
-        add_dep("zlib")
-        add_dep("png", "libpng")
-        add_dep("woff2", "brotli")
-        add_dep("harfbuzz")
+        add_configdep("bzip2")
+        add_configdep("zlib")
+        add_configdep("png", "libpng")
+        add_configdep("woff2", "brotli")
+        add_configdep("harfbuzz", nil, {configs = {freetype = false}}) -- we have to disable freetype in harfbuzz to prevent a circular dependency
     end)
 
     on_install(function (package)
@@ -83,12 +85,23 @@ package("freetype")
 
                 local lib = package:dep(opt.pkg or opt.conf)
                 if lib and not lib:is_system() then
-                    local includeconf = opt.cmakeinclude or (opt.cmakewith .. "_INCLUDE_DIRS")
-                    local libconf = opt.cmakelib or (opt.cmakewith .. "_LIBRARIES")
                     local fetchinfo = lib:fetch()
                     if fetchinfo then
-                        table.insert(configs, "-D" .. includeconf .. "=" .. table.concat(fetchinfo.includedirs or fetchinfo.sysincludedirs, ";"))
-                        table.insert(configs, "-D" .. libconf .. "=" .. table.concat(fetchinfo.libfiles, ";"))
+                        local includedirs = fetchinfo.includedirs or fetchinfo.sysincludedirs
+                        if includedirs and #includedirs > 0 then
+                            local includeconfs = opt.cmakeinclude and table.wrap(opt.cmakeinclude) or {opt.cmakewith .. "_INCLUDE_DIRS"}
+                            for _, includeconf in ipairs(includeconfs) do
+                                table.insert(configs, "-D" .. includeconf .. "=" .. table.concat(fetchinfo.includedirs or fetchinfo.sysincludedirs, ";"))
+                            end
+                        end
+                        -- libfiles may include .dll (https://github.com/xmake-io/xmake-repo/pull/8155)
+                        local libfiles = table.remove_if(table.clone(fetchinfo.libfiles or {}), function (i, file) return path.extension(file):lower() == ".dll" end)
+                        if #libfiles > 0 then
+                            local libconfs = opt.cmakelib and table.wrap(opt.cmakelib) or {opt.cmakewith .. "_LIBRARIES"}
+                            for _, libconf in ipairs(libconfs) do
+                                table.insert(configs, "-D" .. libconf .. "=" .. table.concat(libfiles, ";"))
+                            end
+                        end
                     end
                 end
             else
@@ -99,7 +112,7 @@ package("freetype")
                 end
             end
         end
-        add_dep({conf = "bzip2", cmakewith = "BZIP2", cmakedisable = "BZip2", cmakeinclude = "BZIP2_INCLUDE_DIR"})
+        add_dep({conf = "bzip2", cmakewith = "BZIP2", cmakedisable = "BZip2", cmakeinclude = "BZIP2_INCLUDE_DIR", cmakelib = {"BZIP2_LIBRARIES", "BZIP2_LIBRARY"}}) -- there seem to be an error in FindBZip2.cmake
         add_dep({conf = "png", pkg = "libpng", cmakewith = "PNG", cmakeinclude = "PNG_PNG_INCLUDE_DIR", cmakelib = "PNG_LIBRARY"})
         add_dep({conf = "woff2", pkg = "brotli", cmakewith = "BROTLI", cmakedisable = "BrotliDec", cmakeinclude = "BROTLIDEC_INCLUDE_DIRS", cmakelib = "BROTLIDEC_LIBRARIES"})
         add_dep({conf = "zlib", cmakewith = "ZLIB", cmakeinclude = "ZLIB_INCLUDE_DIR", cmakelib = "ZLIB_LIBRARY"})

@@ -1,0 +1,14 @@
+diff --git a/lib/CMakeLists.txt b/lib/CMakeLists.txt
+index 4585a51..c11ed2b 100644
+--- a/lib/CMakeLists.txt
++++ b/lib/CMakeLists.txt
+@@ -154,6 +154,9 @@ if(WITH_STATIC_LIBRARIES)
+ 		"${mosquitto_SOURCE_DIR}"
+ 		"${mosquitto_SOURCE_DIR}/include"
+ 		"${mosquitto_SOURCE_DIR}/lib"
++		"${mosquitto_SOURCE_DIR}/common"
++		"${mosquitto_SOURCE_DIR}/libcommon"
++		"${OPENSSL_INCLUDE_DIR}" # Required for cross compilation
+ 	)
+ 
+ 	set_target_properties(libmosquitto_static PROPERTIES

@@ -6,10 +6,12 @@ package("freeglut")
     add_urls("https://github.com/freeglut/freeglut/releases/download/v$(version)/freeglut-$(version).tar.gz",
              "https://github.com/freeglut/freeglut.git")
 
+    add_versions("3.8.0", "674dcaff25010e09e450aec458b8870d9e98c46f99538db457ab659b321d9989")
     add_versions("3.6.0", "9c3d4d6516fbfa0280edc93c77698fb7303e443c1aaaf37d269e3288a6c3ea52")
     add_versions("3.4.0", "3c0bcb915d9b180a97edaebd011b7a1de54583a838644dcd42bb0ea0c6f3eaec")
 
     add_patches("3.4.0", "patches/3.4.0/arm64.patch", "a96b538e218ca478c7678aad62b724226dcdf11371da58d1287b95dbe241d00e")
+    add_patches("3.6.0", "https://github.com/freeglut/freeglut/commit/800772e993a3ceffa01ccf3fca449d3279cde338.patch", "3c5fd7c50882c721f8db1a97d766db3b17ac79db92eeb00c820ffe9139a1544c")
 
     add_deps("cmake")
 

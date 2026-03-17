@@ -19,14 +19,15 @@ package("libxkbcommon")
 
     on_load(function (package)
         if package:config("x11") then
-            package:add("deps", "libxcb", "xcb-proto", "libxml2", "libxau", "libxdmcp")
+            package:add("deps", "libxcb", "xcb-proto", "libxml2", "libxau", "libxdmcp", { configs = { shared = package:config("shared") }})
             if package:is_plat("linux") then
                 package:add("extsources", "pacman::libxkbcommon-x11", "apt::libxkbcommon-x11-dev")
             end
         end
 
         if package:config("wayland") then
-            package:add("deps", "wayland", "wayland-protocols")
+            package:add("deps", "wayland", { configs = { shared = package:config("shared") }})
+            package:add("deps", "wayland-protocols")
             if package:is_plat("linux") then
                 package:add("extsources", "pacman::libxkbcommon")
             end

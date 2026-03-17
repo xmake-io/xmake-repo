@@ -1,0 +1,13 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+bindir=${prefix}/bin
+
+Name: DirectX 12 Agility SDK
+Description: DirectX 12 Agility SDK for Windows graphics development
+Version: @PROJECT_VERSION@
+URL: https://devblogs.microsoft.com/directx/directx-12-agility-sdk
+Requires:
+Libs: -ld3d12
+Cflags: -I${includedir}

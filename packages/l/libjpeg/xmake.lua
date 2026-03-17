@@ -52,8 +52,8 @@ package("libjpeg")
                     else
                         add_configfiles("jconfig.txt", {filename = "jconfig.h"})
                     end
-                    add_includedirs("$(buildir)", {public = true})
-                    add_headerfiles("jerror.h", "jmorecfg.h", "jpeglib.h", "$(buildir)/jconfig.h")
+                    add_includedirs("$(builddir)", {public = true})
+                    add_headerfiles("jerror.h", "jmorecfg.h", "jpeglib.h", "$(builddir)/jconfig.h")
                     if is_plat("windows") and is_kind("shared") then
                         add_rules("utils.symbols.export_all")
                     end

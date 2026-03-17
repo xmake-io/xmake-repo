@@ -1,9 +1,9 @@
 package("gtk4")
-
     set_homepage("https://gtk.org/")
     set_description("Toolkit for creating graphical user interfaces")
     set_license("LGPL-2.0-or-later")
 
+    add_urls("https://gitlab.gnome.org/GNOME/gtk.git")
     add_urls("https://download.gnome.org/sources/gtk/$(version).tar.xz", {version = function (version)
         return format("%d.%d/gtk-%s", version:major(), version:minor(), version)
     end})
@@ -13,62 +13,70 @@ package("gtk4")
     add_configs("x11", {description = "Enable the X11 gdk backend.", default = is_plat("linux"), type = "boolean"})
     add_configs("wayland", {description = "Enable the wayland gdk backend.", default = false, type = "boolean"})
 
-    on_fetch("windows", "macosx", "linux", function (package, opt)
+    if is_plat("linux") then
+        add_extsources("apt::libgtk-4-dev")
+    end
+
+    add_includedirs("include/gtk-4.0")
+
+    -- https://github.com/mesonbuild/meson/issues/6710
+    add_deps("meson >=1.8.3", "ninja")
+    add_deps("glib", "pango", "gdk-pixbuf", "graphene", "fribidi")
+    add_deps("harfbuzz", "cairo", {configs = {glib = true}})
+    if is_plat("linux") then
+        add_deps("libdrm")
+        add_deps("libepoxy", {configs = {glx = true, x11 = true, egl = true}})
+    else
+        add_deps("libepoxy")
+    end
+
+    on_fetch(function (package, opt)
         if opt.system then
             return package:find_package("pkgconfig::gtk4")
         end
     end)
 
-    if is_plat("linux") then
-        add_extsources("apt::libgtk-4-dev")
-    end
-
-    add_deps("meson", "ninja")
-    add_deps("glib", "pango", "gdk-pixbuf", "libepoxy", "graphene", "fribidi", "pcre2")
-    add_deps("harfbuzz", "cairo", {configs = {glib = true}})
-    if is_plat("linux") then
-        add_deps("libdrm")
-        add_deps("libiconv")
-    elseif is_plat("macosx") then
-        add_deps("libiconv", {system = true})
-        add_deps("libintl")
-    elseif is_plat("windows") then
-        add_deps("libintl")
-    end
-    add_includedirs("include/gtk-4.0")
-
-    on_load("windows|x64", "windows|x86", "macosx", "linux", function (package)
+    on_load(function (package)
         if package:config("x11") then
             package:add("deps", "libx11", "libxrandr", "libxi", "libxcursor", "libxext", "libxdamage", "libxfixes", "libxinerama")
         end
         if package:config("wayland") then
             package:add("deps", "wayland", "libxkbcommon")
         end
+        package:addenv("PATH", "bin")
     end)
 
-    on_install("windows|x64", "windows|x86", "macosx", "linux", function (package)
-        local mesondir = package:dep("meson"):installdir()
-        local gnomemod = path.join(mesondir, "mesonbuild", "modules", "gnome.py")
-        if package:is_plat("windows") then
-            -- workaround https://github.com/mesonbuild/meson/issues/6710
-            io.replace(gnomemod, "absolute_paths=True,", "absolute_paths=False,#x", {plain = true})
-        end
+    on_install("windows|!arm*", "macosx", "linux", "mingw", function (package)
+        import("package.tools.meson")
+
+        os.rm("subprojects")
+
         io.replace("meson.build", "xext_dep,", "[x11_dep, xext_dep],", {plain = true})
         io.replace("meson.build", "xi_dep)", "[x11_dep, xext_dep, xi_dep])", {plain = true})
-        local configs = {"-Dintrospection=disabled",
-                         "-Dbuild-tests=false",
-                         "-Dbuild-testsuite=false",
-                         "-Dbuild-examples=false",
-                         "-Dbuild-demos=false",
-                         "-Dmedia-gstreamer=disabled",
-                         "-Dmedia-ffmpeg=disabled"}
+
+        local configs = {
+            "-Dintrospection=disabled",
+            "-Dbuild-tests=false",
+            "-Dbuild-testsuite=false",
+            "-Dbuild-examples=false",
+            "-Dbuild-demos=false",
+            "-Dmedia-gstreamer=disabled",
+            "-Dmedia-ffmpeg=disabled",
+        }
         table.insert(configs, "-Dx11-backend=" .. (package:config("x11") and "true" or "false"))
         table.insert(configs, "-Dwayland-backend=" .. (package:config("wayland") and "true" or "false"))
-        import("package.tools.meson").install(package, configs, {packagedeps = {"libintl", "libiconv", "pcre2"}})
-        if package:is_plat("windows") then
-            io.replace(gnomemod, "absolute_paths=False,#x", "absolute_paths=True,", {plain = true})
+
+        local shflags
+        local envs = meson.buildenvs(package)
+        if package:is_plat("linux") then
+            local pc_path = path.splitenv(envs.PKG_CONFIG_PATH)
+            table.insert(pc_path, path.join(package:dep("shared-mime-info"):installdir(), "share/pkgconfig"))
+            envs.PKG_CONFIG_PATH = path.joinenv(pc_path)
+        elseif package:is_plat("mingw") then
+            -- gtk (c code) will call gcc to link, but cairo (c++ code) require g++
+            shflags = "-lstdc++"
         end
-        package:addenv("PATH", "bin")
+        meson.install(package, configs, {envs = envs, shflags = shflags})
     end)
 
     on_test(function (package)

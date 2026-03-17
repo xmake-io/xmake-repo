@@ -6,6 +6,8 @@ package("fmt")
     set_urls("https://github.com/fmtlib/fmt/releases/download/$(version)/fmt-$(version).zip",
              "https://github.com/fmtlib/fmt.git")
 
+    add_versions("12.1.0", "695fd197fa5aff8fc67b5f2bbc110490a875cdf7a41686ac8512fb480fa8ada7")
+    add_versions("12.0.0", "1c32293203449792bf8e94c7f6699c643887e826f2d66a80869b4f279fb07d25")
     add_versions("11.2.0", "203eb4e8aa0d746c62d8f903df58e0419e3751591bb53ff971096eaa0ebd4ec3")
     add_versions("11.1.4", "49b039601196e1a765e81c5c9a05a61ed3d33f23b3961323d7322e4fe213d3e6")
     add_versions("11.1.3", "7df2fd3426b18d552840c071c977dc891efe274051d2e7c47e2c83c3918ba6df")

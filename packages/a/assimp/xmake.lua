@@ -5,6 +5,9 @@ package("assimp")
 
     set_urls("https://github.com/assimp/assimp/archive/refs/tags/$(version).zip",
              "https://github.com/assimp/assimp.git")
+
+    add_versions("v6.0.4", "1eeb63f3e6f6c9d820cc52f7d44fa6b6557256330f45ddaa903aa658c47fece5")
+    add_versions("v6.0.3", "e9b3208513aa4566955a45cc085e031f7053e28f2e6a0e33d1657450bd0519c5")
     add_versions("v6.0.2", "699b455b92ce2b6b39aa06a957e59f9d83e8652c8b51364e811660a4acb9ee49")
     add_versions("v6.0.1", "24256974f66e36df6c72b78d4903e1bb6875b6d3f8aa8638639def68f2c50fd0")
     add_versions("v5.4.3", "795c29716f4ac123b403e53b677e9f32a8605c4a7b2d9904bfaae3f4053b506d")
@@ -143,6 +146,9 @@ package("assimp")
             local minizip = package:dep("minizip")
             if minizip and not minizip:is_system() then
                 packagedeps = table.join2(packagedeps or {}, "minizip")
+                if minizip:config("bzip2") then
+                    table.insert(packagedeps, "bzip2")
+                end
             end
             -- fix ninja debug build
             os.mkdir(path.join(package:buildir(), "code/pdb"))
@@ -150,6 +156,9 @@ package("assimp")
             if package:is_debug() and package:has_runtime("MD", "MT") then
                 io.replace("CMakeLists.txt", "/D_DEBUG", "", {plain = true})
             end
+
+            -- fix std::min/max conflict with windows.h
+            io.insert("code/AssetLib/IFC/IFCLoader.cpp", 1, "#define NOMINMAX")
         end
 
         local zlib = package:dep("zlib")
@@ -180,10 +189,14 @@ package("assimp")
     end)
 
     on_test(function (package)
+        local language = "c++17"
+        if package:version() and package:version():lt("v5.2.5") then
+            language = "c++11"
+        end
         assert(package:check_cxxsnippets({test = [[
             #include <cassert>
             void test() {
                 Assimp::Importer importer;
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "assimp/Importer.hpp"}))
+        ]]}, {configs = {languages = language}, includes = "assimp/Importer.hpp"}))
     end)

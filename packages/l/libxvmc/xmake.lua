@@ -1,5 +1,4 @@
 package("libxvmc")
-
     set_homepage("https://www.x.org/")
     set_description("X.Org: X-Video Motion Compensation API")
 
@@ -12,8 +11,12 @@ package("libxvmc")
     end
 
     if is_plat("macosx", "linux") then
-        add_deps("pkg-config", "util-macros", "libx11", "libxext", "libxv", "xorgproto")
+        add_deps("pkg-config", "util-macros", "xorgproto")
     end
+
+    on_load(function (package)
+        package:add("deps", "libx11", "libxext", "libxv", { configs = { shared = package:config("shared") } })
+    end)
 
     on_install("macosx", "linux", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),

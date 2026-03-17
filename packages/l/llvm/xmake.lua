@@ -15,8 +15,8 @@ package("llvm")
     add_configs("pstl",              {description = "Enable pstl project.", default = false, type = "boolean"})
     add_configs("mlir",              {description = "Enable mlir project.", default = false, type = "boolean"})
     add_configs("flang",             {description = "Enable flang project.", default = false, type = "boolean"})
-    add_configs("compiler-rt",       {description = "Enable compiler-rt project.", default = true, type = "boolean"})
 
+    add_configs("compiler-rt",       {description = "Enable compiler-rt runtime.", default = true, type = "boolean"})
     add_configs("libunwind",         {description = "Enable libunwind runtime.", default = true, type = "boolean"})
     add_configs("libc",              {description = "Enable libc runtime.", default = false, type = "boolean"})
     add_configs("libcxx",            {description = "Enable libcxx runtime.", default = true, type = "boolean"})
@@ -35,6 +35,7 @@ package("llvm")
                     package:add("versions", "16.0.6", "5e1f560f75e7a4c7a6509cf7d9a28b4543e7afcb4bcf4f747e9f208f0efa6818")
                     package:add("versions", "17.0.6", "ce78b510603cb3b347788d2f52978e971cf5f55559151ca13a73fd400ad80c41")
                     package:add("versions", "18.1.1", "1e21b088b1f86aebb4a2e4ad473d1892dccab53ecbe06947f31c6fa56a078bf5")
+                    package:add("versions", "21.1.0", "36b9a55e237b2db404aa621aacb8538b56dabc6f49b8927dc1109e8123524d5f")
                     precompiled = true
                 else
                     package:set("urls", "https://github.com/xmake-mirror/llvm-windows/releases/download/$(version)/clang+llvm-$(version)-win64.zip")
@@ -44,6 +45,7 @@ package("llvm")
                     package:add("versions", "16.0.6", "7adb1a630b6cc676a4b983aca9b01e67f770556c6e960e9ee9aa7752c8beb8a3")
                     package:add("versions", "17.0.6", "c480a4c280234b91f7796a1b73b18134ae62fe7c88d2d0c33312d33cb2999187")
                     package:add("versions", "18.1.1", "7040c7a02529bc0c683896d4f851138b700d8aa8f40c5f48503b10f4cc2dc180")
+                    package:add("versions", "21.1.0", "130d0067de849be36c0ec84c6d515bd310cab324a4cc95d8cc71a1d3c6c730f4")
                     precompiled = true
                 end
             end
@@ -56,6 +58,7 @@ package("llvm")
                 package:add("versions", "16.0.6", "ce5e71081d17ce9e86d7cbcfa28c4b04b9300f8fb7e78422b1feb6bc52c3028e")
                 package:add("versions", "17.0.6", "58a8818c60e6627064f312dbf46c02d9949956558340938b71cf731ad8bc0813")
                 package:add("versions", "18.1.1", "8f34c6206be84b186b4b31f47e1b52758fa38348565953fad453d177ef34c0ad")
+                package:add("versions", "21.1.0", "1672e3efb4c2affd62dbbe12ea898b28a451416c7d95c1bd0190c26cbe878825")
             end
         end)
     else
@@ -70,6 +73,7 @@ package("llvm")
                 add_versions("16.0.6", "5e1f560f75e7a4c7a6509cf7d9a28b4543e7afcb4bcf4f747e9f208f0efa6818")
                 add_versions("17.0.6", "ce78b510603cb3b347788d2f52978e971cf5f55559151ca13a73fd400ad80c41")
                 add_versions("18.1.1", "1e21b088b1f86aebb4a2e4ad473d1892dccab53ecbe06947f31c6fa56a078bf5")
+                add_versions("21.1.0", "36b9a55e237b2db404aa621aacb8538b56dabc6f49b8927dc1109e8123524d5f")
                 precompiled = true
             else
                 set_urls("https://github.com/xmake-mirror/llvm-windows/releases/download/$(version)/clang+llvm-$(version)-win64.zip")
@@ -79,6 +83,7 @@ package("llvm")
                 add_versions("16.0.6", "7adb1a630b6cc676a4b983aca9b01e67f770556c6e960e9ee9aa7752c8beb8a3")
                 add_versions("17.0.6", "c480a4c280234b91f7796a1b73b18134ae62fe7c88d2d0c33312d33cb2999187")
                 add_versions("18.1.1", "7040c7a02529bc0c683896d4f851138b700d8aa8f40c5f48503b10f4cc2dc180")
+                add_versions("21.1.0", "130d0067de849be36c0ec84c6d515bd310cab324a4cc95d8cc71a1d3c6c730f4")
                 precompiled = true
             end
         end
@@ -91,6 +96,7 @@ package("llvm")
             add_versions("16.0.6", "ce5e71081d17ce9e86d7cbcfa28c4b04b9300f8fb7e78422b1feb6bc52c3028e")
             add_versions("17.0.6", "58a8818c60e6627064f312dbf46c02d9949956558340938b71cf731ad8bc0813")
             add_versions("18.1.1", "8f34c6206be84b186b4b31f47e1b52758fa38348565953fad453d177ef34c0ad")
+            add_versions("21.1.0", "1672e3efb4c2affd62dbbe12ea898b28a451416c7d95c1bd0190c26cbe878825")
         end
     end
 
@@ -126,7 +132,7 @@ package("llvm")
         os.cp("*", package:installdir())
     end)
 
-    on_install("linux", "macosx|x86_64", "bsd", function (package)
+    on_install("linux", "macosx", "bsd", function (package)
         local projects = {
             "bolt",
             "clang",
@@ -139,7 +145,6 @@ package("llvm")
             "pstl",
             "mlir",
             "flang",
-            "compiler-rt",
             "openmp"
         }
         local projects_enabled = {}
@@ -153,6 +158,7 @@ package("llvm")
             end
         end
         local runtimes = {
+            "compiler-rt",
             "libc",
             "libunwind",
             "libcxx",

@@ -5,6 +5,7 @@ package("zmqpb")
 
     set_urls("https://github.com/SFGrenade/ZmqPb-Cpp/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/SFGrenade/ZmqPb-Cpp.git")
+    add_versions("0.10.6", "24d69ab541b295d8656958f12757183769338c06a5d89f7544e904e198ea33be")
     add_versions("0.1", "4a34ec92faa381306356e84e2a2000093d8f76cfa037db1f4cd0adb0205faebb")
     add_versions("0.2", "5dfa4d4cebb10cb7ae03943e18e8d48c8ff215e80371f24c5ade212be7f20721")
     add_versions("0.3", "343c57c9f72facca47082422a259ec8c531f5c6e332a3828835080c4a96b9064")

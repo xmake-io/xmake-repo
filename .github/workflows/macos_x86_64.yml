@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-13]
+        os: [macos-15-intel]
         arch: [x86_64]
         kind: [static, shared]
 

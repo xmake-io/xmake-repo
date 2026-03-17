@@ -14,6 +14,14 @@ package("bzip2")
         add_extsources("brew::bzip2")
     end
 
+    on_load(function (package)
+        -- @see https://github.com/xmake-io/xmake-repo/pull/8179#issuecomment-3327113818, patches from msys2/MINGW-packages.
+        if package:is_plat("msys", "mingw", "cygwin") then
+            package:add("patches", "*", "patches/cygming.patch", "7e67f77172b19f3e6c1f0875b1d3e9cb79211f8e1c752794ef9afd3704f928cf")
+            package:add("patches", "*", "patches/show-progress.patch", "57f35bd9ef9113629c1d0ab6bcbbb7c0df0f7f4402ba0dccada32aa1cfe838f5")
+        end
+    end)
+
     on_install(function (package)
         local configs = {}
         configs.enable_tools = not package:is_plat("wasm")

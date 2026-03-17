@@ -6,6 +6,7 @@ package("rsync")
     set_license("GPL-3.0")
 
     add_urls("https://download.samba.org/pub/rsync/src/rsync-$(version).tar.gz")
+    add_versions("3.4.1", "2924bcb3a1ed8b551fc101f740b9f0fe0a202b115027647cf69850d65fd88c52")
     add_versions("3.2.3", "becc3c504ceea499f4167a260040ccf4d9f2ef9499ad5683c179a697146ce50e")
 
     add_deps("openssl", "xxhash", "lz4", "acl", "zstd", {host = true})

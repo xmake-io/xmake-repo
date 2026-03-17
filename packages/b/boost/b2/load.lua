@@ -89,8 +89,8 @@ function main(package)
         if vs_toolset then
             local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
             local minor = vs_toolset_ver:minor()
-            if minor and minor >= 40 then
-                package:add("patches", "<=1.85.0", "patches/1.85.0/fix-v144.patch", "1ba99cb2e2f03a4ba489a32596c62e1310b6c73ba4d19afa8796bcf180c84422")
+            if minor and minor >= 44 then
+                package:add("patches", "<=1.85.0", "patches/1.85.0/fix-msvc.patch", "e3c9fcfa424581c385e0346bd747f38d83fe8dcda9a5a9b87fb11796209c52ca")
             end
         end
     end

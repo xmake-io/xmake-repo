@@ -18,11 +18,13 @@ package("re2")
     add_versions("2024.07.02", "eb2df807c781601c14a260a507a5bb4509be1ee626024cb45acbd57cb9d4032b")
     add_versions("2025.07.17", "41bea2a95289d112e7c2ccceeb60ee03d54269e7fe53e3a82bab40babdfa51ef")
     add_versions("2025.08.12", "2f3bec634c3e51ea1faf0d441e0a8718b73ef758d7020175ed7e352df3f6ae12")
+    add_versions("2025.11.05", "87f6029d2f6de8aa023654240a03ada90e876ce9a4676e258dd01ea4c26ffd67")
 
     add_versions("git:2025.07.17", "2025-07-17")
     add_versions("git:2025.08.12", "2025-08-12")
+    add_versions("git:2025.11.05", "2025-11-05")
 
-    add_deps("cmake", "abseil")
+    add_deps("cmake", "abseil <=20260107.0")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")

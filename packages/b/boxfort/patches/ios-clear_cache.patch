@@ -1,0 +1,28 @@
+diff --git a/src/exe.h b/src/exe.h
+index 2c1038d..36e6b99 100644
+--- a/src/exe.h
++++ b/src/exe.h
+@@ -25,6 +25,12 @@
+ #define EXE_H_
+ 
+ #include <stddef.h>
++#if defined(__APPLE__)
++    #include <TargetConditionals.h>
++    #if TARGET_OS_IPHONE || TARGET_OS_SIMULATOR
++        #include <libkern/OSCacheControl.h>
++    #endif
++#endif
+ 
+ #include "config.h"
+ 
+@@ -49,7 +55,9 @@ size_t bxfi_exe_get_vmslide(bxfi_exe_lib lib);
+ 
+ static inline void bxfi_exe_clear_cache(void *addr, size_t len)
+ {
+-#if defined (HAVE___BUILTIN___CLEAR_CACHE)
++#if TARGET_OS_IPHONE || TARGET_OS_SIMULATOR
++    sys_icache_invalidate(addr, len);
++#elif defined (HAVE___BUILTIN___CLEAR_CACHE)
+     __builtin___clear_cache((char *) addr, (char *) addr + len);
+ #endif
+ }

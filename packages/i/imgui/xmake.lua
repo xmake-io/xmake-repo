@@ -7,6 +7,11 @@ package("imgui")
     add_urls("https://github.com/ocornut/imgui.git", {alias = "git"})
 
     -- don't forget to add the docking versions as well
+    add_versions("v1.92.6", "5b17c01f69545bde732b14936d89ce0f508adb83e8b56fa82448371845172bc3")
+    add_versions("v1.92.5", "0eb50fe9aeba1a51f96b5843c7f630a32ed2e9362d693c61b87e4fa870cf826d")
+    add_versions("v1.92.4", "0e175d4d941112532549b418ced0bd546abe9024ecb9b5f431f8a67a2197b0ba")
+    add_versions("v1.92.3", "9212ee7c4718b1466a5d99e64bce3ef1965704afea4ba651f8d978d0791b7c7c")
+    add_versions("v1.92.2", "994aad785a0aa572538d909b923bf0a64e7bfe5ab3360d8ae0e397c6bb312c04")
     add_versions("v1.92.1", "32c237c2abf67a2ffccaac17192f711d4a787554b4133187a153d49057d6109c")
     add_versions("v1.92.0", "42250c45df2736bcef867ae4ff404d138e5135cd36466c63143b1ea3b1c81091")
     add_versions("v1.91.9", "3872a5f90df78fced023c1945f4466b654fd74573370b77b17742149763a7a7c")
@@ -53,6 +58,13 @@ package("imgui")
     add_versions("v1.76",   "e482dda81330d38c87bd81597cacaa89f05e20ed2c4c4a93a64322e97565f6dc")
     add_versions("v1.75",   "1023227fae4cf9c8032f56afcaea8902e9bfaad6d9094d6e48fb8f3903c7b866")
 
+    add_versions("v1.92.6-docking", "5e84cdaa6a6041586a0d11a3071b749734a0439d66fdbdad37ae5b27e37d396c")
+
+    add_versions("git:v1.92.6-docking", "v1.92.6-docking")
+    add_versions("git:v1.92.5-docking", "v1.92.5-docking")
+    add_versions("git:v1.92.4-docking", "v1.92.4-docking")
+    add_versions("git:v1.92.3-docking", "v1.92.3-docking")
+    add_versions("git:v1.92.2-docking", "v1.92.2-docking")
     add_versions("git:v1.92.1-docking", "v1.92.1-docking")
     add_versions("git:v1.92.0-docking", "v1.92.0-docking")
     add_versions("git:v1.91.9-docking", "v1.91.9-docking")
@@ -106,6 +118,7 @@ package("imgui")
     add_configs("sdl3_renderer",    {description = "Enable the sdl3 renderer backend", default = false, type = "boolean"})
     add_configs("sdl3_gpu",         {description = "Enable the sdl3 gpu backend", default = false, type = "boolean"})
     add_configs("vulkan",           {description = "Enable the vulkan backend", default = false, type = "boolean"})
+    add_configs("vulkan_no_proto",  {description = "Enable the vulkan backend with no vulkan function prototypes", default = false, type = "boolean"})
     add_configs("volk",             {description = "Enable the vulkan backend, and use volk to load Vulkan functions", default = false, type = "boolean"})
     add_configs("win32",            {description = "Enable the win32 backend", default = false, type = "boolean"})
     add_configs("osx",              {description = "Enable the OS X backend", default = false, type = "boolean"})
@@ -167,7 +180,10 @@ package("imgui")
         if package:config("sdl3") or package:config("sdl3_renderer") or package:config("sdl3_gpu") then
             package:add("deps", "libsdl3")
         end
-        if package:config("vulkan") then
+        if package:config("vulkan_no_proto") then
+            package:add("deps", "vulkan-headers")
+            package:add("defines", "IMGUI_IMPL_VULKAN_NO_PROTOTYPES")
+        elseif package:config("vulkan") then
             package:add("deps", "vulkan-headers")
         end
         if package:config("volk") then
@@ -203,6 +219,7 @@ package("imgui")
             sdl3_renderer    = package:config("sdl3_renderer"),
             sdl3_gpu         = package:config("sdl3_gpu"),
             vulkan           = package:config("vulkan"),
+            vulkan_no_proto  = package:config("vulkan_no_proto"),
             volk             = package:config("volk"),
             win32            = package:config("win32"),
             osx              = package:config("osx"),

@@ -1,0 +1,12 @@
+diff --git a/aui.views/src/AUI/Render/IRenderer.h b/aui.views/src/AUI/Render/IRenderer.h
+index f7268651..36ee26cc 100644
+--- a/aui.views/src/AUI/Render/IRenderer.h
++++ b/aui.views/src/AUI/Render/IRenderer.h
+@@ -12,6 +12,7 @@
+ #pragma once
+ 
+ #include <glm/glm.hpp>
++#include <glm/gtc/matrix_transform.hpp>
+ #include <AUI/Reflect/AEnumerate.h>
+ #include <AUI/Common/ASide.h>
+ #include <AUI/Common/AColor.h>

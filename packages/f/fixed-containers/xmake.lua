@@ -5,6 +5,7 @@ package("fixed-containers")
     set_license("MIT")
 
     add_urls("https://github.com/teslamotors/fixed-containers.git")
+    add_versions("2025.12.10", "39f7c30b4fe333a792c58bbbc0ec3207c58ccbee")
     add_versions("2025.01.03", "b8e8427326b8f7d3485828488e59b5853cf8b6bf")
 
     add_deps("cmake", "magic_enum")

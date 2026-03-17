@@ -6,6 +6,7 @@ package("libdeflate")
     add_urls("https://github.com/ebiggers/libdeflate/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ebiggers/libdeflate.git")
 
+    add_versions("v1.25", "d11473c1ad4c57d874695e8026865e38b47116bbcb872bfc622ec8f37a86017d")
     add_versions("v1.24", "ad8d3723d0065c4723ab738be9723f2ff1cb0f1571e8bfcf0301ff9661f475e8")
     add_versions("v1.23", "1ab18349b9fb0ce8a0ca4116bded725be7dcbfa709e19f6f983d99df1fb8b25f")
     add_versions("v1.22", "7f343c7bf2ba46e774d8a632bf073235e1fd27723ef0a12a90f8947b7fe851d6")
@@ -43,11 +44,6 @@ package("libdeflate")
         table.insert(configs, "-DLIBDEFLATE_BUILD_STATIC_LIB=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DLIBDEFLATE_BUILD_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
-
-        if package:is_plat("windows") and package:is_debug() then
-            local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.trycp(path.join(package:buildir(), "deflate.pdb"), dir)
-        end
     end)
 
     on_test(function (package)

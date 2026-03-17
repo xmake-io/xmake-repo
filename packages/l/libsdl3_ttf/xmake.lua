@@ -11,12 +11,12 @@ package("libsdl3_ttf")
         add_extsources("brew::sdl3_ttf")
     end
 
-    add_urls("https://www.libsdl.org/projects/SDL_ttf/release/SDL3_ttf-$(version).tar.gz",
-             "https://github.com/libsdl-org/SDL_ttf/releases/download/release-$(version)/SDL3_ttf-$(version).tar.gz", { alias = "archive" })
-    add_urls("https://github.com/libsdl-org/SDL_ttf.git", { alias = "github" })
+    add_urls("https://www.libsdl.org/projects/SDL_ttf/release/SDL3_ttf-$(version).zip",
+             "https://github.com/libsdl-org/SDL_ttf/releases/download/release-$(version)/SDL3_ttf-$(version).zip", { alias = "archive" })
+    add_urls("https://github.com/libsdl-org/SDL_ttf.git", {alias = "github", submodules = false})
 
-    add_versions("archive:3.2.2", "63547d58d0185c833213885b635a2c0548201cc8f301e6587c0be1a67e1e045d")
-    add_versions("archive:3.2.0", "9a741defb7c7d6dff658d402cb1cc46c1409a20df00949e1572eb9043102eb62")
+    add_versions("archive:3.2.2", "d38c2078630e015777aafa1a1ce627df4323114a920c313274346c372ba0d19d")
+    add_versions("archive:3.2.0", "ea75fa02ab328cccdff8bf36d2ec891e445e94fa301cd0ef34c662e24d30b704")
 
     add_versions("github:3.2.2", "release-3.2.2")
     add_versions("github:3.2.0", "release-3.2.0")
@@ -27,6 +27,10 @@ package("libsdl3_ttf")
     add_configs("plutosvg", {description = "Use plutosvg for color emoji support", default = false, type = "boolean"})
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
+    if is_host("windows") then
+        set_policy("platform.longpaths", true)
     end
 
     if on_check then

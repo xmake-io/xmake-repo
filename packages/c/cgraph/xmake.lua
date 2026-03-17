@@ -6,6 +6,8 @@ package("cgraph")
     add_urls("https://github.com/ChunelFeng/CGraph/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ChunelFeng/CGraph.git")
 
+    add_versions("v3.2.2", "6533e8772389f50459d33db764ebee6d0d530e30f5921d95572d030463122cdd")
+    add_versions("v3.1.2", "c3825c846b408a2e8def308ba0688a43baddedd1674ede84c955dc33a5847bf0")
     add_versions("v3.1.1", "b49014b1774ed4009a8770ce482e5cb260ee2cbf7854d7795af0812ccecf48ea")
     add_versions("v3.1.0", "fc2c2df5a975a77eafa1ce396a2e2aa36b8498af15e991c8ce964e1a3b39df73")
     add_versions("v2.6.2", "7067ed97b8c4ad118dccc93aca58e739717d87bcd21d6ea937ffe2e2bd45706d")

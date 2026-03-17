@@ -1,12 +1,13 @@
 package("subhook")
-    set_homepage("https://github.com/Zeex/subhook")
-    set_description("Simple hooking library for C/C++ (x86 only, 32/64-bit, no dependencies)")
+    set_homepage("https://github.com/Dasharo/subhook")
+    set_description("Simple hooking library for C/C++ (x86 only, 32/64-bit, no dependencies). Re-upload of Zeex/subhook.")
     set_license("BSD-2-Clause")
 
-    add_urls("https://github.com/Zeex/subhook.git")
+    add_urls("https://github.com/Dasharo/subhook.git",
+             "https://github.com/xmake-mirror/subhook.git")
     add_versions("2023.02.10", "e935959d2f9cc642bcbb5e7759b2b1e7196b0947")
 
-    on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", "mingw", "msys", function (package)
+    on_install("windows|!arm64", "linux|x86_64", "macosx|x86_64", "bsd", "mingw", "msys", function (package)
         if (not package:config("shared")) and package:is_plat("windows", "mingw") then
             package:add("defines", "SUBHOOK_STATIC")
         end
@@ -25,6 +26,7 @@ package("subhook")
                 end
         ]])
         import("package.tools.xmake").install(package)
+        wprint("The original repository Zeex/subhook is no longer public. You are using a mirror of this repository.")
     end)
 
     on_test(function (package)

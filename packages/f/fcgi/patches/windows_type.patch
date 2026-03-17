@@ -1,0 +1,39 @@
+diff --git a/libfcgi/os_win32.c b/libfcgi/os_win32.c
+index 1a77ca6..c047be9 100644
+--- a/libfcgi/os_win32.c
++++ b/libfcgi/os_win32.c
+@@ -222,7 +222,7 @@ static int Win32NewDescriptor(FILE_TYPE type, int fd, int desiredFd)
+ static void StdinThread(void * startup) 
+ {
+     int doIo = TRUE;
+-    unsigned long fd;
++    unsigned long long fd;
+     unsigned long bytesRead;
+     POVERLAPPED_REQUEST pOv;
+ 
+@@ -1467,7 +1467,7 @@ int OS_CloseRead(int fd)
+  */
+ int OS_DoIo(struct timeval *tmo)
+ {
+-    unsigned long fd;
++    unsigned long long fd;
+     unsigned long bytes;
+     POVERLAPPED_REQUEST pOv;
+     struct timeb tb;
+@@ -1539,6 +1539,7 @@ static int isAddrOK(struct sockaddr_in * inet_sockaddr, const char * okAddrs)
+ }
+ 
+ #ifndef NO_WSAACEPT
++
+ static int CALLBACK isAddrOKCallback(LPWSABUF  lpCallerId,
+                                      LPWSABUF  dc0,
+                                      LPQOS     dc1,
+@@ -1546,7 +1547,7 @@ static int CALLBACK isAddrOKCallback(LPWSABUF  lpCallerId,
+                                      LPWSABUF  dc3,
+                                      LPWSABUF  dc4,
+                                      GROUP     *dc5,
+-                                     DWORD     data)
++                                     DWORD_PTR     data)
+ {
+     struct sockaddr_in *sockaddr = (struct sockaddr_in *) lpCallerId->buf;
+ 

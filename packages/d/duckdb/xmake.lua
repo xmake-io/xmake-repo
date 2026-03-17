@@ -5,6 +5,12 @@ package("duckdb")
 
     add_urls("https://github.com/duckdb/duckdb/releases/download/$(version)/libduckdb-src.zip",
              "https://github.com/duckdb/duckdb.git")
+    add_versions("v1.5.0", "26f2b5ba7b2e01ec321707a1b82116d31202ac96cbf089f47d1c1b6dbae15379")
+    add_versions("v1.4.4", "778434bdbda341a89dd9d2c97efcf8b834a921d4d11c6de77716a5886aa8c7fc")
+    add_versions("v1.4.3", "a9d834d07524f483aa1132ee183169767008468cc485c25b2170b9e6eee47ef6")
+    add_versions("v1.4.2", "ee7e178341ea8199ad52eabdff07aa89969f9904868eaa94e71efb31eaef7f2d")
+    add_versions("v1.4.1", "81da1c9943f7b16e8a41456549fba72473ace3c83887e813e5610eb446c19781")
+    add_versions("v1.4.0", "d1efda5fabc198d2099109f2d6a21392a7ca3888afbafe8573abcb1b09c6f15a")
     add_versions("v1.3.2", "3fc8b872f1e65e1271bb4c7ba698ffc28127968437a99500c44262c01f3de841")
     add_versions("v1.2.2", "478a4e2300d12cd5f494e5ae3d9dbdc7d71ae0e85bccfb72aa0b7731660eece9")
     add_versions("v1.2.1", "c7f21c12039e951dbb74e064ba218a4ca8b4b0a612d40c62d95a858ecaf2fb53")
@@ -18,14 +24,16 @@ package("duckdb")
     add_versions("v0.10.0", "385e27aa67712813e4a07389465c4c5c45c431d97cddd35713b8a306d2a86f2d")
 
     on_install("macosx", "linux", function (package)
-        io.writefile("xmake.lua", [[
+        io.writefile("xmake.lua", string.format([[
             add_rules("mode.debug", "mode.release")
+            add_rules("utils.install.cmake_importfiles")
+            set_version("%s")
             set_languages("c++17")
             target("duckdb")
                 set_kind("$(kind)")
                 add_files("duckdb.cpp")
                 add_headerfiles("duckdb.hpp", "duckdb.h")
-        ]])
+        ]], package:version()))
         import("package.tools.xmake").install(package)
     end)
 

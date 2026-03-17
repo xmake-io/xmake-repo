@@ -5,6 +5,11 @@ package("amrex")
     add_urls("https://github.com/AMReX-Codes/amrex/releases/download/$(version)/amrex-$(version).tar.gz",
              "https://github.com/AMReX-Codes/amrex.git")
 
+    add_versions("26.03", "7139b8bb423a4311e8990bee6cb06b86a81de439363f35a3f29c808a93a003ca")
+    add_versions("26.02", "7627f0bac4f8025b555b6c7c7a26e2d4db4e7a7fda660b77b272ffe40749b7b2")
+    add_versions("26.01", "b26c8d36b3941881bb5db683147f94d5a48f9bcedfa4bcf65a36acb6f0710bcb")
+    add_versions("25.11", "be9e5f04e1f3e2252a14e5bb817fb4f2c231e0901ef85ee4e14341616f6b1ba6")
+    add_versions("25.09", "9c288e502c98a9ebf62c9f46081ecd65703ad49bd8b3eaf17939146cf442163a")
     add_versions("25.08", "6e903fd02e72a3d23b438ec257a96a5a948ac07200220669ab8ff16ff047bde6")
     add_versions("25.06", "2f69c708ddeaba6d4be3a12ab6951f171952f6f7948e628c5148d667c4197838")
     add_versions("25.05", "d80ae0b4ccb26696fcd3c04d96838592fd0043be25fceebd82cd165f809b1a5d")

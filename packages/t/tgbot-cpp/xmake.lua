@@ -6,6 +6,7 @@ package("tgbot-cpp")
     set_urls("https://github.com/reo7sp/tgbot-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/reo7sp/tgbot-cpp.git")
 
+    add_versions("v1.9.1", "632aa24722e0744280f6c20ebe458a5fd47cba5d8221f4530f395639937c108c")
     add_versions("v1.9", "3aacb7cc7a4e95f9915d86794cffb0ec3128f37401a18719c1be215fca37bacb")
     add_versions("v1.8", "43ff1a359b8db026e58e517703e616accaae33e01ebc7e87613632b7e4653467")
     add_versions("v1.7.3", "f1d2863a7ac77f2a58b3c6f8a163b4d6e9d191ab5bff0dcf6e271adabf9111a9")

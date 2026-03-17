@@ -1,11 +1,12 @@
 package("gettext")
-
     set_homepage("https://www.gnu.org/software/gettext/")
     set_description("GNU internationalization (i18n) and localization (l10n) library.")
 
-    set_urls("https://ftpmirror.gnu.org/gettext/gettext-$(version).tar.xz",
+    set_urls("https://mirrors.dotsrc.org/gnu/gettext/gettext-$(version).tar.xz",
+             "https://ftpmirror.gnu.org/gettext/gettext-$(version).tar.xz",
              "https://ftp.gnu.org/gnu/gettext/gettext-$(version).tar.xz",
              {version = function (version) return version:gsub('%-', '.') end})
+
     add_versions("0.19.8-1", "105556dbc5c3fbbc2aa0edb46d22d055748b6f5c7cd7a8d99f8e7eb84e938be4")
     add_versions("0.21", "d20fcbb537e02dcf1383197ba05bd0734ef7bf5db06bdb241eb69b7d16b73192")
     add_versions("0.21.1", "50dbc8f39797950aa2c98e939947c527e5ac9ebd2c1b99dd7b06ba33a6767ae6")

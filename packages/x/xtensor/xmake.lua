@@ -7,6 +7,7 @@ package("xtensor")
     add_urls("https://github.com/xtensor-stack/xtensor/archive/refs/tags/$(version).tar.gz",
              "https://github.com/xtensor-stack/xtensor.git")
 
+    add_versions("0.27.1", "117c192ae3b7c37c0156dedaa88038e0599a6b264666c3c6c2553154b500fe23")
     add_versions("0.27.0", "9ca1743048492edfcc841bbe01f58520ff9c595ec587c0e7dc2fc39deeef3e04")
     add_versions("0.26.0", "f5f42267d850f781d71097b50567a480a82cd6875a5ec3e6238555e0ef987dc6")
     add_versions("0.25.0", "32d5d9fd23998c57e746c375a544edf544b74f0a18ad6bc3c38cbba968d5e6c7")
@@ -15,6 +16,8 @@ package("xtensor")
     add_versions("0.24.1", "dd1bf4c4eba5fbcf386abba2627fcb4a947d14a806c33fde82d0cc1194807ee4")
     add_versions("0.24.0", "37738aa0865350b39f048e638735c05d78b5331073b6329693e8b8f0902df713")
     add_versions("0.23.10", "2e770a6d636962eedc868fef4930b919e26efe783cd5d8732c11e14cf72d871c")
+
+    add_patches("0.25.0", "patches/0.25.0/clang19_build.patch", "b40ef789b39dad40d8f97b73793a5d0377e6165f99a49a8fddde45ff66ed87a2")
 
     add_configs("simd", {description = "Enable SIMD acceleration ", default = true, type = "boolean"})
     add_configs("tbb", {description = "Enable parallelization using intel TBB", default = false, type = "boolean"})

@@ -6,6 +6,8 @@ package("flatbuffers")
     add_urls("https://github.com/google/flatbuffers/archive/refs/tags/$(version).zip",
              "https://github.com/google/flatbuffers.git")
 
+    add_versions("v25.12.19", "f5d4636bfc4d30c622c9ad238ce947848c2b90b10aecd387dc62cdee2584359b")
+    add_versions("v25.9.23", "083a424984986ba7fcd1635d54417d4523a3c729e137575db2421e996a1fb816")
     add_versions("v1.12.0", "4b8b21adbfe8a74b90604161afcf87c125a26b86c99327e7a04525080606536c")
     add_versions("v2.0.0", "ffd68aebdfb300c9e82582ea38bf4aa9ce65c77344c94d5047f3be754cc756ea")
     add_versions("v23.1.21", "48597d6a6f8ca67a02ae8d8494b3bfc9136eb93da60a538d5bfc024f7c564f97")

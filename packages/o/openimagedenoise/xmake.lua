@@ -6,6 +6,7 @@ package("openimagedenoise")
     set_urls("https://github.com/RenderKit/oidn/archive/refs/tags/$(version).tar.gz",
              "https://github.com/RenderKit/oidn.git", {submodules = false})
 
+    add_versions("v2.4.1", "bab9197187a8754cdc0293475a00b7be6a0e967a0da73d6cc86697969cfb0a7e")
     add_versions("v2.3.3", "2b32bd506b819ec0bd0137858af15186d83b760d457b0ac12bd02e0a8544381a")
 
     add_configs("cpu", {description = "Enable CPU device.", default = false, type = "boolean"})

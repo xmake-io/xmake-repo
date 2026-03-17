@@ -1,5 +1,4 @@
 package("taskflow")
-
     set_kind("library", {headeronly = true})
     set_homepage("https://taskflow.github.io/")
     set_description("A fast C++ header-only library to help you quickly write parallel programs with complex task dependencies")
@@ -7,6 +6,9 @@ package("taskflow")
 
     add_urls("https://github.com/taskflow/taskflow.git")
     add_urls("https://github.com/taskflow/taskflow/archive/refs/tags/$(version).tar.gz")
+
+    add_versions("v4.0.0", "a9d27ad29caffc95e394976c6a362debb94194f9b3fbb7f25e34aaf54272f497")
+    add_versions("v3.11.0", "5e45a7ee032cae136843c76824519acbc0306f02d682f7e69fb1d53f69173dcb")
     add_versions("v3.10.0", "fe86765da417f6ceaa2d232ffac70c9afaeb3dc0816337d39a7c93e39c2dee0b")
     add_versions("v3.9.0", "d872a19843d12d437eba9b8664835b7537b92fe01fdb33ed92ca052d2483be2d")
     add_versions("v3.8.0", "51316ee5fbf0c8f8f4638eb7428430cadfe6e8910756593884710e99129fa0ab")
@@ -19,8 +21,19 @@ package("taskflow")
     add_versions("v3.1.0", "17b56e23312d20c4ad5cc497b9f42cd0ad4451dbd2df0160a0a692fd16d47143")
     add_versions("v3.0.0", "553c88a6e56e115d29ac1520b8a0fea4557a5fcda1af1427bd3ba454926d03a2")
 
+    add_patches("v4.0.0", "patches/v4.0.0/fix-arm64.diff", "085e9785e5fa9efe07ae0a849453292065a71ee6b55d7da9e22baa6446654de1")
+
     if is_plat("linux") then
         add_syslinks("pthread")
+    end
+
+    if on_check then
+        on_check("android", function (package)
+            if package:version() and package:version():ge("3.11.0") then
+                local ndk = package:toolchain("ndk"):config("ndkver")
+                assert(ndk and tonumber(ndk) >= 26, "package(taskflow >=3.11.0) requires ndk version >= 26")
+            end
+        end)
     end
 
     on_install("linux", "macosx", "windows", "iphoneos", "android", "cross", "mingw", "bsd", function (package)
@@ -41,6 +54,5 @@ package("taskflow")
                 });
                 executor.run(taskflow).wait();
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = {languages = package:version():ge("4.0.0") and "c++20" or "c++17"}}))
     end)
-

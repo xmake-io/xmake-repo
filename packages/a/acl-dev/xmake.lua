@@ -6,6 +6,7 @@ package("acl-dev")
     add_urls("https://github.com/acl-dev/acl/archive/refs/tags/$(version).tar.gz",
              "https://github.com/acl-dev/acl.git")
 
+    add_versions("v3.6.5", "dba2fe5c70b34d75e2f2ca642bdcb5bad1abe53f116e8162939ecfd6579adabd")
     add_versions("v3.6.4", "2c98f4ff58f774c6dd5e8753a6a32db2045a2d40b77d65b0e5ebdaaffa348285")
     add_versions("v3.6.2", "888fd9b8fb19db4f8e7760a12a28f37f24ba0a2952bb0409b8380413a4b6506b")
     add_versions("v3.6.3", "4c1fe78cc3dbf2843aab440ca638464d1d1e490e81e904115b8f96a88a3b44de")
@@ -16,7 +17,7 @@ package("acl-dev")
     add_patches(">=3.6.2", "patches/v3.6.2/debundle_zlib.diff", "43043fb8fe84ef8f37a6a637e0447a849d38155e6d6ca20a9512c38023077a04")
 
     if is_plat("windows") then
-        add_configs("vs", {description = "Use Visual Studio buildsystem (.sln/.vcxproj)", default = true, type = "boolean"})
+        add_configs("vs", {description = "Use Visual Studio buildsystem (.sln/.vcxproj)", default = false, type = "boolean"})
     end
 
     add_includedirs("include", "include/acl-lib")
@@ -104,10 +105,66 @@ package("acl-dev")
                 "add_library(acl_cpp_static STATIC ${lib_src})\ntarget_precompile_headers(acl_cpp_static PRIVATE src/acl_stdafx.hpp)", {plain = true})
             io.replace("lib_acl_cpp/CMakeLists.txt", [[add_library(acl_cpp_shared SHARED ${lib_src})]],
                 "add_library(acl_cpp_shared SHARED ${lib_src})\ntarget_precompile_headers(acl_cpp_shared PRIVATE src/acl_stdafx.hpp)", {plain = true})
+            -- Remove global FIBER_DLL definitions to fix armasm64 build
+            io.replace("lib_fiber/c/CMakeLists.txt", [[add_definitions("-DFIBER_DLL -DFIBER_EXPORTS")]], [[]], {plain = true})
+            io.replace("lib_fiber/c/CMakeLists.txt", "VERSION 2.8.0", "VERSION 3.15.0", {plain = true})
+
+            if package:config("shared") then
+                -- Add FIBER_DLL only for C/C++ sources
+                io.replace("lib_fiber/c/CMakeLists.txt", [[add_library(fiber_shared SHARED ${lib_src})]],
+                    [[add_library(fiber_shared SHARED ${lib_src})
+                      if(MSVC)
+                          target_compile_definitions(fiber_shared PRIVATE $<$<OR:$<COMPILE_LANGUAGE:C>,$<COMPILE_LANGUAGE:CXX>>:FIBER_DLL> $<$<OR:$<COMPILE_LANGUAGE:C>,$<COMPILE_LANGUAGE:CXX>>:FIBER_EXPORTS>)
+                      endif()]], {plain = true})
+            end
+
+            if package:config("shared") then
+                io.replace("lib_fiber/c/CMakeLists.txt", [["-D_WINSOCK_DEPRECATED_NO_WARNINGS"]], [["-DBOOST_CONTEXT_DYN_LINK" "-DBOOST_CONTEXT_EXPORT=EXPORT"
+"-D_WINSOCK_DEPRECATED_NO_WARNINGS"]], {plain = true})
+            else
+                io.replace("lib_fiber/c/CMakeLists.txt", [["-D_WINSOCK_DEPRECATED_NO_WARNINGS"]], [["-DBOOST_CONTEXT_STATIC_LINK" "-DBOOST_CONTEXT_EXPORT="
+"-D_WINSOCK_DEPRECATED_NO_WARNINGS"]], {plain = true})
+            end
             if package:is_plat("windows") then
                 -- Do not build .gas on windows
-                io.replace("lib_fiber/c/CMakeLists.txt", [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]], [[]], {plain = true})
-                io.replace("lib_fiber/c/CMakeLists.txt", [[${src}/fiber/boost/jump_gas.S)]], [[]], {plain = true})
+                if not package:is_arch("arm.*") then
+                    io.replace("lib_fiber/c/CMakeLists.txt", [[enable_language(C CXX ASM)]], [[enable_language(C CXX ASM_MASM)]], {plain = true})
+                    if package:check_sizeof("void*") == "8" then
+                        io.replace("lib_fiber/c/CMakeLists.txt",
+                            [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]],
+                            [[list(APPEND lib_src ${src}/fiber/boost/make_x86_64_ms_pe_masm.asm]], {plain = true})
+                        io.replace("lib_fiber/c/CMakeLists.txt",
+                            [[${src}/fiber/boost/jump_gas.S)]],
+                            [[${src}/fiber/boost/jump_x86_64_ms_pe_masm.asm)]], {plain = true})
+                    else
+                        io.replace("lib_fiber/c/CMakeLists.txt",
+                            [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]],
+                            [[list(APPEND lib_src ${src}/fiber/boost/make_i386_ms_pe_masm.asm]], {plain = true})
+                        io.replace("lib_fiber/c/CMakeLists.txt", 
+                            [[${src}/fiber/boost/jump_gas.S)]],
+                            [[${src}/fiber/boost/jump_i386_ms_pe_masm.asm)]], {plain = true})
+                    end
+                else
+                    io.replace("lib_fiber/c/CMakeLists.txt", [[enable_language(C CXX ASM)]], [[enable_language(C CXX ASM_MARMASM)]], {plain = true})
+                    if package:check_sizeof("void*") == "8" then
+                        os.cp(path.join(package:scriptdir(), "port", "ontop_arm64_aapcs_pe_armasm.asm"), "lib_fiber/c/src/fiber/boost/ontop_arm64_aapcs_pe_armasm.asm")
+                        os.cp(path.join(package:scriptdir(), "port", "jump_arm64_aapcs_pe_armasm.asm"), "lib_fiber/c/src/fiber/boost/jump_arm64_aapcs_pe_armasm.asm")
+                        os.cp(path.join(package:scriptdir(), "port", "make_arm64_aapcs_pe_armasm.asm"), "lib_fiber/c/src/fiber/boost/make_arm64_aapcs_pe_armasm.asm")
+                        io.replace("lib_fiber/c/CMakeLists.txt",
+                            [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]],
+                            [[list(APPEND lib_src ${src}/fiber/boost/make_arm64_aapcs_pe_armasm.asm]], {plain = true})
+                        io.replace("lib_fiber/c/CMakeLists.txt",
+                            [[${src}/fiber/boost/jump_gas.S)]],
+                            [[${src}/fiber/boost/jump_arm64_aapcs_pe_armasm.asm)]], {plain = true})
+                    else
+                        io.replace("lib_fiber/c/CMakeLists.txt",
+                            [[list(APPEND lib_src ${src}/fiber/boost/make_gas.S]],
+                            [[list(APPEND lib_src ${src}/fiber/boost/make_arm_aapcs_pe_armasm.asm]], {plain = true})
+                        io.replace("lib_fiber/c/CMakeLists.txt",
+                            [[${src}/fiber/boost/jump_gas.S)]],
+                            [[${src}/fiber/boost/jump_arm_aapcs_pe_armasm.asm)]], {plain = true})
+                    end
+                end
             else
                 io.replace("CMakeLists.txt", "project(acl)", "project(acl)\nfind_package(ZLIB)", {plain = true})
             end

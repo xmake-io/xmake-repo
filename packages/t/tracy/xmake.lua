@@ -1,10 +1,13 @@
 package("tracy")
     set_homepage("https://github.com/wolfpld/tracy")
     set_description("C++ frame profiler")
+    set_license("BSD-3-Clause")
 
     add_urls("https://github.com/wolfpld/tracy/archive/refs/tags/$(version).tar.gz",
              "https://github.com/wolfpld/tracy.git")
 
+    add_versions("v0.13.1", "d4efc50ebcb0bfcfdbba148995aeb75044c0d80f5d91223aebfaa8fa9e563d2b")
+    add_versions("v0.13.0", "b0e972dfeebe42470187c1a47b449c8ee9e8656900bcf87b403175ed50796918")
     add_versions("v0.12.2", "09617765ba5ff1aa6da128d9ba3c608166c5ef05ac28e2bb77f791269d444952")
     add_versions("v0.12.1", "03580b01df3c435f74eec165193d6557cdbf3a84d39582ca30969ef5354560aa")
     add_versions("v0.12.0", "ce2fb5b89aeb6db8401d7efe1bfe8393b7a81ca551273e8c6dd46ed37c02a040")
@@ -14,6 +17,8 @@ package("tracy")
     add_versions("v0.9.1", "c2de9f35ab2a516a9689ff18f5b62a55b73b93b66514bd09ba013d7957993cd7")
     add_versions("v0.9", "93a91544e3d88f3bc4c405bad3dbc916ba951cdaadd5fcec1139af6fa56e6bfc")
     add_versions("v0.8.2", "4784eddd89c17a5fa030d408392992b3da3c503c872800e9d3746d985cfcc92a")
+
+    add_patches("v0.13.1", "https://github.com/wolfpld/tracy/commit/d79b6d040efaef3010c1e38bda616483bba10561.patch", "e1b31b128b792ac276ff5b90343a085614dd479b370ce29b264f9e0fdc9d5c24")
 
     add_configs("cmake",                            {description = "Use cmake buildsystem", default = true, type = "boolean"})
 
@@ -54,6 +59,15 @@ package("tracy")
         add_syslinks("pthread", "execinfo")
     end
 
+    if on_check then
+        on_check("android", function (package)
+            if package:version() and package:version():eq("v0.13.1") then
+                local ndk = package:toolchain("ndk"):config("ndkver")
+                assert(ndk and tonumber(ndk) > 22, "package(tracy v0.13.1) require ndk version > 22")
+            end
+        end)
+    end
+
     on_load(function (package)
         if package:config("cmake") then
             package:add("deps", "cmake")
@@ -68,6 +82,8 @@ package("tracy")
 #endif]], {plain = true})
         io.replace("public/client/TracyProfiler.cpp", [[RelationProcessorDie]], [[static_cast<LOGICAL_PROCESSOR_RELATIONSHIP>(5)]], {plain = true})
         if package:config("cmake") then
+            io.replace("CMakeLists.txt", [[/$<IF:$<CONFIG:Release>,,$<CONFIG>>]], "", {plain = true})
+
             local configs = {}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))

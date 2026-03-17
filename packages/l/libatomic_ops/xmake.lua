@@ -6,6 +6,8 @@ package("libatomic_ops")
     add_urls("https://github.com/bdwgc/libatomic_ops/archive/refs/tags/$(version).tar.gz",
              "https://github.com/bdwgc/libatomic_ops.git")
 
+    add_versions("v7.10.0", "96443e58a6bb6c0ada61660ccb547254aaa97e44bceb10a340937f6ba3ba8243")
+    add_versions("v7.8.4", "ea8295ac627646e37fd194d31535bbc02da60b908c8166c5e04d2461a53cb059")
     add_versions("v7.8.2", "ad8428a40e01d41bc4ddad3166afa1fc175c9e58d8ef7ddbd7ef3298e32ac37b")
 
     add_configs("gpl", {description = "Build atomic_ops_gpl library", default = false, type = "boolean"})

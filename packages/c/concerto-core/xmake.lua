@@ -5,7 +5,7 @@ package("concerto-core")
 
     add_urls("https://github.com/ConcertoEngine/ConcertoCore.git")
 
-    add_versions("2025.08.21", "836d4f6ab7a2c961520e692d55bbbc6ff0729b8f")
+    add_versions("2025.10.03", "b088dfbed40faa514c592fb258f087aee32cc77f")
 
     add_configs("asserts", {description = "Enable asserts.", default = false, type = "boolean"})
     add_configs("enet", {description = "Enable ENet support.", default = false, type = "boolean"})
@@ -22,6 +22,9 @@ package("concerto-core")
     on_load(function (package)
         if package:config("enet") then
             package:add("deps", "enet")
+        end
+        if package:config("asserts") then
+            package:add("defines", "CCT_ENABLE_ASSERTS")
         end
     end)
 
@@ -46,9 +49,9 @@ package("concerto-core")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <string>
-            #include <Concerto/Core/Types.hpp>
-            #include <Concerto/Core/Result.hpp>
-            #include <Concerto/Core/DynLib.hpp>
+            #include <Concerto/Core/Types/Types.hpp>
+            #include <Concerto/Core/Result/Result.hpp>
+            #include <Concerto/Core/DynLib/DynLib.hpp>
             void test() {
                 cct::Result<cct::Int32, std::string> result(28);
                 cct::DynLib lib;

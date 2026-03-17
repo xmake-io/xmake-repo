@@ -1,0 +1,112 @@
+diff --git a/FloatEngine/winfuns.h b/FloatEngine/winfuns.h
+index 3fab49a..422516b 100644
+--- a/FloatEngine/winfuns.h
++++ b/FloatEngine/winfuns.h
+@@ -4,12 +4,9 @@
+ 
+ #ifdef LINK_WINFUNS
+ #include "rlgl.h"
+-#pragma comment(lib,"iphlpapi.lib")
+ #ifndef CALLBACK
+ #define CALLBACK __stdcall
+ #endif
+-#pragma comment(lib,"kernel32.lib")
+-#pragma comment(lib,"user32.lib")
+ #ifndef DECLARE_HANDLE
+ #define DECLARE_HANDLE(name) struct name##__{int unused;}; typedef struct name##__ *name
+ #endif
+@@ -217,43 +214,43 @@ ADDRINFOA, * PADDRINFOA;
+ 
+ extern "C" {
+ #if !defined(GetConsoleWindow)
+-	void* GetConsoleWindow();
++	void* CALLBACK GetConsoleWindow();
+ #endif
+ #if !defined(ShowWindow)
+-		void ShowWindow(void* hwnd, int);
++		void CALLBACK ShowWindow(void* hwnd, int);
+ 
+ #endif
+ #if !defined(MessageBoxA)
+-		void MessageBoxA(void* hwnd, const char* a, const char* b, int mode);
++		void CALLBACK MessageBoxA(void* hwnd, const char* a, const char* b, int mode);
+ #endif
+ #if !defined(MessageBoxW)
+-		void MessageBoxW(void* hwnd, const char* a, const char* b, int mode);
++		void CALLBACK MessageBoxW(void* hwnd, const char* a, const char* b, int mode);
+ #endif
+ #if (!defined(SetWindowTextW)&&!defined(SetWindowTextA))
+-		void SetWindowTextW(void* hwnd, const wchar_t* a);
+-		void SetWindowTextA(void* hwnd, const char* a);
++		void CALLBACK SetWindowTextW(void* hwnd, const wchar_t* a);
++		void CALLBACK SetWindowTextA(void* hwnd, const char* a);
+ #endif
+ #if (!defined(SetConsoleCP)&&!defined(SetConsoleOutputCP))
+-		void SetConsoleCP(unsigned int cp);
+-		void SetConsoleOutputCP(unsigned int cp);
++		void CALLBACK SetConsoleCP(unsigned int cp);
++		void CALLBACK SetConsoleOutputCP(unsigned int cp);
+ #endif
+ #if (!defined(ZeroMemory))
+ 		void ZeroMemory(void* memory, int size);
+ #endif
+ #if (!defined(LoadIconA)&&!defined(LoadIconW))
+-		void* LoadIconW(void* , const wchar_t* );
+-		void* LoadIconA(void*, const char*);
++		void* CALLBACK LoadIconW(void* , const wchar_t* );
++		void* CALLBACK LoadIconA(void*, const char*);
+ #endif
+ #if !defined(GetModuleHandleA)
+-		void*  GetModuleHandleA(const char* lpModuleName);
++		void* CALLBACK GetModuleHandleA(const char* lpModuleName);
+ #endif
+-		LRESULT SendMessageA(
++		LRESULT CALLBACK SendMessageA(
+ 			HWND   hWnd,
+ 			UINT   Msg,
+ 			WPARAM wParam,
+ 			LPARAM lParam
+ 		);
+-		void* GetCapture();
++		void* CALLBACK GetCapture();
+ 	}
+ #ifndef LoadIcon
+ #define LoadIcon LoadIconA
+@@ -273,7 +270,7 @@ extern "C" {
+ #ifndef LPWSADATA
+ #define LPWSADATA WSADATA*
+ #endif
+-extern "C" int WSAStartup(
++extern "C" int CALLBACK WSAStartup(
+ 	  WORD      wVersionRequired,
+ 	LPWSADATA lpWSAData
+ );
+@@ -352,9 +349,9 @@ typedef ADDRINFOA ADDRINFO, * LPADDRINFO;
+ #define WINFUNS_HAVE_ADDRINFO
+ #endif
+ 
+-extern "C" int WSAGetLastError();
+-extern "C" HANDLE GetStdHandle(DWORD nStdHandle);
+-extern "C" BOOL SetCurrentConsoleFontEx(HANDLE hConsoleOutput, BOOL  bMaximumWindow, PCONSOLE_FONT_INFOEX lpConsoleCurrentFontEx);
++extern "C" int CALLBACK WSAGetLastError();
++extern "C" HANDLE CALLBACK GetStdHandle(DWORD nStdHandle);
++extern "C" BOOL CALLBACK SetCurrentConsoleFontEx(HANDLE hConsoleOutput, BOOL  bMaximumWindow, PCONSOLE_FONT_INFOEX lpConsoleCurrentFontEx);
+ #ifndef DECLSPEC_IMPORT
+ #define DECLSPEC_IMPORT __declspec (dllimport)
+ #endif
+@@ -363,13 +360,13 @@ extern "C" BOOL SetCurrentConsoleFontEx(HANDLE hConsoleOutput, BOOL  bMaximumWin
+ #endif
+ //WINSOCK_API_LINKAGE int  getaddrinfo(const char* nodename, const char* servname, const struct addrinfo* hints, struct addrinfo** res);
+ //WINSOCK_API_LINKAGE void freeaddrinfo(LPADDRINFO pAddrInfo);
+-extern "C" const char*  inet_ntop(
++extern "C" const char* CALLBACK inet_ntop(
+ 	  int        Family,
+ 	  const void* pAddr,
+ 	char*       pStringBuf,
+ 	size_t     StringBufSize
+ );
+-extern "C" int WSACleanup();
++extern "C" int CALLBACK WSACleanup();
+ }
+ namespace LinuxFuns {
+ 

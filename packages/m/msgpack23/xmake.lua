@@ -7,6 +7,7 @@ package("msgpack23")
     add_urls("https://github.com/rwindegger/msgpack23/archive/refs/tags/$(version).tar.gz",
              "https://github.com/rwindegger/msgpack23.git")
 
+    add_versions("v3.1", "6f0e09f5acc2d5e1e1455d38936aa2cc44a0402ad1d9d1b6cd9203280ff06036")
     add_versions("v2.1", "9ce1e294518aa76cac50f778a359aed17a0daa0d8dc4c1f94cd4f12438b3606c")
 
     add_deps("cmake")
@@ -24,7 +25,7 @@ package("msgpack23")
     end)
 
     on_install(function (package)
-        local configs = {"-DBUILD_TESTING=OFF"}
+        local configs = {"-DBUILD_TESTING=OFF", "-DBUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
 
@@ -33,9 +34,21 @@ package("msgpack23")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            void test() {
-                msgpack23::Packer packer;
-            }
-        ]]}, {configs = {languages = "c++23"}, includes = "msgpack23/msgpack23.h"}))
+        local code
+        if package:version() and package:version():lt("3.0.0") then
+            code = [[
+                void test() {
+                    msgpack23::Packer packer;
+                }
+            ]]
+        else
+            code = [[
+                void test() {
+                    std::vector<std::byte> packedData{};
+                    auto const inserter = std::back_insert_iterator(packedData);
+                    msgpack23::Packer packer{inserter};
+                }
+            ]]
+        end
+        assert(package:check_cxxsnippets({test = code}, {configs = {languages = "c++23"}, includes = "msgpack23/msgpack23.h"}))
     end)

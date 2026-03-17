@@ -3,9 +3,13 @@ package("protoc")
     set_homepage("https://developers.google.com/protocol-buffers/")
     set_description("Google's data interchange format compiler")
 
-    add_deps("protobuf-cpp")
+    if is_plat("android") then
+        add_deps("protobuf-cpp", {configs = {tools = true, upb = true}})
+    else
+        add_deps("protobuf-cpp")
+    end
 
-    on_install(function (package) end)
+    on_install("@windows", "@linux", "@macosx", "@bsd", "@msys", function (package) end)
 
     on_test(function (package)
         os.vrun("protoc --version")

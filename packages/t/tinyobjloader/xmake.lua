@@ -1,5 +1,4 @@
 package("tinyobjloader")
-
     set_homepage("https://github.com/tinyobjloader/tinyobjloader")
     set_description("Tiny but powerful single file wavefront obj loader")
     set_license("MIT")
@@ -21,7 +20,7 @@ package("tinyobjloader")
         end
     end)
 
-    on_install("macosx", "linux", "windows", "mingw", "android", "iphoneos", "cross", function (package)
+    on_install(function (package)
         io.writefile("xmake.lua", string.format([[
             add_rules("mode.debug", "mode.release")
             add_rules("utils.install.cmake_importfiles")

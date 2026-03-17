@@ -1,11 +1,11 @@
 package("ginkgo")
-
     set_homepage("https://ginkgo-project.github.io/")
     set_description("Ginkgo is a high-performance linear algebra library for manycore systems, with a focus on solution of sparse linear systems.")
     set_license("BSD-3-Clause")
 
     add_urls("https://github.com/ginkgo-project/ginkgo/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ginkgo-project/ginkgo.git")
+    add_versions("v1.11.0", "8052c3d5994e1c996ebabe50a169deb565965da4f1c6c02e814ff0c7146c0378")
     add_versions("v1.9.0", "18271e99f81a89cf27102f9d4e84653ae7a0cc745fcda9a7ed486c455553780b")
     add_versions("v1.8.0", "421efaed1be2ef11d230b79fc68bcf7e264a2c57ae52aff6dec7bd90f8d4ae30")
     add_versions("v1.7.0", "f4b362bcb046bc53fbe2e578662b939222d0c44b96449101829e73ecce02bcb3")
@@ -19,6 +19,21 @@ package("ginkgo")
     set_policy("package.cmake_generator.ninja", false)
 
     add_deps("cmake")
+
+    if on_check then
+        on_check("windows", function(package)
+            if package:version():ge("1.10.0") then
+                if package:is_arch("x86") then
+                    raise("package(ginkgo >= v1.10.0): not support windows|x86")
+                end
+                -- Temporarily disabled due to too many symbols exported on arm64.
+                if package:is_arch("arm64") and package:config("shared") then
+                    raise("package(ginkgo >= v1.10.0): not support windows|arm64 shared")
+                end
+            end
+        end)
+    end
+
     on_load("windows", "macosx", "linux", function (package)
         if package:config("openmp") then
             package:add("deps", "openmp")
@@ -44,6 +59,9 @@ package("ginkgo")
         local opt = {}
         if not (package:is_plat("windows") and package:config("shared")) then
             opt.cmake_generator = "Ninja"
+        end
+        if package:is_plat("windows") then
+            opt.cxflags = "/bigobj /Gy"
         end
         import("package.tools.cmake").install(package, configs, opt)
     end)

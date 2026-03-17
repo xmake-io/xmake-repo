@@ -6,6 +6,8 @@ package("libuv")
     set_urls("https://github.com/libuv/libuv/archive/refs/tags/$(version).zip",
              "https://github.com/libuv/libuv.git")
 
+    add_versions("v1.52.1", "d56767702c5b383a78ee9124dd7bdf684f14c681f725117c3f865637a7152cba")
+    add_versions("v1.52.0", "effac923ab45b019dca1efa460e6c076a801d0ea5ec7b224711831be3e23130a")
     add_versions("v1.51.0", "54e1e108c54b2d1dcaee0d16721385404fc95cc2a2cd2deb51e3529c202d6455")
     add_versions("v1.50.0", "038f48e48b3d15c9341dfe1fa5099b83b52ac30f15c97a67269163f8f8ab99ac")
     add_versions("v1.49.2", "9050042ac6cbd85c644e38c23a67e9f8a9d32eafe71479bbea674b4125489141")
@@ -83,6 +85,10 @@ package("libuv")
         if package:is_plat("mingw") then
             io.replace("CMakeLists.txt", "CYGWIN OR MSYS", "FALSE", {plain = true})
         end
+        if package:version():eq("1.52.1") and package:is_plat("mingw") then
+            -- fix mingw const compiler errors
+            io.replace("src/win/util.c", "&(cpu_info->model));", "(char**) &(cpu_info->model));", {plain = true})
+        end
 
         local version = package:version()
         if version:ge("1.42.0") or is_host("windows") then
@@ -93,6 +99,8 @@ package("libuv")
             if version:lt("1.40") then
                 os.cp("include", package:installdir())
             end
+            os.tryrm(package:installdir("lib/pkgconfig/libuv-static.pc"))
+            os.tryrm(package:installdir("lib/pkgconfig/libuv.pc"))
         else
             local configs = {}
             table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))

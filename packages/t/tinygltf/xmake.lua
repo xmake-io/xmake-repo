@@ -7,6 +7,7 @@ package("tinygltf")
     add_urls("https://github.com/syoyo/tinygltf/archive/refs/tags/$(version).tar.gz",
              "https://github.com/syoyo/tinygltf.git")
 
+    add_versions("v2.9.7", "9d31cf7f22e81febaf1ad587d7722582c154f7d9125673ee46c0c594765e8f35")
     add_versions("v2.9.6", "ba2c47a095136bfc8a5d085421e60eb8e8df3bca4ae36eb395084c1b264c6927")
     add_versions("v2.9.5", "7b93da27c524dd17179a0eeba6f432b0060d82f6222630ba027c219ce11e24db")
     add_versions("v2.9.3", "f5f282508609a0098048c8ff25d72f4ef0995bc1d46bc7a5d740e559d80023d2")
