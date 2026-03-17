@@ -6,6 +6,7 @@ package("openexr")
     add_urls("https://github.com/AcademySoftwareFoundation/openexr/archive/refs/tags/$(version).tar.gz",
              "https://github.com/AcademySoftwareFoundation/openexr.git")
 
+    add_versions("v3.4.7", "6f57641fb12b019867a766e602252ed4ccb26d7354e3a15688fe9c85a391716e")
     add_versions("v3.4.6", "f8cfe743a81c8cc1dd3cbaafa7fa76f75ad31456b0fc45a42b086d12530a4e35")
     add_versions("v3.4.5", "b10f21d3f8ff3211eb1687a2e2bf7a79d361aec8dfaca1f9b79f3d70755b4f48")
     add_versions("v3.4.4", "7c663c3c41da9354b5af277bc2fd1d2360788050b4e0751a32bcd50e8abaef8f")
@@ -30,7 +31,10 @@ package("openexr")
 
     if is_plat("linux") then
         -- GCC15 includes once_flag.h in pthread.h which causes name conflicts, so just use std if possible
-        add_patches(">=3.4.5", "patches/3.4.5/threads.patch", "9161afa1f79e6d2af9021659007ed6388f67d1fcb2e16c307677c04479408170")
+        add_patches(">=3.4.5 <3.4.7", "patches/3.4.5/threads.patch", "9161afa1f79e6d2af9021659007ed6388f67d1fcb2e16c307677c04479408170")
+    end
+    if is_plat("bsd") then
+        add_patches("3.4.7", "patches/3.4.7/freebsd.patch", "ca12a487a8130521cdd628cbce1a2b949b822559bb8d6e3ba3626495c62b5c6e")
     end
     add_patches("3.4.0", "patches/3.4.0/openjph-include.patch", "d8eb99fd9f064821134ee61c4bfb0e5dff4be557a21698365361250f13e82e53")
     add_patches("3.3.3", "patches/3.3.3/mingw32.patch", "17cbe9d0cbc0c670a846454893c1a427590789cf6bf052a4d800d1263e0faa9a")
