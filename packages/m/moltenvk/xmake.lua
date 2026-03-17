@@ -21,10 +21,6 @@ package("moltenvk")
 
     add_configs("vk_driver", {description = "Path to MoltenVK", default = nil, type = "string"})
 
-    if is_plat("macosx") then
-        add_extsources("brew::molten-vk")
-    end
-
     add_links("MoltenVK")
 
     if is_plat("macosx", "iphoneos") then
@@ -70,6 +66,24 @@ package("moltenvk")
             local frameworkdir = find_path("vulkan.framework", "~/VulkanSDK/*/macOS/Frameworks")
             if frameworkdir then
                 return { frameworkdirs = frameworkdir, frameworks = "vulkan", rpathdirs = frameworkdir }
+            end
+
+            local brew_prefix = try {function ()
+                return (os.iorunv("brew", {"--prefix", "molten-vk"})):trim()
+            end}
+            if brew_prefix then
+                local libdir = path.join(brew_prefix, "lib")
+                local includedir = path.join(brew_prefix, "include")
+                -- brew's molten-vk puts vulkan headers in libexec/include/ rather than include/
+                local libexec_includedir = path.join(brew_prefix, "libexec", "include")
+                if os.isfile(path.join(libdir, "libMoltenVK.dylib")) or
+                   os.isfile(path.join(libdir, "libMoltenVK.a")) then
+                    local sysincludedirs = {includedir}
+                    if os.isdir(libexec_includedir) then
+                        table.insert(sysincludedirs, libexec_includedir)
+                    end
+                    return {links = "MoltenVK", linkdirs = {libdir}, sysincludedirs = sysincludedirs}
+                end
             end
         end
     end)

@@ -1,6 +1,7 @@
 package("tracy")
     set_homepage("https://github.com/wolfpld/tracy")
     set_description("C++ frame profiler")
+    set_license("BSD-3-Clause")
 
     add_urls("https://github.com/wolfpld/tracy/archive/refs/tags/$(version).tar.gz",
              "https://github.com/wolfpld/tracy.git")
@@ -16,6 +17,8 @@ package("tracy")
     add_versions("v0.9.1", "c2de9f35ab2a516a9689ff18f5b62a55b73b93b66514bd09ba013d7957993cd7")
     add_versions("v0.9", "93a91544e3d88f3bc4c405bad3dbc916ba951cdaadd5fcec1139af6fa56e6bfc")
     add_versions("v0.8.2", "4784eddd89c17a5fa030d408392992b3da3c503c872800e9d3746d985cfcc92a")
+
+    add_patches("v0.13.1", "https://github.com/wolfpld/tracy/commit/d79b6d040efaef3010c1e38bda616483bba10561.patch", "e1b31b128b792ac276ff5b90343a085614dd479b370ce29b264f9e0fdc9d5c24")
 
     add_configs("cmake",                            {description = "Use cmake buildsystem", default = true, type = "boolean"})
 

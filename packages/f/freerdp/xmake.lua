@@ -6,6 +6,7 @@ package("freerdp")
     add_urls("https://github.com/FreeRDP/FreeRDP/releases/download/$(version)/freerdp-$(version).tar.gz",
              "https://github.com/FreeRDP/FreeRDP.git")
 
+    add_versions("3.24.0", "168011bd58eae8d898842ef39c6c9bf5761ab617a68ccad80d623a3e535d0367")
     add_versions("3.23.0", "929273003f35b0b4f211e48d5abed4ebcef99da94784a50b6dc85cd0b7e257b1")
     add_versions("3.22.0", "656670f3aac2c995cb4b1ba181549cc122cc9c95ec31be68a582c1182f474376")
     add_versions("3.21.0", "ec1409ce88020eeebc54e20cc0766cbe7d2e2f4bd382c7061c86f89231a9f44d")

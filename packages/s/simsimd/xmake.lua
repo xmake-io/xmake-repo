@@ -7,6 +7,7 @@ package("simsimd")
     add_urls("https://github.com/ashvardanian/SimSIMD/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ashvardanian/SimSIMD.git")
 
+    add_versions("v6.5.16", "26af59c8d39d65cc3cb526cc8275211fe6e19580eeec2aab708e4ffc27f78f45")
     add_versions("v6.5.12", "f14519635ec45ecb0b4da9a9a5f51f95f77f220bda4e51a5972afd8176a11121")
     add_versions("v6.5.9", "c816934db339c5cf6e7ba6c127c16d082b58bec5f5657a62cb505bf70994e1b8")
     add_versions("v6.5.3", "fa52807be74455d6f99d073262710ce82f7aee4cf0e883d2610b4e74cd440f9c")
@@ -45,7 +46,7 @@ package("simsimd")
 
     on_install(function (package)
         os.cp("include", package:installdir())
-        if not package:has_ctypes("_Float16") then
+        if not package:has_ctypes("_Float16") or (package:is_plat("mingw") and is_subhost("macosx")) then
             package:add("defines", "SIMSIMD_NATIVE_F16=0")
         end
         if not package:has_ctypes("bfloat16_t") then

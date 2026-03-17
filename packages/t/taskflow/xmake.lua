@@ -7,7 +7,7 @@ package("taskflow")
     add_urls("https://github.com/taskflow/taskflow.git")
     add_urls("https://github.com/taskflow/taskflow/archive/refs/tags/$(version).tar.gz")
 
-    add_versions("v4.0.0", "6b050b0db6b6fb4c72c7c65cf6b468b2551adffe708a9a63ade0f3c1ae7d7e2a")
+    add_versions("v4.0.0", "a9d27ad29caffc95e394976c6a362debb94194f9b3fbb7f25e34aaf54272f497")
     add_versions("v3.11.0", "5e45a7ee032cae136843c76824519acbc0306f02d682f7e69fb1d53f69173dcb")
     add_versions("v3.10.0", "fe86765da417f6ceaa2d232ffac70c9afaeb3dc0816337d39a7c93e39c2dee0b")
     add_versions("v3.9.0", "d872a19843d12d437eba9b8664835b7537b92fe01fdb33ed92ca052d2483be2d")
@@ -20,6 +20,8 @@ package("taskflow")
     add_versions("v3.2.0", "26c37a494789fedc5de8d1f8452dc8a7774a220d02c14d5b19efe0dfe0359c0c")
     add_versions("v3.1.0", "17b56e23312d20c4ad5cc497b9f42cd0ad4451dbd2df0160a0a692fd16d47143")
     add_versions("v3.0.0", "553c88a6e56e115d29ac1520b8a0fea4557a5fcda1af1427bd3ba454926d03a2")
+
+    add_patches("v4.0.0", "patches/v4.0.0/fix-arm64.diff", "085e9785e5fa9efe07ae0a849453292065a71ee6b55d7da9e22baa6446654de1")
 
     if is_plat("linux") then
         add_syslinks("pthread")

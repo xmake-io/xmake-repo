@@ -6,6 +6,7 @@ package("orc")
     add_urls("https://github.com/apache/orc/archive/refs/tags/$(version).tar.gz",
              "https://github.com/apache/orc.git")
 
+    add_versions("v2.3.0", "d38b871c3989304d79c28c291bc80819b4585d7cea88d16243f74842a7e2a953")
     add_versions("v2.2.2", "ff952b23f0a7078153ce56ef1f3fa47fefa2bbcb17a2cf305cc36fad6b0a6316")
     add_versions("v2.2.1", "f826086e43512982d377469c35b6794cfdf59d41b91c9bd04ebfac4cbb19f20a")
     add_versions("v2.1.2", "277638a1e408ed405f29f1cdc254ff28b69b7c152cbf6c9f40418765dfe4bd24")
@@ -38,6 +39,28 @@ package("orc")
 
     on_install("windows", "linux", "macosx", "bsd", function (package)
         io.replace("c++/src/CMakeLists.txt", [[(orc STATIC ${SOURCE_FILES})]], [[(orc ${SOURCE_FILES})]], {plain = true})
+
+        if package:version():ge("2.3.0") and package:is_plat("windows") then
+            io.replace("c++/src/ColumnReader.cc",
+                "std::min(numValues, static_cast<size_t>(bufferEnd_ - bufferPointer_) / bytesPerValue_)",
+                "std::min(numValues, static_cast<uint64_t>(bufferEnd_ - bufferPointer_) / bytesPerValue_)",
+                {plain = true})
+        end
+        if package:version():ge("2.3.0") and package:is_plat("windows", "macosx") then
+            io.replace("cmake_modules/FindProtobufAlt.cmake",
+                [[    find_library (PROTOBUF_LIBRARY NAMES protobuf libprotobuf HINTS]],
+                [[    find_library (UTF8_RANGE_LIBRARY NAMES utf8_range libutf8_range HINTS ${_protobuf_path} PATH_SUFFIXES "lib")
+    find_library (UTF8_VALIDITY_LIBRARY NAMES utf8_validity libutf8_validity HINTS ${_protobuf_path} PATH_SUFFIXES "lib")
+    find_library (PROTOBUF_LIBRARY NAMES protobuf libprotobuf HINTS]], {plain = true})
+            io.replace("cmake_modules/ThirdpartyToolchain.cmake",
+                "orc_add_resolved_library (orc_protobuf ${PROTOBUF_LIBRARY} ${PROTOBUF_INCLUDE_DIR})\n  endif ()",
+                [[orc_add_resolved_library (orc_protobuf ${PROTOBUF_LIBRARY} ${PROTOBUF_INCLUDE_DIR})
+  endif ()
+  if (UTF8_RANGE_LIBRARY AND UTF8_VALIDITY_LIBRARY)
+    target_link_libraries(orc_protobuf INTERFACE ${UTF8_RANGE_LIBRARY} ${UTF8_VALIDITY_LIBRARY})
+  endif ()]], {plain = true})
+        end
+
         local configs = {
             "-DBUILD_JAVA=OFF",
             "-DBUILD_CPP_TESTS=OFF",
@@ -64,7 +87,7 @@ package("orc")
         table.insert(configs, "-DHAS_PRE_2038=" .. (package:is_plat("windows") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_ENABLE_AVX512=" .. (package:config("avx512") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"abseil", "utf8_range"}})
     end)
 
     on_test(function (package)
