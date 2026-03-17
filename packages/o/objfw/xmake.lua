@@ -47,9 +47,9 @@ package("objfw")
     end
 
     if is_plat("macosx") then
+        add_deps("openssl3")
         add_syslinks("objc")
         add_frameworks("CoreFoundation")
-
     end
 
     add_configs("tls", { description = "Enable TLS support.", default = (is_plat("macosx") and "securetransport" or "openssl"), values = { true, false, "openssl", "gnutls", "securetransport", "mbedtls" } })
