@@ -47,7 +47,6 @@ package("objfw")
     end
 
     if is_plat("macosx") then
-        add_deps("openssl3")
         add_syslinks("objc")
         add_frameworks("CoreFoundation")
     end
@@ -80,6 +79,9 @@ package("objfw")
     add_configs("arc", { description = "Enable Automatic Reference Counting (ARC) support.", default = true, type = "boolean" })
 
     on_load(function (package)
+        if package:is_plat("macosx") and package:version() and package:version():gt("1.4.4") then
+            package:add("deps", "mbedtls")
+        end
         local tls = package:config("tls")
         if type(tls) == "boolean" then
             if tls then
