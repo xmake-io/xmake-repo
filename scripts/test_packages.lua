@@ -291,13 +291,13 @@ function get_modified_packages()
         end
     end
     if #old_packages > 0 then
-        table.remove_if(old_packages, function (_, package)
-            local splitinfo = package:split("%s+")
-            return #splitinfo == 1
-        end)
-        table.remove_if(new_packages, function (_, package)
-            return table.contains(old_packages, package)
-        end)
+        -- table.remove_if(old_packages, function (_, package)
+        --     local splitinfo = package:split("%s+")
+        --     return #splitinfo == 1
+        -- end)
+        -- table.remove_if(new_packages, function (_, package)
+        --     return table.contains(old_packages, package)
+        -- end)
         -- {
         --     "pkgname", <-- remove this
         --     "pkgname pkgver"
