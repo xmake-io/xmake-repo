@@ -80,7 +80,7 @@ package("objfw")
 
     on_load(function (package)
         if package:is_plat("macosx") and package:version() and package:version():gt("1.4.4") then
-            package:add("deps", "mbedtls")
+            package:add("deps", "openssl3")
         end
         local tls = package:config("tls")
         if type(tls) == "boolean" then
@@ -151,13 +151,24 @@ package("objfw")
             local ssl_incdir = find_path(is_gnu and "gnutls/gnutls.h" or "openssl/ssl.h", { ssl:installdir("include"), "/usr/include/", "/usr/local/include" })
 
             if libssl then
-                table.insert(configs, "CPPFLAGS=-I"..ssl_incdir)
-                table.insert(configs, "LDFLAGS=-L"..libssl.linkdir)
+                table.insert(configs, "CPPFLAGS=-I" .. ssl_incdir)
+                table.insert(configs, "LDFLAGS=-L" .. libssl.linkdir)
             else
                 print("No SSL library found, using system default")
             end
         end
-
+        if package:is_plat("macosx") and package:version() and package:version():gt("1.4.4") then
+            import("lib.detect.find_library")
+            import("lib.detect.find_path")
+            local ssl = package:dep("openssl3")
+            local libssl = find_library("ssl", { ssl:installdir("lib"), "/usr/lib/", "/usr/lib64/", "/usr/local/lib" })
+            if not libssl then
+                libssl = find_library("ssl")
+            end
+            local ssl_incdir = find_path("openssl/ssl.h", { ssl:installdir("include"), "/usr/include/", "/usr/local/include" })
+            table.insert(configs, "CPPFLAGS=-I" .. ssl_incdir)
+            table.insert(configs, "LDFLAGS=-L" .. libssl.linkdir)
+        end
         import("package.tools.autoconf").install(package, configs)
 
         local mflags = {}
