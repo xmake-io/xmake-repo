@@ -216,6 +216,11 @@ package("openssl")
         end
 
         import("configure.patch")(package)
+        local cross = get_config("cross")
+        if cross then
+            cross = cross:endswith("-") and cross or cross .. "-"
+            buildenvs.CC = cross .. "cc"
+        end
         if package:is_cross() or package:is_plat("mingw") then
             os.vrunv("perl", table.join("./Configure", configs), {envs = buildenvs})
         else
