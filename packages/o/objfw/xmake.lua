@@ -79,8 +79,8 @@ package("objfw")
     add_configs("arc", { description = "Enable Automatic Reference Counting (ARC) support.", default = true, type = "boolean" })
 
     on_load(function (package)
-        if package:is_plat("macosx") and package:version() and package:version():gt("1.4.4") then
-            package:add("deps", "openssl3")
+        if package:is_plat("macosx") and package:version() and package:version():gt("1.4.4") and package:config("tls") == "securetransport" then
+            package:config_set("tls", "openssl")
         end
         local tls = package:config("tls")
         if type(tls) == "boolean" then
@@ -157,18 +157,7 @@ package("objfw")
                 print("No SSL library found, using system default")
             end
         end
-        if package:is_plat("macosx") and package:version() and package:version():gt("1.4.4") then
-            import("lib.detect.find_library")
-            import("lib.detect.find_path")
-            local ssl = package:dep("openssl3")
-            local libssl = find_library("ssl", { ssl:installdir("lib"), "/usr/lib/", "/usr/lib64/", "/usr/local/lib" })
-            if not libssl then
-                libssl = find_library("ssl")
-            end
-            local ssl_incdir = find_path("openssl/ssl.h", { ssl:installdir("include"), "/usr/include/", "/usr/local/include" })
-            table.insert(configs, "CPPFLAGS=-I" .. ssl_incdir)
-            table.insert(configs, "LDFLAGS=-L" .. libssl.linkdir)
-        end
+
         import("package.tools.autoconf").install(package, configs)
 
         local mflags = {}
