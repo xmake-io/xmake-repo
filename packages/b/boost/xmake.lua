@@ -94,8 +94,6 @@ package("boost")
         end
 
         if package:config("cmake") then
-            wprint("If cmake build failure, set package config cmake = false fallback to b2 for the build")
-
             package:add("deps", "cmake")
             import("cmake.load")(package)
         else
@@ -109,6 +107,7 @@ package("boost")
     on_install(function (package)
         if package:config("cmake") then
             assert(os.isfile("CMakeLists.txt"), "Currently the source archive only has the b2 build system, you need to download the cmake archive and put it in `xmake g --pkg_searchdirs=` to avoid xrepo using a non-cmake archive url.")
+            wprint("If cmake build failure, set package config cmake = false fallback to b2 for the build")
             import("cmake.install")(package)
         else
             import("b2.install")(package)
