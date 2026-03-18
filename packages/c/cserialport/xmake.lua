@@ -37,19 +37,25 @@ package("cserialport")
         local configs = {"-DCSERIALPORT_BUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
 
         if package:config("c_api") then
-            io.replace("bindings/c/cserialport.h", "#define C_DLL_EXPORT __declspec(dllexport)", "#define C_DLL_EXPORT", {plain = true})
-            io.writefile("xmake.lua", [[
-                add_rules("mode.debug", "mode.release")
-                target("cserialport-c")
-                    set_kind("static")
-                    add_files("bindings/c/cserialport.cpp")
-                    add_headerfiles("bindings/c/cserialport.h")
-                    add_includedirs("include")
-            ]])
-            import("package.tools.xmake").install(package)
+            -- bindings/c/CMakeLists.txt is self-contained (includes all C++ sources)
+            -- patch: remove hardcoded SHARED so BUILD_SHARED_LIBS controls library type
+            io.replace("bindings/c/CMakeLists.txt",
+                "add_library(${PROJECT_NAME} SHARED",
+                "add_library(${PROJECT_NAME}",
+                {plain = true})
+            -- patch: replace example subdirectory with install rules (missing upstream)
+            io.replace("bindings/c/CMakeLists.txt",
+                "add_subdirectory(example)",
+                "install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION lib RUNTIME DESTINATION bin ARCHIVE DESTINATION lib)\n"
+                .. "install(FILES cserialport.h DESTINATION include)",
+                {plain = true})
+            local oldir = os.cd("bindings/c")
+            import("package.tools.cmake").install(package, configs)
+            os.cd(oldir)
+        else
+            import("package.tools.cmake").install(package, configs)
         end
     end)
 
