@@ -177,7 +177,7 @@ package("openssl3")
         import("package.tools.make").make(package, {"install_sw"})
     end)
 
-    on_install("linux", "macosx", "bsd", function (package)
+    on_install("macosx", "bsd", function (package)
         -- https://wiki.openssl.org/index.php/Compilation_and_Installation#PREFIX_and_OPENSSLDIR
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
         local configs = {"--openssldir=" .. package:installdir(),
@@ -202,7 +202,7 @@ package("openssl3")
         end
     end)
 
-    on_install("cross", "android", "iphoneos", "wasm", function (package)
+    on_install("linux", "cross", "android", "iphoneos", "wasm", function (package)
         local target_arch = "generic32"
         if package:is_arch("x86_64") then
             target_arch = "x86_64"
