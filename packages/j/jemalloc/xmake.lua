@@ -13,13 +13,16 @@ package("jemalloc")
     add_configs("prefix", {description = "Prefix to prepend to all public APIs", default = "", type = "string"})
     add_configs("prof", {description = "Enable allocation profiling", default = false, type = "boolean"})
 
-    if is_plat("linux") then
+    if is_plat("linux", "bsd") then
         add_syslinks("pthread", "dl")
     end
 
     on_load(function (package)
         if package:gitref() then
             package:add("deps", "automake", "autoconf")
+        end
+        if package:is_plat("android") then
+            package:add("defines", "JEMALLOC_STRERROR_R_RETURNS_CHAR_WITH_GNU_SOURCE")
         end
     end)
 
@@ -31,6 +34,9 @@ package("jemalloc")
         table.insert(configs, "--with-jemalloc-prefix=" .. (package:config("prefix") or ""))
         table.insert(configs, "--enable-prof=" .. (package:config("prof") and "yes" or "no"))
         import("package.tools.autoconf").install(package, configs)
+        if package:is_plat("mingw") and package:config("shared") then
+            os.trymv(package:installdir("lib", "*.dll"), package:installdir("bin"))
+        end
     end)
 
     on_test(function(package)
