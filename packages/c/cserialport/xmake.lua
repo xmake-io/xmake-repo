@@ -11,6 +11,7 @@ package("cserialport")
     add_versions("v4.3.1", "376f41866be65ddfed91f3d0fea91aaaf5ca7e645f9b9cfcdaa0a9182a0bb3ac")
 
     add_configs("c_api", {description = "Build C API", default = false, type = "boolean"})
+    add_configs("utf8", {description = "Use UTF8 character encoding", default = false, type = "boolean"})
 
     if is_plat("windows", "mingw") then
         add_syslinks("advapi32")
@@ -37,6 +38,9 @@ package("cserialport")
         local configs = {"-DCSERIALPORT_BUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:config("utf8") then
+            table.insert(configs, "-DCSERIALPORT_ENABLE_UTF8=ON")
+        end
 
         if package:config("c_api") then
             -- bindings/c/CMakeLists.txt is self-contained (includes all C++ sources)
