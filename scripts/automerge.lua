@@ -8,7 +8,7 @@ function _get_autoupdate_pr_list()
         if data then
             for _, item in ipairs(data) do
                 if item.title and item.title:find("Auto-update", 1, true) then
-                    table.insert(result, {id = tostring(item.number), title = item.title, createdAt = item.createdAt})
+                    table.insert(result, {id = tostring(math.floor(item.number)), title = item.title, createdAt = item.createdAt})
                 end
             end
         end
