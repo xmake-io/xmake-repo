@@ -1,13 +1,13 @@
 
 function _get_autoupdate_pr_list()
     local result = {}
-    local list = os.iorun("gh pr list --label auto-update --state open -R xmake-io/xmake-repo")
+    local list = os.iorun("gh pr list --label auto-update --state open --json number,title,createdAt -R xmake-io/xmake-repo")
     if list then
-        for _, line in ipairs(list:split("\n")) do
-            if line:find("Auto-update", 1, true) then
-                local id = line:match("(%d+)%s+Auto%-update")
-                if id then
-                    table.insert(result, {id = id, title = line})
+        local data = json.decode(list)
+        if data then
+            for _, item in ipairs(data) do
+                if item.title and item.title:find("Auto-update", 1, true) then
+                    table.insert(result, {id = tostring(item.number), title = item.title, createdAt = item.createdAt})
                 end
             end
         end
@@ -22,6 +22,21 @@ function _check_pr_passed(id)
     end
 end
 
+function _is_pr_stale(createdAt, months)
+    months = months or 2
+    if not createdAt then
+        return false
+    end
+    -- parse ISO 8601 date, e.g. "2025-01-15T10:30:00Z"
+    local year, month, day = createdAt:match("(%d+)-(%d+)-(%d+)")
+    if not year then
+        return false
+    end
+    local created_time = os.time({year = tonumber(year), month = tonumber(month), day = tonumber(day)})
+    local stale_seconds = months * 30 * 24 * 3600
+    return os.time() - created_time > stale_seconds
+end
+
 function main()
     local pr_list = _get_autoupdate_pr_list()
     for _, info in ipairs(pr_list) do
@@ -31,6 +46,9 @@ function main()
         if _check_pr_passed(id) then
             print("pull/%d passed, it will be merged next.", id)
             os.vexec("gh pr merge %d --squash -d -R xmake-io/xmake-repo", id)
+        elseif _is_pr_stale(info.createdAt) then
+            print("pull/%d is stale and not passed, closing it.", id)
+            os.vexec("gh pr close %d -R xmake-io/xmake-repo", id)
         end
     end
 end
