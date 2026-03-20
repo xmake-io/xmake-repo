@@ -17,6 +17,10 @@ package("taglib")
 
     add_links("tag_c", "tag")
 
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     on_install(function (package)
         if not package:config("shared") then
             package:add("defines", "TAGLIB_STATIC")
