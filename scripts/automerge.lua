@@ -1,3 +1,4 @@
+import("core.base.json")
 
 function _get_autoupdate_pr_list()
     local result = {}
