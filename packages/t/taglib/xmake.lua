@@ -6,6 +6,7 @@ package("taglib")
     add_urls("https://github.com/taglib/taglib/archive/refs/tags/$(version).tar.gz",
              "https://github.com/taglib/taglib.git", {submodules = false})
 
+    add_versions("v2.2.1", "8d920bfe302c943bab204ad5183fa0ea13cedee7f72f7256b665888de964d081")
     add_versions("v2.1.1", "bd57924496a272322d6f9252502da4e620b6ab9777992e8934779ebd64babd6e")
     add_versions("v2.1", "95b788b39eaebab41f7e6d1c1d05ceee01a5d1225e4b6d11ed8976e96ba90b0c")
 
@@ -15,6 +16,10 @@ package("taglib")
     add_deps("utfcpp", "zlib")
 
     add_links("tag_c", "tag")
+
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     on_install(function (package)
         if not package:config("shared") then
