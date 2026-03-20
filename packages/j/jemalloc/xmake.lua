@@ -12,6 +12,9 @@ package("jemalloc")
 
     add_configs("prefix", {description = "Prefix to prepend to all public APIs", default = (is_plat("android") and "je_" or ""), type = "string"})
     add_configs("prof", {description = "Enable allocation profiling", default = false, type = "boolean"})
+    if is_plat("mingw") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread", "dl")
@@ -24,12 +27,9 @@ package("jemalloc")
         if package:is_plat("android") and package:config("prefix") == "je_" then
             wprint("package(jemalloc): set API prefix to \"je_\" on Android to avoid C++ declaration conflicts.")
         end
-        if package:is_plat("mingw") and package:config("shared") then
-            package:add("links", "jemalloc")
-        end
     end)
 
-    on_install("linux", "macosx", "bsd", "android", "mingw", function(package)
+    on_install("linux", "macosx", "bsd", "android@linux", "mingw", function(package)
         local configs = {"--enable-doc=no"}
         local cflags = {}
         table.insert(configs, "--enable-debug=" .. (package:is_debug() and "yes" or "no"))
@@ -38,38 +38,23 @@ package("jemalloc")
         table.insert(configs, "--with-jemalloc-prefix=" .. package:config("prefix"))
         table.insert(configs, "--enable-prof=" .. (package:config("prof") and "yes" or "no"))
         if package:is_plat("android") then
-            if is_host("windows") then
-                table.insert(configs, "--disable-libdl")
-                table.insert(cflags, "-UWIN32")
-                table.insert(cflags, "-U_WIN32")
-                table.insert(cflags, "-UWIN64")
-                table.insert(cflags, "-U_WIN64")
-                io.replace("include/jemalloc/internal/jemalloc_internal_decls.h",
-                    "#ifdef _WIN32",
-                    "#if defined(_WIN32) && !defined(__ANDROID__) && !defined(__linux__)", {plain = true})
-            else
-                local has_gnu_strerror_r, _ = package:check_csnippets({test = [[
-                    #define _GNU_SOURCE 1
-                    #include <errno.h>
-                    #include <stdio.h>
-                    #include <stdlib.h>
-                    #include <string.h>
-                    int main() {
-                        char *buffer = (char *) malloc(100);
-                        char *error = strerror_r(EINVAL, buffer, 100);
-                        printf("%s\n", error);
-                    }
-                ]]})
-                if has_gnu_strerror_r then
-                    table.insert(cflags, "-DJEMALLOC_STRERROR_R_RETURNS_CHAR_WITH_GNU_SOURCE")
-                end
+            local has_gnu_strerror_r, _ = package:check_csnippets({test = [[
+                #define _GNU_SOURCE 1
+                #include <errno.h>
+                #include <stdio.h>
+                #include <stdlib.h>
+                #include <string.h>
+                int main() {
+                    char *buffer = (char *) malloc(100);
+                    char *error = strerror_r(EINVAL, buffer, 100);
+                    printf("%s\n", error);
+                }
+            ]]})
+            if has_gnu_strerror_r then
+                table.insert(cflags, "-DJEMALLOC_STRERROR_R_RETURNS_CHAR_WITH_GNU_SOURCE")
             end
         end
         import("package.tools.autoconf").install(package, configs, {cflags = cflags})
-        if package:is_plat("mingw") and package:config("shared") then
-            os.trymv(package:installdir("lib", "jemalloc.dll"), package:installdir("bin", "libjemalloc.dll"))
-            os.vexecv("ls", {package:installdir("lib/lib")})
-        end
     end)
 
     on_test(function(package)
