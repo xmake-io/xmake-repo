@@ -2,7 +2,7 @@ import("core.base.json")
 
 function _get_autoupdate_pr_list()
     local result = {}
-    local list = os.iorun("gh pr list --label auto-update --state open --json number,title,createdAt -R xmake-io/xmake-repo")
+    local list = os.iorun("gh pr list --label auto-update --state open --json number,title,createdAt --limit 1000 -R xmake-io/xmake-repo")
     if list then
         local data = json.decode(list)
         if data then
@@ -49,7 +49,7 @@ function main()
             os.vexec("gh pr merge %d --squash -d -R xmake-io/xmake-repo", id)
         elseif _is_pr_stale(info.createdAt) then
             print("pull/%d is stale and not passed, closing it.", id)
-            os.vexec("gh pr close %d -R xmake-io/xmake-repo", id)
+            os.vexec("gh pr close %d -d -R xmake-io/xmake-repo", id)
         end
     end
 end
