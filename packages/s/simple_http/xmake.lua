@@ -7,6 +7,7 @@ package("simple_http")
     add_urls("https://github.com/fantasy-peak/simple_http/archive/refs/tags/$(version).tar.gz",
              "https://github.com/fantasy-peak/simple_http.git")
 
+    add_versions("v0.6.3", "9b80b0329dbb6e042b46844f1ab6255c1bb3108f0b1e2082704f853b50bc75bc")
     add_versions("v0.6.2", "ffe93846c583a9951c209550101486e2437c123b095c8b00dbed3b9bb594abc9")
     add_versions("v0.6.1", "1772bf750adb04e430b4275385b6d65230830181b93574dba178a854526247ff")
     add_versions("v0.6.0", "6d4649184b4023d2dc45d253a44a6296d14e86999e424c846da8c17211f827ed")
@@ -18,7 +19,7 @@ package("simple_http")
     add_configs("openssl3", {description = "default use openssl3", default = true, type = "boolean"})
 
     add_deps("cmake")
-    add_deps("boost", {configs = {asio = true}})
+    add_deps("boost", {configs = {asio = true, regex = true}})
     add_deps("nghttp2")
 
     on_load(function (package)
