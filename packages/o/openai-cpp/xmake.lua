@@ -10,7 +10,7 @@ package("openai-cpp")
 
     add_deps("nlohmann_json", "libcurl")
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         os.cp("include", package:installdir())
     end)
 
