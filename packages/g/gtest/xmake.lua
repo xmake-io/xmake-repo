@@ -27,7 +27,7 @@ package("gtest")
     add_configs("gmock", {description = "Link to the googlemock library.", default = true, type = "boolean"})
     add_configs("cmake", {description = "Use cmake build system", default = true, type = "boolean"})
 
-    if is_plat("linux", "bsd") then
+    if is_plat("linux", "cross", "bsd") then
         add_syslinks("pthread")
     end
 

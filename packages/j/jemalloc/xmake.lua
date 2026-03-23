@@ -16,7 +16,7 @@ package("jemalloc")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    if is_plat("linux", "bsd") then
+    if is_plat("linux", "cross", "bsd") then
         add_syslinks("pthread", "dl")
     end
 
@@ -29,7 +29,7 @@ package("jemalloc")
         end
     end)
 
-    on_install("linux", "macosx", "bsd", "android@linux", "mingw", function(package)
+    on_install("linux", "cross", "macosx", "bsd", "android@linux", "mingw", function(package)
         local configs = {"--enable-doc=no"}
         local cflags = {}
         table.insert(configs, "--enable-debug=" .. (package:is_debug() and "yes" or "no"))
