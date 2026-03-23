@@ -6,6 +6,7 @@ package("lsp-framework")
     add_urls("https://github.com/leon-bckl/lsp-framework/archive/refs/tags/$(version).tar.gz",
              "https://github.com/leon-bckl/lsp-framework.git")
 
+    add_versions("1.3.1", "f5c53e85c407d3773c7b917f4cab777da12d4059a5aeb2dbc3ec656fa7842569")
     add_versions("1.3.0", "b6b4c0cad392b5e6b5b3897095199ed1b9217b7e468d61993eb4e091972c264b")
     add_versions("1.0.1", "07f924d851896a2d424d554d20820483f8458aa1ff907bb68657b0d2d0bd0d13")
 
