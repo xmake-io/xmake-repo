@@ -68,7 +68,7 @@ package("sqlite3")
     add_configs("rtree",            { description = "Enable R-Tree.", default = false, type = "boolean"})
     add_configs("safe_mode",        { description = "Use thread safe mode in 0 (single thread) | 1 (serialize) | 2 (mutli thread).", default = "1", type = "string", values = {"0", "1", "2"}})
 
-    if is_plat("macosx", "linux", "bsd") then
+    if is_plat("cross", "macosx", "linux", "bsd") then
         add_syslinks("pthread", "dl")
     end
 
