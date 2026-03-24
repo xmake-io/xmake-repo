@@ -55,6 +55,7 @@ package("seqan3")
                 ["3.3.0"] = { gcc = ">=11.0", clang = "unsupported" },
                 ["3.4.0"] = check_gcc12_clang17,
                 ["3.4.1"] = check_gcc12_clang17,
+                ["3.4.2"] = check_gcc12_clang17,
             }
 
             local info
