@@ -47,7 +47,7 @@ package("usockets")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", "cross", function (package)
         local configs = {}
         configs.ssl = package:config("ssl")
         configs.uv = package:config("uv")
