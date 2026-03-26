@@ -7,7 +7,7 @@ package("bc_crunch")
 
     add_versions("1.5.2", "88f0a344acc1b2ce3cc1a8393f422aa1033c0539")
 
-    on_install(function (package)
+    on_install("*|*64", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             target("bc_crunch")
