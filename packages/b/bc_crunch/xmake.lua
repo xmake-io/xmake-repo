@@ -23,6 +23,7 @@ package("bc_crunch")
 
     on_test(function (package)
         assert(package:check_csnippets({test = [[
+            #include <stdlib.h>
             void crunch(const void* input, uint32_t width, uint32_t height, void* output, size_t length) {
                 size_t size = crunch_min_size();
                 void* cruncher = malloc(size);
