@@ -30,7 +30,7 @@ package("usockets")
             package:add("deps", "libuv")
             package:config_set("uv", true)
         else
-            if package:config("libuv") then
+            if package:config("uv") then
                 package:add("deps", "libuv")
                 package:add("defines", "LIBUS_USE_LIBUV")
             end
