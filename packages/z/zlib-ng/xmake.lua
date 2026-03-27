@@ -6,6 +6,7 @@ package("zlib-ng")
     add_urls("https://github.com/zlib-ng/zlib-ng/archive/refs/tags/$(version).tar.gz",
              "https://github.com/zlib-ng/zlib-ng.git")
 
+    add_versions("2.3.3", "f9c65aa9c852eb8255b636fd9f07ce1c406f061ec19a2e7d508b318ca0c907d1")
     add_versions("2.3.2", "6a0561b50b8f5f6434a6a9e667a67026f2b2064a1ffa959c6b2dae320161c2a8")
     add_versions("2.2.5", "5b3b022489f3ced82384f06db1e13ba148cbce38c7941e424d6cb414416acd18")
     add_versions("2.2.4", "a73343c3093e5cdc50d9377997c3815b878fd110bf6511c2c7759f2afb90f5a3")
