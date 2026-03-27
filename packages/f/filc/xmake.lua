@@ -8,6 +8,7 @@ package("filc")
         if os.arch() == "x86_64" then
             set_urls("https://github.com/pizlonator/fil-c/releases/download/v$(version)/filc-$(version)-linux-x86_64.tar.xz")
             add_versions("0.674", "a8ec349f383a49dacc09a9540643164c67081245e591c1e6823609653f2c9740")
+            add_versions("0.678", "8c515f704b3ba524566847d78a8c324708a64d0eefadabb40094bc5130aa8995")
         end
     end
 
