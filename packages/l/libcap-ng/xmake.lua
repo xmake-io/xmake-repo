@@ -4,6 +4,7 @@ package("libcap-ng")
 
     add_urls("https://github.com/stevegrubb/libcap-ng/archive/refs/tags/$(version).tar.gz",
              "https://github.com/stevegrubb/libcap-ng.git")
+    add_versions("v0.9.2", "df6910d996818848de92db9c05f96492e008c4e35f96a8673f9b7cc44f5cf813")
     add_versions("v0.9.1", "52418b8940f83dcc00dcd01d187e67c3399ff65f3fa558442e3a21b415cc46c0")
     add_versions("v0.8.5", "e4be07fdd234f10b866433f224d183626003c65634ed0552b02e654a380244c2")
 
