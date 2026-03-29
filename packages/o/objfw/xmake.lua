@@ -39,7 +39,9 @@ package("objfw")
     add_versions("1.4.2",   "8e6d0cd39271130a0b6c2789fa08f2598c77d9b88acbd0e2c15c8eb1144baa08")
     add_versions("1.4.3",   "0e987c82bd482a957360a1cd7e8d14716442f9bfba68f58fef9b81750db301d9")
     add_versions("1.4.4",   "29be5ea5d6a9c34b9873a40091367eb0b75072d627e2508380c02c38cb60ca38")
-    add_versions("1.5.1",   "fde83565ad1c6aaea2713770ede8f47f1b1e464c9251dde4801e1c614930cdf6")
+    
+    add_versions("1.5", "438f18ea760b081bdfcb2b3829c62b8645d241dde08d65a8c004ee4f6b56d9f4")
+add_versions("1.5.1",   "fde83565ad1c6aaea2713770ede8f47f1b1e464c9251dde4801e1c614930cdf6")
 
     if is_host("linux", "macosx") then
         add_deps("autoconf", "automake", "libtool")
