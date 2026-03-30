@@ -104,6 +104,7 @@ package("imgui")
     add_patches("v1.92.0", "patches/v1.92.0/fix_imgui_api.patch", "e8ca0502056acf356f83703e7190dda87fde43ed245f65f0fb55b85cd164ed83")
     add_patches("v1.92.0-docking", "patches/v1.92.0/fix_imgui_api.patch", "e8ca0502056acf356f83703e7190dda87fde43ed245f65f0fb55b85cd164ed83")
 
+    add_configs("android",          {description = "Enable the android backend", default = false, type = "boolean"})
     add_configs("dx9",              {description = "Enable the dx9 backend", default = false, type = "boolean"})
     add_configs("dx10",             {description = "Enable the dx10 backend", default = false, type = "boolean"})
     add_configs("dx11",             {description = "Enable the dx11 backend", default = false, type = "boolean"})
@@ -205,6 +206,7 @@ package("imgui")
 
     on_install(function (package)
         local configs = {
+            android          = package:config("android"),
             dx9              = package:config("dx9"),
             dx10             = package:config("dx10"),
             dx11             = package:config("dx11"),
