@@ -1,104 +1,203 @@
 package("behaviortree.cpp")
-    set_homepage("https://www.behaviortree.dev/")
-    set_description("Behavior Trees Library in C++. Batteries included.")
-    set_license("MIT")
+	set_homepage("https://www.behaviortree.dev/")
+	set_description("Behavior Trees Library in C++. Batteries included.")
+	set_license("MIT")
 
-    add_urls("https://github.com/BehaviorTree/BehaviorTree.CPP/archive/refs/tags/v$(version).tar.gz",
-             "https://github.com/BehaviorTree/BehaviorTree.CPP.git")
+	add_urls(
+		"https://github.com/BehaviorTree/BehaviorTree.CPP/archive/refs/tags/v$(version).tar.gz",
+		"https://github.com/BehaviorTree/BehaviorTree.CPP.git"
+	)
 
-    add_versions("4.9.0", "74a22cf46d7cd423d7065616528cfd68bcd925b3fc2b819a99413cdd3334c02a")
+	add_versions("4.9.0", "74a22cf46d7cd423d7065616528cfd68bcd925b3fc2b819a99413cdd3334c02a")
 
-    add_configs("groot2_interface", {
-        description = "Enable Groot2 publisher interface. Requires ZeroMQ.",
-        default = true,
-        type = "boolean"
-    })
-    add_configs("sqlite_logging", {
-        description = "Enable SQLite-based logging.",
-        default = true,
-        type = "boolean"
-    })
-    add_configs("tools", {
-        description = "Build command-line tools.",
-        default = false,
-        type = "boolean"
-    })
-    add_configs("vendored", {
-        description = "Use vendored third-party libraries.",
-        default = false,
-        type = "boolean"
-    })
+	add_configs("groot2_interface", {
+		description = "Enable Groot2 publisher interface. Requires ZeroMQ.",
+		default = true,
+		type = "boolean",
+	})
+	add_configs("sqlite_logging", {
+		description = "Enable SQLite-based logging.",
+		default = true,
+		type = "boolean",
+	})
+	add_configs("tools", {
+		description = "Build command-line tools.",
+		default = false,
+		type = "boolean",
+	})
+	add_configs("vendored", {
+		description = "Use vendored third-party libraries.",
+		default = false,
+		type = "boolean",
+	})
 
-    -- BT.CPP uses dlopen on Unix for plugin loading
-    if is_plat("linux", "bsd") then
-        add_syslinks("pthread", "dl")
-    end
+	if is_plat("linux", "bsd") then
+		add_syslinks("pthread", "dl")
+	end
 
-    add_deps("cmake")
+	add_deps("cmake")
 
-    on_load(function (package)
-        if not package:config("vendored") then
-            package:add("deps", "tinyxml2")
-            package:add("deps", "minitrace")
-        end
-        if package:config("groot2_interface") then
-            package:add("deps", "zeromq")
-            if not package:config("vendored") then
-                package:add("deps", "cppzmq")
-            end
-        end
-        if package:config("sqlite_logging") then
-            package:add("deps", "sqlite3")
-        end
-    end)
+	on_load(function(package)
+		if not package:config("vendored") then
+			package:add("deps", "tinyxml2")
+			package:add("deps", "minitrace")
+		end
+		-- Groot2 requires sockets; disable on WASM.
+		local groot2 = package:config("groot2_interface")
+		if groot2 and not package:is_plat("wasm") then
+			package:add("deps", "zeromq")
+		end
+		if package:config("sqlite_logging") then
+			package:add("deps", "sqlite3")
+		end
+	end)
 
+	on_install(function(package)
+		-- patch missing <vector> include for NDK 22 libc++ compatibility
+		io.replace(
+			"include/behaviortree_cpp/utils/polymorphic_cast_registry.hpp",
+			"#pragma once",
+			"#pragma once\n#include <vector>",
+			{ plain = true }
+		)
 
-    on_install(function (package)
-        local configs = {
-            -- Block ament/ROS2 auto-detection
-            "-Dament_cmake_FOUND=FALSE",
-            "-DBUILD_TESTING=OFF",
-            "-DBTCPP_EXAMPLES=OFF",
-            "-DUSE_VENDORED_FLATBUFFERS=ON", -- vendored flatbuffers only includes base.h
-            "-DUSE_VENDORED_MINICORO=ON",
-            "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
-            "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"),
-            "-DBTCPP_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"),
-            "-DBTCPP_GROOT_INTERFACE=" .. (package:config("groot2_interface") and "ON" or "OFF"),
-            "-DBTCPP_SQLITE_LOGGING=" .. (package:config("sqlite_logging") and "ON" or "OFF"),
-            "-DBTCPP_BUILD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"),
-            "-DUSE_VENDORED_MINITRACE=" .. (package:config("vendored") and "ON" or "OFF"),
-            "-DUSE_VENDORED_TINYXML2=" .. (package:config("vendored") and "ON" or "OFF"),
-            "-DUSE_VENDORED_CPPZMQ=" .. (package:config("vendored") and "ON" or "OFF")
-        }
-        import("package.tools.cmake").install(package, configs)
-    end)
+		-- Android API < 24 lacks fseeko/ftello; disable 64-bit file offsets.
+		local extra_cxxflags = ""
+		if package:is_plat("android") then
+			extra_cxxflags = "-U_FILE_OFFSET_BITS"
+		end
 
-    on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            #include <behaviortree_cpp/bt_factory.h>
-            #include <behaviortree_cpp/action_node.h>
+		-- WASM: avoid minicoro fiber backend; use asyncify.
+		if package:is_plat("wasm") then
+			extra_cxxflags = (extra_cxxflags ~= "" and extra_cxxflags .. " " or "") .. "-DMCO_USE_ASYNCIFY"
+		end
 
-            class DummyAction : public BT::SyncActionNode {
-            public:
-                DummyAction(const std::string& name, const BT::NodeConfig& config)
-                    : BT::SyncActionNode(name, config) {}
-                static BT::PortsList providedPorts() { return {}; }
-                BT::NodeStatus tick() override { return BT::NodeStatus::SUCCESS; }
-            };
+		local groot2_enabled = package:config("groot2_interface") and not package:is_plat("wasm")
 
-            void test() {
-                BT::BehaviorTreeFactory factory;
-                factory.registerNodeType<DummyAction>("DummyAction");
-                const std::string xml = R"(
-                    <root BTCPP_format="4">
-                        <BehaviorTree ID="MainTree">
-                            <Action ID="DummyAction"/>
-                        </BehaviorTree>
-                    </root>
-                )";
-                auto tree = factory.createTreeFromText(xml);
-                tree.tickWhileRunning();
-            }
-        ]]}, {configs = {languages = "c++17"}}))
-    end)
+		local configs = {
+			"-Dament_cmake_FOUND=FALSE",
+			"-DBUILD_TESTING=OFF",
+			"-DBTCPP_EXAMPLES=OFF",
+			"-DUSE_VENDORED_FLATBUFFERS=ON",
+			"-DUSE_VENDORED_MINICORO=ON",
+			"-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
+			"-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"),
+			"-DBTCPP_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"),
+			"-DBTCPP_GROOT_INTERFACE=" .. (groot2_enabled and "ON" or "OFF"),
+			"-DBTCPP_SQLITE_LOGGING=" .. (package:config("sqlite_logging") and "ON" or "OFF"),
+			"-DBTCPP_BUILD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"),
+			"-DUSE_VENDORED_MINITRACE=" .. (package:config("vendored") and "ON" or "OFF"),
+			"-DUSE_VENDORED_TINYXML2=" .. (package:config("vendored") and "ON" or "OFF"),
+			-- cppzmq is header-only but expects a libzmq target.
+			"-DUSE_VENDORED_CPPZMQ=ON",
+		}
+
+		if extra_cxxflags ~= "" then
+			table.insert(configs, "-DCMAKE_CXX_FLAGS=" .. extra_cxxflags)
+		end
+
+		if groot2_enabled then
+			local zeromq = package:dep("zeromq")
+			if zeromq then
+				local fetchinfo = zeromq:fetch()
+				if fetchinfo then
+					local includedirs = fetchinfo.sysincludedirs or fetchinfo.includedirs
+					local libfiles = fetchinfo.libfiles
+
+					local zmq_include = (includedirs and #includedirs > 0) and includedirs[1] or ""
+					local zmq_libfile = (libfiles and #libfiles > 0) and libfiles[1] or ""
+
+					if zmq_include ~= "" then
+						table.insert(configs, "-DZeroMQ_INCLUDE_DIRS=" .. zmq_include)
+						table.insert(configs, "-DZeroMQ_INCLUDE_DIR=" .. zmq_include)
+					end
+					if zmq_libfile ~= "" then
+						-- Force FindZeroMQ to use provided library (avoid duplicate linkage).
+						table.insert(configs, "-DZeroMQ_FOUND=TRUE")
+						table.insert(configs, "-DZeroMQ_LIBRARIES=" .. zmq_libfile)
+						table.insert(configs, "-DZeroMQ_LIBRARY=" .. zmq_libfile)
+					end
+
+					-- Inject libzmq target required by cppzmq.
+                    -- Also set ZMQ_STATIC and required Windows system libs.
+					if zmq_libfile ~= "" then
+						local zmq_libfile_cmake = zmq_libfile:gsub("\\", "/")
+						local zmq_include_cmake = zmq_include:gsub("\\", "/")
+
+						-- Collect syslinks for MSVC and MinGW.
+						local win_syslinks = ""
+						if package:is_plat("windows", "mingw") then
+							local syslinks = fetchinfo.syslinks
+							if syslinks and #syslinks > 0 then
+								win_syslinks = table.concat(syslinks, ";")
+							else
+								win_syslinks = "ws2_32;advapi32;rpcrt4;iphlpapi"
+							end
+						end
+
+						local init_file = "btcpp_zmq_targets.cmake"
+						io.writefile(
+							init_file,
+							string.format(
+								[[
+                                    # Auto-generated by the xmake behaviortree.cpp package.
+                                    # Creates the imported target required by 3rdparty/cppzmq/CMakeLists.txt.
+                                    if(NOT TARGET libzmq-static)
+                                        add_library(libzmq-static STATIC IMPORTED GLOBAL)
+                                        set_target_properties(libzmq-static PROPERTIES
+                                            IMPORTED_LOCATION "%s"
+                                            INTERFACE_INCLUDE_DIRECTORIES "%s"
+                                            IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
+                                            INTERFACE_COMPILE_DEFINITIONS "ZMQ_STATIC"
+                                            INTERFACE_LINK_LIBRARIES "%s"
+                                        )
+                                    endif()
+                                    if(NOT TARGET libzmq)
+                                        add_library(libzmq ALIAS libzmq-static)
+                                    endif()
+                                ]],
+								zmq_libfile_cmake,
+								zmq_include_cmake,
+								win_syslinks
+							)
+						)
+
+						table.insert(configs, "-DCMAKE_PROJECT_INCLUDE=" .. path.absolute(init_file):gsub("\\", "/"))
+					end
+				end
+			end
+		end
+
+		import("package.tools.cmake").install(package, configs)
+	end)
+
+	on_test(function(package)
+		assert(package:check_cxxsnippets({
+			test = [[
+                #include <behaviortree_cpp/bt_factory.h>
+                #include <behaviortree_cpp/action_node.h>
+
+                class DummyAction : public BT::SyncActionNode {
+                public:
+                    DummyAction(const std::string& name, const BT::NodeConfig& config)
+                        : BT::SyncActionNode(name, config) {}
+                    static BT::PortsList providedPorts() { return {}; }
+                    BT::NodeStatus tick() override { return BT::NodeStatus::SUCCESS; }
+                };
+
+                void test() {
+                    BT::BehaviorTreeFactory factory;
+                    factory.registerNodeType<DummyAction>("DummyAction");
+                    const std::string xml = R"(
+                        <root BTCPP_format="4">
+                            <BehaviorTree ID="MainTree">
+                                <Action ID="DummyAction"/>
+                            </BehaviorTree>
+                        </root>
+                    )";
+                    auto tree = factory.createTreeFromText(xml);
+                    tree.tickWhileRunning();
+                }
+            ]],
+		}, { configs = { languages = "c++17" } }))
+	end)
