@@ -133,7 +133,7 @@ endforeach()
         if os.isfile(vars_file) then
             local content = io.readfile(vars_file)
             for _, line in ipairs(content:split("\n")) do
-                line = line:trim()
+                local line = line:trim()
                 if #line > 0 then
                     local var, value = line:match("^([^=]+)=(.+)$")
                     if var and value == "TRUE" then

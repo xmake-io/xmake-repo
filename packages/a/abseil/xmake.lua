@@ -93,7 +93,7 @@ package("abseil")
                 if line:startswith("Requires: ") then
                     local requires = line:sub(10):split(",")
                     for _, dep in ipairs(requires) do
-                        dep = dep:split("=")[1]:trim()
+                        local dep = dep:split("=")[1]:trim()
                         dag:add_edge(link, dep)
                     end
                 end

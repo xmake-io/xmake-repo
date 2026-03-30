@@ -57,7 +57,7 @@ function _get_latest_modified_packages()
     local instances = {}
     local files = os.iorun("git diff --name-only HEAD^")
     for _, file in ipairs(files:split('\n')) do
-        file = file:trim()
+        local file = file:trim()
         if file:find("packages", 1, true) and path.filename(file) == "xmake.lua" then
            assert(file == file:lower(), "%s must be lower case!", file)
            local packagedir = path.directory(file)
@@ -123,7 +123,7 @@ function _get_packagerefs_in_latest_24h()
         if commit and #commit == 8 then
             local files = os.iorun("git diff --name-only " .. commit .. "^")
             for _, file in ipairs(files:split('\n')) do
-                file = file:trim()
+                local file = file:trim()
                 if file:find("packages", 1, true) and path.filename(file) == "xmake.lua" then
                    assert(file == file:lower(), "%s must be lower case!", file)
                    local packagedir = path.directory(file)

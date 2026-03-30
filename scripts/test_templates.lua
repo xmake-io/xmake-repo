@@ -29,7 +29,7 @@ function main(...)
     local diff = try {function () return os.iorun("git --no-pager diff --name-only HEAD^") end}
     if diff then
         for _, file in ipairs(diff:split("\n")) do
-            file = file:trim()
+            local file = file:trim()
             if file:startswith("templates") and file:endswith("xmake.lua") then
                 table.insert(templates, file)
             end

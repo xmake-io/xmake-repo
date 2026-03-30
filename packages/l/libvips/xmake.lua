@@ -142,6 +142,7 @@ package("libvips")
                     enabled_string = (enabled and "true" or "false")
                 end
 
+                local name = name
                 if configs_map[name] then
                     name = configs_map[name]
                 end
