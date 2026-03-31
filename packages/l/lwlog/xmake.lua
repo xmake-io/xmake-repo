@@ -13,11 +13,17 @@ package("lwlog")
         add_syslinks("pthread")
     end
 
-    add_includedirs("include/src")
+    add_includedirs("include/src", "include/lwlog")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    if on_check then
+        on_check("windows|arm64", function (package)
+            raise("package(lwlog): unsupport windows|arm64")
+        end)
+    end
+
+    on_install("!android", function (package)
         io.replace("CMakeLists.txt", "STATIC", "", {plain = true})
         io.replace("CMakeLists.txt",
             "target_link_libraries(lwlog_lib PRIVATE Threads::Threads)",
@@ -35,9 +41,11 @@ package("lwlog")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <lwlog.h>
-            void test() {
-                lwlog::init_default_logger();
-                lwlog::info("Info message");
+            int main()
+            {
+	            auto basic = std::make_shared<lwlog::basic_logger<lwlog::sinks::stdout_sink>>("CONSOLE");
+	            auto console = std::make_shared<lwlog::console_logger>("CONSOLE");
+	            return 0;
             }
         ]]}, {configs = {languages = "c++17"}}))
     end)
