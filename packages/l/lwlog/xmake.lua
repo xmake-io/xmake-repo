@@ -6,17 +6,26 @@ package("lwlog")
     add_urls("https://github.com/ChristianPanov/lwlog/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ChristianPanov/lwlog.git")
 
+    add_versions("v1.5.0", "1820842edf252235aa97a7c876cba5455fcec767a68ac7ca5b05b673269b9942")
     add_versions("v1.3.1", "63123ff25b15d46ad0a89d4c85dd7c22d63382b89ed251607b3cbd908698a6da")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
 
-    add_includedirs("include/src")
+    add_includedirs("include/src", "include/lwlog")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    if on_check then
+        on_check("windows", function (package)
+            if package:is_arch("arm64") or package:is_arch("x86") then
+                raise("package(lwlog): unsupport windows|arm64 and windows|x86")
+            end
+        end)
+    end
+
+    on_install("!android and !wasm and !bsd", function (package)
         io.replace("CMakeLists.txt", "STATIC", "", {plain = true})
         io.replace("CMakeLists.txt",
             "target_link_libraries(lwlog_lib PRIVATE Threads::Threads)",
@@ -34,9 +43,11 @@ package("lwlog")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <lwlog.h>
-            void test() {
-                lwlog::init_default_logger();
-                lwlog::info("Info message");
+            int main()
+            {
+	            auto basic = std::make_shared<lwlog::basic_logger<lwlog::sinks::stdout_sink>>("CONSOLE");
+	            auto console = std::make_shared<lwlog::console_logger>("CONSOLE");
+	            return 0;
             }
         ]]}, {configs = {languages = "c++17"}}))
     end)

@@ -19,7 +19,7 @@ package("zstd")
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
     add_configs("contrib", {description = "Build contrib", default = false, type = "boolean"})
 
-    if is_plat("linux", "bsd") then
+    if is_plat("linux", "cross", "bsd") then
         add_syslinks("pthread")
     end
 

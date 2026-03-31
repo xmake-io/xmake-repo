@@ -2,6 +2,7 @@ add_rules("mode.debug", "mode.release")
 add_rules("utils.install.cmake_importfiles")
 set_languages("cxx14")
 
+option("android",          {showmenu = true,  default = false})
 option("dx9",              {showmenu = true,  default = false})
 option("dx10",             {showmenu = true,  default = false})
 option("dx11",             {showmenu = true,  default = false})
@@ -67,6 +68,11 @@ target("imgui")
 
     if is_kind("shared") and is_plat("windows", "mingw") then
         add_defines("IMGUI_API=__declspec(dllexport)")
+    end
+
+    if has_config("android") then
+        add_files("backends/imgui_impl_android.cpp")
+        add_headerfiles("(backends/imgui_impl_android.h)")
     end
 
     if has_config("dx9") then
