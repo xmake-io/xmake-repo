@@ -25,7 +25,7 @@ package("lwlog")
         end)
     end
 
-    on_install("!android and !wasm", function (package)
+    on_install("!android and !wasm and !bsd", function (package)
         io.replace("CMakeLists.txt", "STATIC", "", {plain = true})
         io.replace("CMakeLists.txt",
             "target_link_libraries(lwlog_lib PRIVATE Threads::Threads)",
