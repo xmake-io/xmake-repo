@@ -6,6 +6,7 @@ package("littlefs")
     add_urls("https://github.com/littlefs-project/littlefs/archive/refs/tags/$(version).tar.gz",
              "https://github.com/littlefs-project/littlefs.git")
 
+    add_versions("v2.11.3", "15521be8aaed133c453e7337714e029a9f62480ab41f59c4ba5d18297a076207")
     add_versions("v2.11.2", "47048bf9b90fda041467ea581ae2f8bfc90aa233082d2ddedcfec5a5073cad47")
     add_versions("v2.11.1", "cd31f8db25efe03ca5067cfc653867595d5fba048d907d9b6a067b725e576e25")
     add_versions("v2.11.0", "54ed6382d75cbd4898fa89ddc0db7bf82abadfd8b209e12950cb10a05a6dc424")
