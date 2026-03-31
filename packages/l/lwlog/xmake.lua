@@ -18,12 +18,14 @@ package("lwlog")
     add_deps("cmake")
 
     if on_check then
-        on_check("windows|arm64", function (package)
-            raise("package(lwlog): unsupport windows|arm64")
+        on_check("windows", function (package)
+            if package:is_arch("arm64") or package:is_arch("x86") then
+                raise("package(lwlog): unsupport windows|arm64 and windows|x86")
+            end
         end)
     end
 
-    on_install("!android", function (package)
+    on_install("!android and !wasm", function (package)
         io.replace("CMakeLists.txt", "STATIC", "", {plain = true})
         io.replace("CMakeLists.txt",
             "target_link_libraries(lwlog_lib PRIVATE Threads::Threads)",
