@@ -46,7 +46,7 @@ package("zlib-ng")
         end)
     end
 
-    on_install("windows", "macosx", "linux", "android", "mingw", function (package)
+    on_install("windows", "macosx", "linux", "cross", "android", "mingw", function (package)
         local configs = {
             "-DZLIB_ENABLE_TESTS=OFF",
             "-DZLIBNG_ENABLE_TESTS=OFF",
