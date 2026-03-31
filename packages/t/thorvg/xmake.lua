@@ -6,6 +6,7 @@ package("thorvg")
     add_urls("https://github.com/thorvg/thorvg/archive/refs/tags/$(version).tar.gz",
              "https://github.com/thorvg/thorvg.git")
 
+    add_versions("v1.0.3", "96bd73c9b3f063251404609757301197d63b6a75e22c1527889dcaab3d5827a0")
     add_versions("v1.0-pre10", "a8d2cff9c64495b24b4f51730d26d16f5a12136c7a5c38ac18c0e6caa8d4efc6")
     add_versions("v0.15.8", "bc0d6cf60a49fa760d562e125300d144d9f0436a8499f942ce234bd2acb7a5d5")
     add_versions("v0.15.2", "98fcd73567c003a33fad766a7dbb9244c61e9b4721397d42e7fa04fc2e499dce")
