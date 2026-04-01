@@ -36,7 +36,9 @@ package("libharu")
     on_install(function (package)
         io.replace("src/CMakeLists.txt", "install(FILES ${addlib}", "#", {plain = true})
         if package:is_plat("cross", "wasm") then
-            io.replace("cmake/modules/haru.cmake", [[message(FATAL_ERROR "Cannot find required math library")]], [[set(MATH_LIB)]], {plain = true})
+            if package:version():lt("2.4.6") then
+                io.replace("cmake/modules/haru.cmake", [[message(FATAL_ERROR "Cannot find required math library")]], [[set(MATH_LIB)]], {plain = true})
+            end
             io.replace("src/CMakeLists.txt", "target_link_libraries (hpdf ${M_LIB})", "", {plain = true})
         end
         local configs = {"-DLIBHPDF_EXAMPLES=OFF"}
