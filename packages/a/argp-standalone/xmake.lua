@@ -7,13 +7,13 @@ package("argp-standalone")
     add_urls("https://github.com/argp-standalone/argp-standalone/archive/refs/tags/$(version).tar.gz",
              "https://github.com/argp-standalone/argp-standalone.git")
     add_versions("1.5.0", "c29eae929dfebd575c38174f2c8c315766092cec99a8f987569d0cad3c6d64f6")
-    add_versions("1.3", "dec79694da1319acd2238ce95df57f3680fea2482096e483323fddf3d818d8be")
 
-    add_deps("meson", "ninja")
     add_deps("libintl")
 
     on_install("macosx", "android", function (package)
-        import("package.tools.meson").install(package)
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        os.cp(path.join(package:scriptdir(), "port", "config.h.in"), "config.h.in")
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
