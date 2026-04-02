@@ -9,7 +9,7 @@ package("kompute")
 
     add_deps("cmake", "vulkan-loader")
 
-    on_install("windows", function (package)
+    on_install("windows", "linux", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DKOMPUTE_OPT_BUILD_AS_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
