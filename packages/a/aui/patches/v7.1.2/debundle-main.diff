@@ -20,7 +20,18 @@ index 6902d56..a6d4b2d 100644
  
  # define all components
  define_aui_component(core)
-@@ -195,7 +200,9 @@ auib_precompiled_binary()
+@@ -86,6 +91,8 @@ define_aui_component(json)
+ define_aui_component(audio)
+-define_aui_component(updater)
++if (NOT AUIB_DISABLE)
++    define_aui_component(updater)
++endif ()
+ 
+-if (NOT ANDROID AND NOT IOS)
++if (NOT ANDROID AND NOT IOS AND NOT AUIB_DISABLE)
+     define_aui_component(uitests)
+ endif()
+@@ -195,7 +202,9 @@ auib_precompiled_binary()
  # [auib_precompiled_binary]
  
  # test aui.boot on ci/cd
