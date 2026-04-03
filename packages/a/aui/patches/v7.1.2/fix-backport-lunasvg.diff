@@ -19,3 +19,4 @@ index 7b638202..c4449d5b 100644
  
  
  SvgImageFactory::SvgImageFactory(AByteBufferView buf) {
+ 

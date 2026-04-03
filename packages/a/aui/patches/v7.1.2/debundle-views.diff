@@ -124,3 +124,4 @@ index dfe6b18b9..a0e2189b1 100644
                  find_package(ZLIB REQUIRED)
                  aui_link(aui.views PRIVATE ZLIB::ZLIB)
              endif ()
+ 

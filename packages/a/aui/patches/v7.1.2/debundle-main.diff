@@ -42,3 +42,4 @@ index 6902d56..a6d4b2d 100644
  
  # [configure file example]
  configure_file(cmake/aui-config.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/aui-config.cmake @ONLY)
+ 

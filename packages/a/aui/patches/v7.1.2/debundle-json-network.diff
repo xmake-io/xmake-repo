@@ -28,3 +28,4 @@ index bb668703..1f85acd3 100644
 +  aui_enable_tests(aui.network)
 +endif()
 \ No newline at end of file
+ 

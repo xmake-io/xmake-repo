@@ -4,7 +4,7 @@ index 6aa1b072..0000000 100644
 +++ b/aui.core/CMakeLists.txt
 @@ -6,12 +6,16 @@ option(AUI_ENABLE_ASAN "Enable AddressSanitizer" OFF)
  option(AUI_ENABLE_DEATH_TESTS "Enable GTest death tests" ON)
-
+ 
  aui_module(aui.core EXPORT aui)
 -aui_enable_tests(aui.core)
 -aui_enable_benchmarks(aui.core)
@@ -12,8 +12,8 @@ index 6aa1b072..0000000 100644
 +    aui_enable_tests(aui.core)
 +    aui_enable_benchmarks(aui.core)
 +endif ()
-
-
+ 
+ 
  get_filename_component(SELF_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 -if (GLM_INCLUDE_DIR)
 +if (AUIB_DISABLE)
@@ -32,12 +32,12 @@ index 6aa1b072..0000000 100644
 +else ()
 +    target_include_directories(aui.core PUBLIC $<BUILD_INTERFACE:${GLM_INCLUDE_DIR}>)
 +endif ()
-
+ 
  target_compile_definitions(aui.core PRIVATE UNICODE=1)
  target_compile_definitions(aui.core PUBLIC NOMINMAX=1)
 @@ -49,8 +57,12 @@ if (NOT WIN32)
      endif()
-
+ 
      if (AUI_PLATFORM_LINUX)
 -        auib_import(backtrace https://github.com/aui-framework/libbacktrace
 -                    VERSION a5a32e3cc8e22a9fc40689a884b032c52ee3f88e)
@@ -49,9 +49,9 @@ index 6aa1b072..0000000 100644
 +        endif ()
          set(_use_backtrace TRUE)
      else()
-
+ 
 @@ -84,13 +96,17 @@ endif()
-
+ 
  if(_use_backtrace)
      message(STATUS "Stacktrace backend: backtrace")
 -    aui_link(aui.core PRIVATE backtrace)
@@ -72,8 +72,8 @@ index 6aa1b072..0000000 100644
      message(STATUS "Stacktrace backend: none")
 @@ -146,17 +162,23 @@ if (AUI_SHARED_PTR_FIND_INSTANCES)
  endif()
-
-
+ 
+ 
 -# [auib_import examples]
 -auib_import(fmt https://github.com/fmtlib/fmt
 -            VERSION 9.1.0
@@ -87,7 +87,7 @@ index 6aa1b072..0000000 100644
 +    auib_import(fmt https://github.com/fmtlib/fmt
 +                VERSION 9.1.0
 +                CMAKE_ARGS -DFMT_TEST=FALSE -DFMT_DOC=FALSE)
-
+ 
 -auib_import(range-v3 https://github.com/ericniebler/range-v3
 -        VERSION 0.12.0
 -        CMAKE_ARGS -DRANGE_V3_DOCS=OFF -DRANGE_V3_TESTS=OFF -DRANGE_V3_EXAMPLES=OFF -DRANGE_V3_PERF=OFF -DRANGE_V3_HEADER_CHECKS=OFF)
@@ -96,10 +96,11 @@ index 6aa1b072..0000000 100644
 +            VERSION 0.12.0
 +            CMAKE_ARGS -DRANGE_V3_DOCS=OFF -DRANGE_V3_TESTS=OFF -DRANGE_V3_EXAMPLES=OFF -DRANGE_V3_PERF=OFF -DRANGE_V3_HEADER_CHECKS=OFF)
 +    # [auib_import examples]
-
+ 
 -aui_link(aui.core PUBLIC fmt::fmt-header-only range-v3::range-v3)
 +    aui_link(aui.core PUBLIC fmt::fmt-header-only range-v3::range-v3)
 +endif ()
-
+ 
  # segfault functionality
  if (NOT MSVC AND AUI_CATCH_UNHANDLED)
+ 

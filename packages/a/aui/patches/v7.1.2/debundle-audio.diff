@@ -83,3 +83,4 @@ index 21e441538..96d151626 100644
 -aui_link(aui.audio PRIVATE soxr)
 +    aui_link(aui.audio PRIVATE soxr)
 +endif ()
+ 
