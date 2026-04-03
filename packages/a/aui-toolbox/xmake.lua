@@ -25,5 +25,5 @@ package("aui-toolbox")
     end)
 
     on_test(function (package)
-        os.vrun("aui.toolbox")
+        os.vrun("aui.toolbox" .. (is_host("windows") and ".exe" or ""))
     end)

@@ -6,6 +6,7 @@ end
 
 target("glew")
     add_rules("utils.install.cmake_importfiles")
+    add_rules("utils.install.pkgconfig_importfiles")
     set_kind("$(kind)")
     if is_plat("windows", "mingw") then
         set_basename(is_kind("shared") and "glew32" or "glew32s")
