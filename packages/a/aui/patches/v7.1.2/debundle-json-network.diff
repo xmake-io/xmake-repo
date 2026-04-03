@@ -7,10 +7,11 @@ index d0190bd5..980456da 100644
  
  aui_link(aui.json PRIVATE aui::core)
 -aui_enable_tests(aui.json)
+-aui_enable_benchmarks(aui.json)
 +if (NOT AUIB_DISABLE)
 +    aui_enable_tests(aui.json)
++    aui_enable_benchmarks(aui.json)
 +endif ()
- aui_enable_benchmarks(aui.json)
  if (TARGET Benchmarks)
      # curl needed to download the benchmark data
 diff --git a/aui.network/CMakeLists.txt b/aui.network/CMakeLists.txt

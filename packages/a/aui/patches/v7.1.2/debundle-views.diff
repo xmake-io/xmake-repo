@@ -21,7 +21,7 @@ index dfe6b18b9..a0e2189b1 100644
  
      if (NOT TARGET Freetype::Freetype)
          message(FATAL_ERROR "Freetype not imported")
-@@ -20,29 +24,41 @@ if (OPENGL_FOUND OR ANDROID OR IOS)
+@@ -20,29 +24,43 @@ if (OPENGL_FOUND OR ANDROID OR IOS)
  
  
      if (AUI_PLATFORM_WIN OR AUI_PLATFORM_LINUX OR AUI_PLATFORM_MACOS)
@@ -39,7 +39,10 @@ index dfe6b18b9..a0e2189b1 100644
      endif ()
  
      aui_module(aui.views EXPORT aui)
-     aui_enable_tests(aui.views)
+-    aui_enable_tests(aui.views)
++    if (NOT AUIB_DISABLE)
++        aui_enable_tests(aui.views)
++    endif ()
  
      if (AUI_PLATFORM_LINUX)
 -        auib_use_system_libs_begin()
