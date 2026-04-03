@@ -30,7 +30,7 @@ package("spirv-cross")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "mingw", "android", function (package)
+    on_install("windows", "linux", "macosx", "mingw", "android", "wasm", function (package)
         local configs = {"-DSPIRV_CROSS_ENABLE_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
 
