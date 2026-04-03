@@ -92,7 +92,7 @@ package("aui")
         component:add("links", "aui.crypt")
         package:add("deps", "openssl3")
         if package:is_plat("windows", "mingw") then
-            component:add("syslinks", "wsock32", "ws2_32")
+            component:add("syslinks", "wsock32", "ws2_32", "crypt32")
         end
     end)
 
