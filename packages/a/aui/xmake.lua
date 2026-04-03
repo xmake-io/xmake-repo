@@ -10,7 +10,7 @@ package("aui")
 
     add_patches("v7.1.2", "patches/v7.1.2/debundle-audio.diff", "a220509d417570bc374cbd655d46127feabe04fb29cff14877bcdfc7fc769e43")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-build.diff", "391d389da336dc24ddb37432ad85bcf9de3b956742157628e741a500733151cd")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-core.diff", "75fef90171e0c0327198f4e453d7045bb12821470f903772bbba01cc89c58cda")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-core.diff", "e5f9402053ab93c0a6518f6ebe45629fbadff295f1c78f2678124bc4e17cbd74")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-crypt.diff", "623b7ad65053aa70576409660d4522e7192b2d3fa53c77cec4b3705b1959d78f")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-curl.diff", "af61fabfaf14c6ab56aaab8d31ec58e20e95c20b9c356489bb75cb523b7555a1")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-image.diff", "44bb7e78eab9629c92ef953ec1e0aca9e80712fe2488d6ffa804924d418ebf05")
@@ -18,7 +18,6 @@ package("aui")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-main.diff", "c1cac9dfbae14baaddb68837055a7a858c08786750a16cbbfe955a1f18e5878d")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-sqlite.diff", "1728a4b9afc473acc81b16c544239e6f70a147c0623d894d59dd124e27c94311")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-toolbox.diff", "1ec1abf993eb7e583d32602e1ae8ee4d3358d156e9fac185c0d19ed85660bd3b")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-uitests.diff", "b7ad0900fbe2d8b50698f3439fe2fe6c182c925e94d72420ebb5104ba0f2f633")
     add_patches("v7.1.2", "patches/v7.1.2/debundle-views.diff", "51f2cfc6a2104f1bb993dedfad8a1f32372a01a0f7e829208f532e4a845a9d97")
     add_patches("v7.1.2", "patches/v7.1.2/fix-backport-lunasvg.diff", "daf24391b88e44bdb801b2c1ba36a695f95384d8157ccb23cfc635d5f30bea4a")
     add_patches("v7.1.2", "patches/v7.1.2/fix-msvc-pretty-function.diff", "268f66f42594f0188fe50d33f5783e66f66024087097ebfdfef60c9768e151fd")
@@ -35,7 +34,6 @@ package("aui")
     add_deps("zlib")
 
     add_links(
-        "aui.uitests",
         "aui.audio",
         "aui.json",
         "aui.views",
@@ -132,13 +130,6 @@ package("aui")
         package:add("includedirs", "aui.toolbox/include")
     end)
 
-    -- aui.uitests
-    on_component("uitests", function (package, component)
-        package:add("includedirs", "aui.uitests/include")
-        component:add("links", "aui.uitests")
-        package:add("deps", "gtest", "benchmark")
-    end)
-
     -- aui.views
     on_component("views", function (package, component)
         package:add("includedirs", "aui.views/include")
@@ -171,7 +162,7 @@ package("aui")
     end)
 
     on_load(function (package)
-        package:add("components", "audio", "core", "crypt", "curl", "image", "json", "network", "toolbox", "uitests", "views", "xml")
+        package:add("components", "audio", "core", "crypt", "curl", "image", "json", "network", "toolbox", "views", "xml")
         if not package:config("shared") then
             package:add("defines", "AUI_STATIC")
         end
