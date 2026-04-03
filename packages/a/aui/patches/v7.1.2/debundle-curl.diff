@@ -8,7 +8,7 @@ index 5141c8ee..00be58b4 100644
 -auib_import(CURL https://github.com/aui-framework/curl/archive/refs/heads/master.zip
 -            ARCHIVE)
 +if (AUIB_DISABLE)
-+    find_package(CURL CONFIG REQUIRED)
++    find_package(CURL REQUIRED)
 +else ()
 +    auib_import(CURL https://github.com/aui-framework/curl/archive/refs/heads/master.zip
 +                ARCHIVE)

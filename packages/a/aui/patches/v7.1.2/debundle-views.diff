@@ -11,7 +11,7 @@ index dfe6b18b9..a0e2189b1 100644
 -                CMAKE_ARGS -DFT_DISABLE_BZIP2=ON -DFT_DISABLE_PNG=ON -DFT_DISABLE_HARFBUZZ=ON -DFT_DISABLE_BROTLI=ON
 -    )
 +    if (AUIB_DISABLE)
-+        find_package(freetype CONFIG REQUIRED)
++        find_package(Freetype REQUIRED)
 +    else ()
 +        auib_import(Freetype https://github.com/freetype/freetype/archive/refs/tags/VER-2-13-3.zip ARCHIVE
 +                    CONFIG_ONLY
