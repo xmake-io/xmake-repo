@@ -64,7 +64,7 @@ package("ktx")
         end
     end)
 
-    on_install("!iphoneos and !wasm", function (package)
+    on_install("!iphoneos", function (package)
         if package:has_runtime("MD", "MT") then
             io.replace("CMakeLists.txt", "_DEBUG", "", {plain = true})
         end
@@ -106,6 +106,9 @@ package("ktx")
         table.insert(configs, "-DKTX_FEATURE_KTX2=" .. (package:config("ktx2") and "ON" or "OFF"))
         table.insert(configs, "-DKTX_FEATURE_VK_UPLOAD=" .. (package:config("vulkan") and "ON" or "OFF"))
         table.insert(configs, "-DKTX_FEATURE_GL_UPLOAD=" .. (package:config("opengl") and "ON" or "OFF"))
+        if package:is_plat("wasm") then
+            table.insert(configs, "-DCMAKE_CXX_STANDARD=17")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
