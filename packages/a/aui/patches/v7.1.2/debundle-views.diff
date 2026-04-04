@@ -21,7 +21,7 @@ index dfe6b18b9..a0e2189b1 100644
  
      if (NOT TARGET Freetype::Freetype)
          message(FATAL_ERROR "Freetype not imported")
-@@ -20,29 +24,42 @@ if (OPENGL_FOUND OR ANDROID OR IOS)
+@@ -20,29 +24,43 @@ if (OPENGL_FOUND OR ANDROID OR IOS)
  
  
      if (AUI_PLATFORM_WIN OR AUI_PLATFORM_LINUX OR AUI_PLATFORM_MACOS)
@@ -29,7 +29,8 @@ index dfe6b18b9..a0e2189b1 100644
 -                CMAKE_WORKING_DIR "build/cmake"
 -                VERSION a80a1dc)
 +        if (AUIB_DISABLE)
-+            find_package(GLEW REQUIRED)
++            include(FindPkgConfig)
++            pkg_check_modules(glew REQUIRED IMPORTED_TARGET glew)
 +        else ()
 +            auib_import(GLEW https://github.com/aui-framework/glew-cmake
 +                    CMAKE_WORKING_DIR "build/cmake"
@@ -78,7 +79,7 @@ index dfe6b18b9..a0e2189b1 100644
      endif ()
  
      if (NOT AUI_PLATFORM_WINDOWS)
-@@ -92,23 +107,35 @@ if (OPENGL_FOUND OR ANDROID OR IOS)
+@@ -92,23 +108,35 @@ if (OPENGL_FOUND OR ANDROID OR IOS)
          aui_link(aui.views PRIVATE Freetype::Freetype)
          aui_link(aui.views PRIVATE OpenGL::GL)
  
@@ -92,7 +93,7 @@ index dfe6b18b9..a0e2189b1 100644
 +                find_package(Fontconfig REQUIRED)
 +                auib_use_system_libs_end()
 +            endif ()
-+            aui_link(aui.views PUBLIC GLEW::GLEW)
++            aui_link(aui.views PUBLIC PkgConfig::glew)
 +        else ()
 +            if (AUI_PLATFORM_LINUX)
 +                # glew defines unwanted dependencies to OpenGL which may vary from distro to distro; silence them
