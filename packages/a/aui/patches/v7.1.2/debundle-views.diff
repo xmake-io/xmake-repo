@@ -21,7 +21,7 @@ index dfe6b18b9..a0e2189b1 100644
  
      if (NOT TARGET Freetype::Freetype)
          message(FATAL_ERROR "Freetype not imported")
-@@ -20,29 +24,43 @@ if (OPENGL_FOUND OR ANDROID OR IOS)
+@@ -20,29 +24,42 @@ if (OPENGL_FOUND OR ANDROID OR IOS)
  
  
      if (AUI_PLATFORM_WIN OR AUI_PLATFORM_LINUX OR AUI_PLATFORM_MACOS)
@@ -78,7 +78,7 @@ index dfe6b18b9..a0e2189b1 100644
      endif ()
  
      if (NOT AUI_PLATFORM_WINDOWS)
-@@ -92,23 +108,35 @@ if (OPENGL_FOUND OR ANDROID OR IOS)
+@@ -92,23 +107,35 @@ if (OPENGL_FOUND OR ANDROID OR IOS)
          aui_link(aui.views PRIVATE Freetype::Freetype)
          aui_link(aui.views PRIVATE OpenGL::GL)
  
