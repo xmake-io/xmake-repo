@@ -30,7 +30,7 @@ package("gtk3")
     end)
 
     add_deps("meson", "ninja")
-    add_deps("cairo", {configs = {glib = true}})
+    add_deps("cairo", {configs = {glib = true, xlib = true}})
     add_deps("glib", "pango", "graphene", "libxkbcommon", "libxext")
     add_deps("libepoxy", {configs = {egl = true, glx = true, x11 = true}})
     add_deps("libx11", "libxfixes", "libxcursor", "libxi", "libxcomposite", "libxrandr", "libxdamage", "libxinerama", "libiconv", "at-spi2-core")
