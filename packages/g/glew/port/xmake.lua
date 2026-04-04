@@ -64,6 +64,7 @@ target("glew")
 
 target("glewinfo")
     set_kind("binary")
+    set_default(false)
     add_deps("glew")
     if is_plat("windows", "mingw") then
         add_syslinks("user32", "gdi32", "glu32", "opengl32")
@@ -77,6 +78,7 @@ target("glewinfo")
 
 target("visualinfo")
     set_kind("binary")
+    set_default(false)
     add_deps("glew")
     if is_plat("windows", "mingw") then
         add_syslinks("user32", "gdi32", "glu32", "opengl32")
