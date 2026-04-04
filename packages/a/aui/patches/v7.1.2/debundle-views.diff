@@ -119,9 +119,11 @@ index dfe6b18b9..a0e2189b1 100644
 -            aui_link(aui.views PRIVATE shlwapi.lib)
 +            aui_link(aui.views PRIVATE shlwapi)
 +            aui_link(aui.views PRIVATE gdi32 ole32 opengl32)
++            find_package(ZLIB REQUIRED)
++            aui_link(aui.views PRIVATE ZLIB::ZLIB)
              if (MINGW)
 +                aui_link(aui.views PRIVATE uuid)
-                 find_package(ZLIB REQUIRED)
-                 aui_link(aui.views PRIVATE ZLIB::ZLIB)
+-                find_package(ZLIB REQUIRED)
+-                aui_link(aui.views PRIVATE ZLIB::ZLIB)
              endif ()
  
