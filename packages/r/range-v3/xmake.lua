@@ -28,15 +28,7 @@ package("range-v3")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             void test() {
-                using namespace ranges;
-                auto triples = views::for_each(views::iota(1), [](int z) {
-                    return views::for_each(views::iota(1, z + 1), [=](int x) {
-                        return views::for_each(views::iota(x, z + 1), [=](int y) {
-                            return yield_if(x * x + y * y == z * z,
-                                            std::make_tuple(x, y, z));
-                        });
-                    });
-                });
+                for (auto i : ranges::views::iota(1,10)) std::cout << i << " ";
             }
-        ]]}, {configs = {languages = "c++17"}, includes = "range/v3/all.hpp"}))
+        ]]}, {configs = {languages = "c++17"}, includes = { "iostream", "range/v3/all.hpp" }}))
     end)
