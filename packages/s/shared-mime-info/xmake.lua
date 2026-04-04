@@ -19,7 +19,7 @@ package("shared-mime-info")
     add_deps("glib", "gettext")
 
     on_install("macosx", "linux", function (package)
-        import("package.tools.meson").install(package, {}, {packagedeps = {"libintl", "libiconv"}})
+        import("package.tools.meson").install(package, {}, {packagedeps = {"libintl", "libiconv", "libxml2"}})
     end)
 
     on_test(function (package)
