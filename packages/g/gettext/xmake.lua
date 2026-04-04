@@ -14,6 +14,7 @@ package("gettext")
     add_versions("0.23.1", "c1f97a72a7385b7e71dd07b5fea6cdaf12c9b88b564976b23bd8c11857af2970")
     add_versions("0.24.1", "6164ec7aa61653ac9cdfb41d5c2344563b21f707da1562712e48715f1d2052a6")
     add_versions("0.25", "05240b29f5b0f422e5a4ef8e9b5f76d8fa059cc057693d2723cdb76f36a88ab0")
+    add_versions("1.0", "71132a3fb71e68245b8f2ac4e9e97137d3e5c02f415636eb508ae607bc01add7")
 
     if is_plat("macosx") then
         add_frameworks("CoreFoundation")

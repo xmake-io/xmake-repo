@@ -2,6 +2,7 @@ add_rules("mode.debug", "mode.release")
 
 option("vers", {description = "Set the version"})
 
+add_requires("opengl")
 if is_plat("linux") then
     add_requires("libx11", "xorgproto")
 end
@@ -11,6 +12,7 @@ target("glew")
     add_rules("utils.install.cmake_importfiles")
     add_rules("utils.install.pkgconfig_importfiles")
     set_kind("$(kind)")
+    add_packages("opengl")
     if is_plat("windows", "mingw") then
         set_basename(is_kind("shared") and "glew32" or "glew32s")
         add_syslinks("glu32", "opengl32")
@@ -66,6 +68,7 @@ target("glewinfo")
     set_kind("binary")
     set_default(false)
     add_deps("glew")
+    add_packages("opengl")
     if is_plat("windows", "mingw") then
         add_syslinks("user32", "gdi32", "glu32", "opengl32")
     elseif is_plat("macosx") then
@@ -80,6 +83,7 @@ target("visualinfo")
     set_kind("binary")
     set_default(false)
     add_deps("glew")
+    add_packages("opengl")
     if is_plat("windows", "mingw") then
         add_syslinks("user32", "gdi32", "glu32", "opengl32")
     elseif is_plat("macosx") then
