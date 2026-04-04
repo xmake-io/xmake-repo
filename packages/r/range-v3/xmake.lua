@@ -15,9 +15,10 @@ package("range-v3")
     end
 
     add_deps("cmake")
-    if is_plat("windows") then
-        add_cxxflags("/permissive-")
-    end
+
+    on_load("windows", function (package)
+        package:add("cxxflags", "/permissive-")
+    end)
 
     on_install(function (package)
         local configs = {"-DRANGE_V3_DOCS=OFF", "-DRANGE_V3_TESTS=OFF", "-DRANGE_V3_EXAMPLES=OFF", "-DRANGE_V3_PERF=OFF"}
