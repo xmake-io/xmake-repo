@@ -9,17 +9,15 @@ package("glew")
 
     add_defines("GLEW_NO_GLU")
 
-    on_load(function (package)
-        package:add("deps", "opengl")
-        if package:is_plat("linux") then
-            package:add("syslinks", "GL")
-            package:add("deps", "libx11", "xorgproto")
-        elseif package:is_plat("windows", "mingw") then
-            package:add("syslinks", "opengl32")
-            if not package:config("shared") then
-                package:add("defines", "GLEW_STATIC")
-            end
+    on_load("windows", "mingw", function (package)
+        package:add("syslinks", "opengl32")
+        if not package:config("shared") then
+            package:add("defines", "GLEW_STATIC")
         end
+    end)
+    on_load("linux", function (package)
+        package:add("syslinks", "GL")
+        package:add("deps", "libx11", "xorgproto")
     end)
 
     on_install("linux", "macosx", "mingw", "windows", function (package)
