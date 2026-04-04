@@ -22,7 +22,7 @@ package("glew")
     end)
 
     on_install("linux", "macosx", "mingw", "windows", function (package)
-        local configs = {}
+        local configs = {vers = package:version_str()}
         configs.mode = package:debug() and "debug" or "release"
         if package:config("shared") then
             configs.kind = "shared"

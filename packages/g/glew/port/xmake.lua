@@ -1,10 +1,13 @@
 add_rules("mode.debug", "mode.release")
 
+option("vers", {description = "Set the version"})
+
 if is_plat("linux") then
     add_requires("libx11", "xorgproto")
 end
 
 target("glew")
+    set_version("$(vers)")
     add_rules("utils.install.cmake_importfiles")
     add_rules("utils.install.pkgconfig_importfiles")
     set_kind("$(kind)")
