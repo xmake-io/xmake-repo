@@ -29,8 +29,7 @@ index dfe6b18b9..a0e2189b1 100644
 -                CMAKE_WORKING_DIR "build/cmake"
 -                VERSION a80a1dc)
 +        if (AUIB_DISABLE)
-+            include(FindPkgConfig)
-+            pkg_check_modules(glew REQUIRED IMPORTED_TARGET glew)
++            find_package(glew REQUIRED)
 +        else ()
 +            auib_import(GLEW https://github.com/aui-framework/glew-cmake
 +                    CMAKE_WORKING_DIR "build/cmake"
@@ -93,7 +92,7 @@ index dfe6b18b9..a0e2189b1 100644
 +                find_package(Fontconfig REQUIRED)
 +                auib_use_system_libs_end()
 +            endif ()
-+            aui_link(aui.views PUBLIC PkgConfig::glew)
++            aui_link(aui.views PUBLIC glew::glew)
 +        else ()
 +            if (AUI_PLATFORM_LINUX)
 +                # glew defines unwanted dependencies to OpenGL which may vary from distro to distro; silence them
