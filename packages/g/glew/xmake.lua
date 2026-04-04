@@ -24,7 +24,7 @@ package("glew")
 
     on_install("linux", "macosx", "mingw", "windows", function (package)
         local configs = {vers = package:version_str()}
-        configs.mode = package:debug() and "debug" or "release"
+        configs.mode = package:is_debug() and "debug" or "release"
         if package:config("shared") then
             configs.kind = "shared"
         elseif package:is_plat("linux") and package:config("pic") ~= false then
