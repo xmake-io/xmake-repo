@@ -288,7 +288,24 @@ package("aui")
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs, opt)
+        local cmake = import("package.tools.cmake")
+        -- gdk-pixbuf-2.0.pc has Requires.private: shared-mime-info when gio_sniffing=true.
+        -- shared-mime-info is a binary package so it's not in PKG_CONFIG_PATH, causing
+        -- pkg_check_modules(GTK3) to fail. Add it manually.
+        if package:is_plat("linux") then
+            local smi = package:dep("shared-mime-info")
+            if smi then
+                local envs = cmake.buildenvs(package, opt)
+                local pc_path = path.splitenv(envs.PKG_CONFIG_PATH or "")
+                local smi_pc = path.join(smi:installdir(), "share", "pkgconfig")
+                if os.isdir(smi_pc) then
+                    table.insert(pc_path, smi_pc)
+                end
+                envs.PKG_CONFIG_PATH = path.joinenv(pc_path)
+                opt.envs = envs
+            end
+        end
+        cmake.install(package, configs, opt)
     end)
 
     on_test(function (package)
