@@ -176,7 +176,6 @@ package("aui")
             "API_AUI_IMAGE=AUI_IMPORT",
             "API_AUI_JSON=AUI_IMPORT",
             "API_AUI_NETWORK=AUI_IMPORT",
-            "API_AUI_UITESTS=AUI_IMPORT",
             "API_AUI_UPDATER=AUI_IMPORT",
             "API_AUI_VIEWS=AUI_IMPORT",
             "API_AUI_XML=AUI_IMPORT"

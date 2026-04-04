@@ -11,9 +11,9 @@ package("libxdmcp")
         add_extsources("apt::libxdmcp-dev", "pacman::libxmdcp")
     end
 
-    if is_plat("macosx", "linux", "bsd", "cross") then
-        add_deps("pkg-config", "xorgproto")
-    end
+    on_load("macosx", "linux", "bsd", "cross", function (package)
+        package:add("deps", "pkg-config", "xorgproto")
+    end)
 
     on_install("macosx", "linux", "bsd", "cross", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),

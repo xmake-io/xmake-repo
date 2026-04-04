@@ -12,12 +12,11 @@ package("libxext")
         add_extsources("apt::libxext-dev")
     end
 
-    if is_plat("macosx", "linux", "bsd", "cross") then
-        add_deps("pkg-config", "xorgproto")
-    end
-
     on_load(function (package)
         package:add("deps", "libx11", { configs = { shared = package:config("shared") } })
+        if package:is_plat("macosx", "linux", "bsd", "cross") then
+            package:add("deps", "pkg-config", "xorgproto")
+        end
     end)
 
     on_install("macosx", "linux", "bsd", "cross", function (package)
