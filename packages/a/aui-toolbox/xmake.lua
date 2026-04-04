@@ -9,15 +9,12 @@ package("aui-toolbox")
 
     add_versions("v7.1.2", "a4cf965c50d75e20a319c9c8b231ad9c13c25a06ad303e1eb65d1ff141b1f85c")
 
-    add_deps("aui", {configs = {
-        components = {"core", "crypt", "image"}
-    }})
-
-    on_check(function (package)
-        if package:is_cross() then
-            raise("package(aui-toolbox): does not support cross-compilation.")
-        end
-    end)
+    add_deps("aui", {
+        host = true,
+        configs = {
+            components = {"core", "crypt", "image"}
+        }
+    })
 
     on_install("@windows", "@macosx", "@linux", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")

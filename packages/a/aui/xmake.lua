@@ -293,17 +293,36 @@ package("aui")
         -- shared-mime-info is a binary package so it's not in PKG_CONFIG_PATH, causing
         -- pkg_check_modules(GTK3) to fail. Add it manually.
         if package:is_plat("linux") then
+            local envs = cmake.buildenvs(package, opt)
+            local pc_path = path.splitenv(envs.PKG_CONFIG_PATH or "")
+            -- Setting PKG_CONFIG_PATH overrides pkg-config's built-in default paths,
+            -- so system packages (e.g. xproto from x11proto-dev) become invisible.
+            -- Re-add the standard system paths so transitive deps of gtk+-3.0 resolve.
+            local find_tool = import("lib.detect.find_tool")
+            local pkg_config = find_tool("pkg-config") or find_tool("pkgconf")
+            if pkg_config then
+                local sys_paths = try {function()
+                    return os.iorunv(pkg_config.program, {"--variable=pc_path", "pkg-config"})
+                end}
+                if sys_paths then
+                    for _, p in ipairs(sys_paths:trim():split(path.envsep())) do
+                        if not table.contains(pc_path, p) then
+                            table.insert(pc_path, p)
+                        end
+                    end
+                end
+            end
+            -- shared-mime-info is a binary package (excluded from librarydeps) but
+            -- gdk-pixbuf-2.0.pc requires it. Add its share/pkgconfig manually.
             local smi = package:dep("shared-mime-info")
             if smi then
-                local envs = cmake.buildenvs(package, opt)
-                local pc_path = path.splitenv(envs.PKG_CONFIG_PATH or "")
                 local smi_pc = path.join(smi:installdir(), "share", "pkgconfig")
-                if os.isdir(smi_pc) then
+                if os.isdir(smi_pc) and not table.contains(pc_path, smi_pc) then
                     table.insert(pc_path, smi_pc)
                 end
-                envs.PKG_CONFIG_PATH = path.joinenv(pc_path)
-                opt.envs = envs
             end
+            envs.PKG_CONFIG_PATH = path.joinenv(pc_path)
+            opt.envs = envs
         end
         cmake.install(package, configs, opt)
     end)
