@@ -19,7 +19,18 @@ package("shared-mime-info")
     add_deps("glib", "gettext")
 
     on_install("macosx", "linux", function (package)
-        import("package.tools.meson").install(package, {}, {packagedeps = {"libintl", "libiconv", "libxml2"}})
+        local meson_tool = import("package.tools.meson")
+        local opt = {packagedeps = {"libintl", "libiconv"}}
+        local envs = meson_tool.buildenvs(package, opt)
+        local libxml2 = package:dep("libxml2")
+        if libxml2 and libxml2:config("tools") then
+            local bindir = libxml2:installdir("bin")
+            if os.isdir(bindir) then
+                envs.PATH = bindir .. path.envsep() .. (envs.PATH or os.getenv("PATH") or "")
+            end
+        end
+        opt.envs = envs
+        meson_tool.install(package, {}, opt)
     end)
 
     on_test(function (package)
