@@ -32,7 +32,7 @@ package("gtk3")
     add_deps("meson", "ninja")
     add_deps("cairo", {configs = {glib = true}})
     add_deps("glib", "pango", "graphene", "libxkbcommon", "libxext")
-    add_deps("libepoxy", {configs = {egl = true}})
+    add_deps("libepoxy", {configs = {egl = true, glx = true}})
     add_deps("libx11", "libxfixes", "libxcursor", "libxi", "libxcomposite", "libxrandr", "libxdamage", "libxinerama", "libiconv", "at-spi2-core")
     add_links("gtk-3", "gdk-3", "gailutil-3", "X11", "X11-cxb", "pangocairo-1.0", "pango", "rt")
 
