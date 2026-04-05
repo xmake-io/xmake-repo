@@ -6,10 +6,10 @@ package("portable_attributes")
 
     add_urls("https://github.com/mtueih/portable_attributes/archive/refs/tags/$(version).tar.gz")
 
-    add_versions("1.0.0", "52fc80e097c6ec4a396ae225c78c7740a6740982c312d7fe97ffd33cb5f3a1f1")
+    add_versions("v1.0.0", "52fc80e097c6ec4a396ae225c78c7740a6740982c312d7fe97ffd33cb5f3a1f1")
 
     on_install(function (package)
-        os.cp("include/portable_attributes.h", package:installdir("include"))
+        os.cp("include", package:installdir())
     end)
 
     on_test(function (package)
