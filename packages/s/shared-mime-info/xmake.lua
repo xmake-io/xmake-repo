@@ -28,6 +28,8 @@ package("shared-mime-info")
         if libxml2 then
             table.insert(xmllint_paths, libxml2:installdir("bin"))
         end
+        io.replace("meson.build", "find_program('xmllint')", "find_program('xmllint', required: false)", {plain = true})
+        io.replace("meson.build", "\nsubdir('tests')", "", {plain = true})
         local xmllint = find_tool("xmllint", {paths = xmllint_paths, force = true})
         if xmllint then
             local native_file = os.tmpfile() .. ".ini"
@@ -35,7 +37,6 @@ package("shared-mime-info")
             opt.envs = meson_tool.buildenvs(package, opt)
             meson_tool.install(package, {"--native-file=" .. native_file}, opt)
         else
-            io.replace("meson.build", "find_program('xmllint')", "find_program('xmllint', required: false)", {plain = true})
             meson_tool.install(package, {}, opt)
         end
     end)
