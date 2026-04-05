@@ -21,16 +21,13 @@ package("shared-mime-info")
     on_install("macosx", "linux", function (package)
         local meson_tool = import("package.tools.meson")
         local opt = {packagedeps = {"libintl", "libiconv"}}
-        local envs = meson_tool.buildenvs(package, opt)
-        local pc_path = path.splitenv(envs.PATH or os.getenv("PATH") or "")
-        for _, dep in ipairs(package:orderdeps()) do
-            if dep:name() == "libxml2" and dep:config("tools") then
-                table.insert(pc_path, 1, dep:installdir("bin"))
-                break
+        local libxml2 = package:dep("libxml2")
+        if libxml2 and libxml2:config("tools") then
+            local bindir = libxml2:installdir("bin")
+            if os.isdir(bindir) then
+                os.setenv("PATH", bindir .. path.envsep() .. (os.getenv("PATH") or ""))
             end
         end
-        envs.PATH = path.joinenv(pc_path)
-        opt.envs = envs
         meson_tool.install(package, {}, opt)
     end)
 
