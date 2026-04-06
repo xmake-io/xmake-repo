@@ -7,6 +7,7 @@ package("hwdata")
     add_urls("https://github.com/vcrhonek/hwdata/archive/refs/tags/$(version).tar.gz",
              "https://github.com/vcrhonek/hwdata.git")
 
+    add_versions("v0.406", "1ccfd1ca723595b1fe8794f4157ec5635be1ebedb5d13769b4be75d0b75bc199")
     add_versions("v0.402", "e390fe2f5f5ef7ed9ccbe62eb7cd40d4ee2b57389e7869c0dc96433c81812e7a")
     add_versions("v0.401", "e9ff93b9807cc014ed8f7f5cb5dc2c31e714058c82ddc59b7355f5c57c9b759e")
     add_versions("v0.400", "05d96821aaae04be4e684eaf9ac22e08efe646321bc64be323b91b66e7e2095c")
