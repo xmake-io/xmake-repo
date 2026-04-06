@@ -45,7 +45,7 @@ package("gettext")
                          "--without-xz"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
-        if package:debug() then
+        if package:is_debug() then
             table.insert(configs, "--enable-debug")
         end
         if package:config("pic") ~= false then
@@ -113,8 +113,7 @@ package("gettext")
                 envs.SHELL = "sh"
                 autoconf.configure(package, configs, {envs = envs})
 
-                local njob = option.get("jobs") or tostring(os.default_njob())
-                local argv = {"-j" .. njob}
+                local argv = {}
                 if option.get("verbose") then
                     table.insert(argv, "V=1")
                 end
