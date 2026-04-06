@@ -5,6 +5,8 @@ package("xgrammar")
 
     add_urls("https://github.com/mlc-ai/xgrammar/archive/refs/tags/$(version).tar.gz",
              "https://github.com/mlc-ai/xgrammar.git")
+    add_versions("v0.1.33", "a897c5fa757cc40962938ec7fc23392a546842fcafb78cc8d7d5d3d19fdd050a")
+    add_versions("v0.1.32", "6e9056edd673fc64ce0246dc6b263e9a91d562c7460f890787c49e5dfd3e50f6")
     add_versions("v0.1.31", "f250b421c444b8a94a68bbcab8638354b0c141f4719c1c2ee80d729bc649cab3")
     add_versions("v0.1.29", "46bf72bf92f17305218ad9a0cfbc6e317646de31f22131e3bc5462a0681914a3")
     add_versions("v0.1.27", "44c11de70e7bfed0dd856459ad08dfa9cb884959948165c5f4bb072cbb63e980")
@@ -15,6 +17,8 @@ package("xgrammar")
     add_versions("v0.1.22", "9c67453254637380a997c248d00d08ad2caa474d1a361c1794ea258593daa316")
     add_versions("v0.1.21", "071a40a2a27ead8128214bd29cd4f5a9386e913ef0fb189e33ce768b28771436")
     add_versions("v0.1.19", "f05f8d05b12b29523a2f299535a42180e665ce80109360a6afafc300d82f1b78")
+
+    add_patches("0.1.32", "patches/0.1.32/static_const_member.patch", "b7df1189d561e798dbae28dba987d363666aab3a7c57d9a2f606036aefa0fdc0")
 
     add_configs("python_bindings", {description = "Build Python bindings", default = false, type = "boolean"})
     add_deps("dlpack 1.1")

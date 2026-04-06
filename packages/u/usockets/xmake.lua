@@ -30,7 +30,7 @@ package("usockets")
             package:add("deps", "libuv")
             package:config_set("uv", true)
         else
-            if package:config("libuv") then
+            if package:config("uv") then
                 package:add("deps", "libuv")
                 package:add("defines", "LIBUS_USE_LIBUV")
             end
@@ -47,7 +47,7 @@ package("usockets")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", "cross", function (package)
         local configs = {}
         configs.ssl = package:config("ssl")
         configs.uv = package:config("uv")

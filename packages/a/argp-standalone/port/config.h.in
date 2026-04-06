@@ -1,0 +1,38 @@
+#ifndef ARGP_CONFIG_H
+#define ARGP_CONFIG_H
+
+${define HAVE_UNISTD_H}
+${define HAVE_ALLOCA_H}
+${define HAVE_MALLOC_H}
+${define HAVE_LIBINTL_H}
+${define HAVE_ASPRINTF}
+${define HAVE_STRCHRNUL}
+${define HAVE_STRNDUP}
+${define HAVE_MEMPCPY}
+${define HAVE_DECL_PROGRAM_INVOCATION_NAME}
+${define HAVE_DECL_PROGRAM_INVOCATION_SHORT_NAME}
+
+/* these must be defined to 0 (not undef) when unavailable,
+ * because argp-namefrob.h checks: defined(X) && !X */
+#define HAVE_DECL_FWRITE_UNLOCKED ${default HAVE_DECL_FWRITE_UNLOCKED 0}
+#define HAVE_DECL_FPUTS_UNLOCKED ${default HAVE_DECL_FPUTS_UNLOCKED 0}
+#define HAVE_DECL_FPUTC_UNLOCKED ${default HAVE_DECL_FPUTC_UNLOCKED 0}
+#define HAVE_DECL_PUTC_UNLOCKED ${default HAVE_DECL_PUTC_UNLOCKED 0}
+#define HAVE_DECL_CLEARERR_UNLOCKED ${default HAVE_DECL_CLEARERR_UNLOCKED 0}
+#define HAVE_DECL_FEOF_UNLOCKED ${default HAVE_DECL_FEOF_UNLOCKED 0}
+#define HAVE_DECL_FERROR_UNLOCKED ${default HAVE_DECL_FERROR_UNLOCKED 0}
+#define HAVE_DECL_FFLUSH_UNLOCKED ${default HAVE_DECL_FFLUSH_UNLOCKED 0}
+#define HAVE_DECL_FGETS_UNLOCKED ${default HAVE_DECL_FGETS_UNLOCKED 0}
+#define HAVE_DECL_FLOCKFILE ${default HAVE_DECL_FLOCKFILE 0}
+
+#if __GNUC__
+# define HAVE_GCC_ATTRIBUTE 1
+#endif
+
+#if __GNUC__ && HAVE_GCC_ATTRIBUTE
+# define UNUSED __attribute__ ((__unused__))
+#else
+# define UNUSED
+#endif
+
+#endif

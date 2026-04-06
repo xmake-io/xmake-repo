@@ -58,7 +58,7 @@ package("sqlite3")
     add_versions("3.51.0+0", "42e26dfdd96aa2e6b1b1be5c88b0887f9959093f650d693cb02eb9c36d146ca5")
     add_versions("3.51.0+100", "4f2445cd70479724d32ad015ec7fd37fbb6f6130013bd4bfbc80c32beb42b7e0")
     add_versions("3.51.0+200", "fbd89f866b1403bb66a143065440089dd76100f2238314d92274a082d4f2b7bb")
-    add_versions("3.52.0+0", "f6b50b0c103392af32a8be15b2b9d25959de9a00a70c3979128aafeaa5338b3f")
+    add_versions("3.51.0+300", "81f5be397049b0cae1b167f2225af7646fc0f82e4a9b3c48c9ea3a533e21d77a")
 
     add_configs("explain_comments", { description = "Inserts comment text into the output of EXPLAIN.", default = true, type = "boolean"})
     add_configs("dbpage_vtab",      { description = "Enable the SQLITE_DBPAGE virtual table.", default = true, type = "boolean"})
@@ -68,7 +68,7 @@ package("sqlite3")
     add_configs("rtree",            { description = "Enable R-Tree.", default = false, type = "boolean"})
     add_configs("safe_mode",        { description = "Use thread safe mode in 0 (single thread) | 1 (serialize) | 2 (mutli thread).", default = "1", type = "string", values = {"0", "1", "2"}})
 
-    if is_plat("macosx", "linux", "bsd") then
+    if is_plat("cross", "macosx", "linux", "bsd") then
         add_syslinks("pthread", "dl")
     end
 

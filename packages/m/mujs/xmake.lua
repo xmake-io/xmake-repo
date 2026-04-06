@@ -4,9 +4,10 @@ package("mujs")
     set_license("ISC")
 
     add_urls("https://mujs.com/downloads/mujs-$(version).tar.gz")
-    add_urls("https://github.com/ccxvii/mujs/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/ccxvii/mujs.git")
+    add_urls("https://codeberg.org/ccxvii/mujs/archive/$(version).tar.gz",
+             "https://codeberg.org/ccxvii/mujs.git")
 
+    add_versions("1.3.8", "9231804b4c730419230554157161b0c9584b470003043f11370b355c7866380c")
     add_versions("1.3.7", "fa15735edc4b3d27675d954b5703e36a158f19cfa4f265aa5388cd33aede1c70")
     add_versions("1.3.6", "7cf3a5e622cff41903efff0334518fc94af063256752c38ba4618a5191e44f18")
     add_versions("1.3.5", "78a311ae4224400774cb09ef5baa2633c26971513f8b931d3224a0eb85b13e0b")

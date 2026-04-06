@@ -35,7 +35,7 @@ package("aws-c-common")
 
     if is_plat("windows", "mingw") then
         add_syslinks("bcrypt", "ws2_32", "shlwapi")
-    elseif is_plat("linux", "bsd") then
+    elseif is_plat("linux", "cross", "bsd") then
         add_syslinks("dl", "m", "pthread", "rt")
     elseif is_plat("macosx") then
         add_frameworks("CoreFoundation")

@@ -5,6 +5,7 @@ package("librdkafka")
 
     add_urls("https://github.com/confluentinc/librdkafka/archive/refs/tags/$(version).tar.gz",
              "https://github.com/confluentinc/librdkafka.git")
+    add_versions("v2.14.0", "c05c03ef00a13a8463fac3e8918c04843c416f11ced58c889d806a88ca92cf99")
     add_versions("v2.13.2", "14972092e4115f6e99f798a7cb420cbf6daa0c73502b3c52ae42fb5b418eea8f")
     add_versions("v2.13.0", "3bd351601d8ebcbc99b9a1316cae1b83b00edbcf9411c34287edf1791c507600")
     add_versions("v2.12.1", "ec103fa05cb0f251e375f6ea0b6112cfc9d0acd977dc5b69fdc54242ba38a16f")

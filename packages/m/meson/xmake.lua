@@ -7,6 +7,7 @@ package("meson")
     add_urls("https://github.com/mesonbuild/meson/releases/download/$(version)/meson-$(version).tar.gz",
              "https://github.com/mesonbuild/meson.git")
 
+    add_versions("1.10.2", "7890287d911dd4ee1ebd0efb61ed0321bfcd87c725df923a837cf90c6508f96b")
     add_versions("1.10.1", "c42296f12db316a4515b9375a5df330f2e751ccdd4f608430d41d7d6210e4317")
     add_versions("1.10.0", "8071860c1f46a75ea34801490fd1c445c9d75147a65508cd3a10366a7006cc1c")
     add_versions("1.9.0", "cd27277649b5ed50d19875031de516e270b22e890d9db65ed9af57d18ebc498d")

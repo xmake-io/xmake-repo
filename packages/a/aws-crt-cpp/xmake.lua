@@ -6,6 +6,8 @@ package("aws-crt-cpp")
     add_urls("https://github.com/awslabs/aws-crt-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-crt-cpp.git")
 
+    add_versions("v0.38.4", "2a0ec17b6e41d42b362d2502db26d07cf80667a2fc87a67352a27df9dfcb64a9")
+    add_versions("v0.38.1", "e8275e143c8e525de72d78ce75ff77e433e996ce580a3fab52607b137a71d07d")
     add_versions("v0.37.4", "2bada1b314dcf6f4acbc1db648088bd4933445b02c13d8580ae1ed4f85d6ab84")
     add_versions("v0.37.3", "8cbe1dbfa0aac9fae835f2fb1f36617c39f618f3d69445e9f504ba56ef2e8df1")
     add_versions("v0.37.1", "b91b70c436bd2d35a8758871983312bea63696ff34ef8e44ec1b86072db28a18")
@@ -28,7 +30,7 @@ package("aws-crt-cpp")
     add_deps("cmake", "aws-c-common", "aws-c-io", "aws-checksums", "aws-c-event-stream",
              "aws-c-http", "aws-c-mqtt", "aws-c-auth", "aws-c-s3")
 
-    on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", "msys", function (package)
+    on_install("windows|x64", "windows|x86", "linux", "cross", "macosx", "bsd", "msys", function (package)
         local cmakedir = package:dep("aws-c-common"):installdir("lib", "cmake")
         if package:is_plat("windows") then
             cmakedir = cmakedir:gsub("\\", "/")

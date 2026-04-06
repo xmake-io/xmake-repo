@@ -18,7 +18,7 @@ package("proj")
 
     if is_plat("windows", "mingw") then
         add_syslinks("shell32", "ole32")
-    elseif is_plat("linux", "bsd") then
+    elseif is_plat("cross", "linux", "bsd") then
         add_syslinks("dl", "pthread")
     end
 
@@ -49,7 +49,7 @@ package("proj")
         if package:config("curl") and (package:version():le("9.4")) then
             io.replace("src/lib_proj.cmake", "${CURL_LIBRARIES}", "CURL::libcurl", {plain = true})
         end
-
+        io.insert("src/filemanager.cpp", 1, "#include <cstdint>")
         local configs = {
             "-DNLOHMANN_JSON_ORIGIN=external",
             "-DBUILD_TESTING=OFF",

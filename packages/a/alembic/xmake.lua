@@ -6,6 +6,7 @@ package("alembic")
     add_urls("https://github.com/alembic/alembic/archive/refs/tags/$(version).tar.gz",
              "https://github.com/alembic/alembic.git")
 
+    add_versions("1.8.11", "ab299bb4b1894a6675c73fa29940522b54c81a91b1d691ca3470d86b7345ffce")
     add_versions("1.8.10", "06c9172faf29e9fdebb7be99621ca18b32b474f8e481238a159c87d16b298553")
     add_versions("1.8.9", "8c59c10813feee917d262c71af77d6fa3db1acaf7c5fecfd4104167077403955")
     add_versions("1.8.8", "ba1f34544608ef7d3f68cafea946ec9cc84792ddf9cda3e8d5590821df71f6c6")
