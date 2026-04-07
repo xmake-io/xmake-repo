@@ -6,6 +6,7 @@ package("acl-dev")
     add_urls("https://github.com/acl-dev/acl/archive/refs/tags/$(version).tar.gz",
              "https://github.com/acl-dev/acl.git")
 
+    add_versions("v3.6.6", "f47d4f524491de761a251231ed34dd8ffac0fea01bfbd6cb18d3eca88c6421ba")
     add_versions("v3.6.5", "dba2fe5c70b34d75e2f2ca642bdcb5bad1abe53f116e8162939ecfd6579adabd")
     add_versions("v3.6.4", "2c98f4ff58f774c6dd5e8753a6a32db2045a2d40b77d65b0e5ebdaaffa348285")
     add_versions("v3.6.2", "888fd9b8fb19db4f8e7760a12a28f37f24ba0a2952bb0409b8380413a4b6506b")
