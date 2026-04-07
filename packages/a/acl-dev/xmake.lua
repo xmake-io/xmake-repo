@@ -62,7 +62,7 @@ package("acl-dev")
 
     on_install("windows", "android", "iphoneos", "macosx", "linux", "cross", "bsd", function (package)
         if package:is_plat("windows") and not package:is_arch64() then
-            io.replace("lib_fiber/c/src/common/pthread_patch.c", "static void NTAPI thread_exit(void *ctx)", "static void WINAPI thread_exit(void *ctx)", {plain = true})
+            io.replace("lib_fiber/c/src/common/pthread_patch.c", "static void NTAPI thread_exit(void *ctx)", "static void __stdcall thread_exit(void *ctx)", {plain = true})
         end
         if package:is_plat("windows") and package:config("vs") then
             import("package.tools.msbuild")
