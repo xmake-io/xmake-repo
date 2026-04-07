@@ -77,7 +77,7 @@ package("sentencepiece")
                 {plain = true})
             table.insert(configs, "-DSPM_TCMALLOC_STATIC=ON")
         end
-        import("package.tools.cmake").install(package, configs, {packagedeps = #packagedeps > 0 and packagedeps or nil})
+        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
     end)
 
     on_test(function (package)
