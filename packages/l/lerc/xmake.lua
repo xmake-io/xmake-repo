@@ -6,6 +6,7 @@ package("lerc")
     add_urls("https://github.com/Esri/lerc/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Esri/lerc.git")
 
+    add_versions("v4.1.0", "f05b24d2368becab9144873878655bb718910631550d4f786262378c16ab94a7")
     add_versions("v4.0.0", "91431c2b16d0e3de6cbaea188603359f87caed08259a645fd5a3805784ee30a0")
 
     add_deps("cmake")
