@@ -6,6 +6,7 @@ package("acl-dev")
     add_urls("https://github.com/acl-dev/acl/archive/refs/tags/$(version).tar.gz",
              "https://github.com/acl-dev/acl.git")
 
+    add_versions("v3.6.6", "f47d4f524491de761a251231ed34dd8ffac0fea01bfbd6cb18d3eca88c6421ba")
     add_versions("v3.6.5", "dba2fe5c70b34d75e2f2ca642bdcb5bad1abe53f116e8162939ecfd6579adabd")
     add_versions("v3.6.4", "2c98f4ff58f774c6dd5e8753a6a32db2045a2d40b77d65b0e5ebdaaffa348285")
     add_versions("v3.6.2", "888fd9b8fb19db4f8e7760a12a28f37f24ba0a2952bb0409b8380413a4b6506b")
@@ -60,6 +61,10 @@ package("acl-dev")
     end)
 
     on_install("windows", "android", "iphoneos", "macosx", "linux", "cross", "bsd", function (package)
+        if package:is_plat("windows") and not package:is_arch64() then
+            io.replace("lib_fiber/c/src/common/pthread_patch.c", "static void NTAPI thread_exit(void *ctx)", "static void WINAPI thread_exit(void *ctx)", {plain = true})
+            io.replace("lib_fiber/c/src/common/pthread_patch.c", "__fls_key = FlsAlloc(thread_exit)", "__fls_key = FlsAlloc((PFLS_CALLBACK_FUNCTION)thread_exit)", {plain = true})
+        end
         if package:is_plat("windows") and package:config("vs") then
             import("package.tools.msbuild")
             for _, vcxproj in ipairs(os.files("**.vcxproj")) do
