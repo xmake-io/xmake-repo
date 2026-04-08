@@ -10,7 +10,8 @@ package("h5cpp")
     add_versions("v0.6.0", "72b459c92670628d730b3386fe6f4ac61218885afa904f234a181c2022a9f56f")
     add_versions("v0.5.1", "8fcab57ffbc2d799fe315875cd8fcf67e8b059cccc441ea45a001c03f6a9fd25")
 
-    add_patches(">=0.5.1", path.join(os.scriptdir(), "patches", "fix-find-hdf5.patch"), "25f26ec6994d387571d7c068ba0405a34db45480a9c17fe3ea6402042e7de87c")
+    add_patches(">=0.5.1 <0.7.1", path.join(os.scriptdir(), "patches", "0.5.1", "fix-find-hdf5.patch"), "25f26ec6994d387571d7c068ba0405a34db45480a9c17fe3ea6402042e7de87c")
+    add_patches(">=0.7.1", path.join(os.scriptdir(), "patches", "0.7.1", "cmake.patch"), "53e3de0fc93cbc132942185647493199eabbdfbb72c8d0de6a03761e0576ee76")
 
     add_deps("cmake")
     add_deps("zlib")
