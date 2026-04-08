@@ -13,5 +13,13 @@ package("portable_attributes")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("NODISCARD", {includes = "portable_attributes.h"}))
+        assert(package:check_csnippets({test = [[
+            #include <portable_attributes.h>
+            NODISCARD int get_info(void) {
+                return 123;
+            }
+            int main(void) {
+                return 0;
+            }
+        ]]}, {configs = {languages = "c11"}}))
     end)
