@@ -109,6 +109,11 @@ package("gettext")
                     io.replace(conffile, "REPLACE_STDIO_WRITE_FUNCS=1", "REPLACE_STDIO_WRITE_FUNCS=0")
                     io.replace(conffile, "REPLACE_WRITE=1", "REPLACE_WRITE=0")
                 end
+                -- explicitly set --build triple so autoconf doesn't use config.guess which may return
+                -- an ARM triple when CC is set to an android cross-compiler (NDK r22 clang with --gcc-toolchain),
+                -- causing autoconf to think it's not cross-compiling and try to execute ARM binaries on Windows
+                local build_arch = (os.arch() == "x86_64") and "x86_64" or "i686"
+                table.insert(configs, "--build=" .. build_arch .. "-pc-msys")
                 local envs = os.joinenvs(autoconf.buildenvs(package, {cflags = cflags, ldflags = ldflags}), os.getenvs())
                 envs.SHELL = "sh"
                 autoconf.configure(package, configs, {envs = envs})
