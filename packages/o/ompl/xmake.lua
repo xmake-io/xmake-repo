@@ -18,6 +18,7 @@ package("ompl")
     add_includedirs("include", "include/ompl-1.7")
 
     if is_plat("windows", "mingw") then
+        add_defines("_USE_MATH_DEFINES")
         add_syslinks("psapi", "ws2_32")
     elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
@@ -25,6 +26,16 @@ package("ompl")
 
     add_deps("cmake")
     add_deps("eigen")
+
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            if package:version() and package:version():ge("2.0.0") then
+                assert(ndk_sdkver and tonumber(ndk_sdkver) >= 23, "package(ompl >= 2.0.0): need ndk api level >= 23 for android")
+            end
+        end)
+    end
 
     on_load(function (package)
         local boost_configs = {
@@ -55,6 +66,7 @@ package("ompl")
             "-DOMPL_BUILD_DEMOS=OFF",
             "-DOMPL_BUILD_PYTESTS=OFF",
             "-DR_EXEC=R_EXEC-NOTFOUND",
+            "-DCMAKE_CXX_STANDARD=14",
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
