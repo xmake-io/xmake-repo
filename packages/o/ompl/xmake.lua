@@ -18,7 +18,6 @@ package("ompl")
     add_includedirs("include", "include/ompl-1.7")
 
     if is_plat("windows", "mingw") then
-        add_defines("_USE_MATH_DEFINES")
         add_syslinks("psapi", "ws2_32")
     elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
@@ -29,10 +28,8 @@ package("ompl")
 
     if on_check then
         on_check("android", function (package)
-            local ndk = package:toolchain("ndk")
-            local ndk_sdkver = ndk:config("ndk_sdkver")
             if package:version() and package:version():ge("2.0.0") then
-                assert(ndk_sdkver and tonumber(ndk_sdkver) >= 23, "package(ompl >= 2.0.0): need ndk api level >= 23 for android")
+                raise("package(ompl >= 2.0.0): unsupport android")
             end
         end)
     end
@@ -46,6 +43,9 @@ package("ompl")
             regex = true,
             thread = true,
         }
+        if package:is_plat("windows") then
+            package:add("defines", "_USE_MATH_DEFINES")
+        end
         if package:config("python") then
             package:add("deps", "python 3.x")
             boost_configs.python = true
