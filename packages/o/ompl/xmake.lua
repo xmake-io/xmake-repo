@@ -43,7 +43,7 @@ package("ompl")
             regex = true,
             thread = true,
         }
-        if package:is_plat("windows") then
+        if package:is_plat("windows", "mingw") then
             package:add("defines", "_USE_MATH_DEFINES")
         end
         if package:config("python") then
@@ -74,7 +74,7 @@ package("ompl")
         table.insert(configs, "-DOMPL_BUILD_VAMP=" .. (package:config("vamp") and "ON" or "OFF"))
         table.insert(configs, "-DOMPL_BUILD_PYBINDINGS=" .. (package:config("python") and "ON" or "OFF"))
         local cxflags
-        if package:is_plat("windows") then
+        if package:is_plat("windows", "mingw") then
             cxflags = "-D_USE_MATH_DEFINES"
         end
         import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
