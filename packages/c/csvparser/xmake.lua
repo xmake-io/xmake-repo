@@ -5,6 +5,7 @@ package("csvparser")
     set_license("MIT")
 
     add_urls("https://github.com/vincentlaucsb/csv-parser/archive/refs/tags/$(version).zip")
+    add_versions("3.1.0", "8e4a3bf7a0f09f2a751857657e91bd3ee1382d3f2b36873a499abbd58ab172f2")
     add_versions("2.5.1", "f8cb1ff7199aebbdf39dbc2ed8122bbcb52797b7b0e2b029028d4b5fc1e56327")
     add_versions("2.4.2", "7f23f4007349f76ba2d4c87ed50de354838ce67f927e141127386bc0a2ffee45")
     add_versions("2.3.0", "17eb8e1a4f2f8cdc6679329e4626de608bb33a830d5614184a21b5d8838bbbb0")
