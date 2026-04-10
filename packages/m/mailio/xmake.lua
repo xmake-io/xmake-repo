@@ -27,15 +27,9 @@ package("mailio")
     on_install("!iphoneos and !wasm", function (package)
         io.replace("CMakeLists.txt", "/WX", "", {plain = true})
         io.replace("CMakeLists.txt", "set(Boost_USE_STATIC_LIBS ON)", "", {plain = true})
-
         io.replace("CMakeLists.txt", " unit_test_framework", "", {plain = true})
-        if package:is_plat("windows") then
-            io.replace("CMakeLists.txt", "if (MSVC)",
-            "if (MSVC)\n    target_link_libraries(${PROJECT_NAME} crypt32)", {plain = true})
-        elseif package:is_plat("mingw") then
-            io.replace("CMakeLists.txt", "if(MINGW)",
-            "if (MINGW)\n    target_link_libraries(${PROJECT_NAME} crypt32)", {plain = true})
-        end
+        io.replace("CMakeLists.txt", "if (MSVC)", "if (MSVC)\n    target_link_libraries(${PROJECT_NAME} crypt32)", {plain = true})
+        io.replace("CMakeLists.txt", "\nif(MINGW)", "\nif (MINGW)\n    target_link_libraries(${PROJECT_NAME} crypt32)", {plain = true})
 
         local configs = {
             "-DMAILIO_BUILD_EXAMPLES=OFF",
