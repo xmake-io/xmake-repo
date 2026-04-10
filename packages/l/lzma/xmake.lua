@@ -4,6 +4,7 @@ package("lzma")
     set_description("LZMA SDK")
 
     add_urls("https://www.7-zip.org/a/lzma$(version).7z", {version = function (version) return version:gsub("%.", "") end})
+    add_urls("https://altushost-bul.dl.sourceforge.net/project/sevenzip/LZMA%20SDK/lzma$(version).7z", {version = function (version) return version:gsub("%.", "") end})
     add_versions("19.00", "00f569e624b3d9ed89cf8d40136662c4c5207eaceb92a70b1044c77f84234bad")
     add_versions("21.07", "833888f03c6628c8a062ce5844bb8012056e7ab7ba294c7ea232e20ddadf0d75")
     add_versions("22.01", "35b1689169efbc7c3c147387e5495130f371b4bad8ec24f049d28e126d52d9fe")
@@ -13,7 +14,7 @@ package("lzma")
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
-    on_install(function (package) 
+    on_install(function (package)
         os.cd("C")
         local xmake_lua = [[
             add_rules("mode.debug", "mode.release")
