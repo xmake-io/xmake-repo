@@ -12,3 +12,4 @@ index c17cb1da..aa088ce4 100644
 +    aui_enable_tests(aui.toolbox)
 +endif ()
 \ No newline at end of file
+ 

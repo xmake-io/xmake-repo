@@ -11,7 +11,7 @@ index dfe6b18b9..a0e2189b1 100644
 -                CMAKE_ARGS -DFT_DISABLE_BZIP2=ON -DFT_DISABLE_PNG=ON -DFT_DISABLE_HARFBUZZ=ON -DFT_DISABLE_BROTLI=ON
 -    )
 +    if (AUIB_DISABLE)
-+        find_package(freetype CONFIG REQUIRED)
++        find_package(Freetype REQUIRED)
 +    else ()
 +        auib_import(Freetype https://github.com/freetype/freetype/archive/refs/tags/VER-2-13-3.zip ARCHIVE
 +                    CONFIG_ONLY
@@ -21,7 +21,7 @@ index dfe6b18b9..a0e2189b1 100644
  
      if (NOT TARGET Freetype::Freetype)
          message(FATAL_ERROR "Freetype not imported")
-@@ -20,29 +24,41 @@ if (OPENGL_FOUND OR ANDROID OR IOS)
+@@ -20,29 +24,43 @@ if (OPENGL_FOUND OR ANDROID OR IOS)
  
  
      if (AUI_PLATFORM_WIN OR AUI_PLATFORM_LINUX OR AUI_PLATFORM_MACOS)
@@ -39,7 +39,10 @@ index dfe6b18b9..a0e2189b1 100644
      endif ()
  
      aui_module(aui.views EXPORT aui)
-     aui_enable_tests(aui.views)
+-    aui_enable_tests(aui.views)
++    if (NOT AUIB_DISABLE)
++        aui_enable_tests(aui.views)
++    endif ()
  
      if (AUI_PLATFORM_LINUX)
 -        auib_use_system_libs_begin()
@@ -116,8 +119,11 @@ index dfe6b18b9..a0e2189b1 100644
 -            aui_link(aui.views PRIVATE shlwapi.lib)
 +            aui_link(aui.views PRIVATE shlwapi)
 +            aui_link(aui.views PRIVATE gdi32 ole32 opengl32)
++            find_package(ZLIB REQUIRED)
++            aui_link(aui.views PRIVATE ZLIB::ZLIB)
              if (MINGW)
 +                aui_link(aui.views PRIVATE uuid)
-                 find_package(ZLIB REQUIRED)
-                 aui_link(aui.views PRIVATE ZLIB::ZLIB)
+-                find_package(ZLIB REQUIRED)
+-                aui_link(aui.views PRIVATE ZLIB::ZLIB)
              endif ()
+ 

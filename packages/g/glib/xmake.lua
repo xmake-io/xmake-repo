@@ -107,6 +107,7 @@ package("glib")
             "-Dselinux=disabled",
             "-Dlibmount=disabled",
             "-Dsysprof=disabled",
+            "-Dintrospection=disabled",
         }
         if package:is_plat("macosx") and package:version():le("2.61.0") then
             table.insert(configs, "-Diconv=native")
