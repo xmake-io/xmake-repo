@@ -28,7 +28,7 @@ package("libxmake")
     add_includedirs("include")
     if is_plat("windows") then
         add_ldflags("/export:malloc", "/export:free", "/export:memmove")
-        add_syslinks("kernel32", "user32", "gdi32", "ws2_32", "advapi32", "shell32")
+        add_syslinks("kernel32", "user32", "gdi32", "ws2_32", "advapi32", "shell32", "wintrust", "crypt32")
         add_ldflags("/LTCG")
         add_shflags("/LTCG")
     elseif is_plat("android") then
