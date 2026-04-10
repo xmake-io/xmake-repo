@@ -7,6 +7,7 @@ package("tinygltf")
     add_urls("https://github.com/syoyo/tinygltf/archive/refs/tags/$(version).tar.gz",
              "https://github.com/syoyo/tinygltf.git")
 
+    add_versions("v3.0.0", "806b0f1ba8007837fcd531e23872286f8a8870ee23275e1eb5304cdb48e4cb30")
     add_versions("v2.9.7", "9d31cf7f22e81febaf1ad587d7722582c154f7d9125673ee46c0c594765e8f35")
     add_versions("v2.9.6", "ba2c47a095136bfc8a5d085421e60eb8e8df3bca4ae36eb395084c1b264c6927")
     add_versions("v2.9.5", "7b93da27c524dd17179a0eeba6f432b0060d82f6222630ba027c219ce11e24db")
@@ -22,6 +23,12 @@ package("tinygltf")
     add_deps("cmake", "nlohmann_json", "stb")
 
     on_install(function (package)
+        if package:version():ge("v3.0.0") then
+            local includedir = package:installdir("include")
+            os.cp("tiny_gltf_v3.h", includedir)
+            os.cp("tinygltf_json.h", includedir)
+        end
+
         io.replace("tiny_gltf.h", [[#include "json.hpp"]], "#include <nlohmann/json.hpp>", {plain = true})
 
         local configs = {
@@ -32,9 +39,18 @@ package("tinygltf")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
+        
     end)
 
     on_test(function (package)
+        if package:version():ge("v3.0.0") then
+            assert(package:check_cxxsnippets({test = [[
+                void test() {
+                    tg3_model model;
+                }
+            ]]}, {configs = {languages = "c++14"}, includes = "tiny_gltf_v3.h"}))
+        end
+
         assert(package:check_cxxsnippets({test = [[
             void test() {
                 tinygltf::TinyGLTF loader;
