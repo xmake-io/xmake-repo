@@ -16,11 +16,9 @@ package("ode")
         add_syslinks("pthread")
     end
 
-    -- Temporarily disable windows Arm64, until a
-    -- new version that supports it is released!
-    on_install("windows|x64", "windows|x86", "macosx", "linux", function (package)
+    on_install("windows|!arm*", "macosx", "linux", function (package)
         local configs = {"-DODE_WITH_DEMOS=OFF", "-DODE_WITH_TESTS=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:config("libccd") then
             table.insert(configs, "-DODE_WITH_LIBCCD=ON")
