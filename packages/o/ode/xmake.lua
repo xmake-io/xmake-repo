@@ -1,10 +1,10 @@
 package("ode")
-
     set_homepage("http://ode.org/")
     set_description("ODE is an open source, high performance library for simulating rigid body dynamics.")
     set_license("BSD-3-Clause")
 
     add_urls("https://bitbucket.org/odedevs/ode/get/$(version).zip")
+    add_versions("0.16.6", "a6845f79fb401995de1fa1882d067e6803c0cc3a755a5fb0a28874a5182d89d6")
     add_versions("0.16.2", "000a5cdd0a81811cade2b0409ec06911a95e3c4c0d72a4cce3af6131115d0350")
 
     add_configs("libccd", {description = "Build with libccd.", default = false, type = "boolean"})
