@@ -27,18 +27,19 @@ package("tinygltf")
             local includedir = package:installdir("include")
             os.cp("tiny_gltf_v3.h", includedir)
             os.cp("tinygltf_json.h", includedir)
-        else
-            io.replace("tiny_gltf.h", [[#include "json.hpp"]], "#include <nlohmann/json.hpp>", {plain = true})
-    
-            local configs = {
-                "-DTINYGLTF_BUILD_LOADER_EXAMPLE=OFF",
-                "-DTINYGLTF_HEADER_ONLY=ON",
-                "-DTINYGLTF_INSTALL_VENDOR=OFF",
-            }
-            table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-            import("package.tools.cmake").install(package, configs)
         end
+
+        io.replace("tiny_gltf.h", [[#include "json.hpp"]], "#include <nlohmann/json.hpp>", {plain = true})
+
+        local configs = {
+            "-DTINYGLTF_BUILD_LOADER_EXAMPLE=OFF",
+            "-DTINYGLTF_HEADER_ONLY=ON",
+            "-DTINYGLTF_INSTALL_VENDOR=OFF",
+        }
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        import("package.tools.cmake").install(package, configs)
+        
     end)
 
     on_test(function (package)
@@ -47,12 +48,12 @@ package("tinygltf")
                 void test() {
                     tg3_model model;
                 }
-            ]]}, {configs = {languages = "c++17"}, includes = "tiny_gltf_v3.h"}))
-        else
-            assert(package:check_cxxsnippets({test = [[
-                void test() {
-                    tinygltf::TinyGLTF loader;
-                }
-            ]]}, {configs = {languages = "c++14"}, includes = "tiny_gltf.h"}))
+            ]]}, {configs = {languages = "c++14"}, includes = "tiny_gltf_v3.h"}))
         end
+
+        assert(package:check_cxxsnippets({test = [[
+            void test() {
+                tinygltf::TinyGLTF loader;
+            }
+        ]]}, {configs = {languages = "c++14"}, includes = "tiny_gltf.h"}))
     end)
