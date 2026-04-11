@@ -67,12 +67,12 @@ package("openal-soft")
     end)
 
     on_test(function (package)
-        if package:version():ge("v1.25.0") then
-            required_cpp_ver = "c++20"
-        elseif  package:version():ge("v1.24.0") then
-            required_cpp_ver = "c++17"
+        if package:version():ge("1.25.0") then
+            local required_cpp_ver = "c++20"
+        elseif  package:version():ge("1.24.0") then
+            local required_cpp_ver = "c++17"
         else
-            required_cpp_ver = "c++11"
+            local required_cpp_ver = "c++11"
         end
 
         assert(package:has_cfuncs("alGetProcAddress",
