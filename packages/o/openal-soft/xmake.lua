@@ -52,6 +52,14 @@ package("openal-soft")
     end)
 
     on_install("windows", "linux", "mingw", "macosx", "android", "iphoneos", "cross", "bsd" , function (package)
+        if package:version():ge("1.25.0") then
+            assert(package:check_cxxsnippets({test = ""}, {configs = {languages = "c++20"}}),
+                "openal-soft >= 1.25.0 requires a C++20 compiler (NDK >= r23 for Android)")
+        elseif package:version():ge("1.24.0") then
+            assert(package:check_cxxsnippets({test = ""}, {configs = {languages = "c++17"}}),
+                "openal-soft >= 1.24.0 requires a C++17 compiler")
+        end
+
         -- https://github.com/kcat/openal-soft/issues/864
         io.replace("CMakeLists.txt", "if(HAVE_GCC_PROTECTED_VISIBILITY)", "if(0)", { plain = true })
         local configs = {"-DALSOFT_EXAMPLES=OFF", "-DALSOFT_UTILS=OFF"}
