@@ -53,8 +53,14 @@ package("openal-soft")
 
     on_install("windows", "linux", "mingw", "macosx", "android", "iphoneos", "cross", "bsd" , function (package)
         if package:version():ge("1.25.0") then
-            assert(package:check_cxxsnippets({test = ""}, {configs = {languages = "c++20"}}),
-                "openal-soft >= 1.25.0 requires a C++20 compiler (NDK >= r23 for Android)")
+            assert(package:check_cxxsnippets({test = [[
+                template<typename... Ts>
+                struct overloaded : Ts... { using Ts::operator()...; };
+                void test() {
+                    auto f = overloaded{[](){}, [](){}};
+                }
+            ]]}, {configs = {languages = "c++20"}}),
+            "openal-soft >= 1.25.0 requires CTAD for aggregates (Clang 17+, Apple Clang 16+/Xcode 16+, GCC 12+)")
         elseif package:version():ge("1.24.0") then
             assert(package:check_cxxsnippets({test = ""}, {configs = {languages = "c++17"}}),
                 "openal-soft >= 1.24.0 requires a C++17 compiler")
