@@ -10,6 +10,7 @@ package("wayland")
     add_versions("1.23.0", "05b3e1574d3e67626b5974f862f36b5b427c7ceeb965cb36a4e6c2d342e45ab2")
     add_versions("1.23.1", "864fb2a8399e2d0ec39d56e9d9b753c093775beadc6022ce81f441929a81e5ed")
     add_versions("1.24.0", "82892487a01ad67b334eca83b54317a7c86a03a89cfadacfef5211f11a5d0536")
+    add_versions("1.25.0", "c065f040afdff3177680600f249727e41a1afc22fccf27222f15f5306faa1f03")
 
     if is_plat("linux") then
         add_extsources("apt::libwayland-dev", "pacman::wayland")
