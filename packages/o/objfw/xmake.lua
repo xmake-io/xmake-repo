@@ -175,7 +175,7 @@ package("objfw")
         package:add("mflags", mflags)
         package:add("mxxflags", mxxflags)
         package:add("ldflags", ldflags)
-        package:addenv("PATH", package:installdir("bin"))
+        package:addenv("PATH", "bin")
 
         if package:config("runtime") then
             package:add("links", {"objfw", "objfwrt", (package:config("tls") and "objfwtls" or nil)})
