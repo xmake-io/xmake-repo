@@ -69,7 +69,6 @@ function get_links(package)
         "LLVMOrcTargetProcess",
         "LLVMSymbolize",
         "LLVMTableGen",
-        -- LLVMTableGenGlobalISel was split into Basic+Common in LLVM 19+
         "LLVMTextAPI",
         "LLVMWindowsManifest",
         "LLVMXRay"
@@ -128,11 +127,6 @@ function get_links(package)
     if links_arch then
         links = table.join(links_arch, links)
     end
-    return links
-end
-
-function main(package, component)
-    local links = get_links(package)
     -- LLVMTableGenGlobalISel was split into LLVMTableGenBasic + LLVMTableGenCommon in LLVM 19+
     if package:version() and package:version():ge("19") then
         table.insert(links, "LLVMTableGenBasic")
@@ -140,5 +134,9 @@ function main(package, component)
     else
         table.insert(links, "LLVMTableGenGlobalISel")
     end
-    component:add("links", links)
+    return links
+end
+
+function main(package, component)
+    component:add("links", get_links(package))
 end
