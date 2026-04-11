@@ -6,6 +6,7 @@ package("libpng")
     add_urls("https://github.com/glennrp/libpng/archive/refs/tags/$(version).tar.gz",
              "https://github.com/glennrp/libpng.git")
 
+    add_versions("v1.6.57", "4cbb7b0746edc1683c9581b373365e955133b7f1243f171b7d1535b4415dfedb")
     add_versions("v1.6.56", "41d74ffe235cb7e8bab40bcad2167f7bb25edbf2231dcfff57ccf4305dc0bfae")
     add_versions("v1.6.55", "71a2c5b1218f60c4c6d2f1954c7eb20132156cae90bdb90b566c24db002782a6")
     add_versions("v1.6.54", "ba7efce137409079989df4667706c339bebfbb10e9f413474718012a13c8cd4c")
