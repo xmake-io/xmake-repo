@@ -115,9 +115,13 @@ package("cpp-httplib")
     end)
 
     on_test(function (package)
+        local languages = "c++11"
+        if package:is_plat("windows") and package:has_tool("cxx", "clang", "clangxx") then
+            languages = "c++14"
+        end
         assert(package:check_cxxsnippets({test = [[
             void test() {
                 httplib::Client cli("http://cpp-httplib-server.yhirose.repl.co");
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "httplib.h"}))
+        ]]}, {configs = {languages = languages}, includes = "httplib.h"}))
     end)
