@@ -19,7 +19,7 @@ package("libnpy-matajoh")
     add_deps("miniz")
 
     on_check(function (package)
-        if package:is_plat("android") and package:version() and package:version():eq("2.1.0") then
+        if package:is_plat("android") and package:version() and package:version():ge("2.1.0") then
             local ndk = package:toolchain("ndk")
             local ndkver = ndk and ndk:config("ndkver")
             if ndkver and tonumber(ndkver) == 27 then
@@ -30,7 +30,7 @@ package("libnpy-matajoh")
 
     on_install(function (package)
         os.rm("doc", "src/miniz")
-        local configs = {}
+        local configs = {"-DLIBNPY_USE_SYSTEM_MINIZ=ON"}
         if package:config("shared") and package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
