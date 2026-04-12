@@ -1,20 +1,21 @@
-name: 📦 Package Request or Update
-description: Suggest a new package to be added or an existing one to be updated.
-labels: ["dependencies", "enhancement"]
+name: 🛠 Package Request/Update
+description: Suggest adding a new package definition or updating an existing one for xrepo.
+title: "[{{ type }}]: {{ package-name }}"
+labels: ["package-request"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to suggest a package change! Please fill out the details below.
+        Please provide the details required to create or update a package definition for xrepo.
   
   - type: dropdown
-    id: request-type
+    id: type
     attributes:
-      label: Request Type
-      description: Are you suggesting a brand new package or an update to an existing one?
+      label: Action Type
       options:
-        - New Package Request
-        - Existing Package Update
+        - New Package
+        - Update Package
+        - Fix Package
     validations:
       required: true
 
@@ -22,44 +23,71 @@ body:
     id: package-name
     attributes:
       label: Package Name
-      placeholder: e.g., lodash, pandas, requests
+      placeholder: e.g., tbox, openssl, libpng
     validations:
       required: true
 
   - type: input
-    id: package-version
+    id: version
     attributes:
-      label: Proposed Version
-      placeholder: e.g., 2.4.1 or "latest"
+      label: Version(s)
+      description: Which version(s) should be added or updated?
+      placeholder: e.g., v1.6.7, latest
     validations:
       required: true
 
   - type: input
-    id: package-url
+    id: repository
     attributes:
-      label: Package URL
-      description: Link to the repository or registry (NPM, PyPI, etc.)
+      label: Project Repository
+      placeholder: https://github.com/user/repo
     validations:
       required: true
 
-  - type: textarea
-    id: justification
+  - type: input
+    id: homepage
     attributes:
-      label: Justification
-      description: Why should we add or update this package? What problem does it solve?
-      placeholder: |
-        - Improves performance by X%
-        - Resolves security vulnerability CVE-XXXX
-        - Required for feature Y
+      label: Project Homepage
+      placeholder: https://www.example.com
+    validations:
+      required: false
+
+  - type: input
+    id: license
+    attributes:
+      label: License
+      placeholder: e.g., Apache-2.0, MIT, GPL-3.0
     validations:
       required: true
 
   - type: checkboxes
-    id: checks
+    id: platforms
     attributes:
-      label: Final Checks
+      label: Supported Platforms
+      description: Which platforms is this package known to work on?
       options:
-        - label: I have checked that this package is compatible with our current environment.
-          required: true
-        - label: I have verified that this is not a duplicate request.
-          required: true
+        - label: Windows
+        - label: Linux
+        - label: macOS
+        - label: Android
+        - label: iOS
+        - label: WebAssembly (Wasm)
+        - label: FreeBSD
+        - label: Other (specify in Additional Context)
+
+  - type: textarea
+    id: build-info
+    attributes:
+      label: Build System & Dependencies
+      description: Does the upstream use CMake, Meson, Autoconf, or just a Makefile? List any required dependencies.
+      placeholder: |
+        Upstream uses CMake.
+        Requires: zlib, libiconv
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any specific xmake.lua snippets or build flags if you have them.
