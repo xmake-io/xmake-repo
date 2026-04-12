@@ -9,7 +9,12 @@ package("yolos-cpp")
              "https://github.com/Geekgineer/YOLOs-CPP.git")
     add_versions("v1.0.0", "2be86dbd0344468f03afab473865171c49e65561d13b00a5ef91e294c218c556")
 
-    add_deps("onnxruntime", "opencv")
+    add_configs("gpu", {description = "Enable GPU support.", default = false, type = "boolean"})
+
+    on_load(function (package)
+        package:add("deps", "onnxruntime", {configs = {gpu = package:config("gpu")}})
+        package:add("deps", "opencv")
+    end)
 
     on_install("windows", "linux|arm64", "linux|x86_64", "macosx", function (package)
         os.cp("include", package:installdir())
