@@ -6,6 +6,7 @@ package("libnpy-matajoh")
     add_urls("https://github.com/matajoh/libnpy/archive/refs/tags/$(version).tar.gz",
              "https://github.com/matajoh/libnpy.git")
 
+    add_versions("v2.1.2", "882b43c1500f743210bbfe4f4a831d034dc07abb70355620dd2bd56f090a55b7")
     add_versions("v2.1.0", "366f8e9dda31b08a8ef291f964f3bece7aede148dbde7836df08bf0397aee9c5")
     add_versions("v1.5.3", "27f6ce7136fe9d4bc823b98585e21f5cd8c27b72d634afa9d613cd4101e6aff1")
 
