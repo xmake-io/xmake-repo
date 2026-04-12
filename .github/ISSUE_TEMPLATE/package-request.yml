@@ -1,0 +1,65 @@
+name: 📦 Package Request or Update
+description: Suggest a new package to be added or an existing one to be updated.
+labels: ["dependencies", "enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to suggest a package change! Please fill out the details below.
+  
+  - type: dropdown
+    id: request-type
+    attributes:
+      label: Request Type
+      description: Are you suggesting a brand new package or an update to an existing one?
+      options:
+        - New Package Request
+        - Existing Package Update
+    validations:
+      required: true
+
+  - type: input
+    id: package-name
+    attributes:
+      label: Package Name
+      placeholder: e.g., lodash, pandas, requests
+    validations:
+      required: true
+
+  - type: input
+    id: package-version
+    attributes:
+      label: Proposed Version
+      placeholder: e.g., 2.4.1 or "latest"
+    validations:
+      required: true
+
+  - type: input
+    id: package-url
+    attributes:
+      label: Package URL
+      description: Link to the repository or registry (NPM, PyPI, etc.)
+    validations:
+      required: true
+
+  - type: textarea
+    id: justification
+    attributes:
+      label: Justification
+      description: Why should we add or update this package? What problem does it solve?
+      placeholder: |
+        - Improves performance by X%
+        - Resolves security vulnerability CVE-XXXX
+        - Required for feature Y
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Final Checks
+      options:
+        - label: I have checked that this package is compatible with our current environment.
+          required: true
+        - label: I have verified that this is not a duplicate request.
+          required: true
