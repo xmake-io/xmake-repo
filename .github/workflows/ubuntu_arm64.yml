@@ -4,7 +4,8 @@ on:
   pull_request:
     branches:
       - dev
-
+    paths:
+      - 'packages/*/xmake.lua'
 jobs:
   build:
     strategy:
