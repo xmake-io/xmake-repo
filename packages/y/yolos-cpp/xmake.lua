@@ -1,9 +1,8 @@
 package("yolos-cpp")
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/Geekgineer/YOLOs-CPP")
     set_description("Cross-Platform Production-ready C++ inference engine for YOLO models (v5-v12, YOLO26).")
     set_license("AGPL-3.0")
-
-    set_kind("library", {headeronly = true})
 
     add_urls("https://github.com/Geekgineer/YOLOs-CPP/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Geekgineer/YOLOs-CPP.git")
@@ -21,5 +20,5 @@ package("yolos-cpp")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxincludes("yolos/yolos.hpp", {configs = {languages = "c++17"}}))
+        assert(package:has_cxxtypes("yolos::BoundingBox", {includes = {"yolos/yolos.hpp"}, configs = {languages = "c++17"}}))
     end)
