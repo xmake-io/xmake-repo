@@ -60,6 +60,14 @@ package("daxa")
         io.replace("src/utils/impl_task_graph_mk2.cpp",
             "auto transient_heap_alignment = 0ull;",
             "VkDeviceSize transient_heap_alignment = 0;", {plain = true})
+        -- align_up(current_offset, sizeof(X)): current_offset is u64, sizeof is size_t
+        io.replace("src/utils/impl_task_graph_mk2.cpp",
+            "align_up(current_offset,",
+            "align_up<u64>(current_offset,", {plain = true})
+        -- std::min(actual_size, cinfo.size): usize vs u64 deduction conflict
+        io.replace("src/utils/impl_task_graph_mk2.cpp",
+            "std::min(actual_size, cinfo.size)",
+            "std::min<u64>(actual_size, cinfo.size)", {plain = true})
         io.replace("src/utils/impl_task_graph_ui.cpp",
             "std::min(255ull, resource.name.size())",
             "std::min<size_t>(255, resource.name.size())", {plain = true})
@@ -73,6 +81,33 @@ package("daxa")
         io.replace("src/utils/impl_resource_viewer.hpp",
             "void * imgui_image_id = {};",
             "unsigned long long imgui_image_id = {};", {plain = true})
+
+        io.replace("CMakeLists.txt",
+            "pkg_check_modules(WAYLAND_CLIENT wayland-client)",
+            "pkg_check_modules(WAYLAND_CLIENT IMPORTED_TARGET wayland-client)", {plain = true})
+        io.replace("CMakeLists.txt",
+            "pkg_check_modules(WAYLAND_CURSOR wayland-cursor)",
+            "pkg_check_modules(WAYLAND_CURSOR IMPORTED_TARGET wayland-cursor)", {plain = true})
+        io.replace("CMakeLists.txt",
+            "pkg_check_modules(WAYLAND_EGL wayland-egl)",
+            "pkg_check_modules(WAYLAND_EGL IMPORTED_TARGET wayland-egl)", {plain = true})
+        io.replace("CMakeLists.txt",
+            "pkg_check_modules(XKBCOMMON xkbcommon)",
+            "pkg_check_modules(XKBCOMMON IMPORTED_TARGET xkbcommon)", {plain = true})
+        io.replace("CMakeLists.txt", [[
+                    ${WAYLAND_CLIENT_INCLUDE_DIRS}
+                    ${WAYLAND_CURSOR_INCLUDE_DIRS}
+                    ${WAYLAND_EGL_INCLUDE_DIRS}
+                    ${XKBCOMMON_INCLUDE_DIRS}]], "", {plain = true})
+        io.replace("CMakeLists.txt", [[
+                    ${WAYLAND_CLIENT_LIBRARIES}
+                    ${WAYLAND_CURSOR_LIBRARIES}
+                    ${WAYLAND_EGL_LIBRARIES}
+                    ${XKBCOMMON_LIBRARIES}]], [[
+                    PkgConfig::WAYLAND_CLIENT
+                    PkgConfig::WAYLAND_CURSOR
+                    PkgConfig::WAYLAND_EGL
+                    PkgConfig::XKBCOMMON]], {plain = true})
 
         io.writefile("cmake/deps.cmake", [[
 find_package(Vulkan REQUIRED)
