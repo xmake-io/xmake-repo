@@ -45,9 +45,16 @@ package("daxa")
             package:add("deps", "pkgconf", "libx11", "wayland", "libxkbcommon")
             package:add("defines", "DAXA_BUILT_WITH_X11=1", "DAXA_BUILT_WITH_WAYLAND=1")
         end
+        if package:is_plat("windows") then
+            if package:config("shared") then
+                package:add("defines", "DAXA_CMAKE_EXPORT=__declspec(dllimport)", "DAXA_EXPORT=DAXA_CMAKE_EXPORT")
+            else
+                package:add("defines", "DAXA_CMAKE_EXPORT=", "DAXA_EXPORT=DAXA_CMAKE_EXPORT")
+            end
+        end
     end)
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", function (package)
         -- GCC 15 changed uint64_t from unsigned long to unsigned long long on some platforms,
         -- causing ull/ll literals to mismatch u64/i64 in template deduction.
         -- Also: imgui 1.91.x changed ImTextureID from void* to ImU64.
