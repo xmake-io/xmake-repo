@@ -19,7 +19,7 @@ jobs:
         group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-FreeBSD-${{ matrix.kind }}
         cancel-in-progress: true
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v6
 
       - name: Tests
         uses: vmactions/freebsd-vm@v1

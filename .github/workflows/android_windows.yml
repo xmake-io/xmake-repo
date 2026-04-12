@@ -28,7 +28,7 @@ jobs:
           path: C:/Users/runneradmin/AppData/Local/.xmake/packages/n/ndk
           key: ${{ matrix.os }}-ndk
 
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v6
 
       - uses: xmake-io/github-action-setup-xmake@v1
         with:

@@ -17,7 +17,7 @@ jobs:
         group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-iPhoneOS
         cancel-in-progress: true
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v6
       - uses: xmake-io/github-action-setup-xmake@v1
         with:
           xmake-version: branch@master
