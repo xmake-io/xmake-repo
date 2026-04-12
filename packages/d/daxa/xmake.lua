@@ -45,16 +45,9 @@ package("daxa")
             package:add("deps", "pkgconf", "libx11", "wayland", "libxkbcommon")
             package:add("defines", "DAXA_BUILT_WITH_X11=1", "DAXA_BUILT_WITH_WAYLAND=1")
         end
-        if package:is_plat("windows") then
-            if package:config("shared") then
-                package:add("defines", "DAXA_CMAKE_EXPORT=__declspec(dllimport)", "DAXA_EXPORT=DAXA_CMAKE_EXPORT")
-            else
-                package:add("defines", "DAXA_CMAKE_EXPORT=", "DAXA_EXPORT=DAXA_CMAKE_EXPORT")
-            end
-        end
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("linux", function (package)
         -- GCC 15 changed uint64_t from unsigned long to unsigned long long on some platforms,
         -- causing ull/ll literals to mismatch u64/i64 in template deduction.
         -- Also: imgui 1.91.x changed ImTextureID from void* to ImU64.
@@ -88,7 +81,6 @@ package("daxa")
         io.replace("src/utils/impl_resource_viewer.hpp",
             "void * imgui_image_id = {};",
             "unsigned long long imgui_image_id = {};", {plain = true})
-
         io.replace("CMakeLists.txt",
             "pkg_check_modules(WAYLAND_CLIENT wayland-client)",
             "pkg_check_modules(WAYLAND_CLIENT IMPORTED_TARGET wayland-client)", {plain = true})
@@ -115,7 +107,6 @@ package("daxa")
                     PkgConfig::WAYLAND_CURSOR
                     PkgConfig::WAYLAND_EGL
                     PkgConfig::XKBCOMMON]], {plain = true})
-
         io.writefile("cmake/deps.cmake", [[
 find_package(Vulkan REQUIRED)
 
