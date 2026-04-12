@@ -13,6 +13,8 @@ package("binutils")
     add_versions("2.38", "e316477a914f567eccc34d5d29785b8b0f5a10208d36bbacedcc39048ecfe024")
     add_versions("2.34", "f00b0e8803dc9bab1e2165bd568528135be734df3fabf8d0161828cd56028952")
 
+    add_patches("2.45", "patches/gprofng-protect-against-standard-library-macros.patch", "092907d9dd6bc51744758245aa4f98a58c0352f00b5d85cd07a6150ce22fae71")
+
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::binutils")
     elseif is_plat("linux") then
