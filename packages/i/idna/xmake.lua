@@ -6,6 +6,7 @@ package("idna")
     set_urls("https://github.com/ada-url/idna/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ada-url/idna.git")
 
+    add_versions("0.5.0", "4b6f2f8307cbac33625f1904136501dd5582d47d5fe07793916cd58475560a84")
     add_versions("0.4.0", "82f168993cdbb79f633242538e70f3b753118b091a9a91aaf4d0522a1e5ec285")
     add_versions("0.3.4", "67d15822575ef4ea3c9b71e0dc72cead86c45e0ba51c11722f9166f1f595c613")
     add_versions("0.3.3", "5afa8194d7a2c5b78e4aa716d386e3a550c785efdd9478c04b7b91d57c945c80")
