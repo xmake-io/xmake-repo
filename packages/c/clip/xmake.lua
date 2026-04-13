@@ -6,6 +6,7 @@ package("clip")
     add_urls("https://github.com/dacap/clip/archive/refs/tags/$(version).tar.gz",
              "https://github.com/dacap/clip.git")
 
+    add_versions("v1.15", "f08fb890b89b82b5c7d9e21d4ed039e704e7d82b77caab25d7c46f773a5133ac")
     add_versions("v1.13", "0d07f80bc48c16d049778501bfb4a58d4f5c4087fd99a53b0640d64dc3b86868")
     add_versions("v1.12", "54e96e04115c7ca1eeeecf432548db5cd3dddb08a91ededb118adc31b128e08c")
     add_versions("v1.11", "047d43f837adffcb3a26ce09fd321472615cf35a18e86418d789b70d742519dc")
@@ -43,6 +44,9 @@ package("clip")
     end)
 
     on_install("!android and !iphoneos and !bsd and !cross", function(package)
+        if package:version():ge("1.14") then
+            io.replace("CMakeLists.txt", "FILES clip.h", "FILES clip.h clip_base.h", {plain = true})
+        end
         io.replace("CMakeLists.txt", "ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}", "ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}\nRUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}", {plain = true})
         io.replace("CMakeLists.txt", "if(CLIP_WINDOWSCODECS_LIBRARY)", "if(1)", {plain = true})
         io.replace("CMakeLists.txt", "target_link_libraries(clip ${CLIP_WINDOWSCODECS_LIBRARY})", "target_link_libraries(clip windowscodecs)", {plain = true})
