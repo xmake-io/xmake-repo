@@ -20,5 +20,5 @@ package("yolos-cpp")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("yolos::BoundingBox", {includes = {"yolos/yolos.hpp"}, configs = {languages = "c++17"}}))
+        assert(package:has_cxxfuncs([[yolos::version::toString(yolos::YOLOVersion::Auto)]], {includes = {"yolos/yolos.hpp"}, configs = {languages = "c++17"}}))
     end)
