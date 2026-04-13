@@ -1,0 +1,93 @@
+name: 🛠 Package Request/Update
+description: Suggest adding a new package definition or updating an existing one for xrepo.
+title: "[{{ type }}]: {{ package-name }}"
+labels: ["package-request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please provide the details required to create or update a package definition for xrepo.
+  
+  - type: dropdown
+    id: type
+    attributes:
+      label: Action Type
+      options:
+        - New Package
+        - Update Package
+        - Fix Package
+    validations:
+      required: true
+
+  - type: input
+    id: package-name
+    attributes:
+      label: Package Name
+      placeholder: e.g., tbox, openssl, libpng
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version(s)
+      description: Which version(s) should be added or updated?
+      placeholder: e.g., v1.6.7, latest
+    validations:
+      required: true
+
+  - type: input
+    id: repository
+    attributes:
+      label: Project Repository
+      placeholder: https://github.com/user/repo
+    validations:
+      required: true
+
+  - type: input
+    id: homepage
+    attributes:
+      label: Project Homepage
+      placeholder: https://www.example.com
+    validations:
+      required: false
+
+  - type: input
+    id: license
+    attributes:
+      label: License
+      placeholder: e.g., Apache-2.0, MIT, GPL-3.0
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: platforms
+    attributes:
+      label: Supported Platforms
+      description: Which platforms is this package known to work on?
+      options:
+        - label: Windows
+        - label: Linux
+        - label: macOS
+        - label: Android
+        - label: iOS
+        - label: WebAssembly (Wasm)
+        - label: FreeBSD
+        - label: Other (specify in Additional Context)
+
+  - type: textarea
+    id: build-info
+    attributes:
+      label: Build System & Dependencies
+      description: Does the upstream use CMake, Meson, Autoconf, or just a Makefile? List any required dependencies.
+      placeholder: |
+        Upstream uses CMake.
+        Requires: zlib, libiconv
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any specific xmake.lua snippets or build flags if you have them.
