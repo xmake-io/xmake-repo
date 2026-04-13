@@ -12,14 +12,16 @@ do
     add_versions("git:1.0.0", "1.0.0")
     add_versions("git:latest", "master")
 
-    add_configs("shared", {
-        description = "Build shared library.",
-        default = false,
-        type = "boolean",
-        readonly = true
-    })
+    if is_plat("windows") then
+        add_configs("shared", {
+            description = "Build shared library.",
+            default = false,
+            type = "boolean",
+            readonly = true
+        })
+    end
 
-    on_install("linux", "windows", function(package)
+    on_install("macosx", "android", "linux", "windows", "mingw", function(package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)
     end)
