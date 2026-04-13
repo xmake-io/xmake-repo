@@ -23,7 +23,7 @@ package("libultrahdr")
 		end
 	end)
 
-	on_install("windows", "macosx", "linux", "mingw", "bsd", "android", function (package)
+	on_install("windows", "macosx", "linux", "mingw", "android", function (package)
 		local configs = {
 			"-DUHDR_BUILD_EXAMPLES=OFF",
 			"-DUHDR_BUILD_TESTS=OFF",
