@@ -127,7 +127,7 @@ package("objfw")
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") and name ~= "arc" then
-                name = name:gsub("_", "-")
+                local name = name:gsub("_", "-")
                 if enabled then
                     table.insert(configs, "--enable-" .. name)
                 else

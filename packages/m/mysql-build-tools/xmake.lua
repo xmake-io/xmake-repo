@@ -68,6 +68,7 @@ package("mysql-build-tools")
 
     on_test(function (package)
         for _, name in ipairs(tool_list) do
+            local name = name
             if is_host("windows") then
                 name = name .. ".exe"
             end

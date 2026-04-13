@@ -23,6 +23,7 @@ package("spirv-cross")
                        "spirv-cross-msl", "spirv-cross-util", "spirv-cross-hlsl",
                        "spirv-cross-glsl", "spirv-cross-core"}
         for _, link in ipairs(links) do
+            local link = link
             if package:is_plat("windows") and package:is_debug() then
                 link = link .. "d"
             end

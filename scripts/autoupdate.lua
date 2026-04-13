@@ -46,7 +46,7 @@ function _is_pending(instance, version)
     local remote_branches = os.iorun("git ls-remote --head %s", repourl)
     if remote_branches then
         for _, remote_branch in ipairs(remote_branches:split("\n")) do
-            remote_branch = remote_branch:split("%s")[2]
+            local remote_branch = remote_branch:split("%s")[2]
             if remote_branch == "refs/heads/" .. branch then
                 is_pending = true
                 break
@@ -85,6 +85,7 @@ function _update_version(instance, version, shasum)
         local versionfiles = instance:get("versionfiles")
         if versionfiles then
             for _, versionfile in ipairs(table.wrap(versionfiles)) do
+                local versionfile = versionfile
                 if not os.isfile(versionfile) then
                     versionfile = path.join(instance:scriptdir(), versionfile)
                 end
