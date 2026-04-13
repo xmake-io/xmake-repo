@@ -65,7 +65,10 @@ package("opencolorio")
 
         local opt = {}
         if minizip_ng then
-            opt.packagedeps = "minizip-ng"
+            opt.packagedeps = {"minizip-ng"}
+            if package:is_plat("macosx") then
+                table.insert(opt.packagedeps, "openssl")
+            end
         end
         import("package.tools.cmake").install(package, configs, opt)
     end)
