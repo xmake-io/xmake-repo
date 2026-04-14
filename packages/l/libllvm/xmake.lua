@@ -21,9 +21,15 @@ package("libllvm")
 
     if is_plat("windows") then
         -- pre-built
+
+        local arch = is_arch("x64") and "64" or "32"
+        add_urls("https://github.com/xmake-mirror/llvm-windows/releases/download/$(version)/clang+llvm-$(version)-win" .. arch .. ".zip")
         if is_arch("x64") then
-            add_urls("https://github.com/xmake-mirror/llvm-windows/releases/download/$(version)/clang+llvm-$(version)-win64.zip")
             add_versions("19.1.7", "c6e058c6012f499811caa1ec037cc1b5c2fd2f8c20cc3315cae602cbd6c81a5e")
+            add_versions("21.1.0", "130d0067de849be36c0ec84c6d515bd310cab324a4cc95d8cc71a1d3c6c730f4")
+        elseif is_arch("x86") then
+            add_versions("19.1.7", "8fded42dfa7fede876057e3a857073a5df15649df62a6f1c352588f65569d940")
+            add_versions("21.1.0", "36b9a55e237b2db404aa621aacb8538b56dabc6f49b8927dc1109e8123524d5f")
         end
 
         -- The LLVM shared library cannot be built under windows.
@@ -38,6 +44,9 @@ package("libllvm")
         add_urls("https://github.com/llvm/llvm-project.git", {alias = "git"})
         add_versions("tarball:19.1.7", "82401fea7b79d0078043f7598b835284d6650a75b93e64b6f761ea7b63097501")
         add_versions("git:19.1.7", "llvmorg-19.1.7")
+
+        add_versions("tarball:21.1.0", "1672e3efb4c2affd62dbbe12ea898b28a451416c7d95c1bd0190c26cbe878825")
+        add_versions("git:21.1.0", "llvmorg-21.1.0")
 
         add_deps("ninja")
         add_deps("zlib", "zstd", {optional = true})
@@ -88,6 +97,14 @@ package("libllvm")
         end
         if package:is_plat("windows") then
             package:add("links", "LLVM-C")
+        end
+
+        -- LLVM 21+ introduces new split libraries that must be linked explicitly
+        if package:version() and package:version():ge("21.0") then
+            package:add("links", "LLVMFrontendDirective")
+            package:add("links", "LLVMFrontendAtomic")
+            package:add("links", "LLVMDebugInfoDWARFLowLevel")
+            package:add("links", "LLVMDWARFCFIChecker")
         end
 
     end)
