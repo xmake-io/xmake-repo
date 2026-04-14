@@ -84,12 +84,12 @@ package("objfw")
                 if package:is_plat("macosx") then
                     package:add("frameworks", "Security")
                 else
-                    package:add("deps", "openssl")
+                    package:add("deps", "openssl3")
                 end
             end
         elseif tls then
             if tls == "openssl" then
-                package:add("deps", "openssl")
+                package:add("deps", "openssl3")
             elseif tls == "securetransport" then
                 package:add("frameworks", "Security")
             elseif tls == "gnutls" then
