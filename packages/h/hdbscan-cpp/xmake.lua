@@ -18,5 +18,5 @@ package("hdbscan-cpp")
     end)
 
     on_test(function(package)
-        assert(package:has_cxxfuncs("Hdbscan(std::string())", { includes = "Hdbscan/hdbscan.hpp"}))
+        assert(package:has_cxxfuncs("Hdbscan(\"\")", { includes = "Hdbscan/hdbscan.hpp"}))
     end)
