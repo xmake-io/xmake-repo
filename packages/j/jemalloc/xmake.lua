@@ -33,8 +33,8 @@ package("jemalloc")
 
     on_install("linux", "cross", "macosx", "bsd", "android@linux", "mingw", function(package)
         if package:version() and package:version():ge("5.3.1") then
-            io.replace("configure.ac", "AC_MSG_ERROR([cannot determine return type of strerror_r])", "", {plain = true})
-            io.replace("configure", [[as_fn_error $? "cannot determine return type of strerror_r" "$LINENO" 5]], "", {plain = true})
+            io.replace("configure.ac", "AC_MSG_ERROR([cannot determine return type of strerror_r])", "true;", {plain = true})
+            io.replace("configure", [[as_fn_error $? "cannot determine return type of strerror_r" "$LINENO" 5]], "true;", {plain = true})
         end
         local configs = {"--enable-doc=no"}
         local cflags = {}
