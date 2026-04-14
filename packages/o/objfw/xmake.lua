@@ -75,9 +75,6 @@ package("objfw")
     add_configs("arc", { description = "Enable Automatic Reference Counting (ARC) support.", default = true, type = "boolean" })
 
     on_load(function (package)
-        if package:is_plat("macosx") and package:version() and package:version():gt("1.4.4") and package:config("tls") == "securetransport" then
-            package:config_set("tls", "openssl")
-        end
         local tls = package:config("tls")
         if type(tls) == "boolean" then
             if tls then
@@ -134,7 +131,7 @@ package("objfw")
 
         -- SecureTransport must be handled by system so we don't worry about providing CFLAGS and LDFLAGS,
         -- but for OpenSSL and GnuTLS we need to provide the paths
-        local ssl = package:dep("openssl") or package:dep("gnutls")
+        local ssl = package:dep("openssl3") or package:dep("gnutls") or package:dep("openssl")
         local is_gnu = ssl and ssl:name() == "gnutls"
         if ssl then
             import("lib.detect.find_library")
@@ -150,8 +147,6 @@ package("objfw")
             if libssl then
                 table.insert(configs, "CPPFLAGS=-I" .. ssl_incdir)
                 table.insert(configs, "LDFLAGS=-L" .. libssl.linkdir)
-            else
-                print("No SSL library found, using system default")
             end
         end
 
