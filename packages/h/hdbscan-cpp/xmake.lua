@@ -4,10 +4,9 @@ package("hdbscan-cpp")
     set_description("A C++ implementation of HDBSCAN clustering algorithm")
     set_license("MIT")
 
-    add_urls("https://github.com/rohanmohapatra/hdbscan-cpp.git", { alias = "git" })
+    add_urls("https://github.com/rohanmohapatra/hdbscan-cpp.git")
 
-    add_versions("git:1.0.0", "1.0.0")
-    add_versions("git:latest", "master")
+    add_versions("2019.07.09", "843dcfd9ee4c88d9f645d9619cff600b2d16aa85")
 
     if is_plat("windows") then
         add_configs("shared", { description = "Build shared library.", default = false, type = "boolean", readonly = true })
