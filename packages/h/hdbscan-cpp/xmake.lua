@@ -1,5 +1,4 @@
 package("hdbscan-cpp")
-    set_kind("library")
     set_homepage("https://github.com/rohanmohapatra/hdbscan-cpp")
     set_description("A C++ implementation of HDBSCAN clustering algorithm")
     set_license("MIT")
