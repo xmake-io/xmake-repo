@@ -1,6 +1,7 @@
 package("jemalloc")
-    set_homepage("http://jemalloc.net/")
+    set_homepage("https://jemalloc.net/")
     set_description("A general purpose malloc(3) implementation that emphasizes fragmentation avoidance and scalable concurrency support.")
+    set_license("BSD-2-Clause")
 
     add_urls("https://github.com/jemalloc/jemalloc/releases/download/$(version)/jemalloc-$(version).tar.bz2",
              "https://github.com/jemalloc/jemalloc.git")
@@ -31,6 +32,9 @@ package("jemalloc")
     end)
 
     on_install("linux", "cross", "macosx", "bsd", "android@linux", "mingw", function(package)
+        if package:version() and package:version():ge("5.3.1") then
+            io.replace("configure.ac", "AC_MSG_ERROR([cannot determine return type of strerror_r])", "", {plain = true})
+        end
         local configs = {"--enable-doc=no"}
         local cflags = {}
         table.insert(configs, "--enable-debug=" .. (package:is_debug() and "yes" or "no"))
