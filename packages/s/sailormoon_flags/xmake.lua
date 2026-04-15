@@ -5,6 +5,7 @@ package("sailormoon_flags")
     set_license("MIT")
 
     add_urls("https://github.com/sailormoon/flags/archive/refs/tags/v$(version).tar.gz")
+    add_versions("1.2", "2fb981e00d5f97753fa2b685819c4cab8aea7a3f62939a9a0549fb8406b37500")
     add_versions("1.1", "f6626c97ba7a45c473557db2e4b68df4d9cda18a8a97c89a5d8d4e5c53dde904")
 
     on_install(function (package)
