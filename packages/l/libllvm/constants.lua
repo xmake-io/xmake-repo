@@ -27,6 +27,47 @@ function get_llvm_known_projects()
     return table.join(get_llvm_all_projects(), get_llvm_extra_projects())
 end
 
+function get_llvm_all_targets()
+    -- @see llvm/CMakeLists.txt: LLVM_ALL_TARGETS
+    return {
+        "AArch64",
+        "AMDGPU",
+        "ARM",
+        "AVR",
+        "BPF",
+        "Hexagon",
+        "Lanai",
+        "LoongArch",
+        "Mips",
+        "MSP430",
+        "NVPTX",
+        "PowerPC",
+        "RISCV",
+        "Sparc",
+        "SPIRV",
+        "SystemZ",
+        "VE",
+        "WebAssembly",
+        "X86",
+        "XCore"
+    }
+end
+
+function get_llvm_experimental_targets()
+    -- @see llvm/CMakeLists.txt: LLVM_ALL_EXPERIMENTAL_TARGETS
+    return {
+        "ARC",
+        "CSKY",
+        "DirectX",
+        "M68k",
+        "Xtensa"
+    }
+end
+
+function get_llvm_known_targets()
+    return table.join(get_llvm_all_targets(), get_llvm_experimental_targets())
+end
+
 function get_llvm_all_runtimes()
     return {
         "libc",

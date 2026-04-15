@@ -19,6 +19,13 @@ package("libllvm")
         add_configs(runtime:gsub("-", "_"), {description = "Build " .. runtime .. " runtime.", default = false, type = "boolean"})
     end
 
+    for _, target in ipairs(get_llvm_all_targets()) do
+        add_configs("target_" .. target:lower(), {description = "Build " .. target .. " target backend.", default = false, type = "boolean"})
+    end
+    for _, target in ipairs(get_llvm_experimental_targets()) do
+        add_configs("target_" .. target:lower(), {description = "Build " .. target .. " experimental target backend.", default = false, type = "boolean"})
+    end
+
     if is_plat("windows") then
         -- pre-built
 
@@ -107,6 +114,34 @@ package("libllvm")
             package:add("links", "LLVMDWARFCFIChecker")
         end
 
+        -- automatically enable the target matching the host architecture
+        local arch = package:arch()
+        local target_mapping = {
+            ["x86"] = "X86",
+            ["x64"] = "X86",
+            ["x86_64"] = "X86",
+            ["i386"] = "X86",
+            ["arm64"] = "AArch64",
+            ["arm64-v8a"] = "AArch64",
+            ["aarch64"] = "AArch64",
+            ["arm"] = "ARM",
+            ["armv7a"] = "ARM",
+            ["armv7"] = "ARM",
+            ["armeabi-v7a"] = "ARM",
+            ["riscv64"] = "RISCV",
+            ["riscv32"] = "RISCV",
+            ["loong64"] = "LoongArch",
+            ["mips"] = "Mips",
+            ["mips64"] = "Mips",
+            ["ppc64"] = "PowerPC",
+            ["ppc64le"] = "PowerPC",
+            ["wasm"] = "WebAssembly"
+        }
+        local host_target = target_mapping[arch]
+        if host_target then
+            package:config_set("target_" .. host_target:lower(), true)
+        end
+
     end)
 
     on_install("windows|x64", function (package)
@@ -118,6 +153,8 @@ package("libllvm")
 
         local projects_enabled = {}
         local runtimes_enabled = {}
+        local targets_enabled = {}
+        local experimental_targets_enabled = {}
         for _, project in ipairs(constants.get_llvm_known_projects()) do
             if package:config(project:gsub("-", "_")) then
                 table.insert(projects_enabled, project)
@@ -128,12 +165,23 @@ package("libllvm")
                 table.insert(runtimes_enabled, runtime)
             end
         end
+        for _, target in ipairs(constants.get_llvm_all_targets()) do
+            if package:config("target_" .. target:lower()) then
+                table.insert(targets_enabled, target)
+            end
+        end
+        for _, target in ipairs(constants.get_llvm_experimental_targets()) do
+            if package:config("target_" .. target:lower()) then
+                table.insert(experimental_targets_enabled, target)
+            end
+        end
 
         local configs = {
             "-DBUILD_SHARED_LIBS=OFF",
 
             -- llvm
             "-DLLVM_BUILD_UTILS=OFF",
+            "-DLLVM_BUILD_EXAMPLES=OFF",
             "-DLLVM_INCLUDE_DOCS=OFF",
             "-DLLVM_INCLUDE_EXAMPLES=OFF",
             "-DLLVM_INCLUDE_TESTS=OFF",
@@ -150,7 +198,17 @@ package("libllvm")
             "-DFLANG_BUILD_TOOLS=OFF",
             "-DLLD_BUILD_TOOLS=OFF"
         }
+        if #targets_enabled > 0 then
+            table.insert(configs, "-DLLVM_TARGETS_TO_BUILD=" .. table.concat(targets_enabled, ";"))
+        end
+        if #experimental_targets_enabled > 0 then
+            table.insert(configs, "-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=" .. table.concat(experimental_targets_enabled, ";"))
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        -- ARM64 uses gold linker to avoid relocation truncation errors with large binaries
+        if package:is_arch("arm64.*", "aarch64") then
+            table.insert(configs, "-DLLVM_USE_LINKER=lld")
+        end
         table.insert(configs, "-DLLVM_BUILD_LLVM_DYLIB=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DLLVM_ENABLE_EH=" .. (package:config("exception") and "ON" or "OFF"))
         table.insert(configs, "-DLLVM_ENABLE_RTTI=" .. (package:config("rtti") and "ON" or "OFF"))
