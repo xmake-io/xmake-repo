@@ -10,30 +10,42 @@ package("openjdk")
             add_urls("https://aka.ms/download-jdk/microsoft-jdk-$(version)-windows-x64.zip")
 
             add_versions("21.0.5", "12e42c2c572a111f38e2a9e044afc50dbdac850349a4d4bb26808ed33119a9cd")
+            add_versions("21.0.10", "45a44af1f832e720ea6ad90dd7b2c94a48b2e5bf2fab92b2403e975f78d7d5e1")
+            add_versions("25.0.2", "38d1a42d189c50b24152014ef131931f25f4cc80400ce618f0477f5e4e5aa252")
         elseif os.arch() == "arm64" then
             add_urls("https://aka.ms/download-jdk/microsoft-jdk-$(version)-windows-aarch64.zip")
 
             add_versions("21.0.5", "5eaa375659c543a5d3310d51004e3bdc290ff9e48e9bcd29187dfafeca97c2a4")
+            add_versions("21.0.10", "924c7127929aeb90019c1982a26b0a88337aed00ef333afb0bec28c06a6b5767")
+            add_versions("25.0.2", "e0d9380cf3d0b5efc675664fa0db22cc9eb5d77c4fd2a132f4b58df0608593cf")
         end
     elseif is_host("linux") then
         if os.arch() == "x86_64" then
             add_urls("https://aka.ms/download-jdk/microsoft-jdk-$(version)-linux-x64.tar.gz")
 
             add_versions("21.0.5", "0d42a80dbc92f2f112e6db3b4b9bd278c0776a73b6050812e720230813487ebd")
+            add_versions("21.0.10", "18ca81d9cbca9b34eb3976c515310dc025efeb23c90616e3faa61c275acf60fd")
+            add_versions("25.0.2", "3ed688a48c9b9295e67f074a5d201f761af15f83a2e003e5d8fd6dd93c18a10a")
         elseif os.arch() == "arm64" then
             add_urls("https://aka.ms/download-jdk/microsoft-jdk-$(version)-linux-aarch64.tar.gz")
 
             add_versions("21.0.5", "356844fe544085b00cd73935e0c7a4c534f286799728fa6d6e996d1cb8b1a682")
+            add_versions("21.0.10", "5d80661f5a55c6d0f3abba2b8196b269fa6a490142f4c751c8373058c00ba233")
+            add_versions("25.0.2", "bdc5fffc0d1e741ab7840b8e733fca48b70d1b6838db4d90b94a78b90e6ea8cb")
         end
     elseif is_host("macosx") then
         if os.arch() == "x86_64" then
             add_urls("https://aka.ms/download-jdk/microsoft-jdk-$(version)-macos-x64.tar.gz")
 
             add_versions("21.0.5", "3e2317348141b28203fac39eaa60c14a1b3f1fdb9cfdbcb793eaa4dd5828da6e")
+            add_versions("21.0.10", "b4c94a74d06e1046480ebe35e01e038b532e966b10ff797dc8d530ee75fa560e")
+            add_versions("25.0.2", "6bc02fd3182dee12510f253d08eeac342a1f0e03d7f4114763f83d8722e2915e")
         elseif os.arch() == "arm64" then
             add_urls("https://aka.ms/download-jdk/microsoft-jdk-$(version)-macos-aarch64.tar.gz")
 
             add_versions("21.0.5", "78aa915475b426c03059cc51e9c12596a5138457bd7ebb9b90daad119551662d")
+            add_versions("21.0.10", "f480c5533d37564640fb831c6c1f3c674889bc5ffd363bb7019c69ea9335cf23")
+            add_versions("25.0.2", "0bface8af5ceea3bf8b7eec6d38f1a68b68b60db5ea14eb2a1bd9767cf971fed")
         end
     end
 
