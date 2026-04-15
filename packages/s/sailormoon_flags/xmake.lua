@@ -13,6 +13,10 @@ package("sailormoon_flags")
     end)
 
     on_test(function (package)
+        local languages = "c++17"
+        if package:version() and package:version():ge("1.2") then
+            languages = "c++20"
+        end
         assert(package:check_cxxsnippets({test = [[
             #include "flags.h"
             void test() {
@@ -20,5 +24,5 @@ package("sailormoon_flags")
                 char **argv = NULL;
                 const flags::args args(argc, argv);
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = {languages = languages}}))
     end)
