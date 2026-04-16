@@ -205,10 +205,20 @@ package("libllvm")
             table.insert(configs, "-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=" .. table.concat(experimental_targets_enabled, ";"))
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        -- ARM64 uses gold linker to avoid relocation truncation errors with large binaries
-        if package:is_arch("arm64.*", "aarch64") then
-            table.insert(configs, "-DLLVM_USE_LINKER=lld")
+        table.insert(configs, "-DLLVM_PARALLEL_COMPILE_JOBS=2")
+        table.insert(configs, "-DLLVM_PARALLEL_LINK_JOBS=1")
+
+        -- Native Linux ARM64 needs lld to avoid R_AARCH64_CALL26 relocation overflow
+        -- on large (debug/shared) binaries. Skip when cross-compiling (cross toolchains
+        -- like arm-gnu-toolchain don't bundle ld.lld) and skip when lld isn't installed
+        -- so CMake's CXX_SUPPORTS_CUSTOM_LINKER probe doesn't fail the configure step.
+        if package:is_arch("arm64.*", "aarch64") and is_host("linux") and (os.arch() == "arm64" or os.arch() == "aarch64") then
+            local find_tool = import("lib.detect.find_tool")
+            if find_tool("ld.lld") or find_tool("lld") then
+                table.insert(configs, "-DLLVM_USE_LINKER=lld")
+            end
         end
+
         table.insert(configs, "-DLLVM_BUILD_LLVM_DYLIB=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DLLVM_ENABLE_EH=" .. (package:config("exception") and "ON" or "OFF"))
         table.insert(configs, "-DLLVM_ENABLE_RTTI=" .. (package:config("rtti") and "ON" or "OFF"))
