@@ -40,10 +40,11 @@ package("jsbsim")
     end)
 
     on_test(function (package)
+        local languages = package:version():ge("1.3.0") and "c++17" or "c++14"
         assert(package:check_cxxsnippets({test = [[
             void test() {
                 JSBSim::FGFDMExec FDMExec;
                 FDMExec.RunIC();
             }
-        ]]}, {configs = {languages = "c++14"}, includes = "JSBSim/FGFDMExec.h"}))
+        ]]}, {configs = {languages = languages}, includes = "JSBSim/FGFDMExec.h"}))
     end)
