@@ -6,6 +6,7 @@ package("miniz")
     add_urls("https://github.com/richgel999/miniz/archive/refs/tags/$(version).tar.gz",
              "https://github.com/richgel999/miniz.git")
 
+    add_versions("3.1.1", "8bb29c7bd6f22356e5583e794bed4a0b3e6dfcbcadb49974fc9270ccca1e5557")
     add_versions("3.1.0", "09569fc19d060ac9f5999ba9356728c2494ebe6a24ac0eb0a6b6ae3d396cfea6")
     add_versions("3.0.2", "c4b4c25a4eb81883448ff8924e6dba95c800094a198dc9ce66a292ac2ef8e018")
     add_versions("2.2.0", "bd1136d0a1554520dcb527a239655777148d90fd2d51cf02c36540afc552e6ec")
