@@ -62,7 +62,6 @@ package("imgui")
     add_versions("v1.92.7-docking", "123926eb22d4990dea06bec0739d92f7790c8ee505b3d903fe2de7e5940f2c27")
     add_versions("v1.92.6-docking", "5e84cdaa6a6041586a0d11a3071b749734a0439d66fdbdad37ae5b27e37d396c")
 
-    add_versions("git:v1.92.7-docking", "v1.92.7-docking")
     add_versions("git:v1.92.6-docking", "v1.92.6-docking")
     add_versions("git:v1.92.5-docking", "v1.92.5-docking")
     add_versions("git:v1.92.4-docking", "v1.92.4-docking")
