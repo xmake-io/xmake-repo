@@ -56,10 +56,10 @@ package("libsdl3")
     add_configs("haptic", { description = "Enable haptic input support", default = true, type = "boolean"})
     add_configs("camera", { description = "Enable support for SDL_Camera", default = true, type = "boolean"})
     add_configs("storage", { description = "Enable support for SDL_Storage", default = true, type = "boolean"})
-    add_configs("process", { description = "Enable support for SDL's cross-platform process spawing", default = true, type = "boolean"})
+    add_configs("process", { description = "Enable support for SDL's cross-platform process spawning", default = true, type = "boolean"})
     add_configs("dialog", { description = "Enable support for SDL's native file/directory picker and dialog", default = true, type = "boolean"})
     add_configs("tray", { description = "Enable support for SDL's tray system API", default = true, type = "boolean"})
-    add_configs("filesystem", { description = "Enable support for SDL's standar file path handling", default = true, type = "boolean"})
+    add_configs("filesystem", { description = "Enable support for SDL's standard file path handling", default = true, type = "boolean"})
     add_configs("threads", { description = "Enable support for SDL's threading and mutex wrappers", default = true, type = "boolean"})
     add_configs("timers", { description = "Enable support for SDL's timers and delay functions", default = true, type = "boolean"})
     add_configs("loadso", { description = "Enable support for loading shared libraries through SDL's runtime", default = true, type = "boolean"})
@@ -79,7 +79,7 @@ package("libsdl3")
     on_load(function (package)
         local supports_video = package:config("video")
 
-        if supports_video then
+        if supports_video and not package:is_plat("wasm") then
             package:add("deps", "egl-headers")
             package:add("deps", "opengl-headers")
         else
@@ -100,7 +100,7 @@ package("libsdl3")
             package:set("policy", "package.cmake_generator.ninja", true)
         end
         if package:is_plat("linux", "bsd", "cross") and package:config("x11") and supports_video then
-            local deplibs = {"libx11", "libxcb", "libxext", "libxcursor", "libxfixes", "libxi", "libxrandr", "libxrender", "libxss"}
+            local deplibs = {"libx11", "libxcb", "libxext", "libxcursor", "libxfixes", "libxi", "libxrandr", "libxrender", "libxss", "xorgproto"}
             local depconfig = package:config("x11_shared") and {private = true, configs = {shared = true}} or nil
             for _, lib in ipairs(deplibs) do
                 package:add("deps", lib, depconfig)
