@@ -1,5 +1,5 @@
 package("rocksdb")
-    set_homepage("http://rocksdb.org")
+    set_homepage("https://rocksdb.org")
     set_description("A library that provides an embeddable, persistent key-value store for fast storage.")
     set_license("Apache-2.0")
 
@@ -26,7 +26,6 @@ package("rocksdb")
     add_versions("v9.2.1", "bb20fd9a07624e0dc1849a8e65833e5421960184f9c469d508b58ed8f40a780f")
     add_versions("v9.1.1", "54ca90dd782a988cd3ebc3e0e9ba9b4efd563d7eb78c5e690c2403f1b7d4a87a")
     add_versions("v9.0.0", "013aac178aa12837cbfa3b1e20e9e91ff87962ab7fdd044fd820e859f8964f9b")
-    add_versions("v7.10.2", "4619ae7308cd3d11cdd36f0bfad3fb03a1ad399ca333f192b77b6b95b08e2f78")
 
     add_configs("jemalloc", {description = "Build with JeMalloc.", default = false, type = "boolean"})
     add_configs("liburing", {description = "Build with liburing.", default = false, type = "boolean"})
@@ -85,7 +84,7 @@ package("rocksdb")
         end
         if package:is_plat("windows") then
             io.replace("CMakeLists.txt", "/Zi", "", {plain = true})
-            local vs_runtime = package:config("vs_runtime")
+            local vs_runtime = package:runtimes()
             if vs_runtime then
                 table.insert(configs, "-DWITH_MD_LIBRARY=" .. (vs_runtime:startswith("MD") and "ON" or "OFF"))
             end
@@ -99,8 +98,13 @@ package("rocksdb")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+            #include <memory>
             void test() {
-                rocksdb::DB* db;
+                #if ROCKSDB_MAJOR >= 10
+                std::unique_ptr<rocksdb::DB> db;
+                #else
+                rocksdb::DB *db = nullptr;
+                #endif
                 rocksdb::Options options;
                 options.create_if_missing = true;
                 rocksdb::Status status = rocksdb::DB::Open(options, "./test", &db);
