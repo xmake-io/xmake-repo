@@ -23,7 +23,7 @@ package("aws-c-mqtt")
 
     add_deps("cmake", "aws-c-http", "aws-c-io", "aws-c-cal", "aws-c-common")
 
-    on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", "msys", "cross", function (package)
+    on_install("windows", "linux", "macosx", "bsd", "msys", "cross", function (package)
         local cmakedir = package:dep("aws-c-common"):installdir("lib", "cmake")
         if package:is_plat("windows") then
             cmakedir = cmakedir:gsub("\\", "/")
