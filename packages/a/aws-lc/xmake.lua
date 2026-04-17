@@ -5,6 +5,7 @@ package("aws-lc")
     add_urls("https://github.com/aws/aws-lc/archive/refs/tags/$(version).tar.gz",
              "https://github.com/aws/aws-lc.git")
 
+    add_versions("v1.72.0", "f214c0e06e043c4f18b836059ccb5ecbed781173e8eed106839ee2dd4f4cc157")
     add_versions("v1.71.0", "31b1eed775294825f084c0d4e09df53e1cf036fb98a202a8c2c342543828a985")
     add_versions("v1.70.0", "533dd3f35639f44784c8ad9b73c279ec3959aba79c63b9726dd8066564b2058f")
     add_versions("v1.69.0", "cdaa8dcd5f4ead8c82646fabef3c811381c4c7906de4489415e3fdf2558922f8")
