@@ -10,7 +10,7 @@ package("qjswrapper")
 
     set_kind("library", {headeronly = true})
 
-    add_deps("quickjs-ng 0.14")z
+    add_deps("quickjs-ng 0.14")
 
     on_install(function (package)
         import("package.tools.xmake").install(package)
