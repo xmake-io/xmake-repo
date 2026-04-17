@@ -5,6 +5,8 @@ package("rapidjson")
     set_description("RapidJSON is a JSON parser and generator for C++.")
     set_license("MIT")
 
+    set_urls("https://github.com/Tencent/rapidjson/archive/refs/tags/$(version).zip",
+             "https://github.com/Tencent/rapidjson.git", {submodules = false})
     set_urls("https://github.com/Tencent/rapidjson.git")
 
     add_versions("v1.1.0", "8e00c38829d6785a2dfb951bb87c6974fa07dfe488aa5b25deec4b8bc0f6a3ab")
@@ -15,6 +17,10 @@ package("rapidjson")
     add_configs("cmake", {description = "Use cmake build system", default = false, type = "boolean"})
 
     on_load(function (package)
+        if package:config("cmake") then
+            package:add("deps", "cmake")
+        end
+
         if package:is_plat("windows") and package:is_arch("arm.*") then
             package:add("defines", "RAPIDJSON_ENDIAN=RAPIDJSON_LITTLEENDIAN")
         end
@@ -22,7 +28,6 @@ package("rapidjson")
 
     on_install(function (package)
         if package:config("cmake") then
-            package:add("deps", "cmake")
             local configs = {
                 "-DRAPIDJSON_BUILD_DOC=OFF",
                 "-DRAPIDJSON_BUILD_EXAMPLES=OFF",
