@@ -59,7 +59,7 @@ package("imgui")
     add_versions("v1.76",   "e482dda81330d38c87bd81597cacaa89f05e20ed2c4c4a93a64322e97565f6dc")
     add_versions("v1.75",   "1023227fae4cf9c8032f56afcaea8902e9bfaad6d9094d6e48fb8f3903c7b866")
 
-    -- NOTE: Why is this here like that?
+    add_versions("v1.92.7-docking", "123926eb22d4990dea06bec0739d92f7790c8ee505b3d903fe2de7e5940f2c27")
     add_versions("v1.92.6-docking", "5e84cdaa6a6041586a0d11a3071b749734a0439d66fdbdad37ae5b27e37d396c")
 
     add_versions("git:v1.92.7-docking", "v1.92.7-docking")
