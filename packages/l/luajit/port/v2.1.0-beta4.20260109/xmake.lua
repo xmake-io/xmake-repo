@@ -15,14 +15,8 @@ option("gc64", {default = false})
 -- Host Target: minilua
 target("minilua")
     set_kind("binary")
-    set_plat(os.host())
-    if is_arch("x64", "x86_64", "arm64.*", "mips64") then
-        set_arch(os.arch())
-    else
-        set_arch(is_host("windows") and "x86" or "i386")
-    end
     add_files("src/host/minilua.c")
-    if is_host("windows") then
+    if is_plat("windows") then
         add_defines("_CRT_SECURE_NO_DEPRECATE")
     else
         add_syslinks("m")
@@ -115,16 +109,10 @@ target("buildvm_headers")
 -- Host Target: buildvm
 target("buildvm")
     set_kind("binary")
-    set_plat(os.host())
-    if is_arch("x64", "x86_64", "arm64.*", "mips64") then
-        set_arch(os.arch())
-    else
-        set_arch(is_host("windows") and "x86" or "i386")
-    end
     add_defines("LUAJIT_ENABLE_LUA52COMPAT", {public = true})
     add_deps("minilua", "buildvm_headers")
     add_files("src/host/buildvm*.c")
-    if is_host("windows") then
+    if is_plat("windows") then
         add_defines("_CRT_SECURE_NO_DEPRECATE")
     else
         add_syslinks("m", "dl")
