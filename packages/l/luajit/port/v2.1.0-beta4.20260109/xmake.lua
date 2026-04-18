@@ -16,6 +16,7 @@ option("gc64", {default = false})
 target("minilua")
     set_kind("binary")
     set_plat(os.host())
+    set_toolchains("envs")
     if is_arch("x64", "x86_64", "arm64.*", "mips64") then
         set_arch(os.arch())
     else
@@ -116,6 +117,7 @@ target("buildvm_headers")
 target("buildvm")
     set_kind("binary")
     set_plat(os.host())
+    set_toolchains("envs")
     if is_arch("x64", "x86_64", "arm64.*", "mips64") then
         set_arch(os.arch())
     else
