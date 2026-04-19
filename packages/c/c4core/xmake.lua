@@ -6,6 +6,7 @@ package("c4core")
     add_urls("https://github.com/biojppm/c4core/releases/download/v$(version)/c4core-$(version)-src.zip",
              "https://github.com/biojppm/c4core.git")
 
+    add_versions("0.2.11", "5f667922c299434a9eeb34fb7fcf5e74de86d890d7788dea849a423fc429b87a")
     add_versions("0.2.10", "8560011998c714a7faeafc1f4fea8d8b579bb6971cd9b38fddcc965a5bb4ae17")
     add_versions("0.2.8", "50ddd86571d66f007c7ea84025b201b39eb0d182983344b93822de2e2db8978a")
     add_versions("0.2.7", "84cb22610ee822a3ce50927c4b290693fcbcc37dbabc446f15fd15903af314e0")

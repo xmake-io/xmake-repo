@@ -57,12 +57,9 @@ package("objfw")
     add_configs("runtime", { description = "Use the included runtime, not recommended for macOS!", default = not is_plat("macosx"), type = "boolean" })
     add_configs("seluid24", { description = "Use 24 bit instead of 16 bit for selector UIDs.", default = false, type = "boolean" })
     add_configs("unicode_tables", { description = "Enable Unicode tables.", default = true, type = "boolean" })
-
     add_configs("codepage_437", { description = "Enable codepage 437 support.", default = true, type = "boolean" })
-    
-
     add_configs("codepage_850", { description = "Enable codepage 850 support.", default = true, type = "boolean" })
-    add_configs("codepage-858", { description = "Enable codepage 858 support.", default = true, type = "boolean" })
+    add_configs("codepage_858", { description = "Enable codepage 858 support.", default = true, type = "boolean" })
     add_configs("iso_8859_2", { description = "Enable ISO-8859-2 support.", default = true, type = "boolean" })
     add_configs("iso_8859_3", { description = "Enable ISO-8859-3 support.", default = true, type = "boolean" })
     add_configs("iso_8859_15", { description = "Enable ISO-8859-15 support.", default = true, type = "boolean" })
@@ -71,12 +68,10 @@ package("objfw")
     add_configs("mac_roman", { description = "Enable Mac Roman encoding support.", default = true, type = "boolean" })
     add_configs("windows_1251", { description = "Enable windows 1251 support.", default = true, type = "boolean" })
     add_configs("windows_1252", { description = "Enable windows 1252 support.", default = true, type = "boolean" })
-
     add_configs("threads", { description = "Enable threads.", default = true, type = "boolean" })
     add_configs("compiler_tls", { description = "Enable compiler thread local storage (TLS).", default = true, type = "boolean" })
     add_configs("files", { description = "Enable files.", default = true, type = "boolean" })
     add_configs("sockets", { description = "Enable sockets.", default = true, type = "boolean" })
-
     add_configs("arc", { description = "Enable Automatic Reference Counting (ARC) support.", default = true, type = "boolean" })
 
     on_load(function (package)
@@ -105,6 +100,7 @@ package("objfw")
                 raise("Unknown TLS library: %s", tls)
             end
         end
+        package:addenv("PATH", "bin")
     end)
 
     on_check(function (package)
@@ -127,11 +123,11 @@ package("objfw")
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") and name ~= "arc" then
-                name = name:gsub("_", "-")
+                local config_name = name:gsub("_", "-")
                 if enabled then
-                    table.insert(configs, "--enable-" .. name)
+                    table.insert(configs, "--enable-" .. config_name)
                 else
-                    table.insert(configs, "--disable-" .. name)
+                    table.insert(configs, "--disable-" .. config_name)
                 end
             end
         end

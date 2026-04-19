@@ -10,12 +10,11 @@ package("libxcursor")
         add_extsources("apt::libxcursor-dev")
     end
 
-    if is_plat("macosx", "linux", "bsd", "cross") then
-        add_deps("pkg-config", "util-macros")
-    end
-
     on_load(function (package)
         package:add("deps", "libx11", "libxfixes", "libxrender", { configs = { shared = package:config("shared") } })
+        if package:is_plat("macosx", "linux", "bsd", "cross") then
+            package:add("deps", "pkg-config", "util-macros")
+        end
     end)
 
     on_install("macosx", "linux", "bsd", "cross", function (package)

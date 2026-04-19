@@ -7,6 +7,7 @@ package("lockfree")
     add_urls("https://github.com/DNedic/lockfree/archive/refs/tags/$(version).tar.gz",
              "https://github.com/DNedic/lockfree.git")
 
+    add_versions("3.0.0", "da4472e900affe3d94b16d6a9b0773829abaa929053b85a6fe0fcc4f599aceec")
     add_versions("2.0.10", "0a810c522f7a0b7d1d2ffad6079cdf552735d3489db1c5ded72b8b369e60e9fb")
 
     on_install(function (package)

@@ -19,7 +19,26 @@ package("shared-mime-info")
     add_deps("glib", "gettext")
 
     on_install("macosx", "linux", function (package)
-        import("package.tools.meson").install(package, {}, {packagedeps = {"libintl", "libiconv"}})
+        local meson_tool = import("package.tools.meson")
+        local find_tool = import("lib.detect.find_tool")
+        local opt = {packagedeps = {"libintl", "libiconv"}}
+        -- xmllint is only used for XML validation during build, not required for functionality
+        local xmllint_paths = {}
+        local libxml2 = package:dep("libxml2")
+        if libxml2 then
+            table.insert(xmllint_paths, libxml2:installdir("bin"))
+        end
+        io.replace("meson.build", "find_program('xmllint')", "find_program('xmllint', required: false)", {plain = true})
+        io.replace("meson.build", "subdir('tests')", "", {plain = true})
+        local xmllint = find_tool("xmllint", {paths = xmllint_paths, force = true})
+        if xmllint then
+            local native_file = os.tmpfile() .. ".ini"
+            io.writefile(native_file, format("[binaries]\nxmllint = ['%s']\n", xmllint.program))
+            opt.envs = meson_tool.buildenvs(package, opt)
+            meson_tool.install(package, {"--native-file=" .. native_file}, opt)
+        else
+            meson_tool.install(package, {}, opt)
+        end
     end)
 
     on_test(function (package)

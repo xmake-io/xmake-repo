@@ -7,6 +7,7 @@ package("zpp_bits")
     add_urls("https://github.com/eyalz800/zpp_bits/archive/refs/tags/$(version).tar.gz",
              "https://github.com/eyalz800/zpp_bits.git")
 
+    add_versions("v4.7", "e8590ac346d8a4e98c19bcf8f1dd4d4b552f7d27ffbcbe93528fef5cb9efbd97")
     add_versions("v4.6", "ca5889fd2328df7411c0e4f4ddd64b396277dec5ed589b5f009dadc36ef3a24d")
     add_versions("v4.5.1", "2589469c86700264e4746b3efb0319b6911f2b9899fbd7cefddb6a01a7001f3b")
     add_versions("v4.5", "2ed5058b1394cd79b5130916e6beb275efbfb73f1713ed1d08a7d3ba1b36970e")

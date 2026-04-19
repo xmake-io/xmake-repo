@@ -35,3 +35,4 @@ index 033e7ad5..1f8d8915 100644
 +if (NOT AUIB_DISABLE)
 +    aui_enable_tests(aui.image)
 +endif ()
+ 

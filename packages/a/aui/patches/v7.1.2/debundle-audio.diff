@@ -2,7 +2,7 @@ diff --git a/aui.audio/CMakeLists.txt b/aui.audio/CMakeLists.txt
 index 21e441538..96d151626 100644
 --- a/aui.audio/CMakeLists.txt
 +++ b/aui.audio/CMakeLists.txt
-@@ -5,26 +5,43 @@ add_subdirectory(3rdparty/ogg)
+@@ -5,26 +5,44 @@ add_subdirectory(3rdparty/ogg)
  aui_link(aui.audio PUBLIC aui::core)
  
  if (AUI_PLATFORM_ANDROID)
@@ -52,8 +52,9 @@ index 21e441538..96d151626 100644
 -auib_import(Opus https://github.com/xiph/opus.git VERSION v1.4)
 -aui_link(aui.audio PRIVATE Opus::opus)
 +if (AUIB_DISABLE)
-+    find_package(Opus CONFIG REQUIRED)
-+    aui_link(aui.audio PRIVATE Opus::opus)
++    include(FindPkgConfig)
++    pkg_check_modules(Opus REQUIRED IMPORTED_TARGET opus)
++    aui_link(aui.audio PRIVATE PkgConfig::Opus)
 +else ()
 +    auib_import(Opus https://github.com/xiph/opus.git VERSION v1.4)
 +    aui_link(aui.audio PRIVATE Opus::opus)
@@ -61,7 +62,7 @@ index 21e441538..96d151626 100644
  
  if (AUI_PLATFORM_IOS OR AUI_PLATFORM_MACOS)
      auib_use_system_libs_begin()
-@@ -42,9 +59,15 @@ if (AUI_PLATFORM_MACOS)
+@@ -42,9 +60,15 @@ if (AUI_PLATFORM_MACOS)
  					   "-framework QuartzCore")
  endif()
  
@@ -82,3 +83,4 @@ index 21e441538..96d151626 100644
 -aui_link(aui.audio PRIVATE soxr)
 +    aui_link(aui.audio PRIVATE soxr)
 +endif ()
+ 

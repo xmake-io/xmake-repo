@@ -28,6 +28,9 @@ jobs:
           wget https://developer.arm.com/-/media/Files/downloads/gnu/14.3.rel1/binrel/arm-gnu-toolchain-14.3.rel1-x86_64-${{ matrix.cross }}.tar.xz
           tar -xvf arm-gnu-toolchain-14.3.rel1-x86_64-${{ matrix.cross }}.tar.xz
 
+      - name: Set up system dependencies
+        run: sudo apt-get update && sudo apt-get install -y libgl1-mesa-dev libglu1-mesa-dev
+
       - name: Tests
         run: |
           xmake l ./scripts/test.lua -D -p cross --sdk=`pwd`/arm-gnu-toolchain-14.3.rel1-x86_64-${{ matrix.cross }}

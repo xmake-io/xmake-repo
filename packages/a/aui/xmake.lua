@@ -8,23 +8,22 @@ package("aui")
 
     add_versions("v7.1.2", "a4cf965c50d75e20a319c9c8b231ad9c13c25a06ad303e1eb65d1ff141b1f85c")
 
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-audio.diff", "a51f9b89b0ec4895b6d1f10c1259e0c620c8a0480817598de977210c0ad78e46")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-build.diff", "391d389da336dc24ddb37432ad85bcf9de3b956742157628e741a500733151cd")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-core.diff", "2ab1e7181d07b64bb059b8b7fdff69c295df84043560ecb337516c649ac28bbe")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-crypt.diff", "58045d168a8c7f2658554e0a3010579ec53b54e2c51f524a4fb61e5e4d6fc0a7")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-curl.diff", "937280a828ce0bc30a590606e7d65de55c9421d0650897c2d775e3731405a4b0")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-image.diff", "44bb7e78eab9629c92ef953ec1e0aca9e80712fe2488d6ffa804924d418ebf05")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-json-network.diff", "6d7d8da64cf85212e14757f7d24ac5ac6501dfd0ff3a4fcbe973c7c58c4f213c")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-main.diff", "c1cac9dfbae14baaddb68837055a7a858c08786750a16cbbfe955a1f18e5878d")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-sqlite.diff", "1728a4b9afc473acc81b16c544239e6f70a147c0623d894d59dd124e27c94311")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-toolbox.diff", "1ec1abf993eb7e583d32602e1ae8ee4d3358d156e9fac185c0d19ed85660bd3b")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-uitests.diff", "b7ad0900fbe2d8b50698f3439fe2fe6c182c925e94d72420ebb5104ba0f2f633")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-views.diff", "d889bbbd1808f12937219e5ca40b835cb972e6d764d021e4ec5444132a68a8a3")
-    add_patches("v7.1.2", "patches/v7.1.2/fix-backport-lunasvg.diff", "daf24391b88e44bdb801b2c1ba36a695f95384d8157ccb23cfc635d5f30bea4a")
-    add_patches("v7.1.2", "patches/v7.1.2/fix-msvc-pretty-function.diff", "268f66f42594f0188fe50d33f5783e66f66024087097ebfdfef60c9768e151fd")
-    add_patches("v7.1.2", "patches/v7.1.2/fix-osx-enforce-cpp-template.diff", "599e1e9ec9beec581258db67af8c9fe9dd2351eb169a538890c65422b5052659")
-    add_patches("v7.1.2", "patches/v7.1.2/fixup-network.diff", "888c1ed0e96f21bd842de72f8f9fe933261c5f76c99be55cf8e83f424bd1f79e")
-    add_patches("v7.1.2", "patches/v7.1.2/fix-glm.diff", "9b0f2e3000ea2cea92d3e3641a9db74274bc746e13ddacf6ffeddebb229e1c6d")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-audio.diff", "199f93a75085f9b60c7e735e91cfa47d4316183740c97de9c59988aaf28a0279")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-build.diff", "136de2ca2729b02f729c3bbdb31589436801c27c93622b654e55bc1a72ce3d83")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-core.diff", "708081ddce4be722d81c3cc42c5a11c1b7b2b1aa31a2748c9f94117c48540e58")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-crypt.diff", "92e4ab69e13e0f8743cd581f7c940b10a6ee4830df5c7ea19f721d8986f4a639")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-curl.diff", "322bed6bb924faa82995a4cd5f7cf1cdf3b1e5c09f1ac6b0c7a0cbb55f3f242c")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-image.diff", "4f8f0fb64de19d3fae8aabc08398073963cb956edb1967a6877c958d3d5f8e49")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-json-network.diff", "d71f6bb1cc39ec14e4718c8d401a858a0e514cf0687537c451ded350a3ac2fc5")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-main.diff", "22f975c944d6c59b4fca2ece11176476e6e9423b10b91cc5ddfc5c820ec9821d")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-sqlite.diff", "f27b236e4f9beebcb090d288523f4c64d37700c7e56b6a6ed1776bfaa84c8309")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-toolbox.diff", "10cad07fafef39eba0776cf8a8195040d02532b70e7bbc9599fe29a14f4e23d3")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-views.diff", "6301f160aad25f35af358cc043b417636b8896b6e4231be472a692e789f2535e")
+    add_patches("v7.1.2", "patches/v7.1.2/fix-backport-lunasvg.diff", "4a30826ddba1ba708d781593b93cae8c9521be7a157fff514c8f7b805477e6d4")
+    add_patches("v7.1.2", "patches/v7.1.2/fix-msvc-pretty-function.diff", "501353756941a706c795b61b25a788bc754f2556fe37bfb4bdd9341d48947c46")
+    add_patches("v7.1.2", "patches/v7.1.2/fix-osx-enforce-cpp-template.diff", "e8b11cb86dcf4b6d7ceddb2c70e926385c476515ece94e2149fb9a365475b7f5")
+    add_patches("v7.1.2", "patches/v7.1.2/fixup-network.diff", "5a385f757f76d6653e51c4582747a30837f0a852aff8a7210bcc1007edbd188d")
+    add_patches("v7.1.2", "patches/v7.1.2/fix-glm.diff", "7bbd5ae3db67b7b372b745b9e7d104292a98dc789457c7e7213d0d7f4ab395f3")
 
     add_deps("cmake")
     if is_subhost("windows") then
@@ -35,7 +34,6 @@ package("aui")
     add_deps("zlib")
 
     add_links(
-        "aui.uitests",
         "aui.audio",
         "aui.json",
         "aui.views",
@@ -76,7 +74,8 @@ package("aui")
     on_component("core", function (package, component)
         package:add("includedirs", "aui.core/include")
         component:add("links", "aui.core")
-        package:add("deps", "fmt 9.1.0", "range-v3", "glm")
+        package:add("deps", "fmt 9.1.0", "range-v3")
+        package:add("deps", "glm", {configs = {header_only = false}})
         if package:is_plat("linux") then
             package:add("deps", "libbacktrace")
             component:add("syslinks", "pthread", "dl")
@@ -93,7 +92,7 @@ package("aui")
         component:add("links", "aui.crypt")
         package:add("deps", "openssl3")
         if package:is_plat("windows", "mingw") then
-            component:add("syslinks", "wsock32", "ws2_32")
+            component:add("syslinks", "wsock32", "ws2_32", "crypt32")
         end
     end)
 
@@ -131,13 +130,6 @@ package("aui")
         package:add("includedirs", "aui.toolbox/include")
     end)
 
-    -- aui.uitests
-    on_component("uitests", function (package, component)
-        package:add("includedirs", "aui.uitests/include")
-        component:add("links", "aui.uitests")
-        package:add("deps", "gtest", "benchmark")
-    end)
-
     -- aui.views
     on_component("views", function (package, component)
         package:add("includedirs", "aui.views/include")
@@ -170,7 +162,7 @@ package("aui")
     end)
 
     on_load(function (package)
-        package:add("components", "audio", "core", "crypt", "curl", "image", "json", "network", "toolbox", "uitests", "views", "xml")
+        package:add("components", "audio", "core", "crypt", "curl", "image", "json", "network", "toolbox", "views", "xml")
         if not package:config("shared") then
             package:add("defines", "AUI_STATIC")
         end
@@ -184,7 +176,6 @@ package("aui")
             "API_AUI_IMAGE=AUI_IMPORT",
             "API_AUI_JSON=AUI_IMPORT",
             "API_AUI_NETWORK=AUI_IMPORT",
-            "API_AUI_UITESTS=AUI_IMPORT",
             "API_AUI_UPDATER=AUI_IMPORT",
             "API_AUI_VIEWS=AUI_IMPORT",
             "API_AUI_XML=AUI_IMPORT"
@@ -290,13 +281,49 @@ package("aui")
             if package:has_tool("cxx", "cl", "clang_cl") then
                 opt.cxflags = {"/EHsc"}
             end
-            if package:targetarch():startswith("arm") then
+            if package:arch():startswith("arm") then
                 io.replace("cmake/aui.build.cmake", [[if (CMAKE_GENERATOR_PLATFORM MATCHES "(arm64)|(ARM64)" OR CMAKE_SYSTEM_PROCESSOR MATCHES "(aarch64|arm64)")]], [[if (1)]], {plain = true})
             end
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs, opt)
+        local cmake = import("package.tools.cmake")
+        -- gdk-pixbuf-2.0.pc has Requires.private: shared-mime-info when gio_sniffing=true.
+        -- shared-mime-info is a binary package so it's not in PKG_CONFIG_PATH, causing
+        -- pkg_check_modules(GTK3) to fail. Add it manually.
+        if package:is_plat("linux") then
+            local envs = cmake.buildenvs(package, opt)
+            local pc_path = path.splitenv(envs.PKG_CONFIG_PATH or "")
+            -- Setting PKG_CONFIG_PATH overrides pkg-config's built-in default paths,
+            -- so system packages (e.g. xproto from x11proto-dev) become invisible.
+            -- Re-add the standard system paths so transitive deps of gtk+-3.0 resolve.
+            local find_tool = import("lib.detect.find_tool")
+            local pkg_config = find_tool("pkg-config") or find_tool("pkgconf")
+            if pkg_config then
+                local sys_paths = try {function()
+                    return os.iorunv(pkg_config.program, {"--variable=pc_path", "pkg-config"})
+                end}
+                if sys_paths then
+                    for _, p in ipairs(sys_paths:trim():split(path.envsep())) do
+                        if not table.contains(pc_path, p) then
+                            table.insert(pc_path, p)
+                        end
+                    end
+                end
+            end
+            -- shared-mime-info is a binary package (excluded from librarydeps) but
+            -- gdk-pixbuf-2.0.pc requires it. Add its share/pkgconfig manually.
+            local smi = package:dep("shared-mime-info")
+            if smi then
+                local smi_pc = path.join(smi:installdir(), "share", "pkgconfig")
+                if os.isdir(smi_pc) and not table.contains(pc_path, smi_pc) then
+                    table.insert(pc_path, smi_pc)
+                end
+            end
+            envs.PKG_CONFIG_PATH = path.joinenv(pc_path)
+            opt.envs = envs
+        end
+        cmake.install(package, configs, opt)
     end)
 
     on_test(function (package)

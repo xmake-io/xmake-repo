@@ -12,9 +12,9 @@ package("libxau")
         add_extsources("apt::libxau-dev", "pacman::libxau")
     end
 
-    if is_plat("macosx", "linux", "bsd", "cross") then
-        add_deps("pkg-config", "util-macros", "xorgproto")
-    end
+    on_load("macosx", "linux", "bsd", "cross", function (package)
+        package:add("deps", "pkg-config", "util-macros", "xorgproto")
+    end)
 
     on_install("macosx", "linux", "bsd", "cross", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),

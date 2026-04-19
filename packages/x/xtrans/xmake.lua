@@ -11,9 +11,9 @@ package("xtrans")
         add_extsources("apt::xtrans-dev", "pacman::xtrans")
     end
 
-    if is_plat("macosx", "linux", "bsd", "cross") then
-        add_deps("pkg-config", "util-macros", "xorgproto")
-    end
+    on_load("macosx", "linux", "bsd", "cross", function (package)
+        package:add("deps", "pkg-config", "util-macros", "xorgproto")
+    end)
 
     on_install("macosx", "linux", "bsd", "cross", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
@@ -28,5 +28,5 @@ package("xtrans")
     end)
 
     on_test(function (package)
-        assert(package:has_ctypes("Xtransaddr", {includes = "X11/Xtrans/Xtrans.h"}))
+        assert(package:has_ctypes("Xtransaddr", {includes = "X11/Xtrans/Xtrans.h", packagedeps = "xorgproto"}))
     end)

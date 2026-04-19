@@ -105,3 +105,4 @@ index 90c53d45..f980b2a3 100644
          if (NOT TARGET benchmark::benchmark)
              message(FATAL_ERROR "benchmark::benchmark not found!")
          endif()
+ 
