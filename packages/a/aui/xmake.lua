@@ -280,9 +280,30 @@ package("aui")
             if package:has_tool("cxx", "cl", "clang_cl") then
                 opt.cxflags = {"/EHsc"}
             end
-            if package:arch():startswith("arm") then
-                io.replace("cmake/aui.build.cmake", [[if (CMAKE_GENERATOR_PLATFORM MATCHES "(arm64)|(ARM64)" OR CMAKE_SYSTEM_PROCESSOR MATCHES "(aarch64|arm64)")]], [[if (1)]], {plain = true})
-            end
+        end
+        -- cmake's AUI_ARCH_* detection uses CMAKE_SYSTEM_PROCESSOR which may not be
+        -- set correctly for cross-compilation (e.g. iOS with Xcode generator uses the
+        -- host processor). Pass the flags explicitly so cmake skips its own detection.
+        if package:is_arch("arm64.*") then
+            table.insert(configs, "-DAUI_ARCH_ARM_64=1")
+            table.insert(configs, "-DAUI_ARCH_ARM_V7=0")
+            table.insert(configs, "-DAUI_ARCH_X86=0")
+            table.insert(configs, "-DAUI_ARCH_X86_64=0")
+        elseif package:is_arch("arm.*") then
+            table.insert(configs, "-DAUI_ARCH_ARM_64=0")
+            table.insert(configs, "-DAUI_ARCH_ARM_V7=1")
+            table.insert(configs, "-DAUI_ARCH_X86=0")
+            table.insert(configs, "-DAUI_ARCH_X86_64=0")
+        elseif package:is_arch("x86", "i386") then
+            table.insert(configs, "-DAUI_ARCH_ARM_64=0")
+            table.insert(configs, "-DAUI_ARCH_ARM_V7=0")
+            table.insert(configs, "-DAUI_ARCH_X86=1")
+            table.insert(configs, "-DAUI_ARCH_X86_64=0")
+        else
+            table.insert(configs, "-DAUI_ARCH_ARM_64=0")
+            table.insert(configs, "-DAUI_ARCH_ARM_V7=0")
+            table.insert(configs, "-DAUI_ARCH_X86=0")
+            table.insert(configs, "-DAUI_ARCH_X86_64=1")
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
