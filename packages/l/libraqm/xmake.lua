@@ -6,6 +6,7 @@ package("libraqm")
     add_urls("https://github.com/HOST-Oman/libraqm/archive/refs/tags/$(version).tar.gz",
              "https://github.com/HOST-Oman/libraqm.git")
 
+    add_versions("v0.10.5", "7f3dd21b4b3bd28a36f2c911d31d91a9d69341697713923ef1aac65d56ebcafd")
     add_versions("v0.10.4", "6b583fb0eb159a3727a1e8c653bb0294173a14af8eb60195a775879de72320a3")
     add_versions("v0.10.3", "fe1fe28b32f97ef97b325ca5d2defb0704da1ef048372ec20e85e1f587e20965")
     add_versions("v0.10.2", "db68fd9f034fc40ece103e511ffdf941d69f5e935c48ded8a31590468e42ba72")
