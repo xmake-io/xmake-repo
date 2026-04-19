@@ -353,6 +353,13 @@ package("aui")
             envs.PKG_CONFIG_PATH = path.joinenv(pc_path)
             opt.envs = envs
         end
+        if is_host("windows") then
+            local find_tool = import("lib.detect.find_tool")
+            local pc = find_tool("pkgconf") or find_tool("pkg-config")
+            if pc then
+                table.insert(configs, "-DPKG_CONFIG_EXECUTABLE=" .. pc.program)
+            end
+        end
         cmake.install(package, configs, opt)
     end)
 
