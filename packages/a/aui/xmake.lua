@@ -144,7 +144,7 @@ package("aui")
         elseif package:is_plat("android") then
             component:add("syslinks", "EGL", "GLESv2", "GLESv3")
         elseif package:is_plat("iphoneos") then
-            component:add("frameworks", "OpenGLES")
+            component:add("frameworks", "OpenGLES", "UIKit", "QuartzCore")
         elseif package:is_plat("macosx") then
             component:add("frameworks", "AppKit", "Cocoa", "CoreData", "Foundation", "QuartzCore", "UniformTypeIdentifiers", "OpenGL")
         end
