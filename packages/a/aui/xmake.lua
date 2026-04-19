@@ -24,6 +24,7 @@ package("aui")
     add_patches("v7.1.2", "patches/v7.1.2/fix-osx-enforce-cpp-template.diff", "e8b11cb86dcf4b6d7ceddb2c70e926385c476515ece94e2149fb9a365475b7f5")
     add_patches("v7.1.2", "patches/v7.1.2/fixup-network.diff", "5a385f757f76d6653e51c4582747a30837f0a852aff8a7210bcc1007edbd188d")
     add_patches("v7.1.2", "patches/v7.1.2/fix-glm.diff", "7bbd5ae3db67b7b372b745b9e7d104292a98dc789457c7e7213d0d7f4ab395f3")
+    add_patches("v7.1.2", "patches/v7.1.2/fix-jni-env-duplicate-symbol.diff", "72bbb655c1ea336ca8e1232a603950df5ecb5a43dce9c30612597ac0915583e1")
 
     add_deps("cmake")
     if is_subhost("windows") then
@@ -44,12 +45,6 @@ package("aui")
         "aui.network",
         "aui.core"
     )
-
-    on_check(function (package)
-        if package:is_cross() then
-            raise("package(aui): does not support cross-compilation now.")
-        end
-    end)
 
     -- aui.audio
     on_component("audio", function (package, component)
@@ -268,9 +263,13 @@ package("aui")
         add_flags(package, arch_flags, arch_names)
 
         package:add("defines", "GLM_ENABLE_EXPERIMENTAL=1")
+
+        if package:is_cross() then
+            package:add("deps", "aui-toolbox", {host = true})
+        end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", "android", "iphoneos", function (package)
         local configs = {
             "-DAUI_INSTALL_RUNTIME_DEPENDENCIES=OFF",
             "-DAUIB_NO_PRECOMPILED=TRUE",
@@ -287,6 +286,16 @@ package("aui")
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:is_cross() then
+            local toolbox_pkg = package:dep("aui-toolbox")
+            if toolbox_pkg then
+                local suffix = is_host("windows") and ".exe" or ""
+                local toolbox_exe = path.join(toolbox_pkg:installdir("bin"), "aui.toolbox" .. suffix)
+                if os.isfile(toolbox_exe) then
+                    table.insert(configs, "-DAUI_TOOLBOX_EXE=" .. toolbox_exe)
+                end
+            end
+        end
         local cmake = import("package.tools.cmake")
         -- gdk-pixbuf-2.0.pc has Requires.private: shared-mime-info when gio_sniffing=true.
         -- shared-mime-info is a binary package so it's not in PKG_CONFIG_PATH, causing
