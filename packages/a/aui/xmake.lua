@@ -46,6 +46,16 @@ package("aui")
         "aui.core"
     )
 
+    on_check(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            template <typename T>
+            constexpr bool always_true = true;
+            int main() {
+                static_assert(always_true<decltype([]{})>, "Test failed");    
+                return 0;
+            }]]}, {configs = {languages = "c++20"}}), "package(aui): Your compiler does not support wording for lambdas in unevaluated contexts.")
+    end)
+
     -- aui.audio
     on_component("audio", function (package, component)
         package:add("includedirs", "aui.audio/include")
