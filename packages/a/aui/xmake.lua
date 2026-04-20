@@ -60,7 +60,6 @@ package("aui")
                 }]]}, {configs = {languages = "c++20"}}), "package(aui): Your compiler does not support lambdas in unevaluated contexts (a C++20 feature).")
             if package:is_plat("android") then
                 local ndk = package:toolchain("ndk")
-                local ndkver = ndk:config("ndkver")
                 local ndk_sdkver = ndk:config("ndk_sdkver")
                 assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(aui) require ndk api >= 24")
             end
