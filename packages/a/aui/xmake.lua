@@ -24,6 +24,7 @@ package("aui")
     add_patches("v7.1.2", "patches/v7.1.2/fix-osx-enforce-cpp-template.diff", "e8b11cb86dcf4b6d7ceddb2c70e926385c476515ece94e2149fb9a365475b7f5")
     add_patches("v7.1.2", "patches/v7.1.2/fixup-network.diff", "5a385f757f76d6653e51c4582747a30837f0a852aff8a7210bcc1007edbd188d")
     add_patches("v7.1.2", "patches/v7.1.2/fix-glm.diff", "7bbd5ae3db67b7b372b745b9e7d104292a98dc789457c7e7213d0d7f4ab395f3")
+    add_patches("v7.1.2", "patches/v7.1.2/fix-jni-env-duplicate-symbol.diff", "72bbb655c1ea336ca8e1232a603950df5ecb5a43dce9c30612597ac0915583e1")
 
     add_deps("cmake")
     if is_subhost("windows") then
@@ -45,11 +46,25 @@ package("aui")
         "aui.core"
     )
 
-    on_check(function (package)
-        if package:is_cross() then
-            raise("package(aui): does not support cross-compilation now.")
-        end
-    end)
+    if on_check then
+        on_check(function (package)
+            assert(package:check_cxxsnippets({test = [[
+                #include <type_traits>
+                template<typename T>
+                concept not_overloaded_lambda = requires {
+                    &T::operator();
+                };
+                static_assert(not_overloaded_lambda<decltype([]{})>, "aui::not_overloaded_lambda failed");
+                int main() {
+                    return 0;
+                }]]}, {configs = {languages = "c++20"}}), "package(aui): Your compiler does not support lambdas in unevaluated contexts (a C++20 feature).")
+            if package:is_plat("android") then
+                local ndk = package:toolchain("ndk")
+                local ndk_sdkver = ndk:config("ndk_sdkver")
+                assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(aui) require ndk api >= 24")
+            end
+        end)
+    end
 
     -- aui.audio
     on_component("audio", function (package, component)
@@ -149,7 +164,7 @@ package("aui")
         elseif package:is_plat("android") then
             component:add("syslinks", "EGL", "GLESv2", "GLESv3")
         elseif package:is_plat("iphoneos") then
-            component:add("frameworks", "OpenGLES")
+            component:add("frameworks", "OpenGLES", "UIKit", "QuartzCore")
         elseif package:is_plat("macosx") then
             component:add("frameworks", "AppKit", "Cocoa", "CoreData", "Foundation", "QuartzCore", "UniformTypeIdentifiers", "OpenGL")
         end
@@ -268,9 +283,13 @@ package("aui")
         add_flags(package, arch_flags, arch_names)
 
         package:add("defines", "GLM_ENABLE_EXPERIMENTAL=1")
+
+        if package:is_cross() then
+            package:add("deps", "aui-toolbox", {host = true})
+        end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", "android", "iphoneos", function (package)
         local configs = {
             "-DAUI_INSTALL_RUNTIME_DEPENDENCIES=OFF",
             "-DAUIB_NO_PRECOMPILED=TRUE",
@@ -281,17 +300,48 @@ package("aui")
             if package:has_tool("cxx", "cl", "clang_cl") then
                 opt.cxflags = {"/EHsc"}
             end
-            if package:arch():startswith("arm") then
-                io.replace("cmake/aui.build.cmake", [[if (CMAKE_GENERATOR_PLATFORM MATCHES "(arm64)|(ARM64)" OR CMAKE_SYSTEM_PROCESSOR MATCHES "(aarch64|arm64)")]], [[if (1)]], {plain = true})
-            end
+        end
+        -- cmake's AUI_ARCH_* detection uses CMAKE_SYSTEM_PROCESSOR which may not be
+        -- set correctly for cross-compilation (e.g. iOS with Xcode generator uses the
+        -- host processor). Pass the flags explicitly so cmake skips its own detection.
+        if package:is_arch("arm64.*") then
+            table.insert(configs, "-DAUI_ARCH_ARM_64=1")
+            table.insert(configs, "-DAUI_ARCH_ARM_V7=0")
+            table.insert(configs, "-DAUI_ARCH_X86=0")
+            table.insert(configs, "-DAUI_ARCH_X86_64=0")
+        elseif package:is_arch("arm.*") then
+            table.insert(configs, "-DAUI_ARCH_ARM_64=0")
+            table.insert(configs, "-DAUI_ARCH_ARM_V7=1")
+            table.insert(configs, "-DAUI_ARCH_X86=0")
+            table.insert(configs, "-DAUI_ARCH_X86_64=0")
+        elseif package:is_arch("x86", "i386") then
+            table.insert(configs, "-DAUI_ARCH_ARM_64=0")
+            table.insert(configs, "-DAUI_ARCH_ARM_V7=0")
+            table.insert(configs, "-DAUI_ARCH_X86=1")
+            table.insert(configs, "-DAUI_ARCH_X86_64=0")
+        else
+            table.insert(configs, "-DAUI_ARCH_ARM_64=0")
+            table.insert(configs, "-DAUI_ARCH_ARM_V7=0")
+            table.insert(configs, "-DAUI_ARCH_X86=0")
+            table.insert(configs, "-DAUI_ARCH_X86_64=1")
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:is_cross() then
+            local toolbox_pkg = package:dep("aui-toolbox")
+            if toolbox_pkg then
+                local suffix = is_host("windows") and ".exe" or ""
+                local toolbox_exe = path.join(toolbox_pkg:installdir("bin"), "aui.toolbox" .. suffix)
+                if os.isfile(toolbox_exe) then
+                    table.insert(configs, "-DAUI_TOOLBOX_EXE=" .. toolbox_exe)
+                end
+            end
+        end
         local cmake = import("package.tools.cmake")
         -- gdk-pixbuf-2.0.pc has Requires.private: shared-mime-info when gio_sniffing=true.
         -- shared-mime-info is a binary package so it's not in PKG_CONFIG_PATH, causing
         -- pkg_check_modules(GTK3) to fail. Add it manually.
-        if package:is_plat("linux") then
+        if is_host("linux") then
             local envs = cmake.buildenvs(package, opt)
             local pc_path = path.splitenv(envs.PKG_CONFIG_PATH or "")
             -- Setting PKG_CONFIG_PATH overrides pkg-config's built-in default paths,
@@ -322,6 +372,19 @@ package("aui")
             end
             envs.PKG_CONFIG_PATH = path.joinenv(pc_path)
             opt.envs = envs
+        end
+        if is_host("windows") then
+            local pkgconf_dep = package:dep("pkgconf")
+            if pkgconf_dep then
+                local bindir = pkgconf_dep:installdir("bin")
+                local pkgconf_exe = path.join(bindir, "pkg-config.exe")
+                if not os.isfile(pkgconf_exe) then
+                    pkgconf_exe = path.join(bindir, "pkgconf.exe")
+                end
+                if os.isfile(pkgconf_exe) then
+                    table.insert(configs, "-DPKG_CONFIG_EXECUTABLE=" .. pkgconf_exe)
+                end
+            end
         end
         cmake.install(package, configs, opt)
     end)
