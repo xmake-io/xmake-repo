@@ -47,7 +47,6 @@ package("gtk3")
                                     "libxi",
                                     "pango",
                                     "at-spi2-core",
-                                    "cairo",
                                     "libthai",
                                     "libdatrie",
                                     "gdk-pixbuf"}}

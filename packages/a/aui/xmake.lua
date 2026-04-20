@@ -275,10 +275,6 @@ package("aui")
             "-DAUIB_NO_PRECOMPILED=TRUE",
             "-DAUIB_DISABLE=ON",
         }
-        local components = package:config("components")
-        if components then
-            table.insert(configs, "-DAUIB_COMPONENTS=" .. table.concat(components, ";"))
-        end
         local opt = {}
         if package:is_plat("windows", "mingw") then
             if package:has_tool("cxx", "cl", "clang_cl") then
