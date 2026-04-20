@@ -48,12 +48,15 @@ package("aui")
 
     on_check(function (package)
         assert(package:check_cxxsnippets({test = [[
-            template <typename T>
-            constexpr bool always_true = true;
+            #include <type_traits>
+            template<typename T>
+            concept not_overloaded_lambda = requires {
+                &T::operator();
+            };
+            static_assert(not_overloaded_lambda<decltype([]{})>, "aui::not_overloaded_lambda failed");
             int main() {
-                static_assert(always_true<decltype([]{})>, "Test failed");    
                 return 0;
-            }]]}, {configs = {languages = "c++20"}}), "package(aui): Your compiler does not support wording for lambdas in unevaluated contexts.")
+            }]]}, {configs = {languages = "c++20"}}), "package(aui): Your compiler does not support lambdas in unevaluated contexts (a C++20 feature).")
     end)
 
     -- aui.audio
