@@ -321,7 +321,7 @@ package("aui")
         -- gdk-pixbuf-2.0.pc has Requires.private: shared-mime-info when gio_sniffing=true.
         -- shared-mime-info is a binary package so it's not in PKG_CONFIG_PATH, causing
         -- pkg_check_modules(GTK3) to fail. Add it manually.
-        if package:is_plat("linux") then
+        if is_host("linux") then
             local envs = cmake.buildenvs(package, opt)
             local pc_path = path.splitenv(envs.PKG_CONFIG_PATH or "")
             -- Setting PKG_CONFIG_PATH overrides pkg-config's built-in default paths,
@@ -354,10 +354,16 @@ package("aui")
             opt.envs = envs
         end
         if is_host("windows") then
-            local find_tool = import("lib.detect.find_tool")
-            local pc = find_tool("pkgconf") or find_tool("pkg-config")
-            if pc then
-                table.insert(configs, "-DPKG_CONFIG_EXECUTABLE=" .. pc.program)
+            local pkgconf_dep = package:dep("pkgconf")
+            if pkgconf_dep then
+                local bindir = pkgconf_dep:installdir("bin")
+                local pkgconf_exe = path.join(bindir, "pkg-config.exe")
+                if not os.isfile(pkgconf_exe) then
+                    pkgconf_exe = path.join(bindir, "pkgconf.exe")
+                end
+                if os.isfile(pkgconf_exe) then
+                    table.insert(configs, "-DPKG_CONFIG_EXECUTABLE=" .. pkgconf_exe)
+                end
             end
         end
         cmake.install(package, configs, opt)
