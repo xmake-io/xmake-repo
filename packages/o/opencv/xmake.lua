@@ -140,6 +140,9 @@ package("opencv")
         if package:config("tesseract") then
             package:add("deps", "tesseract 4.1.3") -- OpenCV need tesseract from the v4 series
         end
+        if package:config("eigen") then
+            package:add("deps", "eigen")
+        end
     end)
 
     if on_check then
@@ -178,6 +181,14 @@ package("opencv")
         end
         if package:config("cuda") then
             table.insert(configs, "-DWITH_CUDA=ON")
+        end
+        local eigen = package:dep("eigen")
+        if eigen then
+            local eigen_cmake_files = os.files(eigen:installdir("**/Eigen3Config.cmake"))
+            if eigen_cmake_files and #eigen_cmake_files > 0 then
+                local cmake_dir = path.directory(eigen_cmake_files[1])
+                table.insert(configs, "-DEigen3_DIR=" .. cmake_dir)
+            end
         end
 
         table.insert(configs, "-DPARALLEL_ENABLE_PLUGINS=" .. (package:config("dynamic_parallel") and "ON" or "OFF"))
