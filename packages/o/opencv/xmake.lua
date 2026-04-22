@@ -172,6 +172,7 @@ package("opencv")
                          "-DBUILD_opencv_python2=OFF",
                          "-DBUILD_opencv_python3=OFF",
                          "-DBUILD_JAVA=OFF"}
+        local packagedeps = {}
 
         if package:config("tesseract") then
             table.insert(configs, "-DWITH_TESSERACT=ON")
@@ -185,13 +186,8 @@ package("opencv")
         if package:config("cuda") then
             table.insert(configs, "-DWITH_CUDA=ON")
         end
-        local eigen = package:dep("eigen")
-        if eigen then
-            local eigen_cmake_files = os.files(eigen:installdir("**/Eigen3Config.cmake"))
-            if eigen_cmake_files and #eigen_cmake_files > 0 then
-                local cmake_dir = path.directory(eigen_cmake_files[1])
-                table.insert(configs, "-DEigen3_DIR=" .. cmake_dir)
-            end
+        if package:config("eigen") then
+            table.insert(packagedeps, "eigen")
         end
         if package:config("tbb") then
             table.insert(configs, "-DBUILD_TBB=OFF")
@@ -256,7 +252,7 @@ package("opencv")
                 shflags = {"-Wl,-Bsymbolic"}
             end
         end
-        import("package.tools.cmake").install(package, configs, {builddir = "bd", shflags = shflags, ldflags = ldflags})
+        import("package.tools.cmake").install(package, configs, {builddir = "bd", packagedeps = packagedeps, shflags = shflags, ldflags = ldflags})
 
         if not package:is_plat("windows", "android") then
             local cmakefile = os.files(package:installdir("**/OpenCVModules.cmake"))
