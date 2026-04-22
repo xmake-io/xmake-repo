@@ -143,7 +143,7 @@ package("opencv")
         if package:config("eigen") then
             package:add("deps", "eigen")
         end
-        if package:config("tbb") and package:is_plat("windows") and not package:is_arch("arm.*") then
+        if package:config("tbb") then
             package:add("deps", "tbb", {debug = package:is_debug()})
         end
     end)
@@ -193,8 +193,7 @@ package("opencv")
                 table.insert(configs, "-DEigen3_DIR=" .. cmake_dir)
             end
         end
-        local tbb = package:dep("tbb")
-        if tbb then
+        if package:config("tbb") then
             table.insert(configs, "-DBUILD_TBB=OFF")
         end
 
