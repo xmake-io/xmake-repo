@@ -289,7 +289,7 @@ package("aui")
         end
     end)
 
-    on_install("windows", "macosx", "linux", "android", "iphoneos", function (package)
+    on_install("windows", "macosx", "linux", "android", "iphoneos", "wasm", function (package)
         local configs = {
             "-DAUI_INSTALL_RUNTIME_DEPENDENCIES=OFF",
             "-DAUIB_NO_PRECOMPILED=TRUE",
