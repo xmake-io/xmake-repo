@@ -143,6 +143,9 @@ package("opencv")
         if package:config("eigen") then
             package:add("deps", "eigen")
         end
+        if package:config("tbb") and package:is_plat("windows") and not package:is_arch("arm.*") then
+            package:add("deps", "tbb", {debug = package:is_debug()})
+        end
     end)
 
     if on_check then
@@ -189,6 +192,10 @@ package("opencv")
                 local cmake_dir = path.directory(eigen_cmake_files[1])
                 table.insert(configs, "-DEigen3_DIR=" .. cmake_dir)
             end
+        end
+        local tbb = package:dep("tbb")
+        if tbb then
+            table.insert(configs, "-DBUILD_TBB=OFF")
         end
 
         table.insert(configs, "-DPARALLEL_ENABLE_PLUGINS=" .. (package:config("dynamic_parallel") and "ON" or "OFF"))
