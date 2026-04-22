@@ -3,7 +3,7 @@ package("libxau")
     set_description("X.Org: A Sample Authorization Protocol for X")
 
     set_urls("https://www.x.org/archive/individual/lib/libXau-$(version).tar.gz", {alias = "xorg"})
-    set_urls("https://download.nus.edu.sg/mirror/cygwin/x86_64/release/libXau/libXau-$(version)-1-src.tar.xz", {alias = "mirror"})
+    set_urls("https://gcc.gnu.org/pub/cygwin/x86_64/release/libXau/libXau-$(version)-1-src.tar.xz", {alias = "mirror"})
 
     add_versions("xorg:1.0.10", "51a54da42475d4572a0b59979ec107c27dacf6c687c2b7b04e5cf989a7c7e60c")
     add_versions("xorg:1.0.11", "3a321aaceb803577a4776a5efe78836eb095a9e44bbc7a465d29463e1a14f189")
