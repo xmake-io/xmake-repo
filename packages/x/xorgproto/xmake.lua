@@ -3,8 +3,8 @@ package("xorgproto")
     set_homepage("https://www.x.org/")
     set_description("X.Org: Protocol Headers")
 
-    set_urls("https://xorg.freedesktop.org/archive/individual/proto/xorgproto-$(version).tar.gz", {alias = "xorg"})
-    set_urls("https://support.garz-fricke.com/mirror/xorgproto-$(version).tar.xz", {alias = "mirror"})
+    add_urls("https://xorg.freedesktop.org/archive/individual/proto/xorgproto-$(version).tar.gz", {alias = "xorg"})
+    add_urls("https://support.garz-fricke.com/mirror/xorgproto-$(version).tar.xz", {alias = "mirror"})
 
     add_versions("xorg:2021.5", "be6ddd6590881452fdfa170c1c9ff87209a98d36155332cbf2ccbc431add86ff")
     add_versions("xorg:2022.2", "da351a403d07a7006d7bdc8dcfc14ddc1b588b38fb81adab9989a8eef605757b")
