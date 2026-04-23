@@ -13,7 +13,13 @@ package("raylib-cpp")
     add_versions("v5.0.2", "d3a718170882bc873c973a19a824d7fa4bfd9d0087b4778057231409a240920d")
     add_versions("v5.0.1", "6d10469019700fd5993db9a18bdd0ed025105b1bf7dd8916e353eef8bfac6355")
 
-	add_deps("raylib 6.x")
+    on_load(function (package)
+        if package:version():ge("6.0.0") then
+            package:add("deps", "raylib 6.x")
+        else
+            package:add("deps", "raylib 5.x")
+        end
+    end)
 
     on_install("windows", "linux", "macosx", "mingw", "wasm", "android", function (package)
         os.cp("include/*.hpp", package:installdir("include/raylib-cpp"))
