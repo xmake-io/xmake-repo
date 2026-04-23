@@ -45,7 +45,7 @@ package("raylib")
     elseif is_plat("windows", "mingw") then
         add_syslinks("gdi32", "user32", "winmm", "shell32")
     elseif is_plat("linux") then
-        add_syslinks("pthread", "dl", "m")z
+        add_syslinks("pthread", "dl", "m")
         add_deps("libx11", "libxrandr", "libxrender", "libxinerama", "libxcursor", "libxi", "libxfixes", "libxext")
     elseif is_plat("wasm") then
         add_ldflags("-sUSE_GLFW=3", "-sASSERTIONS=1", "-sWASM=1", "-sASYNCIFY", "-sGL_ENABLE_GET_PROC_ADDRESS=1", {force = true})
