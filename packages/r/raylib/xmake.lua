@@ -20,6 +20,7 @@ package("raylib")
         add_versions("4.5.0", "63deb87ffc32e5eb2023ba763aaea2cb5f41bd37bbc07760651efe251bd76f3d")
         add_versions("5.0", "48e477d3dde2e20220572c9f93a332c48cf378fc1e1f205454b975180085565c")
         add_versions("5.5", "930c67b676963c6cffbd965814664523081ecbf3d30fc9df4211d0064aa6ba39")
+        add_versions("6.0", "6AE5947FBD36AEE4C280E3A2B3E1893316C433E292BDA6E94E0F2B037498AD70")
     else
         add_urls("https://github.com/raysan5/raylib/archive/$(version).tar.gz",
                  "https://github.com/raysan5/raylib.git")
@@ -32,6 +33,7 @@ package("raylib")
         add_versions("4.5.0", "163378604f2293ea5ebf3238f50c8926addde72d1a6bc8998ac2e96074ba8af8")
         add_versions("5.0", "98f049b9ea2a9c40a14e4e543eeea1a7ec3090ebdcd329c4ca2cf98bc9793482")
         add_versions("5.5", "aea98ecf5bc5c5e0b789a76de0083a21a70457050ea4cc2aec7566935f5e258e")
+        add_versions("6.0", "2B3EE1E2120C7A0796B33062C7E9A694DD8A8CAA56A96319AC8C8ECF54A90D0B")
     end
 
     if not (is_plat("macosx") and is_arch("x86_64")) then
