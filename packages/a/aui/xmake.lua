@@ -25,6 +25,7 @@ package("aui")
     add_patches("v7.1.2", "patches/v7.1.2/fixup-network.diff", "5a385f757f76d6653e51c4582747a30837f0a852aff8a7210bcc1007edbd188d")
     add_patches("v7.1.2", "patches/v7.1.2/fix-glm.diff", "7bbd5ae3db67b7b372b745b9e7d104292a98dc789457c7e7213d0d7f4ab395f3")
     add_patches("v7.1.2", "patches/v7.1.2/fix-jni-env-duplicate-symbol.diff", "72bbb655c1ea336ca8e1232a603950df5ecb5a43dce9c30612597ac0915583e1")
+    add_patches("v7.1.2", "patches/v7.1.2/fix-wasm.diff", "1bda0ef634d101f1cbd318abfa91f6d26f6ff191721fd59b3428fd584474c243")
 
     add_deps("cmake")
     if is_subhost("windows") then
@@ -289,7 +290,7 @@ package("aui")
         end
     end)
 
-    on_install("windows", "macosx", "linux", "android", "iphoneos", function (package)
+    on_install("windows", "macosx", "linux", "android", "iphoneos", "wasm", function (package)
         local configs = {
             "-DAUI_INSTALL_RUNTIME_DEPENDENCIES=OFF",
             "-DAUIB_NO_PRECOMPILED=TRUE",
