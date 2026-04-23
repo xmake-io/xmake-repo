@@ -51,6 +51,7 @@ package("raylib")
         add_ldflags("-sUSE_GLFW=3", "-sASSERTIONS=1", "-sWASM=1", "-sASYNCIFY", "-sGL_ENABLE_GET_PROC_ADDRESS=1", {force = true})
     elseif is_plat("android") then
         add_syslinks("log", "android", "EGL", "GLESv2", "OpenSLES", "m")
+        add_ldflags("-Wl,--wrap=fopen")
     end
     add_deps("opengl", {optional = true})
 
