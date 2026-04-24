@@ -149,7 +149,9 @@ package("libllvm")
     end)
 
     on_install("linux", "macosx", "bsd", "android", "iphoneos", "cross", function (package)
-        local constants = import('constants')
+        import("lib.detect.find_tool")
+        import('constants')
+        import("utils.ci.is_running", {alias = "ci_is_running"})
 
         local projects_enabled = {}
         local runtimes_enabled = {}
@@ -213,7 +215,6 @@ package("libllvm")
         -- like arm-gnu-toolchain don't bundle ld.lld) and skip when lld isn't installed
         -- so CMake's CXX_SUPPORTS_CUSTOM_LINKER probe doesn't fail the configure step.
         if package:is_arch("arm64.*", "aarch64") and is_host("linux") and (os.arch() == "arm64" or os.arch() == "aarch64") then
-            local find_tool = import("lib.detect.find_tool")
             if find_tool("ld.lld") or find_tool("lld") then
                 table.insert(configs, "-DLLVM_USE_LINKER=lld")
             end
@@ -296,8 +297,12 @@ package("libllvm")
         tryadd_dep("zlib", "ZLIB")
         tryadd_dep("zstd")
 
+        local opt = {}
+        if ci_is_running() then
+            opt.jobs = "1"
+        end
         os.cd("llvm")
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
