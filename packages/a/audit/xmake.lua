@@ -1,8 +1,11 @@
 package("audit")
+    set_homepage("https://github.com/linux-audit/audit-userspace")
     set_description("Userspace components of the audit framework.")
+    set_license("LGPL-2.1")
 
     add_urls("https://github.com/linux-audit/audit-userspace/archive/refs/tags/$(version).tar.gz",
              "https://github.com/linux-audit/audit-userspace.git")
+    add_versions("v4.1.4", "8396544ea08c69b39f5c00027549394f2149b31c4a9e693097d6ce134f3ffe3d")
     add_versions("v4.1.3", "866a659c91746ee4436fa6f99d4f80768fc1a3aa92e6ec2081e353fcfc79589f")
     add_versions("v4.1.2", "5c638bbeef9adb6c5715d3a60f0f5adb93e9b81633608af13d23c61f5e5db04d")
 
@@ -62,7 +65,9 @@ package("audit")
             table.insert(packagedeps, dep:name())
         end
 
-        import("package.tools.autoconf").install(package, configs, {packagedeps = packagedeps})
+        local cflags = {"-Wno-error=discarded-qualifiers"}
+
+        import("package.tools.autoconf").install(package, configs, {packagedeps = packagedeps, cflags = cflags})
     end)
 
     on_test(function (package)
