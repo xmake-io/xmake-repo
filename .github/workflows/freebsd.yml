@@ -25,10 +25,21 @@ jobs:
         uses: vmactions/freebsd-vm@v1
         with:
           usesh: true
+          release: "14.1"
           sync: sshfs
           mem: 12288
           copyback: false
-          prepare: pkg install -y git curl unzip gmake llvm gsed bash perl5 openssl 7-zip coreutils
+          prepare: |
+            export ASSUME_ALWAYS_YES=yes
+            export IGNORE_OSVERSION=yes
+            
+            pkg bootstrap -f
+            pkg update -f
+            
+            # Upgrade pre-installed VM packages so their libraries match the 'latest' repo
+            pkg upgrade -y
+            
+            pkg install -y git curl unzip gmake llvm gsed bash perl5 openssl 7-zip coreutils
           run: |
             git config --global --add safe.directory `pwd`
             git clone --recurse-submodules https://github.com/xmake-io/xmake.git /tmp/xmake -b dev
@@ -39,5 +50,3 @@ jobs:
             export XMAKE_ROOT=y
             cd -
             xmake l ./scripts/test.lua -D -k ${{ matrix.kind }} -vD
-
-
