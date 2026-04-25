@@ -29,24 +29,25 @@ jobs:
           mem: 12288
           copyback: false
           prepare: |
-            # 1. Wipe out any corrupted repository database caches
-            rm -f /var/db/pkg/repo-*.sqlite
-            
-            # 2. Overwrite the repository configuration to use direct HTTPS
-            # Using single quotes ensures ${ABI} is read literally by pkg and not interpolated by the shell
+            # 1. Nuke ALL existing repo configs to stop the ghost 'pkg+' SRV errors
+            rm -f /etc/pkg/*.conf
+            rm -rf /usr/local/etc/pkg/repos
             mkdir -p /usr/local/etc/pkg/repos
-            echo 'FreeBSD: { url: "https://pkg.FreeBSD.org/${ABI}/latest", mirror_type: "none", signature_type: "fingerprints", fingerprints: "/usr/share/keys/pkg", enabled: yes }' > /usr/local/etc/pkg/repos/FreeBSD.conf
             
-            # Disable the default base config just to be safe
-            sed -i '' 's/pkg+http:/https:/g' /etc/pkg/FreeBSD.conf || true
-            sed -i '' 's/mirror_type: "srv"/mirror_type: "none"/g' /etc/pkg/FreeBSD.conf || true
+            # 2. Write a single, explicitly direct configuration. 
+            # Using plain HTTP avoids CA root issues before ca_root_nss is installed.
+            echo 'FreeBSD: { url: "http://pkg.freebsd.org/${ABI}/latest", mirror_type: "none", signature_type: "fingerprints", fingerprints: "/usr/share/keys/pkg", enabled: yes }' > /usr/local/etc/pkg/repos/FreeBSD.conf
             
-            # 3. Bootstrap and forcefully update the repositories
-            env ASSUME_ALWAYS_YES=yes pkg bootstrap -f
-            pkg update -f
+            # 3. Completely obliterate the cache directories to fix the 'truncated reply'
+            rm -rf /var/db/pkg/repos/*
+            rm -f /var/db/pkg/repo-*.sqlite
+            rm -rf /var/cache/pkg/*
             
-            # 4. Install dependencies
-            pkg install -y git curl unzip gmake llvm gsed bash perl5 openssl 7-zip coreutils
+            # 4. Bootstrap, update, and install dependencies using IPv4 (-4) 
+            # to bypass common QEMU IPv6 networking dropouts in GitHub Actions
+            env ASSUME_ALWAYS_YES=yes pkg -4 bootstrap -f
+            pkg -4 update -f
+            pkg -4 install -y git curl unzip gmake llvm gsed bash perl5 openssl 7-zip coreutils
           run: |
             git config --global --add safe.directory `pwd`
             git clone --recurse-submodules https://github.com/xmake-io/xmake.git /tmp/xmake -b dev
