@@ -29,9 +29,23 @@ jobs:
           mem: 12288
           copyback: false
           prepare: |
+            # 1. Wipe out any corrupted repository database caches
+            rm -f /var/db/pkg/repo-*.sqlite
+            
+            # 2. Overwrite the repository configuration to use direct HTTPS
+            # Using single quotes ensures ${ABI} is read literally by pkg and not interpolated by the shell
             mkdir -p /usr/local/etc/pkg/repos
-            echo 'FreeBSD: { url: "pkg+http://pkg.FreeBSD.org/${ABI}/latest" }' > /usr/local/etc/pkg/repos/FreeBSD.conf
-            pkg update || true
+            echo 'FreeBSD: { url: "https://pkg.FreeBSD.org/${ABI}/latest", mirror_type: "none", signature_type: "fingerprints", fingerprints: "/usr/share/keys/pkg", enabled: yes }' > /usr/local/etc/pkg/repos/FreeBSD.conf
+            
+            # Disable the default base config just to be safe
+            sed -i '' 's/pkg+http:/https:/g' /etc/pkg/FreeBSD.conf || true
+            sed -i '' 's/mirror_type: "srv"/mirror_type: "none"/g' /etc/pkg/FreeBSD.conf || true
+            
+            # 3. Bootstrap and forcefully update the repositories
+            env ASSUME_ALWAYS_YES=yes pkg bootstrap -f
+            pkg update -f
+            
+            # 4. Install dependencies
             pkg install -y git curl unzip gmake llvm gsed bash perl5 openssl 7-zip coreutils
           run: |
             git config --global --add safe.directory `pwd`
@@ -43,5 +57,3 @@ jobs:
             export XMAKE_ROOT=y
             cd -
             xmake l ./scripts/test.lua -D -k ${{ matrix.kind }} -vD
-
-
