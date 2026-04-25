@@ -6,6 +6,7 @@ package("krb5")
     add_urls("https://kerberos.org/dist/krb5/$(version).tar.gz", {version = function (version)
         return format("%d.%d/krb5-%s", version:major(), version:minor(), version)
     end})
+    add_versions("1.22.2", "3243ffbc8ea4d4ac22ddc7dd2a1dc54c57874c40648b60ff97009763554eaf13")
     add_versions("1.22.1", "1a8832b8cad923ebbf1394f67e2efcf41e3a49f460285a66e35adec8fa0053af")
 
     add_configs("tls", {description = "Enable TLS/OpenSSL support.", default = false, type = "boolean"})
@@ -21,6 +22,8 @@ package("krb5")
 
     on_install("macosx", "linux", function (package)
         os.cd("src")
+        io.replace("aclocal.m4", "error=discarded-qualifiers ", "", {plain = true})
+        io.replace("configure", "error=discarded-qualifiers ", "", {plain = true})
         local configs = {"--disable-dependency-tracking", "--with-system-verto"}
         table.insert(configs, "--with-tls-impl=" .. (package:config("tls") and "openssl" or "no"))
         local cppflags = {}
