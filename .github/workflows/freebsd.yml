@@ -25,12 +25,16 @@ jobs:
         uses: vmactions/freebsd-vm@v1
         with:
           usesh: true
-          release: "14.1"  # Force a stable FreeBSD release to avoid the 15.0 cluster bug
+          release: "14.1"
           sync: sshfs
           mem: 12288
           copyback: false
           prepare: |
-            env ASSUME_ALWAYS_YES=yes pkg bootstrap -f
+            # Export these so they apply to all subsequent pkg commands
+            export ASSUME_ALWAYS_YES=yes
+            export IGNORE_OSVERSION=yes
+            
+            pkg bootstrap -f
             pkg update -f
             pkg install -y git curl unzip gmake llvm gsed bash perl5 openssl 7-zip coreutils
           run: |
