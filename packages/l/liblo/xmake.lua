@@ -13,13 +13,13 @@ package("liblo")
         add_syslinks("pthread")
     end
 
-    on_install("windows", "macosx", "linux", "bsd", "mingw", function (package)
+    on_install(function (package)
         os.cd("cmake")
         local configs = {
             "-DWITH_STATIC=ON",
             "-DWITH_TESTS=OFF",
         }
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
     end)
 
