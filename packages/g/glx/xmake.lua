@@ -6,7 +6,11 @@ package("glx")
     on_fetch(function (package, opt)
         if opt.system then
             if package:is_plat("linux") and package.find_package then
-                return package:find_package("glx", opt) or package:find_package("libglx", opt)
+                return package:find_package("GLX", opt) or package:find_package("pkgconfig::glx", opt)
             end
         end
     end)
+
+    if is_plat("linux") then
+        add_extsources("apt::libglx-dev")
+    end
