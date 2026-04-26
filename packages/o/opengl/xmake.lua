@@ -12,7 +12,11 @@ package("opengl")
         end
         if opt.system then
             if package:is_plat("linux") and package.find_package then
-                return package:find_package("OpenGL", opt) or package:find_package("GL", opt)
+                return package:find_package("OpenGL", opt) or package:find_package("GL", opt) or package:find_package("pkgconfig::opengl", opt) or package:find_package("pkgconfig::gl", opt)
             end
         end
     end)
+
+    if is_plat("linux") then
+        add_extsources("apt::libopengl-dev")
+    end
