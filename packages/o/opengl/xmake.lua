@@ -12,7 +12,7 @@ package("opengl")
         end
         if opt.system then
             if package:is_plat("linux") and package.find_package then
-                return package:find_package("opengl", opt) or package:find_package("libgl", opt)
+                return package:find_package("opengl", opt) or package:find_package("gl", opt)
             end
         end
     end)
