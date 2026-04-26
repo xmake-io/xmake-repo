@@ -6,6 +6,7 @@ package("harfbuzz")
     add_urls("https://github.com/harfbuzz/harfbuzz/archive/refs/tags/$(version).tar.gz", {excludes = "**/README", "**/test"})
     add_urls("https://github.com/harfbuzz/harfbuzz.git")
 
+    add_versions("14.1.0", "9deffe9dded3c367c7d08265fd0a64193fad505a362a4889d898568c1cd46812")
     add_versions("13.1.1", "8497968914f415d633c7ff885f58862667c40b79d2f04031951a5d04e91d1090")
     add_versions("11.3.3", "5563e1eeea7399c37dc7f0f92a89bbc79d8741bbdd134d22d2885ddb95944314")
     add_versions("11.2.1", "057d5754c3ac0c499bbf4d729d52acf134c7bb4ba8868ba22e84ae96bc272816")
