@@ -37,12 +37,12 @@ package("liblo")
         else
             io.replace("CMakeLists.txt", [[TARGETS ${LIBRARY_STATIC} ${LIBRARY_SHARED}]], [[TARGETS ${LIBRARY_STATIC}]], {plain = true})
         end
-        io.replace("CMakeLists.txt", [[if (WITH_TOOLS)]], [[if (BUILD_SHARED_LIBS)
+        io.replace("CMakeLists.txt", [[# Tools]], [[# Tools
+    if (BUILD_SHARED_LIBS)
         set_target_properties(${LIBRARY_STATIC} PROPERTIES EXCLUDE_FROM_ALL 1)
     else()
         set_target_properties(${LIBRARY_SHARED} PROPERTIES EXCLUDE_FROM_ALL 1)
-    endif()
-    if (WITH_TOOLS)]], {plain = true})
+    endif()]], {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
 
