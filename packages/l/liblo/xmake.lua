@@ -23,6 +23,11 @@ package("liblo")
         }
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        if package:config("shared") then
+            io.replace("CMakeLists.txt", [[TARGETS ${LIBRARY_STATIC} ${LIBRARY_SHARED}]], [[TARGETS ${LIBRARY_SHARED}]], {plain = true})
+        else
+            io.replace("CMakeLists.txt", [[TARGETS ${LIBRARY_STATIC} ${LIBRARY_SHARED}]], [[TARGETS ${LIBRARY_STATIC}]], {plain = true})
+        end
         io.replace("CMakeLists.txt", [[add_library(${LIBRARY_STATIC} STATIC ${LIBRARY_SOURCES})]], [[add_library(${LIBRARY_STATIC} STATIC ${LIBRARY_SOURCES})
     if (BUILD_SHARED_LIBS)
 		set_target_properties(${LIBRARY_STATIC} PROPERTIES EXCLUDE_FROM_ALL 1)
