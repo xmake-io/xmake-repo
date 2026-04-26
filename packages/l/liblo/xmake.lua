@@ -19,6 +19,13 @@ package("liblo")
         add_syslinks("wsock32", "ws2_32", "iphlpapi")
     end
 
+    on_check("android", function (package)
+        local ndk_sdkver = package:toolchain("ndk"):config("ndk_sdkver")
+        if ndk_sdkver and tonumber(ndk_sdkver) < 24 then
+            raise("package(liblo): require ndk api >= 24")
+        end
+    end)
+
     on_install(function (package)
         os.cd("cmake")
         local configs = {
