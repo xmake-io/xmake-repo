@@ -7,6 +7,10 @@ package("liblo")
              "https://github.com/radarsat1/liblo.git")
     add_versions("0.34", "e9a294c7613e1bec2abcf26f2010604643d605ed6852e16b51837400729fcbee")
 
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     add_deps("cmake")
 
     if is_plat("linux", "cross", "bsd") then
