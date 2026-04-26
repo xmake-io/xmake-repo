@@ -22,7 +22,7 @@ package("liblo")
         end
     end)
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         os.cd("cmake")
         local configs = {
             "-DWITH_STATIC=ON",
@@ -33,10 +33,8 @@ package("liblo")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         if package:config("shared") then
-            io.replace("CMakeLists.txt", [[add_library(${LIBRARY_STATIC} STATIC ${LIBRARY_SOURCES})]], [[]], {plain = true})
             io.replace("CMakeLists.txt", [[TARGETS ${LIBRARY_STATIC} ${LIBRARY_SHARED}]], [[TARGETS ${LIBRARY_SHARED}]], {plain = true})
         else
-            io.replace("CMakeLists.txt", [[add_library(${LIBRARY_SHARED} SHARED ${LIBRARY_SOURCES})]], [[]], {plain = true})
             io.replace("CMakeLists.txt", [[TARGETS ${LIBRARY_STATIC} ${LIBRARY_SHARED}]], [[TARGETS ${LIBRARY_STATIC}]], {plain = true})
         end
         io.replace("CMakeLists.txt", [[# Tools]], [[# Tools
