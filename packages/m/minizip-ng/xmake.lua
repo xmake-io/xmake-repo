@@ -76,6 +76,11 @@ package("minizip-ng")
                 table.insert(configs, "-DMZ_" .. name:upper() .. "=" .. (enabled and "ON" or "OFF"))
             end
         end
+
+        -- need 7zip > 25.00 and patch to prevent forced dependency pulls from GitHub
+        if package:version() and package:version():ge("4.1.1") then
+            table.insert(configs, "-DMZ_PPMD=OFF")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
