@@ -18,6 +18,8 @@ package("liblo")
         local configs = {
             "-DWITH_STATIC=ON",
             "-DWITH_TESTS=OFF",
+            "-DWITH_EXAMPLES=OFF",
+            "-DWITH_CPP_TESTS=OFF"
         }
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
