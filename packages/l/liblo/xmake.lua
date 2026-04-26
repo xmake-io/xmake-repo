@@ -47,6 +47,9 @@ package("liblo")
     else()
         set_target_properties(${LIBRARY_SHARED} PROPERTIES EXCLUDE_FROM_ALL 1)
     endif()]], {plain = true})
+        if package:is_plat("wasm") then
+            io.replace("CMakeLists.txt", [[add_library(${LIBRARY_SHARED} SHARED ${LIBRARY_SOURCES})]], [[]], {plain = true})
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
