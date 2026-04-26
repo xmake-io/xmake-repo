@@ -2,7 +2,7 @@ package("lv2")
     set_kind("library", {headeronly = true})
     set_homepage("https://lv2plug.in")
     set_description("The LV2 audio plugin specification")
-    set_license("0BSD", "Apache-2.0", "CC-BY-1.0", "CC-BY-4.0", "ISC", "MIT", "W3C-19980720", "W3C-20150513")
+    set_license("ISC")
 
     add_urls("https://gitlab.com/lv2/lv2/-/archive/v$(version).tar.gz",
              "https://gitlab.com/lv2/lv2.git")
