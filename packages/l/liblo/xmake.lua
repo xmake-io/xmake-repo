@@ -7,10 +7,6 @@ package("liblo")
              "https://github.com/radarsat1/liblo.git")
     add_versions("0.34", "e9a294c7613e1bec2abcf26f2010604643d605ed6852e16b51837400729fcbee")
 
-    if is_plat("wasm") then
-        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-    end
-
     add_deps("cmake")
 
     if is_plat("linux", "cross", "bsd") then
@@ -41,15 +37,12 @@ package("liblo")
         else
             io.replace("CMakeLists.txt", [[TARGETS ${LIBRARY_STATIC} ${LIBRARY_SHARED}]], [[TARGETS ${LIBRARY_STATIC}]], {plain = true})
         end
-        io.replace("CMakeLists.txt", [[add_library(${LIBRARY_STATIC} STATIC ${LIBRARY_SOURCES})]], [[add_library(${LIBRARY_STATIC} STATIC ${LIBRARY_SOURCES})
-    if (BUILD_SHARED_LIBS)
+        io.replace("CMakeLists.txt", [[if (WITH_TOOLS)]], [[if (BUILD_SHARED_LIBS)
         set_target_properties(${LIBRARY_STATIC} PROPERTIES EXCLUDE_FROM_ALL 1)
     else()
         set_target_properties(${LIBRARY_SHARED} PROPERTIES EXCLUDE_FROM_ALL 1)
-    endif()]], {plain = true})
-        if package:is_plat("wasm") then
-            io.replace("CMakeLists.txt", [[add_library(${LIBRARY_SHARED} SHARED ${LIBRARY_SOURCES})]], [[]], {plain = true})
-        end
+    endif()
+    if (WITH_TOOLS)]], {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
 
