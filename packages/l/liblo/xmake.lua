@@ -19,6 +19,7 @@ package("liblo")
             "-DWITH_STATIC=ON",
             "-DWITH_TESTS=OFF",
         }
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         io.replace("CMakeLists.txt", [[add_library(${LIBRARY_STATIC} STATIC ${LIBRARY_SOURCES})]], [[add_library(${LIBRARY_STATIC} STATIC ${LIBRARY_SOURCES})
     if (BUILD_SHARED_LIBS)
