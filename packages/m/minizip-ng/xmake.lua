@@ -6,6 +6,7 @@ package("minizip-ng")
     add_urls("https://github.com/zlib-ng/minizip-ng/archive/refs/tags/$(version).tar.gz",
              "https://github.com/zlib-ng/minizip-ng.git")
 
+    add_versions("4.1.2", "3738c742c663fda43f1e510b8eeef312917581a712c89cb253f682aaef8c732f")
     add_versions("4.1.0", "85417229bb0cd56403e811c316150eea1a3643346d9cec7512ddb7ea291b06f2")
     add_versions("4.0.10", "c362e35ee973fa7be58cc5e38a4a6c23cc8f7e652555daf4f115a9eb2d3a6be7")
     add_versions("4.0.8", "c3e9ceab2bec26cb72eba1cf46d0e2c7cad5d2fe3adf5df77e17d6bbfea4ec8f")
@@ -74,6 +75,11 @@ package("minizip-ng")
             if not package:extraconf("configs", name, "builtin") then
                 table.insert(configs, "-DMZ_" .. name:upper() .. "=" .. (enabled and "ON" or "OFF"))
             end
+        end
+
+        -- need 7zip > 25.00 and patch to prevent forced dependency pulls from GitHub
+        if package:version() and package:version():ge("4.1.1") then
+            table.insert(configs, "-DMZ_PPMD=OFF")
         end
         import("package.tools.cmake").install(package, configs)
     end)
