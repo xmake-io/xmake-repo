@@ -10,7 +10,9 @@ package("liblo")
     add_deps("cmake")
 
     if is_plat("linux", "cross", "bsd") then
-        add_syslinks("pthread")
+        add_syslinks("pthread", "m")
+    elseif is_plat("windows", "mingw") then
+        add_syslinks("wsock32", "ws2_32", "iphlpapi")
     end
 
     on_install(function (package)
