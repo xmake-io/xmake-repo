@@ -20,6 +20,12 @@ package("liblo")
             "-DWITH_TESTS=OFF",
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        io.replace("CMakeLists.txt", [[add_library(${LIBRARY_STATIC} STATIC ${LIBRARY_SOURCES})]], [[add_library(${LIBRARY_STATIC} STATIC ${LIBRARY_SOURCES})
+    if (BUILD_SHARED_LIBS)
+		set_target_properties(${LIBRARY_STATIC} PROPERTIES EXCLUDE_FROM_ALL 1)
+	else()
+		set_target_properties(${LIBRARY_SHARED} PROPERTIES EXCLUDE_FROM_ALL 1)
+	endif()]], {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
 
