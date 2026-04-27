@@ -1,0 +1,20 @@
+--- a/reflect
++++ b/reflect
+@@
+-    return [&] {
+-      static constexpr const auto name = fixed_string<std::remove_cvref_t<decltype(type_name[0])>, std::size(type_name)>{std::data(type_name)};
+-      return std::string_view{name};
+-    }();
++    return [&]<std::size_t... Is>(std::index_sequence<Is...>) {
++      static constexpr char arr[] = { type_name[Is]..., '\0' };
++      return std::string_view{arr, sizeof...(Is)};
++    }(std::make_index_sequence<std::size(type_name)>{});
+@@
+-    return [&] {
+-      static constexpr const auto name = fixed_string<std::remove_cvref_t<decltype(member_name[0])>, std::size(member_name)>{std::data(member_name)};
+-      return std::string_view{name};
+-    }();
++    return [&]<std::size_t... Is>(std::index_sequence<Is...>) {
++      static constexpr char arr[] = { member_name[Is]..., '\0' };
++      return std::string_view{arr, sizeof...(Is)};
++    }(std::make_index_sequence<std::size(member_name)>{});
