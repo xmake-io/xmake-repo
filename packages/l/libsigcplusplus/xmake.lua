@@ -18,9 +18,11 @@ package("libsigcplusplus")
 
     add_deps("meson", "ninja")
     on_load(function (package)
+        local version = package:version()
+        local major = (version and version:major()) or 3
         package:add("includedirs",
-            "include/sigc++-" .. package:version():major() .. ".0",
-            "lib/sigc++-" .. package:version():major() .. ".0/include")
+            "include/sigc++-" .. major .. ".0",
+            "lib/sigc++-" .. major .. ".0/include")
     end)
 
     on_install("windows", "linux", "macosx", "mingw", "msys", "iphoneos", "cross", "wasm", function (package)
