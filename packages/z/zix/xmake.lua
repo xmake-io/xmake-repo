@@ -1,6 +1,6 @@
 package("zix")
     set_description("A lightweight C99 portability and data structure library")
-    set_license("0BSD", "ISC")
+    set_license("ISC")
 
     add_urls("https://gitlab.com/drobilla/zix/-/archive/v$(version)/zix-v$(version).tar.gz",
              "https://gitlab.com/drobilla/zix.git")
@@ -9,19 +9,21 @@ package("zix")
 
     add_deps("meson", "ninja")
 
+    on_load(function (package)
+        package:add("includedirs", "include/zix-0")
+        if not package:config("shared") then
+            package:add("defines", "ZIX_STATIC")
+        end
+    end)
+
     on_install(function (package)
         local configs = {
             "-Dbenchmarks=disabled",
             "-Ddocs=disabled",
             "-Dtests=disabled",
-			"-Dtests_cpp=disabled",
+            "-Dtests_cpp=disabled",
         }
-		import("package.tools.meson").install(package, configs)
-		package:add("includedirs", path.join("include", "zix-0"))
-        if not package:config("shared") then
-            package:add("defines", "ZIX_STATIC")
-        end
-
+        import("package.tools.meson").install(package, configs)
     end)
 
     on_test(function (package)		
