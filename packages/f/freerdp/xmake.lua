@@ -126,7 +126,7 @@ package("freerdp")
         end
     end)
 
-    on_install("!bsd and !iphoneos", function (package)
+    on_install("!bsd and !iphoneos and !wasm", function (package)
         if package:is_plat("mingw") then
             io.replace("winpr/include/winpr/wtypes.h", "typedef ssize_t SSIZE_T;", "#ifndef _SSIZE_T_DEFINED\ntypedef ssize_t SSIZE_T;\n#endif", {plain = true})
         end
