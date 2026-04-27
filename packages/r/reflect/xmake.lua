@@ -19,9 +19,15 @@ package("reflect")
 
     on_load(function (package)
         local tc = package:is_plat("windows") and package:toolchain("msvc")
-        local vs = tc and tonumber(tc:config("vs"))
+        if not tc then return end
 
-        if vs and vs >= 1950 then
+        local toolset = tc:config("vs_toolset")
+        if not toolset then return end
+
+        local major, minor = toolset:match("^(%d+)%.(%d+)")
+        if not major or not minor then return end
+
+        if tonumber(major) == 14 and tonumber(minor) >= 50 then
             package:add("patches", "*", "patches/msvc-1950-fix-constexpr.patch", "20c69e79ca868d90fb6d8dddd10d9ed0dab63cc72691e97d30a3fe5dd2466559")
         end
     end)
