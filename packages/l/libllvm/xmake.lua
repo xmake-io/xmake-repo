@@ -19,11 +19,24 @@ package("libllvm")
         add_configs(runtime:gsub("-", "_"), {description = "Build " .. runtime .. " runtime.", default = false, type = "boolean"})
     end
 
+    for _, target in ipairs(get_llvm_all_targets()) do
+        add_configs("target_" .. target:lower(), {description = "Build " .. target .. " target backend.", default = false, type = "boolean"})
+    end
+    for _, target in ipairs(get_llvm_experimental_targets()) do
+        add_configs("target_" .. target:lower(), {description = "Build " .. target .. " experimental target backend.", default = false, type = "boolean"})
+    end
+
     if is_plat("windows") then
         -- pre-built
+
+        local arch = is_arch("x64") and "64" or "32"
+        add_urls("https://github.com/xmake-mirror/llvm-windows/releases/download/$(version)/clang+llvm-$(version)-win" .. arch .. ".zip")
         if is_arch("x64") then
-            add_urls("https://github.com/xmake-mirror/llvm-windows/releases/download/$(version)/clang+llvm-$(version)-win64.zip")
             add_versions("19.1.7", "c6e058c6012f499811caa1ec037cc1b5c2fd2f8c20cc3315cae602cbd6c81a5e")
+            add_versions("21.1.0", "130d0067de849be36c0ec84c6d515bd310cab324a4cc95d8cc71a1d3c6c730f4")
+        elseif is_arch("x86") then
+            add_versions("19.1.7", "8fded42dfa7fede876057e3a857073a5df15649df62a6f1c352588f65569d940")
+            add_versions("21.1.0", "36b9a55e237b2db404aa621aacb8538b56dabc6f49b8927dc1109e8123524d5f")
         end
 
         -- The LLVM shared library cannot be built under windows.
@@ -38,6 +51,9 @@ package("libllvm")
         add_urls("https://github.com/llvm/llvm-project.git", {alias = "git"})
         add_versions("tarball:19.1.7", "82401fea7b79d0078043f7598b835284d6650a75b93e64b6f761ea7b63097501")
         add_versions("git:19.1.7", "llvmorg-19.1.7")
+
+        add_versions("tarball:21.1.0", "1672e3efb4c2affd62dbbe12ea898b28a451416c7d95c1bd0190c26cbe878825")
+        add_versions("git:21.1.0", "llvmorg-21.1.0")
 
         add_deps("ninja")
         add_deps("zlib", "zstd", {optional = true})
@@ -90,6 +106,42 @@ package("libllvm")
             package:add("links", "LLVM-C")
         end
 
+        -- LLVM 21+ introduces new split libraries that must be linked explicitly
+        if package:version() and package:version():ge("21.0") then
+            package:add("links", "LLVMFrontendDirective")
+            package:add("links", "LLVMFrontendAtomic")
+            package:add("links", "LLVMDebugInfoDWARFLowLevel")
+            package:add("links", "LLVMDWARFCFIChecker")
+        end
+
+        -- automatically enable the target matching the host architecture
+        local arch = package:arch()
+        local target_mapping = {
+            ["x86"] = "X86",
+            ["x64"] = "X86",
+            ["x86_64"] = "X86",
+            ["i386"] = "X86",
+            ["arm64"] = "AArch64",
+            ["arm64-v8a"] = "AArch64",
+            ["aarch64"] = "AArch64",
+            ["arm"] = "ARM",
+            ["armv7a"] = "ARM",
+            ["armv7"] = "ARM",
+            ["armeabi-v7a"] = "ARM",
+            ["riscv64"] = "RISCV",
+            ["riscv32"] = "RISCV",
+            ["loong64"] = "LoongArch",
+            ["mips"] = "Mips",
+            ["mips64"] = "Mips",
+            ["ppc64"] = "PowerPC",
+            ["ppc64le"] = "PowerPC",
+            ["wasm"] = "WebAssembly"
+        }
+        local host_target = target_mapping[arch]
+        if host_target then
+            package:config_set("target_" .. host_target:lower(), true)
+        end
+
     end)
 
     on_install("windows|x64", function (package)
@@ -97,10 +149,14 @@ package("libllvm")
     end)
 
     on_install("linux", "macosx", "bsd", "android", "iphoneos", "cross", function (package)
-        local constants = import('constants')
+        import("lib.detect.find_tool")
+        import('constants')
+        import("utils.ci.is_running", {alias = "ci_is_running"})
 
         local projects_enabled = {}
         local runtimes_enabled = {}
+        local targets_enabled = {}
+        local experimental_targets_enabled = {}
         for _, project in ipairs(constants.get_llvm_known_projects()) do
             if package:config(project:gsub("-", "_")) then
                 table.insert(projects_enabled, project)
@@ -111,12 +167,23 @@ package("libllvm")
                 table.insert(runtimes_enabled, runtime)
             end
         end
+        for _, target in ipairs(constants.get_llvm_all_targets()) do
+            if package:config("target_" .. target:lower()) then
+                table.insert(targets_enabled, target)
+            end
+        end
+        for _, target in ipairs(constants.get_llvm_experimental_targets()) do
+            if package:config("target_" .. target:lower()) then
+                table.insert(experimental_targets_enabled, target)
+            end
+        end
 
         local configs = {
             "-DBUILD_SHARED_LIBS=OFF",
 
             -- llvm
             "-DLLVM_BUILD_UTILS=OFF",
+            "-DLLVM_BUILD_EXAMPLES=OFF",
             "-DLLVM_INCLUDE_DOCS=OFF",
             "-DLLVM_INCLUDE_EXAMPLES=OFF",
             "-DLLVM_INCLUDE_TESTS=OFF",
@@ -133,7 +200,26 @@ package("libllvm")
             "-DFLANG_BUILD_TOOLS=OFF",
             "-DLLD_BUILD_TOOLS=OFF"
         }
+        if #targets_enabled > 0 then
+            table.insert(configs, "-DLLVM_TARGETS_TO_BUILD=" .. table.concat(targets_enabled, ";"))
+        end
+        if #experimental_targets_enabled > 0 then
+            table.insert(configs, "-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=" .. table.concat(experimental_targets_enabled, ";"))
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DLLVM_PARALLEL_COMPILE_JOBS=2")
+        table.insert(configs, "-DLLVM_PARALLEL_LINK_JOBS=1")
+
+        -- Native Linux ARM64 needs lld to avoid R_AARCH64_CALL26 relocation overflow
+        -- on large (debug/shared) binaries. Skip when cross-compiling (cross toolchains
+        -- like arm-gnu-toolchain don't bundle ld.lld) and skip when lld isn't installed
+        -- so CMake's CXX_SUPPORTS_CUSTOM_LINKER probe doesn't fail the configure step.
+        if package:is_arch("arm64.*", "aarch64") and is_host("linux") and (os.arch() == "arm64" or os.arch() == "aarch64") then
+            if find_tool("ld.lld") or find_tool("lld") then
+                table.insert(configs, "-DLLVM_USE_LINKER=lld")
+            end
+        end
+
         table.insert(configs, "-DLLVM_BUILD_LLVM_DYLIB=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DLLVM_ENABLE_EH=" .. (package:config("exception") and "ON" or "OFF"))
         table.insert(configs, "-DLLVM_ENABLE_RTTI=" .. (package:config("rtti") and "ON" or "OFF"))
@@ -211,8 +297,12 @@ package("libllvm")
         tryadd_dep("zlib", "ZLIB")
         tryadd_dep("zstd")
 
+        local opt = {}
+        if ci_is_running() then
+            opt.jobs = "1"
+        end
         os.cd("llvm")
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
