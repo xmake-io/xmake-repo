@@ -13,6 +13,9 @@ package("stlab")
     add_deps("cmake")
     add_deps("boost")
     on_install("windows", "macosx", "linux", function (package)
+        if package:version() and package:version():eq("2.3.0") then
+            io.replace("include/stlab/CMakeLists.txt", "iterator/set_next.hpp\n", "iterator/set_next.hpp\niterator/concepts.hpp\n", {plain = true})
+        end
         import("package.tools.cmake").install(package, {"-Dstlab.testing=OFF", "-Dstlab.coverage=OFF"})
     end)
 
