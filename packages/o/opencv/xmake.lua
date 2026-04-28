@@ -50,7 +50,6 @@ package("opencv")
     add_configs("blas", {description = "Set BLAS vendor.", values = {"mkl", "openblas"}})
     add_configs("cuda", {description = "Enable CUDA support.", default = false, type = "boolean"})
     add_configs("dynamic_parallel", {description = "Dynamically load parallel runtime (TBB etc.).", default = false, type = "boolean"})
-    add_configs("mirror", {description = "Set mirror for download.", values = {"github", "gitcode"}})
 
     if is_plat("macosx") then
         add_frameworks("Foundation", "CoreFoundation", "CoreGraphics", "AppKit", "OpenCL", "Accelerate")
@@ -141,6 +140,12 @@ package("opencv")
         if package:config("tesseract") then
             package:add("deps", "tesseract 4.1.3") -- OpenCV need tesseract from the v4 series
         end
+        if package:config("eigen") then
+            package:add("deps", "eigen")
+        end
+        if package:config("tbb") then
+            package:add("deps", "tbb", {debug = package:is_debug()})
+        end
     end)
 
     if on_check then
@@ -167,6 +172,7 @@ package("opencv")
                          "-DBUILD_opencv_python2=OFF",
                          "-DBUILD_opencv_python3=OFF",
                          "-DBUILD_JAVA=OFF"}
+        local packagedeps = {}
 
         if package:config("tesseract") then
             table.insert(configs, "-DWITH_TESSERACT=ON")
@@ -180,9 +186,13 @@ package("opencv")
         if package:config("cuda") then
             table.insert(configs, "-DWITH_CUDA=ON")
         end
-        if package:config("mirror") then
-            table.insert(configs, "-DOPENCV_DOWNLOAD_MIRROR_ID=" .. package:config("mirror"))
+        if package:config("eigen") then
+            table.insert(packagedeps, "eigen")
         end
+        if package:config("tbb") then
+            table.insert(configs, "-DBUILD_TBB=OFF")
+        end
+
         table.insert(configs, "-DPARALLEL_ENABLE_PLUGINS=" .. (package:config("dynamic_parallel") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -242,7 +252,7 @@ package("opencv")
                 shflags = {"-Wl,-Bsymbolic"}
             end
         end
-        import("package.tools.cmake").install(package, configs, {builddir = "bd", shflags = shflags, ldflags = ldflags})
+        import("package.tools.cmake").install(package, configs, {builddir = "bd", packagedeps = packagedeps, shflags = shflags, ldflags = ldflags})
 
         if not package:is_plat("windows", "android") then
             local cmakefile = os.files(package:installdir("**/OpenCVModules.cmake"))
