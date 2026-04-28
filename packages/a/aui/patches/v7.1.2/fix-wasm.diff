@@ -1,0 +1,25 @@
+diff --git a/aui.core/src/AUI/IO/APath.cpp b/aui.core/src/AUI/IO/APath.cpp
+index c5af31da..be478669 100644
+--- a/aui.core/src/AUI/IO/APath.cpp
++++ b/aui.core/src/AUI/IO/APath.cpp
+@@ -539,7 +539,7 @@ bool APath::isEffectivelyAccessible(AFileAccess flags) const noexcept {
+         return true;
+     }
+     return _waccess(aui::win32::toWchar(*this), wflags) == 0;
+-#elif AUI_PLATFORM_LINUX
++#elif AUI_PLATFORM_LINUX || AUI_PLATFORM_EMSCRIPTEN
+     return euidaccess(toStdString().c_str(), int(flags)) == 0;
+ #elif AUI_PLATFORM_ANDROID
+     return access(toStdString().c_str(), int(flags)) == 0;
+diff --git a/aui.network/src/AUI/Network/AAbstractSocket.cpp b/aui.network/src/AUI/Network/AAbstractSocket.cpp
+index c7b0d8e3..38c8d3f0 100644
+--- a/aui.network/src/AUI/Network/AAbstractSocket.cpp
++++ b/aui.network/src/AUI/Network/AAbstractSocket.cpp
+@@ -49,6 +49,7 @@ void aui_wsa_init()
+ #else
+ 
+ #include <sys/socket.h>
++#include <sys/time.h>
+ #include <netinet/in.h>
+ #include <cstring>
+ #include <netdb.h>

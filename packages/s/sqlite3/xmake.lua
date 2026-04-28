@@ -1,5 +1,4 @@
 package("sqlite3")
-
     set_homepage("https://sqlite.org/")
     set_description("The most used database engine in the world")
     set_license("Public Domain")
@@ -59,6 +58,7 @@ package("sqlite3")
     add_versions("3.51.0+100", "4f2445cd70479724d32ad015ec7fd37fbb6f6130013bd4bfbc80c32beb42b7e0")
     add_versions("3.51.0+200", "fbd89f866b1403bb66a143065440089dd76100f2238314d92274a082d4f2b7bb")
     add_versions("3.51.0+300", "81f5be397049b0cae1b167f2225af7646fc0f82e4a9b3c48c9ea3a533e21d77a")
+    add_versions("3.53.0+0", "851e9b38192fe2ceaa65e0baa665e7fa06230c3d9bd1a6a9662d02380d73365a")
 
     add_configs("explain_comments", { description = "Inserts comment text into the output of EXPLAIN.", default = true, type = "boolean"})
     add_configs("dbpage_vtab",      { description = "Enable the SQLITE_DBPAGE virtual table.", default = true, type = "boolean"})

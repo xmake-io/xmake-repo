@@ -6,6 +6,7 @@ package("openjph")
     add_urls("https://github.com/aous72/OpenJPH/archive/refs/tags/$(version).tar.gz",
              "https://github.com/aous72/OpenJPH.git")
 
+    add_versions("0.27.0", "f6768e927d8e4e4884a2efcf500a88d1b6714a48d69516332a9256803a3c8343")
     add_versions("0.26.3", "29de006da7f1e8cf0cd7c3ec424cf29103e465052c00b5a5f0ccb7e1f917bb3f")
     add_versions("0.26.2", "979dbea44fe6b6b233d08226caa0311549948a4b5d0817bb20d82cbd8bd7a30f")
     add_versions("0.26.1", "bb3c957e421557d8812b42bf3a468bc1182352b8465851cc21d209876146035a")

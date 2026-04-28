@@ -6,6 +6,7 @@ package("sentry-native")
     set_urls("https://github.com/getsentry/sentry-native/releases/download/$(version)/sentry-native.zip",
              "https://github.com/getsentry/sentry-native.git")
 
+    add_versions("0.13.7", "386426d78e7ba481f501768d613d9fd7ff58c6919f3f8f10f9f3851a590ecb6f")
     add_versions("0.13.2", "357f60edee5385dbad1c8ae629deda3843ccec4f244e752d52c957cc78eda57f")
     add_versions("0.13.1", "430bcf38465f29b5b167c4bbeb1d955cda0e40efb73da224b52675e89c7a984e")
     add_versions("0.12.8", "d668da4c13052d98b3920e3731c7d2166f9b0b7113b603c751c660eb567f3248")
@@ -36,8 +37,6 @@ package("sentry-native")
     add_versions("0.6.5", "5f74a5c5c3abc6e1e7825d3306be9e3b3fd4e0f586f3cf7e86607d6f56a71995")
     add_versions("0.6.4", "e00278bf9a4821bb4008985a5a552a84aba6ebb06d3f9e828082fcbf06b04a38")
     add_versions("0.6.3", "6b515c17a9b860ea47c6a5fd7abdfdc89b4b8cbc654c23a8bb42a39bfcb87ad9")
-    add_versions("0.5.0", "87e67ad783a7ec4476b0eb4742bd40fe5a1e2435")
-    add_versions("0.4.15", "ae3ac4efa76d431d8734d7b0b1bf9bbedaf2cbdb18dfc5c95e2411a67808cf29")
 
     add_deps("cmake")
 
@@ -113,7 +112,7 @@ package("sentry-native")
         end
         if package:is_plat("windows") then
             opt.cxflags = { "/experimental:preprocessor-" } -- fixes <Windows SDK>\um\oaidl.h(487): error C2059: syntax error: '/'
-            local vs_runtime = package:config("vs_runtime")
+            local vs_runtime = package:runtimes()
             table.insert(configs, "-DSENTRY_BUILD_RUNTIMESTATIC=" .. ((vs_runtime == "MT" or vs_runtime == "MTd") and "ON" or "OFF"))
         elseif package:is_plat("macosx") then
             opt.shflags = {"-framework", "SystemConfiguration"}
