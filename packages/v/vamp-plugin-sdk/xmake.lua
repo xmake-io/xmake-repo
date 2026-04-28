@@ -13,7 +13,16 @@ package("vamp-plugin-sdk")
         if package:is_plat("windows") then
             io.replace("pkgconfig/vamp-hostsdk.pc.in", "-ldl", "", {plain = true})
         end
-        import("package.tools.cmake").install(package)
+
+        local configs = {}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+
+        --Exporting symbols isn't handled upstream; no visibility macros or such.
+        if package:is_plat("windows") and package:config("shared") then
+            table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
+        end
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
