@@ -1,20 +1,30 @@
 --- a/reflect
 +++ b/reflect
-@@
+@@ -709,9 +709,9 @@ template<class T>
+   if (std::is_constant_evaluated()) {
+     return type_name;
+   } else {
 -    return [&] {
 -      static constexpr const auto name = fixed_string<std::remove_cvref_t<decltype(type_name[0])>, std::size(type_name)>{std::data(type_name)};
 -      return std::string_view{name};
 -    }();
 +    return [&]<std::size_t... Is>(std::index_sequence<Is...>) {
-+      static constexpr char arr[] = { type_name[Is]..., '\0' };
-+      return std::string_view{arr, sizeof...(Is)};
++      static constexpr const char arr[] = {type_name[Is]..., '\0'};
++      return std::string_view{arr, std::size(type_name)};
 +    }(std::make_index_sequence<std::size(type_name)>{});
-@@
+   }
+ }
+@@ -855,9 +855,9 @@ template<std::size_t N, class T> requires (std::is_aggregate_v<std::remove_cvref
+   if (std::is_constant_evaluated()) {
+     return member_name;
+   } else {
 -    return [&] {
 -      static constexpr const auto name = fixed_string<std::remove_cvref_t<decltype(member_name[0])>, std::size(member_name)>{std::data(member_name)};
 -      return std::string_view{name};
 -    }();
 +    return [&]<std::size_t... Is>(std::index_sequence<Is...>) {
-+      static constexpr char arr[] = { member_name[Is]..., '\0' };
-+      return std::string_view{arr, sizeof...(Is)};
++      static constexpr const char arr[] = {member_name[Is]..., '\0'};
++      return std::string_view{arr, std::size(member_name)};
 +    }(std::make_index_sequence<std::size(member_name)>{});
+   }
+ }
