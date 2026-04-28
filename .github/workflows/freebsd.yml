@@ -25,20 +25,23 @@ jobs:
         uses: vmactions/freebsd-vm@v1
         with:
           usesh: true
-          release: "14.1"
+          release: "15.0"
           sync: sshfs
           mem: 12288
           copyback: false
           prepare: |
             export ASSUME_ALWAYS_YES=yes
             export IGNORE_OSVERSION=yes
-            
+
             pkg bootstrap -f
+            # Workaround for broken FreeBSD:15:amd64/latest pkg cluster
+            # fetch-only upgrade primes the repo metadata before the real update.
+            pkg upgrade -Fqy || true
             pkg update -f
-            
+
             # Upgrade pre-installed VM packages so their libraries match the 'latest' repo
             pkg upgrade -y
-            
+
             pkg install -y git curl unzip gmake llvm gsed bash perl5 openssl 7-zip coreutils
           run: |
             git config --global --add safe.directory `pwd`

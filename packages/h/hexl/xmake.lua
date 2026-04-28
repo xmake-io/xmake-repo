@@ -21,7 +21,7 @@ package("hexl")
     if on_check then
         on_check(function (package)
             if not package:is_arch("x86_64", "x64") then
-                raise("package(hexl): only support x86_64 arch")
+                raise("package(hexl): only support x86_64/x64 arch")
             end
         end)
     end
