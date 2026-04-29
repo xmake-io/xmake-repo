@@ -9,6 +9,20 @@ package("reflect")
 
     add_versions("v1.2.6", "2991391d326886a20522ee376c04dceb4ad200ffba909bbce9a4cbe655b61ab8")
 
+    on_check(function (package)
+        if package:is_plat("android") then
+            assert(package:check_cxxsnippets({
+                test = [[
+                    #include <source_location>
+                    void test() {
+                        auto loc = std::source_location::current();
+                        (void)loc;
+                    }
+                ]]
+            }, {configs = {languages = "c++20"}}), "Android NDK/libc++ without <source_location> is not supported")
+        end
+    end)
+
     on_load(function (package)
         local tc = package:is_plat("windows") and package:toolchain("msvc")
         if not tc then return end
