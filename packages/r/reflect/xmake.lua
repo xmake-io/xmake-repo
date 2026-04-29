@@ -11,15 +11,16 @@ package("reflect")
 
     on_check(function (package)
         if package:is_plat("android") then
-            assert(package:check_cxxsnippets({
+            if not package:check_cxxsnippets({
                 test = [[
                     #include <source_location>
                     void test() {
                         auto loc = std::source_location::current();
-                        (void)loc;
                     }
                 ]]
-            }, {configs = {languages = "c++20"}}), "Android NDK/libc++ without <source_location> is not supported")
+            }, {configs = {languages = "c++20"}}) then
+                raise("Reflect package requires std::source_location (NDK r26+)")
+            end
         end
     end)
 
