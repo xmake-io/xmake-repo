@@ -35,7 +35,7 @@ package("reflect")
         if not major or not minor then return end
 
         if tonumber(major) == 14 and tonumber(minor) >= 50 then
-            package:add("patches", "*", "patches/msvc-1950-fix-constexpr.patch", "5c71efaebc24736d7100a0f971fefb14b48a98cb80420b982dd2b0a9870400df")
+            package:add("patches", "*", "patches/msvc-1950-fix-constexpr.patch", "c7073e9964ebadd177332538a72ba93add95cb2154353997dff0bee964e6db44")
         end
     end)
 
