@@ -34,14 +34,19 @@ package("llhttp")
                 opt.cflags = {"-flax-vector-conversions"}
             end
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-            table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
+            if package:version():ge("9.3.1") then
+                table.insert(configs, "-DLLHTTP_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+                table.insert(configs, "-DLLHTTP_BUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
+            else
+                table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+                table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
+            end
             import("package.tools.cmake").install(package, configs, opt)
         else
             xmake_configs.export_symbol = true
+            os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+            import("package.tools.xmake").install(package, xmake_configs)
         end
-        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        import("package.tools.xmake").install(package, xmake_configs)
 
         if package:config("shared") then
             io.replace(package:installdir("include/llhttp.h"), "__declspec(dllexport)", "__declspec(dllimport)", {plain = true})
