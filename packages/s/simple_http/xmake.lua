@@ -7,6 +7,7 @@ package("simple_http")
     add_urls("https://github.com/fantasy-peak/simple_http/archive/refs/tags/$(version).tar.gz",
              "https://github.com/fantasy-peak/simple_http.git")
 
+    add_versions("v0.6.7", "d22f7c543d68830b421fa70154ce348cb897ac5494fc50691e2045bf330587c5")
     add_versions("v0.6.6", "f0fcd565ab8d14ec3dcd7af8e832ac16befcb097e39332927d3c896bf5c212b4")
     add_versions("v0.6.5", "e8afa5a4b6e1acfb3f23e9917c7a36591f2b32a482a22a7ec37e1e020284fbf3")
     add_versions("v0.6.4", "3e25e23ba6473a4cd51357abc4995b68722b3deb3c043897c509913810e1818b")
@@ -26,6 +27,11 @@ package("simple_http")
     add_deps("nghttp2")
 
     on_load(function (package)
+        if package:is_plat("mingw") then
+            package:add("syslinks", "mswsock", "ws2_32")
+            package:add("cxflags", "-Wa,-mbig-obj")
+            package:add("asflags", "-mbig-obj")
+        end
         if package:config("openssl3") then
             package:add("deps", "openssl3")
         else
@@ -33,8 +39,7 @@ package("simple_http")
         end
     end)
 
-
-    on_install("linux", "cross", "bsd", function (package)
+    on_install("linux", "cross", "bsd", "mingw", function (package)
         import("package.tools.cmake").install(package)
     end)
 
