@@ -4,10 +4,11 @@ package("reflect")
     set_description("C++20 Static Reflection library")
     set_license("MIT")
 
-    add_urls("https://github.com/qlibs/reflect/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/qlibs/reflect.git", {submodules = false})
+    add_urls("https://github.com/qlibs/reflect/archive/refs/tags/$(version).tar.gz")
 
     add_versions("v1.2.6", "2991391d326886a20522ee376c04dceb4ad200ffba909bbce9a4cbe655b61ab8")
+
+    add_patches("v1.2.6", "patches/msvc-1950-fix-constexpr.patch", "22ca6dad37ad4074984787ebeab5c138af5bc1cb0ec5e6eabca86bb01190c4a6")
 
     on_check(function (package)
         if package:is_plat("android") then
@@ -21,21 +22,6 @@ package("reflect")
             }, {configs = {languages = "c++20"}}) then
                 raise("Reflect package requires std::source_location (NDK r26+)")
             end
-        end
-    end)
-
-    on_load(function (package)
-        local tc = package:is_plat("windows") and package:toolchain("msvc")
-        if not tc then return end
-
-        local toolset = tc:config("vs_toolset")
-        if not toolset then return end
-
-        local major, minor = toolset:match("^(%d+)%.(%d+)")
-        if not major or not minor then return end
-
-        if tonumber(major) == 14 and tonumber(minor) >= 50 then
-            package:add("patches", "*", "patches/msvc-1950-fix-constexpr.patch", "c7073e9964ebadd177332538a72ba93add95cb2154353997dff0bee964e6db44")
         end
     end)
 
