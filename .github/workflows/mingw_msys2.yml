@@ -10,14 +10,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { msystem: MINGW64, kind: static, arch: x86_64, prefix: /mingw64,
-              install: "git base-devel unzip p7zip mingw-w64-x86_64-toolchain mingw-w64-x86_64-gcc-fortran" }
-          - { msystem: MINGW64, kind: shared, arch: x86_64, prefix: /mingw64,
-              install: "git base-devel unzip p7zip mingw-w64-x86_64-toolchain mingw-w64-x86_64-gcc-fortran" }
-          - { msystem: MINGW32, kind: static, arch: i686,   prefix: /mingw32,
-              install: "git base-devel unzip p7zip mingw-w64-i686-toolchain" }
-          - { msystem: MINGW32, kind: shared, arch: i686,   prefix: /mingw32,
-              install: "git base-devel unzip p7zip mingw-w64-i686-toolchain" }
+          - { msystem: MINGW64, kind: static, arch: x86_64, prefix: /mingw64 }
+          - { msystem: MINGW64, kind: shared, arch: x86_64, prefix: /mingw64 }
+          - { msystem: MINGW32, kind: static, arch: i686,   prefix: /mingw32 }
+          - { msystem: MINGW32, kind: shared, arch: i686,   prefix: /mingw32 }
     concurrency:
         group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-MSYS2_MINGW-${{ matrix.msystem }}-${{ matrix.kind }}-${{ matrix.arch }}
         cancel-in-progress: true
@@ -29,8 +25,18 @@ jobs:
       - uses: msys2/setup-msys2@v2
         with:
           msystem: ${{ matrix.msystem }}
-          install: ${{ matrix.install }}
           update: true
+
+      - name: Install build dependencies
+        shell: msys2 {0}
+        run: |
+          set -euo pipefail
+          pacman -S --noconfirm --needed \
+            git base-devel unzip p7zip \
+            mingw-w64-${{ matrix.arch }}-toolchain
+          if [ "${{ matrix.arch }}" == "x86_64" ]; then
+            pacman -S --noconfirm --needed mingw-w64-x86_64-gcc-fortran
+          fi
 
       # Downgrade i686 GCC packages to 15.2.0-14, the last revision for which
       # MSYS2 still publishes a matching gcc-fortran build. The toolchain
@@ -65,6 +71,7 @@ jobs:
           cd ..
           git reset --hard HEAD
           git clean -fdx
+
       - name: Tests
         shell: msys2 {0}
         run: |
