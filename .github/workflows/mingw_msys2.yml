@@ -15,9 +15,9 @@ jobs:
           - { msystem: MINGW64, kind: shared, arch: x86_64, prefix: /mingw64,
               install: "git base-devel unzip p7zip mingw-w64-x86_64-toolchain mingw-w64-x86_64-gcc-fortran" }
           - { msystem: MINGW32, kind: static, arch: i686,   prefix: /mingw32,
-              install: "git base-devel unzip p7zip" }
+              install: "git base-devel unzip p7zip mingw-w64-i686-toolchain" }
           - { msystem: MINGW32, kind: shared, arch: i686,   prefix: /mingw32,
-              install: "git base-devel unzip p7zip" }
+              install: "git base-devel unzip p7zip mingw-w64-i686-toolchain" }
     concurrency:
         group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-MSYS2_MINGW-${{ matrix.msystem }}-${{ matrix.kind }}-${{ matrix.arch }}
         cancel-in-progress: true
@@ -29,17 +29,19 @@ jobs:
           install: ${{ matrix.install }}
           update: true
 
-      # Pin the i686 GCC toolchain (incl. Fortran) to 15.2.0-14.
-      # MSYS2 has stopped publishing newer i686 Fortran builds, and the live
-      # toolchain group has moved to gcc 16.1.0. Installing matched 15.2.0-14
-      # tarballs together with --nodeps keeps the i686 environment internally
-      # consistent. Stopgap until we drop MINGW32 or migrate to WinLibs.
-      - name: Pin i686 toolchain to 15.2.0-14 (with Fortran)
+      # Downgrade i686 GCC packages to 15.2.0-14, the last revision for which
+      # MSYS2 still publishes a matching gcc-fortran build. The toolchain
+      # group (binutils, crt, headers, winpthreads, etc.) installed above
+      # stays at its current version and supplies the assembler, linker,
+      # CRT, and Windows headers; --nodeps lets us replace just gcc, gcc-libs,
+      # gcc-libgfortran, and gcc-fortran without pacman objecting to the
+      # version skew. Stopgap until we drop MINGW32 or migrate to WinLibs.
+      - name: Pin i686 GCC + Fortran to 15.2.0-14
         if: matrix.arch == 'i686'
         shell: msys2 {0}
         run: |
           set -euo pipefail
-          BASE="https://mirror.msys2.org/mingw/mingw32"
+          BASE="https://repo.msys2.org/mingw/mingw32"
           pacman -U --noconfirm --nodeps --nodeps \
             "$BASE/mingw-w64-i686-gcc-15.2.0-14-any.pkg.tar.zst" \
             "$BASE/mingw-w64-i686-gcc-libs-15.2.0-14-any.pkg.tar.zst" \
