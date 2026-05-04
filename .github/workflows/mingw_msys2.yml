@@ -23,6 +23,9 @@ jobs:
         cancel-in-progress: true
     steps:
       - uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 0
+
       - uses: msys2/setup-msys2@v2
         with:
           msystem: ${{ matrix.msystem }}
