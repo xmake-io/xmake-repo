@@ -1,34 +1,52 @@
 name: MingW (Msys2)
-
 on:
   pull_request:
     branches:
       - dev
-
 jobs:
   build:
     runs-on: windows-latest
     strategy:
       fail-fast: false
       matrix:
-        include: [
-            { msystem: MINGW64, kind: static, arch: x86_64, prefix: /mingw64 },
-            { msystem: MINGW64, kind: shared, arch: x86_64, prefix: /mingw64 },
-            { msystem: MINGW32, kind: static, arch: i686,   prefix: /mingw32 },
-            { msystem: MINGW32, kind: shared, arch: i686,   prefix: /mingw32 }
-        ]
-
+        include:
+          - { msystem: MINGW64, kind: static, arch: x86_64, prefix: /mingw64,
+              install: "git base-devel unzip p7zip mingw-w64-x86_64-toolchain mingw-w64-x86_64-gcc-fortran" }
+          - { msystem: MINGW64, kind: shared, arch: x86_64, prefix: /mingw64,
+              install: "git base-devel unzip p7zip mingw-w64-x86_64-toolchain mingw-w64-x86_64-gcc-fortran" }
+          - { msystem: MINGW32, kind: static, arch: i686,   prefix: /mingw32,
+              install: "git base-devel unzip p7zip" }
+          - { msystem: MINGW32, kind: shared, arch: i686,   prefix: /mingw32,
+              install: "git base-devel unzip p7zip" }
     concurrency:
         group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-MSYS2_MINGW-${{ matrix.msystem }}-${{ matrix.kind }}-${{ matrix.arch }}
         cancel-in-progress: true
     steps:
-
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v6.0.2
       - uses: msys2/setup-msys2@v2
         with:
           msystem: ${{ matrix.msystem }}
-          install: git base-devel unzip p7zip mingw-w64-${{ matrix.arch }}-toolchain mingw-w64-${{ matrix.arch }}-gcc-fortran
+          install: ${{ matrix.install }}
           update: true
+
+      # Pin the entire i686 GCC toolchain (incl. Fortran) to 15.2.0-14.
+      # MSYS2 has stopped publishing newer i686 Fortran builds, and the live
+      # toolchain group has moved to gcc 16.1.0. Installing matched 15.2.0-14
+      # tarballs together with --nodeps keeps the i686 environment internally
+      # consistent. Stopgap until we drop MINGW32 or migrate to WinLibs.
+      - name: Pin i686 toolchain to 15.2.0-14 (with Fortran)
+        if: matrix.arch == 'i686'
+        shell: msys2 {0}
+        run: |
+          set -euo pipefail
+          BASE="https://mirror.msys2.org/mingw/mingw32"
+          pacman -U --noconfirm --nodeps --nodeps \
+            "$BASE/mingw-w64-i686-gcc-15.2.0-14-any.pkg.tar.zst" \
+            "$BASE/mingw-w64-i686-gcc-libs-15.2.0-14-any.pkg.tar.zst" \
+            "$BASE/mingw-w64-i686-gcc-libgfortran-15.2.0-14-any.pkg.tar.zst" \
+            "$BASE/mingw-w64-i686-gcc-fortran-15.2.0-14-any.pkg.tar.zst"
+          gcc --version
+          gfortran --version
 
       - name: Prepare
         shell: msys2 {0}
@@ -42,7 +60,6 @@ jobs:
           cd ..
           git reset --hard HEAD
           git clean -fdx
-
       - name: Tests
         shell: msys2 {0}
         run: |
@@ -51,4 +68,3 @@ jobs:
           else
             xmake l ./scripts/test.lua -vD -p mingw -a i386 -k ${{ matrix.kind }}
           fi
-
