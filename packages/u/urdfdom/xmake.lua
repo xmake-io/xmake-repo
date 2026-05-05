@@ -39,8 +39,10 @@ package("urdfdom")
             else
                 package:add("deps", "tinyxml")
             end
-            if version:ge("5.0.3") then
+            if version:ge("6.0.0") then
                 package:add("deps", "urdfdom-headers")
+            elseif version:ge("5.0.3") then
+                package:add("deps", "urdfdom-headers <3.0.0")
             elseif version:gt("1.0.4") and version:lt("5.0.3") then
                 package:add("deps", "urdfdom-headers <2.0.1")
             else
