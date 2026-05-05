@@ -7,6 +7,7 @@ package("octree")
     set_urls("https://github.com/attcs/Octree/archive/refs/tags/$(version).tar.gz",
              "https://github.com/attcs/Octree.git", {submodules = false})
 
+    add_versions("v3.2.1", "1bc840bc34563419372391734b1283a10eb0eb224ba3f7d8c00880bdca47031f")
     add_versions("v2.5", "86088cd000254aeddf4f9d75c0600b7f799e062340394124d69760829ed317fe")
 
     on_check(function (package)
