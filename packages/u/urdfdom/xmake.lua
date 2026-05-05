@@ -6,6 +6,7 @@ package("urdfdom")
     add_urls("https://github.com/ros/urdfdom/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ros/urdfdom.git")
 
+    add_versions("6.0.0", "3305bb725095c78ca3408a510e11f530cd9bb45229779084695b21b2e693bde9")
     add_versions("5.1.2", "f51e2f92a0830c41f98d5196ba5b01d2c7b900498a8c5ba767b7eb8a76852cdd")
     add_versions("5.1.0", "096478dc889fda2b375184304bd2511d4f33182ecd05732284c15978e2ef5d47")
     add_versions("5.0.4", "f47165c5f4d321216dbcd50d79bfccc459993b113400f507d8d72196388f9c7b")
@@ -38,8 +39,10 @@ package("urdfdom")
             else
                 package:add("deps", "tinyxml")
             end
-            if version:ge("5.0.3") then
+            if version:ge("6.0.0") then
                 package:add("deps", "urdfdom-headers")
+            elseif version:ge("5.0.3") then
+                package:add("deps", "urdfdom-headers <3.0.0")
             elseif version:gt("1.0.4") and version:lt("5.0.3") then
                 package:add("deps", "urdfdom-headers <2.0.1")
             else
