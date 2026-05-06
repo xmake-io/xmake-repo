@@ -26,7 +26,7 @@ package("libsigcplusplus")
     end)
 
     on_install("windows", "linux", "macosx", "mingw", "msys", "iphoneos", "cross", "wasm", function (package)
-        local configs = {"-Dvalidation=false", "-Dbuild-examples=false", "-Dbuild-tests=false"}
+        local configs = {"-Dvalidation=false", "-Dbuild-examples=false", "-Dbuild-tests=false", "-Dbuild-documentation=false"}
         table.insert(configs, "-Dbuild-deprecated-api=" .. (package:config("deprecated_api") and "true" or "false"))
 
         local shflags = {}
