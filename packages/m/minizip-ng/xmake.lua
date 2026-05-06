@@ -64,6 +64,7 @@ package("minizip-ng")
         -- TODO: add new config for zlib-ng?
         io.replace("CMakeLists.txt", "find_package(ZLIBNG QUIET)", "", {plain = true})
         io.replace("CMakeLists.txt", "find_package(ZLIB-NG QUIET)", "", {plain = true}) -- 4.1.0 version
+        io.replace("CMakeLists.txt", "find_package(ZLIB-NG QUIET CONFIG)", "", {plain = true}) -- 4.2.0 version
 
         local configs = {"-DMZ_LIBCOMP=OFF", "-DMZ_FETCH_LIBS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
