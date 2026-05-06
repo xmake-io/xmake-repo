@@ -7,6 +7,7 @@ package("cpp-httplib")
     set_urls("https://github.com/yhirose/cpp-httplib/archive/refs/tags/$(version).tar.gz",
              "https://github.com/yhirose/cpp-httplib.git")
 
+    add_versions("v0.43.3", "8ccb5f498a9dc44769a49466986171b5cfaf89f3a54fd2eacfdc3fda5dfc7a6a")
     add_versions("v0.41.0", "6d38a6b74ea33ac3133b8352f2b55b557c1d42f36e1ed0c01f852e3218329d39")
     add_versions("v0.37.2", "909766cd7697153c9e588b0f96defe1868b7bb11d94b8d4f0c83bb4875bc9066")
     add_versions("v0.37.1", "294776b99d51860881210624b187b64bae7c451c615ea0c6befb8d9d24a139a0")
@@ -41,7 +42,8 @@ package("cpp-httplib")
     add_versions("v0.9.2", "bfef2587a2aa31c85fb361df71c720be97076f8083e4f3881da8572f6a58054f")
     add_versions("v0.8.5", "b353f3e7c124a08940d9425aeb7206183fa29857a8f720c162f8fd820cc18f0e")
 
-    add_patches(">=0.28.0", "patches/v0.23.1/fix-mingw.diff", "d2d8a4c16de3a00d9872526a187257c7ad344eba2a9f109d10b58eadce1c4059")
+    add_patches(">=0.43.2", "patches/v0.43.2/fix-mingw.diff", "953945c4377edf171193564ed499126b8acc675061a2a89d204c7c8f4d9d4f3c")
+    add_patches(">=0.28.0 <0.43.2", "patches/v0.23.1/fix-mingw.diff", "d2d8a4c16de3a00d9872526a187257c7ad344eba2a9f109d10b58eadce1c4059")
     add_patches("v0.26.0", "patches/v0.26.0/fix-mingw.diff", "f7b704e86abd8fd04217056e3ffb01427185e0bae72999246a3b8d13ba23c56a")
     add_patches("v0.23.1", "patches/v0.23.1/fix-mingw.diff", "d2d8a4c16de3a00d9872526a187257c7ad344eba2a9f109d10b58eadce1c4059")
 
