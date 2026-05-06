@@ -26,9 +26,7 @@ package("minizip-ng")
     add_configs("zstd",  {description = "Enable zstd comppressression library.", default = false, type = "boolean"})
 
     add_deps("cmake")
-    if is_plat("linux", "bsd", "android", "cross") then
-        add_deps("openssl")
-    elseif is_plat("wasm") then
+    if is_plat("wasm") then
         add_deps("openssl3")
     end
 
@@ -42,11 +40,15 @@ package("minizip-ng")
     end
 
     on_load(function (package)
-        if package:version() and package:version():ge("4.0") then
-            if package:is_plat("macosx", "iphoneos") then
+        if package:is_plat("windows", "mingw") then
+            package:add("syslinks", "bcrypt")
+        end
+        if package:is_plat("linux", "bsd", "android", "cross", "macosx", "iphoneos") then
+            local version = package:version()
+            if version and version:ge("4.2.0") then
+                package:add("deps", "openssl3")
+            elseif version and version:ge("4.0") then
                 package:add("deps", "openssl")
-            elseif package:is_plat("windows", "mingw") then
-                package:add("syslinks", "bcrypt")
             end
         end
         for name, enabled in pairs(package:configs()) do
