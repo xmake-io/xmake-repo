@@ -7,6 +7,7 @@ package("emscripten")
     add_urls("https://github.com/emscripten-core/emsdk/archive/refs/tags/$(version).tar.gz",
              "https://github.com/emscripten-core/emsdk.git")
 
+    add_versions("5.0.7", "266df4b9644dde18303af05dce7d04854273b0bb527246cb7fb6a09591774ccf")
     add_versions("5.0.3", "9a44a58bca0a3ea594ea7340d9a726cb58c772144dd37406d1c4e921823a75eb")
     add_versions("4.0.23", "a91a4c1f42dbb0345faac093161e27d43e9b6964840d8c8d80976ab8d3eaf2d3")
     add_versions("4.0.12", "d972bf0909718f155aeb5627429230471c94b2a8a3047ee696e2690ec73961cb")
