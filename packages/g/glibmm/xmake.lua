@@ -41,7 +41,7 @@ package("glibmm")
             "lib/giomm-" .. abi .. "/include")
     end)
 
-    on_install("!android" and "!wasm" and "!iphone" and "!bsd", function (package)
+    on_install("!android and !wasm and !iphone and !bsd", function (package)
         local configs = {"-Dbuild-documentation=false", "-Dbuild-examples=false"}
         table.insert(configs, "-Dbuild-deprecated-api=" .. (package:config("deprecated_api") and "true" or "false"))
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
