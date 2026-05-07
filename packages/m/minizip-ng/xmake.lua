@@ -6,6 +6,7 @@ package("minizip-ng")
     add_urls("https://github.com/zlib-ng/minizip-ng/archive/refs/tags/$(version).tar.gz",
              "https://github.com/zlib-ng/minizip-ng.git")
 
+    add_versions("4.2.1", "3cc35c2cb925dbe67cc801e3234b31b0f30197812a99377352fa1b551ab3d011")
     add_versions("4.1.2", "3738c742c663fda43f1e510b8eeef312917581a712c89cb253f682aaef8c732f")
     add_versions("4.1.0", "85417229bb0cd56403e811c316150eea1a3643346d9cec7512ddb7ea291b06f2")
     add_versions("4.0.10", "c362e35ee973fa7be58cc5e38a4a6c23cc8f7e652555daf4f115a9eb2d3a6be7")
@@ -25,9 +26,7 @@ package("minizip-ng")
     add_configs("zstd",  {description = "Enable zstd comppressression library.", default = false, type = "boolean"})
 
     add_deps("cmake")
-    if is_plat("linux", "bsd", "android", "cross") then
-        add_deps("openssl")
-    elseif is_plat("wasm") then
+    if is_plat("wasm") then
         add_deps("openssl3")
     end
 
@@ -41,11 +40,15 @@ package("minizip-ng")
     end
 
     on_load(function (package)
-        if package:version() and package:version():ge("4.0") then
-            if package:is_plat("macosx", "iphoneos") then
+        if package:is_plat("windows", "mingw") then
+            package:add("syslinks", "bcrypt")
+        end
+        if package:is_plat("linux", "bsd", "android", "cross", "macosx", "iphoneos") then
+            local version = package:version()
+            if version and version:ge("4.2.0") then
+                package:add("deps", "openssl3")
+            elseif version and version:ge("4.0") then
                 package:add("deps", "openssl")
-            elseif package:is_plat("windows", "mingw") then
-                package:add("syslinks", "bcrypt")
             end
         end
         for name, enabled in pairs(package:configs()) do
@@ -61,6 +64,7 @@ package("minizip-ng")
         -- TODO: add new config for zlib-ng?
         io.replace("CMakeLists.txt", "find_package(ZLIBNG QUIET)", "", {plain = true})
         io.replace("CMakeLists.txt", "find_package(ZLIB-NG QUIET)", "", {plain = true}) -- 4.1.0 version
+        io.replace("CMakeLists.txt", "find_package(ZLIB-NG QUIET CONFIG)", "", {plain = true}) -- 4.2.0 version
 
         local configs = {"-DMZ_LIBCOMP=OFF", "-DMZ_FETCH_LIBS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
