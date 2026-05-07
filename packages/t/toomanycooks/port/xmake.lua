@@ -10,6 +10,7 @@ end
 
 target("toomanycooks")
     set_kind("$(kind)")
+    set_languages("cxx20")
 
     add_includedirs("include", {public = true})
     add_headerfiles("include/(**.hpp)")
