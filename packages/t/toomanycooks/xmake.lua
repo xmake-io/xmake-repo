@@ -21,7 +21,7 @@ package("toomanycooks")
         end
     end)
 
-    on_install(function (package)
+    on_install("macosx", "linux", "windows", function (package)
         io.writefile("lib.cpp", [[
             #define TMC_IMPL
             #include "tmc/all_headers.hpp" // IWYU pragma: keep
