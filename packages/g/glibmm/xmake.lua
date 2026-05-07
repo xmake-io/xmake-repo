@@ -13,7 +13,7 @@ package("glibmm")
     add_versions("2.66.8", "64f11d3b95a24e2a8d4166ecff518730f79ecc27222ef41faf7c7e0340fc9329")
 
     add_configs("deprecated_api", {description = "Build deprecated API and include it in the library", default = false, type = "boolean"})
-    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean"})
 
     add_deps("meson", "ninja")
 
@@ -26,9 +26,11 @@ package("glibmm")
         if package:version():lt("2.68") then
             package:add("deps", "libsigcplusplus <3.0.0")
             package:add("deps", "glib >=2.61.2")
+            package:add("languages", "c++11")
         else
             package:add("deps", "libsigcplusplus >=3.0.0")
             package:add("deps", "glib >=2.87.3")
+            package:add("languages", "c++17")
         end
 
         local abi = package:version() and package:version():lt("2.68") and "2.4" or "2.68"
@@ -39,9 +41,10 @@ package("glibmm")
             "lib/giomm-" .. abi .. "/include")
     end)
 
-    on_install(function (package)
+    on_install("!android" and "!wasm" and "!iphone" and "!bsd", function (package)
         local configs = {"-Dbuild-documentation=false", "-Dbuild-examples=false"}
         table.insert(configs, "-Dbuild-deprecated-api=" .. (package:config("deprecated_api") and "true" or "false"))
+        table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         import("package.tools.meson").install(package, configs)
     end)
 
