@@ -19,7 +19,7 @@ package("armadillo")
     end)
 
     on_install("windows|!arm*", "macosx", "linux", function (package)
-        os.cd("include") 
+        os.cd("include")
         io.gsub("armadillo_bits/config.hpp.cmake", "${.-}/?", "")
         io.gsub("armadillo_bits/config.hpp.cmake", "#cmakedefine (.-)\n", "${define %1}\n")
         io.writefile("xmake.lua", [[
