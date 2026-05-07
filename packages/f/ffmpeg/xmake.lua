@@ -116,6 +116,7 @@ package("ffmpeg")
             libdav1d    = "dav1d",
             nvenc       = "nv-codec-headers",
             nvdec       = "nv-codec-headers",
+            ffplay      = "libsdl2",
         }
         for name, dep in pairs(configdeps) do
             if package:config(name) then
