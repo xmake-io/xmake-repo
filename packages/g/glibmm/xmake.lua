@@ -19,7 +19,7 @@ package("glibmm")
 
     on_load(function (package)
         -- glibmm doesn't allow static build for MSVC-like compilers.
-        if package:is_plat("windows") then
+        if package:toolchain("msvc") then
             package:config_set("shared", true)
         end
 
