@@ -55,7 +55,7 @@ package("nanobind")
             if package:config("stable_abi") >= 0x030C0000 then
                 package:add("defines", "Py_LIMITED_API=" .. package:config("stable_abi"))
             else
-                wprint("stable_abi=" .. package:config("stable_abi") .. " is too old")
+                raise(string.format("stable_abi=0x%08X is too old, requires >= 0x030C0000", package:config("stable_abi")))
             end
         end
     end)
