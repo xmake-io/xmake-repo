@@ -13,7 +13,7 @@ package("lv2")
 	
     add_configs("old_headers", { description = "Install backwards compatible headers at URI-style paths", default = true, type = "boolean"})
 
-    on_install(function (package)
+    on_install("!android", function (package)
         local configs = {
             "-Ddocs=disabled",
             "-Dplugins=disabled",
