@@ -44,8 +44,7 @@ package("glibmm")
     on_install("!android and !wasm and !iphoneos and !bsd", function (package)
         -- Prevent building generate_defs_glib, generate_defs_gio. Otherwise when being built,
         -- errors arise on mingw builds. Doesn't hurt to filter for all platforms.
-        io.replace(path.join(package:sourcedir(), "tools/extra_defs_gen/meson.build"),
-            "executable(", "# executable(", {plain = true})
+        io.replace("tools/extra_defs_gen/meson.build", "executable(", "# executable(", {plain = true})
         local configs = {"-Dbuild-documentation=false", "-Dbuild-examples=false"}
         table.insert(configs, "-Dbuild-deprecated-api=" .. (package:config("deprecated_api") and "true" or "false"))
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
