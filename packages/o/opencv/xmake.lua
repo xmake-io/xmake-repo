@@ -94,6 +94,29 @@ package("opencv")
         ["2026"] = "vc18"
     }
 
+    local function get_vc_ver(package, arch)
+        local toolchain = package:toolchain("msvc")
+        local vs = toolchain and toolchain:config("vs")
+        local expected_vc_ver = vs and vs_map[vs]
+        local archdir = package:installdir(arch)
+        if os.isdir(archdir) then
+            local vc_dirs = os.dirs(path.join(archdir, "vc*"))
+            if #vc_dirs > 0 then
+                table.sort(vc_dirs)
+                if expected_vc_ver then
+                    local expected_dir = path.join(archdir, expected_vc_ver)
+                    for _, dir in ipairs(vc_dirs) do
+                        if path.absolute(dir) == path.absolute(expected_dir) then
+                            return expected_vc_ver
+                        end
+                    end
+                end
+                return path.basename(vc_dirs[#vc_dirs])
+            end
+        end
+        return expected_vc_ver or raise("Unknown Visual Studio version: " .. tostring(vs))
+    end
+
     on_load("android", "linux", "macosx", "windows", "mingw@windows,msys", function (package)
         if package:is_plat("windows") then
             local arch = "x64"
@@ -101,8 +124,7 @@ package("opencv")
             elseif package:is_arch("arm64") then arch = "ARM64"
             end
             local linkdir = (package:config("shared") and "lib" or "staticlib")
-            local vs = package:toolchain("msvc"):config("vs")
-            local vc_ver = vs_map[vs] or raise("Unknown Visual Studio version: " .. vs)
+            local vc_ver = get_vc_ver(package, arch)
             package:add("linkdirs", linkdir) -- fix path for 4.9.0/vs2022
             package:add("linkdirs", path.join(arch, vc_ver, linkdir))
         elseif package:is_plat("mingw") then
@@ -288,8 +310,7 @@ package("opencv")
                 os.trymv(path.join(package:installdir(), "x86"), path.join(package:installdir(), "ARM64"))
             end
             local linkdir = (package:config("shared") and "lib" or "staticlib")
-            local vs = package:toolchain("msvc"):config("vs")
-            local vc_ver = vs_map[vs] or raise("Unknown Visual Studio version: " .. vs)
+            local vc_ver = get_vc_ver(package, arch)
             local installdir = package:installdir(arch, vc_ver)
             local libfiles = {}
             table.join2(libfiles, os.files(path.join(package:installdir(), linkdir, "*.lib")))
@@ -299,6 +320,7 @@ package("opencv")
                     package:add("links", path.basename(f))
                 end
             end
+            package:add("linkdirs", path.join(arch, vc_ver, linkdir))
             package:addenv("PATH", "bin") -- Fix path for 4.9.0 / vs2022
             package:addenv("PATH", path.join(arch, vc_ver, "bin"))
         elseif package:is_plat("mingw") then
