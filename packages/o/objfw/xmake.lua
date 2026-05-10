@@ -52,7 +52,7 @@ package("objfw")
         add_frameworks("CoreFoundation")
     end
 
-    add_configs("tls", { description = "Enable TLS support.", default = (is_plat("macosx") and "securetransport" or "openssl"), values = { true, false, "openssl", "gnutls", "securetransport", "mbedtls" } })
+    add_configs("tls", { description = "Enable TLS support.", default = "openssl", values = { true, false, "openssl", "gnutls", "securetransport", "mbedtls" } })
     add_configs("rpath", { description = "Enable rpath.", default = true, type = "boolean" })
     add_configs("runtime", { description = "Use the included runtime, not recommended for macOS!", default = not is_plat("macosx"), type = "boolean" })
     add_configs("seluid24", { description = "Use 24 bit instead of 16 bit for selector UIDs.", default = false, type = "boolean" })
@@ -75,14 +75,14 @@ package("objfw")
     add_configs("arc", { description = "Enable Automatic Reference Counting (ARC) support.", default = true, type = "boolean" })
 
     on_load(function (package)
+        -- SecureTransport support removed for 1.4.4: https://git.nil.im/ObjFW/ObjFW/commit/4281f054365af9b97f23145be56b82e3542db354
+        if package:is_plat("macosx") and package:version() and package:version():gt("1.4.4") and package:config("tls") == "securetransport" then
+            package:config_set("tls", "openssl")
+        end
         local tls = package:config("tls")
         if type(tls) == "boolean" then
             if tls then
-                if package:is_plat("macosx") then
-                    package:add("frameworks", "Security")
-                else
-                    package:add("deps", "openssl3")
-                end
+                package:add("deps", "openssl3")
             end
         elseif tls then
             if tls == "openssl" then
