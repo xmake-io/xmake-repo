@@ -16,9 +16,10 @@ package("geo-utils-cpp")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            geo::LatLng a{0.0, 0.0};
-            geo::LatLng b{1.0, 1.0};
-            volatile double d = geo::distance_between(a, b);
-            (void)d;
+            void test() {
+                geo::LatLng a{0.0, 0.0};
+                geo::LatLng b{1.0, 1.0};
+                volatile double d = geo::distance_between(a, b);
+            }
         ]]}, {configs = {languages = "c++17"}, includes = "geo/geo.hpp"}))
     end)
