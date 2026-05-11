@@ -11,6 +11,14 @@ package("lockfree")
     add_versions("3.0.0", "da4472e900affe3d94b16d6a9b0773829abaa929053b85a6fe0fcc4f599aceec")
     add_versions("2.0.10", "0a810c522f7a0b7d1d2ffad6079cdf552735d3489db1c5ded72b8b369e60e9fb")
 
+    add_configs("cacheline_length", {description = "CPU cache line size.", default = (is_plat("macosx") and is_arch("arm64")) and 128 or 64, type = "number"})
+
+    add_defines("LOCKFREE_CACHE_COHERENT=1") -- TODO maybe an option is better
+
+    on_load(function (package)
+        package:add("defines", "LOCKFREE_CACHELINE_LENGTH=" .. package:config("cacheline_length"))
+    end)
+
     on_install(function (package)
         os.cp("lockfree/**.hpp", package:installdir("include/lockfree"), {rootdir = "lockfree"})
     end)
