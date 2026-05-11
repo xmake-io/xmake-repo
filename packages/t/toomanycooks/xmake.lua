@@ -30,7 +30,6 @@ package("toomanycooks")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
 
         import("package.tools.xmake").install(package, {
-            kind = package:config("shared") and "shared" or "static",
             more_threads = package:config("more_threads"),
             priority_count = package:config("priority_count"),
             hwloc = package:config("hwloc")
