@@ -70,6 +70,12 @@ package("daxa")
                 "std::min(actual_size, cinfo.size)",
                 "std::min<u64>(actual_size, cinfo.size)", {plain = true})
         else
+            io.replace("src/utils/impl_task_graph.cpp",
+                "auto resource_heap_size = 0ull;",
+                "VkDeviceSize resource_heap_size = 0;", {plain = true})
+            io.replace("src/utils/impl_task_graph.cpp",
+                "auto resource_heap_alignment = 0ull;",
+                "VkDeviceSize resource_heap_alignment = 0;", {plain = true})
             -- align_up(current_offset, sizeof(X)): current_offset is u64, sizeof is size_t
             io.replace("src/utils/impl_task_graph.cpp",
                 "align_up(current_offset,",
