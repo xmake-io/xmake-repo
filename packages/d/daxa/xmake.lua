@@ -6,6 +6,7 @@ package("daxa")
     add_urls("https://github.com/Ipotrick/Daxa/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Ipotrick/Daxa.git")
 
+    add_versions("3.6", "85913c6169a08dea4f56095709b7571380a543a307de11bcb445ddd544d03442")
     add_versions("3.5", "e5c257a945cbd06a11031cf69fc887d59504777d9d127d8b6f9705ec6bdc08c7")
 
     add_configs("imgui", {description = "The ImGUI Daxa utility", default = true, type = "boolean"})
