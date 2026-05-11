@@ -51,24 +51,34 @@ package("daxa")
     on_install("linux", function (package)
         -- GCC 15 changed uint64_t from unsigned long to unsigned long long on some platforms,
         -- causing ull/ll literals to mismatch u64/i64 in template deduction.
-        -- Also: imgui 1.91.x changed ImTextureID from void* to ImU64.
-        io.replace("src/impl_swapchain.cpp",
-            "std::max(0ll, self->cpu_frame_timeline)",
-            "std::max(i64{0}, self->cpu_frame_timeline)", {plain = true})
-        io.replace("src/utils/impl_task_graph_mk2.cpp",
-            "auto transient_heap_size = 0ull;",
-            "VkDeviceSize transient_heap_size = 0;", {plain = true})
-        io.replace("src/utils/impl_task_graph_mk2.cpp",
-            "auto transient_heap_alignment = 0ull;",
-            "VkDeviceSize transient_heap_alignment = 0;", {plain = true})
-        -- align_up(current_offset, sizeof(X)): current_offset is u64, sizeof is size_t
-        io.replace("src/utils/impl_task_graph_mk2.cpp",
-            "align_up(current_offset,",
-            "align_up<u64>(current_offset,", {plain = true})
-        -- std::min(actual_size, cinfo.size): usize vs u64 deduction conflict
-        io.replace("src/utils/impl_task_graph_mk2.cpp",
-            "std::min(actual_size, cinfo.size)",
-            "std::min<u64>(actual_size, cinfo.size)", {plain = true})
+        if package:version() and package:version():lt("3.6") then
+            io.replace("src/impl_swapchain.cpp",
+                "std::max(0ll, self->cpu_frame_timeline)",
+                "std::max(i64{0}, self->cpu_frame_timeline)", {plain = true})
+            io.replace("src/utils/impl_task_graph_mk2.cpp",
+                "auto transient_heap_size = 0ull;",
+                "VkDeviceSize transient_heap_size = 0;", {plain = true})
+            io.replace("src/utils/impl_task_graph_mk2.cpp",
+                "auto transient_heap_alignment = 0ull;",
+                "VkDeviceSize transient_heap_alignment = 0;", {plain = true})
+            -- align_up(current_offset, sizeof(X)): current_offset is u64, sizeof is size_t
+            io.replace("src/utils/impl_task_graph_mk2.cpp",
+                "align_up(current_offset,",
+                "align_up<u64>(current_offset,", {plain = true})
+            -- std::min(actual_size, cinfo.size): usize vs u64 deduction conflict
+            io.replace("src/utils/impl_task_graph_mk2.cpp",
+                "std::min(actual_size, cinfo.size)",
+                "std::min<u64>(actual_size, cinfo.size)", {plain = true})
+        else
+            -- align_up(current_offset, sizeof(X)): current_offset is u64, sizeof is size_t
+            io.replace("src/utils/impl_task_graph.cpp",
+                "align_up(current_offset,",
+                "align_up<u64>(current_offset,", {plain = true})
+            -- std::min(actual_size, cinfo.size): usize vs u64 deduction conflict
+            io.replace("src/utils/impl_task_graph.cpp",
+                "std::min(actual_size, cinfo.size)",
+                "std::min<u64>(actual_size, cinfo.size)", {plain = true})
+        end
         io.replace("src/utils/impl_task_graph_ui.cpp",
             "std::min(255ull, resource.name.size())",
             "std::min<size_t>(255, resource.name.size())", {plain = true})
