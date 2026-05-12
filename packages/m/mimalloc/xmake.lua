@@ -34,6 +34,8 @@ package("mimalloc")
     if is_plat("windows") then
         add_configs("etw", {description = "Enable Event tracing for Windows", default = false, type = "boolean"})
     end
+    add_configs("override", {description = "Override the standard malloc interface", default = false, type = "boolean"})
+    add_configs("cxx", {description = "Use the C++ compiler to compile the library", default = false, type = "boolean"})
 
     add_deps("cmake")
 
@@ -55,7 +57,6 @@ package("mimalloc")
         end
 
         local configs = {
-            "-DMI_OVERRIDE=OFF",
             "-DMI_BUILD_TESTS=OFF",
             "-DMI_BUILD_OBJECT=OFF",
         }
@@ -66,6 +67,9 @@ package("mimalloc")
         table.insert(configs, "-DMI_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DMI_SECURE=" .. (package:config("secure") and "ON" or "OFF"))
         table.insert(configs, "-DMI_TRACK_ETW=" .. (package:config("etw") and "ON" or "OFF"))
+        table.insert(configs, "-DMI_OVERRIDE=" .. (package:config("override") and "ON" or "OFF"))
+        table.insert(configs, "-DMI_USE_CXX=" .. (package:config("cxx") and "ON" or "OFF"))
+        table.insert(configs, "-DMI_TRACK_ASAN=" .. (package:config("asan") and "ON" or "OFF"))
 
         --x64:mimalloc-redirect.lib/dll x86:mimalloc-redirect32.lib/dll
         if package:version():le("2.0.1") and package:config("shared") and package:is_plat("windows") and package:is_arch("x86") then
@@ -104,7 +108,7 @@ package("mimalloc")
             elseif package:is_plat("macosx") then
                 os.trycp("build/*.dylib", package:installdir("bin"))
                 os.trycp("build/*.dylib", package:installdir("lib"))
-                os.trycp("build/*.a", package:installdir("lib"))               
+                os.trycp("build/*.a", package:installdir("lib"))
             else
                 os.trycp("build/*.so", package:installdir("bin"))
                 os.trycp("build/*.so", package:installdir("lib"))
