@@ -1,9 +1,8 @@
 package("valgrind")
+    set_kind("binary")
     set_homepage("https://valgrind.org")
     set_description("Valgrind is a GPL'd system for debugging and profiling Linux programs.")
     set_license("GPL-3.0")
-
-    set_kind("binary")
 
     add_urls("https://sourceware.org/pub/valgrind/valgrind-$(version).tar.bz2", {alias = "home"})
     add_urls("https://sourceware.org/git/valgrind.git", {alias = "git"})
