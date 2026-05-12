@@ -27,6 +27,7 @@
 -- Run:  xmake l scripts/build_index.lua
 
 import("core.base.json")
+import("core.base.semver")
 import("core.package.package")
 
 -- Match the loader pattern used by scripts/packages.lua and scripts/autoupdate.lua.
@@ -40,25 +41,28 @@ function _load_package(packagename, packagedir, packagefile)
 end
 
 function _latest_version(instance)
-    -- Prefer the ordered list if exposed; otherwise sort the hash table keys.
     local versions = instance:get("versions")
-    if not versions then
+    if not versions or type(versions) ~= "table" then
         return nil
     end
+    -- `add_versions(v, sha)` stores entries as a hash {version = sha256, ...}, so
+    -- we collect keys and sort them ourselves to pick the latest.
     local list = {}
-    if type(versions) == "table" then
-        if #versions > 0 then
-            -- list-like (ordered)
-            return versions[#versions]
-        end
-        for v, _ in pairs(versions) do
-            table.insert(list, tostring(v))
-        end
+    for v, _ in pairs(versions) do
+        table.insert(list, tostring(v))
     end
     if #list == 0 then
         return nil
     end
-    table.sort(list)
+    -- Semver-aware ascending sort. Falls back to string comparison for non-semver
+    -- versions (e.g. git refs), which a small number of packages use. Matches the
+    -- pattern in scripts/build_artifacts.lua.
+    table.sort(list, function(a, b)
+        if semver.is_valid(a) and semver.is_valid(b) then
+            return semver.compare(a, b) < 0
+        end
+        return a < b
+    end)
     return list[#list]
 end
 
