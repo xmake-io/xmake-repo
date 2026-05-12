@@ -35,8 +35,7 @@ package("mimalloc")
         add_configs("etw", {description = "Enable Event tracing for Windows", default = false, type = "boolean"})
     end
     add_configs("override", {description = "Override the standard malloc interface", default = false, type = "boolean"})
-    add_configs("use_cxx", {description = "Use the C++ compiler to compile the library", default = false, type = "boolean"})
-    add_configs("asan", {description = "Compile with address sanitizer support (adds a small overhead)", default = false, type = "boolean"})
+    add_configs("cxx", {description = "Use the C++ compiler to compile the library", default = false, type = "boolean"})
 
     add_deps("cmake")
 
@@ -69,7 +68,7 @@ package("mimalloc")
         table.insert(configs, "-DMI_SECURE=" .. (package:config("secure") and "ON" or "OFF"))
         table.insert(configs, "-DMI_TRACK_ETW=" .. (package:config("etw") and "ON" or "OFF"))
         table.insert(configs, "-DMI_OVERRIDE=" .. (package:config("override") and "ON" or "OFF"))
-        table.insert(configs, "-DMI_USE_CXX=" .. (package:config("use_cxx") and "ON" or "OFF"))
+        table.insert(configs, "-DMI_USE_CXX=" .. (package:config("cxx") and "ON" or "OFF"))
         table.insert(configs, "-DMI_TRACK_ASAN=" .. (package:config("asan") and "ON" or "OFF"))
 
         --x64:mimalloc-redirect.lib/dll x86:mimalloc-redirect32.lib/dll
