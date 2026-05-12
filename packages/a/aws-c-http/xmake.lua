@@ -6,6 +6,7 @@ package("aws-c-http")
     add_urls("https://github.com/awslabs/aws-c-http/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-http.git")
 
+    add_versions("v0.10.15", "37e7f9806b2877671cfa2bde078c50b78a358f35ef5a07f7bd2ca1beab5b5a9f")
     add_versions("v0.10.14", "d44866920b89e07b9db17e9c84587c6dca6c796d691597f1bee5e17b16b79d39")
     add_versions("v0.10.13", "d8352e7a1fb1996694a4dc31219ce03452882abf8d0858c104727f975e11b9c7")
     add_versions("v0.10.11", "b375e9630aa93830f54b544298745fd30a6cb3d09e5ff8473c7455a1599bf2b7")
