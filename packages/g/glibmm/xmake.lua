@@ -52,5 +52,10 @@ package("glibmm")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxincludes("glibmm.h", {configs = {languages = "c++17"}}))
+        assert(package:check_cxxsnippets({test = [[
+            int main() {
+                Glib::init();
+                return 0;
+            }
+        ]]}, {configs = {languages = "c++17"}, includes = "glibmm.h"}))
     end)
