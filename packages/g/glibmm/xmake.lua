@@ -12,7 +12,7 @@ package("glibmm")
     add_versions("2.88.0", "a6549da3a6c43de83b8717dae5413c57a60d92f6ecc624615c612d0bb0ad0fe2")
     add_versions("2.66.8", "64f11d3b95a24e2a8d4166ecff518730f79ecc27222ef41faf7c7e0340fc9329")
 
-    add_configs("deprecated_api", {description = "Build deprecated API and include it in the library", default = false, type = "boolean"})
+    add_configs("deprecated_api", {description = "Build deprecated API and include it in the library", default = true, type = "boolean"})
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean"})
 
     add_deps("meson", "ninja")
