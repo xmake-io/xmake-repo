@@ -17,7 +17,7 @@
 --         "description":    "<set_description(...)>",
 --         "license":        "<set_license(...)>",
 --         "homepage":       "<set_homepage(...)>",
---         "repository_url": "<set_homepage(...)>",          -- canonical project URL
+--         "repository_url": "<normalized from add_urls(...), homepage fallback>",
 --         "download_url":   "<first add_urls(...) entry with $(version) resolved>"
 --       },
 --       ...
@@ -79,28 +79,107 @@ function _resolve_url(url, version)
     return url
 end
 
-function _first_download_url(instance, version)
+function _urls_list(instance)
     local urls = instance:get("urls")
     if not urls then
-        return nil
+        return {}
     end
     if type(urls) == "string" then
-        return _resolve_url(urls, version)
+        return {urls}
     end
+    return urls
+end
+
+function _first_download_url(instance, version)
     -- xmake convention: the first entry is the primary fetch source for the package.
+    local urls = _urls_list(instance)
     return _resolve_url(urls[1], version)
+end
+
+-- Forge hosts whose "/archive/", "/releases/", "/get/" path segments are
+-- unambiguous version-archive markers (i.e. not just a coincidentally-named
+-- directory on a tarball mirror like download.imagemagick.org/.../releases/...).
+local _forge_hosts = {
+    ["github.com"]    = true,
+    ["gitlab.com"]    = true,
+    ["bitbucket.org"] = true,
+    ["codeberg.org"]  = true,
+    ["gitea.com"]     = true,
+    ["gitee.com"]     = true,
+}
+
+-- Strip per-version archive/release path segments and ".git" suffixes so that a
+-- download URL collapses to the bare "<scheme>://<host>/<owner>/<repo>" root.
+-- Returns nil for URLs that do not match a recognized forge layout — those are
+-- typically vendor tarball mirrors (e.g. ftpmirror.gnu.org) that do not point at
+-- a repository root and should not be reported as repository_url.
+function _normalize_repo_url(url)
+    if type(url) ~= "string" then
+        return nil
+    end
+    url = url:gsub("^git%+", "")
+    -- GitLab "/-/archive/" is a forge-specific marker — accept any host so that
+    -- self-hosted instances (gitlab.gnome.org, code.videolan.org, ...) work.
+    local root = url:match("^(https?://[^/]+/[^/]+/[^/]+)/%-/archive/")
+    if root then
+        return root
+    end
+    -- Bare ".git" URL — also unambiguous, accept any host.
+    root = url:match("^(https?://[^/]+/[^/]+/[^/]+)%.git$")
+    if root then
+        return root
+    end
+    -- "/archive/", "/releases/", "/get/" can occur as ordinary directory names
+    -- on tarball mirrors, so only strip them on hosts where we know the path
+    -- segment is forge-specific.
+    local host = url:match("^https?://([^/]+)/")
+    if host and _forge_hosts[host] then
+        root = url:match("^(https?://[^/]+/[^/]+/[^/]+)/archive/")
+            or url:match("^(https?://[^/]+/[^/]+/[^/]+)/releases/")
+            or url:match("^(https?://[^/]+/[^/]+/[^/]+)/get/")
+        if root then
+            return root
+        end
+    end
+    return nil
+end
+
+function _homepage_as_repo_url(homepage)
+    if type(homepage) ~= "string" then
+        return nil
+    end
+    local host, rest = homepage:match("^https?://([^/]+)/(.+)$")
+    if not host or not _forge_hosts[host] then
+        return nil
+    end
+    -- Require exactly "<owner>/<repo>" (with optional trailing slash) so we
+    -- don't mistake URLs like github.com/owner/repo/wiki for a repo root.
+    local owner, repo = rest:match("^([^/]+)/([^/]+)/?$")
+    if not owner or not repo then
+        return nil
+    end
+    return ("https://%s/%s/%s"):format(host, owner, repo)
+end
+
+function _repository_url(instance)
+    for _, url in ipairs(_urls_list(instance)) do
+        local repo = _normalize_repo_url(url)
+        if repo then
+            return repo
+        end
+    end
+    return _homepage_as_repo_url(instance:get("homepage"))
 end
 
 function _entry(instance)
     local version = _latest_version(instance)
-    local homepage = instance:get("homepage")
     return {
         name           = instance:name(),
         version        = version,
         description    = instance:get("description"),
         license        = instance:get("license"),
-        homepage       = homepage,
-        repository_url = homepage,  -- homepage is, by convention, the canonical project URL
+        homepage       = instance:get("homepage"),
+        repository_url = _repository_url(instance),
         download_url   = _first_download_url(instance, version),
     }
 end
