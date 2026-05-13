@@ -14,7 +14,9 @@ package("libyuv")
     add_patches("1913", "patches/1913/cmake.patch", "9b61c6a5c26e727d164f06e83a3bf19863f840cd57fcee365429561e640930bf")
     add_patches("1891", "patches/1891/cmake.patch", "87086566b2180f65ff3d5ef9db7c59a6e51e2592aeeb787e45305beb4cf9d30d")
 
-    add_configs("jpeg", {description = "Build with JPEG.", default = "none", type = "string", values = {"none", "libjpeg", "libjpeg-turbo"}})
+    add_configs("jpeg", {description = "Build with JPEG.", default = false, type = "boolean"})
+    add_configs("jpeg_library", {description = "Which JPEG library to build with.",
+                default = "libjpeg", type = "string", values = {"libjpeg", "libjpeg-turbo"}})
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
 
     add_deps("cmake")
@@ -31,8 +33,8 @@ package("libyuv")
     end
 
     on_load(function (package)
-        if package:config("jpeg") ~= "none" then
-            package:add("deps", package:config("jpeg"))
+        if package:config("jpeg") then
+            package:add("deps", package:config("jpeg_library"))
         end
 
         if package:config("shared") then
@@ -55,7 +57,7 @@ package("libyuv")
         local configs = {"-DCMAKE_CXX_STANDARD=14"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DLIBYUV_WITH_JPEG=" .. (package:config("jpeg") ~= "none" and "ON" or "OFF"))
+        table.insert(configs, "-DLIBYUV_WITH_JPEG=" .. (package:config("jpeg") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
