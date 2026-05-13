@@ -6,6 +6,7 @@ package("argus")
     add_urls("https://github.com/lucocozz/Argus/archive/refs/tags/$(version).tar.gz",
              "https://github.com/lucocozz/Argus.git")
 
+    add_versions("v0.2.1", "2388cf6b5d64289251d661b07946565ca69690c8a852b4c7872829325c5a9646")
     add_versions("v0.2.0", "b943476d84eef3d64e0fe1aeb2a3c206e5a6767711a19c3d8c933f26cfc72933")
     add_versions("v0.1.0", "0e7780db65a06f72268a60336d8621ea17f704ec12c6d679c0ae86048ec6e8fc")
 
