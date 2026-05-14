@@ -1,5 +1,4 @@
 package("toomanycooks")
-    set_kind("library")
     set_homepage("https://github.com/tzcnt/TooManyCooks/")
     set_description("C++20 concurrency framework with no compromises. Excellent performance, powerful features, and simple syntax.")
     set_license("BSL-1.0")
@@ -9,10 +8,8 @@ package("toomanycooks")
 
     add_versions("1.4.0", "5c847cfd73231409301732f3e158c52b694a2bd90d336e90f558811d59ef7f69")
 
-    add_configs("priority_count", {default = 0, type = "number",
-                description = "Allows you to specify the number of priority levels at compile time. 0 = specified at runtime"})
-    add_configs("more_threads", {default = false, type = "boolean",
-                description = "Unlimited threads in cpu executor, otherwise fixed to 64 threads"})
+    add_configs("priority_count", {default = 0, type = "number", description = "Allows you to specify the number of priority levels at compile time. 0 = specified at runtime"})
+    add_configs("more_threads", {default = false, type = "boolean", description = "Unlimited threads in cpu executor, otherwise fixed to 64 threads"})
     add_configs("hwloc", {default = false, type = "boolean", description = "Build with hwloc"})
 
     on_load(function (package)
@@ -24,7 +21,7 @@ package("toomanycooks")
     on_install("linux", function (package)
         io.writefile("lib.cpp", [[
             #define TMC_IMPL
-            #include "tmc/all_headers.hpp" // IWYU pragma: keep
+            #include "tmc/all_headers.hpp"
         ]])
 
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
