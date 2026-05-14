@@ -38,6 +38,10 @@ package("geode-sdk-tuliphook")
     end)
 
     on_install("!wasm and !cross and !bsd and !iphoneos", function (package)
+        if package:version() and package:version():ge("3.1.13") then
+            -- fix INT_MAX
+            io.replace("src/Pool.cpp", "#include <tulip/platform/DefaultConvention.hpp>", "#include <climits>\n#include <tulip/platform/DefaultConvention.hpp>", {plain = true})
+        end
         io.writefile("xmake.lua", [[
             add_requires("geode-sdk-result")
             add_packages("geode-sdk-result")
