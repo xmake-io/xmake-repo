@@ -26,11 +26,11 @@ package("cairomm")
 
         if abi == "1.0" then
             package:add("deps", "libsigcplusplus <3.0.0")
-            package:add("deps", "cairo >=1.12.0")
+            package:add("deps", "cairo >=1.12.0", {configs = {shared = package:config("shared")}})
             package:add("languages", "c++11")
         else
             package:add("deps", "libsigcplusplus >=3.0.0")
-            package:add("deps", "cairo >=1.14.0")
+            package:add("deps", "cairo >=1.14.0", {configs = {shared = package:config("shared")}})
             package:add("languages", "c++17")
         end
 
