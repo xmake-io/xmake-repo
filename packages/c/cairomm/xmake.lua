@@ -13,11 +13,6 @@ package("cairomm")
     add_configs("exceptions_api", {description = "Build exceptions API and include it in the library", default = true, type = "boolean"})
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean"})
 
-    if is_subhost("windows") then
-        add_deps("pkgconf")
-    else
-        add_deps("pkg-config")
-    end
     add_deps("meson", "ninja")
 
     on_load(function (package)
