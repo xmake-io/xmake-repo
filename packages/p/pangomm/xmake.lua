@@ -39,7 +39,7 @@ package("pangomm")
         end
     end)
 
-    on_install("!android and !bsd and !iphoneos and !wasm", function (package)
+    on_install("!android and !bsd and !iphoneos and !wasm and windows|!arm*", function (package)
         local configs = {"-Dbuild-documentation=false"}
         table.insert(configs, "-Dbuild-deprecated-api=" .. (package:config("deprecated_api") and "true" or "false"))
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
@@ -55,7 +55,7 @@ package("pangomm")
         local language = package:version():lt("2.48") and "c++11" or "c++17"
         assert(package:check_cxxsnippets({test = [[
             int main() {
-            #if PANGOWMM_MAJOR_VERSION > 2 || (PANGOWMM_MAJOR_VERSION == 2 && PANGOWMM_MINOR_VERSION >= 48)
+            #if PANGOMM_MAJOR_VERSION > 2 || (PANGOMM_MAJOR_VERSION == 2 && PANGOMM_MINOR_VERSION >= 48)
                 auto alignment = Pango::Alignment::LEFT;
             #else
                 auto alignment = Pango::ALIGN_LEFT;
