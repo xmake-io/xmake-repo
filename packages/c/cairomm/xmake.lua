@@ -50,7 +50,13 @@ package("cairomm")
         table.insert(configs, "-Dbuild-deprecated-api=" .. (package:config("deprecated_api") and "true" or "false"))
         table.insert(configs, "-Dbuild-exceptions-api=" .. (package:config("exceptions_api") and "true" or "false"))
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-        import("package.tools.meson").install(package, configs)
+
+        local cxxflags = {}
+        if package:is_plat("windows", "mingw") and not package:config("shared") then
+            table.insert(cxxflags, "-DCAIROMM_STATIC_LIB")
+            table.insert(cxxflags, "-DCAIRO_WIN32_STATIC_BUILD")
+        end
+        import("package.tools.meson").install(package, configs, {cxxflags = cxxflags})
     end)
 
     on_test(function (package)
