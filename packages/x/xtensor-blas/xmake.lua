@@ -15,6 +15,15 @@ package("xtensor-blas")
     add_configs("vendor", {description = "Set BLAS vendor.", default = "openblas", type = "string", values = {"mkl", "openblas"}})
 
     add_deps("cmake")
+
+    if on_check then
+        on_check("windows", function (package)
+            if package:is_arch("arm64") then
+                raise("package(xtensor-blas): unsupport windows|arm64")
+            end
+        end)
+    end
+
     on_load("windows", "linux", function (package)
         package:add("deps", package:config("vendor"))
         local version = package:version()
