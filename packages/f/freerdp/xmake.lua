@@ -162,6 +162,13 @@ package("freerdp")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
+        local openssl3 = package:dep("openssl3")
+        if openssl3 then
+            if not openssl3:is_system() then
+                table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl3:installdir())
+            end
+        end
+
         local dep = package:config("json")
         table.insert(configs, "-DWITH_JSON_DISABLED=" .. (dep and "OFF" or "ON"))
         table.insert(configs, "-DWITH_CJSON_REQUIRED=" .. (dep == "cjson" and "ON" or "OFF"))
