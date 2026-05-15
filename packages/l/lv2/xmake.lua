@@ -24,5 +24,5 @@ package("lv2")
     end)
 
     on_test(function (package)		
-        assert(package:has_cfuncs("lv2_descriptor", {includes = "lv2/lv2.h"}))
+        assert(package:has_cfuncs("lv2_descriptor", {includes = "lv2/core/lv2.h"}))
     end)
