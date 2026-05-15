@@ -167,6 +167,28 @@ package("freerdp")
             if not openssl3:is_system() then
                 table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl3:installdir())
             end
+            local fetchinfo = openssl3:fetch({external = false})
+            local libconfig = {
+                OPENSSL_CRYPTO_LIBRARY = "crypto",
+                OPENSSL_SSL_LIBRARY = "ssl"
+            }
+            if fetchinfo then
+                local includedirs = fetchinfo.includedirs or fetchinfo.sysincludedirs
+                if includedirs and #includedirs > 0 then
+                    table.insert(configs, "-DOPENSSL_INCLUDE_DIR=" .. table.concat(includedirs, ";"):gsub("\\", "/"))
+                end
+                for _, libfile in ipairs(fetchinfo.libfiles) do
+                    local libname = path.basename(libfile)
+                    if libname:startswith("lib") then
+                        libname = libname:sub(4)
+                    end
+                    for opt, suffix in pairs(libconfig) do
+                        if libname:endswith(suffix) then
+                            table.insert(configs, "-D" .. opt .. "=" .. libfile:gsub("\\", "/"))
+                        end
+                    end
+                end
+            end
         end
 
         local dep = package:config("json")
