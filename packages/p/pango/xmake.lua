@@ -34,7 +34,11 @@ package("pango")
     on_load(function (package)
         for _, name in ipairs({"fontconfig", "cairo", "freetype", "libthai"}) do
             if package:config(name) then
-                package:add("deps", name)
+                if name == "cairo" and package:config("fontconfig") then
+                    package:add("deps", "cairo", {configs = {fontconfig = true}})
+                else
+                    package:add("deps", name)
+                end
             end
         end
         if package:config("fontconfig") then
