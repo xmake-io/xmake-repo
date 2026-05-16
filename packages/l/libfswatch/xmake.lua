@@ -6,6 +6,7 @@ package("libfswatch")
     add_urls("https://github.com/emcrisostomo/fswatch/archive/refs/tags/$(version).tar.gz",
              "https://github.com/emcrisostomo/fswatch.git")
 
+    add_versions("1.21.0", "1a184152a768b8ce7bb5049f768071ab07c5e9b4d0fd70db91c79d069b01c0b5")
     add_versions("1.19.0", "0701283dd0eae6d21eb4c996ef4caf49921538c11f1c68ae2a5f7b3a2f1e36e7")
     add_versions("1.18.3", "07f9fec15138fe25ea92d869117811c7c4fba2e6c6231682d49b159bae2ebd53")
     add_versions("1.18.2", "698f21fe5489311dabe9e90463fb9d40796780abac8d207b857e86ade7345d86")
