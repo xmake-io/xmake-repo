@@ -98,6 +98,17 @@ package("cairo")
             table.insert(configs, "-Dlzo=" .. (package:config("lzo") and "enabled" or "disabled"))
         end
         import("package.tools.meson").install(package, configs)
+
+        -- Attempt to fix windows/mingw static builds, for when cairo is used as a dependency.
+        -- See the failed tests in https://github.com/xmake-io/xmake-repo/pull/9989 for reference.
+        if not package:config("shared") and (package:is_plat("windows", "mingw")) then
+            for _, pc in ipairs(os.files(path.join(package:installdir("lib", "pkgconfig"), "*.pc"))) do
+                io.replace(pc, "Cflags:", "Cflags: -DCAIRO_WIN32_STATIC_BUILD=1")
+                if package:is_plat("mingw") then
+                    io.replace(pc, "Libs.private:", "Libs.private: -lstdc++")
+                end
+            end
+        end
     end)
 
     on_test(function (package)
