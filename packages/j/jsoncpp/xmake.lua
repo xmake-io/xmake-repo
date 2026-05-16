@@ -6,6 +6,7 @@ package("jsoncpp")
     add_urls("https://github.com/open-source-parsers/jsoncpp/archive/refs/tags/$(version).zip",
              "https://github.com/open-source-parsers/jsoncpp.git")
 
+    add_versions("1.9.7", "c7827b77d561330b671cf4b5c38d3c3eb770f5a417ac30f78c0f0469c87a7a17")
     add_versions("1.9.4", "6da6cdc026fe042599d9fce7b06ff2c128e8dd6b8b751fca91eb022bce310880")
     add_versions("1.9.5", "a074e1b38083484e8e07789fd683599d19da8bb960959c83751cd0284bdf2043")
     add_versions("1.9.6", "0d445d6e956fb62d69ec6895b0000ea6caddf0680373a0d5a37b719c7fbf369b")
