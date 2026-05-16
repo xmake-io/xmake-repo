@@ -106,7 +106,11 @@ package("cairo")
                 io.replace(pc, "Cflags:", "Cflags: -DCAIRO_WIN32_STATIC_BUILD=1")
                 -- Fix undefined references to C++ runtime symbols (operator new[], delete[], __gxx_personality, etc.)
                 if package:is_plat("mingw") then
-                    io.replace(pc, "^(Libs:.*)$", "%1 -lstdc++", {plain = false})
+                    if io.readfile(pc):match("Libs%.private:") then
+                        io.replace(pc, "^(Libs.private:.*)$", "%1 -lstdc++", {plain = false})
+                    else
+                        io.replace(pc, "^(Libs:.*)$", "%1\nLibs.private: -lstdc++", {plain = false})
+                    end
                 end
             end
         end
