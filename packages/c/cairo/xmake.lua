@@ -101,11 +101,12 @@ package("cairo")
 
         -- Fix windows/mingw static builds, for when cairo is used as a dependency.
         for _, pc in ipairs(os.files(path.join(package:installdir("lib", "pkgconfig"), "*.pc"))) do
-            if package:is_plat("windows", "mingw") and not package:config("shared") then
+            if package:is_plat("windows") and not package:config("shared") then
                 io.replace(pc, "Cflags:", "Cflags: -DCAIRO_WIN32_STATIC_BUILD=1")
             end
             --cairo 1.18.0+: DWrite backend needs C++ runtime
             if package:is_plat("mingw") and not package:config("shared") then
+                io.replace(pc, "Cflags:", "Cflags: -DCAIRO_WIN32_STATIC_BUILD=1")
                 io.replace(pc, "^(Libs:.*)$", "%1 -lstdc++", {plain = false})
             end
         end
