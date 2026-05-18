@@ -33,6 +33,7 @@ package("hyprwayland-scanner")
         version = version or (package:version() and package:version_str():gsub("^v", ""))
         version = version or "0.0.0"
         io.replace("src/main.cpp", "SCANNER_VERSION", '"' .. version .. '"', {plain = true})
+        io.replace("src/main.cpp", "#include <pugixml.hpp>", "#include <pugixml.hpp>\n#include <format>", {plain = true})
         if package:is_debug() then
             io.replace("src/main.cpp", "HYPRLAND_DEBUG", "1", {plain = true})
         end
