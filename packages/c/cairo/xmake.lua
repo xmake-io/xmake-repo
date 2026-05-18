@@ -107,7 +107,7 @@ package("cairo")
             --cairo 1.18.0+: DWrite backend needs C++ runtime
             if package:is_plat("mingw") and not package:config("shared") then
                 io.replace(pc, "Cflags:", "Cflags: -DCAIRO_WIN32_STATIC_BUILD=1")
-                io.replace(pc, "^(Libs:.*)$", "%1 -lstdc++", {plain = false})
+                io.replace(pc, "Libs:", "Libs: -lstdc++", {plain = true})
             end
         end
     end)
