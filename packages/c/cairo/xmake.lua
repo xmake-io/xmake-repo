@@ -82,7 +82,7 @@ package("cairo")
         end
 
         --cairo 1.18.0+: DWrite backend needs C++ runtime
-        local envs = meson.buildenvs(package)
+        local envs = import("package.tools.meson").buildenvs(package)
         if package:is_plat("mingw") and not package:config("shared") then
             envs.LDFLAGS = (envs.LDFLAGS or "") .. " -lstdc++"
         end
