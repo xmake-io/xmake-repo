@@ -81,6 +81,12 @@ package("cairo")
             io.replace("util/meson.build", "libmallocstats = library('malloc-stats', 'malloc-stats.c', dependencies : dl_dep)", "", {plain = true})
         end
 
+        --cairo 1.18.0+: DWrite backend needs C++ runtime
+        local envs = meson.buildenvs(package)
+        if package:is_plat("mingw") and not package:config("shared") then
+            envs.LDFLAGS = (envs.LDFLAGS or "") .. " -lstdc++"
+        end
+
         local configs = {
             "--wrap-mode=nopromote",
             "-Dtests=disabled",
@@ -97,17 +103,12 @@ package("cairo")
         if package:version() and package:version():ge("1.18.4") then
             table.insert(configs, "-Dlzo=" .. (package:config("lzo") and "enabled" or "disabled"))
         end
-        import("package.tools.meson").install(package, configs)
+        import("package.tools.meson").install(package, configs, {envs = envs})
 
         -- Fix windows/mingw static builds, for when cairo is used as a dependency.
-        -- See the failed tests in https://github.com/xmake-io/xmake-repo/pull/9989 for reference.
         for _, pc in ipairs(os.files(path.join(package:installdir("lib", "pkgconfig"), "*.pc"))) do
             if not package:config("shared") and (package:is_plat("windows", "mingw")) then
                 io.replace(pc, "Cflags:", "Cflags: -DCAIRO_WIN32_STATIC_BUILD=1")
-            end
-            -- Fix undefined references to C++ runtime symbols (operator new[], delete[], __gxx_personality, etc.)
-            if package:is_plat("mingw") then
-                io.replace(pc, "^(Libs:.*)$", "%1 -lstdc++", {plain = false})
             end
         end
     end)
