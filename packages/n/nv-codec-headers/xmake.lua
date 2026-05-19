@@ -10,7 +10,7 @@ package("nv-codec-headers")
     add_versions("git:13.0.19.0", "n13.0.19.0")
 
     on_install(function (package)
-        import("package.tools.make").make(package, {"install", "PREFIX=" .. package:installdir()})
+        os.vcp("include", package:installdir())
     end)
 
     on_test(function (package)
