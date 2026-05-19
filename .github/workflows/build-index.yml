@@ -1,6 +1,6 @@
 name: Build index
 
-# Generates a flat JSON index of all packages (dist/packages.json) and
+# Generates a flat JSON index of all packages (dist/repology_packages_index.json) and
 # publishes it to the `gh-pages` branch. Consumed by external trackers
 # (e.g. repology.org) that need a structured view of the repository
 # without parsing xmake.lua source files. See xmake-io/xmake-repo#9966.
@@ -25,7 +25,7 @@ jobs:
         with:
           xmake-version: latest
 
-      - name: Build packages.json
+      - name: Build repology_packages_index.json
         run: xmake l scripts/build_index.lua
 
       - name: Publish to gh-pages
@@ -35,4 +35,4 @@ jobs:
           publish_dir: ./dist
           publish_branch: gh-pages
           keep_files: false
-          commit_message: 'autoupdate packages.json'
+          commit_message: 'autoupdate repology_packages_index.json'

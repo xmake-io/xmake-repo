@@ -1,6 +1,6 @@
 -- Generate a flat JSON index of all packages in this repository.
 --
--- Output: dist/packages.json
+-- Output: dist/repology_packages_index.json
 --
 -- Intended consumers: external trackers/aggregators (repology.org and
 -- similar) that need a structured, declarative view of the repository
@@ -203,7 +203,7 @@ function main()
     }
 
     os.mkdir("dist")
-    local outpath = path.join("dist", "packages.json")
+    local outpath = path.join("dist", "repology_packages_index.json")
     json.savefile(outpath, manifest)
     cprint("${green}wrote${clear} %s (%d packages)", outpath, #entries)
 end
