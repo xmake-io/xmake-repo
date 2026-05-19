@@ -6,6 +6,7 @@ package("pango")
     add_urls("https://gitlab.gnome.org/GNOME/pango/-/archive/$(version)/pango-$(version).tar.gz",
              "https://gitlab.gnome.org/GNOME/pango.git")
 
+    add_versions("1.57.1", "fefa79f2a6a37f744aefc1782b7241218b9f50bc1084415c1c73561150ca6665")
     add_versions("1.51.1", "ea92cd570cdba62ca52cc0a7c9ea3cd311b6da3f0328a5aa8a4a81b0a74944a5")
     add_versions("1.50.3", "4a8b0cf33d5f9ecaa9cd99dd72703d5c4c53bc58df64dd9538493bb4356ab691")
 
