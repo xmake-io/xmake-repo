@@ -39,7 +39,7 @@ package("pangomm")
         end
     end)
 
-    on_install("!android and !bsd and !iphoneos and !wasm and !(windows and arm*)", function (package)
+    on_install("!android and !bsd and !iphoneos and !wasm and !windows|arm*", function (package)
         local configs = {"-Dbuild-documentation=false"}
         table.insert(configs, "-Dbuild-deprecated-api=" .. (package:config("deprecated_api") and "true" or "false"))
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
