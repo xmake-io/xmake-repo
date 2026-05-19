@@ -6,6 +6,7 @@ package("vmaf")
     add_urls("https://github.com/Netflix/vmaf/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Netflix/vmaf.git")
 
+    add_versions("v3.1.0", "80090e29d7fd0db472ddc663513f5be89bc936815e62b767e630c1d627279fe2")
     add_versions("v3.0.0", "7178c4833639e6b989ecae73131d02f70735fdb3fc2c7d84bc36c9c3461d93b1")
 
     add_configs("asm", {description = "Build asm files", default = false, type = "boolean"})
