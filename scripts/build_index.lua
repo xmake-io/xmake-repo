@@ -13,12 +13,12 @@
 --     "packages": [
 --       {
 --         "name":           "<package name>",
---         "version":        "<latest version>",
+--         "version":        "<latest version, alias prefix and leading 'v' stripped>",
 --         "description":    "<set_description(...)>",
 --         "license":        "<set_license(...)>",
 --         "homepage":       "<set_homepage(...)>",
---         "repository_url": "<normalized from add_urls(...), homepage fallback>",
---         "download_url":   "<first add_urls(...) entry with $(version) resolved>"
+--         "repository_url": "<verbatim .git URL from add_urls, normalized forge URL, or homepage fallback>",
+--         "download_url":   "<first non-.git add_urls(...) entry with $(version) resolved through the per-URL filter>"
 --       },
 --       ...
 --     ]
@@ -45,11 +45,21 @@ function _latest_version(instance)
     if not versions or type(versions) ~= "table" then
         return nil
     end
-    -- `add_versions(v, sha)` stores entries as a hash {version = sha256, ...}, so
-    -- we collect keys and sort them ourselves to pick the latest.
+    -- `add_versions("alias:1.2.3", sha)` stores entries keyed by `<alias>:<version>`;
+    -- strip the alias prefix and dedupe so 1.2.3 appears once even when multiple
+    -- mirrors are declared. Matches scheme.lua:versions() in xmake core.
+    local seen = {}
     local list = {}
     for v, _ in pairs(versions) do
-        table.insert(list, tostring(v))
+        local key = tostring(v)
+        local pos = key:find(":", 1, true)
+        if pos then
+            key = key:sub(pos + 1)
+        end
+        if key ~= "" and not seen[key] then
+            seen[key] = true
+            table.insert(list, key)
+        end
     end
     if #list == 0 then
         return nil
@@ -66,17 +76,51 @@ function _latest_version(instance)
     return list[#list]
 end
 
-function _resolve_url(url, version)
-    if not url then
+-- Strip a leading "v" tag prefix from versions like "v0.1.30" so the emitted
+-- value matches how downstream trackers (repology, etc.) canonicalize it.
+-- Leaves "1.2.10" / "2025.06.07" untouched.
+function _normalize_version_for_output(version)
+    if type(version) == "string" and version:match("^v%d") then
+        return version:sub(2)
+    end
+    return version
+end
+
+function _resolve_url(instance, url, version)
+    if not url or not version then
         return nil
     end
-    if not version then
-        -- Leave the placeholder rather than emitting a literal "$(version)" in the manifest.
-        return nil
+    if not url:find("%$%(version%)") and not url:find("%$%(version_nodot%)") then
+        return url
     end
-    url = url:gsub("%$%(version%)", version)
-    url = url:gsub("%$%(version_nodot%)", (version:gsub("%.", "")))
-    return url
+    -- A URL declared with `add_urls(tmpl, {version = function (v) ... end})`
+    -- carries a per-URL transform xmake applies before substituting $(version).
+    -- For repology this matters most for "v"-prefixed tags (libthai) and for
+    -- packages that compute path components from the semver (sqlite3).
+    local effective = version
+    local filter = instance:url_version(url)
+    if filter then
+        -- xmake passes a semver object (see modules/.../utils/filter.lua); fall
+        -- back to the raw string for non-semver versions like "2025.06.07" or
+        -- 4-segment versions like "0.8.2.0" where semver.new() raises.
+        local arg = version
+        try {
+            function () arg = semver.new(version) end,
+            catch { function () end }
+        }
+        arg = arg or version
+        local result = filter(arg)
+        if result ~= nil then
+            effective = tostring(result)
+        end
+    end
+    -- Escape "%" in the replacement so URL templates like "ACE%2BTAO-..." (tao_idl)
+    -- aren't interpreted as gsub back-references.
+    local repl = (effective:gsub("%%", "%%%%"))
+    local resolved = url:gsub("%$%(version%)", repl)
+    local repl_nodot = (effective:gsub("%.", ""):gsub("%%", "%%%%"))
+    resolved = resolved:gsub("%$%(version_nodot%)", repl_nodot)
+    return resolved
 end
 
 function _urls_list(instance)
@@ -90,10 +134,22 @@ function _urls_list(instance)
     return urls
 end
 
-function _first_download_url(instance, version)
-    -- xmake convention: the first entry is the primary fetch source for the package.
-    local urls = _urls_list(instance)
-    return _resolve_url(urls[1], version)
+-- Treat ".git" (and "git+..." schemes) as repository pointers, not download URLs.
+function _is_git_url(url)
+    if type(url) ~= "string" then
+        return false
+    end
+    return url:find("^git%+") ~= nil or url:find("%.git$") ~= nil
+end
+
+function _pick_download_url(instance, version)
+    -- Skip ".git" entries: repology wants a file URL in download_url.
+    for _, url in ipairs(_urls_list(instance)) do
+        if not _is_git_url(url) then
+            return _resolve_url(instance, url, version)
+        end
+    end
+    return nil
 end
 
 -- Forge hosts whose "/archive/", "/releases/", "/get/" path segments are
@@ -162,6 +218,13 @@ function _homepage_as_repo_url(homepage)
 end
 
 function _repository_url(instance)
+    -- Prefer a verbatim ".git" URL declared in add_urls — repology asked for
+    -- repository_url to be the raw git URL with the ".git" suffix preserved.
+    for _, url in ipairs(_urls_list(instance)) do
+        if _is_git_url(url) then
+            return (url:gsub("^git%+", ""))
+        end
+    end
     for _, url in ipairs(_urls_list(instance)) do
         local repo = _normalize_repo_url(url)
         if repo then
@@ -175,24 +238,36 @@ function _entry(instance)
     local version = _latest_version(instance)
     return {
         name           = instance:name(),
-        version        = version,
+        version        = _normalize_version_for_output(version),
         description    = instance:get("description"),
         license        = instance:get("license"),
         homepage       = instance:get("homepage"),
         repository_url = _repository_url(instance),
-        download_url   = _first_download_url(instance, version),
+        download_url   = _pick_download_url(instance, version),
     }
 end
 
 function main()
     local entries = {}
+    local skipped = {}
     for _, packagedir in ipairs(os.dirs(path.join("packages", "*", "*"))) do
         local packagename = path.filename(packagedir)
         local packagefile = path.join(packagedir, "xmake.lua")
-        local instance = _load_package(packagename, packagedir, packagefile)
-        if instance and not instance:is_template() then
-            table.insert(entries, _entry(instance))
-        end
+        -- Isolate per-package failures: a broken filter or missing field in one
+        -- xmake.lua must not abort the whole generator.
+        try {
+            function ()
+                local instance = _load_package(packagename, packagedir, packagefile)
+                if instance and not instance:is_template() then
+                    table.insert(entries, _entry(instance))
+                end
+            end,
+            catch {
+                function (errors)
+                    table.insert(skipped, {name = packagename, error = tostring(errors)})
+                end
+            }
+        }
     end
     table.sort(entries, function(a, b) return a.name < b.name end)
 
@@ -206,4 +281,10 @@ function main()
     local outpath = path.join("dist", "repology_packages_index.json")
     json.savefile(outpath, manifest)
     cprint("${green}wrote${clear} %s (%d packages)", outpath, #entries)
+    if #skipped > 0 then
+        cprint("${yellow}skipped${clear} %d package(s):", #skipped)
+        for _, s in ipairs(skipped) do
+            cprint("  %s: %s", s.name, s.error)
+        end
+    end
 end
