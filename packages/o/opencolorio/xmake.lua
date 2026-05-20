@@ -19,6 +19,10 @@ package("opencolorio")
         add_frameworks("CoreFoundation", "CoreGraphics", "ColorSync", "IOKit")
     end
 
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     add_deps("cmake")
     add_deps("expat", "yaml-cpp", "imath", "pystring")
 
@@ -68,7 +72,7 @@ package("opencolorio")
         if minizip_ng then
             opt.packagedeps = {"minizip-ng"}
             if package:is_plat("macosx") then
-                table.insert(opt.packagedeps, "openssl")
+                table.insert(opt.packagedeps, "openssl3")
             end
         end
         import("package.tools.cmake").install(package, configs, opt)
