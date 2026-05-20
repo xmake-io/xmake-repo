@@ -6,6 +6,7 @@ package("libdatachannel")
     add_urls("https://github.com/paullouisageneau/libdatachannel/archive/refs/tags/$(version).tar.gz",
              "https://github.com/paullouisageneau/libdatachannel.git", {submodules = false})
 
+    add_versions("v0.24.3", "bdbe5421bba83dd23a2c88d26e0268482915f3b58ff4e04f48b8e28db299d9cc")
     add_versions("v0.24.2", "91a4795c98e13e91935127ab7880109309bf35b5e5a96c8fcc08e08322576402")
     add_versions("v0.24.1", "e6fc363497a41b5dce38602937c12d30e5e536943cf09c5ee5671c8f206eee08")
     add_versions("v0.23.2", "b9606efc5b2b173f2d22d0be3f6ba4f12af78c00ca02cde5932f3ff902980eb9")

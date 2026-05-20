@@ -6,6 +6,7 @@ package("c-blosc2")
     add_urls("https://github.com/Blosc/c-blosc2/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Blosc/c-blosc2.git")
 
+    add_versions("v3.0.3", "535f2165906d59cba0783ca8cd286b358a0c23493e2d9c4c2840569498a163d0")
     add_versions("v2.23.1", "3a1a55d1e3794fb2b51a12e722d611b3e577443abb7ff9951666511f576ea3da")
     add_versions("v2.22.0", "6c6fe90babfa09bd3c544643d3fc3ea9516f9cbc74e8b3342f0d50416862b76f")
     add_versions("v2.21.3", "4ac2e8b7413624662767b4348626f54ad621d6fbd315d0ba8be32a6ebaa21d41")

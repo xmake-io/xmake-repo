@@ -5,7 +5,7 @@ package("luau")
 
     add_urls("https://github.com/luau-lang/luau/archive/refs/tags/$(version).tar.gz",
              "https://github.com/luau-lang/luau.git")
-    
+
     add_versions("696", "95e5727b50547fd6021ef98234bd8b04410b7198d78d05e0faddee9c52b3602f")
     add_versions("0.695", "15280abccdd81171236ee9f139dfd2189d2f5db10f6e50b9bf91148dae94591b")
     add_versions("0.693", "8843dc7d0a961b289c7e71121ca12db7f2ee41b17d428c59f088789fda9632bf")
@@ -51,13 +51,14 @@ package("luau")
         for library_name, library_type in cmake_file:gmatch("add_library%(([%a|%.]+) (%w+)") do
             library_type = library_type:lower()
             if library_name:startswith("Luau.") and (library_type == "static" or library_type == "interface") then
+                local linkname = library_name
                 if library_name:endswith(".lib") then
-                    library_name = library_name:sub(1, -5)
+                    linkname = library_name:sub(1, -5)
                 end
                 if library_type == "static" then
-                    table.insert(links, library_name)
+                    table.insert(links, linkname)
                 end
-                local include_dir = library_name:sub(6)
+                local include_dir = linkname:sub(6)
                 include_dir = include_dir:gsub("%..*", "")
                 os.trycp(include_dir .. "/include/*", package:installdir("include"))
             end

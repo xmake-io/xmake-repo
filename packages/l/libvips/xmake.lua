@@ -143,10 +143,11 @@ package("libvips")
                     enabled_string = (enabled and "true" or "false")
                 end
 
+                local confname = name
                 if configs_map[name] then
-                    name = configs_map[name]
+                    confname = configs_map[name]
                 end
-                table.insert(configs, "-D" .. name .. "=" .. enabled_string)
+                table.insert(configs, "-D" .. confname .. "=" .. enabled_string)
             end
         end
 

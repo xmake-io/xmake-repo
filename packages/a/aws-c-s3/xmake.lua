@@ -6,6 +6,7 @@ package("aws-c-s3")
     add_urls("https://github.com/awslabs/aws-c-s3/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-s3.git")
 
+    add_versions("v0.12.4", "0775d5410cbca2317504a7f0a22dea12eed4bdacecc09d1e6901e3803e5903c2")
     add_versions("v0.12.3", "65dcc547b8680c8598754ff3273a00a898ad357cff6d0056bc0f1d1bea550760")
     add_versions("v0.12.2", "76348249b4bc305c1a40d089270a5a419f58c03c231b757de0a49a7a234eec76")
     add_versions("v0.12.0", "1a8a8ceda0585d52028a1f3daa5861f924e7d8d2f6a17bec05813dc0b74d6eed")

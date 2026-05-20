@@ -6,6 +6,7 @@ package("meshoptimizer")
     add_urls("https://github.com/zeux/meshoptimizer/archive/refs/tags/$(version).tar.gz",
              "https://github.com/zeux/meshoptimizer.git")
 
+    add_versions("v1.1.1", "30cd4d28fe71bf58c614c23c87fed385bac223acbb2dfaf343d20ffc3584a083")
     add_versions("v1.0.1", "9579624541e27e1cd01379c87e1295407e72c49e4b5b3e2f948393f3b68258ac")
     add_versions("v1.0", "30d1c3651986b2074e847b17223a7269c9612ab7f148b944250f81214fed4993")
     add_versions("v0.25", "68b2fef4e4eaad98e00c657c1e7f8982a7176e61dd7efdeaec67a025b8519be9")

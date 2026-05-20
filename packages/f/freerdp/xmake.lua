@@ -6,6 +6,7 @@ package("freerdp")
     add_urls("https://github.com/FreeRDP/FreeRDP/releases/download/$(version)/freerdp-$(version).tar.gz",
              "https://github.com/FreeRDP/FreeRDP.git")
 
+    add_versions("3.26.0", "55fa5c3159399886ba4adbe2c8a10d0b1c0484022efdf3827f68adc478b944d5")
     add_versions("3.25.0", "2d8f8ef34f607f4c5b978e3d0d96d936d88099f4918d21ba84ac334a89219f7f")
     add_versions("3.24.0", "168011bd58eae8d898842ef39c6c9bf5761ab617a68ccad80d623a3e535d0367")
     add_versions("3.23.0", "929273003f35b0b4f211e48d5abed4ebcef99da94784a50b6dc85cd0b7e257b1")
@@ -160,6 +161,35 @@ package("freerdp")
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+
+        local openssl3 = package:dep("openssl3")
+        if openssl3 then
+            if not openssl3:is_system() then
+                table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl3:installdir())
+            end
+            local fetchinfo = openssl3:fetch({external = false})
+            local libconfig = {
+                OPENSSL_CRYPTO_LIBRARY = "crypto",
+                OPENSSL_SSL_LIBRARY = "ssl"
+            }
+            if fetchinfo then
+                local includedirs = fetchinfo.includedirs or fetchinfo.sysincludedirs
+                if includedirs and #includedirs > 0 then
+                    table.insert(configs, "-DOPENSSL_INCLUDE_DIR=" .. table.concat(includedirs, ";"):gsub("\\", "/"))
+                end
+                for _, libfile in ipairs(fetchinfo.libfiles) do
+                    local libname = path.basename(libfile)
+                    if libname:startswith("lib") then
+                        libname = libname:sub(4)
+                    end
+                    for opt, suffix in pairs(libconfig) do
+                        if libname:endswith(suffix) then
+                            table.insert(configs, "-D" .. opt .. "=" .. libfile:gsub("\\", "/"))
+                        end
+                    end
+                end
+            end
+        end
 
         local dep = package:config("json")
         table.insert(configs, "-DWITH_JSON_DISABLED=" .. (dep and "OFF" or "ON"))

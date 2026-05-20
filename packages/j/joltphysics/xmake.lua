@@ -70,7 +70,7 @@ package("joltphysics")
             package:add("syslinks", "advapi32")
         end
         package:add("defines", "JPH_PROFILE_ENABLED")
-        if package:is_plat("windows") then
+        if package:is_plat("windows") and package:has_tool("cxx", "cl") then
             package:add("defines", "JPH_FLOATING_POINT_EXCEPTIONS_ENABLED")
         end
         if package:config("cross_platform_deterministic") then
@@ -180,6 +180,8 @@ package("joltphysics")
             table.insert(configs, "-DCPP_EXCEPTIONS_ENABLED=" .. (package:config("exceptions") and "ON" or "OFF"))
             table.insert(configs, "-DCPP_RTTI_ENABLED=" .. (package:config("rtti") and "ON" or "OFF"))
             table.insert(configs, "-DCROSS_PLATFORM_DETERMINISTIC=" .. (package:config("cross_platform_deterministic") and "ON" or "OFF"))
+            local fpe_enabled = package:is_plat("windows") and package:has_tool("cxx", "cl")
+            table.insert(configs, "-DFLOATING_POINT_EXCEPTIONS_ENABLED=" .. (fpe_enabled and "ON" or "OFF"))
             table.insert(configs, "-DDOUBLE_PRECISION=" .. (package:config("double_precision") and "ON" or "OFF"))
             table.insert(configs, "-DENABLE_OBJECT_STREAM=" .. (package:config("object_stream") and "ON" or "OFF"))
             table.insert(configs, "-DOBJECT_LAYER_BITS=" .. package:config("object_layer_bits"))

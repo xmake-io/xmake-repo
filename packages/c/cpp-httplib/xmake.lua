@@ -7,6 +7,8 @@ package("cpp-httplib")
     set_urls("https://github.com/yhirose/cpp-httplib/archive/refs/tags/$(version).tar.gz",
              "https://github.com/yhirose/cpp-httplib.git")
 
+    add_versions("v0.45.0", "03121ca28d210ac8014021c2f2deda4a181f215b1638c493c40a4c7e6056495f")
+    add_versions("v0.43.4", "ea125c932f6b9d0321ce1991434fc5a92fbce2ea1ee98fc1745a84872bb93d6c")
     add_versions("v0.43.3", "8ccb5f498a9dc44769a49466986171b5cfaf89f3a54fd2eacfdc3fda5dfc7a6a")
     add_versions("v0.41.0", "6d38a6b74ea33ac3133b8352f2b55b557c1d42f36e1ed0c01f852e3218329d39")
     add_versions("v0.37.2", "909766cd7697153c9e588b0f96defe1868b7bb11d94b8d4f0c83bb4875bc9066")

@@ -207,7 +207,7 @@ package("openssl3")
         end
     end)
 
-    on_install("linux", "cross", "android", "iphoneos", "wasm", function (package)
+    on_install("linux", "cross", "android", "iphoneos", "wasm", "harmony", function (package)
         local target_arch = "generic32"
         if package:is_arch("x86_64") then
             target_arch = "x86_64"
@@ -225,6 +225,13 @@ package("openssl3")
         if package:is_plat("macosx") then
             target_plat = "darwin64"
             target_arch = "x86_64-cc"
+        elseif package:is_plat("harmony") then
+            target_plat = "ohos"
+            if package:is_arch("arm64", "arm64-v8a") then
+                target_arch = "aarch64"
+            elseif package:is_arch("arm.*") then
+                target_arch = "arm"
+            end
         elseif package:is_plat("iphoneos") then
             local xcode = package:toolchain("xcode")
             local simulator = xcode and xcode:config("appledev") == "simulator"
@@ -258,6 +265,7 @@ package("openssl3")
             table.insert(configs, "no-afalgeng")
         end
 
+        import("configure.patch")(package)
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
         if (package:is_cross() and package:is_plat("android") and is_subhost("windows")) or
             package:is_plat("wasm") then

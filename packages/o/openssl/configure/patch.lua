@@ -168,8 +168,30 @@ function _replace_NUL_with_null(package)
     io.replace("Configurations/10-main.conf", "NUL", "null", {plain = true})
 end
 
+function _add_ohos_targets(package)
+    if package:is_plat("harmony") then
+        io.gsub("Configurations/10-main.conf",
+            [=[("linux%-aarch64"%s-=>%s-{.-},)]=],
+            [=[%1
+
+    "ohos-aarch64" => {
+        inherit_from     => [ "linux-aarch64" ],
+        shared_extension => ".so"
+    },
+    "ohos-arm" => {
+        inherit_from     => [ "linux-armv4" ],
+        shared_extension => ".so"
+    },
+    "ohos-x86_64" => {
+        inherit_from     => [ "linux-x86_64" ],
+        shared_extension => ".so"
+    },]=])
+    end
+end
+
 function main(package)
     _remove_unused_pod_usage(package)
     _replace_NUL_with_null(package)
     _fix_overlong_make_recipe(package)
+    _add_ohos_targets(package)
 end

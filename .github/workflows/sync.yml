@@ -48,3 +48,28 @@ jobs:
           export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
           xmake l -vD ./scripts/sync.lua
           xmake l -vD ./scripts/automerge.lua
+
+      - name: Build and publish repology_packages_index.json
+        run: |
+          set -e
+          export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+
+          # 1. Generate the manifest (writes dist/repology_packages_index.json).
+          xmake l scripts/build_index.lua
+
+          # 2. Sanity-check the output before publishing.
+          test -s dist/repology_packages_index.json
+          python3 -c "import json,sys; d=json.load(open('dist/repology_packages_index.json')); assert d['count']>1000, 'too few packages: %d' % d['count']"
+
+          # 3. Publish to gh-pages via SSH (SSH key was installed above).
+          rm -rf gh-pages-work
+          git clone git@github.com:xmake-io/xmake-repo.git gh-pages-work
+          cd gh-pages-work
+          git checkout gh-pages 2>/dev/null || git checkout --orphan gh-pages
+          git rm -rf . 2>/dev/null || true
+          cp ../dist/repology_packages_index.json .
+          git add repology_packages_index.json
+          git diff-index --quiet HEAD -- && echo "no changes to publish" || {
+              git commit -m "autoupdate repology_packages_index.json"
+              git push origin gh-pages
+          }

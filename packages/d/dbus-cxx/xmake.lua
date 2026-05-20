@@ -6,6 +6,7 @@ package("dbus-cxx")
     add_urls("https://github.com/dbus-cxx/dbus-cxx/archive/refs/tags/$(version).tar.gz",
              "https://github.com/dbus-cxx/dbus-cxx.git")
 
+    add_versions("2.6.2", "a4134d793cc8f943aed6544697098656b039fb78ac60097ada8119b918db42eb")
     add_versions("2.6.1", "3aed78806ffda925bc91a608cf77dd2b20557acbe8a627e7c863113b22f1afb8")
     add_versions("2.6.0", "ca22380ec04a1f10154fca76d41e8ce4a8a6351ce86546b297bda5f7eefbc108")
 

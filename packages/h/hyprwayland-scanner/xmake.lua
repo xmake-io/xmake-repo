@@ -7,6 +7,7 @@ package("hyprwayland-scanner")
     add_urls("https://github.com/hyprwm/hyprwayland-scanner/archive/refs/tags/$(version).tar.gz",
              "https://github.com/hyprwm/hyprwayland-scanner.git")
 
+    add_versions("v0.4.6", "05f55fd1a20d8ca81b5030980fdb7c87147749230145bdb3745af2741d617f5c")
     add_versions("v0.4.5", "2125d279eea106e3e6c8dc9fa15181c75d67467b5352d24e2a07903b10abad62")
     add_versions("v0.4.4", "ac73f626019f8d819ff79a5fca06ce4768ce8a3bded6f48c404445f3afaa25ac")
 
@@ -32,6 +33,7 @@ package("hyprwayland-scanner")
         version = version or (package:version() and package:version_str():gsub("^v", ""))
         version = version or "0.0.0"
         io.replace("src/main.cpp", "SCANNER_VERSION", '"' .. version .. '"', {plain = true})
+        io.replace("src/main.cpp", "#include <pugixml.hpp>", "#include <pugixml.hpp>\n#include <format>", {plain = true})
         if package:is_debug() then
             io.replace("src/main.cpp", "HYPRLAND_DEBUG", "1", {plain = true})
         end

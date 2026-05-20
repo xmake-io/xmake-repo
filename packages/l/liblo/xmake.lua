@@ -5,6 +5,7 @@ package("liblo")
 
     add_urls("https://github.com/radarsat1/liblo/archive/refs/tags/$(version).tar.gz",
              "https://github.com/radarsat1/liblo.git")
+    add_versions("0.35", "d3d807faa89fc42a5f2468246d212decfa7d2775da879d6aaaa97768aaf8e183")
     add_versions("0.34", "e9a294c7613e1bec2abcf26f2010604643d605ed6852e16b51837400729fcbee")
 
     add_deps("cmake")
