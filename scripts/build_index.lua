@@ -134,12 +134,16 @@ function _urls_list(instance)
     return urls
 end
 
--- Treat ".git" (and "git+..." schemes) as repository pointers, not download URLs.
+-- Treat ".git" / "git://" / "git+..." URLs as repository pointers, not download
+-- URLs. The "git://" scheme covers GNU Savannah-hosted projects (autoconf, ...)
+-- where the URL has no ".git" suffix.
 function _is_git_url(url)
     if type(url) ~= "string" then
         return false
     end
-    return url:find("^git%+") ~= nil or url:find("%.git$") ~= nil
+    return url:find("^git%+") ~= nil
+        or url:find("^git://") ~= nil
+        or url:find("%.git$") ~= nil
 end
 
 function _pick_download_url(instance, version)
