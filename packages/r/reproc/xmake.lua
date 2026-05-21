@@ -6,6 +6,7 @@ package("reproc")
     add_urls("https://github.com/DaanDeMeyer/reproc/archive/refs/tags/$(version).tar.gz",
              "https://github.com/DaanDeMeyer/reproc.git")
 
+    add_versions("v14.2.7", "77914ba566356d86986db240ecdb1762dfdd55bb1e8e127d016d9c5c4c9300e8")
     add_versions("v14.2.5", "69467be0cfc80734b821c54ada263c8f1439f964314063f76b7cf256c3dc7ee8")
     add_versions("v14.2.4", "55c780f7faa5c8cabd83ebbb84b68e5e0e09732de70a129f6b3c801e905415dd")
 
