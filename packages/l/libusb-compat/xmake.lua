@@ -6,6 +6,7 @@ package("libusb-compat")
     add_urls("https://github.com/libusb/libusb-compat-0.1/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libusb/libusb-compat-0.1.git")
 
+    add_versions("v0.1.9", "991250aecf97e36ed013dcff8ed40583fdd55fd9c387036d2eb759792fde2989")
     add_versions("v0.1.8", "73f8023b91a4359781c6f1046ae84156e06816aa5c2916ebd76f353d41e0c685")
 
     add_deps("libusb")
