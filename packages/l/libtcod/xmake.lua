@@ -26,6 +26,8 @@ package("libtcod")
         add_syslinks("pthread")
     end
 
+    add_links("tcod")
+
     on_load(function (package)
         if not package:config("shared") then
             package:add("defines", "LIBTCOD_STATIC")
