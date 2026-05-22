@@ -18,6 +18,15 @@ package("mlpack")
     
     add_deps("armadillo", "cereal", "ensmallen", "stb")
 
+    if on_check then
+        on_check("windows", function (package)
+            if package:version() and package:version():ge("4.6.0") then
+                -- mlpack#3879 turns the OpenMP version check to a compiler error
+                raise("package(mlpack): requires OpenMP 3.1+, MSVC only supports 3.0")
+            end
+        end)
+    end
+
     on_load(function(package)
         if package:config("openmp") then
             if is_plat("windows") then
