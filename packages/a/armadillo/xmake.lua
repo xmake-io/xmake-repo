@@ -1,15 +1,14 @@
 package("armadillo")
-
     set_kind("library", {headeronly = true})
-    set_homepage("http://arma.sourceforge.net/")
+    set_homepage("https://arma.sourceforge.net/")
     set_description("C++ library for linear algebra & scientific computing")
     set_license("Apache-2.0")
 
-    add_urls("http://sourceforge.net/projects/arma/files/armadillo-$(version).tar.xz")
-    add_versions("11.2.3", "4c2e97ce60707fc1f348f44f7af0cb6d2466d0aad0d0ea4bf5d5dc180e6cba41")
-    add_versions("10.8.1", "5087ab5a2268e5ce71798c1afcb6d1fb246463f8dc88a60db49a083600f98332")
-    add_versions("10.7.0", "9bf60db6fd237721908747a0e56797b97b7ceae3603f2cca0b012a3b88265d3f")
-    add_versions("10.7.3", "aac930d5fbc23dca9453ff3647d03f7d90d9584a4556719ad7bc7adab7db6ff5")
+    add_urls("https://gitlab.com/conradsnicta/armadillo-code/-/archive/$(version)/armadillo-code-$(version).tar.gz",
+             "https://gitlab.com/conradsnicta/armadillo-code")
+    add_versions("15.2.6", "764e12d89a507f54b4dd026cb06ed52084f546a7ab4e9eab45c5abf6c88dcacb")
+    add_versions("14.6.3", "25de1bd5bdb2317a5f9fa2591362427384b9e81fb63c5a5dd175568e0aaf8c22")
+    add_versions("12.8.4", "21cf8aff9cace3db3ab5393b913a09a6013adaffde7a70a6e53f6ead6b78cf02")
 
     add_configs("blas", {description = "Choose BLAS library to use.", default = "openblas", type = "string", values = {"mkl", "openblas"}})
 
