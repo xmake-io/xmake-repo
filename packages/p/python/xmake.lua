@@ -169,21 +169,31 @@ package("python")
 
         -- add openssl libs path
         local openssl = package:dep("openssl"):fetch()
+        local openssl_has_standard_layout = false
         if openssl then
+            -- Try to use --with-openssl for standard installs
             local openssl_dir
             for _, linkdir in ipairs(openssl.linkdirs) do
                 if path.filename(linkdir) == "lib" then
                     openssl_dir = path.directory(linkdir)
+                    -- Check if includedirs is inside the same directory
+                    for _, includedir in ipairs(openssl.sysincludedirs or openssl.includedirs or {}) do
+                        if includedir:startswith(openssl_dir .. "/") then
+                            openssl_has_standard_layout = true
+                            break
+                        end
+                    end
                 else
                     -- try to find if linkdir is root (brew has linkdir as root and includedirs inside)
-                    for _, includedir in ipairs(openssl.sysincludedirs or openssl.includedirs) do
+                    for _, includedir in ipairs(openssl.sysincludedirs or openssl.includedirs or {}) do
                         if includedir:startswith(linkdir) then
                             openssl_dir = linkdir
+                            openssl_has_standard_layout = true
                             break
                         end
                     end
                 end
-                if openssl_dir then
+                if openssl_has_standard_layout then
                     if version:ge("3.0") then
                         table.insert(configs, "--with-openssl=" .. openssl_dir)
                     else
@@ -243,8 +253,14 @@ package("python")
             table.insert(cppflags, "-fPIC")
         end
 
-        -- add external path for zlib and libffi
-        for _, libname in ipairs({"zlib", "libffi"}) do
+        -- add external path for zlib, libffi, and openssl (for non-standard layouts like Nix)
+        local external_libs = {"zlib", "libffi"}
+        -- Use the standard layout check result from above
+        if openssl and not openssl_has_standard_layout then
+            table.insert(external_libs, "openssl")
+        end
+
+        for _, libname in ipairs(external_libs) do
             local lib = package:dep(libname)
             if lib and not lib:is_system() then
                 local fetchinfo = lib:fetch({external = false})
