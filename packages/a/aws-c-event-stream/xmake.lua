@@ -6,6 +6,7 @@ package("aws-c-event-stream")
     add_urls("https://github.com/awslabs/aws-c-event-stream/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-event-stream.git")
 
+    add_versions("v0.7.1", "334b2abfe0cb5c68d79d52525598fdd5f6052b93a17a78a4b1ada7fa1be252c0")
     add_versions("v0.7.0", "88835b4c78462547917f622fd9dda45c991b7e356d9c07e2f0537d4d97fbd4fb")
     add_versions("v0.6.0", "af3cd291d831b5fd65f789b7b9d34d856c6a3a5f6f5eb03bc23cffd1792d25e9")
     add_versions("v0.5.9", "e9371ffe050c24ca4eda439d58a06285db88b550e9cbec006d6ea21db02d424a")
