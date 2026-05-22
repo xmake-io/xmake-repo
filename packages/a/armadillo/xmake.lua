@@ -16,7 +16,7 @@ package("armadillo")
         package:add("deps", "superlu", {configs = {blas = package:config("blas")}})
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows|!arm64", "macosx", "linux", function (package)
         os.cd("include")
         io.gsub("armadillo_bits/config.hpp.cmake", "${.-}/?", "")
         io.gsub("armadillo_bits/config.hpp.cmake", "#cmakedefine (.-)\n", "${define %1}\n")
