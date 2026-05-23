@@ -6,6 +6,7 @@ package("jsbsim")
     add_urls("https://github.com/JSBSim-Team/jsbsim/archive/refs/tags/$(version).tar.gz",
              "https://github.com/JSBSim-Team/jsbsim.git")
 
+    add_versions("v1.3.1", "3ade625a388a1f48f6de7eaaaa8b680e8fed2e29550b669b490735ea88cc81e8")
     add_versions("v1.3.0", "02048a247501b1bb06dadc313991ddcdf07e7f7924e2b7dc6f43f683cfbc1957")
     add_versions("v1.2.3", "3b588e4bff3bc7a9799d035a9b6a7bd0fb991a6511ef44db81e00e4e7c3f423c")
     add_versions("v1.2.2", "91aa07cb36cf789e31551f9c051ba93b5d641724913d9aab416ad9f686713d02")
