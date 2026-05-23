@@ -178,7 +178,7 @@ package("python")
                     openssl_dir = path.directory(linkdir)
                     -- Check if includedirs is inside the same directory
                     for _, includedir in ipairs(openssl.sysincludedirs or openssl.includedirs or {}) do
-                        if includedir:startswith(openssl_dir .. "/") then
+                        if includedir:startswith(openssl_dir) and (openssl_dir == "/" or includedir:sub(openssl_dir:len() + 1, openssl_dir:len() + 1) == "/") then
                             openssl_has_standard_layout = true
                             break
                         end
@@ -186,7 +186,7 @@ package("python")
                 else
                     -- try to find if linkdir is root (brew has linkdir as root and includedirs inside)
                     for _, includedir in ipairs(openssl.sysincludedirs or openssl.includedirs or {}) do
-                        if includedir:startswith(linkdir) then
+                        if includedir:startswith(linkdir) and (linkdir == "/" or includedir:sub(linkdir:len() + 1, linkdir:len() + 1) == "/") then
                             openssl_dir = linkdir
                             openssl_has_standard_layout = true
                             break
