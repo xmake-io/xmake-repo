@@ -45,7 +45,9 @@ package("glibmm")
         -- Prevent building generate_defs_glib, generate_defs_gio. Otherwise when being built,
         -- errors arise on mingw builds. Doesn't hurt to filter for all platforms.
         io.replace("tools/extra_defs_gen/meson.build", "%s*executable%b()", "", {pattern = true, multiline = true})
-        local configs = {"-Dbuild-documentation=false", "-Dbuild-examples=false"}
+        local configs = {"-Dbuild-documentation=false",
+                         "-Dbuild-examples=false",
+                         -Dmsvc14x-parallel-installable=false"}
         table.insert(configs, "-Dbuild-deprecated-api=" .. (package:config("deprecated_api") and "true" or "false"))
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         import("package.tools.meson").install(package, configs)
