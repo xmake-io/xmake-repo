@@ -41,7 +41,8 @@ package("pangomm")
 
     on_install(function (package)
         local configs = {"-Dbuild-documentation=false",
-                         "-Dmaintainer-mode=false"}
+                         "-Dmaintainer-mode=false",
+						 "-Dmsvc14x-parallel-installable=false"}
         table.insert(configs, "-Dbuild-deprecated-api=" .. (package:config("deprecated_api") and "true" or "false"))
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
 
@@ -49,7 +50,7 @@ package("pangomm")
         if package:is_plat("windows", "mingw") and not package:config("shared") then
             table.insert(cxxflags, "-DPANGOMM_STATIC_LIB")
         end
-        import("package.tools.meson").install(package, configs, {cxxflags = cxxflags})
+        import("package.tools.meson").install(package, configs, {cxxflags = cxxflags, packagedeps = "glibmm"})
     end)
 
     on_test(function (package)
@@ -63,5 +64,5 @@ package("pangomm")
             #endif
                 return 0;
             }
-        ]]}, {configs = {languages = language}, includes = "pangomm/pangomm.h"}))
+        ]]}, {configs = {languages = language}, includes = "pangomm.h"}))
     end)
