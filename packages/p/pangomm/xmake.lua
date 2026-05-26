@@ -40,6 +40,10 @@ package("pangomm")
     end)
 
     on_install("!android and !bsd and !iphoneos and !wasm and (!windows or windows|!arm*)", function (package)
+        -- Prevent building generate_extra_defs. Otherwise when being built,
+        -- errors arise on mingw builds. Doesn't hurt to filter for all platforms.
+        io.replace("tools/extra_defs_gen/meson.build", "%s*executable%b()", "", {pattern = true, multiline = true})
+
         local configs = {"-Dbuild-documentation=false",
                          "-Dmaintainer-mode=false",
 						 "-Dmsvc14x-parallel-installable=false"}
@@ -49,6 +53,9 @@ package("pangomm")
         local cxxflags = {}
         if package:is_plat("windows", "mingw") and not package:config("shared") then
             table.insert(cxxflags, "-DPANGOMM_STATIC_LIB")
+        end
+        if not package:dep("cairomm"):config("shared") then
+            table.insert(cxxflags, "-DCAIROMM_STATIC_LIB")
         end
 
         -- Workaround for glibmm_generate_extra_defs-2.xx not being found.
