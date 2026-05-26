@@ -183,7 +183,7 @@ package("python")
                 end 
                 -- Check if openssl uses a standard prefix/include layout
                 for _, includedir in ipairs(openssl.sysincludedirs or openssl.includedirs or {}) do
-                    if openssl_dir and openssl_dir ~= "/" and includedir:startswith(openssl_dir .. "/") then
+                    if openssl_dir and openssl_dir ~= "/" and includedir == path.join(openssl_dir, "include") then
                         openssl_has_standard_layout = true
                         break
                     end
