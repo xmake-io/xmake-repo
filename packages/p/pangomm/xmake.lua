@@ -8,7 +8,7 @@ package("pangomm")
         return format("%d.%d/pangomm-%s", version:major(), version:minor(), version)
     end})
 
-    --add_versions("2.56.1", "539f5aa60e9bdc6b955bb448e2a62cc14562744df690258040fbb74bf885755d")
+    add_versions("2.56.1", "539f5aa60e9bdc6b955bb448e2a62cc14562744df690258040fbb74bf885755d")
     add_versions("2.46.4", "b92016661526424de4b9377f1512f59781f41fb16c9c0267d6133ba1cd68db22")
 
     add_configs("deprecated_api", {description = "Build deprecated API and include it in the library", default = false, type = "boolean"})
@@ -40,7 +40,8 @@ package("pangomm")
     end)
 
     on_install(function (package)
-        local configs = {"-Dbuild-documentation=false"}
+        local configs = {"-Dbuild-documentation=false",
+                         "-Dmaintainer-mode=false"}
         table.insert(configs, "-Dbuild-deprecated-api=" .. (package:config("deprecated_api") and "true" or "false"))
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
 
