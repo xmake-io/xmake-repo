@@ -39,7 +39,7 @@ package("pangomm")
         end
     end)
 
-    on_install("!android", "!bsd", "!iphoneos", "!wasm", "!windows|arm*", function (package)
+    on_install("!android and !bsd and !iphoneos and !wasm and (!windows or windows|!arm*)", function (package)
         local configs = {"-Dbuild-documentation=false",
                          "-Dmaintainer-mode=false",
 						 "-Dmsvc14x-parallel-installable=false"}
