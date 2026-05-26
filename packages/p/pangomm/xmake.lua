@@ -39,7 +39,7 @@ package("pangomm")
         end
     end)
 
-    on_install(function (package)
+    on_install("!android", "!bsd", "!iphoneos", "!wasm", "!windows|arm*", function (package)
         local configs = {"-Dbuild-documentation=false",
                          "-Dmaintainer-mode=false",
 						 "-Dmsvc14x-parallel-installable=false"}
@@ -50,7 +50,15 @@ package("pangomm")
         if package:is_plat("windows", "mingw") and not package:config("shared") then
             table.insert(cxxflags, "-DPANGOMM_STATIC_LIB")
         end
-        import("package.tools.meson").install(package, configs, {cxxflags = cxxflags, packagedeps = "glibmm"})
+
+        -- Workaround for glibmm_generate_extra_defs-2.xx not being found.
+        -- Adding glibmm to packagedeps for the problem gave errors to some platforms.
+        io.replace("tools/extra_defs_gen/meson.build",
+            [[required: glibmm_dep.type_name() != 'internal',]],
+            "required: glibmm_dep.type_name() != 'internal',\n    dirs: '" .. path.join(package:dep("glibmm"):installdir(), "lib"):gsub("\\", "/") .. "',",
+            {plain = true})
+
+        import("package.tools.meson").install(package, configs, {cxxflags = cxxflags})
     end)
 
     on_test(function (package)
