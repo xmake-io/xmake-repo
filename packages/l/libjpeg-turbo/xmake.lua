@@ -28,6 +28,7 @@ package("libjpeg-turbo")
     add_versions("git:3.1.4+1", "3.1.4.1")
 
     add_configs("jpeg", {description = "libjpeg API/ABI emulation target version.", default = "6", type = "string", values = {"6", "7", "8"}})
+    add_configs("simd", {description = "Include SIMD extensions, if available for this platform", default = true, type = "boolean"})
 
     if is_plat("android") then
         add_deps("make")
@@ -59,6 +60,7 @@ package("libjpeg-turbo")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DENABLE_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
+        table.insert(configs, "-DWITH_SIMD=" .. (package:config("simd") and "ON" or "OFF"))
         if package:is_plat("windows") and package:has_runtime("MD") then
             table.insert(configs, "-DWITH_CRT_DLL=ON")
         end
