@@ -7,6 +7,10 @@ package("zix")
 
     add_versions("0.8.0", "51d70d63e970214db84e32d55377d84090c02145f5768265ab140d117f2b8e24")
 
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     add_deps("meson", "ninja")
 
     on_load(function (package)
