@@ -37,7 +37,7 @@ package("libjpeg-turbo")
     on_load(function (package)
         if package:is_built() then
             package:add("deps", "cmake")
-            if package:config("simd") and is_arch("x86_64", "i386", "x64", "x86") then
+            if package:config("simd") and package:is_arch("x86_64", "i386", "x64", "x86") then
                 package:add("deps", "nasm")
             end
         end
