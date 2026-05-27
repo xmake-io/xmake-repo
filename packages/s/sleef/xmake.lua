@@ -56,7 +56,7 @@
         end
     end)
 
-    on_install("linux", "macos", "windows", function (package)
+    on_install(function (package)
         local configs = {
             "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"),
             "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"),
