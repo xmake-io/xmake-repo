@@ -8,6 +8,7 @@ package("libjpeg-turbo")
     end})
     add_urls("https://github.com/libjpeg-turbo/libjpeg-turbo.git", {alias = "git"})
 
+    add_versions("3.1.90", "076ef1431f2803a91f07e0f92433d4dcf39bc9113226c4f46ba3d3d54f514c9d")
     add_versions("3.1.4+1", "a7da42b640377c2a9a9665e2c4b0ea60cd5599afb48c2521e6df0c9dc9d15a25")
     add_versions("3.1.2", "560f6338b547544c4f9721b18d8b87685d433ec78b3c644c70d77adad22c55e6")
     add_versions("3.1.1", "304165ae11e64ab752e9cfc07c37bfdc87abd0bfe4bc699e59f34036d9c84f72")
@@ -34,7 +35,10 @@ package("libjpeg-turbo")
 
     on_load(function (package)
         if package:is_built() then
-            package:add("deps", "cmake", "nasm")
+            package:add("deps", "cmake")
+            if package:config("simd") and is_arch("x86_64", "i386", "x64", "x86") then
+                package:add("deps", "nasm")
+            end
         end
     end)
 
@@ -53,13 +57,8 @@ package("libjpeg-turbo")
 
         local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        if package:config("shared") then
-            table.insert(configs, "-DENABLE_SHARED=ON")
-            table.insert(configs, "-DENABLE_STATIC=OFF")
-        else
-            table.insert(configs, "-DENABLE_SHARED=OFF")
-            table.insert(configs, "-DENABLE_STATIC=ON")
-        end
+        table.insert(configs, "-DENABLE_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DENABLE_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         if package:is_plat("windows") and package:has_runtime("MD") then
             table.insert(configs, "-DWITH_CRT_DLL=ON")
         end
