@@ -17,7 +17,8 @@ package("microsoft-seal")
     add_configs("gaussian", {description = "Use a rounded Gaussian distribution for noise sampling instead of a Centered Binomial Distribution", default = false, type = "boolean"})
     add_configs("intrin", {description = "Use intrinsics", default = false, type = "boolean"})
     add_configs("c_api",  {description = "Builds C API", default = false, type = "boolean", readonly = true})
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
+        -- mingw can not handle thread_local in DLL correctly
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
@@ -52,7 +53,7 @@ package("microsoft-seal")
     end)
 
     -- TODO: Fix cmake try_run
-    on_install("!iphoneos", function (package)
+    on_install("!iphoneos and !wasm", function (package)
         io.replace("CMakeLists.txt", "if(WIN32 AND BUILD_SHARED_LIBS)", "if(0)", {plain = true})
         if package:config("hexl") then
             io.replace("CMakeLists.txt", "1.2.4", "", {plain = true})
