@@ -4,7 +4,7 @@ package("embedded-xoodyak")
     set_license("CC0-1.0")
 
     add_urls("https://github.com/midnight-wonderer/embedded-xoodyak/archive/refs/tags/v$(version).tar.gz",
-        "https://github.com/midnight-wonderer/embedded-xoodyak.git")
+             "https://github.com/midnight-wonderer/embedded-xoodyak.git")
 
     add_versions("0.1.0", "37b977a4233efbb86270a67a02aaf6a897548ce4b95e624d532c1296d113e756")
 
