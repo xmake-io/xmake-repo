@@ -58,7 +58,6 @@ package("rubberband")
             "-Dlv2=" .. (package:config("lv2") and "enabled" or "disabled"),
             "-Dvamp=" .. (package:config("vamp") and "enabled" or "disabled"),
             "-Dcmdline=" .. (package:config("cmdline") and "enabled" or "disabled"),
-            "-Dcmdline=" .. package:config("cmdline"),
             "-Dtests=disabled"
         }
 
