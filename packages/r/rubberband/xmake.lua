@@ -51,7 +51,7 @@ package("rubberband")
         end
 
         -- vDSP (and the auto default on macOS) requires the Accelerate framework
-        if package:is_plat("macosx") and (package:config("fft") == "auto" or package:config("fft") == "vdsp") then
+        if package:is_plat("macosx", "iphoneos") and (package:config("fft") == "auto" or package:config("fft") == "vdsp") then
             package:add("frameworks", "Accelerate")
         end
     end)
@@ -79,9 +79,9 @@ package("rubberband")
         -- wasm fix errors relating to size_t
         if package:is_plat("wasm") then
             io.replace("src/common/mathmisc.h",
-                "#include <cmath>",
-                "#include <cstddef>\n#include <cmath>",
-                {plain = true})
+                '#include "sysutils.h"',
+                '#include "sysutils.h"\n#include <cstddef>',
+        {plain = true})
         end
         import("package.tools.meson").install(package, configs)
     end)
