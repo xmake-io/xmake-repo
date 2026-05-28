@@ -4,7 +4,7 @@ package("rubberband")
     set_license("GPL-2.0-or-later")
 
     add_urls("https://github.com/breakfastquay/rubberband/archive/refs/tags/v$(version).tar.gz",
-             "https://hg.sr.ht/~breakfastquay/rubberband.git")
+             "https://github.com/breakfastquay/rubberband.git")
 
     add_versions("4.0.0", "24300f48a8014b7c863b573a9647e61b1b19b37875e2cdd92005e64c6424d266")
 
