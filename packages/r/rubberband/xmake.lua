@@ -1,7 +1,8 @@
 package("rubberband")
     set_homepage("https://breakfastquay.com/rubberband/")
     set_description("A high quality software library for audio time-stretching and pitch-shifting.")
-    set_license("GPL-2.0-or-later")
+    set_license("GPL-2.0-or-later OR Commercial Licenses")
+    -- For other licenses, see https://breakfastquay.com/technology/license.html, next to "Rubber Band Library".
 
     add_urls("https://github.com/breakfastquay/rubberband/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/breakfastquay/rubberband.git")
