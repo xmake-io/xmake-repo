@@ -29,6 +29,11 @@ package("rubberband")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
+    -- To pass on_test
+    if is_plat("bsd") then
+        add_syslinks("pthread")
+    end
+
     add_deps("meson", "ninja")        
 
     on_load(function (package)
