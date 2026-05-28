@@ -17,21 +17,10 @@ package("rubberband")
 
     add_configs("ipp_path", {description = "Path to Intel IPP libraries, if selected for any of the other options.", default = "", type = "string"})
 
-    add_configs("jni", {description = "Build JNI bindings", default = "disabled", type = "string",
-                        values = {"auto", "enabled", "disabled"}})  -- Is adding JDK as a dependency needed for this option?
-
-    --add_configs("ladspa", {description = "Build LADSPA plugin", default = "disabled", type = "string",
-                           --values = {"auto", "enabled", "disabled"}})
-    -- Not sure if ladspa-sdk can even be added to xrepo.
-
-    add_configs("lv2", {description = "Build LV2 plugin", default = "disabled", type = "string",
-                        values = {"auto", "enabled", "disabled"}})
-
-    add_configs("vamp", {description = "Build Vamp plugin", default = "disabled", type = "string",
-                         values = {"auto", "enabled", "disabled"}})
-
-    add_configs("cmdline", {description = "Build command-line utility", default = "disabled", type = "string",
-                            values = {"auto", "enabled", "disabled"}})
+    add_configs("jni", {description = "Build JNI bindings", default = false, type = "boolean"})
+    add_configs("lv2", {description = "Build LV2 plugin", default = false, type = "boolean"})
+    add_configs("vamp", {description = "Build Vamp plugin", default = false, type = "boolean"})
+    add_configs("cmdline", {description = "Build command-line utility", default = false, type = "boolean"})
 
     add_deps("meson", "ninja")        
 
@@ -39,8 +28,6 @@ package("rubberband")
         -- FFT: KissFFT is vendored in. vDSP is Apple specific.
         if package:config("fft") == "fftw" then
             package:add("deps", "fftw")
-        --elseif package:config("fft") == "sleef" then
-            --package:add("deps", "sleef")
         end
 
         --Resampler: Speex is vendored in.
@@ -49,17 +36,14 @@ package("rubberband")
         end
 
         -- Plugin SDKs
-        --if package:config("ladspa") == "enabled" then
-        --    package:add("deps", "ladspa-sdk")
-        --end
-        if package:config("lv2") == "enabled" then
+        if package:config("lv2") then
             package:add("deps", "lv2")
         end
-        if package:config("vamp") == "enabled" then
+        if package:config("vamp") then
             package:add("deps", "vamp-plugin-sdk")
         end
 
-        if package:config("cmdline") == "enabled" then
+        if package:config("cmdline") then
             package:add("deps", "libsndfile")
         end
     end)
@@ -70,10 +54,10 @@ package("rubberband")
             "-Dfft=" .. package:config("fft"),
             "-Dresampler=" .. package:config("resampler"),
             "-Dipp_path=" .. package:config("ipp_path"),
-            "-Djni=" .. package:config("jni"),
-            --"-Dladspa=" .. package:config("ladspa"),
-            "-Dlv2=" .. package:config("lv2"),
-            "-Dvamp=" .. package:config("vamp"),
+            "-Djni=" .. (package:config("jni") and "enabled" or "disabled"),
+            "-Dlv2=" .. (package:config("lv2") and "enabled" or "disabled"),
+            "-Dvamp=" .. (package:config("vamp") and "enabled" or "disabled"),
+            "-Dcmdline=" .. (package:config("cmdline") and "enabled" or "disabled"),
             "-Dcmdline=" .. package:config("cmdline"),
             "-Dtests=disabled"
         }
