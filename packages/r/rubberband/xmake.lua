@@ -2,7 +2,10 @@ package("rubberband")
     set_homepage("https://breakfastquay.com/rubberband/")
     set_description("A high quality software library for audio time-stretching and pitch-shifting.")
     set_license("GPL-2.0-or-later OR Commercial Licenses")
-    -- For other licenses, see https://breakfastquay.com/technology/license.html, next to "Rubber Band Library".
+    -- For commercial licenses, see https://breakfastquay.com/technology/license.html, next to "Rubber Band Library".
+    -- From README: "If you wish to distribute code using Rubber Band Library under terms other than those of
+    -- the GNU General Public License, you must obtain a commercial licence from us before doing so. In
+    -- particular, you may not legally distribute through any Apple App Store unless you have a commercial licence."
 
     add_urls("https://github.com/breakfastquay/rubberband/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/breakfastquay/rubberband.git")
@@ -46,6 +49,11 @@ package("rubberband")
         if package:config("cmdline") then
             package:add("deps", "libsndfile")
         end
+
+        -- vDSP (and the auto default on macOS) requires the Accelerate framework
+        if package:is_plat("macosx") and (package:config("fft") == "auto" or package:config("fft") == "vdsp") then
+            package:add("frameworks", "Accelerate")
+        end
     end)
 
     on_install(function (package)
@@ -61,6 +69,20 @@ package("rubberband")
             "-Dtests=disabled"
         }
 
+        -- iPhoneOS fix error relating to libatomic
+        if package:is_plat("iphoneos") then
+            io.replace("meson.build",
+                "if cpp.compiles(libatomic_test_program, name : 'test program using std::atomic')",
+                "if system != 'darwin' and system != 'ios' and cpp.compiles(libatomic_test_program, name : 'test program using std::atomic')",
+                {plain = true})
+        end
+        -- wasm fix errors relating to size_t
+        if package:is_plat("wasm") then
+            io.replace("src/common/mathmisc.h",
+                "#include <cmath>",
+                "#include <cstddef>\n#include <cmath>",
+                {plain = true})
+        end
         import("package.tools.meson").install(package, configs)
     end)
 
