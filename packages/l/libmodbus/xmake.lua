@@ -60,6 +60,7 @@ package("libmodbus")
                     local old = os.cd("src/win32")
                     os.exec("cscript /nologo configure.js")
                     os.cd(old)
+                    target:add("headerfiles", "src/win32/config.h")
                 end)
         ]])
         if package:config("shared") then
