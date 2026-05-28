@@ -25,6 +25,10 @@ package("rubberband")
     add_configs("vamp", {description = "Build Vamp plugin", default = false, type = "boolean"})
     add_configs("cmdline", {description = "Build command-line utility", default = false, type = "boolean"})
 
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     add_deps("meson", "ninja")        
 
     on_load(function (package)
