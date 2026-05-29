@@ -17,7 +17,7 @@ package("crashcatch")
         add_syslinks("dbghelp", "user32")
     end
 
-    on_install("!macosx", function(package)
+    on_install("!android and !macosx", function(package)
         os.cp("include/*.hpp", package:installdir("include"))
     end)
 
