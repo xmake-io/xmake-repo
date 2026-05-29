@@ -13,7 +13,7 @@ package("php")
 
     -- 辅助：根据架构、TS、dev 标志生成 hash 表 key
     local function win_key(arch, threadsafe, dev, debug)
-        local a = arch == "x86_64" and "x64" or "x86"
+        local a = arch == "x64" and "x64" or "x86"
         local t = threadsafe and "ts" or "nts"
         if dev then
             return "dev_" .. a .. "_" .. t
@@ -48,7 +48,7 @@ package("php")
         binary:add("urls", url)
 
         for ver, info in pairs(php_versions) do
-            binary:add("versions", ver, info.win[win_key(arch, ts, false)])
+            binary:add("versions", ver, info.win[win_key(arch, ts, false, false)])
         end
     end)
 
@@ -108,7 +108,7 @@ package("php")
 
             local arch = package:is_arch("x86_64", "x64") and "x64" or "x86"
             local ts = package:config("threadsafe")
-            local dev_key = win_key(arch, ts, true)
+            local dev_key = win_key(arch, ts, true, false)
             local dev_hash = info.win[dev_key]
 
             local dev_url = string.format(
