@@ -38,6 +38,10 @@ package("diligentcore")
         add_syslinks("pthread", "dl")
     end
 
+    if is_plat("windows") then
+        add_syslinks("comdlg32")
+    end
+
     if is_plat("macosx") then
         add_frameworks("AppKit")
     elseif is_plat("iphoneos") then
