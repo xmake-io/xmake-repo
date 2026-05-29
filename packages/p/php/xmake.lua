@@ -38,7 +38,7 @@ package("php")
     on_source("windows", function(package)
         local binary = package:scheme("binary")
     
-        local arch = os.is_arch("x86_64") and "x64" or "x86"
+        local arch = package:is_arch("x86_64", "x64") and "x64" or "x86"
         local ts = package:config("threadsafe")
         local suffix = ts and "" or "-nts"
         local url = string.format(
@@ -106,7 +106,7 @@ package("php")
             local info = php_versions[ver]
             if not info then return end
 
-            local arch = os.is_arch("x86_64") and "x64" or "x86"
+            local arch = package:is_arch("x86_64", "x64") and "x64" or "x86"
             local ts = package:config("threadsafe")
             local dev_key = win_key(arch, ts, true)
             local dev_hash = info.win[dev_key]
@@ -130,12 +130,12 @@ package("php")
             end
         end
 
-        -- ==================== 调试符号包（新增） ====================
+        -- ==================== 调试符号包 ====================
         if package:config("debug") then
             local ver = package:version_str()
             local info = php_versions[ver]
             if info then
-                local arch = os.is_arch("x86_64") and "x64" or "x86"
+                local arch = package:is_arch("x86_64", "x64") and "x64" or "x86"
                 local ts = package:config("threadsafe")
                 local debug_key = win_key(arch, ts, false, true)
                 local debug_hash = info.win[debug_key]
@@ -184,8 +184,8 @@ package("php")
             os.cp("*.dll", package:installdir("bin"))
             os.cp("ext/*", package:installdir("bin", "ext"), {rootdir = "ext"})
             os.cp("dev/*", package:installdir("bin", "dev"), {rootdir = "dev"})
-            os.cp("extras/*", package:installdir("bin", "extras"), {rootdir = "extras"})
-            os.cp("lib/enchant/*", package:installdir("lib", "enchant"))
+            os.trycp("extras/*", package:installdir("bin", "extras"), {rootdir = "extras"})
+            os.trycp("lib/enchant/*", package:installdir("lib", "enchant"))
             os.cp("*.exe", package:installdir("bin"))
             os.cp("*.phar", package:installdir("bin"))
             os.cp("*.bat", package:installdir("bin"))

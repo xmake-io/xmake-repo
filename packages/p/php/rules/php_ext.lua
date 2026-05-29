@@ -18,12 +18,12 @@ rule("php.ext")
         end
 
         -- 编译定义
-        target:add("defines", "COMPILE_DL_" .. target:name():upper())
+        target:add("defines", "COMPILE_DL_" .. target:name():upper():gsub("[^%w_]", "_"))
         target:add("defines", "ZEND_ENABLE_STATIC_TSRMLS_CACHE=1")
 
         if target:is_plat("windows") then
             target:add("defines", "ZEND_WIN32", "PHP_WIN32", "ZEND_DLL", "PHP_DLL")
-            target:add("cxflags", "/wd4996")
+            target:add("cxflags", "/wd4996", {tools = {"cl", "clang_cl"}})
         else
             target:add("cflags", "-fPIC")
         end
