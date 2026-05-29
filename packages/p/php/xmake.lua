@@ -177,7 +177,7 @@ package("php")
         import("package.tools.autoconf").install(package, configs)
     end)
 
-    on_install("windows", function(package)
+    on_install("windows|x64", "windows|x86", function(package)
         local scheme = package:current_scheme()
         if scheme and scheme:name() == "binary" then
             -- 主包：运行时
@@ -217,5 +217,21 @@ package("php")
             end
         else
             -- source scheme
+        end
+    end)
+
+    on_test(function(package)
+        local php_exe = path.join(package:installdir("bin"), "php")
+        os.vrun(php_exe .. " -v")
+        assert(package:has_cincludes("php/main/php_version.h"))
+    end)
+
+    on_test("windows", function(package)
+        local php_exe = path.join(package:installdir("bin"), "php.exe")
+        os.vrun(php_exe .. " -v")
+
+        local scheme = package:current_scheme()
+        if scheme and scheme:name() == "source" or package:config("devpack") then
+            assert(package:has_cincludes("php/main/php_version.h"))
         end
     end)
