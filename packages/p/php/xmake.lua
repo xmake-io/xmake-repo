@@ -28,7 +28,7 @@ package("php")
         local source = package:scheme("source")
         source:add("urls", "https://www.php.net/distributions/php-$(version).tar.gz")
         for ver, info in pairs(php_versions) do
-            source:add("versions", ver, info.linux.source)
+            source:add("versions", ver, info.source)
         end
 
         -- 无二进制包 schemes
@@ -41,20 +41,14 @@ package("php")
         local arch = os.is_arch("x86_64") and "x64" or "x86"
         local ts = package:config("threadsafe")
         local suffix = ts and "" or "-nts"
-        local debug = package:config("debug")
+        local url = string.format(
+            "https://downloads.php.net/~windows/releases/archives/php-$(version)%s-Win32-vs17-%s.zip",
+            suffix, arch)
 
-        if debug then
-            local url = string.format(
-                "https://downloads.php.net/~windows/releases/archives/php-debug-pack-$(version)%s-Win32-vs17-%s.zip",suffix, arch)
-            binary:add("urls", url)
-        else
-            local url = string.format(
-                "https://downloads.php.net/~windows/releases/archives/php-$(version)%s-Win32-vs17-%s.zip",suffix, arch)
-            binary:add("urls", url)
-        end
+        binary:add("urls", url)
 
         for ver, info in pairs(php_versions) do
-            binary:add("versions", ver, info.win[win_key(arch, ts, false, debug)])
+            binary:add("versions", ver, info.win[win_key(arch, ts, false)])
         end
     end)
 
@@ -135,6 +129,37 @@ package("php")
                 os.mv(devdir_tmp, devdir)
             end
         end
+
+        -- ==================== 调试符号包（新增） ====================
+        if package:config("debug") then
+            local ver = package:version_str()
+            local info = php_versions[ver]
+            if info then
+                local arch = os.is_arch("x86_64") and "x64" or "x86"
+                local ts = package:config("threadsafe")
+                local debug_key = win_key(arch, ts, false, true)
+                local debug_hash = info.win[debug_key]
+
+                -- 注意 URL 格式：php-debug-pack-{version}-{ts/nts}-Win32-vs17-{arch}.zip
+                local debug_url = string.format(
+                    "https://downloads.php.net/~windows/releases/archives/php-debug-pack-%s%s-Win32-vs17-%s.zip",
+                    ver, ts and "" or "nts", arch)
+                local debugfile = path.join(package:cachedir(), path.filename(debug_url))
+
+                if not os.isfile(debugfile) then
+                    print("downloading php debug pack:", debug_url)
+                end
+                download_and_verify(debugfile, debug_url, debug_hash)
+
+                local debugdir = path.join(sourcedir, "debugpack")
+                local debugdir_tmp = debugdir .. ".tmp"
+                os.rm(debugdir_tmp)
+                if archive.extract(debugfile, debugdir_tmp) then
+                    os.rm(debugdir)
+                    os.mv(debugdir_tmp, debugdir)
+                end
+            end
+        end
     end)
 
     on_install("linux", function(package)
@@ -182,6 +207,13 @@ package("php")
                 os.trycp(path.join(devroot, "lib", "*"), package:installdir("lib"))
                 os.trycp(path.join(devroot, "script", "*"), package:installdir("script"))
                 os.trycp(path.join(devroot, "build", "*"), package:installdir("build"))
+            end
+
+            -- 调试符号包：.pdb 与 .dll/.exe 同目录才能自动加载
+            if package:config("debug") then
+                local debugdirs = os.dirs(path.join("debugpack", "*"))
+                local debugroot = #debugdirs > 0 and debugdirs[1] or "debugpack"
+                os.trycp(path.join(debugroot, "*.pdb"), package:installdir("bin"))
             end
         else
             -- source scheme
