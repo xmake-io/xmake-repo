@@ -4,7 +4,7 @@
 -- ============================================================
 php_versions = {
     ["8.5.6"] = {
-        source = "4e7baaf0a690e954a20e7ced3dd633ce8cb8094e2b6b612a55e703ecbbdcbf4f",
+        source = "169aaa21c2834b38df8e39169f43bc5bea8d4059a816cfbc59be08fc2bae60cd",
         win = {
             x64_nts = "e25cc9400a7d176f18074f677ef0159d6b04aecfb255c924d808b7144075092f",
             x64_ts = "38c20264dcfb098cbec3b2b25bc21312e436b87dceadc76725aa1d7cf80be1fc",
@@ -21,7 +21,7 @@ php_versions = {
         }
     },
     ["8.4.21"] = {
-        source = "4e7baaf0a690e954a20e7ced3dd633ce8cb8094e2b6b612a55e703ecbbdcbf4f",
+        source = "db96ee0a8e5ee7b73a4913a2aeddc162ba2ef16cd34b9347b5b9a6150e1f8e48",
         win = {
             x64_nts = "2cb57d0d3a17b1248c6a53b600719d4b051e1c374373404d5031409c0725031d",
             x64_ts = "9e2f6e455d3f42993f09deed23ad0178b3787090c924793e50414b6a92de186a",
