@@ -30,3 +30,5 @@ tags
 doc
 .claude
 dist/
+.idea/
+/updated
