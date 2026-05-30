@@ -21,6 +21,12 @@ package("crashcatch")
         os.cp("include/*.hpp", package:installdir("include"))
     end)
 
-    on_test(function(package)
-        assert(package:has_cxxtypes("CrashCatch_Config", {configs = {languages = "cxx17"}, includes = "CrashCatchDLL.hpp"}))
+    on_test(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            #include <CrashCatchDLL.hpp>
+            int test() {
+                crashcatch_enable();
+                return 0;
+            }
+        ]]}, {configs = {languages = "cxx17"}}))
     end)
