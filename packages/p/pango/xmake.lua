@@ -83,11 +83,14 @@ package("pango")
             envs.LDFLAGS = string.gsub(envs.LDFLAGS, "%-libpath:", "/libpath:")
         end
 
-        local cxflags
-        if package:is_plat("windows", "mingw") and not package:dep("cairo"):config("shared") then
-            cxflags = "-DCAIRO_WIN32_STATIC_BUILD=1"
+        -- Force the Cairo static-build define into the compiler environment
+        -- so Meson's dependency/feature checks pick it up during configuration.
+        if package:is_plat("windows", "mingw") and package:dep("cairo") and not package:dep("cairo"):config("shared") then
+            envs.CFLAGS   = (envs.CFLAGS or "")   .. " -DCAIRO_WIN32_STATIC_BUILD=1"
+            envs.CXXFLAGS = (envs.CXXFLAGS or "") .. " -DCAIRO_WIN32_STATIC_BUILD=1"
         end
-        meson.install(package, configs, {envs = envs, cxflags = cxflags})
+
+        meson.install(package, configs, {envs = envs})
     end)
 
     on_test(function (package)
