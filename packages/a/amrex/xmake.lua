@@ -20,7 +20,8 @@ package("amrex")
     add_versions("24.12", "ca4b41ac73fabb9cf3600b530c9823eb3625f337d9b7b9699c1089e81c67fc67")
     add_versions("24.09", "a1435d16532d04a1facce9a9ae35d68a57f7cd21a5f22a6590bde3c265ea1449")
 
-    add_patches(">=24.09", "patches/24.09/remove-symlink.patch", "d71adb07252e488ee003f6f04fea756864d6af2232b43208c9e138e062eb6e4d")
+    add_patches(">=24.09 <26.05", "patches/24.09/remove-symlink.patch", "d71adb07252e488ee003f6f04fea756864d6af2232b43208c9e138e062eb6e4d")
+    add_patches(">=26.05", "patches/26.05/remove-symlink.patch", "c287e25c0473c0eb1046747070beb04c0c7a59ccf53d872af6761da8739cdda5")
 
     add_configs("openmp", {description = "Enable OpenMP", default = false, type = "boolean"})
     add_configs("mpi", {description = "Enable MPI", default = false, type = "boolean", readonly = true})
@@ -83,6 +84,7 @@ package("amrex")
     end)
 
     on_test(function (package)
+        local languages = package:version() and package:version():ge("26.05") and "c++20" or "c++17"
         assert(package:check_cxxsnippets({test = [[
             #include <AMReX.H>
             #include <AMReX_Print.H>
@@ -94,5 +96,5 @@ package("amrex")
                 }
                 amrex::Finalize();
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = {languages = languages}}))
     end)
