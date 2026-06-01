@@ -63,7 +63,7 @@ package("libjpeg-turbo")
         if package:is_plat("windows") and package:has_runtime("MD") then
             table.insert(configs, "-DWITH_CRT_DLL=ON")
         end
-        if package:is_plat("mingw") then
+        if package:is_plat("mingw", "cross") then
             table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. package:arch())
         end
 
