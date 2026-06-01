@@ -22,16 +22,18 @@ package("gamenetworkingsockets")
     add_configs("webrtc", {description = "Enable p2p.", default = false, type = "boolean"})
 
     on_load("windows", "linux", function(package)
-        if not package:config("shared") then
-            package:add("defines", "STEAMNETWORKINGSOCKETS_STATIC_LINK")
-            package:add("deps", "protobuf-cpp <30")
-            if not package:is_plat("windows") then
-                package:add("deps", "openssl")
-            end
-            if package:config("webrtc") then
-                package:add("deps", "abseil")
-            end
-        end
+       package:add("deps", "protobuf-cpp <30")
+       if not package:is_plat("windows") then
+           package:add("deps", "openssl")
+       end
+        
+       if package:config("webrtc") then
+          package:add("deps", "abseil")
+       end
+        
+       if not package:config("shared") then
+           package:add("defines", "STEAMNETWORKINGSOCKETS_STATIC_LINK")
+       end
     end)
 
     on_install("windows|x86", "windows|x64", "linux", function (package)
