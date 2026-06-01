@@ -42,7 +42,7 @@ package("libheif")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", "cross", function (package)
         local configs =
         {
             "-DBUILD_TESTING=OFF",
