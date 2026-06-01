@@ -33,7 +33,7 @@ package("glib")
     elseif is_plat("macosx") then
         add_syslinks("resolv")
         add_frameworks("AppKit", "Foundation", "CoreServices", "CoreFoundation")
-    elseif is_plat("linux") then
+    elseif is_plat("linux", "cross") then
         add_syslinks("pthread", "dl", "resolv")
     end
 
@@ -45,8 +45,8 @@ package("glib")
     end
 
     add_deps("libffi", "zlib")
-    if is_plat("linux") then
-        add_deps("libiconv")
+    if is_plat("linux", "cross") then
+        add_deps("libiconv", "libelf")
     elseif is_plat("macosx") then
         add_deps("libiconv", "libintl")
     elseif is_plat("windows", "mingw") then
