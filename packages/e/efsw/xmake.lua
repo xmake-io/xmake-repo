@@ -5,6 +5,7 @@ package("efsw")
 
     set_urls("https://github.com/SpartanJ/efsw/archive/refs/tags/$(version).tar.gz",
              "https://github.com/SpartanJ/efsw.git")
+    add_versions("1.6.2", "708ea52b015aabc3284016c43fd49e809b1e6ca67297ffd2c1d540599b8f0414")
     add_versions("1.5.1", "403691e15b48dc0e67e7d3fe6e6aa3d116bc8420790df93d1d90d2cecaa06e70")
     add_versions("1.5.0", "20421778fd59a845393ff6a7a1f461228574fe5062b1bf5f82d533c0d25a41bd")
     add_versions("1.4.1", "f0ddee587928737c6a3dc92eb88266a804c77279cbdf29d47e5e6f6ad6c7fd9a")
@@ -36,9 +37,11 @@ package("efsw")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
+        local test
+        if package:version() and package:version():ge("1.6.0") then
+            test = [[
             class CustomListener : public efsw::FileWatchListener {
-                void handleFileAction(efsw::WatchID watchid, const std::string& dir, const std::string& filename, efsw::Action action, std::string oldFilename) {}
+                void handleFileAction(efsw::WatchID watchid, const std::string& dir, const std::string& filename, efsw::Action action, const std::string &oldFilename) override {}
             };
 
             void test() {
@@ -46,6 +49,19 @@ package("efsw")
 
                 efsw::FileWatcher fileWatcher;
                 fileWatcher.addWatch(".", &customListener);
-            }
-        ]]}, {includes = {"efsw/efsw.hpp"}}))
+            }]]
+        else
+            test = [[
+            class CustomListener : public efsw::FileWatchListener {
+                void handleFileAction(efsw::WatchID watchid, const std::string& dir, const std::string& filename, efsw::Action action, std::string oldFilename) override {}
+            };
+
+            void test() {
+                CustomListener customListener;
+
+                efsw::FileWatcher fileWatcher;
+                fileWatcher.addWatch(".", &customListener);
+            }]]
+        end
+        assert(package:check_cxxsnippets({test = test}, {configs = {languages = "c++11"}, includes = {"efsw/efsw.hpp"}}))
     end)
