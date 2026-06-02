@@ -82,6 +82,7 @@ package("libwebsockets")
         table.insert(configs, "-DLWS_WITH_LIBUV=" .. (package:config("libuv") and "ON" or "OFF"))
         table.insert(configs, "-DLWS_WITH_LIBEVENT=" .. (package:config("libevent") and "ON" or "OFF"))
         table.insert(configs, "-DLWS_WITH_GLIB=" .. (package:config("glib") and "ON" or "OFF"))
+        table.insert(configs, "-DLWS_WITH_LIBCAP=" .. (package:config("libcap") and package:is_plat("linux") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
