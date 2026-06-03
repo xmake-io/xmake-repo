@@ -10,10 +10,8 @@ package("serd")
     add_deps("meson", "ninja")
 
     on_load(function (package)
-        local abi = "1"
-        if not package:is_head() and package:version():lt("1.0") then
-            abi = "0"
-        end
+        local version = package:version()
+        local abi = version and (version:lt("1") and "0" or "1") or "0"
 
         package:add("includedirs",
             "include/serd-" .. abi)
@@ -44,10 +42,8 @@ package("serd")
         table.insert(configs, "-Dstatic=" .. (package:config("shared") and "false" or "true"))
         table.insert(configs, "-Dtools=" .. (package:config("tools") and "enabled" or "disabled"))
 
-        local abi = "1"
-        if not package:is_head() and package:version():lt("1.0") then
-            abi = "0"
-        end
+        local version = package:version()
+        local abi = version and (version:lt("1") and "0" or "1") or "0"
         if abi == "1" then
             table.insert(configs, "-Dbindings_cpp=" .. (package:config("bindings_cpp") and "enabled" or "disabled"))
         end
