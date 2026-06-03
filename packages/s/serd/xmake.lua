@@ -25,7 +25,7 @@ package("serd")
     end)
 
     if is_plat("wasm") then
-        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     else
         add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"})
     end
