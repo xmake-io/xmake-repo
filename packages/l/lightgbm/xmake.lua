@@ -27,7 +27,7 @@ package("lightgbm")
         end)
     end
 
-    on_load("windows|x64", "linux", function (package)
+    on_load("windows|x64", "linux", "macosx", function (package)
         if package:config("gpu") then
             package:add("deps", "opencl")
             package:add("deps", "boost", {configs = {filesystem = true, system = true}})
@@ -35,9 +35,12 @@ package("lightgbm")
         if package:is_plat("linux") and package:has_tool("cc", "clang", "clangxx") then
             package:add("deps", "libomp")
         end
+        if package:is_plat("macosx") then
+            package:add("deps", "libomp")
+        end
     end)
 
-    on_install("windows|x64", "linux", function (package)
+    on_install("windows|x64", "linux", "macosx", function (package)
         if package:version() and package:version():lt("4.2.0") then
             os.cd("compile")
         end
