@@ -70,5 +70,8 @@ package("lightgbm")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("LightGBM::ChunkedArray<int>", {includes = "LightGBM/utils/chunked_array.hpp"}))
+        assert(package:has_cxxtypes("LightGBM::ChunkedArray<int>", 
+            {includes = "LightGBM/utils/chunked_array.hpp"},
+            {configs = {languages = "c++11"}
+        }))
     end)
