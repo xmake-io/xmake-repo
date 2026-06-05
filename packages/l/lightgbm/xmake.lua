@@ -65,6 +65,9 @@ package("lightgbm")
                 end
             end
         end
+        if package:is_plat("macosx") then
+            table.insert(configs, "-DCMAKE_CXX_STANDARD=11")
+        end
         import("package.tools.cmake").install(package, configs)
         package:addenv("PATH", "bin")
     end)
