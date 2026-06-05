@@ -47,5 +47,6 @@ package("node-addon-api")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxfuncs("Napi::Just(0)", {configs = {languages = "c++11"}, includes = "napi.h"}))
+        local languages = package:version() and package:version():ge("8.8.0") and "c++17" or "c++11"
+        assert(package:has_cxxfuncs("Napi::Just(0)", {configs = {languages = languages}, includes = "napi.h"}))
     end)
