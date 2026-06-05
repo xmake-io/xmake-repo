@@ -7,6 +7,7 @@ package("emscripten")
     add_urls("https://github.com/emscripten-core/emsdk/archive/refs/tags/$(version).tar.gz",
              "https://github.com/emscripten-core/emsdk.git")
 
+    add_versions("6.0.0", "85c35c690ff6747243cb439076835c2a870df8cc5e8d304fe0800c69f6f6e265")
     add_versions("5.0.7", "266df4b9644dde18303af05dce7d04854273b0bb527246cb7fb6a09591774ccf")
     add_versions("5.0.3", "9a44a58bca0a3ea594ea7340d9a726cb58c772144dd37406d1c4e921823a75eb")
     add_versions("4.0.23", "a91a4c1f42dbb0345faac093161e27d43e9b6964840d8c8d80976ab8d3eaf2d3")
@@ -90,6 +91,9 @@ package("emscripten")
     end)
 
     on_test(function (package)
-        local emcc = is_host("windows") and "emcc.bat" or "emcc"
+        local emcc = "emcc"
+        if is_host("windows") then
+            emcc = emcc .. (package:version() and package:version():ge("6.0.0") and ".exe" or ".bat")
+        end
         os.vrunv(emcc, {"--version"})
     end)
