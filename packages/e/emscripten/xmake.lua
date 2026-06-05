@@ -91,6 +91,9 @@ package("emscripten")
     end)
 
     on_test(function (package)
-        local emcc = is_host("windows") and "emcc.bat" or "emcc"
+        local emcc = "emcc"
+        if is_host("windows") then
+            emcc = emcc .. (package:version() and package:version():ge("6.0.0") and ".exe" or ".bat")
+        end
         os.vrunv(emcc, {"--version"})
     end)
