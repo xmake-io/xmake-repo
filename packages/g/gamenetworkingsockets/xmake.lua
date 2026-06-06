@@ -21,7 +21,7 @@ package("gamenetworkingsockets")
     end
 
     add_configs("webrtc", {description = "Enable P2P.", default = false, type = "boolean"})
-    add_configs("ice", {description = "Enable P2P/ICE.", default = false, type = "boolean"})
+    add_configs("ice", {description = "Enable P2P/ICE.", default = true, type = "boolean"})
 
     on_load("windows", "linux", function(package)
         if package:version():gt("1.4.1") then
