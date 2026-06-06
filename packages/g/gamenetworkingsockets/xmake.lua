@@ -25,23 +25,22 @@ package("gamenetworkingsockets")
 
     on_load("windows", "linux", function(package)
         if package:version():gt("1.4.1") then
-           package:add("deps", "protobuf-cpp")
-           package:add("deps", "abseil")
-           package:add("deps", "openssl")
+            package:add("deps", "protobuf-cpp")
+            package:add("deps", "abseil")
 
-           package:add("includedirs", "include", "include/GameNetworkingSockets")
+            package:add("includedirs", "include", "include/GameNetworkingSockets")
 
-           if package:config("ice") then
-              package:add("defines", "STEAMNETWORKINGSOCKETS_ENABLE_ICE")
-           end
+            if package:config("ice") then
+                package:add("defines", "STEAMNETWORKINGSOCKETS_ENABLE_ICE")
+            end
         else
-           package:add("deps", "protobuf-cpp <30")
-           if not package:is_plat("windows") then
-               package:add("deps", "openssl")
-           end
+            package:add("deps", "protobuf-cpp <30")
+            if not package:is_plat("windows") then
+                package:add("deps", "openssl")
+            end
 
-           if package:config("webrtc") then
-              package:add("deps", "abseil")
+            if package:config("webrtc") then
+                package:add("deps", "abseil")
             end
         end
 
@@ -84,7 +83,7 @@ package("gamenetworkingsockets")
             if protobuf then
                 table.insert(configs, "-DProtobuf_USE_STATIC_LIBS=" .. (protobuf:config("shared") and "OFF" or "ON"))
             end
-    
+
             local openssl = package:dep("openssl")
             if openssl then
                 table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
