@@ -13,7 +13,7 @@ package("gamenetworkingsockets")
     add_versions("v1.2.0", "768a7cec2491e34c824204c4858351af2866618ceb13a024336dc1df8076bef3")
 
     if is_plat("windows") then
-        add_syslinks("ws2_32")
+        add_syslinks("ws2_32", "BCrypt")
         add_defines("_WINDOWS", "WIN32")
     else
         add_defines("POSIX", "LINUX")
@@ -35,13 +35,14 @@ package("gamenetworkingsockets")
             end
         else
             package:add("deps", "protobuf-cpp <30")
-            if not package:is_plat("windows") then
-                package:add("deps", "openssl")
-            end
 
             if package:config("webrtc") then
                 package:add("deps", "abseil")
             end
+        end
+
+        if not package:is_plat("windows") then
+            package:add("deps", "openssl")
         end
 
         if not package:config("shared") then
@@ -84,10 +85,14 @@ package("gamenetworkingsockets")
                 table.insert(configs, "-DProtobuf_USE_STATIC_LIBS=" .. (protobuf:config("shared") and "OFF" or "ON"))
             end
 
-            local openssl = package:dep("openssl")
-            if openssl then
-                table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
-                table.insert(configs, "-DOPENSSL_USE_STATIC_LIBS=" .. (openssl:config("shared") and "OFF" or "ON"))
+            if not package:is_plat("windows") then
+                local openssl = package:dep("openssl")
+                if openssl then
+                    table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
+                    table.insert(configs, "-DOPENSSL_USE_STATIC_LIBS=" .. (openssl:config("shared") and "OFF" or "ON"))
+                end
+            else
+                table.insert(configs, "-DUSE_CRYPTO=BCrypt")
             end
     
             import("package.tools.cmake").install(package, configs)
