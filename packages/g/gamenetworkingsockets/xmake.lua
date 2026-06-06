@@ -20,8 +20,8 @@ package("gamenetworkingsockets")
         add_syslinks("pthread")
     end
 
-    add_configs("webrtc", {description = "Enable P2P.", default = false, type = "boolean"})
-    add_configs("ice", {description = "Enable P2P/ICE.", default = true, type = "boolean"})
+    add_configs("webrtc", {description = "Enable P2P with Google's WebRTC.", default = false, type = "boolean"})
+    add_configs("ice", {description = "Enable P2P with ICE.", default = true, type = "boolean"})
 
     on_load("windows", "linux", function(package)
         if package:version():gt("1.4.1") then
