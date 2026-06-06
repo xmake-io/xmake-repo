@@ -99,7 +99,6 @@ package("gamenetworkingsockets")
             local gns = path.join(package:installdir("include"), "GameNetworkingSockets", "steam")
             os.cp(gns, path.join(package:installdir("include"), "steam"))
             os.tryrm(path.join(package:installdir("include"), "GameNetworkingSockets"))
-            --os.cp("lib/*.lib", package:installdir("lib"))
         end
 
         if oldir then
