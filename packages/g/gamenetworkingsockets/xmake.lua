@@ -4,9 +4,9 @@ package("gamenetworkingsockets")
     set_description("Reliable & unreliable messages over UDP. Robust message fragmentation & reassembly. P2P networking / NAT traversal. Encryption. ")
     set_license("BSD-3-Clause")
 
-    set_urls("https://github.com/ValveSoftware/GameNetworkingSockets.git")
+    set_urls("https://github.com/ValveSoftware/GameNetworkingSockets/archive/$(version).tar.gz",
+             "https://github.com/ValveSoftware/GameNetworkingSockets.git")
 
-    -- Use SHA256 of the .tar.gz file found in the Releases section on GitHub
     add_versions("v1.6.0", "bddfe735d29ff2bbf186013a945ed57caaf4b79893eb7918c06c0f64955016f3")
     add_versions("v1.4.1", "1cfb2bf79c51a08ae4e8b7ff5e9c1266b43cfff6f53ecd3e7bc5e3fcb2a22503")
     add_versions("v1.4.0", "eca3b5684dbf81a3a6173741a38aa20d2d0a4d95be05cf88c70e0e50062c407b")
