@@ -68,6 +68,10 @@ package("aws-c-io")
         if package:is_plat("windows") then
             table.insert(configs, "-DAWS_STATIC_MSVC_RUNTIME_LIBRARY=" .. (package:runtimes():startswith("MT") and "ON" or "OFF"))
         end
+        if package:is_plat("macosx") then
+            --TODO: add an option to USE_S2N
+            table.insert(configs, "-DAWS_USE_SECITEM=ON")
+        end
         import("package.tools.cmake").install(package, configs)
 
         if package:is_plat("windows") and package:is_debug() then
