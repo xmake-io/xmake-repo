@@ -6,6 +6,7 @@ package("cgif")
     add_urls("https://github.com/dloebl/cgif/archive/refs/tags/$(version).tar.gz",
              "https://github.com/dloebl/cgif.git")
 
+    add_versions("v0.5.3", "dcc7731e974ee77db75df26c99aca4d95f11ca2d267d870d42bce1e0d1e1e75f")
     add_versions("v0.5.2", "d5e603309176334406d7e4f0063ed96924fe9b0368e8037df2614c0df67bb41b")
     add_versions("v0.5.1", "211e3dfba7138e4cbc1272999aa735be52fc14cab8cb000d9d6aa9d294423034")
     add_versions("v0.5.0", "d6cb312c7da2c6c9f310811aa3658120c0316ba130c48a012e7baf3698920fe9")
