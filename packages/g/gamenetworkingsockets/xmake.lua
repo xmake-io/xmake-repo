@@ -14,7 +14,7 @@ package("gamenetworkingsockets")
     add_versions("v1.2.0", "768a7cec2491e34c824204c4858351af2866618ceb13a024336dc1df8076bef3")
 
     if is_plat("windows") then
-        add_syslinks("ws2_32", "BCrypt")
+        add_syslinks("ws2_32", "bcrypt")
         add_defines("_WINDOWS", "WIN32")
     else
         add_defines("POSIX", "LINUX")
