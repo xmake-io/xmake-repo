@@ -36,6 +36,8 @@ package("aws-c-io")
     add_versions("v0.14.5", "2700bcde062f7de1c1cbfd236b9fdfc9b24b4aa6dc0fb09bb156e16e07ebd0b6")
     add_versions("v0.13.32", "2a6b18c544d014ca4f55cb96002dbbc1e52a2120541c809fa974cb0838ea72cc")
 
+    add_configs("s2n", {description = "Use s2n-tls as TLS backend.", default = is_plat("macosx") or is_plat("linux"), type = "boolean"})
+
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
@@ -50,7 +52,13 @@ package("aws-c-io")
 
     add_deps("cmake", "aws-c-common", "aws-c-cal")
 
-    on_install("!wasm and (!mingw or mingw|!i386)", function (package)
+    on_load(function (package)
+        if package:config("s2n") then
+            package:add("deps", "s2n-tls")
+        end
+    end)
+
+    on_install("windows", "linux", "bsd", "cross", "android", "mingw|!i386", "macosx|arm64", function (package)
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "USE_WINDOWS_DLL_SEMANTICS", "AWS_IO_USE_IMPORT_EXPORT")
         end
@@ -65,12 +73,14 @@ package("aws-c-io")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_SANITIZERS=" .. (package:config("asan") and "ON" or "OFF"))
+        table.insert(configs, "-DUSE_S2N=" .. (package:config("s2n") and "ON" or "OFF"))
         if package:is_plat("windows") then
             table.insert(configs, "-DAWS_STATIC_MSVC_RUNTIME_LIBRARY=" .. (package:runtimes():startswith("MT") and "ON" or "OFF"))
         end
         if package:is_plat("macosx") then
-            --TODO: add an option to USE_S2N
-            table.insert(configs, "-DAWS_USE_SECITEM=ON")
+            if not package:config("s2n") then
+                table.insert(configs, "-DAWS_USE_SECITEM=ON")
+            end
         end
         import("package.tools.cmake").install(package, configs)
 
