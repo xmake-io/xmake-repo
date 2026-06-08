@@ -1,5 +1,4 @@
 package("libsdl3_mixer")
-
     set_homepage("https://github.com/libsdl-org/SDL_mixer")
     set_description("An audio mixer that supports various file formats for Simple Directmedia Layer.")
     set_license("zlib")
@@ -28,7 +27,7 @@ package("libsdl3_mixer")
 
     on_install(function (package)
         local configs = {"-DSDLMIXER_TESTS=OFF", "-DSDLMIXER_EXAMPLES=OFF", "-DSDLMIXER_VENDORED=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
