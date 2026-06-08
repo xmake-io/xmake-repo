@@ -6,6 +6,7 @@ package("s2n-tls")
     add_urls("https://github.com/aws/s2n-tls/archive/refs/tags/$(version).tar.gz",
              "https://github.com/aws/s2n-tls.git")
 
+    add_versions("v1.7.3", "9b7c52aa76b1773218ce9033875a35cb59f29fa7ce2d8de16132648bd75c2194")
     add_versions("v1.7.2", "3ca5361dabd2b041ba6d8c3fe73d1bc5a721dc5f62bbf71838010d1eddaa0cfd")
     add_versions("v1.7.0", "a6e8228e238239bb3c17b1eda3ed702bcbb2eaebc792eac4d754cc5619b0ea06")
     add_versions("v1.6.2", "b62c52ededd0b42e58fea660727141728cfb853c564083dbfc6fd027a1564582")
@@ -24,13 +25,6 @@ package("s2n-tls")
     add_versions("v1.5.5", "6316e1ad2c8ef5807519758bb159d314b9fef31d79ae27bc8f809104b978bb04")
     add_versions("v1.5.1", "d79710d6ef089097a3b84fc1e5cec2f08d1ec46e93b1d400df59fcfc859e15a3")
     add_versions("v1.5.0", "5e86d97d8f24653ef3dff3abe6165169f0ba59cdf52b5264987125bba070174d")
-    add_versions("v1.4.18", "a55b0b87eaaffc58bd44d90c5bf7903d11be816aa144296193e7d1a6bea5910e")
-    add_versions("v1.4.17", "5235cd2c926b89ae795b1e6b5158dce598c9e79120208b4bcd8d19ce04d86986")
-    add_versions("v1.4.16", "84fdbaa894c722bf13cac87b8579f494c1c2d66de642e5e6104638fddea76ad9")
-    add_versions("v1.4.14", "90cd0b7b1e5ebc7e40ba5f810cc24a4d604aa534fac7260dee19a35678e38659")
-    add_versions("v1.4.12", "d0769f27eb9e6b8fc98d3e8e3eb87ed71e10b08fade87893b293878d84faaceb")
-    add_versions("v1.4.3", "e42551bdf6595f718e232eb98c4f0e37c7a284f29bfcbc09fa9c0a2145754ab9")
-    add_versions("v1.3.51", "75c650493c42dddafd5dec6a42f2258ab52e501719ee5a337ec580cc958ea67a")
 
     add_configs("pq", {description = [[Enables all Post Quantum Crypto code. You likely want this
     for older compilers or uncommon platforms.]], default = false, type = "boolean"})
@@ -42,9 +36,9 @@ package("s2n-tls")
         add_syslinks("m", "pthread")
     end
 
-    add_deps("cmake", "openssl")
+    add_deps("cmake", "openssl3")
 
-    on_install("linux", "bsd", "cross", "android", function (package)
+    on_install("linux", "bsd", "cross", "android", "macosx|arm64", function (package)
         local configs = {
             "-DBUILD_TESTING=OFF",
             "-DUNSAFE_TREAT_WARNINGS_AS_ERRORS=OFF",
