@@ -25,7 +25,7 @@ package("aws-c-event-stream")
 
     add_deps("cmake", "aws-c-common", "aws-c-io", "aws-checksums")
 
-    on_install("windows", "linux", "macosx", "bsd", "msys", "cross", function (package)
+    on_install("windows", "linux", "macosx|arm64", "bsd", "msys", "cross", function (package)
         local cmakedir = package:dep("aws-c-common"):installdir("lib", "cmake")
         if package:is_plat("windows") then
             cmakedir = cmakedir:gsub("\\", "/")
