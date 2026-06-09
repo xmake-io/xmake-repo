@@ -120,6 +120,32 @@
                 {plain = true})
         end
 
+        if package:is_plat("windows") and package:is_arch("arm.*") then
+            -- CMake MATCHES is case-sensitive; ARM64 != arm64
+            io.replace("Configure.cmake",
+                'elseif(SLEEF_TARGET_PROCESSOR MATCHES "aarch64|arm64")',
+                'elseif(SLEEF_TARGET_PROCESSOR MATCHES "aarch64|arm64|ARM64")',
+                {plain = true})
+        end
+
+        if package:is_plat("windows") then
+            -- Skip __builtin_sqrt check on MSVC (crashes cmake try_compile) - Error since MSVC 19.51/CMake 4.3.3/Ninja 1.13.1?
+            io.replace("Configure.cmake",
+                '# Built-in math functions\n\nCHECK_C_SOURCE_COMPILES("',
+                '# Built-in math functions\n\nif(NOT MSVC)\nCHECK_C_SOURCE_COMPILES("',
+                {plain = true})
+            io.replace("Configure.cmake",
+                '  COMPILER_SUPPORTS_BUILTIN_MATH)',
+                '  COMPILER_SUPPORTS_BUILTIN_MATH)\nendif()',
+                {plain = true})
+
+            -- MSVC ARM64 does not define __ARM_NEON; use _M_ARM64 instead
+            io.replace("src/arch/helperadvsimd.h",
+                '#if !defined(__ARM_NEON) && !defined(SLEEF_GENHEADER)',
+                '#if !defined(__ARM_NEON) && !defined(_M_ARM64) && !defined(SLEEF_GENHEADER)',
+                {plain = true})
+        end
+
         local configs = {
             "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"),
             "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"),
@@ -169,26 +195,6 @@
             "-DSLEEF_ENABLE_TLFLOAT=OFF",
             "-DSLEEF_DISABLE_SSL=ON",
         }
-
-        if package:is_plat("windows") and package:is_arch("arm.*") then
-            -- CMake MATCHES is case-sensitive; ARM64 != arm64
-            io.replace("Configure.cmake",
-                'elseif(SLEEF_TARGET_PROCESSOR MATCHES "aarch64|arm64")',
-                'elseif(SLEEF_TARGET_PROCESSOR MATCHES "aarch64|arm64|ARM64")',
-                {plain = true})
-        end
-
-        if package:is_plat("windows") then
-            -- Skip __builtin_sqrt check on MSVC (crashes cmake try_compile) - Error since MSVC 19.51/CMake 4.3.3/Ninja 1.13.1?
-            io.replace("Configure.cmake",
-                '# Built-in math functions\n\nCHECK_C_SOURCE_COMPILES("',
-                '# Built-in math functions\n\nif(NOT MSVC)\nCHECK_C_SOURCE_COMPILES("',
-                {plain = true})
-            io.replace("Configure.cmake",
-                '  COMPILER_SUPPORTS_BUILTIN_MATH)',
-                '  COMPILER_SUPPORTS_BUILTIN_MATH)\nendif()',
-                {plain = true})
-        end
 
         if package:is_cross() then
             -- Build native host tools first
