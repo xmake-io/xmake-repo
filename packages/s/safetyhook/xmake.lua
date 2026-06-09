@@ -6,6 +6,7 @@ package("safetyhook")
     add_urls("https://github.com/cursey/safetyhook/archive/refs/tags/$(version).tar.gz",
              "https://github.com/cursey/safetyhook.git")
 
+    add_versions("v0.6.10", "e30b8ec44a2eeb26ebe1a8006f03649de0686e5bbf1f5a9d29d98670a6c10f92")
     add_versions("v0.6.9", "2cd773fbcec62945e8fae4b1858ecc77e7cfa84d55df694cb38676d440dd47d2")
     add_versions("v0.6.7", "05e66f9a1ac85249f590149a146e74fd946950cfe0c82917e5a4ec178e9e212a")
     add_versions("v0.6.6", "3189b59255d9824fd7e501bb0353f46f0f1e487116cff56090766ef1fd136bc9")
