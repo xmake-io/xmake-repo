@@ -170,6 +170,14 @@
             "-DSLEEF_DISABLE_SSL=ON",
         }
 
+        if package:is_plat("windows") and package:is_arch("arm.*") then
+            -- CMake MATCHES is case-sensitive; ARM64 != arm64
+            io.replace("Configure.cmake",
+                'elseif(SLEEF_TARGET_PROCESSOR MATCHES "aarch64|arm64")',
+                'elseif(SLEEF_TARGET_PROCESSOR MATCHES "aarch64|arm64|ARM64")',
+                {plain = true})
+        end
+
         if package:is_cross() then
             -- Build native host tools first
             local native_build_dir = path.join(package:builddir(), "sleef_native_host")
@@ -196,6 +204,8 @@
 
             if package:is_plat("windows") and package:is_arch("arm*") then
                 table.insert(configs, "-DSLEEF_DISABLE_SVE=ON")
+                -- Override cmake auto-detected target processor for cross-build
+                table.insert(configs, "-DSLEEF_TARGET_PROCESSOR=ARM64")
             else
                 table.insert(configs, "-DSLEEF_DISABLE_SVE=" .. (package:config("sve") and "OFF" or "ON"))
             end
