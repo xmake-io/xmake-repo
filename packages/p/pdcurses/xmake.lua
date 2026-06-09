@@ -1,6 +1,7 @@
 package("pdcurses")
     set_homepage("https://pdcurses.org/")
     set_description("PDCurses - a curses library for environments that don't fit the termcap/terminfo model.")
+    set_license("Public Domain")
 
     add_urls("https://github.com/wmcbrine/PDCurses/archive/refs/tags/$(version).tar.gz",
              "https://github.com/wmcbrine/PDCurses.git")

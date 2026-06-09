@@ -2,6 +2,7 @@ package("krb5")
 
     set_homepage("http://web.mit.edu/kerberos/")
     set_description("Kerberos: The Network Authentication Protocol")
+    set_license("MIT")
 
     add_urls("https://kerberos.org/dist/krb5/$(version).tar.gz", {version = function (version)
         return format("%d.%d/krb5-%s", version:major(), version:minor(), version)

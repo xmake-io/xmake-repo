@@ -2,6 +2,7 @@ package("depot_tools")
     set_kind("binary")
     set_homepage("https://chromium.googlesource.com/chromium/tools/depot_tools")
     set_description("Tools for working with Chromium development")
+    set_license("BSD-3-Clause")
 
     add_urls("https://github.com/xmake-mirror/depot_tools.git",
              "https://chromium.googlesource.com/chromium/tools/depot_tools.git")
