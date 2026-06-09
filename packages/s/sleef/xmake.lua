@@ -57,6 +57,7 @@
             package:add("defines", "SLEEF_STATIC_LIBS")
         end
 
+        package:add("links", "sleef")
         if package:config("dft") then
             package:add("links", "sleefdft")
         end
