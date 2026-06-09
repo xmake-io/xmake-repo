@@ -15,7 +15,7 @@ package("luajit")
     add_configs("gc64",  { description = "Enable GC64.", default = false, type = "boolean"})
 
     add_includedirs("include", "include/luajit")
-    if not is_plat("windows") then
+    if not is_plat("windows") and not is_plat("mingw") then
         add_syslinks("dl")
     end
 
@@ -42,7 +42,7 @@ package("luajit")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "bsd", "android", "iphoneos", function (package)
+    on_install("windows", "mingw", "linux", "macosx", "bsd", "android", "iphoneos", function (package)
         local configs = {}
         configs.fpu     = package:config("fpu")
         configs.nojit   = package:config("nojit")
