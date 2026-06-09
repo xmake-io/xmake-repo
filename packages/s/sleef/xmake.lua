@@ -10,7 +10,6 @@
 
     add_configs("shared",          {description = "Build shared libraries", default = true, type = "boolean"})
     add_configs("lto",             {description = "Enable LTO on GCC or ThinLTO on clang", default = false, type = "boolean"})
-    add_configs("libm",            {description = "Build libsleef", default = true, type = "boolean"})
     add_configs("dft",             {description = "Build libsleefdft", default = false, type = "boolean"})
     add_configs("quad",            {description = "Build libsleefquad", default = false, type = "boolean"})
     add_configs("gnuabi",          {description = "Build libsleefgnuabi", default = true, type = "boolean"})
@@ -54,6 +53,19 @@
         if package:config("cuda") then
             package:add("deps", "cuda")
         end
+        if not package:config("shared") then
+            package:add("defines", "SLEEF_STATIC_LIBS")
+        end
+
+        if package:config("dft") then
+            package:add("links", "sleefdft")
+        end
+        if package:config("quad") then
+            package:add("links", "sleefquad")
+        end
+        if package:config("gnuabi") then
+            package:add("links", "sleefgnuabi")
+        end
     end)
 
     on_install(function (package)
@@ -63,7 +75,6 @@
 
             -- Core options
             "-DSLEEF_ENABLE_LTO=" .. (package:config("lto") and "ON" or "OFF"),
-            "-DSLEEF_BUILD_LIBM=" .. (package:config("libm") and "ON" or "OFF"),
             "-DSLEEF_BUILD_DFT=" .. (package:config("dft") and "ON" or "OFF"),
             "-DSLEEF_BUILD_QUAD=" .. (package:config("quad") and "ON" or "OFF"),
             "-DSLEEF_BUILD_GNUABI_LIBS=" .. (package:config("gnuabi") and "ON" or "OFF"),
@@ -108,6 +119,33 @@
             "-DSLEEF_ENABLE_TLFLOAT=OFF",
             "-DSLEEF_DISABLE_SSL=ON",
         }
+
+        if package:is_cross() then
+            -- Build native host tools first
+            local native_build_dir = path.join(package:buildir(), "sleef_native_host")
+            local native_configs = {
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DBUILD_SHARED_LIBS=OFF",
+                "-DSLEEF_BUILD_DFT=OFF",
+                "-DSLEEF_BUILD_QUAD=OFF",
+                "-DSLEEF_BUILD_GNUABI_LIBS=OFF",
+                "-DSLEEF_BUILD_SCALAR_LIB=OFF",
+                "-DSLEEF_BUILD_INLINE_HEADERS=OFF",
+                "-DSLEEF_BUILD_TESTS=OFF",
+                "-DSLEEF_BUILD_BENCH=OFF",
+                "-DSLEEF_ENABLE_TESTER=OFF",
+                "-DSLEEF_ENABLE_TESTER4=OFF",
+                "-DSLEEF_DISABLE_FFTW=ON",
+                "-DSLEEF_DISABLE_MPFR=ON",
+                "-DSLEEF_ENABLE_TLFLOAT=OFF",
+                "-DSLEEF_DISABLE_SSL=ON",
+            }
+            os.mkdir(native_build_dir)
+            os.exec("cmake -S . -B " .. native_build_dir .. " " .. table.concat(native_configs, " "))
+            os.exec("cmake --build " .. native_build_dir .. " --target mkrename mkrename_gnuabi mkmasked_gnuabi mkdisp mkalias addSuffix")
+
+            table.insert(configs, "-DNATIVE_BUILD_DIR=" .. path.absolute(native_build_dir))
+        end
 
         import("package.tools.cmake").install(package, configs)
     end)
