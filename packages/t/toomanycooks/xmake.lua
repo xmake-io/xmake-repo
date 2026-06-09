@@ -6,6 +6,7 @@ package("toomanycooks")
     add_urls("https://github.com/tzcnt/TooManyCooks/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/tzcnt/TooManyCooks.git")
 
+    add_versions("1.6.0", "bf4c7f92968ca2b268f56582c314c5944d342eed4e72b4cde8240b56e88e64ca")
     add_versions("1.4.0", "5c847cfd73231409301732f3e158c52b694a2bd90d336e90f558811d59ef7f69")
 
     add_configs("priority_count", {default = 0, type = "number", description = "Allows you to specify the number of priority levels at compile time. 0 = specified at runtime"})
