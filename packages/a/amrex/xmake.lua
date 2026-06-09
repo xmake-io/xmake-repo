@@ -1,6 +1,7 @@
 package("amrex")
     set_homepage("https://amrex-codes.github.io/amrex")
     set_description("AMReX: Software Framework for Block Structured AMR")
+    set_license("BSD-3-Clause")
 
     add_urls("https://github.com/AMReX-Codes/amrex/releases/download/$(version)/amrex-$(version).tar.gz",
              "https://github.com/AMReX-Codes/amrex.git")

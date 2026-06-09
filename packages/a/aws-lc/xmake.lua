@@ -1,6 +1,7 @@
 package("aws-lc")
     set_homepage("https://github.com/aws/aws-lc")
     set_description("AWS-LC is a general-purpose cryptographic library maintained by the AWS Cryptography team for AWS and their customers. It іs based on code from the Google BoringSSL project and the OpenSSL project.")
+    set_license("Apache-2.0")
 
     add_urls("https://github.com/aws/aws-lc/archive/refs/tags/$(version).tar.gz",
              "https://github.com/aws/aws-lc.git")
