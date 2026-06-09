@@ -178,6 +178,18 @@
                 {plain = true})
         end
 
+        if package:is_plat("windows") then
+            -- Skip __builtin_sqrt check on MSVC (crashes cmake try_compile) - Error since MSVC 19.51/CMake 4.3.3/Ninja 1.13.1?
+            io.replace("Configure.cmake",
+                '# Built-in math functions\n\nCHECK_C_SOURCE_COMPILES("',
+                '# Built-in math functions\n\nif(NOT MSVC)\nCHECK_C_SOURCE_COMPILES("',
+                {plain = true})
+            io.replace("Configure.cmake",
+                '  COMPILER_SUPPORTS_BUILTIN_MATH)',
+                '  COMPILER_SUPPORTS_BUILTIN_MATH)\nendif()',
+                {plain = true})
+        end
+
         if package:is_cross() then
             -- Build native host tools first
             local native_build_dir = path.join(package:builddir(), "sleef_native_host")
@@ -202,7 +214,7 @@
             os.exec("cmake -S . -B " .. native_build_dir .. " " .. table.concat(native_configs, " "))
             os.exec("cmake --build " .. native_build_dir .. " --target mkrename mkrename_gnuabi mkmasked_gnuabi mkdisp mkalias addSuffix")
 
-            if package:is_plat("windows") and package:is_arch("arm*") then
+            if package:is_plat("windows") and package:is_arch("arm.*") then
                 table.insert(configs, "-DSLEEF_DISABLE_SVE=ON")
                 -- Override cmake auto-detected target processor for cross-build
                 table.insert(configs, "-DSLEEF_TARGET_PROCESSOR=ARM64")
