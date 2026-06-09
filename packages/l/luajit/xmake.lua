@@ -15,7 +15,7 @@ package("luajit")
     add_configs("gc64",  { description = "Enable GC64.", default = false, type = "boolean"})
 
     add_includedirs("include", "include/luajit")
-    if not is_plat("windows") and not is_plat("mingw") then
+    if not is_plat("windows", "mingw") then
         add_syslinks("dl")
     end
 
