@@ -78,27 +78,45 @@
                 {plain = true})
         end
 
-        -- iOS architecture detection fix
         if package:is_plat("iphoneos") then
+            -- iOS architecture detection fix
             io.replace("Configure.cmake",
                 'if(CMAKE_SYSTEM_NAME STREQUAL "Darwin" AND CMAKE_OSX_ARCHITECTURES MATCHES "^(x86_64|arm64)$")',
                 'if((CMAKE_SYSTEM_NAME STREQUAL "Darwin" OR CMAKE_SYSTEM_NAME STREQUAL "iOS") AND CMAKE_OSX_ARCHITECTURES MATCHES "^(x86_64|arm64)$")',
                 {plain = true})
+
+            -- SVE crashes Apple Clang on iPhoneOS
+            io.replace("Configure.cmake",
+                'if(SLEEF_ARCH_AARCH64 AND NOT SLEEF_DISABLE_SVE AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")',
+                'if(SLEEF_ARCH_AARCH64 AND NOT SLEEF_DISABLE_SVE AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin" AND NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")',
+                {plain = true})
         end
 
-        -- Disable alias attr on mingw (PE/COFF)
         if package:is_plat("mingw") then
+            -- Disable alias attr on mingw (PE/COFF)
             io.replace("Configure.cmake",
                 'if (COMPILER_SUPPORTS_WEAK_ALIASES)',
                 'if (COMPILER_SUPPORTS_WEAK_ALIASES AND NOT (WIN32 AND CMAKE_C_COMPILER_ID STREQUAL "GNU"))',
                 {plain = true})
+
+            --Remove __stdcall from EXPORT on mingw (matches SLEEF_IMPORT)
+            io.replace("src/common/misc.h",
+                '#define EXPORT __stdcall __declspec(dllexport)',
+                '#define EXPORT __declspec(dllexport)',
+                {plain = true})
         end
 
-        -- Remove -msse2 -mfpmath=sse on Emscripten (wasm)
         if package:is_plat("wasm") then
+            -- Remove -msse2 -mfpmath=sse on Emscripten (wasm)
             io.replace("Configure.cmake",
                 'if (SLEEF_ARCH_X86 AND SLEEF_ARCH_32BIT)',
                 'if (SLEEF_ARCH_X86 AND SLEEF_ARCH_32BIT AND NOT CMAKE_SYSTEM_NAME STREQUAL "Emscripten")',
+                {plain = true})
+
+            -- Guard -mavx2;-mfma for PURECFMA_SCALAR (line 196)
+            io.replace("Configure.cmake",
+                '  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mavx2;-mfma")',
+                '  if(NOT CMAKE_SYSTEM_NAME STREQUAL "Emscripten")\n    set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mavx2;-mfma")\n  endif()',
                 {plain = true})
         end
 
