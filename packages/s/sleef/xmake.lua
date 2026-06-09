@@ -87,7 +87,7 @@
         end
 
         -- Disable alias attr on mingw (PE/COFF)
-        if package:target_os() == "windows" then
+        if package:is_plat("mingw") then
             io.replace("Configure.cmake",
                 'if (COMPILER_SUPPORTS_WEAK_ALIASES)',
                 'if (COMPILER_SUPPORTS_WEAK_ALIASES AND NOT (WIN32 AND CMAKE_C_COMPILER_ID STREQUAL "GNU"))',
