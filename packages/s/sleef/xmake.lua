@@ -71,7 +71,7 @@
 
     on_install(function (package)
         -- Remove --target from NEON32 flags on Android ARM32
-        if package:is_cross() and package:target_os() == "android" and package:arch():find("^arm") and not package:arch():find("arm64") then
+        if package:is_cross() and package:is_plat("android") and package:arch():find("^arm") and not package:arch():find("arm64") then
             io.replace("Configure.cmake",
                 'set(CLANG_FLAGS_ENABLE_NEON32 "--target=arm-linux-gnueabihf;-mcpu=cortex-a8")',
                 'set(CLANG_FLAGS_ENABLE_NEON32 "--target=arm-linux-gnueabihf;-mcpu=cortex-a8")\nif(ANDROID)\n  list(FILTER CLANG_FLAGS_ENABLE_NEON32 EXCLUDE REGEX "^--target")\nendif()',
