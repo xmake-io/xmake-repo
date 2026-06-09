@@ -70,6 +70,38 @@
     end)
 
     on_install(function (package)
+        -- Remove --target from NEON32 flags on Android ARM32
+        if package:is_cross() and package:target_os() == "android" and package:arch():find("^arm") and not package:arch():find("arm64") then
+            io.replace("Configure.cmake",
+                'set(CLANG_FLAGS_ENABLE_NEON32 "--target=arm-linux-gnueabihf;-mcpu=cortex-a8")',
+                'set(CLANG_FLAGS_ENABLE_NEON32 "--target=arm-linux-gnueabihf;-mcpu=cortex-a8")\nif(ANDROID)\n  list(FILTER CLANG_FLAGS_ENABLE_NEON32 EXCLUDE REGEX "^--target")\nendif()',
+                {plain = true})
+        end
+
+        -- iOS architecture detection fix
+        if package:is_plat("iphoneos") then
+            io.replace("Configure.cmake",
+                'if(CMAKE_SYSTEM_NAME STREQUAL "Darwin" AND CMAKE_OSX_ARCHITECTURES MATCHES "^(x86_64|arm64)$")',
+                'if((CMAKE_SYSTEM_NAME STREQUAL "Darwin" OR CMAKE_SYSTEM_NAME STREQUAL "iOS") AND CMAKE_OSX_ARCHITECTURES MATCHES "^(x86_64|arm64)$")',
+                {plain = true})
+        end
+
+        -- Disable alias attr on mingw (PE/COFF)
+        if package:target_os() == "windows" then
+            io.replace("Configure.cmake",
+                'if (COMPILER_SUPPORTS_WEAK_ALIASES)',
+                'if (COMPILER_SUPPORTS_WEAK_ALIASES AND NOT (WIN32 AND CMAKE_C_COMPILER_ID STREQUAL "GNU"))',
+                {plain = true})
+        end
+
+        -- Remove -msse2 -mfpmath=sse on Emscripten (wasm)
+        if package:is_plat("wasm") then
+            io.replace("Configure.cmake",
+                'if (SLEEF_ARCH_X86 AND SLEEF_ARCH_32BIT)',
+                'if (SLEEF_ARCH_X86 AND SLEEF_ARCH_32BIT AND NOT CMAKE_SYSTEM_NAME STREQUAL "Emscripten")',
+                {plain = true})
+        end
+
         local configs = {
             "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"),
             "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"),
