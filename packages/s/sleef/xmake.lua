@@ -150,6 +150,17 @@
                 '  set(COMPILER_SUPPORTS_ADVSIMD 1)\n  set(COMPILER_SUPPORTS_ADVSIMDNOFMA 1)',
                 '  if(NOT MSVC)\n    set(COMPILER_SUPPORTS_ADVSIMD 1)\n    set(COMPILER_SUPPORTS_ADVSIMDNOFMA 1)\n  endif()',
                 {plain = true})
+
+            -- __cpuidex is x86-only, unresolved on MSVC ARM64
+            io.replace("src/common/common.c",
+                '#ifdef _MSC_VER\n#include <intrin.h>\nEXPORT void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx) {\n  __cpuidex(out, eax, ecx);\n}',
+                '#if defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))\n#include <intrin.h>\nEXPORT void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx) {\n  __cpuidex(out, eax, ecx);\n}',
+                {plain = true})
+
+            io.replace("src/common/common.c",
+                '#if defined(__i386__) || defined(__x86_64__) || defined(_MSC_VER)',
+                '#if defined(__i386__) || defined(__x86_64__) || defined(_M_IX86) || defined(_M_X64)',
+                {plain = true})
         end
 
         local configs = {
