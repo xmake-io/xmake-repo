@@ -113,10 +113,10 @@
                 'if (SLEEF_ARCH_X86 AND SLEEF_ARCH_32BIT AND NOT CMAKE_SYSTEM_NAME STREQUAL "Emscripten")',
                 {plain = true})
 
-            -- Guard -mavx2;-mfma for PURECFMA_SCALAR (line 196)
+            -- Substitute FP_FAST_FMA defines for -mavx2;-mfma on Emscripten
             io.replace("Configure.cmake",
                 '  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mavx2;-mfma")',
-                '  if(NOT CMAKE_SYSTEM_NAME STREQUAL "Emscripten")\n    set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mavx2;-mfma")\n  endif()',
+                '  if(NOT CMAKE_SYSTEM_NAME STREQUAL "Emscripten")\n    set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mavx2;-mfma")\n  else()\n    set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-DFP_FAST_FMA;-DFP_FAST_FMAF")\n  endif()',
                 {plain = true})
         end
 
@@ -153,7 +153,6 @@
             "-DSLEEF_DISABLE_AVX=" .. (package:config("avx") and "OFF" or "ON"),
             "-DSLEEF_DISABLE_AVX2=" .. (package:config("avx2") and "OFF" or "ON"),
             "-DSLEEF_DISABLE_AVX512F=" .. (package:config("avx512f") and "OFF" or "ON"),
-            "-DSLEEF_DISABLE_SVE=" .. (package:config("sve") and "OFF" or "ON"),
             "-DSLEEF_DISABLE_VSX=" .. (package:config("vsx") and "OFF" or "ON"),
             "-DSLEEF_DISABLE_VSX3=" .. (package:config("vsx3") and "OFF" or "ON"),
             "-DSLEEF_DISABLE_VXE=" .. (package:config("vxe") and "OFF" or "ON"),
@@ -173,7 +172,7 @@
 
         if package:is_cross() then
             -- Build native host tools first
-            local native_build_dir = path.join(package:buildir(), "sleef_native_host")
+            local native_build_dir = path.join(package:builddir(), "sleef_native_host")
             local native_configs = {
                 "-DCMAKE_BUILD_TYPE=Release",
                 "-DBUILD_SHARED_LIBS=OFF",
@@ -194,6 +193,12 @@
             os.mkdir(native_build_dir)
             os.exec("cmake -S . -B " .. native_build_dir .. " " .. table.concat(native_configs, " "))
             os.exec("cmake --build " .. native_build_dir .. " --target mkrename mkrename_gnuabi mkmasked_gnuabi mkdisp mkalias addSuffix")
+
+            if package:is_plat("windows") and package:is_arch("arm*") then
+                table.insert(configs, "-DSLEEF_DISABLE_SVE=ON")
+            else
+                table.insert(configs, "-DSLEEF_DISABLE_SVE=" .. (package:config("sve") and "OFF" or "ON"))
+            end
 
             table.insert(configs, "-DNATIVE_BUILD_DIR=" .. path.absolute(native_build_dir))
         end
