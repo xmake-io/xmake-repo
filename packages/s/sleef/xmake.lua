@@ -144,6 +144,12 @@
                 '#if !defined(__ARM_NEON) && !defined(SLEEF_GENHEADER)',
                 '#if !defined(__ARM_NEON) && !defined(_M_ARM64) && !defined(SLEEF_GENHEADER)',
                 {plain = true})
+
+            -- MSVC ARM64 NEON intrinsics differ from GCC/Clang; Disable ADVSIMD until implemented
+            io.replace("Configure.cmake",
+                '  set(COMPILER_SUPPORTS_ADVSIMD 1)\n  set(COMPILER_SUPPORTS_ADVSIMDNOFMA 1)',
+                '  if(NOT MSVC)\n    set(COMPILER_SUPPORTS_ADVSIMD 1)\n    set(COMPILER_SUPPORTS_ADVSIMDNOFMA 1)\n  endif()',
+                {plain = true})
         end
 
         local configs = {
