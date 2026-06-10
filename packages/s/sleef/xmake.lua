@@ -1,14 +1,13 @@
-	package("sleef")
-		set_homepage("https://sleef.org/")
-		set_description("SIMD Library for Evaluating Elementary Functions, vectorized libm and DFT")
-		set_license("BSL-1.0")
+package("sleef")
+    set_homepage("https://sleef.org/")
+    set_description("SIMD Library for Evaluating Elementary Functions, vectorized libm and DFT")
+    set_license("BSL-1.0")
 
-		add_urls("https://github.com/shibatch/sleef/archive/refs/tags/$(version).tar.gz",
-				 "https://github.com/shibatch/sleef.git")
+    add_urls("https://github.com/shibatch/sleef/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/shibatch/sleef.git")
 
-		add_versions("3.9.0", "af60856abac08a3b5e72a8d156dd71fec1f7ac23de8ee67793f45f9edcdf0908")
+    add_versions("3.9.0", "af60856abac08a3b5e72a8d156dd71fec1f7ac23de8ee67793f45f9edcdf0908")
 
-    add_configs("shared",          {description = "Build shared libraries", default = true, type = "boolean"})
     add_configs("lto",             {description = "Enable LTO on GCC or ThinLTO on clang", default = false, type = "boolean"})
     add_configs("dft",             {description = "Build libsleefdft", default = false, type = "boolean"})
     add_configs("quad",            {description = "Build libsleefquad", default = false, type = "boolean"})
@@ -26,7 +25,7 @@
 
     add_configs("cuda",            {description = "Enable CUDA", default = false, type = "boolean"})
 
-    add_configs("build_with_libm", {description = "build libsleef with libm, can turn off on Windows to solve mutiple math functions issue", default = true, type = "boolean"})
+    add_configs("libm",            {description = "build libsleef with libm, can turn off on Windows to solve mutiple math functions issue", default = true, type = "boolean"})
 
     add_configs("float128",        {description = "Enable float128 support", default = true, type = "boolean"})
 
@@ -185,7 +184,7 @@
 
             "-DSLEEF_ENABLE_CUDA=" .. (package:config("cuda") and "ON" or "OFF"),
 
-            "-DSLEEF_BUILD_WITH_LIBM=" .. (package:config("build_with_libm") and "ON" or "OFF"),
+            "-DSLEEF_BUILD_WITH_LIBM=" .. (package:config("libm") and "ON" or "OFF"),
 
             "-DSLEEF_DISABLE_FLOAT128=" .. (package:config("float128") and "OFF" or "ON"),
 
@@ -233,9 +232,10 @@
                 "-DSLEEF_ENABLE_TLFLOAT=OFF",
                 "-DSLEEF_DISABLE_SSL=ON",
             }
-            os.mkdir(native_build_dir)
-            os.exec("cmake -S . -B " .. native_build_dir .. " " .. table.concat(native_configs, " "))
-            os.exec("cmake --build " .. native_build_dir .. " --target mkrename mkrename_gnuabi mkmasked_gnuabi mkdisp mkalias addSuffix")
+            import("package.tools.cmake").build(package, native_configs, {
+                builddir = native_build_dir,
+                targets = {"mkrename", "mkrename_gnuabi", "mkmasked_gnuabi", "mkdisp", "mkalias", "addSuffix"}
+            })
 
             if package:is_plat("windows") and package:is_arch("arm.*") then
                 table.insert(configs, "-DSLEEF_DISABLE_SVE=ON")
