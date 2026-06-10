@@ -19,15 +19,21 @@ package("vcpkg")
     add_versions("2024.07.12", "7da785e42b7487fb0e7465188f12c6ce0dfa760ab334d0f4f708bd1fc54081b1")
     add_versions("2024.05.24", "3034e534d4ed13e6e6edad3c331c0e9e3280f579dd4ba86151aa1e2896b85d31")
 
+    add_configs("telemetry", {description = "Enable vcpkg telemetry.", default = false, type = "boolean"})
+
     add_deps("zip", "unzip", "cmake", "ninja", "curl")
 
     on_install("@linux", "@macosx", "@windows", function(package)
-        if package:is_plat("windows") then
-            os.vrun("bootstrap-vcpkg.bat")
-        else
-            os.vrunv("./bootstrap-vcpkg.sh", {shell = true})
+        local args = {}
+        if not package:config("telemetry") then
+            table.insert(args, "-disableMetrics")
         end
-        os.cp(".", package:installdir())
+        if package:is_plat("windows") then
+            os.vrunv("bootstrap-vcpkg.bat", args)
+        else
+            os.vrunv("./bootstrap-vcpkg.sh", args, {shell = true})
+        end
+        os.cp("*|buildtrees|downloads", package:installdir())
         package:setenv("VCPKG_ROOT", ".")
         package:addenv("PATH", ".")
         package:mark_as_pathenv("VCPKG_ROOT")
