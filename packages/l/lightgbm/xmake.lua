@@ -27,7 +27,7 @@ package("lightgbm")
         end)
     end
 
-    on_load("windows|x64", "linux", function (package)
+    on_load("windows|x64", "linux", "macosx", function (package)
         if package:config("gpu") then
             package:add("deps", "opencl")
             package:add("deps", "boost", {configs = {filesystem = true, system = true}})
@@ -35,9 +35,12 @@ package("lightgbm")
         if package:is_plat("linux") and package:has_tool("cc", "clang", "clangxx") then
             package:add("deps", "libomp")
         end
+        if package:is_plat("macosx") then
+            package:add("deps", "libomp")
+        end
     end)
 
-    on_install("windows|x64", "linux", function (package)
+    on_install("windows|x64", "linux", "macosx", function (package)
         if package:version() and package:version():lt("4.2.0") then
             os.cd("compile")
         end
@@ -62,10 +65,16 @@ package("lightgbm")
                 end
             end
         end
+        if package:is_plat("macosx") then
+            table.insert(configs, "-DCMAKE_CXX_STANDARD=11")
+        end
         import("package.tools.cmake").install(package, configs)
         package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("LightGBM::ChunkedArray<int>", {includes = "LightGBM/utils/chunked_array.hpp"}))
+        assert(package:has_cxxtypes("LightGBM::ChunkedArray<int>", 
+            {includes = "LightGBM/utils/chunked_array.hpp"},
+            {configs = {languages = "c++11"}
+        }))
     end)
