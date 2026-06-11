@@ -6,6 +6,7 @@ package("openrestry-luajit")
     set_urls("https://github.com/openresty/luajit2/archive/refs/tags/$(version).zip",
         "https://github.com/openresty/luajit2.git")
 
+    add_versions("v2.1-20230911", "26360e7828153f99ecc95cde61523fc406e3154ebaa21377c84331958c53c5d1")
     add_versions("v2.1-20230119", "0de62abafce957b4ed9b2417d5a1c065d9c53d3f4a28fcbe6b59f128d1a4fb37")
     add_versions("v2.1-20220310", "5d765a7a60cb698afcba91c52204cbe085687ac32f6b99abeca6c3719ecf82a8")
 
