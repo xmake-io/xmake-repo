@@ -36,12 +36,13 @@ package("pcre2")
             suffix = "d"
         end
         package:add("links", "pcre2-posix" .. suffix)
-        local widths = {}
-        for wid in bitwidth:gmatch("%d+") do
-            table.insert(widths, wid);
+        local widths = bitwidth:split(",")
+        local allowed = { ["8"] = true, ["16"] = true, ["32"] = true }
+        for _, wid in ipairs(widths) do
+            assert(allowed[wid], "Invalid bitwidth '" .. wid .. "'")
             package:add("links", "pcre2-" .. wid .. suffix)
         end
-        package:config_set("bit_widths", widths)
+        package:data_set("widths_list", widths)
         if #widths == 1 then
             package:add("defines", "PCRE2_CODE_UNIT_WIDTH=" .. widths[1])
         else
@@ -65,7 +66,7 @@ package("pcre2")
         table.insert(configs, "-DPCRE2_SUPPORT_JIT=" .. (package:config("jit") and "ON" or "OFF"))
         table.insert(configs, "-DPCRE2_STATIC_PIC=" .. (package:config("pic") and "ON" or "OFF"))
 
-        local widths = package:config("bit_widths")
+        local widths = package:data("widths_list")
         if not table.contains(widths, "8") then
             table.insert(configs, "-DPCRE2_BUILD_PCRE2_8=OFF")
         end
@@ -96,14 +97,14 @@ package("pcre2")
             end
 
             local pcre2_posix_pc = path.join(pkgconfig_dir, "libpcre2-posix.pc")
-            if os.isfile(pcre2_posix_pc) then
+            if os.isfile(pcre2_posix_pc) and table.contains(widths, "8") then
                 io.replace(pcre2_posix_pc, "Cflags: -I${includedir}", table.concat(defines, " "), {plain = true})
             end
         end
     end)
 
     on_test(function (package)
-        local widths = package:config("bit_widths")
+        local widths = package:data("widths_list")
         if #widths == 1 then
             assert(package:has_cfuncs("pcre2_compile", {includes = "pcre2.h"}))
         end
