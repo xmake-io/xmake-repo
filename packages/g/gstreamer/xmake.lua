@@ -22,7 +22,7 @@ package("gstreamer")
     if is_plat("windows") then
         add_deps("pkgconf", "winflexbison")
     else
-        add_deps("flex", "bison")
+        add_deps("flex", "bison", { host = true })
     end
     add_deps("glib")
 
