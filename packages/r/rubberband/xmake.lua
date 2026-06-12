@@ -65,7 +65,7 @@ package("rubberband")
         end
     end)
 
-    on_install(function (package)
+    on_install("!android", function (package)
         local configs = {
             "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"),
             "-Dfft=" .. package:config("fft"),
