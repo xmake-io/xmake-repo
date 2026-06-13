@@ -6,6 +6,7 @@ package("pinocchio")
     add_urls("https://github.com/stack-of-tasks/pinocchio/archive/refs/tags/$(version).tar.gz",
              "https://github.com/stack-of-tasks/pinocchio.git", {submodules = false})
 
+    add_versions("v4.0.0", "e9ca048fd6c6e3f9e25ca691c7517c6cfdeb5218f03621dbe15ddeb7de2f9a1a")
     add_versions("v3.9.0", "721cf3e08956146856a9c9de914788bac4076536620bd7264722d6a7cfb50500")
     add_versions("v2.7.1", "b1b9016560263cfc70a4f5fc58c64d239a816437cf200fb8507ad4e46eaa833d")
 
