@@ -7,6 +7,7 @@ package("md4qt")
     add_urls("https://github.com/igormironchik/md4qt/archive/refs/tags/$(version).tar.gz",
              "https://github.com/igormironchik/md4qt.git")
 
+    add_versions("5.1.1", "e457a8a993b72876f265c4de6fa642d286fc0449825f410c4d85f1163e9794d6")
     add_versions("3.0.0", "757f94ce1818123abe899729bba00aa1d99150d4cbe934ab57a95b308fd536dd")
     add_versions("2.8.1", "02a046c1586da820be0c5dd36f635ca50060f893fe638b542546f4a7a07d3164")
     add_versions("2.8.0", "82ef6acc84ea3a7891e4547f7d79af4caaef0f4d6f152bdab2a5c6ed5a48d11b")
