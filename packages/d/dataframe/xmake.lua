@@ -19,6 +19,8 @@ package("dataframe")
     add_versions("1.21.0", "a6b07eaaf628225a34e4402c1a6e311430e8431455669ac03691d92f44081172")
     add_versions("1.22.0", "4b244241cd56893fccb22f7c874588f0d86b444912382ed6e9a4cf95e55ffda2")
 
+    add_patches("4.0.2", "https://github.com/hosseinmoein/DataFrame/commit/6a4581504814c8f83f61ea2567f4daa6967cbb23.patch", "91bb45e181881d1117f8b90dda13aa13b228a9d057fafc86ff3b5b265cffd0a9")
+
     if is_plat("linux", "bsd") then
         add_syslinks("pthread", "rt")
     end
