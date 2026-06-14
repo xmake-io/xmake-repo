@@ -15,7 +15,7 @@ package("pcre2")
     if not is_plat("iphoneos") then
         add_configs("jit", {description = "Enable jit.", default = not is_plat("wasm"), type = "boolean"})
     end
-    add_configs("bitwidth", {description = "Set the code unit width.", default = "8", values = {"8", "16", "32"}})
+    add_configs("bitwidth", {description = "Set the code unit widths to build, separated by comma (8,16,32).", default = "8", type = "string"})
 
     add_deps("cmake")
 
@@ -36,8 +36,18 @@ package("pcre2")
             suffix = "d"
         end
         package:add("links", "pcre2-posix" .. suffix)
-        package:add("links", "pcre2-" .. bitwidth .. suffix)
-        package:add("defines", "PCRE2_CODE_UNIT_WIDTH=" .. bitwidth)
+        local widths = bitwidth:split(",")
+        local allowed = { ["8"] = true, ["16"] = true, ["32"] = true }
+        for _, wid in ipairs(widths) do
+            assert(allowed[wid], "Invalid bitwidth '" .. wid .. "'")
+            package:add("links", "pcre2-" .. wid .. suffix)
+        end
+        package:data_set("widths_list", widths)
+        if #widths == 1 then
+            package:add("defines", "PCRE2_CODE_UNIT_WIDTH=" .. widths[1])
+        else
+            package:add("defines", "PCRE2_CODE_UNIT_WIDTH=0")
+        end
         if not package:config("shared") then
             package:add("defines", "PCRE2_STATIC")
         end
@@ -56,10 +66,12 @@ package("pcre2")
         table.insert(configs, "-DPCRE2_SUPPORT_JIT=" .. (package:config("jit") and "ON" or "OFF"))
         table.insert(configs, "-DPCRE2_STATIC_PIC=" .. (package:config("pic") and "ON" or "OFF"))
 
-        local bitwidth = package:config("bitwidth") or "8"
-        if bitwidth ~= "8" then
+        local widths = package:data("widths_list")
+        if not table.contains(widths, "8") then
             table.insert(configs, "-DPCRE2_BUILD_PCRE2_8=OFF")
-            table.insert(configs, "-DPCRE2_BUILD_PCRE2_" .. bitwidth .. "=ON")
+        end
+        for _, wid in ipairs(widths) do
+            table.insert(configs, "-DPCRE2_BUILD_PCRE2_" .. wid .. "=ON")
         end
         if package:is_debug() then
             table.insert(configs, "-DPCRE2_DEBUG=ON")
@@ -78,17 +90,25 @@ package("pcre2")
             end
             table.insert(defines, 1, "Cflags: -I${includedir}")
             local pkgconfig_dir = package:installdir("lib/pkgconfig")
-
-            local pcre2_pc = path.join(pkgconfig_dir, format("libpcre2-%d.pc", package:config("bitwidth")))
-            io.replace(pcre2_pc, "Cflags: -I${includedir}", table.concat(defines, " "), {plain = true})
+            
+            for _, wid in ipairs(widths) do
+                local pcre2_pc = path.join(pkgconfig_dir, format("libpcre2-%d.pc", wid))
+                io.replace(pcre2_pc, "Cflags: -I${includedir}", table.concat(defines, " "), {plain = true})
+            end
 
             local pcre2_posix_pc = path.join(pkgconfig_dir, "libpcre2-posix.pc")
-            if os.isfile(pcre2_posix_pc) then
+            if os.isfile(pcre2_posix_pc) and table.contains(widths, "8") then
                 io.replace(pcre2_posix_pc, "Cflags: -I${includedir}", table.concat(defines, " "), {plain = true})
             end
         end
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("pcre2_compile", {includes = "pcre2.h"}))
+        local widths = package:data("widths_list")
+        if #widths == 1 then
+            assert(package:has_cfuncs("pcre2_compile", {includes = "pcre2.h"}))
+        end
+        for _, wid in ipairs(widths) do
+            assert(package:has_cfuncs("pcre2_compile_" .. wid, {includes = "pcre2.h"}))
+        end
     end)
