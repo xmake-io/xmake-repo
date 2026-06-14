@@ -2,10 +2,6 @@ package("rubberband")
     set_homepage("https://breakfastquay.com/rubberband/")
     set_description("A high quality software library for audio time-stretching and pitch-shifting.")
     set_license("GPL-2.0-or-later OR Commercial Licenses")
-    -- For commercial licenses, see https://breakfastquay.com/technology/license.html, next to "Rubber Band Library".
-    -- From README: "If you wish to distribute code using Rubber Band Library under terms other than those of
-    -- the GNU General Public License, you must obtain a commercial licence from us before doing so. In
-    -- particular, you may not legally distribute through any Apple App Store unless you have a commercial licence."
 
     add_urls("https://github.com/breakfastquay/rubberband/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/breakfastquay/rubberband.git")
@@ -29,7 +25,6 @@ package("rubberband")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    -- To pass on_test
     if is_plat("bsd") then
         add_syslinks("pthread")
     end
@@ -37,17 +32,14 @@ package("rubberband")
     add_deps("meson", "ninja")        
 
     on_load(function (package)
-        -- FFT: KissFFT is vendored in. vDSP is Apple specific.
         if package:config("fft") == "fftw" then
             package:add("deps", "fftw")
         end
 
-        --Resampler: Speex is vendored in.
         if package:config("resampler") == "libsamplerate" then
             package:add("deps", "libsamplerate")
         end
 
-        -- Plugin SDKs
         if package:config("lv2") then
             package:add("deps", "lv2")
         end
@@ -59,7 +51,6 @@ package("rubberband")
             package:add("deps", "libsndfile")
         end
 
-        -- vDSP (and the auto default on macOS) requires the Accelerate framework
         if package:is_plat("macosx", "iphoneos") and (package:config("fft") == "auto" or package:config("fft") == "vdsp") then
             package:add("frameworks", "Accelerate")
         end
