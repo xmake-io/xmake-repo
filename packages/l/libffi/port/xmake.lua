@@ -132,7 +132,7 @@ target("ffi")
     add_includedirs("include")
     add_headerfiles("include/ffi.h")
     add_files("src/prep_cif.c", "src/types.c", "src/closures.c", "src/tramp.c")
-    if not is_arch("arm") and not is_arch("arm64") then
+    if not is_arch("arm.*") and not is_arch("arm64.*") then
         add_files("src/raw_api.c", "src/java_raw_api.c")
     end
     if is_plat("windows") and is_arch("x86") then
@@ -151,16 +151,16 @@ target("ffi")
         add_files("src/x86/ffi64.c", "src/x86/ffiw64.c", "src/x86/win64_intel.S")
         add_includedirs("src/x86")
         add_headerfiles("src/x86/ffitarget.h")
-    elseif is_arch("arm") then
-        add_files("src/arm/ffi.c")
-        add_files(is_plat("windows") and "src/arm/sysv_msvc_arm32.S" or "src/arm/sysv.S")
-        add_includedirs("src/arm")
-        add_headerfiles("src/arm/ffitarget.h")
-    elseif is_arch("arm64") then
+    elseif is_arch("arm64.*") then
         add_files("src/aarch64/ffi.c")
         add_files(is_plat("windows") and "src/aarch64/win64_armasm.S" or "src/aarch64/sysv.S")
         add_includedirs("src/aarch64")
         add_headerfiles("src/aarch64/ffitarget.h")
+    elseif is_arch("arm.*") then
+        add_files("src/arm/ffi.c")
+        add_files(is_plat("windows") and "src/arm/sysv_msvc_arm32.S" or "src/arm/sysv.S")
+        add_includedirs("src/arm")
+        add_headerfiles("src/arm/ffitarget.h")
     elseif is_arch("mips64") then
         add_files("src/mips/ffi.c", "src/mips/n32.S")
         add_headerfiles("src/mips/ffitarget.h")
