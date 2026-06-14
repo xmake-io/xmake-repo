@@ -6,6 +6,7 @@ package("dataframe")
     add_urls("https://github.com/hosseinmoein/DataFrame/archive/refs/tags/$(version).tar.gz",
              "https://github.com/hosseinmoein/DataFrame.git")
 
+    add_versions("4.0.2", "e04def7c032e0f3a3d89593e83462df1cc2a652230a2eb1a68ed2503ffab39ef")
     add_versions("4.0.1", "3e1739dd4b6306658f2cadef93af270b764205f5ddf90e9324c917f9a14cae37")
     add_versions("4.0.0", "093a3a0c7bdc475e8d7221e98bf00aac37c96e6311e870fd8b7f2ded4e0ec8ff")
     add_versions("3.7.0", "bd3bb9f45bb0ac092e4ff9052d565d8d6eed8f8029a1a7de7424b4190b797345")
@@ -17,6 +18,8 @@ package("dataframe")
     add_versions("3.0.0", "9266fb85c518a251a5440e490c81615601791f2de2fad8755aa09f13a0c541f9")
     add_versions("1.21.0", "a6b07eaaf628225a34e4402c1a6e311430e8431455669ac03691d92f44081172")
     add_versions("1.22.0", "4b244241cd56893fccb22f7c874588f0d86b444912382ed6e9a4cf95e55ffda2")
+
+    add_patches("4.0.2", "https://github.com/hosseinmoein/DataFrame/commit/6a4581504814c8f83f61ea2567f4daa6967cbb23.patch", "91bb45e181881d1117f8b90dda13aa13b228a9d057fafc86ff3b5b265cffd0a9")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread", "rt")
