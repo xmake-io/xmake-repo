@@ -62,6 +62,7 @@ package("openimageio")
     on_install("windows|!arm64", "macosx", "linux", function (package)
         io.replace("CMakeLists.txt", "NOT ${PROJECT_NAME}_IS_SUBPROJECT", "TRUE", {plain = true})
         io.replace("src/png.imageio/png_pvt.h", "#include <libpng16/png.h>", "#include <png.h>", {plain = true})
+        io.replace("src/cmake/Config.cmake.in", "find_dependency(OpenColorIO)", "find_dependency(OpenColorIO)\n    find_dependency(OpenEXR)\n    find_dependency(pugixml)", {plain = true})
         local configs = {"-DBUILD_DOCS=OFF",
                          "-DINSTALL_DOCS=OFF",
                          "-DOIIO_BUILD_TESTS=OFF",
