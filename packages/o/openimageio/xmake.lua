@@ -87,7 +87,11 @@ package("openimageio")
         if package:config("python") then
             os.vrunv("python", {"-m", "pip", "install", "numpy"})
         end
-        ext = {packagedeps = {"minizip-ng", "openssl"}}
+        ext = {
+            packagedeps = {"minizip-ng", "openssl"},
+            shflags = {"-lssl", "-lcrypto"},
+            ldflags = {"-lssl", "-lcrypto"}
+        }
         if package:is_plat("windows") then
             ext.cxflags = "/utf-8"
         end
