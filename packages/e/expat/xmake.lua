@@ -43,7 +43,7 @@ package("expat")
             table.insert(configs, "-DEXPAT_MSVC_STATIC_CRT=" .. (package:has_runtime("MT") and "ON" or "OFF"))
         end
         local opt = {}
-        if package:has_tool("cxx", "cl") then
+        if package:has_tool("cc", "cl") then
             opt.cxflags = {"/utf-8"}
         end
         import("package.tools.cmake").install(package, configs, opt)
