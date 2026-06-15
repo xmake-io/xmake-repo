@@ -42,7 +42,11 @@ package("expat")
         if package:is_plat("windows") then
             table.insert(configs, "-DEXPAT_MSVC_STATIC_CRT=" .. (package:has_runtime("MT") and "ON" or "OFF"))
         end
-        import("package.tools.cmake").install(package, configs)
+        local opt = {}
+        if package:has_tool("cxx", "cl") then
+            opt.cxflags = {"/utf-8"}
+        end
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
