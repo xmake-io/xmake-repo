@@ -109,6 +109,22 @@ package("llama.cpp")
         table.insert(configs, "-DGGML_VULKAN=" .. (package:config("vulkan") and "ON" or "OFF"))
         table.insert(configs, "-DGGML_OPENBLAS=" .. (package:config("blas") and "ON" or "OFF"))
 
+        if package:config("vulkan") then
+            local shaderc = package:dep("shaderc")
+            local fetched = shaderc:fetch()
+            local glslc = fetched and fetched.program
+            if not glslc then
+                glslc = path.join(shaderc:installdir("bin"), "glslc" .. (is_host("windows") and ".exe" or ""))
+            end
+            if not (fetched and fetched.program) and not os.isfile(glslc) then
+                glslc = nil
+            end
+            assert(glslc, "package(llama.cpp): Vulkan requires glslc from shaderc")
+            if glslc then
+                table.insert(configs, "-DVulkan_GLSLC_EXECUTABLE=" .. glslc)
+            end
+        end
+
         local opt = {builddir = "b"}
         if package:is_plat("windows") then
             local ninja = package:dep("ninja")
@@ -121,6 +137,11 @@ package("llama.cpp")
         end
 
         import("package.tools.cmake").install(package, configs, opt)
+
+        if package:config("vulkan") then
+            local vulkan_libs = os.files(path.join(package:installdir("lib"), "*ggml-vulkan*"))
+            assert(vulkan_libs and #vulkan_libs > 0, "package(llama.cpp): Vulkan was enabled, but ggml-vulkan was not installed")
+        end
     end)
 
     on_test(function (package)
