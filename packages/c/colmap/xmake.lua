@@ -43,7 +43,7 @@ package("colmap")
             end
         end
         if package:version():ge("4.0") then
-            package:add("deps", "openimageio", "suitsparse")
+            package:add("deps", "openimageio", "suitesparse")
         else
             package:add("deps", "freeimage")
         end
