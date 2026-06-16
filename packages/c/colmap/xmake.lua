@@ -42,7 +42,11 @@ package("colmap")
                 package:add("deps", conf)
             end
         end
-        package:add("deps", package:version():ge("4.0") and "openimageio" or "freeimage")
+        if package:version():ge("4.0") then
+            package:add("deps", "openimageio", "suitsparse")
+        else
+            package:add("deps", "freeimage")
+        end
     end)
 
     on_install("windows|x64", "linux", "macosx", function (package)
