@@ -1,11 +1,17 @@
 package("llama.cpp")
-    set_homepage("https://github.com/ggerganov/llama.cpp")
+    set_homepage("https://github.com/ggml-org/llama.cpp")
     set_description("Port of Facebook's LLaMA model in C/C++")
     set_license("MIT")
 
-    add_urls("https://github.com/ggerganov/llama.cpp/archive/refs/tags/b$(version).tar.gz",
-             "https://github.com/ggerganov/llama.cpp.git")
+    add_urls("https://github.com/ggml-org/llama.cpp/archive/refs/tags/b$(version).tar.gz",
+             "https://github.com/ggml-org/llama.cpp.git")
 
+    add_versions("9647", "b3faee1d784ee12ae492fb9dafec09e099acae38c9b864eab5f072977478e7f7")
+    add_versions("9500", "ebff6593ce1555c2f01e19b8545d6b47db87d4aed5a8e67c721c45ef708b553b")
+    add_versions("9000", "98bac6351ee3a1c6490e6c84940fdf213a39cf5f8f2100a680e646fa57a43608")
+    add_versions("8500", "1ee7d187ede94452fcbb71ee5856e923212b84ed5f2ddfa5ec487a1079b23cb3")
+    add_versions("6000", "9be103102d597a9820a525158f91d349ba84e19e12a9177bd591b67c82d2fc0f")
+    add_versions("4000", "bdfc19f69f966ef98e0f1ab6c7744eda1229bafaa121f515b3f4f0ac8779fd9f")
     add_versions("3775", "405bae9d550cb3fbf36d6583377b951a346b548f5850987238fe024a16f45cad")
 
     add_configs("curl", {description = "llama: use libcurl to download model from an URL", default = false, type = "boolean"})
@@ -18,11 +24,13 @@ package("llama.cpp")
         add_frameworks("Accelerate", "Foundation", "Metal", "MetalKit")
     elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
+    elseif is_plat("windows") then
+        add_syslinks("advapi32")
     end
 
-    add_links("llama", "ggml")
+    add_links("llama", "ggml", "ggml-base", "ggml-cpu")
 
-    add_deps("cmake")
+    add_deps("cmake", "ninja")
 
     if on_check then
         on_check("android", function (package)
@@ -63,6 +71,7 @@ package("llama.cpp")
             -- requires vulkan-1 and glslc
             package:add("deps", "vulkansdk")
             package:add("deps", "shaderc", {configs = {binaryonly = true}})
+            package:add("links", "ggml-vulkan")
         end
         if package:config("blas") then
             if is_subhost("windows") then
@@ -79,6 +88,9 @@ package("llama.cpp")
             "-DLLAMA_BUILD_TESTS=OFF",
             "-DLLAMA_BUILD_EXAMPLES=OFF",
             "-DLLAMA_BUILD_SERVER=OFF",
+            "-DLLAMA_BUILD_TOOLS=OFF",
+            "-DLLAMA_BUILD_COMMON=OFF",
+            "-DLLAMA_BUILD_APP=OFF",
             "-DGGML_ALL_WARNINGS=OFF",
             "-DGGML_BUILD_TESTS=OFF",
             "-DGGML_BUILD_EXAMPLES=OFF",
@@ -96,7 +108,19 @@ package("llama.cpp")
         table.insert(configs, "-DGGML_CUDA=" .. (package:config("cuda") and "ON" or "OFF"))
         table.insert(configs, "-DGGML_VULKAN=" .. (package:config("vulkan") and "ON" or "OFF"))
         table.insert(configs, "-DGGML_OPENBLAS=" .. (package:config("blas") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+
+        local opt = {builddir = "b"}
+        if package:is_plat("windows") then
+            local ninja = package:dep("ninja")
+            if ninja then
+                local ninja_exe = path.join(ninja:installdir("bin"), "ninja.exe")
+                if os.isfile(ninja_exe) then
+                    table.insert(configs, "-DCMAKE_MAKE_PROGRAM=" .. ninja_exe)
+                end
+            end
+        end
+
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
