@@ -9,7 +9,7 @@ package("colmap")
     add_versions("4.0.4",  "200309abca2a3ee05970b1f8a48d545fc71f435dffe6764a8040f9f6f364da32")
     add_versions("3.13.0", "98a8f8cf6358774be223239a9b034cc9d55bf66c43f54fc6ddea9128a1ee197a")
 
-    add_patches("4.x", "patches/4.0.4/deps.patch", "78d80731ee16b204153ad23b665644c10309109ef204fee0d4c643e85222863a")
+    add_patches("4.x", "patches/4.0.4/deps.patch", "aba1b95523a31b5ff1931ad6bcab0353eff96ae151f06b3847ca467af9a9cb7b")
     add_patches("3.x", "patches/3.13.0/deps.patch", "93f43c149b95195bf03f30b22710502faa4c26242e7a7059881464c0b1fde2e6")
 
     add_configs("simd",              {description = "Enable SIMD optimizations.",                   default = true,  type = "boolean"})
