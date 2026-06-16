@@ -10,6 +10,10 @@ package("msgpack-c")
     add_versions("6.0.1", "a349cd9af28add2334c7009e331335af4a5b97d8558b2e9804d05f3b33d97925")
     add_versions("4.0.0", "420fe35e7572f2a168d17e660ef981a589c9cbe77faa25eb34a520e1fcc032c8")
 
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     add_deps("cmake")
 
     on_install(function (package)
