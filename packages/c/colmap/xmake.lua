@@ -50,6 +50,7 @@ package("colmap")
     end)
 
     on_install("windows|x64", "linux", "macosx", function (package)
+        io.replace("cmake/Findonnxruntime.cmake", "onnxruntime/onnxruntime_cxx_api.h", "onnxruntime/onnxruntime_cxx_api.h\nonnxruntime_cxx_api.h", {plain = true})
         local configs = {
             "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
             "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"),
