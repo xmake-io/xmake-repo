@@ -28,9 +28,12 @@ package("llama.cpp")
         add_syslinks("advapi32")
     end
 
-    add_links("llama", "ggml", "ggml-base", "ggml-cpu")
+    add_links("llama", "ggml")
 
-    add_deps("cmake", "ninja")
+    add_deps("cmake")
+    if is_plat("windows") then
+        add_deps("ninja")
+    end
 
     if on_check then
         on_check("android", function (package)
@@ -54,6 +57,11 @@ package("llama.cpp")
     end
 
     on_load(function (package)
+        local version = tonumber(package:version_str())
+        if version and version >= 3800 then
+            package:add("links", "ggml-base", "ggml-cpu")
+        end
+
         if package:config("shared") then
             package:add("defines", "GGML_SHARED", "LLAMA_SHARED")
         end
@@ -66,12 +74,16 @@ package("llama.cpp")
         end
         if package:config("cuda") then
             package:add("deps", "cuda")
+            if version and version >= 3800 then
+                package:add("links", "ggml-cuda")
+            end
         end
         if package:config("vulkan") then
-            -- requires vulkan-1 and glslc
             package:add("deps", "vulkansdk")
             package:add("deps", "shaderc", {configs = {binaryonly = true}})
-            package:add("links", "ggml-vulkan")
+            if version and version >= 3800 then
+                package:add("links", "ggml-vulkan")
+            end
         end
         if package:config("blas") then
             if is_subhost("windows") then
