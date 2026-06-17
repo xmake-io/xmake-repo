@@ -65,7 +65,7 @@ package("colmap")
         for _, conf in ipairs(confs) do
             table.insert(configs, "-D" .. conf:upper() .. "_ENABLED=" .. (package:config(conf) and "ON" or "OFF"))
         end
-        local opt = package:version():ge("4.0") and {packagedeps = {"minizip-ng"}} or {}
+        local opt = package:version():ge("4.0") and {packagedeps = {"minizip-ng", "onnxruntime"}} or {}
         import("package.tools.cmake").install(package, configs, opt)
     end)
 
