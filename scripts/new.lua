@@ -127,7 +127,7 @@ function generate_package(reponame, get_data)
     local has_xmake, has_cmake, has_meson, has_bazel, has_autoconf, need_autogen
     local latest_release = data.latestRelease
 
-    if type(latest_release) == "table" and latest_release ~= {} then
+    if type(latest_release) == "table" and latest_release.tagName then
         local url = string.format("https://%s/%s/archive/refs/tags/%s.tar.gz", host, reponame, latest_release.tagName)
         local giturl = string.format("https://%s/%s.git", host, reponame)
         local tmpfile = os.tmpfile({ramdisk = false}) .. ".tar.gz"
