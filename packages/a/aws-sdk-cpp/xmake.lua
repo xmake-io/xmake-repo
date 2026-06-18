@@ -32,15 +32,14 @@ package("aws-sdk-cpp")
     add_deps("aws-c-sdkutils")
 
     on_load(function (package)
-        local openssl = package:is_plat("linux", "macosx") and "openssl3" or "openssl"
         if package:config("http_client") then
-            package:add("deps", "libcurl", {configs = {[openssl] = true, zlib = true}})
+            package:add("deps", "libcurl", {configs = {openssl3 = true, zlib = true}})
             if package:is_plat("macosx") then
                 package:add("frameworks", "Foundation", "CoreFoundation", "Security", "SystemConfiguration")
             end
         end
         if package:config("encryption") then
-            package:add("deps", openssl)
+            package:add("deps", "openssl3")
         end
     end)
 
@@ -53,7 +52,7 @@ package("aws-sdk-cpp")
         table.insert(configs, "-DNO_ENCRYPTION=" .. (package:config("encryption") and "OFF" or "ON"))
         table.insert(configs, "-DUSE_OPENSSL=" .. (package:config("encryption") and "ON" or "OFF"))
         if package:config("encryption") then
-            local openssl = package:dep(package:is_plat("linux", "macosx") and "openssl3" or "openssl")
+            local openssl = package:dep("openssl3")
             if openssl and not openssl:is_system() then
                 table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
             end
