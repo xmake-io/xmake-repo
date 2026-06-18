@@ -6,6 +6,7 @@ package("mmkv")
     add_urls("https://github.com/Tencent/MMKV/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Tencent/MMKV.git")
 
+    add_versions("v2.4.0", "ea31077212e81c930370d2d142e76c5005c63d9f359211f03766b49d89b28ce5")
     add_versions("v2.3.0", "99ee71b937cc4c8fe7600babdf4b452e34b36d3899f7c9154ad464b9aab21a5d")
 
     add_links("mmkv", "core")
