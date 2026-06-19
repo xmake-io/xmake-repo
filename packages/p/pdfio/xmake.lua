@@ -6,6 +6,7 @@ package("pdfio")
     add_urls("https://github.com/michaelrsweet/pdfio/archive/refs/tags/$(version).tar.gz",
              "https://github.com/michaelrsweet/pdfio.git")
 
+    add_versions("v1.6.4", "1efa737a8f370b1d9e9a3084dd73479cae8c5e74eee75abc53f5e60b942f53e6")
     add_versions("v1.6.3", "5021c00208f37547d7b9d454df08d55a33a8e22537b716a74c2ca888d6c277ea")
     add_versions("v1.6.1", "de733aad5d5b2d8199667ca28efe01fce17e00743ba021f88303c8a81a5eaa67")
     add_versions("v1.5.0", "895cfa22a895d0afc69a18402f19057ddaf8f035cc0a69f3f2a4cbe55ead9662")
@@ -18,6 +19,10 @@ package("pdfio")
         add_syslinks("advapi32")
     elseif is_plat("linux", "bsd") then
         add_syslinks("m")
+    end
+
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
     add_deps("zlib")
