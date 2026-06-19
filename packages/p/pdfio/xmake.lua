@@ -21,6 +21,10 @@ package("pdfio")
         add_syslinks("m")
     end
 
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     add_deps("zlib")
 
     if on_check then
