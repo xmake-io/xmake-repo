@@ -27,6 +27,11 @@ package("librats")
             local ndk_sdkver = ndk:config("ndk_sdkver")
             assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(librats) require ndk api level > 21")
         end)
+        on_check("iphoneos", function (package)
+            if package:version() and package:version():ge("1.0.0") then
+                raise("package(librats >= 1.0) not support iphoneos")
+            end
+        end)
     end
 
     on_load(function (package)
