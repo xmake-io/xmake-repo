@@ -16,6 +16,10 @@ package("tinyexr")
 
     add_deps("miniz")
 
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     on_install(function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
