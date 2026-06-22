@@ -6,6 +6,7 @@ package("tinyexr")
     add_urls("https://github.com/syoyo/tinyexr/archive/refs/tags/$(version).tar.gz",
              "https://github.com/syoyo/tinyexr.git")
 
+    add_versions("v3.0.0", "9e7a3e8881b9c316b350685cb31fdaf8d295e988e317023984ae9915ea15ed47")
     add_versions("v1.0.13", "01edf1e18e32e5503fdd2a35d62bb593109daa392324cec0157b150e5fd68077")
     add_versions("v1.0.12", "e3383703d6eaf175a3f36dfc23ec5c8a22e61ddc3acd05dd442cb33ce7af0d39")
     add_versions("v1.0.10", "d2e4cef7ec1ad48e5c363171d15458def77749221db8510bfdfd68cd927fe6cc")
@@ -14,6 +15,10 @@ package("tinyexr")
     add_versions("v1.0.8", "b56446533f36496c3c76b8e4f664f04736b173c5e3f4903f6edff3753f363302")
 
     add_deps("miniz")
+
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     on_install(function (package)
         io.writefile("xmake.lua", [[
