@@ -7,13 +7,14 @@ package("librealsense")
              "https://github.com/realsenseai/librealsense.git", {submodules = false})
 
     add_versions("v2.58.2", "1e164e424b4eeb207ec05caecc6fadc1f3ecdce0d6d36f0f2e4fe6a2a9b423ab")
+    add_versions("v2.58.1", "14409c3b810bf1508b87f46d47608a89018743b8a73d5855ab5d1ad18763fd8c")
     add_versions("v2.57.7", "02eae8aa49d52d39ea5483836116fee2596e1146254274db6b76d7a62092d9e8")
     add_versions("v2.57.6", "4c5eeafe004422e564df4ba74cab0e89a4b32282d0e0d6c1e9b33382bb5ed767")
     add_versions("v2.57.5", "6fe337090becb668289178b20dfce07d553d4a71fd54ffbfee18b45847bcdee4")
     add_versions("v2.57.4", "3e82f9b545d9345fd544bb65f8bf7943969fb40bcfc73d983e7c2ffcdc05eaeb")
 
     add_patches(">=2.57.3 <2.57.6", "patches/2.57.3/missing-headers.patch", "13834e38528e5009cdffc653515602f32a72e042497457c424de684ff5c69723")
-    add_patches(">=2.57.6", "patches/2.57.6/missing-headers.patch", "78f33ee8eabf443d18028235ceacd22c0d661249a0904600179b78cafcf182a8")
+    add_patches("2.57.6", "patches/2.57.6/missing-headers.patch", "78f33ee8eabf443d18028235ceacd22c0d661249a0904600179b78cafcf182a8")
 
     add_configs("cuda", {description = "Enable CUDA", default = false, type = "boolean"})
     add_configs("openmp", {description = "Use OpenMP", default = false, type = "boolean"})
