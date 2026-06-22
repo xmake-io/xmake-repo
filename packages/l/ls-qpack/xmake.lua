@@ -6,6 +6,7 @@ package("ls-qpack")
     add_urls("https://github.com/litespeedtech/ls-qpack/archive/refs/tags/$(version).tar.gz",
              "https://github.com/litespeedtech/ls-qpack.git")
 
+    add_versions("v2.6.4", "1bea5d42312b7004162421a10876799cf7587e1407e359f6301ac0e37b787a15")
     add_versions("v2.6.3", "822f60e118a82f79c8a550164a3dd8dd87409c8bae5bc226f4bdcba10f191418")
     add_versions("v2.6.2", "db1a83102bb7d2d946a910cb11a9d69c1c5b9fd9a40249c22c411fb9c429fe16")
     add_versions("v2.6.1", "b6c91e8974876c69788fbb7d84c5d49a9a3c932c168fe353261923c742d3d635")
