@@ -34,7 +34,7 @@ package("openjph")
         end)
     end
 
-    on_install(function (package)
+    on_install("!mingw or mingw|!i386", function (package)
         local ojph_header_path
         if package:version():lt("0.26.0") then
             ojph_header_path = "src/core/common"
