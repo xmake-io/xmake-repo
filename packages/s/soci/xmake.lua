@@ -6,6 +6,7 @@ package("soci")
     add_urls("https://github.com/SOCI/soci/archive/refs/tags/$(version).tar.gz",
              "https://github.com/SOCI/soci.git")
 
+    add_versions("v4.1.4", "144f017cccc2e2d806badb3313d6ab3c67a1925bccaa747a46fb3907108a615d")
     add_versions("v4.0.3", "4b1ff9c8545c5d802fbe06ee6cd2886630e5c03bf740e269bb625b45cf934928")
     add_patches("v4.0.3", path.join(os.scriptdir(), "patches", "v4.0.3", "cmake_policy_fix.patch"), "6d8746c3ae39edf1b750d47dcfde97dedbe4211c2563481e877d36a9dccc556a")
 
