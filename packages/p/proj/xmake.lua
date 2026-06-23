@@ -6,6 +6,7 @@ package("proj")
     add_urls("https://download.osgeo.org/proj/proj-$(version).tar.gz")
     add_urls("https://github.com/OSGeo/PROJ/releases/download/$(version)/proj-$(version).tar.gz")
 
+    add_versions("9.8.1", "af5b731c145c1d13c4e3b4eeb7d167e94e845e440f71e3496b4ed8dae0291960")
     add_versions("9.8.0", "a8b493b00cf4d08b712b9e063ed5e53e2be90fcde46770e9dbd773341f378f43")
     add_versions("9.7.1", "6c097dc803c561929cdfcc46e4bf9945ea977611fb31493ad14e88edaeae260f")
     add_versions("9.7.0", "65705ecd987b50bf63e15820ce6bd17c042feaabda981249831bd230f6689709")
