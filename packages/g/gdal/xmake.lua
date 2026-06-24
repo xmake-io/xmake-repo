@@ -37,7 +37,7 @@ package("gdal")
     end
 
     on_load(function (package)
-        package:add("deps", "proj", {configs = {curl = package:config("curl")}})
+        package:add("deps", "proj", {configs = {curl = package:config("curl"), shared = package:config("shared")}})
 
         local configdeps = {
             curl = "libcurl",
