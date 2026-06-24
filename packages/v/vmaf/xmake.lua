@@ -44,6 +44,9 @@ package("vmaf")
                 assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(vmaf/armeabi-v7a) require ndk api level > 21")
             end
         end)
+        on_check("wasm", function (package)
+            assert(package:version() and package:version():lt("3.1.0"), "package(vmaf/wasm) require version < 3.1.0")
+        end)
     end
 
     on_load(function (package)
