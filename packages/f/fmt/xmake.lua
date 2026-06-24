@@ -46,12 +46,21 @@ package("fmt")
         add_extsources("brew::fmt")
     end
 
+    if on_check then
+        on_check("mingw", function (package)
+            if package:is_arch("i386", "x86") then
+                assert(package:version() and package:version():lt("12.2.0"), "package(fmt >= 12.2.0) unsupported on mingw/i386")
+            end
+        end)
+    end
+
     on_load(function (package)
         if package:config("header_only") then
             package:add("defines", "FMT_HEADER_ONLY=1")
             package:set("kind", "library", {headeronly = true})
         else
             package:add("deps", "cmake")
+            package:add("links", "fmt")
         end
         if package:config("shared") then
             local version = package:version()
