@@ -8,6 +8,7 @@ package("arrow")
 
     add_urls("https://github.com/apache/arrow/archive/refs/tags/apache-arrow-$(version).tar.gz",
              "https://github.com/apache/arrow.git")
+    add_versions('21.0.0', 'e92401790fdba33bfb4b8aa522626d800ea7fda4b6f036aaf39849927d2cf88d')
     add_versions('7.0.0', '57e13c62f27b710e1de54fd30faed612aefa22aa41fa2c0c3bacd204dd18a8f3')
 
     add_configs("csv",      {description = "CSV reader module", default = true, type = "boolean"})
@@ -35,12 +36,15 @@ package("arrow")
         add_configs(config, {description = "Enable " .. dep .. " support.", default = false, type = "boolean"})
     end
 
-    add_deps("cmake", "boost")
+    add_deps("cmake >=3.25", "xsimd", "ninja")
+    add_deps("boost", {configs={date_time=true, regex=true, math=true}})
 
     if is_plat("bsd") then
         add_syslinks("pthread", "execinfo")
     elseif is_plat("linux") then
         add_syslinks("pthread")
+    elseif is_plat("windows") then
+        add_syslinks("Ole32")
     end
 
     on_load(function (package)
@@ -78,9 +82,18 @@ package("arrow")
         if package:config("parquet") then
             package:add("deps", "thrift")
         end
+
+        if package:is_plat("windows") then
+            if not package:config("shared") then
+                package:add("defines", "ARROW_STATIC")
+                package:add("links", "arrow_static", "arrow_dataset_static", "arrow_compute_stati", "arrow_acero_static", "arrow_bundled_dependencies")
+            else
+                package:add("links", "arrow_compute", "arrow_acero")
+            end
+        end
     end)
 
-    on_install("linux", "macosx", "bsd", function (package)
+    on_install("windows", "linux", "macosx", "bsd", function (package)
         local configs = {
             "-DARROW_BUILD_TESTS=OFF",
             "-DARROW_DEPENDENCY_SOURCE=SYSTEM",
@@ -121,5 +134,5 @@ package("arrow")
                 arrow::Int64Builder id_builder(pool);
                 (void)id_builder;
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "arrow/api.h"}))
+        ]]}, {configs = {languages = "c++17"}, includes = "arrow/api.h"}))
     end)
