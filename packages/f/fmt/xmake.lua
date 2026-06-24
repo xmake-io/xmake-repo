@@ -6,6 +6,7 @@ package("fmt")
     set_urls("https://github.com/fmtlib/fmt/releases/download/$(version)/fmt-$(version).zip",
              "https://github.com/fmtlib/fmt.git")
 
+    add_versions("12.2.0", "a2f4a8d51178f954e4c339007f77edd76ba0cb2e36f87a48e5a5403d9be5878f")
     add_versions("12.1.0", "695fd197fa5aff8fc67b5f2bbc110490a875cdf7a41686ac8512fb480fa8ada7")
     add_versions("12.0.0", "1c32293203449792bf8e94c7f6699c643887e826f2d66a80869b4f279fb07d25")
     add_versions("11.2.0", "203eb4e8aa0d746c62d8f903df58e0419e3751591bb53ff971096eaa0ebd4ec3")
@@ -45,12 +46,21 @@ package("fmt")
         add_extsources("brew::fmt")
     end
 
+    if on_check then
+        on_check("mingw", function (package)
+            if package:is_arch("i386", "x86") then
+                assert(package:version() and package:version():lt("12.2.0"), "package(fmt >= 12.2.0) unsupported on mingw/i386")
+            end
+        end)
+    end
+
     on_load(function (package)
         if package:config("header_only") then
             package:add("defines", "FMT_HEADER_ONLY=1")
             package:set("kind", "library", {headeronly = true})
         else
             package:add("deps", "cmake")
+            package:add("links", "fmt")
         end
         if package:config("shared") then
             local version = package:version()
@@ -74,7 +84,7 @@ package("fmt")
             return
         end
         io.gsub("CMakeLists.txt", "MASTER_PROJECT AND CMAKE_GENERATOR MATCHES \"Visual Studio\"", "0")
-        local configs = {"-DFMT_TEST=OFF", "-DFMT_DOC=OFF", "-DFMT_FUZZ=OFF", "-DCMAKE_CXX_VISIBILITY_PRESET=default"}
+        local configs = {"-DFMT_TEST=OFF", "-DFMT_DOC=OFF", "-DFMT_FUZZ=OFF", "-DFMT_DEBUG_POSTFIX=", "-DCMAKE_CXX_VISIBILITY_PRESET=default"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DFMT_UNICODE=" .. (package:config("unicode") and "ON" or "OFF"))
