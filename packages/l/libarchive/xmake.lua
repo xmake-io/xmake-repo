@@ -28,7 +28,7 @@ package("libarchive")
 
     on_load(function (package)
         if package:config("openssl3") then
-            package:add("deps", "openssl3")
+            package:add("deps", "openssl3", {configs = {shared = package:config("shared")}})
         end
         if package:config("lzma") then
             package:add("deps", "lzma")
