@@ -20,7 +20,7 @@ package("libarchive")
     add_deps("zlib", "bzip2", "lz4", "zstd")
 
     add_configs("openssl3", {description = "Enable use of OpenSSL.", default = true, type = "boolean"})
-    add_configs("lzma", {description = "Enable use of OpenSSL.", default = false, type = "boolean"})
+    add_configs("lzma", {description = "Enable use of LZMA.", default = false, type = "boolean"})
 
     if is_plat("windows") then
         add_syslinks("advapi32", "bcrypt", "ws2_32", "shlwapi", "user32", "crypt32")
