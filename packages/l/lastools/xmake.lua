@@ -6,6 +6,7 @@ package("lastools")
     add_urls("https://github.com/LAStools/LAStools/archive/refs/tags/$(version).tar.gz",
              "https://github.com/LAStools/LAStools.git")
 
+    add_versions("v2.0.5", "3d66320076faed754c2b0bf353a00c5ba8c11d78a9cc4903289ca99a9cb308fe")
     add_versions("v2.0.4", "40009d74dd7e782e2f245f4e35d063db06e74b2948a47157ee41f1cf63057090")
     add_versions("v2.0.3", "b6c6ac33835ead2c69d05e282febc266048ba071a71dae6fdad321d532dfcf78")
 
