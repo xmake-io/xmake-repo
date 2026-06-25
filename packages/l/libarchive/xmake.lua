@@ -19,16 +19,23 @@ package("libarchive")
     add_deps("cmake")
     add_deps("zlib", "bzip2", "lz4", "zstd", "lzma")
 
+    add_configs("openssl3", {description = "Enable use of OpenSSL.", default = true, type = "boolean"})
+
     if is_plat("windows") then
-        add_syslinks("advapi32")
+        add_syslinks("advapi32", "bcrypt")
     end
+
+    on_load(function (package)
+        if package:config("openssl3") then
+            package:add("deps", "openssl3")
+        end
+    end)
 
     on_install("windows", "linux", "macosx", function (package)
         local configs = {"-DENABLE_TEST=OFF",
                          "-DENABLE_CAT=OFF",
                          "-DENABLE_TAR=OFF",
                          "-DENABLE_CPIO=OFF",
-                         "-DENABLE_OPENSSL=OFF",
                          "-DENABLE_PCREPOSIX=OFF",
                          "-DENABLE_LibGCC=OFF",
                          "-DENABLE_CNG=OFF",
@@ -39,6 +46,7 @@ package("libarchive")
                          "-DENABLE_LIBB2=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DENABLE_OPENSSL=" .. (package:config("openssl3") and "ON" or "OFF"))
         if not package:config("shared") then
             package:add("defines", "LIBARCHIVE_STATIC")
         end
