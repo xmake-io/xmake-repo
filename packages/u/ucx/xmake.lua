@@ -6,6 +6,7 @@ package("ucx")
     add_urls("https://github.com/openucx/ucx/releases/download/v$(version)/ucx-$(version).tar.gz",
              "https://github.com/openucx/ucx.git")
 
+    add_versions("1.20.1", "545c419a7b5e04643cb8bff5a19b3b5071a8f8f0605f1e8efb36f8f3d7bfb9d3")
     add_versions("1.18.0", "fa75070f5fa7442731b4ef5fc9549391e147ed3d859afeb1dad2d4513b39dc33")
     add_versions("1.17.0", "34658e282f99f89ce7a991c542e9727552734ac6ad408c52f22b4c2653b04276")
     add_versions("1.16.0", "f73770d3b583c91aba5fb07557e655ead0786e057018bfe42f0ebe8716e9d28c")
