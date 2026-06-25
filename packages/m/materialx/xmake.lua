@@ -6,6 +6,7 @@ package("materialx")
     set_urls("https://github.com/AcademySoftwareFoundation/MaterialX/archive/refs/tags/$(version).tar.gz",
              "https://github.com/AcademySoftwareFoundation/MaterialX.git", {submodules = false})
 
+    add_versions("v1.39.5", "c0d739b70a36f6f72888a0e8e66db5c83ae87c40737cc9b51c108166804f3a3b")
     add_versions("v1.39.4", "ce9c1a3b84a060d6280d355a72bf42b53837ee7bcc5a566cab1e927c64078fd9")
     add_versions("v1.39.3", "1f299d14c1243a4834e2363921d98465cc002b37e7f5cddb6f8747ab58fbf6d1")
     add_versions("v1.39.0", "cc470da839cdc0e31e4b46ee46ff434d858c38c803b1d4a1012ed12546ace541")
