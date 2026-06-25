@@ -13,6 +13,7 @@ package("protobuf-cpp")
     end})
 
     -- TODO: Use x.y.z version? https://protobuf.dev/support/version-support
+    add_versions("35.0", "20f10bb6ba69c391add381310d10747d4b0c32660ad651932ffcb9d04b748845")
     add_versions("33.2", "d0c6246dc7817d26e809cae88f69b019a92827096811c85e65d3d01102974710")
     add_versions("33.1", "801c7d44b2ec2ffaaf94555eda48a2239ef21e6602808ca8d22a9005fc2c03ef")
     add_versions("32.1", "2d25be4d5bf3bf28a97de553ae76c49f2a6fa3c21b04d3ccd5b3e0abc9262d00")
