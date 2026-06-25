@@ -42,7 +42,7 @@ package("libarchive")
                          "-DENABLE_CPIO=OFF",
                          "-DENABLE_PCREPOSIX=OFF",
                          "-DENABLE_LibGCC=OFF",
-                         "-DENABLE_CNG=OFF",
+                         "-DENABLE_LIBGCC=OFF",
                          "-DENABLE_ICONV=OFF",
                          "-DENABLE_ACL=OFF",
                          "-DENABLE_EXPAT=OFF",
@@ -52,6 +52,7 @@ package("libarchive")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_OPENSSL=" .. (package:config("openssl3") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_LZMA=" .. (package:config("lzma") and "ON" or "OFF"))
+        table.insert(configs, "-DENABLE_CNG=" .. (package:is_plat("windows") and "ON" or "OFF"))
         if not package:config("shared") then
             package:add("defines", "LIBARCHIVE_STATIC")
         end
