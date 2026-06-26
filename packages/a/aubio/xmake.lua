@@ -120,11 +120,28 @@ package("aubio")
         table.insert(configs, "-DHAVE_FLAC=" .. (package:config("flac") and "ON" or "OFF"))
 
         local extra_cflags = ""
-        if package:config("fftw") then extra_cflags = extra_cflags .. " -DHAVE_FFTW3" end
+        local extra_shflags = ""
+
+        if package:config("fftw") then
+            extra_cflags = extra_cflags .. " -DHAVE_FFTW3"
+            if package:toolchain("msvc") then
+                extra_shflags = extra_shflags .. " fftw3f.lib"
+            else
+                extra_shflags = extra_shflags .. " -lfftw3f"
+            end
+        end
+
         if package:config("accelerate") and package:is_plat("macosx", "iphoneos") then
             extra_cflags = extra_cflags .. " -DHAVE_ACCELERATE"
+            extra_shflags = extra_shflags .. " -framework Accelerate"
         end
-        table.insert(configs, "-DCMAKE_C_FLAGS=" .. extra_cflags)
+
+        if extra_cflags ~= "" then
+           table.insert(configs, "-DCMAKE_C_FLAGS=" .. extra_cflags)
+        end
+       if extra_shflags ~= "" then
+           table.insert(configs, "-DCMAKE_SHARED_LINKER_FLAGS=" .. extra_shflags)
+       end
 
         if package:is_plat("windows") and package:config("shared") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
