@@ -6,6 +6,7 @@ package("freerdp")
     add_urls("https://github.com/FreeRDP/FreeRDP/releases/download/$(version)/freerdp-$(version).tar.gz",
              "https://github.com/FreeRDP/FreeRDP.git")
 
+    add_versions("3.27.1", "a9f8a75b81f67790df015d0d33c69241a50188092bfb658991ad7780604321bf")
     add_versions("3.26.0", "55fa5c3159399886ba4adbe2c8a10d0b1c0484022efdf3827f68adc478b944d5")
     add_versions("3.25.0", "2d8f8ef34f607f4c5b978e3d0d96d936d88099f4918d21ba84ac334a89219f7f")
     add_versions("3.24.0", "168011bd58eae8d898842ef39c6c9bf5761ab617a68ccad80d623a3e535d0367")
@@ -19,6 +20,9 @@ package("freerdp")
     add_versions("3.16.0", "385af54245560493698730b688b5e6e5d56d5c7ecf2fa7c1d7cedfde8a4ba456")
     add_versions("3.15.0", "e8cd58decef4c970faea2fbea675970eea60e440ebe8033c54889acb83787371")
 
+    if is_plat("windows") and is_arch("x86") then
+        add_patches("3.27.1", "patches/3.27.1/msvc-x86-callback.patch", "60e03fc1b0e2610af031a615b618981ffc0f5d9643bba28980fd01c80e470e93")
+    end
     if is_plat("mingw") then
         add_patches(">=3.19.1", "patches/3.19.1/mingw-c11.patch", "84083315e41f8e2800c838ef9d36a7db3ea6470ae86c30ed691af30a017b5870")
     end
