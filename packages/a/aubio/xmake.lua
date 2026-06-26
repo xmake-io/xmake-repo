@@ -7,27 +7,46 @@ package("aubio")
 
     add_versions("2026.4.10", "ad5cf975aed08cc4562dd008cf9f83b12b82ffb8")
 
-    add_configs("sndfile",    {description = "Enable libsndfile",    default = false, type = "boolean"})
-    add_configs("samplerate", {description = "Enable libsamplerate", default = false, type = "boolean"})
-    add_configs("rubberband", {description = "Enable rubberband",    default = false, type = "boolean"})
+    add_configs("sndfile",    {description = "Use libsndfile",          default = false, type = "boolean"})
+    add_configs("samplerate", {description = "Use libsamplerate",       default = false, type = "boolean"})
+    add_configs("rubberband", {description = "Use rubberband",          default = false, type = "boolean"})
+    add_configs("fftw",       {description = "Use FFTW3",               default = false, type = "boolean"})
+    add_configs("vorbis",     {description = "Use Ogg Vorbis encoding", default = false, type = "boolean"})
+    add_configs("flac",       {description = "Use FLAC encoding",       default = false, type = "boolean"})
+    add_configs("accelerate", {description = "Use Accelerate framework (macOS, iOS)", default = true, type = "boolean"})
 
     add_deps("cmake")
 
     if is_subhost("windows") then
-        add_deps("pkgconf")
+        add_deps("pkgconf", {host = true})
     else
-        add_deps("pkg-config")
+        add_deps("pkg-config", {host = true})
     end
 
     on_load(function (package)
         if package:config("sndfile") then
             package:add("deps", "libsndfile")
+            --vorbis and flac are dependencies of sndfile, so set options to true.
+            package:config_set("vorbis", true)
+            package:config_set("flac", true)
         end
         if package:config("samplerate") then
             package:add("deps", "libsamplerate")
         end
         if package:config("rubberband") then
             package:add("deps", "rubberband")
+        end
+        if package:config("fftw") then
+            package:add("deps", "fftw", {configs = {precisions = {"float"}}})
+        end
+        if package:config("vorbis") then
+            package:add("deps", "libvorbis")
+        end
+        if package:config("flac") then
+            package:add("deps", "libflac")
+        end
+        if package:config("accelerate") and package:is_plat("macosx", "iphoneos") then
+            package:add("frameworks", "Accelerate")
         end
     end)
 
@@ -41,7 +60,7 @@ package("aubio")
 
         io.replace("src/CMakeLists.txt",
             "add_library (aubio SHARED)",
-            "add_library (aubio " .. (package:config("shared") and "SHARED" or "STATIC") .. ")", {plain = true})
+            "add_library (aubio)", {plain = true})
 
         -- Skip examples and tests
         io.replace("CMakeLists.txt",
@@ -71,9 +90,41 @@ package("aubio")
             .. "endif()",
             {plain = true})
 
+        -- Guard optional dependencies behind cache variables
+        local function guard_dep(dep_name, dep_line)
+            io.replace("src/CMakeLists.txt",
+                "add_optional_dependency (" .. dep_line .. ")",
+                "if(DEFINED HAVE_" .. dep_name .. ")\n"
+                .. "    if(HAVE_" .. dep_name .. ")\n"
+                .. "        target_compile_definitions (aubio PUBLIC HAVE_" .. dep_name .. ")\n"
+                .. "    endif()\n"
+                .. "else()\n"
+                .. "    add_optional_dependency (" .. dep_line .. ")\n"
+                .. "endif()",
+                {plain = true})
+        end
+        guard_dep("SNDFILE",    "SNDFILE sndfile>=1.0.4")
+        guard_dep("SAMPLERATE", "SAMPLERATE samplerate>=0.0.15")
+        guard_dep("RUBBERBAND", "RUBBERBAND rubberband>=1.3")
+        guard_dep("VORBISENC",  "VORBISENC vorbisenc vorbis ogg")
+        guard_dep("FLAC",       "FLAC flac")
+
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+
+        table.insert(configs, "-DHAVE_SNDFILE=" .. (package:config("sndfile") and "ON" or "OFF"))
+        table.insert(configs, "-DHAVE_SAMPLERATE=" .. (package:config("samplerate") and "ON" or "OFF"))
+        table.insert(configs, "-DHAVE_RUBBERBAND=" .. (package:config("rubberband") and "ON" or "OFF"))
+        table.insert(configs, "-DHAVE_VORBISENC=" .. (package:config("vorbis") and "ON" or "OFF"))
+        table.insert(configs, "-DHAVE_FLAC=" .. (package:config("flac") and "ON" or "OFF"))
+
+        local extra_cflags = ""
+        if package:config("fftw") then extra_cflags = extra_cflags .. " -DHAVE_FFTW3" end
+        if package:config("accelerate") and package:is_plat("macosx", "iphoneos") then
+            extra_cflags = extra_cflags .. " -DHAVE_ACCELERATE"
+        end
+        table.insert(configs, "-DCMAKE_C_FLAGS=" .. extra_cflags)
 
         if package:is_plat("windows") and package:config("shared") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
