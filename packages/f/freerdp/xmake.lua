@@ -24,7 +24,6 @@ package("freerdp")
         add_patches("3.27.1", "patches/3.27.1/msvc-x86-callback.patch", "60e03fc1b0e2610af031a615b618981ffc0f5d9643bba28980fd01c80e470e93")
     end
     if is_plat("mingw") then
-        add_patches("3.27.1", "patches/3.27.1/msvc-x86-callback.patch", "60e03fc1b0e2610af031a615b618981ffc0f5d9643bba28980fd01c80e470e93")
         add_patches(">=3.19.1", "patches/3.19.1/mingw-c11.patch", "84083315e41f8e2800c838ef9d36a7db3ea6470ae86c30ed691af30a017b5870")
     end
 
