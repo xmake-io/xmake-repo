@@ -7,6 +7,7 @@ package("valijson")
     add_urls("https://github.com/tristanpenman/valijson/archive/refs/tags/$(version).tar.gz",
              "https://github.com/tristanpenman/valijson.git", {submodules = false})
 
+    add_versions("v1.1.0", "bb37d86f5fe78f559f108517f30ce587c960ea5bd23d71413b7493cda6c3a4cc")
     add_versions("v1.0.6", "bf0839de19510ff7792d8a8aca94ea11a288775726b36c4c9a2662651870f8da")
 
     add_configs("exceptions", {description = "Enable exception", default = true, type = "boolean"})
@@ -29,6 +30,10 @@ package("valijson")
     end)
 
     on_test(function (package)
+        local languages = "c++14"
+        if package:version() and package:version():ge("1.1.0") then
+            languages = "c++17"
+        end
         assert(package:check_cxxsnippets({test = [[
             #include <valijson/schema.hpp>
             #include <valijson/schema_parser.hpp>
@@ -36,5 +41,5 @@ package("valijson")
                 valijson::Schema mySchema;
                 valijson::SchemaParser parser;
             }
-        ]]}, {configs = {languages = "c++14"}}))
+        ]]}, {configs = {languages = languages}}))
     end)
