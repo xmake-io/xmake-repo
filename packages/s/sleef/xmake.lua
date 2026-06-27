@@ -119,7 +119,7 @@ package("sleef")
                 {plain = true})
         end
 
-        if package:is_plat("windows") and package:is_arch("arm.*") then
+        if package:is_plat("windows") and package:is_arch("arm64", "arm") then
             -- CMake MATCHES is case-sensitive; ARM64 != arm64
             io.replace("Configure.cmake",
                 'elseif(SLEEF_TARGET_PROCESSOR MATCHES "aarch64|arm64")',
@@ -233,10 +233,10 @@ package("sleef")
                 "-DSLEEF_DISABLE_SSL=ON",
             }
             os.mkdir(native_build_dir)
-            os.exec("cmake -S . -B " .. native_build_dir .. " " .. table.concat(native_configs, " "))
-            os.exec("cmake --build " .. native_build_dir .. " --target mkrename mkrename_gnuabi mkmasked_gnuabi mkdisp mkalias addSuffix")
+            os.vrunv("cmake", table.join({"-S", ".", "-B", native_build_dir}, native_configs))
+            os.vrunv("cmake", {"--build", native_build_dir, "--target", "mkrename", "mkrename_gnuabi", "mkmasked_gnuabi", "mkdisp", "mkalias", "addSuffix"})
 
-            if package:is_plat("windows") and package:is_arch("arm.*") then
+            if package:is_plat("windows") and package:is_arch("arm64", "arm") then
                 table.insert(configs, "-DSLEEF_DISABLE_SVE=ON")
                 -- Override cmake auto-detected target processor for cross-build
                 table.insert(configs, "-DSLEEF_TARGET_PROCESSOR=ARM64")
