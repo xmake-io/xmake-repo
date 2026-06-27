@@ -77,7 +77,7 @@ package("diligentcore")
 
         if package:config("hlsl") or package:config("archiver") or package:config("glslang") then
             package:add("deps", "glslang")
-            package:add("deps", "spirv-tools", {public = true})
+            package:add("deps", "spirv-tools")
         end
 
         package:add("deps", "spirv-cross")
