@@ -30,6 +30,10 @@ package("valijson")
     end)
 
     on_test(function (package)
+        local languages = "c++14"
+        if package:version() and package:version():ge("1.1.0") then
+            languages = "c++17"
+        end
         assert(package:check_cxxsnippets({test = [[
             #include <valijson/schema.hpp>
             #include <valijson/schema_parser.hpp>
@@ -37,5 +41,5 @@ package("valijson")
                 valijson::Schema mySchema;
                 valijson::SchemaParser parser;
             }
-        ]]}, {configs = {languages = "c++14"}}))
+        ]]}, {configs = {languages = languages}}))
     end)
