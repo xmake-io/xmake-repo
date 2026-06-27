@@ -4,6 +4,7 @@ package("libarchive")
     set_license("BSD-2-Clause")
 
     add_urls("https://libarchive.org/downloads/libarchive-$(version).tar.gz")
+    add_urls("https://github.com/libarchive/libarchive/releases/download/v$(version)/libarchive-$(version).tar.gz")
 
     add_versions("3.8.8", "038918ea315cdd446cc63acfe880d6011832bbe1711c887de5de5441b306c190")
     add_versions("3.8.7", "4b787cca6697a95c7725e45293c973c208cbdc71ae2279f30ef09f52472b9166")
