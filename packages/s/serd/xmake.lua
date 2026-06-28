@@ -9,12 +9,19 @@ package("serd")
 
     add_deps("meson", "ninja")
 
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    else
+        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"})
+    end
+    add_configs("tools", { description = "Build command line utilities", default = true, type = "boolean"})
+    add_configs("bindings_cpp", {description = "Build C++ bindings", default = false, type = "boolean"})
+
     on_load(function (package)
         local version = package:version()
         local abi = version and (version:lt("1") and "0" or "1") or "0"
 
-        package:add("includedirs",
-            "include/serd-" .. abi)
+        package:add("includedirs", "include/serd-" .. abi)
 
         if not package:config("shared") then
             package:add("defines", "SERD_STATIC")
@@ -24,14 +31,6 @@ package("serd")
             package:add("deps", "zix")
         end
     end)
-
-    if is_plat("wasm") then
-        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-    else
-        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"})
-    end
-    add_configs("tools", { description = "Build command line utilities", default = true, type = "boolean"})
-    add_configs("bindings_cpp", {description = "Build C++ bindings", default = false, type = "boolean"})
 
     on_install(function (package)
         local configs = {
