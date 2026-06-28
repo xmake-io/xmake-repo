@@ -6,6 +6,7 @@ package("nng")
     add_urls("https://github.com/nanomsg/nng/archive/refs/tags/$(version).zip",
              "https://github.com/nanomsg/nng.git")
 
+    add_versions("v1.12.0", "35420429f11f998a26ff23c2df5a08e8c531a35cb00e7f733bec7ab6db11ea22")
     add_versions("v1.11", "46a5a1567326824a5011249d4c10d3cd42ebbc32da3888759e9fa723505bb22f")
     add_versions("v1.10.2", "bd16a8a8be9f585d9def13b5d5a29e1fea4a6ef2f8a11eba7e670386f60a9e90")
     add_versions("v1.10.1", "ce209b0830c8dc69980cbd78aa39f4590a28799e7a00fd2b938a82cf740e7d9a")
