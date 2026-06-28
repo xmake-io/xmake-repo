@@ -30,7 +30,7 @@ package("sord")
         end
 
         if not package:config("shared") then
-            package:add("defines", "SERD_STATIC")
+            package:add("defines", "SORD_STATIC")
         end
 
         package:add("includedirs", "include/sord-0")
