@@ -13,6 +13,12 @@ package("zix")
 
     add_deps("meson", "ninja")
 
+    if is_subhost("windows") then
+        add_deps("pkgconf", {host = true})
+    else
+        add_deps("pkg-config", {host = true})
+    end
+
     on_load(function (package)
         package:add("includedirs", "include/zix-0")
         if not package:config("shared") then
