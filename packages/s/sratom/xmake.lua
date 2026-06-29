@@ -29,7 +29,7 @@ package("sratom")
         package:add("includedirs", "include/sratom-0")
     end)
 
-    on_install(function (package)
+    on_install("!android", function (package)
         local configs = {
             "-Ddocs=disabled",
             "-Dtests=disabled",
