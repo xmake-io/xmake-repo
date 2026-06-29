@@ -23,7 +23,7 @@ package("lilv")
     add_configs("tools", { description = "Build command line utilities", default = false, type = "boolean"})
     add_configs("dynmanifest", {description = "Build dynamic manifest support", default = false, type = "boolean"})
     add_configs("bindings_cpp", {description = "Build C++ bindings", default = true, type = "boolean"})
-    add_configs("bindings_py", {description = "Build Python bindings", default = true, type = "boolean"})
+    add_configs("bindings_py", {description = "Build Python bindings", default = false, type = "boolean"})
 
     on_load(function (package)
         if not package:config("shared") then
