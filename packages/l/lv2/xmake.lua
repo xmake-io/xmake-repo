@@ -10,7 +10,7 @@ package("lv2")
     add_versions("1.18.10", "15038fabd0313f281a5611f41502e3649274082b74c879bcc4a4bc5a2e79e85b")
 
     add_deps("meson", "ninja")
-	
+
     add_configs("old_headers", { description = "Install backwards compatible headers at URI-style paths", default = true, type = "boolean"})
 
     on_install("!android", function (package)
@@ -19,8 +19,8 @@ package("lv2")
             "-Dplugins=disabled",
             "-Dtests=disabled",
         }
-		table.insert(configs, "-Dold_headers=" .. (package:config("old_headers") and "true" or "false"))
-		import("package.tools.meson").install(package, configs)
+        table.insert(configs, "-Dold_headers=" .. (package:config("old_headers") and "true" or "false"))
+        import("package.tools.meson").install(package, configs)
     end)
 
     on_test(function (package)		
