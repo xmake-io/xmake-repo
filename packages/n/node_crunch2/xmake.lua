@@ -12,7 +12,7 @@ package("node_crunch2")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
-    add_deps("spdlog", "asio", "lz4", "taocpp-json")
+    add_deps("spdlog", "asio", "lz4", "openssl3", "taocpp-json")
 
     if on_check then
         on_check(function (package)
@@ -40,10 +40,6 @@ package("node_crunch2")
             "package(node_crunch2) requires a compiler supporting parenthesized aggregate initialization.")
         end)
     end
-
-    on_load(function (package)
-        package:add("deps", "openssl")
-    end)
 
     on_install("!wasm", function (package)
         import("package.tools.xmake").install(package)
