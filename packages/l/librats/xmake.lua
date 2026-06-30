@@ -6,6 +6,7 @@ package("librats")
     set_urls("https://github.com/DEgITx/librats/archive/refs/tags/$(version).tar.gz",
              "https://github.com/DEgITx/librats.git")
 
+    add_versions("1.0.2", "37a82bb4fe1567ed6d28a9814a50ea952d7b50a8b22368164e9d15d72dc10a24")
     add_versions("0.8.0", "6223839f884eea16ed10128e0b88bc96374397cce3f24e5ee35324a0e2c4d3c7")
     add_versions("0.5.4", "1abf6aca56add96311a7e99490bc966180e2e919b4a8a581f0c068aed7eff91d")
     add_versions("0.4.0", "df1cc354d960a9cf6fd88c4b72939b975d67a1da5513f7a59aa38c1129b81b25")
@@ -25,6 +26,11 @@ package("librats")
             local ndk = package:toolchain("ndk")
             local ndk_sdkver = ndk:config("ndk_sdkver")
             assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(librats) require ndk api level > 21")
+        end)
+        on_check("iphoneos", function (package)
+            if package:version() and package:version():ge("1.0.0") then
+                raise("package(librats >= 1.0) not support iphoneos")
+            end
         end)
     end
 

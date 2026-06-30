@@ -1,6 +1,7 @@
 package("mquickjs")
     set_homepage("https://github.com/bellard/mquickjs")
     set_description("Public repository of the Micro QuickJS Javascript Engine")
+    set_license("MIT")
 
     add_urls("https://github.com/bellard/mquickjs.git")
     add_versions("2025.12.22", "17ce6fe54c1ea4f500f26636bd22058fce2ce61a")

@@ -6,6 +6,7 @@ package("ois")
     add_urls("https://github.com/wgois/OIS/archive/refs/tags/$(version).tar.gz",
              "https://github.com/wgois/OIS.git")
 
+    add_versions("v1.6.0", "e3f635286c0992258d5ad85d14b90c85915794b512265bd1d67455c386fc9e5a")
     add_versions("v1.5.1", "614f6ef6d69cf6d84f1b50efff46a6c1acce426933e5f0dcf29862ea8332af73")
 
     add_deps("cmake")
@@ -18,7 +19,7 @@ package("ois")
         add_syslinks("dinput8", "dxguid", "ole32", "oleaut32", "user32", "uuid", "xinput", "winmm")
     end
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows|!arm64", "linux", "macosx", function (package)
         local configs = {
             "-DOIS_BUILD_DEMOS=OFF", 
             "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",

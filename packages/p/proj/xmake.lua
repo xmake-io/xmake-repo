@@ -4,6 +4,13 @@ package("proj")
     set_license("MIT")
 
     add_urls("https://download.osgeo.org/proj/proj-$(version).tar.gz")
+    add_urls("https://github.com/OSGeo/PROJ/releases/download/$(version)/proj-$(version).tar.gz")
+
+    add_versions("9.8.1", "af5b731c145c1d13c4e3b4eeb7d167e94e845e440f71e3496b4ed8dae0291960")
+    add_versions("9.8.0", "a8b493b00cf4d08b712b9e063ed5e53e2be90fcde46770e9dbd773341f378f43")
+    add_versions("9.7.1", "6c097dc803c561929cdfcc46e4bf9945ea977611fb31493ad14e88edaeae260f")
+    add_versions("9.7.0", "65705ecd987b50bf63e15820ce6bd17c042feaabda981249831bd230f6689709")
+    add_versions("9.6.1", "493a8f801bfdaadf9dc50e5bc58e4fcc9186f1557accab3acccbd7e7ae423132")
     add_versions("9.4.0", "3643b19b1622fe6b2e3113bdb623969f5117984b39f173b4e3fb19a8833bd216")
     add_versions("9.0.1", "737eaacbe7906d0d6ff43f0d9ebedc5c734cccc9e6b8d7beefdec3ab22d9a6a3")
     add_versions("8.2.1", "76ed3d0c3a348a6693dfae535e5658bbfd47f71cb7ff7eb96d9f12f7e068b1cf")
@@ -42,19 +49,22 @@ package("proj")
     end)
 
     on_install("!wasm and (!android or android@!windows)", function (package)
-        -- windows@arm64 cann't generate proj.db
-        if package:is_plat("windows") and package:is_arch("arm64") then
-            io.replace("CMakeLists.txt", "add_subdirectory(data)", "", {plain = true})
-        end
-        if package:config("curl") and (package:version():le("9.4")) then
-            io.replace("src/lib_proj.cmake", "${CURL_LIBRARIES}", "CURL::libcurl", {plain = true})
-        end
-        io.insert("src/filemanager.cpp", 1, "#include <cstdint>")
         local configs = {
             "-DNLOHMANN_JSON_ORIGIN=external",
             "-DBUILD_TESTING=OFF",
             "-DPROJ_TESTS=OFF",
         }
+
+        -- windows@arm64 cann't generate proj.db
+        if package:is_plat("windows") and package:is_arch("arm64") then
+            io.replace("CMakeLists.txt", "add_subdirectory(data)", "", {plain = true})
+            table.insert(configs, "-DEMBED_RESOURCE_FILES=OFF")
+        end
+        if package:config("curl") and (package:version():le("9.4")) then
+            io.replace("src/lib_proj.cmake", "${CURL_LIBRARIES}", "CURL::libcurl", {plain = true})
+        end
+        io.insert("src/filemanager.cpp", 1, "#include <cstdint>")
+
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:version():ge("8.2") then

@@ -6,6 +6,7 @@ package("capstone")
     add_urls("https://github.com/capstone-engine/capstone/archive/refs/tags/$(version).tar.gz",
              "https://github.com/capstone-engine/capstone.git", {submodules = false})
 
+    add_versions("5.0.9", "0619da31af08152600af95c481527ef6d756c0a8404fca7544a4fdf6dfc2c0f9")
     add_versions("5.0.7", "6427a724726d161d1e05fb49fff8cd0064f67836c04ffca3c11d6d859e719caa")
     add_versions("5.0.6", "240ebc834c51aae41ca9215d3190cc372fd132b9c5c8aa2d5f19ca0c325e28f9")
     add_versions("5.0.5", "3bfd3e7085fbf0fab75fb1454067bf734bb0bebe9b670af7ce775192209348e9")

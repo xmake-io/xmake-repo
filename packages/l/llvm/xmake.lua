@@ -133,6 +133,7 @@ package("llvm")
     end)
 
     on_install("linux", "macosx", "bsd", function (package)
+        import("lib.detect.find_tool")
         local projects = {
             "bolt",
             "clang",
@@ -194,7 +195,13 @@ package("llvm")
             "-DLLDB_ENABLE_LZMA=OFF",
             "-DLIBOMP_INSTALL_ALIASES=OFF"
         }
-        table.insert(configs, "-DLLVM_CREATE_XCODE_TOOLCHAIN=" .. (package:is_plat("macosx") and "ON" or "OFF")) -- TODO
+        -- LLVM_CREATE_XCODE_TOOLCHAIN requires full Xcode to detect its version,
+        -- it fails when only the command line tools are installed
+        local xcodebuild = false
+        if package:is_plat("macosx") then
+            xcodebuild = find_tool("xcodebuild")
+        end
+        table.insert(configs, "-DLLVM_CREATE_XCODE_TOOLCHAIN=" .. (xcodebuild and "ON" or "OFF"))
         table.insert(configs, "-DLLVM_BUILD_LLVM_C_DYLIB=" .. (package:is_plat("macosx") and "ON" or "OFF"))
         if package:has_tool("cxx", "clang", "clangxx") then
             table.insert(configs, "-DLLVM_ENABLE_LIBCXX=ON")

@@ -27,6 +27,7 @@ package("libjpeg-turbo")
     add_versions("git:3.1.4+1", "3.1.4.1")
 
     add_configs("jpeg", {description = "libjpeg API/ABI emulation target version.", default = "6", type = "string", values = {"6", "7", "8"}})
+    add_configs("simd", {description = "Include SIMD extensions, if available for this platform", default = true, type = "boolean"})
 
     if is_plat("android") then
         add_deps("make")
@@ -34,11 +35,14 @@ package("libjpeg-turbo")
 
     on_load(function (package)
         if package:is_built() then
-            package:add("deps", "cmake", "nasm")
+            package:add("deps", "cmake")
+            if package:config("simd") and package:is_arch("x86_64", "i386", "x64", "x86") then
+                package:add("deps", "nasm")
+            end
         end
     end)
 
-    on_install("windows", "linux", "macosx", "bsd", "android", "mingw", function (package)
+    on_install("windows", "linux", "macosx", "bsd", "android", "mingw", "cross", function (package)
         io.replace("sharedlib/CMakeLists.txt", "string(REGEX REPLACE \"/MT\" \"/MD\"", "#", {plain = true})
         io.replace("sharedlib/CMakeLists.txt", "set(CMAKE_MSVC_RUNTIME_LIBRARY", "#", {plain = true})
         io.replace("sharedlib/CMakeLists.txt", "/NODEFAULTLIB:LIBCMT /NODEFAULTLIB:LIBCMTD", "", {plain = true})
@@ -53,17 +57,13 @@ package("libjpeg-turbo")
 
         local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        if package:config("shared") then
-            table.insert(configs, "-DENABLE_SHARED=ON")
-            table.insert(configs, "-DENABLE_STATIC=OFF")
-        else
-            table.insert(configs, "-DENABLE_SHARED=OFF")
-            table.insert(configs, "-DENABLE_STATIC=ON")
-        end
+        table.insert(configs, "-DENABLE_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DENABLE_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
+        table.insert(configs, "-DWITH_SIMD=" .. (package:config("simd") and "ON" or "OFF"))
         if package:is_plat("windows") and package:has_runtime("MD") then
             table.insert(configs, "-DWITH_CRT_DLL=ON")
         end
-        if package:is_plat("mingw") then
+        if package:is_plat("mingw", "cross") then
             table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. package:arch())
         end
 

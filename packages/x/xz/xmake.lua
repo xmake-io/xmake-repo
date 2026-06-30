@@ -1,6 +1,7 @@
 package("xz")
     set_homepage("https://tukaani.org/xz/")
     set_description("General-purpose data compression with high compression ratio.")
+    set_license("LGPL-2.1-or-later")
 
     set_urls("https://github.com/tukaani-project/xz/releases/download/v$(version)/xz-$(version).tar.gz",
              "https://downloads.sourceforge.net/project/lzmautils/xz-$(version).tar.gz")

@@ -6,6 +6,7 @@ package("rocksdb")
     add_urls("https://github.com/facebook/rocksdb/archive/refs/tags/$(version).tar.gz",
              "https://github.com/facebook/rocksdb.git")
 
+    add_versions("v11.1.2", "3aba946031d27734eeea68ced7dd6f46629ba23a7b49945eb29aea68d1595311")
     add_versions("v11.1.1", "63f11183fe40725a0e89a9e392f2c86c94b90064f1d95f5173a02cfe40de13f7")
     add_versions("v11.0.4", "b4dfd75199f385ec76056f81d33cde8f4cb446ea2ed1821feec7b996b3409f67")
     add_versions("v10.10.1", "df2ff348f3fac8578fd4b727eee7267aaf90cd403c99b55e898d1db63fa8cff5")

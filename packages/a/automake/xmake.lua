@@ -3,6 +3,7 @@ package("automake")
     set_kind("binary")
     set_homepage("https://www.gnu.org/software/automake/")
     set_description("A tool for automatically generating Makefile.in files compliant with the GNU Coding Standards.")
+    set_license("GPL-2.0-or-later")
 
     add_urls("https://ftpmirror.gnu.org/gnu/automake/automake-$(version).tar.gz",
              "https://ftp.gnu.org/gnu/automake/automake-$(version).tar.gz",

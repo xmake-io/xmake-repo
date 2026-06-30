@@ -6,6 +6,7 @@ package("csvparser")
 
     add_urls("https://github.com/vincentlaucsb/csv-parser/archive/refs/tags/$(version).tar.gz",
              "https://github.com/vincentlaucsb/csv-parser.git")
+    add_versions("5.3.0", "66911a50cfb347c47bc109a52bb01b1bf7bb35184466b6bda8bca8770a41576c")
     add_versions("3.1.0", "7820acdbc31657366fa394ce5341730f9ed600fcd737def6052ee711294d544a")
     add_versions("2.5.2", "b6ceb7c75a37f3539424bdc583b7424d78a55c1986b732dadbcce0738c212058")
     add_versions("2.4.2", "a185cbcd9dcaac584de852b6c4a39f6bed29872141379a5cd76c78d890d10325")

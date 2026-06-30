@@ -6,6 +6,9 @@ package("aws-c-s3")
     add_urls("https://github.com/awslabs/aws-c-s3/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-s3.git")
 
+    add_versions("v0.12.7", "daa717ccac1136cf73b69cd4057d3d302b4037f0ebfa6552a8f532f79f8032f8")
+    add_versions("v0.12.6", "d70061a523ee1fb6f0127e52653e7cc252347893295d675797b3d387e0e46049")
+    add_versions("v0.12.5", "1d039ef1fb7df6696757b3fe219ce03a52c244c79e38d637c49d99b4f5871e14")
     add_versions("v0.12.4", "0775d5410cbca2317504a7f0a22dea12eed4bdacecc09d1e6901e3803e5903c2")
     add_versions("v0.12.3", "65dcc547b8680c8598754ff3273a00a898ad357cff6d0056bc0f1d1bea550760")
     add_versions("v0.12.2", "76348249b4bc305c1a40d089270a5a419f58c03c231b757de0a49a7a234eec76")
@@ -38,7 +41,7 @@ package("aws-c-s3")
     add_deps("cmake")
     add_deps("aws-checksums", "aws-c-io", "aws-c-http", "aws-c-auth")
 
-    on_install("!wasm and (!mingw or mingw|!i386)", function (package)
+    on_install("windows", "linux", "bsd", "cross", "android", "mingw|!i386", "macosx|arm64", function (package)
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "WIN32", "AWS_S3_USE_IMPORT_EXPORT")
         end

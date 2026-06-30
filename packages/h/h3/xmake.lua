@@ -6,6 +6,7 @@ package("h3")
     add_urls("https://github.com/uber/h3/archive/refs/tags/$(version).tar.gz",
              "https://github.com/uber/h3.git")
 
+    add_versions("v4.5.0", "0da8a392a6ff77e76b60e6a331a49497d0935b6b7b6899da7a3e2786139b0441")
     add_versions("v4.4.1", "9df719eb878f218c203e424dc5ffca9b98eca4d78ba83928773987649ead404d")
     add_versions("v4.4.0", "b88de0212058812f560c21517e62cd6b2d146f5382b9cc1316bd45c1a3334239")
     add_versions("v4.3.0", "a47cfa36e255e4bf16c63015aaff8e6fe2afc14ffaa3f6b281718158446c0e9b")

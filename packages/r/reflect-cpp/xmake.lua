@@ -6,6 +6,7 @@ package("reflect-cpp")
     add_urls("https://github.com/getml/reflect-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/getml/reflect-cpp.git", {submodules = false})
 
+    add_versions("v0.25.0", "de74d3793fd3dde9105ebe0f40bffb28df7009d59e0714389e4d29fcb46a1a3f")
     add_versions("v0.24.0", "2185d45cca58f60bcdaca37a995c6f8e90c0105f312610333fed75f2efa6a996")
     add_versions("v0.22.0", "5756d74e7df640b4633a3ea5a3c0d7c4e096bdd3f67828f8b02f58b156ba39ec")
     add_versions("v0.20.0", "b774f11fd602683e3c7febabfe6e888b866cec28497c5e9c6ba82aeeb4465bbc")

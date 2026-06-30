@@ -7,6 +7,7 @@ package("cppjieba")
     add_urls("https://github.com/yanyiwu/cppjieba/archive/refs/tags/$(version).tar.gz",
              "https://github.com/yanyiwu/cppjieba.git", {submodules = false})
 
+    add_versions("v5.6.7", "08322f7c2a06a88e52eb0fdbc286ec86a85abae5b2a33b1e1430dba50b71960e")
     add_versions("v5.6.3", "2f58f88608a5521b47057cc5d46a79c93283c619d81d3d8956c33b8e9cdd84fb")
     add_versions("v5.6.0", "e6e517b778e0f4a99cbed1ee3eaa041616b74bc685e03a6ca08887ad9cedfe49")
     add_versions("v5.5.0", "5919269a0929399616ef7b38240c3a12cfe3323ea4c7c101976ce8ffb9c1c7dc")

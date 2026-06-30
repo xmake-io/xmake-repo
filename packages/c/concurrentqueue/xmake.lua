@@ -6,6 +6,7 @@ package("concurrentqueue")
     add_urls("https://github.com/cameron314/concurrentqueue/archive/refs/tags/$(version).tar.gz",
              "https://github.com/cameron314/concurrentqueue.git")
 
+    add_versions("v1.0.5", "4d6368a27492d86011fde5ca0cf386dce7c49cd425aa3d9b063ca6ec373a6ef3")
     add_versions("v1.0.4", "87fbc9884d60d0d4bf3462c18f4c0ee0a9311d0519341cac7cbd361c885e5281")
 
     add_configs("c_api", {description = "Build C API", default = false, type = "boolean"})

@@ -1,5 +1,6 @@
 package("autotools")
     set_kind("binary")
+    set_license("GPL-3.0-or-later")
 
     if is_subhost("msys") then
         add_deps("pacman::autotools")

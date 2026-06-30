@@ -6,6 +6,7 @@ package("aws-c-auth")
     add_urls("https://github.com/awslabs/aws-c-auth/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-auth.git")
 
+    add_versions("v0.10.3", "20fc5e75529fadd81fd38b25f9d83798b53ab235ebbac92cdfbb716cfcc7593d")
     add_versions("v0.10.2", "832d2ae61ccd408ef001dd14eb909cc9551a5724211a817688bbb898a60457a7")
     add_versions("v0.10.1", "85d737f0f735256f1931e85e4cadbe228d88698f7b59a9b390b49ef5d0778a43")
     add_versions("v0.9.5", "39000bff55fe8c82265b9044a966ab37da5c192a775e1b68b6fcba7e7f9882fb")
@@ -28,7 +29,7 @@ package("aws-c-auth")
     add_deps("cmake")
     add_deps("aws-c-io", "aws-c-sdkutils", "aws-c-http")
 
-    on_install("!wasm and (!mingw or mingw|!i386)", function (package)
+    on_install("windows", "linux", "bsd", "cross", "android", "mingw|!i386", "macosx|arm64", function (package)
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "USE_WINDOWS_DLL_SEMANTICS", "AWS_AUTH_USE_IMPORT_EXPORT")
         end
