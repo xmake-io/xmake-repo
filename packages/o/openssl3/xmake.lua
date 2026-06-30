@@ -272,7 +272,7 @@ package("openssl3")
 
         import("configure.patch")(package)
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
-        if (package:is_cross() and package:is_plat("android") and is_subhost("windows")) or
+        if (package:is_plat("android") and is_subhost("windows")) or
             package:is_plat("wasm") then
 
             buildenvs.CFLAGS = buildenvs.CFLAGS:gsub("\\", "/")
