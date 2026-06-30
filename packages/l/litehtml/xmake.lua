@@ -6,6 +6,7 @@ package("litehtml")
     add_urls("https://github.com/litehtml/litehtml/archive/refs/tags/$(version).tar.gz",
              "https://github.com/litehtml/litehtml.git")
 
+    add_versions("v0.10", "7700eced92847d34ad9846b138cf195a9c974b519be70de58797880ae9da649e")
     add_versions("v0.9", "ef957307da15b1258a70961942840bcf54225a8d75315dcbc156186eba35b1a7")
 
     add_deps("cmake")
