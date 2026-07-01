@@ -35,6 +35,15 @@ package("sratom")
             "-Dtests=disabled",
         }
         import("package.tools.meson").install(package, configs)
+        -- Copying .pc files from libdata/pkgconfig to lib/pkgconfig after install fixes the FreeBSD package discovery issue.
+        if package:is_plat("bsd") then
+            local srcdir = path.join(package:installdir(), "libdata", "pkgconfig")
+            local dstdir = path.join(package:installdir(), "lib", "pkgconfig")
+            if os.isdir(srcdir) then
+                os.mkdir(dstdir)
+                os.cp(path.join(srcdir, "*.pc"), dstdir)
+            end
+        end
     end)
 
     on_test(function (package)
