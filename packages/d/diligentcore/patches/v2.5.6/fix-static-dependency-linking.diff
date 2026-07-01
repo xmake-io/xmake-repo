@@ -1,0 +1,57 @@
+diff --git a/ThirdParty/CMakeLists.txt b/ThirdParty/CMakeLists.txt
+index 5486b48..9dfa47e 100644
+--- a/ThirdParty/CMakeLists.txt
++++ b/ThirdParty/CMakeLists.txt
+@@ -10,6 +10,10 @@ include(FindPkgConfig)
+ 
+ if (GL_SUPPORTED AND (PLATFORM_WIN32 OR PLATFORM_LINUX OR PLATFORM_MACOS) AND (NOT glew_FOUND))
+     pkg_check_modules(glew REQUIRED glew)
+ endif()
++if (PLATFORM_LINUX AND glew_FOUND)
++    set(glew_LIBRARIES ${glew_STATIC_LIBRARIES})
++    set(glew_LIBRARY_DIRS ${glew_STATIC_LIBRARY_DIRS})
++endif()
+ 
+ if (VULKAN_SUPPORTED)
+@@ -30,10 +34,18 @@ if (VULKAN_SUPPORTED OR METAL_SUPPORTED OR WEBGPU_SUPPORTED OR (ARCHIVER_SUPPORT
+ 
+     if (NOT (${DILIGENT_NO_GLSLANG} AND ${DILIGENT_NO_HLSL}) AND (NOT SPIRV-Tools_FOUND))
+         pkg_check_modules(SPIRV-Tools REQUIRED SPIRV-Tools)
+     endif()
++    if (PLATFORM_LINUX AND SPIRV-Tools_FOUND)
++        set(SPIRV-Tools_LIBRARIES ${SPIRV-Tools_STATIC_LIBRARIES})
++        set(SPIRV-Tools_LIBDIR ${SPIRV-Tools_STATIC_LIBRARY_DIRS})
++    endif()
+ 
+     if (NOT ${DILIGENT_NO_GLSLANG} AND (NOT glslang_FOUND))
+         pkg_check_modules(glslang REQUIRED glslang)
+     endif()
++    if (PLATFORM_LINUX AND glslang_FOUND)
++        set(glslang_LIBRARIES ${glslang_STATIC_LIBRARIES})
++        set(glslang_LIBDIR ${glslang_STATIC_LIBRARY_DIRS})
++    endif()
+ 
+     if (NOT spirv-cross-c_FOUND)
+diff --git a/Graphics/ShaderTools/CMakeLists.txt b/Graphics/ShaderTools/CMakeLists.txt
+index 42bf3be..9057f7c 100644
+--- a/Graphics/ShaderTools/CMakeLists.txt
++++ b/Graphics/ShaderTools/CMakeLists.txt
+@@ -186,7 +186,7 @@ if(ENABLE_SPIRV)
+     if (${USE_SPIRV_TOOLS})
+         target_link_libraries(Diligent-ShaderTools
+         PRIVATE
+-            SPIRV-Tools-opt
++            ${SPIRV-Tools_LIBRARIES}
+         )
+         target_compile_definitions(Diligent-ShaderTools PRIVATE USE_SPIRV_TOOLS=1)
+     endif()
+@@ -194,8 +194,7 @@ if(ENABLE_SPIRV)
+     if (${USE_GLSLANG})
+         target_link_libraries(Diligent-ShaderTools
+         PRIVATE
+-            SPIRV
+-            glslang
++            ${glslang_LIBRARIES}
+         )
+     endif()
+ endif()
