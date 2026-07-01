@@ -36,7 +36,8 @@ diff --git a/Graphics/Archiver/CMakeLists.txt b/Graphics/Archiver/CMakeLists.txt
 --- a/Graphics/Archiver/CMakeLists.txt
 +++ b/Graphics/Archiver/CMakeLists.txt
 @@ -150,7 +150,8 @@ if(GL_SUPPORTED OR GLES_SUPPORTED)
-         target_link_libraries(Diligent-Archiver-static PRIVATE ${glew_LIBRARIES})
+-        target_link_libraries(Diligent-Archiver-static PRIVATE ${glew_LIBRARIES})
++        target_link_libraries(Diligent-Archiver-static PRIVATE ${glew_LIBRARIES} opengl32)
      elseif(PLATFORM_LINUX)
          find_package(X11 REQUIRED)
 +        find_package(OpenGL REQUIRED)
@@ -49,7 +50,8 @@ diff --git a/Graphics/GraphicsEngineOpenGL/CMakeLists.txt b/Graphics/GraphicsEng
 --- a/Graphics/GraphicsEngineOpenGL/CMakeLists.txt
 +++ b/Graphics/GraphicsEngineOpenGL/CMakeLists.txt
 @@ -203,9 +203,10 @@ if(PLATFORM_WIN32)
-     set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${glew_LIBRARIES})
+-    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${glew_LIBRARIES})
++    set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} ${glew_LIBRARIES} opengl32)
  elseif(PLATFORM_ANDROID)
      set(PRIVATE_DEPENDENCIES ${PRIVATE_DEPENDENCIES} GLESv3 EGL)
  elseif(PLATFORM_LINUX)

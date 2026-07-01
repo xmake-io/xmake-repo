@@ -11,7 +11,7 @@ package("diligentcore")
     add_patches("v2.5.6", "patches/v2.5.6/debundle-thirdparty.diff", "3d276a78e9ae47516668229dcb644f328a3602d389a3d73784eeb52d8a53108d")
     add_patches("v2.5.6", "patches/v2.5.6/enforce-static-lib-type-for-platform-libraries.diff", "ee88a2a04348dcc9de7960a87ff5dc1fb1b534caf1f6224bb2d0c88d37a4bc53")
     add_patches("v2.5.6", "patches/v2.5.6/fix-build-deps-pkgconf.diff", "9998204546cf551a48301e972b582eeeaf002607a4f474086d7d80f4762451ee")
-    add_patches("v2.5.6", "patches/v2.5.6/fix-static-dependency-linking.diff", "529fa07fa3e7237c30e469e3c1fdb83d22c47e6cec04b4461d6d6e7398e8c68e")
+    add_patches("v2.5.6", "patches/v2.5.6/fix-static-dependency-linking.diff", "c414c8a56a5e2e3db213902dc29d00ae2f38e3752eb09aec1088faca78212afa")
     add_patches("v2.5.6", "patches/v2.5.6/fix-install-path.diff", "6be244cb16df0a5d84ae4fe97ebecd0cf0f2058f8fded78f5c0a28d84510afc9")
     add_patches("v2.5.6", "patches/v2.5.6/fix-spirv-cross-namespace.diff", "d5a866d4b5bce061a3597dcc026cb88c4b9f92af352ef4071750d355b8b924f0")
 
