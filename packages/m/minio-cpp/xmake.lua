@@ -6,6 +6,7 @@ package("minio-cpp")
     add_urls("https://github.com/minio/minio-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/minio/minio-cpp.git")
 
+    add_versions("v0.4.0", "31cca03d32a3a27955d21764e3719097895f243f3b3add932f3c207758624eda")
     add_versions("v0.3.0", "da0f2f54bf169ad9e5e9368cc9143df4db056fc5c05bb55d8c1d9065e7211f7c")
 
     add_patches("0.3.0", "patches/0.3.0/cmake-pkgconfig-find-deps.patch", "53a0a5a300c896ad92dbaf3b96fa25556a2f555e84ce07deb7b7b1562ddac9e5")
