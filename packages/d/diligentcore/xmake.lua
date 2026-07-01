@@ -37,6 +37,8 @@ package("diligentcore")
 
     if is_plat("linux") then
         add_syslinks("pthread", "dl")
+    elseif is_plat("windows") then
+        add_syslinks("comdlg32")
     end
 
     if is_plat("macosx") then
