@@ -2,7 +2,6 @@ package("box3d")
     set_homepage("https://github.com/erincatto/box3d")
     set_description("Box3D is a 3D physics engine for games")
     set_license("MIT")
-    set_languages("c17")
 
     add_urls(
         "https://github.com/erincatto/box3d/archive/refs/tags/$(version).tar.gz",
@@ -54,5 +53,5 @@ package("box3d")
                 b3Quat rotation = b3Body_GetRotation(bodyId);
                 b3DestroyWorld(worldId);
             }
-        ]]}, {configs = {languages = {"c17"}}, includes = "box3d/box3d.h" }))
+        ]]}, {configs = {languages = "c17"}, includes = "box3d/box3d.h" }))
     end)
