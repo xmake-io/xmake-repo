@@ -12,7 +12,7 @@ package("node_crunch2")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
-    add_deps("spdlog", "asio", "lz4", "openssl", "taocpp-json")
+    add_deps("spdlog", "asio", "lz4", "openssl3", "taocpp-json")
 
     if on_check then
         on_check(function (package)
@@ -24,8 +24,20 @@ package("node_crunch2")
                         int value = *result;
                     }
                 }
-            ]]}, {configs = {languages = "c++20"}}), 
-            "package(node_crunch2) requires a compiler supporting C++20 with <expected> header.")
+            ]]}, {configs = {languages = "c++23"}}), 
+            "package(node_crunch2) requires a compiler supporting C++23 with <expected> header.")
+            assert(package:check_cxxsnippets({test = [[
+                #include <vector>
+                #include <cstdint>
+                struct NCCompressedMessage {
+                    std::vector<uint8_t> data = {};
+                };
+                void test() {
+                    std::vector<uint8_t> compressed_data;
+                    auto msg = NCCompressedMessage(compressed_data);
+                }
+            ]]}, {configs = {languages = "c++23"}}), 
+            "package(node_crunch2) requires a compiler supporting parenthesized aggregate initialization.")
         end)
     end
 
@@ -34,10 +46,6 @@ package("node_crunch2")
     end)
 
     on_test(function (package)
-        local package_std = "c++20"
-        if package:is_plat("windows") then
-            package_std = "c++23"
-        end
         assert(package:check_cxxsnippets({
             test = [[
                 using namespace NodeCrunch2;
@@ -50,5 +58,5 @@ package("node_crunch2")
                     NCConfiguration config = NCConfiguration(key1);
                 }
             ]]
-        }, {configs = {languages = package_std}, includes = {"nc_message.hpp", "nc_config.hpp"}}))
+        }, {configs = {languages = "c++23"}, includes = {"nc_message.hpp", "nc_config.hpp"}}))
     end)

@@ -76,7 +76,7 @@ package("openssl3")
                         package:add("deps", "jom", {private = true})
                     end
                 end
-            elseif package:is_plat("android", "wasm") and is_subhost("windows") and os.arch() == "x64" then
+            elseif package:is_plat("android", "wasm") and is_host("windows") and os.arch() == "x64" then
                 -- when building for android on windows, use msys2 perl instead of strawberry-perl to avoid configure issue
                 package:add("deps", "msys2", {configs = {msystem = "MINGW64", base_devel = true}, private = true})
             end
@@ -272,7 +272,7 @@ package("openssl3")
 
         import("configure.patch")(package)
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
-        if (package:is_cross() and package:is_plat("android") and is_subhost("windows")) or
+        if (package:is_plat("android") and is_host("windows")) or
             package:is_plat("wasm") then
 
             buildenvs.CFLAGS = buildenvs.CFLAGS:gsub("\\", "/")
