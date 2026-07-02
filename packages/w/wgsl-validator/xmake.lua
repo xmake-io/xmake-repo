@@ -13,7 +13,13 @@ package("wgsl-validator")
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
     if is_plat("windows", "mingw") then
-        add_syslinks("Advapi32", "User32", "Userenv", "WS2_32", "RuntimeObject", "NtDll")
+        local libs = {"Advapi32", "User32", "Userenv", "WS2_32", "RuntimeObject", "NtDll"}
+        if is_plat("mingw") and is_host("linux") then -- mingw sys libs under linux are lowercase
+            for i, lib in ipairs(libs) do
+                libs[i] = lib:lower()
+            end
+        end
+        add_syslinks(unpack(libs))
     elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
