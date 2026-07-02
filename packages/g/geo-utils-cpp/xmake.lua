@@ -7,6 +7,7 @@ package("geo-utils-cpp")
     add_urls("https://github.com/gistrec/geo-utils-cpp/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/gistrec/geo-utils-cpp.git")
 
+    add_versions("1.1.0", "fcf31dba71e9c9db265bb44b91d54f0f101feda54660b843e1a1a4c74e5d565c")
     add_versions("1.0.2", "be01e145e38341544ba283ebd7ca9896e9b488659167b72ce662960fe4d58bb4")
     add_versions("1.0.1", "2594b5dd736dab3ee99dc586dd326f699b90243b6074df582a32547f90b82a08")
 
