@@ -12,18 +12,23 @@ package("box3d")
 
     add_deps("cmake")
 
-    add_configs("disable_simd", { description = "Disable SIMD math (slower)", default = false, type = "boolean" })
+    add_configs("simd", { description = "Enable SIMD math (slower)", default = false, type = "boolean" })
     add_configs("double_precision", { description = "Enable double precision for large worlds", default = false, type = "boolean" })
 
     if is_plat("linux", "bsd") then
-        add_syslinks("pthread")
+        add_syslinks("pthread", "m")
     end
 
     on_install(function(package)
-        local configs = {}
+        local configs = {
+            "-DBOX3D_SAMPLES=OFF",
+            "-DBOX3D_UNIT_TESTS=OFF",
+            "-DBOX3D_BENCHMARKS=OFF",
+            "-DBOX3D_DOCS=OFF"
+        }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DBOX3D_DISABLE_SIMD=" .. (package:config("disable_simd") and "ON" or "OFF"))
+        table.insert(configs, "-DBOX3D_DISABLE_SIMD=" .. (package:config("simd") and "OFF" or "ON"))
         table.insert(configs, "-DBOX3D_DOUBLE_PRECISION=" .. (package:config("double_precision") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
