@@ -21,7 +21,7 @@ package("gstreamer")
     if is_plat("windows") then
         add_deps("pkgconf", "winflexbison")
     else
-        add_deps("flex", "bison", { host = true })
+        add_deps("flex", "bison", {kind = "binary", host = true, private = true})
     end
     add_deps("glib")
 
@@ -54,6 +54,7 @@ package("gstreamer")
         if package:is_plat("windows", "macosx") then
             table.insert(packagedeps, "libintl")
         end
+        os.cd("subprojects/gstreamer")
         import("package.tools.meson").install(package, configs, {packagedeps = packagedeps})
     end)
 
