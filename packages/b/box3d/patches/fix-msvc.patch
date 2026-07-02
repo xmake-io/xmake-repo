@@ -1,0 +1,15 @@
+diff --git a/src/ctz.h b/src/ctz.h
+--- a/src/ctz.h
++++ b/src/ctz.h
+@@ -72,7 +72,11 @@ static inline uint32_t b3CTZ64( uint64_t block )
+ 
+ static inline int b3PopCount64( uint64_t block )
+ {
++#ifdef _WIN64
+ 	return (int)__popcnt64( block );
++#else
++	return (int)__popcnt( (uint32_t)block ) + (int)__popcnt( (uint32_t)( block >> 32 ) );
++#endif
+ }
+ 
+ #else
