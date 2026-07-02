@@ -21,6 +21,9 @@ package("luajit")
 
     if on_check then
         on_check(function (package)
+            if is_host("macosx") and package:check_sizeof("void*") == "4" then
+                raise("package(luajit): 32-bit targets are unsupported on macOS hosts")
+            end
             if package:version() then
                 if package:version():eq("v2.1.0-beta3") then
                     if package:is_arch("arm.*") then
