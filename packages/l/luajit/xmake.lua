@@ -15,12 +15,15 @@ package("luajit")
     add_configs("gc64",  { description = "Enable GC64.", default = false, type = "boolean"})
 
     add_includedirs("include", "include/luajit")
-    if not is_plat("windows") then
+    if not is_plat("windows", "mingw") then
         add_syslinks("dl")
     end
 
     if on_check then
         on_check(function (package)
+            if is_host("macosx") and package:check_sizeof("void*") == "4" then
+                raise("package(luajit): 32-bit targets are unsupported on macOS hosts")
+            end
             if package:version() then
                 if package:version():eq("v2.1.0-beta3") then
                     if package:is_arch("arm.*") then
@@ -42,7 +45,7 @@ package("luajit")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "bsd", "android", "iphoneos", function (package)
+    on_install("windows", "mingw", "linux", "macosx", "bsd", "android", "iphoneos", function (package)
         local configs = {}
         configs.fpu     = package:config("fpu")
         configs.nojit   = package:config("nojit")
