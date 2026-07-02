@@ -243,7 +243,7 @@ target("luajit")
             target:add("defines", "LUAJIT_OS=LUAJIT_OS_OTHER")
         end
 
-        if target:is_plat("windows", "luajit") and target:is_shared() then
+        if target:is_plat("windows", "mingw") and target:is_shared() then
             target:add("defines", "LUA_BUILD_AS_DLL", "_CRT_STDIO_INLINE=__declspec(dllexport)__inline")
         end
     end)
