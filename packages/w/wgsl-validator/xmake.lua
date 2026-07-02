@@ -18,7 +18,7 @@ package("wgsl-validator")
         add_syslinks("dl", "m", "pthread", "rt", "util")
     end
 
-    on_install(function (package)
+    on_install("!mingw", function (package)
         package:base():script("install")(package)
         local envs = package:data("xmake_envs")
 
