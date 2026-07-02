@@ -10,7 +10,7 @@ package("box3d")
 
     add_versions("v0.1.0", "df232c7618c0d0d3927b798044559ee56eabadeb9d8ff9dc526d4b384d7b415d")
 
-    add_patches("v0.1.0", path.join(os.scriptdir(), "patches/fix-msvc.patch"), "a1f376ab4bb154e6ae78236dce1ef0af58ba3d93dda2ff73ab9a23440081f147")
+    add_patches("v0.1.0", "patches/fix-msvc.patch", "a1f376ab4bb154e6ae78236dce1ef0af58ba3d93dda2ff73ab9a23440081f147")
 
     add_deps("cmake")
 
