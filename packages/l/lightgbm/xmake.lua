@@ -32,8 +32,10 @@ package("lightgbm")
             package:add("deps", "opencl")
             package:add("deps", "boost", {configs = {filesystem = true, system = true}})
         end
-        if package:is_plat("linux") and package:has_tool("cc", "clang", "clangxx") then
+        if package:is_plat("macosx") or (package:is_plat("linux") and package:has_tool("cc", "clang", "clangxx")) then
             package:add("deps", "libomp")
+        elseif package:is_plat("linux") then
+            package:add("syslinks", "gomp")
         end
     end)
 
@@ -59,6 +61,21 @@ package("lightgbm")
                     table.insert(configs, "-DOpenMP_CXX_LIB_NAMES=libomp")
                     table.insert(configs, "-DOpenMP_CXX_FLAGS=-I" .. includedirs[1])
                     table.insert(configs, "-DOpenMP_libomp_LIBRARY=" .. table.concat(libfiles, " "))
+                end
+            end
+        end
+        if package:is_plat("macosx") then
+            local libomp = package:dep("libomp"):fetch()
+            if libomp then
+                local includedirs = table.wrap(libomp.includedirs or libomp.sysincludedirs)
+                local libfiles = table.wrap(libomp.libfiles)
+                if #includedirs > 0 and #libfiles > 0 then
+                    table.insert(configs, "-DUSE_HOMEBREW_FALLBACK=OFF")
+                    table.insert(configs, "-DOpenMP_C_FLAGS=-Xpreprocessor -fopenmp -I" .. includedirs[1])
+                    table.insert(configs, "-DOpenMP_CXX_FLAGS=-Xpreprocessor -fopenmp -I" .. includedirs[1])
+                    table.insert(configs, "-DOpenMP_C_LIB_NAMES=omp")
+                    table.insert(configs, "-DOpenMP_CXX_LIB_NAMES=omp")
+                    table.insert(configs, "-DOpenMP_omp_LIBRARY=" .. libfiles[1])
                 end
             end
         end
