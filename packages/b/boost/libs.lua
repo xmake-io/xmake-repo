@@ -34,7 +34,8 @@ local sorted_libs = {
   "chrono",
   "system",
   "charconv",
-  "atomic"
+  "atomic",
+  "spirit"
 }
 
 local libs_dep = {
@@ -158,6 +159,9 @@ local libs_dep = {
     "mpi",
     "random",
     "serialization"
+  },
+  spirit = {
+    "thread",
   }
 }
 
