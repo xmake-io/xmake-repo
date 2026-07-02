@@ -187,7 +187,7 @@ target("luajit")
     if is_mode("debug") then
         add_defines("LUA_USE_ASSERT")
     end
-    if is_kind("shared") and is_plat("windows") then
+    if is_kind("shared") and is_plat("windows", "mingw") then
         add_defines("LUA_BUILD_AS_DLL")
     end
     add_defines("LUAJIT_ENABLE_LUA52COMPAT", {public = true})
