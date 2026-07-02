@@ -27,7 +27,7 @@ package("lightgbm")
         end)
     end
 
-    on_load("windows|x64", "linux", function (package)
+    on_load("windows|x64", "linux", "macosx", function (package)
         if package:config("gpu") then
             package:add("deps", "opencl")
             package:add("deps", "boost", {configs = {filesystem = true, system = true}})
@@ -37,7 +37,7 @@ package("lightgbm")
         end
     end)
 
-    on_install("windows|x64", "linux", function (package)
+    on_install("windows|x64", "linux", "macosx", function (package)
         if package:version() and package:version():lt("4.2.0") then
             os.cd("compile")
         end
@@ -67,5 +67,11 @@ package("lightgbm")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("LightGBM::ChunkedArray<int>", {includes = "LightGBM/utils/chunked_array.hpp"}))
+        assert(package:check_cxxsnippets({test = [[
+            #include <LightGBM/c_api.h>
+            void test() {
+                const char* msg = LGBM_GetLastError();
+                (void)msg;
+            }
+        ]]}, {configs = {languages = "c++11"}}))
     end)
