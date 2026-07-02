@@ -18,7 +18,7 @@ package("wgsl-validator")
         add_syslinks("dl", "m", "pthread", "rt", "util")
     end
 
-    on_install("!mingw", function (package)
+    on_install(function (package)
         package:base():script("install")(package)
         local envs = package:data("xmake_envs")
 
@@ -33,6 +33,13 @@ package("wgsl-validator")
                 set_values("rust.cratetype", "staticlib")
                 add_packages("cargo::naga")
         ]])
+        if is_host("windows") and package:is_plat("mingw", "msys") then
+            local mingw_root = os.programdir():match("^(.-[/\\]mingw%d+)[/\\]")
+            if mingw_root then
+                envs = table.clone(envs or {})
+                envs.PATH = path.join(mingw_root, "bin") .. path.envsep() .. (os.getenv("PATH") or "")
+            end
+        end
         import("package.tools.xmake").install(package, nil, {envs = envs})
     end)
 
