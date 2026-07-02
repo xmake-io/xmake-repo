@@ -1,5 +1,4 @@
 package("rgfw")
-
     set_homepage("https://github.com/ColleagueRiley/RGFW")
     set_description("A single-header windowing framework for creating windows, graphics contexts and handling input.")
     set_license("zlib")
@@ -18,7 +17,7 @@ package("rgfw")
     if is_plat("windows", "mingw", "msys") then
         add_syslinks("gdi32", "shell32", "user32")
     elseif is_plat("macosx") then
-        add_frameworks("Cocoa", "CoreVideo", "OpenGL", "IOKit")
+        add_frameworks("Cocoa", "CoreVideo", "IOKit")
     elseif is_plat("linux", "bsd") then
         add_syslinks("dl", "pthread")
     end
@@ -46,7 +45,7 @@ package("rgfw")
         end
     end)
 
-    on_install( function (package)
+    on_install("windows", "mingw", "msys", "linux", "bsd", "macosx", "wasm", function (package)
         os.cp("RGFW.h", package:installdir("include"))
         os.cp("XDL.h", package:installdir("include"))
         if not package:config("headeronly") then
@@ -100,8 +99,8 @@ package("rgfw")
         end
     end)
 
-    on_test( function (package)
-        local configs = { languages = "c99" }
+    on_test(function (package)
+        local configs = { languages = package:is_plat("wasm") and "gnu99" or "c99" }
         if package:config("headeronly") then
             configs.defines = "RGFW_IMPLEMENTATION"
         end
