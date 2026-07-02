@@ -14,7 +14,7 @@ package("box3d")
 
     add_deps("cmake")
 
-    add_configs("simd", { description = "Enable SIMD math (slower)", default = false, type = "boolean" })
+    add_configs("simd", { description = "Enable SIMD math (faster, but not supported on every platform)", default = true, type = "boolean" })
     add_configs("double_precision", { description = "Enable double precision for large worlds", default = false, type = "boolean" })
 
     if is_plat("linux", "bsd") then
