@@ -12,6 +12,11 @@ package("stv")
     end)
 
     on_test(function (package)
-        package:set("languages", "c99")
-        assert(package:has_cincludes("stv.h"), "stv.h not found")
+        local language = (package:is_plat("windows") and "c11" or "c99")
+        assert(package:check_csnippets({test = [[
+            #include <stv.h>
+            void test() {
+                stv_new("Hello world");
+            }
+        ]]}, {configs = {languages = language}}))
     end)
