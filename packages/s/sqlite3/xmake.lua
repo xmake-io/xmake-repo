@@ -138,5 +138,9 @@ package("sqlite3")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("sqlite3_open_v2", {includes = "sqlite3.h"}))
+        local configs = {}
+        if package:is_plat("wasm") and package:config("shared") then
+            configs.cxflags = "-fPIC"
+        end
+        assert(package:has_cfuncs("sqlite3_open_v2", {includes = "sqlite3.h", configs = configs}))
     end)
