@@ -13,6 +13,12 @@ package("zix")
 
     add_deps("meson", "ninja")
 
+    if is_subhost("windows") then
+        add_deps("pkgconf", {host = true})
+    else
+        add_deps("pkg-config", {host = true})
+    end
+
     on_load(function (package)
         package:add("includedirs", "include/zix-0")
         if not package:config("shared") then
@@ -28,6 +34,15 @@ package("zix")
             "-Dtests_cpp=disabled",
         }
         import("package.tools.meson").install(package, configs)
+        -- Copying .pc files from libdata/pkgconfig to lib/pkgconfig after install fixes the FreeBSD package discovery issue.
+        if package:is_plat("bsd") then
+            local srcdir = path.join(package:installdir(), "libdata", "pkgconfig")
+            local dstdir = path.join(package:installdir(), "lib", "pkgconfig")
+            if os.isdir(srcdir) then
+                os.mkdir(dstdir)
+                os.cp(path.join(srcdir, "*.pc"), dstdir)
+            end
+        end
     end)
 
     on_test(function (package)		

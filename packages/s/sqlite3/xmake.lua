@@ -60,14 +60,19 @@ package("sqlite3")
     add_versions("3.51.0+300", "81f5be397049b0cae1b167f2225af7646fc0f82e4a9b3c48c9ea3a533e21d77a")
     add_versions("3.53.0+0", "851e9b38192fe2ceaa65e0baa665e7fa06230c3d9bd1a6a9662d02380d73365a")
     add_versions("3.53.0+100", "83e6b2020a034e9a7ad4a72feea59e1ad52f162e09cbd26735a3ffb98359fc4f")
+    add_versions("3.53.0+200", "588ad51949419a56ebe81fe56193d510c559eb94c9a57748387860b5d3069316")
 
     add_configs("explain_comments", { description = "Inserts comment text into the output of EXPLAIN.", default = true, type = "boolean"})
+    add_configs("column_metadata",  { description = "Enable column metadata APIs.", default = false, type = "boolean"})
     add_configs("dbpage_vtab",      { description = "Enable the SQLITE_DBPAGE virtual table.", default = true, type = "boolean"})
     add_configs("stmt_vtab",        { description = "Enable the SQLITE_STMT virtual table logic.", default = true, type = "boolean"})
     add_configs("dbstat_vtab",      { description = "Enable the dbstat virtual table.", default = true, type = "boolean"})
     add_configs("math_functions",   { description = "Enable the built-in SQL math functions.", default = true, type = "boolean"})
     add_configs("rtree",            { description = "Enable R-Tree.", default = false, type = "boolean"})
+    add_configs("omit_shared_cache", { description = "Omit shared-cache support.", default = false, type = "boolean"})
+    add_configs("omit_deprecated",  { description = "Omit deprecated interfaces.", default = false, type = "boolean"})
     add_configs("safe_mode",        { description = "Use thread safe mode in 0 (single thread) | 1 (serialize) | 2 (mutli thread).", default = "1", type = "string", values = {"0", "1", "2"}})
+    add_configs("default_wal_synchronous", { description = "Set the default Write-Ahead Logging synchronous level in WAL mode: 0 (OFF), 1 (NORMAL), 2 (FULL), or 3 (EXTRA).", default = "1", type = "string", values = {"0", "1", "2", "3"}})
 
     if is_plat("cross", "macosx", "linux", "bsd") then
         add_syslinks("pthread", "dl")
@@ -78,22 +83,29 @@ package("sqlite3")
             add_rules("mode.debug", "mode.release")
             set_encodings("utf-8")
 
-            option("explain_comments", {default = false, defines = "SQLITE_ENABLE_EXPLAIN_COMMENTS"})
-            option("dbpage_vtab", {default = false, defines = "SQLITE_ENABLE_DBPAGE_VTAB"})
-            option("stmt_vtab", {default = false, defines = "SQLITE_ENABLE_STMTVTAB"})
-            option("dbstat_vtab", {default = false, defines = "SQLITE_ENABLE_DBSTAT_VTAB"})
-            option("math_functions", {default = false, defines = "SQLITE_ENABLE_MATH_FUNCTIONS"})
-            option("rtree", {default = false, defines = "SQLITE_ENABLE_RTREE"})
-            option("safe_mode", {default = "1"})
+            option("explain_comments", {defines = "SQLITE_ENABLE_EXPLAIN_COMMENTS"})
+            option("column_metadata", {defines = "SQLITE_ENABLE_COLUMN_METADATA"})
+            option("dbpage_vtab", {defines = "SQLITE_ENABLE_DBPAGE_VTAB"})
+            option("stmt_vtab", {defines = "SQLITE_ENABLE_STMTVTAB"})
+            option("dbstat_vtab", {defines = "SQLITE_ENABLE_DBSTAT_VTAB"})
+            option("math_functions", {defines = "SQLITE_ENABLE_MATH_FUNCTIONS"})
+            option("rtree", {defines = "SQLITE_ENABLE_RTREE"})
+            option("omit_shared_cache", {defines = "SQLITE_OMIT_SHARED_CACHE"})
+            option("omit_deprecated", {defines = "SQLITE_OMIT_DEPRECATED"})
+            option("safe_mode")
+            option("default_wal_synchronous")
 
             target("sqlite3")
                 set_kind("$(kind)")
                 add_files("sqlite3.c")
                 add_headerfiles("sqlite3.h", "sqlite3ext.h")
-                add_options("explain_comments", "dbpage_vtab", "stmt_vtab", "dbstat_vtab", "math_functions", "rtree")
+                add_options("explain_comments", "column_metadata", "dbpage_vtab", "stmt_vtab", "dbstat_vtab", "math_functions", "rtree", "omit_shared_cache", "omit_deprecated")
 
                 if has_config("safe_mode") then
                     add_defines("SQLITE_THREADSAFE=" .. get_config("safe_mode"))
+                end
+                if has_config("default_wal_synchronous") then
+                    add_defines("SQLITE_DEFAULT_WAL_SYNCHRONOUS=" .. get_config("default_wal_synchronous"))
                 end
 
                 if is_kind("shared") and is_plat("windows") then
@@ -126,5 +138,9 @@ package("sqlite3")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("sqlite3_open_v2", {includes = "sqlite3.h"}))
+        local configs = {}
+        if package:is_plat("wasm") and package:config("shared") then
+            configs.cxflags = "-fPIC"
+        end
+        assert(package:has_cfuncs("sqlite3_open_v2", {includes = "sqlite3.h", configs = configs}))
     end)
