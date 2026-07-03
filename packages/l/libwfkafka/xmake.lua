@@ -6,6 +6,7 @@ package("libwfkafka")
     add_urls("https://github.com/sogou/workflow/archive/refs/tags/$(version).tar.gz",
              "https://github.com/sogou/workflow.git")
 
+    add_versions("v1.0.1", "8da09b26e9f138ed98f11e6be7352ae9cc9a1f297135945ccde8a3d997b65508")
     add_versions("v1.0.0", "e163bcdde05e5bf0708d44995a7b8579a947acb8fef9a26e3b6da9b6df63e822")
     add_versions("v0.11.11", "5b526cdd6c2c38c89b1966afca481b54b1342ac1f53b150f2ca0353659ac7efa")
     add_versions("v0.11.7", "218158704ddf9ea4187cd0b310f7f819002db1b46c64a0e1a6a536d009f04bfc")
