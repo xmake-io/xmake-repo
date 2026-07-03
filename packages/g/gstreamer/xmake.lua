@@ -4,6 +4,7 @@ package("gstreamer")
     set_license("LGPL-2.0-or-later")
 
     add_urls("https://github.com/GStreamer/gstreamer/archive/refs/tags/$(version).tar.gz")
+    add_versions("1.29.2", "bdc85ae119a6f0ece463c0bc202881d56a036df29378f8b417e2088dea2800b5")
     add_versions("1.24.2", "2006cb5ba1484e5a15b53d893a85e3d832bc17d26b457c399cb74203701e141c")
 
     add_configs("tools", {description = "Build tools.", default = false, type = "boolean"})
