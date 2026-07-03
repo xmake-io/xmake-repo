@@ -218,8 +218,10 @@ package("libcurl")
             if package:debug() then
                 libname = libname .. "-d"
             end
-            io.replace(package:installdir() .. "/lib/pkgconfig/libcurl.pc",
-                       " -lcurl", " -l" .. libname, {plain = true})
+            local pc_file = path.join(package:installdir(), "lib", "pkgconfig", "libcurl.pc")
+            if os.isfile(pc_file) then
+                io.replace(pc_file, " -lcurl", " -l" .. libname, {plain = true})
+            end
         end
     end)
 
