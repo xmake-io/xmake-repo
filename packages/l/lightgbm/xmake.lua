@@ -27,17 +27,19 @@ package("lightgbm")
         end)
     end
 
-    on_load("windows|x64", "linux", function (package)
+    on_load("windows|x64", "linux", "macosx", function (package)
         if package:config("gpu") then
             package:add("deps", "opencl")
             package:add("deps", "boost", {configs = {filesystem = true, system = true}})
         end
-        if package:is_plat("linux") and package:has_tool("cc", "clang", "clangxx") then
+        if package:is_plat("macosx") or (package:is_plat("linux") and package:has_tool("cc", "clang", "clangxx")) then
             package:add("deps", "libomp")
+        elseif package:is_plat("linux") then
+            package:add("syslinks", "gomp")
         end
     end)
 
-    on_install("windows|x64", "linux", function (package)
+    on_install("windows|x64", "linux", "macosx", function (package)
         if package:version() and package:version():lt("4.2.0") then
             os.cd("compile")
         end
@@ -62,10 +64,31 @@ package("lightgbm")
                 end
             end
         end
+        if package:is_plat("macosx") then
+            local libomp = package:dep("libomp"):fetch()
+            if libomp then
+                local includedirs = table.wrap(libomp.includedirs or libomp.sysincludedirs)
+                local libfiles = table.wrap(libomp.libfiles)
+                if #includedirs > 0 and #libfiles > 0 then
+                    table.insert(configs, "-DUSE_HOMEBREW_FALLBACK=OFF")
+                    table.insert(configs, "-DOpenMP_C_FLAGS=-Xpreprocessor -fopenmp -I" .. includedirs[1])
+                    table.insert(configs, "-DOpenMP_CXX_FLAGS=-Xpreprocessor -fopenmp -I" .. includedirs[1])
+                    table.insert(configs, "-DOpenMP_C_LIB_NAMES=omp")
+                    table.insert(configs, "-DOpenMP_CXX_LIB_NAMES=omp")
+                    table.insert(configs, "-DOpenMP_omp_LIBRARY=" .. libfiles[1])
+                end
+            end
+        end
         import("package.tools.cmake").install(package, configs)
         package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("LightGBM::ChunkedArray<int>", {includes = "LightGBM/utils/chunked_array.hpp"}))
+        assert(package:check_cxxsnippets({test = [[
+            #include <LightGBM/c_api.h>
+            void test() {
+                const char* msg = LGBM_GetLastError();
+                (void)msg;
+            }
+        ]]}, {configs = {languages = "c++11"}}))
     end)
