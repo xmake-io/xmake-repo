@@ -62,7 +62,7 @@ package("libcurl")
         elseif package:is_plat("linux", "bsd") then
             package:add("syslinks", "pthread")
         elseif package:is_plat("windows", "mingw") then
-            package:add("syslinks", "advapi32", "crypt32", "wldap32", "winmm", "ws2_32", "user32")
+            package:add("syslinks", "advapi32", "crypt32", "wldap32", "winmm", "ws2_32", "user32", "iphlpapi", "bcrypt", "secur32")
         end
 
         if package:is_plat("mingw") and is_subhost("msys") then
