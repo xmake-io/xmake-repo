@@ -140,6 +140,7 @@ package("libcurl")
         end
         if package:is_plat("windows") then
             table.insert(configs, "-DCURL_STATIC_CRT=" .. (package:has_runtime("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DIMPORT_LIB_SUFFIX=")
         end
         if package:is_plat("mingw") and version:le("7.85.0") then
             io.replace("src/CMakeLists.txt", 'COMMAND ${CMAKE_COMMAND} -E echo "/* built-in manual is disabled, blank function */" > tool_hugehelp.c', "", {plain = true})
@@ -211,6 +212,15 @@ package("libcurl")
             table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
         end
         import("package.tools.cmake").install(package, configs, {builddir = "build"})
+
+        if package:is_plat("windows") then
+            local libname = "libcurl"
+            if package:debug() then
+                libname = libname .. "-d"
+            end
+            io.replace(package:installdir() .. "/lib/pkgconfig/libcurl.pc",
+                       " -lcurl", " -l" .. libname, {plain = true})
+        end
     end)
 
     on_test(function (package)
