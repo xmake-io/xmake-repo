@@ -15,8 +15,10 @@ package("libsdl3_mixer")
              "https://github.com/libsdl-org/SDL_mixer/releases/download/release-$(version)/SDL3_mixer-$(version).zip", { alias = "archive" })
     add_urls("https://github.com/libsdl-org/SDL_mixer.git", {alias = "github", submodules = false})
 
+    add_versions("archive:3.2.2", "09bb145c399231390b37024aeeeba82c0a105471184a231a5ce3993747ca9308")
     add_versions("archive:3.2.4", "bbf0173861d5ee66555605435d4f423261d228649cb03dcb6cf3d24063683625")
 
+    add_versions("github:3.2.2", "release-3.2.2")
     add_versions("github:3.2.4", "release-3.2.4")
 
     add_deps("cmake")
