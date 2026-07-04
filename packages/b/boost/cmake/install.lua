@@ -73,6 +73,8 @@ function _add_libs_configs(package, configs)
         libs.for_each(function (libname)
             if header_only_buildable and header_only_buildable:has(libname) then
                 -- continue
+            elseif libname == "container" then
+                -- Don't exclude: needed by header-only modules like lexical_cast
             else
                 if not package:config(libname) then
                     table.insert(exclude_libs, libname)
@@ -80,6 +82,10 @@ function _add_libs_configs(package, configs)
             end
         end)
         table.insert(configs, "-DBOOST_EXCLUDE_LIBRARIES=" .. table.concat(exclude_libs, ";"))
+    end
+
+    if not package:config("container") then
+        table.insert(configs, "-DBOOST_CONTAINER_HEADER_ONLY=ON")
     end
 
     table.insert(configs, "-DBOOST_ENABLE_PYTHON=" .. (package:config("python") and "ON" or "OFF"))
