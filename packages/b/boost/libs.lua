@@ -171,6 +171,7 @@ local header_only_buildable = {
   "exception",
   "regex",
   "math",
+  "container",
 }
 
 function get_libs()
