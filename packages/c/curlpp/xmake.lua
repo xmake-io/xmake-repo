@@ -4,6 +4,7 @@ package("curlpp")
     set_license("MIT")
 
     add_urls("https://github.com/jpbarrette/curlpp.git")
+    add_versions("2026.02.12", "ec1b66e699557cd9d608d322c013a1ebda16bd08")
     add_versions("2023.07.27", "1d8c7876cc81d7d125b663066282b207d9cbfe9a")
 
     add_deps("libcurl")
