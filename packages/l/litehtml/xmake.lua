@@ -25,13 +25,14 @@ package("litehtml")
     end)
 
     on_test(function (package)
+        local languages = package:version() and package:version():ge("0.10") and "c++17" or "c++11"
         assert(package:check_cxxsnippets({test = [[
             #include <string>
             #include <litehtml.h>
             using namespace litehtml;
             void test() {
-                css_element_selector selector;
-                selector.parse(".class");
+                style css;
+                css.add_property(_background_color_, "#ffffff");
             }
-        ]]}, {configs = {languages = "c++11"}}))
+        ]]}, {configs = {languages = languages}}))
     end)
