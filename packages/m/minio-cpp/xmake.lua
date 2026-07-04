@@ -24,6 +24,17 @@ package("minio-cpp")
     add_deps("inih", {configs = {ini_parser = true}})
     add_deps("curlpp", "pugixml", "zlib")
 
+    if on_check then
+        on_check("mingw", function (package)
+            assert(package:version() and package:version():lt("0.4.0"), "package(minio-cpp >=0.4.0): unsupport mingw")
+        end)
+        on_check("windows", function (package)
+            if package:version() and package:version():ge("0.4.0") and package:config("shared") then
+                raise("package(minio-cpp >=0.4.0): unsupport windows shared")
+            end
+        end)
+    end
+
     on_load(function (package)
         -- xrepo package: curlpp -> libcurl -> openssl
         if package:is_plat("linux") then
