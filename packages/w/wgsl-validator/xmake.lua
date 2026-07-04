@@ -33,13 +33,6 @@ package("wgsl-validator")
                 set_values("rust.cratetype", "staticlib")
                 add_packages("cargo::naga")
         ]])
-        if is_host("windows") and package:is_plat("mingw", "msys") then
-            local mingw_root = os.programdir():match("^(.-[/\\]mingw%d+)[/\\]")
-            if mingw_root then
-                envs = table.clone(envs or {})
-                envs.PATH = path.join(mingw_root, "bin") .. path.envsep() .. (os.getenv("PATH") or "")
-            end
-        end
         import("package.tools.xmake").install(package, nil, {envs = envs})
     end)
 
