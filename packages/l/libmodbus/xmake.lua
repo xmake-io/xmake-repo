@@ -5,6 +5,7 @@ package("libmodbus")
 
     add_urls("https://github.com/stephane/libmodbus/archive/refs/tags/$(version).tar.gz",
              "https://github.com/stephane/libmodbus.git")
+    add_versions("v3.2.0", "0c61007b2815daf452618f8b877d15cdcd376b71ad5dbd06b330d70f53b2ccaa")
     add_versions("v3.1.12", "4151177f5223625c6be94230affb096aa8b1cdb0df00fe1f74ce53878a25d15d")
     add_versions("v3.1.11", "8a750452ef86a53de6cec6fbca67bd5be08d0a1e87278a422fbce3003fd42d99")
     add_versions("v3.1.10", "e93503749cd89fda4c8cf1ee6371a3a9cc1f0a921c165afbbc4fd96d4813fa1a")
