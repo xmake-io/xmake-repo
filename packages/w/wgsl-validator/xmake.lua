@@ -13,9 +13,9 @@ package("wgsl-validator")
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
     if is_plat("windows", "mingw") then
-        add_syslinks("Advapi32", "User32", "Userenv", "WS2_32", "RuntimeObject", "NtDll")
+        add_syslinks("kernel32", "ntdll", "userenv", "ws2_32", "dbghelp")
     elseif is_plat("linux", "bsd") then
-        add_syslinks("pthread")
+        add_syslinks("dl", "m", "pthread", "rt", "util")
     end
 
     on_install(function (package)
@@ -33,6 +33,13 @@ package("wgsl-validator")
                 set_values("rust.cratetype", "staticlib")
                 add_packages("cargo::naga")
         ]])
+        if is_host("windows") and package:is_plat("mingw", "msys") then
+            local mingw_root = os.programdir():match("^(.-[/\\]mingw%d+)[/\\]")
+            if mingw_root then
+                envs = table.clone(envs or {})
+                envs.PATH = path.join(mingw_root, "bin") .. path.envsep() .. (os.getenv("PATH") or "")
+            end
+        end
         import("package.tools.xmake").install(package, nil, {envs = envs})
     end)
 

@@ -3,6 +3,7 @@ package("rust")
     set_homepage("https://rust-lang.org")
     set_description("Rust is a general-purpose programming language emphasizing performance, type safety, and concurrency.")
 
+    add_versions("1.96.1", "")
     add_versions("1.86.0", "")
 
     add_deps("ca-certificates", {host = true, private = true})
