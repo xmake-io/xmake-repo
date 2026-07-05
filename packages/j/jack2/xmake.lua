@@ -13,6 +13,7 @@ package("jack2")
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             add_languages("c11")
+            add_rules("utils.install.pkgconfig_importfiles")
 
             option("version", {description = "Set the version"})
             set_version(get_config("version"))
