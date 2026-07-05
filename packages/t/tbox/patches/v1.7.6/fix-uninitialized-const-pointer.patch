@@ -1,0 +1,51 @@
+--- a/src/tbox/libm/isqrti.c
++++ b/src/tbox/libm/isqrti.c
+@@ -206,7 +206,7 @@
+         // analyze isqrti
+         tb_hong_t                   t1 = tb_uclock();
+         __tb_volatile__ tb_size_t   n1 = 200;
+-        __tb_volatile__ tb_uint32_t v1; tb_used(&v1);
++        __tb_volatile__ tb_uint32_t v1 = 0; tb_used(&v1);
+         while (n1--)
+         {
+             v1 = tb_isqrti_impl((1 << 4) + 3);
+@@ -219,7 +219,7 @@
+         // analyze sqrt
+         tb_hong_t                   t2 = tb_uclock();
+         __tb_volatile__ tb_size_t   n2 = 200;
+-        __tb_volatile__ tb_uint32_t v2; tb_used(&v2);
++        __tb_volatile__ tb_uint32_t v2 = 0; tb_used(&v2);
+         while (n2--)
+         {
+             v2 = tb_isqrti_impl_using_sqrt((1 << 4) + 3);
+--- a/src/tbox/libm/isqrti64.c
++++ b/src/tbox/libm/isqrti64.c
+@@ -82,7 +82,7 @@
+         // analyze isqrti64
+         tb_hong_t                   t1 = tb_uclock();
+         __tb_volatile__ tb_size_t   n1 = 100;
+-        __tb_volatile__ tb_uint32_t v1; tb_used(&v1);
++        __tb_volatile__ tb_uint32_t v1 = 0; tb_used(&v1);
+         while (n1--)
+         {
+             v1 = tb_isqrti64_impl((1 << 4) + 3);
+@@ -100,7 +100,7 @@
+         // analyze sqrt
+         tb_hong_t                   t2 = tb_uclock();
+         __tb_volatile__ tb_size_t   n2 = 100;
+-        __tb_volatile__ tb_uint32_t v2; tb_used(&v2);
++        __tb_volatile__ tb_uint32_t v2 = 0; tb_used(&v2);
+         while (n2--)
+         {
+             v2 = tb_isqrti64_impl_using_sqrt((1 << 4) + 3);
+--- a/src/tbox/platform/posix/thread_local.c
++++ b/src/tbox/platform/posix/thread_local.c
+@@ -141,7 +141,7 @@
+         /* mark exists and we use dummy variable to silence glibc 2.34 warnings
+          * https://github.com/SELinuxProject/selinux/issues/311
+          */
+-        tb_int_t dummy;
++        tb_int_t dummy = 0;
+         ok = pthread_setspecific(((pthread_key_t*)local->priv)[1], &dummy) == 0;
+     }
+     return ok;
