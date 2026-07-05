@@ -35,6 +35,8 @@ package("glib")
         add_frameworks("AppKit", "Foundation", "CoreServices", "CoreFoundation")
     elseif is_plat("linux", "cross") then
         add_syslinks("pthread", "dl", "resolv")
+    elseif is_plat("bsd") then
+        add_syslinks("pthread")
     end
 
     add_deps("meson", "ninja")
@@ -51,12 +53,14 @@ package("glib")
         add_deps("libiconv", "libintl")
     elseif is_plat("windows", "mingw") then
         add_deps("libintl")
+    elseif is_plat("bsd") then
+        add_deps("libintl")
     end
 
     add_includedirs("include/glib-2.0", "lib/glib-2.0/include")
     add_links("gio-2.0", "gobject-2.0", "gthread-2.0", "gmodule-2.0", "glib-2.0")
 
-    on_fetch("macosx", "linux", function (package, opt)
+    on_fetch("macosx", "linux", "bsd", function (package, opt)
         if opt.system and package.find_package then
             local result
             for _, name in ipairs({"gio-2.0", "gobject-2.0", "gthread-2.0", "gmodule-2.0", "glib-2.0"}) do
@@ -88,7 +92,7 @@ package("glib")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("windows", "macosx", "linux", "cross", "mingw", function (package)
+    on_install("windows", "macosx", "linux", "bsd", "cross", "mingw", function (package)
         io.gsub("meson.build", "subdir%('tests'%)", "")
         io.gsub("meson.build", "subdir%('fuzzing'%)", "")
         io.gsub("gio/meson.build", "subdir%('tests'%)", "")
@@ -114,6 +118,10 @@ package("glib")
             table.insert(configs, "-Diconv=native")
         elseif package:is_plat("windows") and package:version():le("2.74.0") then
             table.insert(configs, "-Diconv=external")
+        end
+        if package:is_plat("bsd") then
+            table.insert(configs, "-Dxattr=false")
+            table.insert(configs, "-Db_lundef=false")
         end
         table.insert(configs, "-Dglib_debug=" .. (package:is_debug() and "enabled" or "disabled"))
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
