@@ -84,5 +84,9 @@ package("tbox")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("tb_exit", {includes = "tbox/tbox.h", configs = {languages = "c99"}}))
+        local configs = {languages = "c99"}
+        if package:is_plat("wasm") and package:config("pic") ~= false then
+            configs.cxflags = "-fPIC"
+        end
+        assert(package:has_cfuncs("tb_exit", {includes = "tbox/tbox.h", configs = configs}))
     end)
