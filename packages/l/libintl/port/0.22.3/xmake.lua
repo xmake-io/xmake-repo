@@ -230,16 +230,18 @@ void test() {environ.foo = 1;}]], {includes = is_plat("windows") and "stdlib.h" 
 -- config.h variables
 if is_plat("windows", "mingw") then
     set_configvar("USE_WINDOWS_THREADS", 1)
-else
-option("USE_ISOC_THREADS")
-    add_cfuncs("thrd_create")
-    add_cincludes("threads.h")
-option_end()
-if has_config("USE_ISOC_THREADS") then
-    set_configvar("USE_ISOC_AND_POSIX_THREADS", 1)
-else
+elseif is_plat("bsd") then
     set_configvar("USE_POSIX_THREADS", 1)
-end
+else
+    option("USE_ISOC_THREADS")
+        add_cfuncs("thrd_create")
+        add_cincludes("threads.h")
+    option_end()
+    if has_config("USE_ISOC_THREADS") then
+        set_configvar("USE_ISOC_AND_POSIX_THREADS", 1)
+    else
+        set_configvar("USE_POSIX_THREADS", 1)
+    end
 end
 configvar_check_ctypes("HAVE_STDINT_H_WITH_UINTMAX", "uintmax_t", {includes = "stdint.h"})
 configvar_check_ctypes("HAVE_UINTMAX_T", "uintmax_t", {includes = "stdint.h"})
