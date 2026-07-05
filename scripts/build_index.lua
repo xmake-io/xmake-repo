@@ -1,10 +1,9 @@
 -- Generate a flat JSON index of all packages in this repository.
 --
 -- Output: dist/repology_packages_index.json
---
--- Intended consumers: external trackers/aggregators (repology.org and
--- similar) that need a structured, declarative view of the repository
--- without parsing xmake.lua source files. See xmake-io/xmake-repo#9966.
+-- Consumers: external trackers/aggregators (repology.org and similar) that
+-- need a structured view of the repository without parsing xmake.lua files.
+-- See xmake-io/xmake-repo#9966.  Run:  xmake l scripts/build_index.lua
 --
 -- Schema:
 --   {
@@ -23,42 +22,39 @@
 --         "download_urls":  ["<all non-.git add_urls(...) entries with $(version) resolved for the latest version>"],
 --         "patches":        ["<repo-relative path or URL of patches applied to the latest version>"],
 --         "base":           "<base package name, only for set_base(...) alias packages>"
---       },
---       ...
+--       }, ...
 --     ]
 --   }
 --
--- Packages that declare neither versions nor urls (pure system/SDK wrappers
--- like opengl, matlab, autotools) are excluded: there is no upstream release
--- to report. Alias packages created with set_base(...) inherit versions and
+-- Packages that declare neither versions nor urls (system/SDK wrappers like
+-- opengl, matlab) are excluded. set_base(...) aliases inherit versions and
 -- urls from their base package and carry a "base" field.
 --
--- Some packages only declare versions for a non-linux build host
--- (is_host("windows"), os.arch() == "x64", is_plat("windows"), ...). Those
--- are re-loaded under a set of synthetic host/plat/arch profiles and the
--- results merged, so the index is complete regardless of the machine that
--- generates it. See _synthetic_profiles below.
---
--- Run:  xmake l scripts/build_index.lua
+-- Descriptions can branch on the build host (is_host("windows"),
+-- os.arch() == "x64", is_plat("windows"), ...), so a single load only sees
+-- the current machine's branch. Every package is therefore re-loaded under
+-- each synthetic host/plat/arch profile below and the results merged, making
+-- the index identical regardless of the machine that generates it.
 
 import("core.base.json")
 import("core.base.semver")
 import("core.package.package")
 
--- Synthetic profiles used to re-load packages whose versions are declared
--- behind host/plat/arch conditionals. plat/arch go through the official
--- load_from_repository() opt (backed by is_plat/is_arch); host and os_arch
--- are applied via the hooks installed by _install_synthetic_hooks().
-local _synthetic_profiles = {
-    {name = "windows-x64",   plat = "windows", arch = "x64",    host = "windows", os_arch = "x64"},
-    {name = "windows-x86",   plat = "windows", arch = "x86",    host = "windows", os_arch = "x86"},
-    {name = "macosx-arm64",  plat = "macosx",  arch = "arm64",  host = "macosx",  os_arch = "arm64"},
-    {name = "macosx-x86_64", plat = "macosx",  arch = "x86_64", host = "macosx",  os_arch = "x86_64"},
-    {name = "linux-x86_64",  plat = "linux",   arch = "x86_64", host = "linux",   os_arch = "x86_64"},
-}
+-- Covers every host used with is_host(...) and every arch compared against
+-- os.arch() / used with is_arch(...) in package descriptions (zig, mkl, ...).
+-- plat/arch go through the official load_from_repository() opt; the same
+-- values are applied as host and os.arch() via _install_synthetic_hooks().
+local _synthetic_profiles = {}
+for _, p in ipairs({{"windows", "x64", "x86", "arm64"},
+                    {"macosx", "arm64", "x86_64"},
+                    {"linux", "x86_64", "arm64", "i386"},
+                    {"bsd", "x86_64"}}) do
+    for i = 2, #p do
+        table.insert(_synthetic_profiles, {plat = p[1], arch = p[i]})
+    end
+end
 
--- The active synthetic profile ({host = ..., os_arch = ...}), empty outside
--- the profile re-load passes.
+-- The active synthetic profile, empty outside the profile re-load passes.
 local _synthetic = {}
 
 -- Match the loader pattern used by scripts/packages.lua and scripts/autoupdate.lua.
@@ -74,9 +70,9 @@ function _load_package(packagename, packagedir, packagefile, opt)
 end
 
 -- import("core.package.package") returns a sandbox wrapper; the underlying
--- core module (which owns the package interpreter and its is_host/is_plat
--- predicates) is only reachable as an upvalue of the wrapped functions.
--- Returns nil on future xmake refactors — callers must degrade gracefully.
+-- core module (which owns the package interpreter) is only reachable as an
+-- upvalue of the wrapped functions. Returns nil on future xmake refactors —
+-- callers must degrade gracefully.
 function _core_package_module()
     return try {
         function ()
@@ -94,31 +90,27 @@ function _core_package_module()
     }
 end
 
--- Reroute the description-scope host/arch predicates through _synthetic so
--- the profile passes can emulate other build hosts. Must run before the
--- first package load: the interpreter captures the predicate functions when
--- it is created. Returns true if the hooks are installed.
+-- Reroute the description-scope is_host / os.arch / os.host predicates
+-- through _synthetic so the profile passes can emulate other build hosts.
+-- They live in the interpreter's builtin-module table (_PUBLIC), captured at
+-- interpreter creation, so this must run before the first package load.
+-- Returns true if the hooks are installed; bails out (false) instead of
+-- installing hooks that would only crash later on a future xmake refactor.
 function _install_synthetic_hooks(core)
     if not core then
         return false
     end
     return try {
         function ()
-            -- the description scope gets is_host / os.arch / os.host from the
-            -- interpreter's builtin-module table (core/sandbox/modules/interpreter/),
-            -- registered into _PUBLIC at interpreter creation — patch them there
             local pub = core._interpreter()._PUBLIC
             local real_is_host = pub.is_host
             local interp_os = pub.os
             local real_arch_func = interp_os and interp_os.arch
             local real_host_func = interp_os and interp_os.host
-            -- bail out (hooks_ok = false) instead of installing hooks that would
-            -- only crash later, at package-load time, on a future xmake refactor
             if type(real_is_host) ~= "function" or type(real_arch_func) ~= "function"
                 or type(real_host_func) ~= "function" then
                 return false
             end
-            -- is_host(...) in package descriptions (cuda, aqt, ndk, appimage, ...)
             pub.is_host = function (...)
                 if _synthetic.host then
                     for _, v in ipairs(table.join(...)) do
@@ -130,7 +122,6 @@ function _install_synthetic_hooks(core)
                 end
                 return real_is_host(...)
             end
-            -- os.arch() / os.host() in package descriptions (w64devkit, aqt, ...)
             interp_os.arch = function (...)
                 return _synthetic.os_arch or real_arch_func(...)
             end
@@ -155,10 +146,9 @@ function _uncache_package(core, packagename, basename)
     end
 end
 
--- Resolve set_base("...") the same way xmake's require impl does: load the
--- base package and attach it, so instance:get(...) falls back to the base
--- for urls, homepage, description, license, ... Recurses so multi-level
--- base chains resolve too, with a depth guard against cycles.
+-- Resolve set_base("...") like xmake's require impl: load the base package
+-- and attach it, so instance:get(...) falls back to it for urls, homepage,
+-- ... Recurses for multi-level chains, with a depth guard against cycles.
 function _resolve_base(instance, opt, depth)
     depth = depth or 0
     local basename = instance:get("base")
@@ -191,42 +181,36 @@ function _init_source(instance)
     }
 end
 
-function _all_versions(instance)
-    -- instance:versions() also reads add_versionfiles(...) files (libcurl,
-    -- ndk, ...) and strips "alias:" url prefixes; fall back to the raw
-    -- versions table on older xmake.
-    local list = {}
-    if instance.versions then
-        list = table.wrap(instance:versions())
-    else
-        local seen = {}
-        for v, _ in pairs(table.wrap(instance:get("versions"))) do
-            local key = tostring(v)
-            local pos = key:find(":", 1, true)
-            if pos then
-                key = key:sub(pos + 1)
-            end
-            if key ~= "" and not seen[key] then
-                seen[key] = true
-                table.insert(list, key)
-            end
+-- Three-way version comparison for picking "latest". semver.compare()
+-- ignores build metadata after "+", but mkl versions conda artifacts as
+-- "2025.2.0+627" (win-64) next to "2025.2.0+628" (linux-64) — break semver
+-- ties on the build suffix, numerically when possible. Non-semver versions
+-- (git refs, ...) compare as plain strings.
+function _compare_versions(a, b)
+    if semver.is_valid(a) and semver.is_valid(b) then
+        local diff = semver.compare(a, b)
+        if diff ~= 0 then
+            return diff
+        end
+        a, b = a:match("%+(.*)$") or "", b:match("%+(.*)$") or ""
+        local an, bn = tonumber(a), tonumber(b)
+        if an and bn then
+            a, b = an, bn
         end
     end
-    -- Semver-aware ascending sort. Falls back to string comparison for non-semver
-    -- versions (e.g. git refs), which a small number of packages use. Matches the
-    -- pattern in scripts/build_artifacts.lua.
-    table.sort(list, function(a, b)
-        if semver.is_valid(a) and semver.is_valid(b) then
-            return semver.compare(a, b) < 0
-        end
-        return a < b
-    end)
+    return a == b and 0 or a < b and -1 or 1
+end
+
+function _all_versions(instance)
+    -- instance:versions() also reads add_versionfiles(...) files (libcurl,
+    -- ndk, ...) and strips "alias:" url prefixes.
+    local list = table.wrap(instance:versions())
+    table.sort(list, function(a, b) return _compare_versions(a, b) < 0 end)
     return list
 end
 
--- Strip a leading "v" tag prefix from versions like "v0.1.30" so the emitted
--- value matches how downstream trackers (repology, etc.) canonicalize it.
--- Leaves "1.2.10" / "2025.06.07" untouched.
+-- Strip a leading "v" tag prefix ("v0.1.30") so the emitted value matches
+-- how downstream trackers canonicalize versions; leaves "1.2.10" untouched.
 function _normalize_version_for_output(version)
     if type(version) == "string" and version:match("^v%d") then
         return version:sub(2)
@@ -242,69 +226,51 @@ function _resolve_url(instance, url, version)
         return url
     end
     -- A URL declared with `add_urls(tmpl, {version = function (v) ... end})`
-    -- carries a per-URL transform xmake applies before substituting $(version).
-    -- For repology this matters most for "v"-prefixed tags (libthai) and for
-    -- packages that compute path components from the semver (sqlite3).
+    -- carries a per-URL transform applied before substituting $(version) —
+    -- matters for "v"-prefixed tags (libthai) and computed path components
+    -- (sqlite3).
     local effective = version
     local filter = instance:url_version(url)
     if filter then
-        -- xmake passes a semver object (see modules/.../utils/filter.lua); fall
-        -- back to the raw string for non-semver versions like "2025.06.07" or
-        -- 4-segment versions like "0.8.2.0" where semver.new() raises.
+        -- xmake passes a semver object; fall back to the raw string for
+        -- non-semver versions where semver.new() raises.
         local arg = version
         try {
             function () arg = semver.new(version) end,
             catch { function () end }
         }
-        arg = arg or version
-        local result = filter(arg)
+        local result = filter(arg or version)
         if result ~= nil then
             effective = tostring(result)
         end
     end
-    -- Escape "%" in the replacement so URL templates like "ACE%2BTAO-..." (tao_idl)
-    -- aren't interpreted as gsub back-references.
-    local repl = (effective:gsub("%%", "%%%%"))
-    local resolved = url:gsub("%$%(version%)", repl)
-    local repl_nodot = (effective:gsub("%.", ""):gsub("%%", "%%%%"))
-    resolved = resolved:gsub("%$%(version_nodot%)", repl_nodot)
+    -- Escape "%" in the replacement so URL templates like "ACE%2BTAO-..."
+    -- (tao_idl) aren't interpreted as gsub back-references.
+    local resolved = url:gsub("%$%(version%)", (effective:gsub("%%", "%%%%")))
+    resolved = resolved:gsub("%$%(version_nodot%)", (effective:gsub("%.", ""):gsub("%%", "%%%%")))
     return resolved
 end
 
+-- instance:urls() is scheme-aware: it sees urls added dynamically by
+-- on_source() and falls back to the set_base(...) base package. Returns raw
+-- templates; $(version) placeholders are resolved against the latest version.
 function _urls_list(instance)
-    -- instance:urls() is scheme-aware, so it also sees urls added dynamically
-    -- by on_source() (cmake), and falls back to the set_base(...) base package
-    -- (curl -> libcurl). Both return raw templates: $(version) placeholders
-    -- are resolved later against the latest version.
-    local urls
-    if instance.urls then
-        urls = instance:urls()
-    else
-        urls = instance:get("urls")
-    end
-    if not urls then
-        return {}
-    end
+    local urls = instance:urls()
     if type(urls) == "string" then
         return {urls}
     end
-    return urls
+    return urls or {}
 end
 
--- Treat ".git" / "git://" / "git+..." URLs as repository pointers, not download
--- URLs. The "git://" scheme covers GNU Savannah-hosted projects (autoconf, ...)
--- where the URL has no ".git" suffix.
+-- ".git" / "git://" / "git+..." URLs are repository pointers, not download
+-- URLs ("git://" covers GNU Savannah projects without a ".git" suffix).
 function _is_git_url(url)
-    if type(url) ~= "string" then
-        return false
-    end
-    return url:find("^git%+") ~= nil
-        or url:find("^git://") ~= nil
-        or url:find("%.git$") ~= nil
+    return type(url) == "string"
+        and (url:find("^git%+") or url:find("^git://") or url:find("%.git$")) ~= nil
 end
 
+-- Skip git entries: repology wants file URLs in download_urls.
 function _download_urls(instance, version)
-    -- Skip ".git" entries: repology wants file URLs in download_urls.
     local resolved = {}
     local seen = {}
     for _, url in ipairs(_urls_list(instance)) do
@@ -320,53 +286,38 @@ function _download_urls(instance, version)
 end
 
 -- Forge hosts whose "/archive/", "/releases/", "/get/" path segments are
--- unambiguous version-archive markers (i.e. not just a coincidentally-named
--- directory on a tarball mirror like download.imagemagick.org/.../releases/...).
+-- unambiguous version-archive markers (not just a directory name on a
+-- tarball mirror like download.imagemagick.org/.../releases/...).
 local _forge_hosts = {
-    ["github.com"]    = true,
-    ["gitlab.com"]    = true,
-    ["bitbucket.org"] = true,
-    ["codeberg.org"]  = true,
-    ["gitea.com"]     = true,
-    ["gitee.com"]     = true,
+    ["github.com"] = true, ["gitlab.com"] = true, ["bitbucket.org"] = true,
+    ["codeberg.org"] = true, ["gitea.com"] = true, ["gitee.com"] = true,
 }
 
--- Strip per-version archive/release path segments and ".git" suffixes so that a
--- download URL collapses to the bare "<scheme>://<host>/<owner>/<repo>" root.
--- Returns nil for URLs that do not match a recognized forge layout — those are
--- typically vendor tarball mirrors (e.g. ftpmirror.gnu.org) that do not point at
--- a repository root and should not be reported as repository_url.
+-- Collapse a download URL to its bare "<scheme>://<host>/<owner>/<repo>"
+-- root; nil for URLs that do not match a recognized forge layout (vendor
+-- tarball mirrors like ftpmirror.gnu.org do not point at a repository).
 function _normalize_repo_url(url)
     if type(url) ~= "string" then
         return nil
     end
     url = url:gsub("^git%+", "")
-    -- GitLab "/-/archive/" is a forge-specific marker — accept any host so that
-    -- self-hosted instances (gitlab.gnome.org, code.videolan.org, ...) work.
+    -- "/-/archive/" and a bare ".git" suffix are forge-specific on any host
+    -- (self-hosted gitlab instances); the other markers only on known hosts.
     local root = url:match("^(https?://[^/]+/[^/]+/[^/]+)/%-/archive/")
+        or url:match("^(https?://[^/]+/[^/]+/[^/]+)%.git$")
     if root then
         return root
     end
-    -- Bare ".git" URL — also unambiguous, accept any host.
-    root = url:match("^(https?://[^/]+/[^/]+/[^/]+)%.git$")
-    if root then
-        return root
-    end
-    -- "/archive/", "/releases/", "/get/" can occur as ordinary directory names
-    -- on tarball mirrors, so only strip them on hosts where we know the path
-    -- segment is forge-specific.
     local host = url:match("^https?://([^/]+)/")
     if host and _forge_hosts[host] then
-        root = url:match("^(https?://[^/]+/[^/]+/[^/]+)/archive/")
+        return url:match("^(https?://[^/]+/[^/]+/[^/]+)/archive/")
             or url:match("^(https?://[^/]+/[^/]+/[^/]+)/releases/")
             or url:match("^(https?://[^/]+/[^/]+/[^/]+)/get/")
-        if root then
-            return root
-        end
     end
-    return nil
 end
 
+-- Accept a homepage as repository_url only if it is exactly a forge
+-- "<owner>/<repo>" root (not github.com/owner/repo/wiki and the like).
 function _homepage_as_repo_url(homepage)
     if type(homepage) ~= "string" then
         return nil
@@ -375,18 +326,15 @@ function _homepage_as_repo_url(homepage)
     if not host or not _forge_hosts[host] then
         return nil
     end
-    -- Require exactly "<owner>/<repo>" (with optional trailing slash) so we
-    -- don't mistake URLs like github.com/owner/repo/wiki for a repo root.
     local owner, repo = rest:match("^([^/]+)/([^/]+)/?$")
-    if not owner or not repo then
-        return nil
+    if owner and repo then
+        return ("https://%s/%s/%s"):format(host, owner, repo)
     end
-    return ("https://%s/%s/%s"):format(host, owner, repo)
 end
 
+-- Prefer a verbatim git URL declared in add_urls — repology asked for the
+-- raw git URL with the ".git" suffix preserved.
 function _repository_url(instance, homepage)
-    -- Prefer a verbatim ".git" URL declared in add_urls — repology asked for
-    -- repository_url to be the raw git URL with the ".git" suffix preserved.
     for _, url in ipairs(_urls_list(instance)) do
         if _is_git_url(url) then
             return (url:gsub("^git%+", ""))
@@ -401,11 +349,11 @@ function _repository_url(instance, homepage)
     return _homepage_as_repo_url(homepage)
 end
 
--- Patches applied to the given version, as repo-relative paths (or verbatim
+-- Patches applied to the given version, as repo-relative paths (verbatim
 -- URLs for remote patches). Mirrors scheme.lua:patches(): exact version key
--- first, then semver range keys like ">=1.0.0" or "*". Relative paths are
--- resolved against the package scriptdir (falling back to the set_base(...)
--- package), like xmake does when applying patches at install time.
+-- first, then semver range keys like ">=1.0.0". Relative paths resolve
+-- against the package scriptdir (falling back to the set_base(...) package),
+-- like xmake does when applying patches at install time.
 function _patches_for_version(instance, version)
     local patchinfos = instance:get("patches")
     if not patchinfos or not version then
@@ -454,8 +402,7 @@ end
 
 function _entry(instance)
     -- init dynamic sources for the package and its set_base(...) chain; the
-    -- public accessors below (versions(), urls(), url_version(), get(...))
-    -- all fall back to the base package on their own once _BASE is attached
+    -- accessors below all fall back to the base once _BASE is attached
     _init_source(instance)
     local base = instance:base()
     local depth = 0
@@ -503,28 +450,17 @@ function _load_entry(packagename, packagedir, packagefile, opt)
     end
 end
 
--- Merge the per-profile candidates for one package: union of versions, entry
--- fields from the profile that carries the newest version (so version and
--- download_urls stay consistent), download url mirrors from every profile
--- that agrees on that version.
+-- Merge the per-profile candidates for one package: union of versions;
+-- scalar fields from the profile that carries the newest version (so version
+-- and download_urls stay consistent); download url mirrors and patches from
+-- every profile that agrees on that version; repository_url from any profile
+-- (a verbatim git URL — libllvm only declares one on non-windows branches —
+-- wins over normalized forge/homepage fallbacks, in profile order).
 function _merge_candidates(candidates)
     local best
     for _, candidate in ipairs(candidates) do
-        if candidate.version then
-            if not best then
-                best = candidate
-            else
-                local a, b = best.version, candidate.version
-                local newer
-                if semver.is_valid(a) and semver.is_valid(b) then
-                    newer = semver.compare(b, a) > 0
-                else
-                    newer = b > a
-                end
-                if newer then
-                    best = candidate
-                end
-            end
+        if candidate.version and (not best or _compare_versions(candidate.version, best.version) > 0) then
+            best = candidate
         end
     end
     if not best then
@@ -532,6 +468,7 @@ function _merge_candidates(candidates)
     end
     local versions, seen = {}, {}
     local urls, seen_urls = {}, {}
+    local patches, seen_patches = {}, {}
     for _, candidate in ipairs(candidates) do
         for _, v in ipairs(candidate.versions or {}) do
             if not seen[v] then
@@ -546,18 +483,33 @@ function _merge_candidates(candidates)
                     table.insert(urls, u)
                 end
             end
+            for _, p in ipairs(candidate.patches or {}) do
+                if not seen_patches[p] then
+                    seen_patches[p] = true
+                    table.insert(patches, p)
+                end
+            end
         end
     end
-    table.sort(versions, function(a, b)
-        if semver.is_valid(a) and semver.is_valid(b) then
-            return semver.compare(a, b) < 0
+    local repo
+    for _, candidate in ipairs(candidates) do
+        local r = candidate.repository_url
+        if r and (r:find("%.git$") or r:find("^git://")) then
+            repo = r
+            break
         end
-        return a < b
-    end)
+        repo = repo or r
+    end
+    table.sort(versions, function(a, b) return _compare_versions(a, b) < 0 end)
     best.versions = versions
+    best.repository_url = repo
     if #urls > 0 then
         best.download_urls = urls
         best.download_url = urls[1]
+    end
+    if #patches > 0 then
+        table.sort(patches)
+        best.patches = patches
     end
     return best
 end
@@ -568,24 +520,54 @@ function main()
 
     local entries = {}
     local no_version = {}
-    local missing = {}
     local skipped = {}
     for _, packagedir in ipairs(os.dirs(path.join("packages", "*", "*"))) do
         local packagename = path.filename(packagedir)
         local packagefile = path.join(packagedir, "xmake.lua")
-        -- Isolate per-package failures: a broken filter or missing field in one
-        -- xmake.lua must not abort the whole generator.
+        -- Isolate per-package failures: a broken filter in one xmake.lua must
+        -- not abort the whole generator.
         try {
             function ()
+                -- The plain load only sees the current machine's conditional
+                -- branches (zig on macOS yields macOS-only urls); it provides
+                -- the base name and a fallback, while the indexed entry is
+                -- merged from the per-profile re-loads.
                 local entry = _load_entry(packagename, packagedir, packagefile)
-                if entry then
-                    if entry.version then
-                        table.insert(entries, entry)
-                    elseif hooks_ok then
-                        table.insert(missing, {name = packagename, dir = packagedir, file = packagefile, entry = entry})
-                    else
-                        table.insert(no_version, packagename)
+                if not entry then
+                    return
+                end
+                local merged
+                if hooks_ok then
+                    local candidates = {}
+                    for _, profile in ipairs(_synthetic_profiles) do
+                        try {
+                            function ()
+                                _uncache_package(core, packagename, entry.base)
+                                _synthetic.host = profile.plat
+                                _synthetic.os_arch = profile.arch
+                                local candidate = _load_entry(packagename, packagedir, packagefile,
+                                    {plat = profile.plat, arch = profile.arch})
+                                if candidate and candidate.version then
+                                    table.insert(candidates, candidate)
+                                end
+                            end,
+                            catch { function () end }
+                        }
+                        _synthetic.host = nil
+                        _synthetic.os_arch = nil
                     end
+                    _uncache_package(core, packagename, entry.base)
+                    merged = _merge_candidates(candidates)
+                end
+                -- fallback: profile emulation unavailable, or it missed this
+                -- package's conditionals (an exotic host/arch branch)
+                if not merged and entry.version then
+                    merged = entry
+                end
+                if merged then
+                    table.insert(entries, merged)
+                else
+                    table.insert(no_version, packagename)
                 end
             end,
             catch {
@@ -596,47 +578,15 @@ function main()
         }
     end
 
-    -- Second chance for packages whose versions hide behind host/plat/arch
-    -- conditionals: re-load them under each synthetic profile and merge.
-    for _, item in ipairs(missing) do
-        local candidates = {}
-        for _, profile in ipairs(_synthetic_profiles) do
-            try {
-                function ()
-                    _uncache_package(core, item.name, item.entry.base)
-                    _synthetic.host = profile.host
-                    _synthetic.os_arch = profile.os_arch
-                    local entry = _load_entry(item.name, item.dir, item.file,
-                        {plat = profile.plat, arch = profile.arch})
-                    if entry and entry.version then
-                        table.insert(candidates, entry)
-                    end
-                end,
-                catch { function () end }
-            }
-            _synthetic.host = nil
-            _synthetic.os_arch = nil
-        end
-        _uncache_package(core, item.name, item.entry.base)
-        local merged = _merge_candidates(candidates)
-        if merged then
-            table.insert(entries, merged)
-        else
-            table.insert(no_version, item.name)
-        end
-    end
-
     table.sort(entries, function(a, b) return a.name < b.name end)
-
-    local manifest = {
-        generated_at = os.date("!%Y-%m-%dT%H:%M:%SZ"),
-        count        = #entries,
-        packages     = entries,
-    }
 
     os.mkdir("dist")
     local outpath = path.join("dist", "repology_packages_index.json")
-    json.savefile(outpath, manifest)
+    json.savefile(outpath, {
+        generated_at = os.date("!%Y-%m-%dT%H:%M:%SZ"),
+        count        = #entries,
+        packages     = entries,
+    })
     cprint("${green}wrote${clear} %s (%d packages)", outpath, #entries)
     if not hooks_ok then
         cprint("${yellow}warning${clear}: synthetic host/arch hooks unavailable, host-conditional versions may be missing")
