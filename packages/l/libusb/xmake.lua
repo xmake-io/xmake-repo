@@ -71,4 +71,12 @@ package("libusb")
 
     on_test(function (package)
         assert(package:has_cfuncs("libusb_init", {includes = "libusb-1.0/libusb.h"}))
+
+        -- Fix libusb's .pc file name if not having 1.0 suffix
+        local pcdir = path.join(package:installdir(), "lib", "pkgconfig")
+        local src = path.join(pcdir, "libusb.pc")
+        local dst = path.join(pcdir, "libusb-1.0.pc")
+        if os.isfile(src) then
+            os.mv(src, dst)
+        end
     end)
