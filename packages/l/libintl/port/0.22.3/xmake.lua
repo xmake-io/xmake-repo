@@ -351,7 +351,7 @@ end
 -- libgnuintl.h variables
 set_configvar("HAVE_NAMELESS_LOCALES", 0)
 set_configvar("ENHANCE_LOCALE_FUNCS", 0)
-configvar_check_cfuncs("HAVE_NEWLOCALE", "newlocale", {includes = (is_plat("macosx") and "xlocale.h" or "locale.h"), default = 0})
+configvar_check_cfuncs("HAVE_NEWLOCALE", "newlocale", {includes = (is_plat("macosx", "bsd") and "xlocale.h" or "locale.h"), default = 0})
 configvar_check_cfuncs("HAVE_POSIX_PRINTF", "printf", {includes = "stdio.h", default = 0})
 configvar_check_cfuncs("HAVE_WPRINTF", "wprintf", {includes = "wchar.h", default = 0})
 configvar_check_cfuncs("HAVE_SNPRINTF", "snprintf", {includes = "stdio.h", default = 0})
@@ -365,6 +365,8 @@ target("intl")
     end
     if is_plat("windows", "mingw") then
         add_syslinks("advapi32")
+    elseif is_plat("bsd") then
+        add_syslinks("pthread")
     end
     set_configvar("HAVE_ICONV", 0)
     set_configvar("HAVE_ICONV_H", 0)
