@@ -35,5 +35,9 @@ package("jack2")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("jack_get_version_string", {includes = "jack/jack.h"}))
+        local configs = {languages = "c11"}
+        if package:is_plat("wasm") and package:config("pic") ~= false then
+            configs.cxflags = "-fPIC"
+        end
+        assert(package:has_cfuncs("jack_get_version_string", {includes = "jack/jack.h", configs = configs}))
     end)
