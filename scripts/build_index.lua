@@ -109,6 +109,15 @@ function _install_synthetic_hooks(core)
             -- registered into _PUBLIC at interpreter creation — patch them there
             local pub = core._interpreter()._PUBLIC
             local real_is_host = pub.is_host
+            local interp_os = pub.os
+            local real_arch_func = interp_os and interp_os.arch
+            local real_host_func = interp_os and interp_os.host
+            -- bail out (hooks_ok = false) instead of installing hooks that would
+            -- only crash later, at package-load time, on a future xmake refactor
+            if type(real_is_host) ~= "function" or type(real_arch_func) ~= "function"
+                or type(real_host_func) ~= "function" then
+                return false
+            end
             -- is_host(...) in package descriptions (cuda, aqt, ndk, appimage, ...)
             pub.is_host = function (...)
                 if _synthetic.host then
@@ -122,9 +131,6 @@ function _install_synthetic_hooks(core)
                 return real_is_host(...)
             end
             -- os.arch() / os.host() in package descriptions (w64devkit, aqt, ...)
-            local interp_os = pub.os
-            local real_arch_func = interp_os.arch
-            local real_host_func = interp_os.host
             interp_os.arch = function (...)
                 return _synthetic.os_arch or real_arch_func(...)
             end
@@ -140,25 +146,29 @@ end
 -- Drop a package (and its base, for aliases) from the loader cache so it can
 -- be re-evaluated under a different synthetic profile.
 function _uncache_package(core, packagename, basename)
-    if core then
-        core._memcache():set2("packages", packagename, nil)
+    local cache = core and core._memcache and core._memcache()
+    if cache and cache.set2 then
+        cache:set2("packages", packagename, nil)
         if basename then
-            core._memcache():set2("packages", basename, nil)
+            cache:set2("packages", basename, nil)
         end
     end
 end
 
 -- Resolve set_base("...") the same way xmake's require impl does: load the
 -- base package and attach it, so instance:get(...) falls back to the base
--- for urls, homepage, description, license, ...
-function _resolve_base(instance, opt)
+-- for urls, homepage, description, license, ... Recurses so multi-level
+-- base chains resolve too, with a depth guard against cycles.
+function _resolve_base(instance, opt, depth)
+    depth = depth or 0
     local basename = instance:get("base")
-    if not basename or instance:base() then
+    if not basename or instance:base() or depth > 8 then
         return
     end
-    local basedir = path.join("packages", basename:sub(1, 1):lower(), basename)
+    local basedir = path.join("packages", basename:sub(1, 1):lower(), basename:lower())
     local baseinst = _load_package(basename, basedir, path.join(basedir, "xmake.lua"), opt)
     if baseinst then
+        _resolve_base(baseinst, opt, depth + 1)
         instance._BASE = baseinst
     end
 end
