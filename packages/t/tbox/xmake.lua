@@ -18,8 +18,10 @@ package("tbox")
     add_versions("v1.7.4", "c2eb29ad0cab15b851ab54cea6ae99555222a337a0f83340ae820b4a6e76a10c")
     add_versions("v1.7.5", "6382cf7d6110cbe6f29e8346d0e4eb078dd2cbf7e62913b96065848e351eb15e")
     add_versions("v1.7.6", "2622de5473b8f2e94b800b86ff6ef4a535bc138c61c940c3ab84737bb94a126a")
+    add_versions("v1.8.0", "3b919f61055b75fe9cb3796477468f6fe7524801d429e6ac48933ddde9caafbd")
 
     add_patches("v1.7.6", "patches/v1.7.6/fix-uninitialized-const-pointer.patch", "4430c2c01aa2c42a4e89a443356bece20ae2d0dde0602f0ad16cd44edf56c561")
+    add_patches("v1.8.0", "patches/v1.8.0/fix-uninitialized-const-pointer.patch", "ee37b33a151e78430fa409f50e4b8cac24ac52ac07f83d2d24614278adef242f")
 
     add_configs("micro",      {description = "Compile micro core library for the embed system.", default = false, type = "boolean"})
     add_configs("float",      {description = "Enable or disable the float type.", default = true, type = "boolean"})
