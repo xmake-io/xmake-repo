@@ -14,6 +14,8 @@ package("libintl")
 
     if is_plat("windows", "mingw") then
         add_syslinks("advapi32")
+    elseif is_plat("bsd") then
+        add_syslinks("pthread")
     end
 
     on_fetch(function (package, opt)
@@ -22,7 +24,7 @@ package("libintl")
         end
     end)
 
-    on_install("windows", "macosx", "android", "mingw", function (package)
+    on_install("windows", "macosx", "bsd", "android", "mingw", function (package)
         -- on linux libintl is already a part of libc
         os.cp(path.join(os.scriptdir(), "port", package:version_str(), "xmake.lua"), "xmake.lua")
         for _, conffile in ipairs({"gettext-runtime/config.h.in", "gettext-runtime/intl/config.h.in"}) do
