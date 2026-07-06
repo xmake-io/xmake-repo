@@ -24,7 +24,7 @@ package("re2")
     add_versions("git:2025.08.12", "2025-08-12")
     add_versions("git:2025.11.05", "2025-11-05")
 
-    add_deps("cmake", "abseil <=20260526.0")
+    add_deps("cmake", "abseil <=20260107.0")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")

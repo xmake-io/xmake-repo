@@ -33,6 +33,17 @@ package("abseil")
 
     add_configs("cxx_standard", {description = "Select c++ standard to build.", default = "17", type = "string", values = {"14", "17", "20"}})
 
+    if on_check then
+        on_check("android", function (package)
+            local version = package:version()
+            if version and version:ge("20260526.0") then
+                local ndk = package:toolchain("ndk")
+                local ndkver = ndk:config("ndkver")
+                assert(ndkver and tonumber(ndkver) >= 27, "package(abseil): need ndk version >= 27 for android since 20260526.0")
+            end
+        end)
+    end
+
     on_load(function (package)
         if package:is_plat("windows", "mingw", "msys") then
             package:add("syslinks", "advapi32", "dbghelp", "bcrypt")
