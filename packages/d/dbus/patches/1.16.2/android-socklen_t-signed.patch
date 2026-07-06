@@ -1,0 +1,14 @@
+diff --git a/dbus/dbus-sysdeps-unix.c b/dbus/dbus-sysdeps-unix.c
+index 87ba2d8..b1bad63 100644
+--- a/dbus/dbus-sysdeps-unix.c
++++ b/dbus/dbus-sysdeps-unix.c
+@@ -1957,7 +1957,9 @@ add_groups_to_credentials (int              client_fd,
+ #if defined(__linux__) && defined(SO_PEERGROUPS)
+   _DBUS_STATIC_ASSERT (sizeof (gid_t) <= sizeof (dbus_gid_t));
+   /* This function assumes socklen_t is unsigned, which is true on Linux */
++#ifndef __ANDROID__ /* bionic socklen_t is signed on 32-bit ABIs */
+   _DBUS_STATIC_ASSERT (((socklen_t) -1) > 0);
++#endif
+   gid_t *buf = NULL;
+   socklen_t len = 1024;
+   dbus_bool_t oom = FALSE;

@@ -9,6 +9,10 @@ package("dbus")
     add_versions("1.14.8", "273718fe5150a1a44fe77abcf442dc64082f7375fdc15fcbd80b84316f897326")
     add_versions("1.16.2", "d77cc71acd93e85f2bd2a6fe3a40e5bd023519e3e9fa9b5361e7109f42b74060")
 
+    -- bionic's socklen_t is signed on 32-bit ABIs (e.g. armeabi-v7a), which trips
+    -- a dbus static assert that assumes it is unsigned; guard it on Android.
+    add_patches("1.16.2", "patches/1.16.2/android-socklen_t-signed.patch", "c5c98e1300e05c737cfcf3a6904973dbb9fa0a71c036d5c96bd8c29f81f5b3a5")
+
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::dbus")
     elseif is_plat("linux") then
@@ -22,6 +26,13 @@ package("dbus")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
     add_configs("system_bus_address", {description = "D-Bus system bus address.", type = "string"})
+
+    on_check("android", function (package)
+        -- dbus uses getgrnam_r/getgrgid_r, which bionic only declares since API 24
+        local ndk = package:toolchain("ndk")
+        local ndk_sdkver = ndk and ndk:config("ndk_sdkver")
+        assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(dbus): need ndk api level >= 24 for android")
+    end)
 
     on_install(function (package)
         local configs = {"-DDBUS_BUILD_TESTS=OFF", "-DDBUS_ENABLE_DOXYGEN_DOCS=OFF", "-DDBUS_ENABLE_XML_DOCS=OFF"}
