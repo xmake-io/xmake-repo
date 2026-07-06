@@ -41,7 +41,7 @@ package("glibmm")
             "lib/giomm-" .. abi .. "/include")
     end)
 
-    on_install("!android and !wasm and !iphoneos and !bsd", function (package)
+    on_install("!android and !wasm and !iphoneos", function (package)
         -- Prevent building generate_defs_glib, generate_defs_gio. Otherwise when being built,
         -- errors arise on mingw builds. Doesn't hurt to filter for all platforms.
         io.replace("tools/extra_defs_gen/meson.build", "%s*executable%b()", "", {pattern = true, multiline = true})
