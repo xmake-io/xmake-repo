@@ -54,6 +54,8 @@ package("brainflow")
         local opt = {}
         if package:is_plat("windows") then
             opt.cxflags = {"-DUNICODE", "-D_UNICODE"}
+            io.replace("third_party/DSPFilters/include/DspFilters/Common.h",
+                "namespace tr1 = std::tr1;", "namespace tr1 = std;", {plain = true})
         end
 
         import("package.tools.cmake").install(package, configs, opt)
