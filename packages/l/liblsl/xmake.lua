@@ -26,6 +26,7 @@ package("liblsl")
         local configs = {
             "-DLSL_UNITTESTS=OFF",
             "-DLSL_TOOLS=OFF",
+            "-DLSL_OPTIMIZATIONS=OFF",
             "-DLSL_INSTALL=ON",
             "-DLSL_BUNDLED_BOOST=ON",
             "-DLSL_BUNDLED_PUGIXML=ON",

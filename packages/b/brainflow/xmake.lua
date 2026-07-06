@@ -51,7 +51,12 @@ package("brainflow")
             table.insert(configs, "-DBRAINFLOW_VERSION=" .. tostring(version))
         end
 
-        import("package.tools.cmake").install(package, configs)
+        local opt = {}
+        if package:is_plat("windows") then
+            opt.cxflags = {"-DUNICODE", "-D_UNICODE"}
+        end
+
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
