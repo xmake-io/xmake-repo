@@ -37,10 +37,10 @@ package("dbus")
     on_install(function (package)
         local configs = {"-DDBUS_BUILD_TESTS=OFF", "-DDBUS_ENABLE_DOXYGEN_DOCS=OFF", "-DDBUS_ENABLE_XML_DOCS=OFF"}
         if package:is_plat("wasm") then
-            table.insert(configs, "-DDBUS_BUILD_DAEMON=OFF")
-            table.insert(configs, "-DDBUS_ENABLE_LAUNCHD=OFF")
-            table.insert(configs, "-DDBUS_ENABLE_SYSTEMD=OFF")
-            table.insert(configs, "-DDBUS_BUILD_X11=OFF")
+            io.replace("bus/CMakeLists.txt",
+                "if(ENABLE_TRADITIONAL_ACTIVATION)",
+                "if(ENABLE_TRADITIONAL_ACTIVATION AND NOT EMSCRIPTEN)",
+                {plain = true})
         end
         table.insert(configs, "-DDBUS_SESSION_SOCKET_DIR=" .. path.unix(package:installdir("socket")))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
