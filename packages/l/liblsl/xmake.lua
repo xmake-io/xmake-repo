@@ -14,7 +14,7 @@ package("liblsl")
         if package:is_plat("linux", "bsd") then
             package:add("syslinks", "pthread")
         elseif package:is_plat("windows") then
-            package:add("syslinks", "ws2_32")
+            package:add("syslinks", "ws2_32", "iphlpapi", "winmm", "mswsock")
         end
 
         if not package:config("shared") then
