@@ -17,12 +17,7 @@ package("dbus")
         add_extsources("brew::dbus")
     end
 
-    add_deps("cmake")
-    if is_plat("bsd") then
-        add_deps("expat", {system = false})
-    else
-        add_deps("expat")
-    end
+    add_deps("cmake", "expat")
     add_includedirs("include/dbus-1.0", "lib/dbus-1.0/include")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
