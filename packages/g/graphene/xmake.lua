@@ -20,10 +20,13 @@ package("graphene")
         end
     end)
 
-    on_install("windows", "macosx", "linux", "cross", "mingw", function (package)
+    on_install("windows", "macosx", "linux", "cross", "mingw", "bsd", function (package)
         local configs = {"-Dtests=false", "-Dinstalled_tests=false", "-Dintrospection=disabled"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         table.insert(configs, "-Dgobject_types=" .. (package:config("gobject") and "true" or "false"))
+        if package:is_plat("bsd") then
+            table.insert(configs, "-Db_lundef=false")
+        end
         import("package.tools.meson").install(package, configs)
     end)
 
