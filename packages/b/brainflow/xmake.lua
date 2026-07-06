@@ -12,25 +12,17 @@ package("brainflow")
 
     on_load(function (package)
         package:add("includedirs", "inc")
-
-        local is_windows = package:is_plat("windows")
-        local is_32bit = is_windows and package:is_arch("x86", "i386")
-        local suffix = is_32bit and "32" or ""
-
-        package:add("links",
-            "Brainflow" .. suffix,
-            "BoardController" .. suffix,
-            "DataHandler" .. suffix,
-            "MLModule" .. suffix)
+        package:add("links", "Brainflow", "BoardController", "DataHandler", "MLModule")
 
         if package:is_plat("linux", "bsd") then
             package:add("syslinks", "pthread", "dl")
-        elseif is_windows then
-            package:add("syslinks", "ws2_32", "iphlpapi")
         end
     end)
 
-    on_install("linux", "macosx", "windows", "bsd", function (package)
+    -- Windows (MSVC) is intentionally omitted: BrainFlow only supports an MSVC
+    -- build with the Windows 8.1 SDK (https://github.com/brainflow-dev/brainflow/blob/master/.github/workflows/run_windows.yml)
+    -- and does not target Windows on ARM at all, so it does not compile against a recent MSVC/SDK.
+    on_install("linux", "macosx", "bsd", function (package)
         local configs = {
             "-DBUILD_TESTS=OFF",
             "-DBUILD_BLUETOOTH=OFF",
@@ -51,14 +43,7 @@ package("brainflow")
             table.insert(configs, "-DBRAINFLOW_VERSION=" .. tostring(version))
         end
 
-        local opt = {}
-        if package:is_plat("windows") then
-            opt.cxflags = {"-DUNICODE", "-D_UNICODE"}
-            io.replace("third_party/DSPFilters/include/DspFilters/Common.h",
-                "namespace tr1 = std::tr1;", "namespace tr1 = std;", {plain = true})
-        end
-
-        import("package.tools.cmake").install(package, configs, opt)
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
