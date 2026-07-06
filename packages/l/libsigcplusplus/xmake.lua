@@ -25,7 +25,7 @@ package("libsigcplusplus")
             "lib/sigc++-" .. major .. ".0/include")
     end)
 
-    on_install("windows", "linux", "macosx", "mingw", "msys", "iphoneos", "cross", "wasm", function (package)
+    on_install("!android", function (package)
         local configs = {"-Dvalidation=false", "-Dbuild-examples=false", "-Dbuild-tests=false", "-Dbuild-documentation=false"}
         table.insert(configs, "-Dbuild-deprecated-api=" .. (package:config("deprecated_api") and "true" or "false"))
 
