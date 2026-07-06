@@ -11,8 +11,8 @@ index b9129b1..f5022b2 100644
 +    # query pkg-config / find_package("pkgconfig::libusb-1.0") resolve it.
 +    set(prefix "${CMAKE_INSTALL_PREFIX}")
 +    set(exec_prefix "\${prefix}")
-+    set(libdir "\${exec_prefix}/lib")
-+    set(includedir "\${prefix}/include")
++    set(libdir "\${exec_prefix}/${CMAKE_INSTALL_LIBDIR}")
++    set(includedir "\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}")
 +    set(VERSION "${LIBUSB_VERSION}")
 +    # Libs.private mirrors the per-OS target_link_libraries above, in the
 +    # same link order, so static consumers get the right transitive deps.
