@@ -6,6 +6,7 @@ package("amgcl")
     add_urls("https://github.com/ddemidov/amgcl/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ddemidov/amgcl.git", {submodules = false})
 
+    add_versions("1.4.9", "9bfdfb357052a1e6f3d417c763e3e02e42e15d354a00630f9ce35a93de0b3960")
     add_versions("1.4.8", "0db9a8ecd5ee5a9e2a5c2ca46948deff5d98f03e98d530998a567c4f6d87341d")
     add_versions("1.4.6", "b9d27679d4fa325840ef5fc877c7945ba01d08b143b90080db4836ac7a8983d2")
     add_versions("1.4.5", "611b7e46b60640abab055d815e2b28af3cb92e71fa609c514465f94b51c1f886")
