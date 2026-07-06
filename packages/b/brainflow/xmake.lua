@@ -5,6 +5,7 @@ package("brainflow")
 
     add_urls("https://github.com/brainflow-dev/brainflow/archive/refs/tags/$(version).tar.gz",
              "https://github.com/brainflow-dev/brainflow.git")
+    add_versions("5.22.2", "a7e21b1b9d086370496282a5198c904cb25199cacd9c6a809b9adce544fcbe36")
     add_versions("5.20.1", "0f01f00025c67ce52745be26ebc049d1ba68d398c3fe5a6df6c766c3bf6d40ce")
 
     add_deps("cmake")
