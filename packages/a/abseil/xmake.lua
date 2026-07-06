@@ -6,6 +6,7 @@ package("abseil")
     add_urls("https://github.com/abseil/abseil-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/abseil/abseil-cpp.git")
 
+    add_versions("20260526.0", "6e1aee535473414164bf83e4ebc40240dec71a4701f8a642d906e95bea1aea0c")
     add_versions("20260107.1", "4314e2a7cbac89cac25a2f2322870f343d81579756ceff7f431803c2c9090195")
     add_versions("20260107.0", "4c124408da902be896a2f368042729655709db5e3004ec99f57e3e14439bc1b2")
     add_versions("20250814.1", "1692f77d1739bacf3f94337188b78583cf09bab7e420d2dc6c5605a4f86785a1")
@@ -31,6 +32,17 @@ package("abseil")
     add_deps("cmake")
 
     add_configs("cxx_standard", {description = "Select c++ standard to build.", default = "17", type = "string", values = {"14", "17", "20"}})
+
+    if on_check then
+        on_check("android", function (package)
+            local version = package:version()
+            if version and version:ge("20260526.0") then
+                local ndk = package:toolchain("ndk")
+                local ndkver = ndk:config("ndkver")
+                assert(ndkver and tonumber(ndkver) >= 27, "package(abseil): need ndk version >= 27 for android since 20260526.0")
+            end
+        end)
+    end
 
     on_load(function (package)
         if package:is_plat("windows", "mingw", "msys") then
@@ -94,7 +106,10 @@ package("abseil")
                     local requires = line:sub(10):split(",")
                     for _, dep in ipairs(requires) do
                         dep = dep:split("=")[1]:trim()
-                        dag:add_edge(link, dep)
+                        -- absl_strings has self references
+                        if dep ~= link then
+                            dag:add_edge(link, dep)
+                        end
                     end
                 end
             end
