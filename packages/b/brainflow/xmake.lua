@@ -41,7 +41,8 @@ package("brainflow")
             "-DBUILD_SYNCHRONI_SDK=OFF",
             "-DUSE_LIBFTDI=OFF",
             "-DUSE_OPENMP=OFF",
-            "-DWARNINGS_AS_ERRORS=OFF"
+            "-DWARNINGS_AS_ERRORS=OFF",
+            "-DBUILD_SHARED_LIBS=OFF"
         }
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
