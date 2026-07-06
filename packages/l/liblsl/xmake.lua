@@ -5,6 +5,7 @@ package("liblsl")
 
     add_urls("https://github.com/sccn/liblsl/archive/refs/tags/$(version).tar.gz",
              "https://github.com/sccn/liblsl.git")
+    add_versions("v1.17.7", "19604fb1b30c753457e8bf1430341d84012834c0cf8d2ca921e8151d31220df9")
     add_versions("v1.17.5", "6f1f5a3fc4c4a162c86ced19c75d13a81d8ebe1f819c50caf257b1ee0b401d1a")
 
     add_deps("cmake")
