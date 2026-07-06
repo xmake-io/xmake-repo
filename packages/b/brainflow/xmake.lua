@@ -13,8 +13,7 @@ package("brainflow")
     on_load(function (package)
         package:add("includedirs", "inc")
         package:add("links", "Brainflow", "BoardController", "DataHandler", "MLModule")
-
-        if package:is_plat("linux", "bsd") then
+        if package:is_plat("linux") then
             package:add("syslinks", "pthread", "dl")
         end
     end)
@@ -22,7 +21,7 @@ package("brainflow")
     -- Windows (MSVC) is intentionally omitted: BrainFlow only supports an MSVC
     -- build with the Windows 8.1 SDK (https://github.com/brainflow-dev/brainflow/blob/master/.github/workflows/run_windows.yml)
     -- and does not target Windows on ARM at all, so it does not compile against a recent MSVC/SDK.
-    on_install("linux", "macosx", "bsd", function (package)
+    on_install("linux", "macosx", function (package)
         local configs = {
             "-DBUILD_TESTS=OFF",
             "-DBUILD_BLUETOOTH=OFF",
