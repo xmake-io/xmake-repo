@@ -95,7 +95,10 @@ package("abseil")
                     local requires = line:sub(10):split(",")
                     for _, dep in ipairs(requires) do
                         dep = dep:split("=")[1]:trim()
-                        dag:add_edge(link, dep)
+                        -- absl_strings has self references
+                        if dep ~= link then
+                            dag:add_edge(link, dep)
+                        end
                     end
                 end
             end
