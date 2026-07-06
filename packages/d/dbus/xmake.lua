@@ -37,6 +37,12 @@ package("dbus")
     on_install(function (package)
         local configs = {"-DDBUS_BUILD_TESTS=OFF", "-DDBUS_ENABLE_DOXYGEN_DOCS=OFF", "-DDBUS_ENABLE_XML_DOCS=OFF"}
         if package:is_plat("wasm") then
+            table.join2(configs, {
+                "-DDBUS_BUILD_DAEMON=OFF",
+                "-DDBUS_BUILD_X11=OFF",
+                "-DDBUS_ENABLE_SYSTEMD=OFF",
+                "-DDBUS_ENABLE_LAUNCHD=OFF"
+            })
             io.replace("bus/CMakeLists.txt",
                 "if(ENABLE_TRADITIONAL_ACTIVATION)",
                 "if(ENABLE_TRADITIONAL_ACTIVATION AND NOT EMSCRIPTEN)",
