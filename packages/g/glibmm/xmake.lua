@@ -45,6 +45,12 @@ package("glibmm")
         -- Prevent building generate_defs_glib, generate_defs_gio. Otherwise when being built,
         -- errors arise on mingw builds. Doesn't hurt to filter for all platforms.
         io.replace("tools/extra_defs_gen/meson.build", "%s*executable%b()", "", {pattern = true, multiline = true})
+
+        -- FreeBSD (and other BSDs) need -lc for environ when linking with --no-undefined
+        if package:is_plat("bsd") then
+            package:add("ldflags", "-lc")
+        end
+
         local configs = {"-Dbuild-documentation=false",
                          "-Dbuild-examples=false",
                          "-Dmsvc14x-parallel-installable=false"}
