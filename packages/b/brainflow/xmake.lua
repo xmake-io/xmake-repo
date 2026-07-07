@@ -10,13 +10,11 @@ package("brainflow")
 
     add_deps("cmake")
 
-    on_load(function (package)
-        package:add("includedirs", "inc")
-        package:add("links", "Brainflow", "BoardController", "DataHandler", "MLModule")
-        if package:is_plat("linux") then
-            package:add("syslinks", "pthread", "dl")
-        end
-    end)
+    add_includedirs("inc")
+    add_links("Brainflow", "BoardController", "DataHandler", "MLModule")
+    if is_plat("linux") then
+        add_syslinks("pthread", "dl")
+    end
 
     -- Windows (MSVC) is intentionally omitted: BrainFlow only supports an MSVC
     -- build with the Windows 8.1 SDK (https://github.com/brainflow-dev/brainflow/blob/master/.github/workflows/run_windows.yml)

@@ -10,13 +10,13 @@ package("liblsl")
 
     add_deps("cmake")
 
-    on_load(function (package)
-        if package:is_plat("linux", "bsd") then
-            package:add("syslinks", "pthread")
-        elseif package:is_plat("windows") then
-            package:add("syslinks", "ws2_32", "iphlpapi", "winmm", "mswsock")
-        end
+    if is_plat("linux", "bsd") then
+        add_syslinks("pthread")
+    elseif is_plat("windows") then
+        add_syslinks("ws2_32", "iphlpapi", "winmm", "mswsock")
+    end
 
+    on_load(function (package)
         if not package:config("shared") then
             package:add("defines", "LIBLSL_STATIC")
         end
