@@ -64,10 +64,7 @@ end
 
 function _add_libs_configs(package, configs)
     if not package:config("all") then
-        local header_only_buildable
-        if package:is_headeronly() then
-            header_only_buildable = hashset.from(libs.get_header_only_buildable())
-        end
+        local header_only_buildable = hashset.from(libs.get_header_only_buildable())
 
         local exclude_libs = {}
         libs.for_each(function (libname)
