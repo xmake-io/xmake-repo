@@ -25,6 +25,7 @@ function add_urls(package, scheme_name)
     scheme:add("versions", "4.1.4",  "a728a8ae5846aecbe3f4fea1405d809a6455ac7d1ed1f80c1fcf82f48d071ee1")
     scheme:add("versions", "4.2.1",  "414aacfac54ba0e78e64a018720b64ed6bfca14b587047b8b3489f407a14a070")
     scheme:add("versions", "4.2.3",  "7efaccde8c5a6b2968bad6ce0fe60e19b6e10701a12fce948c2bf79bac8a11e9")
+    scheme:add("versions", "4.3.4",  "fdeff897b9eb49d764539f2b1edc6eb7e1440df325678a97c1978499e931adda")
 end
 
 function install(package)
