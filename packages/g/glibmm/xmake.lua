@@ -56,7 +56,7 @@ package("glibmm")
                          "-Dmsvc14x-parallel-installable=false"}
         table.insert(configs, "-Dbuild-deprecated-api=" .. (package:config("deprecated_api") and "true" or "false"))
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-        import("package.tools.meson").install(package, configs)
+        import("package.tools.meson").install(package, configs, {ldflags = ldflags})
     end)
 
     on_test(function (package)
