@@ -72,7 +72,7 @@ package("wxwidgets")
             add_patches("<=3.2.5", "patches/3.2.5/add_libdir.patch", "9a9fe4d745b4b6b09998ec7a93642d69761a8779d203fbb42a3df8c3d62adeb0")
         end
     end
-    
+
     if is_plat("macosx") then
         add_defines("__WXOSX_COCOA__", "__WXMAC__", "__WXOSX__", "__WXMAC_XCODE__")
         add_frameworks("AudioToolbox", "WebKit", "CoreFoundation", "Security", "Carbon", "Cocoa", "IOKit", "QuartzCore")
@@ -106,7 +106,7 @@ package("wxwidgets")
                 package:add("includedirs", path.join("lib", "wx", "include", "gtk3-unicode" .. static .. "-" .. suffix))
             end
             package:add("includedirs", path.join("include", "wx-" .. suffix))
-            if package:debug() then
+            if package:is_debug() then
                 package:add("defines", "wxDEBUG_LEVEL=2")
             end
             if package:config("shared") then
@@ -118,7 +118,7 @@ package("wxwidgets")
                 package:add("deps", "gdk-pixbuf")
             end
 
-            if is_plat("linux") then
+            if package:is_plat("linux") then
                  if package:config("shared") then
                     package:add("deps", "gtk3", {configs = {shared = true}})
                 else
@@ -128,7 +128,7 @@ package("wxwidgets")
         end
     end)
 
-    on_install("windows", function (package)
+    on_install("windows|x86", "windows|x64", function (package)
         local dlldir = package:is_arch("x64") and "vc14x_x64_dll" or "vc14x_dll"
         os.cp(path.join("lib", dlldir, "*.lib"), package:installdir("lib"))
         os.cp(path.join(package:resourcedir("releaseDLL"),"lib", dlldir, "*.dll"), package:installdir("bin"))
@@ -139,13 +139,14 @@ package("wxwidgets")
     end)
 
     on_install("macosx", "linux", function (package)
+        import("core.base.semver")
+        import("utils.ci.is_running", {alias = "ci_is_running"})
+
         -- Notify the user about issues caused by the CMake version.
         local cmake = package:dep("cmake")
         local cmake_fetch = cmake:fetch()
-        local major, minor, patch = cmake_fetch.version:match("^(%d+)%.(%d+)%.(%d+)$")
-        local cmake_version = tonumber(major.. minor.. patch)
-        if cmake_version > 3280 then
-            wprint("\ncmake may not find Cmath detail in https://github.com/prusa3d/PrusaSlicer/issues/12169\n")
+        if cmake_fetch and cmake_fetch.version and semver.match(cmake_fetch.version):gt("3.28.0") then
+            wprint("cmake may not find Cmath detail in https://github.com/prusa3d/PrusaSlicer/issues/12169\n")
         end
 
         io.replace("build/cmake/modules/FindGTK3.cmake", "FIND_PACKAGE_HANDLE_STANDARD_ARGS(GTK3 DEFAULT_MSG GTK3_INCLUDE_DIRS GTK3_LIBRARIES VERSION_OK)", 
@@ -163,12 +164,12 @@ package("wxwidgets")
                          "-DwxUSE_NANOSVG=sys",
                          "-DwxUSE_LIBTIFF=builtin"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        if package:debug() then
+        if package:is_debug() then
             table.insert(configs, "-DwxBUILD_DEBUG_LEVEL=2")
         end
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {jobs = ci_is_running() and 1 or nil})
+        
         local version = package:version()
         local subdir = "wx-" .. version:major() .. "." .. version:minor()
         local setupdir = package:is_plat("macosx") and "osx" or "gtk"
