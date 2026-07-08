@@ -6,12 +6,13 @@ package("libusb")
     add_urls("https://github.com/libusb/libusb/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libusb/libusb.git")
 
+    add_versions("v1.0.30", "2ae28adb0bb9558c86135c4e1c11b320b0805461e207a64a6e520a114094bf07")
     add_versions("v1.0.29", "7c2dd39c0b2589236e48c93247c986ae272e27570942b4163cb00a060fcf1b74")
     add_versions("v1.0.28", "378b3709a405065f8f9fb9f35e82d666defde4d342c2a1b181a9ac134d23c6fe")
     add_versions("v1.0.27", "e8f18a7a36ecbb11fb820bd71540350d8f61bcd9db0d2e8c18a6fb80b214a3de")
     add_versions("v1.0.26", "a09bff99c74e03e582aa30759cada218ea8fa03580517e52d463c59c0b25e240")
 
-    add_resources(">=1.0.26", "libusb-cmake", "https://github.com/libusb/libusb-cmake.git", "8f0b4a38fc3eefa2b26a99dff89e1c12bf37afd4")
+    add_resources(">=1.0.26", "libusb-cmake", "https://github.com/libusb/libusb-cmake.git", "c8477c10ac2ac6b1718d4d498e102b9f18b776f5")
 
     add_patches("v1.0.26", "patches/windows-add-clock-gettime-check.patch", "38cc23fd5a9c2445951dbe6c6f19e677d333f82332ff5be18a4f362637265f0d")
 
@@ -23,9 +24,13 @@ package("libusb")
         add_extsources("pacman::libusb")
     end
 
-    if is_plat("macosx") then
+    if is_plat("windows", "mingw") then
+        add_syslinks("kernel32", "user32")
+    elseif is_plat("macosx") then
         add_frameworks("CoreFoundation", "IOKit", "Security")
-    elseif is_plat("linux", "bsd") then
+    elseif is_plat("android") then
+        add_syslinks("android", "log")
+    elseif is_plat("linux", "cross", "bsd", "wasm") then
         add_syslinks("pthread")
     end
 
@@ -54,6 +59,8 @@ package("libusb")
         io.replace("CMakeLists.txt",
             [[get_filename_component(LIBUSB_ROOT "libusb/libusb" ABSOLUTE)]],
             [[get_filename_component(LIBUSB_ROOT "libusb" ABSOLUTE)]], {plain = true})
+
+        import("devel.git").apply(path.join(package:scriptdir(), "patches", "libusb-cmake-pkgconfig.patch"))
 
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
