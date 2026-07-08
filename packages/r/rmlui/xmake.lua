@@ -55,7 +55,7 @@ package("rmlui")
             #include <cstdint>
             ]], {plain = true})
         end
-        
+
         local configs = {"-DBUILD_TESTING=OFF", "-DBUILD_SAMPLES=OFF"}
         if package:is_plat("macosx") and package:is_arch("arm64") then
             table.insert(configs, "-DCMAKE_OSX_ARCHITECTURES=arm64")
@@ -84,5 +84,5 @@ package("rmlui")
             void test() {
                 Rml::Context* context = Rml::CreateContext("default", Rml::Vector2i(640, 480));
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = {languages = (not package:version() or package:version():ge("6.2")) and "c++17" or "c++14"}}))
     end)
