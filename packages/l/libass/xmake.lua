@@ -28,6 +28,11 @@ package("libass")
             local ndk = package:toolchain("ndk"):config("ndkver")
             assert(ndk and tonumber(ndk) > 22, "package(libass) dep(harfbuzz) require ndk version > 22")
         end)
+        on_check("mingw", function (package)
+            if is_subhost("macosx") then
+                raise("package(libass): does not support mingw@macosx")
+            end
+        end)
     end
 
     on_install(function (package)
