@@ -18,6 +18,18 @@ package("libass")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
+    if on_check then
+        on_check("windows", function (package)
+            if package:is_arch("arm64") then
+                raise("package(libass): does not support windows|arm64 because MSVC cannot assemble its AArch64 sources")
+            end
+        end)
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk"):config("ndkver")
+            assert(ndk and tonumber(ndk) > 22, "package(libass) dep(harfbuzz) require ndk version > 22")
+        end)
+    end
+
     on_install(function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         os.cp(path.join(package:scriptdir(), "port", "config.h.in"), "config.h.in")

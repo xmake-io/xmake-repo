@@ -55,6 +55,9 @@ target("ass")
         elseif is_arch("arm64.*", "aarch64") then
             add_files("libass/aarch64/*.S")
             add_defines("ARCH_AARCH64")
+            if is_plat("macosx") then
+                add_defines("PREFIX")
+            end
         end
     end
     if has_config("system-font-provider") then
