@@ -11,6 +11,7 @@ package("node-addon-api")
     set_urls("https://github.com/nodejs/node-addon-api/archive/refs/tags/$(version).tar.gz",
              "https://github.com/nodejs/node-addon-api.git")
 
+    add_versions("v8.9.0", "d3c35d47f57461a49826349928da4913cb467d81288549973b7f9335f5d4c001")
     add_versions("v8.8.0", "5c87d586de7204fbe7ebc87e6ceb2d49fc9a6ead02803a263ebea8ff9b7d2060")
     add_versions("v8.7.0", "c0dace4e1d4ae280acca09cea8bbe7af20683ac226844d834b5f34a0abd78a89")
     add_versions("v8.6.0", "04da1219b6a03fb7ebdabf7e7f023f7434692f3e839fca8624f8a925563f36fe")
