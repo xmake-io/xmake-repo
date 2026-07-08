@@ -84,5 +84,5 @@ package("rmlui")
             void test() {
                 Rml::Context* context = Rml::CreateContext("default", Rml::Vector2i(640, 480));
             }
-        ]]}, {configs = {languages = "c++14"}}))
+        ]]}, {configs = {languages = "c++17"}}))
     end)
