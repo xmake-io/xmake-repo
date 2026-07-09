@@ -62,13 +62,39 @@ function _add_iostreams_configs(package, configs)
     end
 end
 
+function _add_cmake_required_lib(required_libs, libname)
+    if required_libs[libname] then
+        return
+    end
+
+    required_libs[libname] = true
+    for _, dep_libname in ipairs(libs.get_lib_deps()[libname] or {}) do
+        _add_cmake_required_lib(required_libs, dep_libname)
+    end
+end
+
+function _get_cmake_required_libs(package)
+    local required_libs = {}
+
+    -- Boost.Serialization's CMake target links Boost::spirit. Spirit is an
+    -- interface target, but it must not be excluded or CMake generation fails.
+    if package:config("serialization") then
+        _add_cmake_required_lib(required_libs, "spirit")
+    end
+
+    return required_libs
+end
+
 function _add_libs_configs(package, configs)
     if not package:config("all") then
         local header_only_buildable = hashset.from(libs.get_header_only_buildable())
+        local cmake_required_libs = _get_cmake_required_libs(package)
 
         local exclude_libs = {}
         libs.for_each(function (libname)
-            if header_only_buildable and header_only_buildable:has(libname) then
+            if cmake_required_libs[libname] then
+                -- keep the target available for another selected Boost CMake target
+            elseif header_only_buildable and header_only_buildable:has(libname) then
                 -- continue
             elseif libname == "container" then
                 -- Don't exclude: needed by header-only modules like lexical_cast
