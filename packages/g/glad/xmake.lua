@@ -6,6 +6,7 @@ package("glad")
     add_urls("https://github.com/Dav1dde/glad/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Dav1dde/glad.git")
 
+    add_versions("v2.0.8", "44f06f9195427c7017f5028d0894f57eb216b0a8f7c4eda7ce883732aeb2d0fc")
     add_versions("v0.1.36", "8470ed1b0e9fbe88e10c34770505c8a1dc8ccb78cadcf673331aaf5224f963d2")
     add_versions("v0.1.34", "4be2900ff76ac71a2aab7a8be301eb4c0338491c7e205693435b09aad4969ecd")
 
