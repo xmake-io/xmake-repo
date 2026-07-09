@@ -131,9 +131,9 @@ package("glib")
         local function add_to_pc(pcpath, field, value)
             if os.isfile(pcpath) then
                 if io.readfile(pcpath):find(field .. ":", 1, true) then
-                    io.replace(pcpath, field .. ":", field .. ": " .. value .. " ")
+                    io.replace(pcpath, field .. ":", field .. ": " .. value .. " ", {plain = true})
                 else
-                    io.gsub(pcpath, "^(Cflags:)", field .. ": " .. value .. "\n%1")
+                    io.replace(pcpath, "Cflags:", field .. ": " .. value .. "\nCflags:", {plain = true})
                 end
             end
         end
