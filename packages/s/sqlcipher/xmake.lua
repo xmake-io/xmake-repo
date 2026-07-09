@@ -20,6 +20,9 @@ package("sqlcipher")
     add_configs("encrypt",  { description = "enable encrypt", default = true, type = "boolean"})
     add_configs("temp_store",  { description = "use an in-ram database for temporary tables", default = "2", values = {"0", "1", "2" , "3"}})
     add_configs("threadsafe",  { description = "sqltie thread safe mode", default = "1", values = {"0", "1", "2"}})
+    if is_plat("linux") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     if is_plat("iphoneos") then
         add_frameworks("Security")

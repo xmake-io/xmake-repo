@@ -16,7 +16,7 @@ option_end()
 option("temp_store")
     set_default("2")
     set_values("0", "1", "2", "3")
-option_end()            
+option_end()
 
 target("sqlcipher")
     set_kind("$(kind)")
