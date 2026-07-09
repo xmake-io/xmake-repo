@@ -296,7 +296,7 @@ void test() {
   setlocale(LC_ALL, "en_US.UTF-8");
 }
 ]])
-if is_plat("windows", "mingw") and is_kind("shared") then
+if is_plat("windows", "mingw") then
     set_configvar("WOE32DLL", 1)
 end
 set_configvar("SETLOCALE_NULL_ALL_MTSAFE", is_plat("windows", "linux") and 1 or 0)
@@ -422,23 +422,39 @@ target("intl")
         io.gsub("gettext-runtime/intl/gnulib-lib/tsearch.h", "(definition of _GL_ARG_NONNULL.-)\n", "%1\n#include <arg-nonnull.h>\n")
         io.gsub("gettext-runtime/intl/gnulib-lib/tsearch.h", "(definition of _GL_WARN_ON_USE.-)\n", "%1\n#include <warn-on-use.h>\n")
         io.replace("gettext-runtime/intl/gnulib-lib/tsearch.c", "#include <search.h>", "#include <tsearch.h>", {plain = true})
-        os.cp("gettext-runtime/intl/libgnuintl.h", "gettext-runtime/intl/libintl.h")
 
-        if target:is_plat("mingw") and target:kind() == "shared" then
-            io.gsub("gettext-runtime/intl/export.h", "#define LIBINTL_DLL_EXPORTED.-\n", "#define LIBINTL_DLL_EXPORTED __declspec(dllexport)\n")
-        end
+        io.writefile("gettext-runtime/intl/export.h", [[
+#ifndef _LIBINTL_EXPORT_H
+#define _LIBINTL_EXPORT_H 1
+
+#if (defined _WIN32 || defined __CYGWIN__) && defined WOE32DLL
+# if BUILDING_LIBINTL
+#  define LIBINTL_DLL_EXPORTED __declspec(dllexport)
+# else
+#  define LIBINTL_DLL_EXPORTED __declspec(dllimport)
+# endif
+#else
+# if BUILDING_LIBINTL && defined __declspec
+#  define LIBINTL_DLL_EXPORTED __declspec(dllexport)
+# else
+#  define LIBINTL_DLL_EXPORTED
+# endif
+#endif
+
+#endif
+]])
 
         local lines = io.readfile("gettext-runtime/intl/export.h")
         io.replace("gettext-runtime/intl/libgnuintl.h", "#define _LIBINTL_H 1", "#define _LIBINTL_H 1\n" .. lines, {plain = true})
-        io.replace("gettext-runtime/intl/libgnuintl.h", "extern", "extern LIBINTL_DLL_EXPORTED", {plain = true})
+        io.gsub("gettext-runtime/intl/libgnuintl.h", "extern ([^\"])", "extern LIBINTL_DLL_EXPORTED %1")
+        os.cp("gettext-runtime/intl/libgnuintl.h", "gettext-runtime/intl/libintl.h")
     end)
+
     after_install(function (target)
         local dest = path.join(target:installdir(), "include", "libintl.h")
         os.cp("gettext-runtime/intl/libintl.h", dest)
         if target:is_plat("windows", "mingw") and target:kind() == "shared" then
-            io.replace(dest, 'extern "C"', 'EXTERN_C', {plain = true})
-            io.gsub(dest, "%f[%a]extern%f[%A]", "extern __declspec(dllimport)")
-            io.replace(dest, 'EXTERN_C', 'extern "C"', {plain = true})
+            io.gsub(dest, "#define LIBINTL_DLL_EXPORTED __declspec%(dllexport%)", "#define LIBINTL_DLL_EXPORTED __declspec(dllimport)")
         end
     end)
 target_end()
