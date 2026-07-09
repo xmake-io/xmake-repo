@@ -4,6 +4,7 @@ package("sqlcipher")
     set_license("BSD-3-Clause")
 
     set_urls("https://github.com/sqlcipher/sqlcipher/archive/refs/tags/v$(version).tar.gz")
+    add_versions("4.17.0", "79c0e164b9c059e7487bf8f29272f601cca5f3312cc267461f81e349962a5058")
     add_versions("4.16.0", "d687bf981199ac019c6c87b11f92a5900aec777855e7ba5b30e5e1192933ce8a")
     add_versions("4.14.0", "67fb27e967a4a6968c0905691c89c908e7250dddc581b887c19ef981c737e473")
     add_versions("4.13.0", "7ca5c11f70e460d6537844185621d5b3d683a001e6bad223d15bdf8eff322efa")
@@ -19,6 +20,9 @@ package("sqlcipher")
     add_configs("encrypt",  { description = "enable encrypt", default = true, type = "boolean"})
     add_configs("temp_store",  { description = "use an in-ram database for temporary tables", default = "2", values = {"0", "1", "2" , "3"}})
     add_configs("threadsafe",  { description = "sqltie thread safe mode", default = "1", values = {"0", "1", "2"}})
+    if is_plat("linux") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     if is_plat("iphoneos") then
         add_frameworks("Security")
@@ -121,8 +125,8 @@ package("sqlcipher")
             configs.kind = "shared"
         end
         configs.encrypt = package:config("encrypt")
-        configs.threadsafe = threadsafe
-        configs.temp_store = temp_store
+        configs.threadsafe = package:config("threadsafe")
+        configs.temp_store = package:config("temp_store")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
     end)

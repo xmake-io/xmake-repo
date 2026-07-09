@@ -9,14 +9,14 @@ option("encrypt")
 option_end()
 
 option("threadsafe")
-    set_default("2")
+    set_default("1")
     set_values("0", "1", "2")
 option_end()
 
 option("temp_store")
     set_default("2")
     set_values("0", "1", "2", "3")
-option_end()            
+option_end()
 
 target("sqlcipher")
     set_kind("$(kind)")
@@ -44,6 +44,11 @@ target("sqlcipher")
     if is_plat("macosx", "linux", "cross") then
         add_defines("SQLITE_ENABLE_MATH_FUNCTIONS")
         add_syslinks("pthread", "dl", "m")
+    end
+    if is_plat("linux") and is_arch("x86_64") and is_kind("static") then
+        -- SQLCipher 4.17.0 uses a thread-local xoshiro state. The default
+        -- local-dynamic TLS model can produce R_X86_64_DTPOFF32 link errors.
+        add_cflags("-ftls-model=initial-exec")
     end
     if is_plat("android") then
         add_defines("SQLITE_ENABLE_MATH_FUNCTIONS", "SQLITE_HAVE_ZLIB")
