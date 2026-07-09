@@ -128,16 +128,29 @@ package("glib")
         table.insert(configs, "-Dgio_module_dir=" .. path.join(package:installdir(), "lib/gio/modules"))
         import("package.tools.meson").install(package, configs, {packagedeps = {"libintl", "libiconv", "libffi", "zlib"}})
 
-        local deps = {}
-        if package:dep("libiconv") and not package:dep("libiconv"):is_system() then
-            table.insert(deps, "libiconv")
+        local function add_to_pc(pcpath, field, value)
+            if os.isfile(pcpath) then
+                if io.readfile(pcpath):find(field .. ":", 1, true) then
+                    io.replace(pcpath, field .. ":", field .. ": " .. value .. " ")
+                else
+                    io.gsub(pcpath, "^(Cflags:)", field .. ": " .. value .. "\n%1")
+                end
+            end
         end
+        local pc_dir = package:installdir("lib/pkgconfig")
         if package:dep("libintl") and not package:dep("libintl"):is_system() then
-            table.insert(deps, "libintl")
+            add_to_pc(path.join(pc_dir, "glib-2.0.pc"), "Libs", "-lintl")
+            for _, pc in ipairs({"gio-2.0.pc", "gobject-2.0.pc", "gthread-2.0.pc",
+                                 "gmodule-no-export-2.0.pc", "girepository-2.0.pc"}) do
+                add_to_pc(path.join(pc_dir, pc), "Libs.private", "-lintl")
+            end
         end
-        if #deps > 0 then
-            local glib_pc = package:installdir("lib/pkgconfig/glib-2.0.pc")
-            io.replace(glib_pc, "Requires: ", format("Requires: %s ", table.concat(deps, " ")), {plain = true})
+        if package:dep("libiconv") and not package:dep("libiconv"):is_system() then
+            add_to_pc(path.join(pc_dir, "glib-2.0.pc"), "Libs", "-liconv")
+            for _, pc in ipairs({"gio-2.0.pc", "gobject-2.0.pc", "gthread-2.0.pc",
+                                 "gmodule-no-export-2.0.pc", "girepository-2.0.pc"}) do
+                add_to_pc(path.join(pc_dir, pc), "Libs.private", "-liconv")
+            end
         end
     end)
 
