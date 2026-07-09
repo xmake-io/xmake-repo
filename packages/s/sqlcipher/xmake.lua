@@ -4,6 +4,7 @@ package("sqlcipher")
     set_license("BSD-3-Clause")
 
     set_urls("https://github.com/sqlcipher/sqlcipher/archive/refs/tags/v$(version).tar.gz")
+    add_versions("4.17.0", "79c0e164b9c059e7487bf8f29272f601cca5f3312cc267461f81e349962a5058")
     add_versions("4.16.0", "d687bf981199ac019c6c87b11f92a5900aec777855e7ba5b30e5e1192933ce8a")
     add_versions("4.14.0", "67fb27e967a4a6968c0905691c89c908e7250dddc581b887c19ef981c737e473")
     add_versions("4.13.0", "7ca5c11f70e460d6537844185621d5b3d683a001e6bad223d15bdf8eff322efa")
