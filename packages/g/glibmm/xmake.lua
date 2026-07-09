@@ -47,9 +47,9 @@ package("glibmm")
         io.replace("tools/extra_defs_gen/meson.build", "%s*executable%b()", "", {pattern = true, multiline = true})
 
         local opt = {}
-        -- FreeBSD (and other BSDs) need -lc for environ when linking with --no-undefined
+        -- ld.lld drops -lc before libglib-2.0.a references environ
         if package:is_plat("bsd") then
-            opt.ldflags = "-lc"
+            opt.ldflags = "-Wl,--no-as-needed,-lc,--as-needed"
         end
 
         local configs = {"-Dbuild-documentation=false",
