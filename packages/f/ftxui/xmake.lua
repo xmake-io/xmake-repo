@@ -5,6 +5,7 @@ package("ftxui")
 
     add_urls("https://github.com/ArthurSonzogni/FTXUI/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ArthurSonzogni/FTXUI.git")
+    add_versions("v7.0.0", "14bef1f8caff548c49af8eeadfca21910d66e93e68237f0c3d20236b60c01e7e")
     add_versions("v6.1.9", "45819c1e54914783d4a1ca5633885035d74146778a1f74e1213cdb7b76340e71")
     add_versions("v6.1.1", "eb3546cc662c18f0c3f54ece72618fe43905531d2088e4ba8081983fa8986b95")
     add_versions("v6.0.2", "ace3477a8dd7cdb911dbc75e7b43cdcc9cf1d4a3cc3fb41168ecc31c06626cb9")
