@@ -46,9 +46,10 @@ package("glibmm")
         -- errors arise on mingw builds. Doesn't hurt to filter for all platforms.
         io.replace("tools/extra_defs_gen/meson.build", "%s*executable%b()", "", {pattern = true, multiline = true})
 
+        local opt = {}
         -- FreeBSD (and other BSDs) need -lc for environ when linking with --no-undefined
         if package:is_plat("bsd") then
-            package:add("ldflags", "-lc")
+            opt.ldflags = "-lc"
         end
 
         local configs = {"-Dbuild-documentation=false",
@@ -56,7 +57,7 @@ package("glibmm")
                          "-Dmsvc14x-parallel-installable=false"}
         table.insert(configs, "-Dbuild-deprecated-api=" .. (package:config("deprecated_api") and "true" or "false"))
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-        import("package.tools.meson").install(package, configs, {ldflags = ldflags})
+        import("package.tools.meson").install(package, configs, opt)
     end)
 
     on_test(function (package)
