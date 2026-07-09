@@ -46,18 +46,18 @@ package("glibmm")
         -- errors arise on mingw builds. Doesn't hurt to filter for all platforms.
         io.replace("tools/extra_defs_gen/meson.build", "%s*executable%b()", "", {pattern = true, multiline = true})
 
-        local opt = {}
-        -- ld.lld drops -lc before libglib-2.0.a references environ
-        if package:is_plat("bsd") then
-            opt.ldflags = "-Wl,--no-as-needed,-lc,--as-needed"
-        end
-
         local configs = {"-Dbuild-documentation=false",
                          "-Dbuild-examples=false",
                          "-Dmsvc14x-parallel-installable=false"}
         table.insert(configs, "-Dbuild-deprecated-api=" .. (package:config("deprecated_api") and "true" or "false"))
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-        import("package.tools.meson").install(package, configs, opt)
+
+        -- FreeBSD: environ is provided by the main executable, not libc.
+        -- Allow undefined symbols in the shared library; resolved at runtime.
+        if package:is_plat("bsd") then
+            table.insert(configs, "-Db_lundef=false")
+        end
+        import("package.tools.meson").install(package, configs)
     end)
 
     on_test(function (package)
