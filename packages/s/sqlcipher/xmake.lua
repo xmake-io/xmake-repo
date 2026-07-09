@@ -122,8 +122,8 @@ package("sqlcipher")
             configs.kind = "shared"
         end
         configs.encrypt = package:config("encrypt")
-        configs.threadsafe = threadsafe
-        configs.temp_store = temp_store
+        configs.threadsafe = package:config("threadsafe")
+        configs.temp_store = package:config("temp_store")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
     end)
