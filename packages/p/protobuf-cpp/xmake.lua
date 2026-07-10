@@ -45,6 +45,8 @@ package("protobuf-cpp")
     add_patches("3.19.4", "patches/3.19.4/vs_runtime.patch", "8e73e585d29f3b9dca3c279df0b11b3ee7651728c07f51381a69e5899b93c367")
     -- https://github.com/msys2/MINGW-packages/blob/e77de8e92025175ffa0a217c3444249aa6f8f4a9/mingw-w64-protobuf/0004-fix-build-with-gcc-15.patch#L7
     add_patches(">=31.0<32.0", "patches/31.0/gcc15.patch", "6475e824fabf7835f77e0410830c80b23e4c7a71fa5d7f4867ee7235942b167f")
+    -- https://github.com/protocolbuffers/protobuf/issues/27942
+    add_patches("35.1", "patches/35.1/freebsd.patch", "b8487322891c6c6483e2799d81fbd0e2e26e85cf2bf20a4b1a2ed2039e7d6cac")
 
     add_configs("rtti", {description = "Enable runtime type information", default = true, type = "boolean"})
     add_configs("zlib", {description = "Enable zlib", default = false, type = "boolean"})
