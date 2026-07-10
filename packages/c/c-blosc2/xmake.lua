@@ -26,6 +26,15 @@ package("c-blosc2")
     add_versions("v2.13.2", "f2adcd9615f138d1bb16dc27feadab1bb1eab01d77e5e2323d14ad4ca8c3ca21")
     add_versions("v2.10.2", "069785bc14c006c7dab40ea0c620bdf3eb8752663fd55c706d145bceabc2a31d")
 
+    if is_plat("bsd") then
+        -- _XOPEN_SOURCE hides BSD extensions such as flock() on FreeBSD.
+        add_patches("3.2.1", "patches/v3.2.1/freebsd.patch", "608aa28d0a0dd5e7e67badc51b4eda85996efe0da8b933117bdf788e1ad7f0bf")
+    end
+
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     add_configs("lz4", {description = "Enable LZ4 support.", default = true, type = "boolean"})
     add_configs("zlib", {description = "Enable Zlib support.", default = false, type = "boolean"})
     add_configs("zstd", {description = "Enable Zstd support.", default = false, type = "boolean"})
