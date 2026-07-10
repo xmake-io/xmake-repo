@@ -6,6 +6,7 @@ package("grpc")
     add_urls("https://github.com/grpc/grpc/archive/refs/tags/$(version).zip",
              "https://github.com/grpc/grpc.git")
 
+    add_versions("v1.82.1", "dfd8a44d9a0c20908bb8083aacd56bd7861dd400ef171002fa63f9c3c426702e")
     add_versions("v1.69.0", "987763312292c8a6088108173ccde2b336a40f35ae22b5b7b3744e44929aaf9f")
     add_versions("v1.51.3", "17720fd0a690e904a468b4b3dae6fa5ec40b0d1f4d418e2ca092e2f92f06fce0")
     add_versions("v1.62.1", "f672a3a3b370f2853869745110dabfb6c13af93e17ffad4676a0b95b5ec204af")
@@ -102,6 +103,9 @@ package("grpc")
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:is_plat("windows") then
+            table.insert(configs, "-DgRPC_MSVC_STATIC_RUNTIME=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
+        end
 
         table.insert(configs, "-DgRPC_BUILD_CODEGEN=" .. (package:is_cross() and "OFF" or "ON"))
         table.insert(configs, "-DgRPC_BUILD_GRPC_CPP_PLUGIN=" .. (package:is_cross() and "OFF" or "ON"))
