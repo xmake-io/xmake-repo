@@ -18,6 +18,9 @@ package("verilator")
     add_versions("v5.032", "5a262564b10be8bdb31ff4fb67d77bcf5f52fc1b4e6c88d5ca3264fb481f1e41")
     add_versions("v5.016", "66fc36f65033e5ec904481dd3d0df56500e90c0bfca23b2ae21b4a8d39e05ef1")
 
+    add_patches("v5.050", path.join(os.scriptdir(), "patches", "v5.050", "fix-memory-leak-in-VerilatedFst-close.patch"),
+                "35bfd6177053fc31365fb0dedee850ebae89849500a5b23e100d21129f5c235c")
+
     add_deps("cmake")
 
     if on_check then
