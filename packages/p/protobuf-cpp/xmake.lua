@@ -54,6 +54,10 @@ package("protobuf-cpp")
     add_configs("upb", {description = "Build upb", default = not is_plat("android"), type = "boolean"})
     add_configs("tools", {description = "Build libprotoc and protoc compiler", default = not is_plat("android"), type = "boolean"})
 
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::protobuf")
     elseif is_plat("linux") then
@@ -103,7 +107,7 @@ package("protobuf-cpp")
             if package:version():lt("30.0") then
                 package:add("deps", "abseil <=20250127.0")
             else
-                package:add("deps", "abseil")
+                package:add("deps", "abseil <=20260107.1")
             end
         end
 
