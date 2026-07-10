@@ -6,6 +6,7 @@ package("cwt-cucumber")
     add_urls("https://github.com/ThoSe1990/cwt-cucumber/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ThoSe1990/cwt-cucumber.git")
 
+    add_versions("2.9", "d8d3e17691b337a750182378efcb8881c68d21bffb951850a232732397644689")
     add_versions("2.8", "30576a39a9ce2c4a915ed8f0e46f3f0ef149febf995989dfb02a05866ff38f57")
     add_versions("2.7", "12a38587fc50990dbb7f80a18e401011ea8d7e5d1dd82a13e66cb294a02bbd78")
     add_versions("2.6", "1896f695b06dccf30d030ea819f693e4324bbd2f38f336aa36cf6fa87be3dfbd")
