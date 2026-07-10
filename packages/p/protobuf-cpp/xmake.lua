@@ -13,6 +13,7 @@ package("protobuf-cpp")
     end})
 
     -- TODO: Use x.y.z version? https://protobuf.dev/support/version-support
+    add_versions("35.1", "bf89df2fa0088de9c9890fbfba0076263a36c2f84847a7b54e7e32effd6201c7")
     add_versions("33.2", "d0c6246dc7817d26e809cae88f69b019a92827096811c85e65d3d01102974710")
     add_versions("33.1", "801c7d44b2ec2ffaaf94555eda48a2239ef21e6602808ca8d22a9005fc2c03ef")
     add_versions("32.1", "2d25be4d5bf3bf28a97de553ae76c49f2a6fa3c21b04d3ccd5b3e0abc9262d00")
@@ -44,12 +45,18 @@ package("protobuf-cpp")
     add_patches("3.19.4", "patches/3.19.4/vs_runtime.patch", "8e73e585d29f3b9dca3c279df0b11b3ee7651728c07f51381a69e5899b93c367")
     -- https://github.com/msys2/MINGW-packages/blob/e77de8e92025175ffa0a217c3444249aa6f8f4a9/mingw-w64-protobuf/0004-fix-build-with-gcc-15.patch#L7
     add_patches(">=31.0<32.0", "patches/31.0/gcc15.patch", "6475e824fabf7835f77e0410830c80b23e4c7a71fa5d7f4867ee7235942b167f")
+    -- https://github.com/protocolbuffers/protobuf/issues/27942
+    add_patches("35.1", "patches/35.1/freebsd.patch", "b8487322891c6c6483e2799d81fbd0e2e26e85cf2bf20a4b1a2ed2039e7d6cac")
 
     add_configs("rtti", {description = "Enable runtime type information", default = true, type = "boolean"})
     add_configs("zlib", {description = "Enable zlib", default = false, type = "boolean"})
     add_configs("lite", {description = "Build lite version", default = true, type = "boolean", readonly = true})
     add_configs("upb", {description = "Build upb", default = not is_plat("android"), type = "boolean"})
     add_configs("tools", {description = "Build libprotoc and protoc compiler", default = not is_plat("android"), type = "boolean"})
+
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::protobuf")
@@ -100,7 +107,7 @@ package("protobuf-cpp")
             if package:version():lt("30.0") then
                 package:add("deps", "abseil <=20250127.0")
             else
-                package:add("deps", "abseil")
+                package:add("deps", "abseil <=20260107.1")
             end
         end
 
