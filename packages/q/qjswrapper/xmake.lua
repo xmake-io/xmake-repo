@@ -7,7 +7,7 @@ package("qjswrapper")
     add_urls("https://github.com/burdockcascade/qjswrapper/archive/refs/tags/$(version).tar.gz",
              "https://github.com/burdockcascade/qjswrapper.git")
 
-    add_versions("v0.1.0", "e38144b0c01cf1e484a0417ef97e7fa8cf307fb8515a3514512cd32605d7c6f4")
+    add_versions("0.1.0", "e38144b0c01cf1e484a0417ef97e7fa8cf307fb8515a3514512cd32605d7c6f4")
 
     add_deps("quickjs-ng")
 
