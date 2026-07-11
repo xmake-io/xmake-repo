@@ -6,6 +6,7 @@ package("cnats")
     add_urls("https://github.com/nats-io/nats.c/archive/refs/tags/$(version).tar.gz",
              "https://github.com/nats-io/nats.c.git")
 
+    add_versions("v3.13.0", "f6ec9ee2ab367594b56dd3265e3561074ade7c3d7410a6f45a77704c5e537024")
     add_versions("v3.12.0", "06b64d7045fd618c98e5608001b384bdbfa6a17718dba64e732ba72a6f00649b")
     add_versions("v3.11.0", "9ee45cd502a49dbd29bed491286a4926e5e53f14a8aacad413c0cf4a057abee0")
     add_versions("v3.10.1", "1765533bbc1270ab7c89e3481b4778db7d1e7b4db2fa906b6602cd5c02846222")
@@ -17,6 +18,10 @@ package("cnats")
     add_configs("tls", {description = "Build with TLS support", default = false, type = "boolean"})
     add_configs("sodium", {description = "Build with libsodium", default = false, type = "boolean"})
     add_configs("streaming", {description = "Build NATS Streaming", default = false, type = "boolean"})
+
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32")
