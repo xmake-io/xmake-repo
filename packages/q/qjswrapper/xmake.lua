@@ -2,6 +2,7 @@ package("qjswrapper")
     set_homepage("https://github.com/burdockcascade/qjswrapper")
     set_description("A modern, high-level C++ wrapper library designed to integrate and interact with the QuickJS engine.")
     set_license("MIT")
+    set_kind("headeronly")
 
     add_urls("https://github.com/burdockcascade/qjswrapper/archive/refs/tags/$(version).tar.gz",
              "https://github.com/burdockcascade/qjswrapper.git")
