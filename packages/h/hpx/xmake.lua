@@ -36,9 +36,9 @@ package("hpx")
             package:add("deps", malloc)
         end
         if package:config("context") then
-            package:add("deps", "boost >=1.71.0", {configs = {context = true, spirit = true}})
+            package:add("deps", "boost >=1.71.0", {configs = {context = true, serialization = true, spirit = true}})
         else
-            package:add("deps", "boost >=1.71.0", {configs = {spirit = true}})
+            package:add("deps", "boost >=1.71.0", {configs = {serialization = true, spirit = true}})
         end
     end)
 
