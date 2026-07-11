@@ -28,7 +28,7 @@ package("hpx")
         set_policy("package.cmake_generator.ninja", false)
     end
 
-    add_deps("cmake", "hwloc", "asio >=1.12.0")
+    add_deps("cmake", "hwloc", "asio >=1.12.0 <=1.21.0")
 
     on_load("windows|x64", "linux|x86_64", "macosx|x86_64", function (package)
         local malloc = package:config("malloc")
@@ -36,9 +36,9 @@ package("hpx")
             package:add("deps", malloc)
         end
         if package:config("context") then
-            package:add("deps", "boost >=1.71.0", {configs = {context = true}})
+            package:add("deps", "boost >=1.71.0", {configs = {context = true, spirit = true}})
         else
-            package:add("deps", "boost >=1.71.0")
+            package:add("deps", "boost >=1.71.0", {configs = {spirit = true}})
         end
     end)
 
@@ -46,6 +46,7 @@ package("hpx")
         local configs = {"-DHPX_WITH_EXAMPLES=OFF", "-DHPX_WITH_TESTS=OFF", "-DHPX_WITH_UNITY_BUILD=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DHPX_WITH_STATIC_LINKING=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DHPX_WITH_MALLOC=" .. package:config("malloc"))
         table.insert(configs, "-DHPX_WITH_CUDA=" .. (package:config("cuda") and "ON" or "OFF"))
         table.insert(configs, "-DHPX_WITH_PARCELPORT_MPI=" .. (package:config("mpi") and "ON" or "OFF"))
