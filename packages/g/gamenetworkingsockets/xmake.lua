@@ -26,7 +26,7 @@ package("gamenetworkingsockets")
 
     on_load("windows", "linux", function(package)
         if package:version():gt("1.4.1") then
-            package:add("deps", "protobuf-cpp")
+            package:add("deps", "protobuf-cpp <35.1")
             package:add("deps", "abseil")
 
             if package:config("ice") then
