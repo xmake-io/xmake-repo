@@ -23,6 +23,11 @@ package("hpx")
         add_syslinks("pthread")
     end
 
+    if is_plat("windows") then
+        -- HPX overrides CMake's Ninja job pools, conflicting with --linkjobs.
+        set_policy("package.cmake_generator.ninja", false)
+    end
+
     add_deps("cmake", "hwloc", "asio >=1.12.0")
 
     on_load("windows|x64", "linux|x86_64", "macosx|x86_64", function (package)
