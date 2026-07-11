@@ -19,10 +19,16 @@ package("json-glib")
 
     add_includedirs("include", "include/json-glib-1.0")
 
-    on_install("linux", function (package)
+    on_load(function (package)
+        if not package:config("shared") then
+            package:add("defines", "JSON_STATIC_BUILD")
+        end
+    end)
+
+    on_install("linux", "windows", function (package)
         local configs = {"-Ddocumentation=disabled", "-Dtests=false", "-Dgtk_doc=disabled", "-Dman=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-        import("package.tools.meson").install(package, configs, {packagedeps = {"libiconv"}})
+        import("package.tools.meson").install(package, configs, {packagedeps = {"libiconv", "libintl"}})
     end)
 
     on_test(function (package)
