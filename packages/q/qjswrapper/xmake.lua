@@ -12,7 +12,7 @@ package("qjswrapper")
     add_deps("quickjs-ng")
 
     on_install(function (package)
-        os.cp("include/qjswrapper.hpp", package:installdir("include"))
+        os.cp("include", package:installdir())
     end)
 
     on_test(function (package)
