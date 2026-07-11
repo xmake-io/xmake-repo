@@ -24,6 +24,7 @@ package("hpx")
     end
 
     if is_plat("windows") then
+        add_syslinks("dbghelp", "psapi", "shlwapi", "ws2_32", "mswsock")
         -- HPX overrides CMake's Ninja job pools, conflicting with --linkjobs.
         set_policy("package.cmake_generator.ninja", false)
     end
