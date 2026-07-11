@@ -19,6 +19,10 @@ package("cnats")
     add_configs("sodium", {description = "Build with libsodium", default = false, type = "boolean"})
     add_configs("streaming", {description = "Build NATS Streaming", default = false, type = "boolean"})
 
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32")
     elseif is_plat("linux", "bsd") then
