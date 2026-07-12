@@ -17,6 +17,7 @@ package("openimageio")
                         tbb         = "TBB",
                         giflib      = "GIF",
                         libheif     = "Libheif",
+                        libjxl      = "JXL",
                         openjpeg    = "OpenJPEG",
                         openvdb     = "OpenVDB",
                         ptex        = "Ptex",
