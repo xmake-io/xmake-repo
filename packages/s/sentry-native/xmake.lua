@@ -6,6 +6,7 @@ package("sentry-native")
     set_urls("https://github.com/getsentry/sentry-native/releases/download/$(version)/sentry-native.zip",
              "https://github.com/getsentry/sentry-native.git")
 
+    add_versions("0.15.3", "5feccee8b53167352e234cdee217f050c5f23679b6d661e829f77dfee023327c")
     add_versions("0.15.2", "ead664dc2ec5fa09692ce512611eecf3c29e15eaa892b72492480ca938e3651f")
     add_versions("0.15.1", "ea36b2c6ea29eb72afe891c32fb0d09a127260efc90377ce7d29578b80e409b0")
     add_versions("0.15.0", "2ce973346e75fba8d399c16b0bd6092246ea1721f4ca6b79de295ef5041a90ef")
