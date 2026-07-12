@@ -12,7 +12,7 @@ package("fmm3d")
         add_deps("mingw-w64", "make")
     end
 
-    on_install("linux", "macosx", "windows", function (package)
+    on_install("linux", "macosx", "windows|!arm64", function (package)
         if package:is_plat("windows") then
             os.cp("make.inc.windows.mingw", "make.inc")
 
