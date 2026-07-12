@@ -8,6 +8,7 @@ package("seacas")
         return "v" .. version:gsub("%.", "-")
     end})
     add_versions("2025.08.28", "29125a84859c78b6bb0b5909ce7443aa2774235f0fc75dedf467a223603e0ffd")
+    add_versions("2025.10.14", "f9351a8f1a555a015020f249b1e5c26a282fbb6e274f9b71eb38720d61267dda")
 
     add_configs("zoltan",  {description = "Enable Zoltan.", default = false, type = "boolean"})
     add_configs("fortran", {description = "Enable Fortran support.", default = false, type = "boolean"})
@@ -19,7 +20,7 @@ package("seacas")
 
     on_load(function (package)
         if package:is_plat("windows") and package:config("shared") then
-            package:add("patches", "2025.08.28", "patches/2025.08.28/windows_shared.patch", "286681457a359a1f498087b72f221c01ec5d51f46bf13b13c1a8c0211bebe766")
+            package:add("patches", "<=2025.10.14", "patches/2025.08.28/windows_shared.patch", "286681457a359a1f498087b72f221c01ec5d51f46bf13b13c1a8c0211bebe766")
         end
     end)
 
