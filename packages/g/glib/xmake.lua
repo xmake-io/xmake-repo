@@ -13,6 +13,7 @@ package("glib")
     add_versions("home:2.78.1", "915bc3d0f8507d650ead3832e2f8fb670fce59aac4d7754a7dab6f1e6fed78b2")
     add_versions("home:2.85.0", "97cfb0466ae41fca4fa2a57a15440bee15b54ae76a12fb3cbff11df947240e48")
     add_versions("home:2.88.1", "51ab804c56f6eab3e5045c774d1290ac5e4c923d4f9a3d8e33123bee45c1840e")
+    add_versions("home:2.89.1", "74447129c31afe141810f995626e8b99ab677413dae76ee3cf5a9cc6e75a486e")
 
     add_patches("2.71.0", path.join(os.scriptdir(), "patches", "2.71.0", "macosx.patch"), "a0c928643e40f3a3dfdce52950486c7f5e6f6e9cfbd76b20c7c5b43de51d6399")
 
@@ -129,27 +130,23 @@ package("glib")
         import("package.tools.meson").install(package, configs, {packagedeps = {"libintl", "libiconv", "libffi", "zlib"}})
 
         local function add_to_pc(pcpath, field, value)
-            if os.isfile(pcpath) then
-                if io.readfile(pcpath):find(field .. ":", 1, true) then
-                    io.replace(pcpath, field .. ":", field .. ": " .. value .. " ", {plain = true})
-                else
-                    io.replace(pcpath, "Cflags:", field .. ": " .. value .. "\nCflags:", {plain = true})
-                end
+            if not os.isfile(pcpath) then return end
+            local content = io.readfile(pcpath)
+            if content:find(field .. ":", 1, true) then
+                content = content:gsub("(" .. field .. ": [^\n]*)", "%1 " .. value)
+            else
+                content = content:gsub("(Cflags:)", field .. ": " .. value .. "\n%1")
             end
+            io.writefile(pcpath, content)
         end
         local pc_dir = package:installdir("lib/pkgconfig")
-        if package:dep("libintl") and not package:dep("libintl"):is_system() then
-            add_to_pc(path.join(pc_dir, "glib-2.0.pc"), "Libs", "-lintl")
-            for _, pc in ipairs({"gio-2.0.pc", "gobject-2.0.pc", "gthread-2.0.pc",
-                                 "gmodule-no-export-2.0.pc", "girepository-2.0.pc"}) do
-                add_to_pc(path.join(pc_dir, pc), "Libs.private", "-lintl")
-            end
-        end
-        if package:dep("libiconv") and not package:dep("libiconv"):is_system() then
-            add_to_pc(path.join(pc_dir, "glib-2.0.pc"), "Libs", "-liconv")
-            for _, pc in ipairs({"gio-2.0.pc", "gobject-2.0.pc", "gthread-2.0.pc",
-                                 "gmodule-no-export-2.0.pc", "girepository-2.0.pc"}) do
-                add_to_pc(path.join(pc_dir, pc), "Libs.private", "-liconv")
+        local pcs = {"glib-2.0.pc", "gio-2.0.pc", "gobject-2.0.pc", "gthread-2.0.pc",
+                     "gmodule-no-export-2.0.pc", "girepository-2.0.pc"}
+        for _, depname in ipairs({"libintl", "libiconv"}) do
+            if package:dep(depname) and not package:dep(depname):is_system() then
+                for _, pc in ipairs(pcs) do
+                    add_to_pc(path.join(pc_dir, pc), "Requires.private", depname)
+                end
             end
         end
     end)
