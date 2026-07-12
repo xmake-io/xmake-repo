@@ -171,12 +171,15 @@ package("joltphysics")
         if package:config("gpu_api") == "dx12" then
             package:add("defines", "JPH_USE_DX12")
             package:add("deps", "directx12-agility")
+            package:add("deps", "directxshadercompiler", {private = true})
         elseif package:config("gpu_api") == "mtl" then
             package:add("defines", "JPH_USE_MTL")
             package:add("frameworks", "Foundation", "Metal", "MetalKit")
+            package:add("deps", "directxshadercompiler", {private = true})
         elseif package:config("gpu_api") == "vk" then
             package:add("defines", "JPH_USE_VK")
             package:add("deps", "vulkan-headers")
+            package:add("deps", "directxshadercompiler", {private = true})
         elseif package:config("gpu_api") == "cpu" then
             package:add("defines", "JPH_USE_CPU_COMPUTE")
         end
