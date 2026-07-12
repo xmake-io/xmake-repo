@@ -129,6 +129,8 @@ package("onnxruntime")
             os.mv("lib/*.dll", package:installdir("bin"))
         end
         os.cp("*", package:installdir())
+        io.replace(package:installdir("lib/cmake/onnxruntime/onnxruntimeTargets.cmake"), "include/onnxruntime", "include", {plain = true})
+        io.replace(package:installdir("lib/cmake/onnxruntime/onnxruntimeTargets-release.cmake"), "lib64", "lib", {plain = true})
     end)
 
     on_test(function (package)
