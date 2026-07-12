@@ -60,7 +60,11 @@ package("depot_tools")
 
     on_test(function (package)
         import("core.base.global")
-        os.vrun("python3 --version")
+        if is_host("windows") then
+            os.vrun("python --version")
+        else
+            os.vrun("python3 --version")
+        end
         os.vrun("ninja --version")
         local envs = {}
         local proxy = global.get("proxy")
