@@ -5,24 +5,26 @@ package("fmm3d")
 
     set_urls("https://github.com/flatironinstitute/FMM3D/archive/refs/tags/$(version).zip",
              "https://github.com/flatironinstitute/FMM3D.git")
+    add_versions("v2.1.0", "45974f21df0c9b2f9054bf729d7425715bb2a1ee2309d90852678fd50a69e80d")
     add_versions("v1.0.4", "59fa04965cd46cd564ba4784d91f00f8b0d24e0a08967a7b90f076dd5eb30faf")
 
     if is_plat("windows") then
         add_deps("mingw-w64", "make")
     end
 
-    on_install("linux", "macosx", "windows", function (package)
+    on_install("linux", "macosx", "windows|!arm64", function (package)
         if package:is_plat("windows") then
             os.cp("make.inc.windows.mingw", "make.inc")
 
             io.replace("makefile", "mkdir -p $(FMM_INSTALL_DIR)", "", {plain = true})
-            io.replace("makefile", "cp -f lib/$(DYNAMICLIB) $(FMM_INSTALL_DIR)/", "copy /y lib\\$(DYNAMICLIB) $(FMM_INSTALL_DIR)", {plain = true})
-            io.replace("makefile", "cp -f lib-static/$(STATICLIB) $(FMM_INSTALL_DIR)/", "copy /y lib-static\\$(STATICLIB) $(FMM_INSTALL_DIR)", {plain = true})
-            io.replace("makefile", "[ ! -f lib/$(LIMPLIB) ] || cp lib/$(LIMPLIB) $(FMM_INSTALL_DIR)/", "if exist lib\\$(LIMPLIB) copy lib\\$(LIMPLIB) $(FMM_INSTALL_DIR)", {plain = true})
+            io.replace("makefile", "cp -f lib/$(DYNAMICLIB) $(FMM_INSTALL_DIR)/", "cmd /c copy /y lib\\$(DYNAMICLIB) $(FMM_INSTALL_DIR)", {plain = true})
+            io.replace("makefile", "cp -f lib-static/$(STATICLIB) $(FMM_INSTALL_DIR)/", "cmd /c copy /y lib-static\\$(STATICLIB) $(FMM_INSTALL_DIR)", {plain = true})
+            io.replace("makefile", "[ ! -f lib/$(LIMPLIB) ] || cp lib/$(LIMPLIB) $(FMM_INSTALL_DIR)/", "cmd /c if exist lib\\$(LIMPLIB) copy lib\\$(LIMPLIB) $(FMM_INSTALL_DIR)", {plain = true})
+            io.replace("makefile", "[ ! -f lib/$(LIMPLIB) ] || cp -f lib/$(LIMPLIB) $(FMM_INSTALL_DIR)/", "cmd /c if exist lib\\$(LIMPLIB) copy /y lib\\$(LIMPLIB) $(FMM_INSTALL_DIR)", {plain = true})
 
-            io.replace("makefile", "mv $(STATICLIB) lib-static/", "move $(STATICLIB) lib-static", {plain = true})
-            io.replace("makefile", "mv $(DYNAMICLIB) lib/", "move $(DYNAMICLIB) lib", {plain = true})
-            io.replace("makefile", "[ ! -f $(LIMPLIB) ] || mv $(LIMPLIB) lib/", "if exist $(LIMPLIB) move $(LIMPLIB) lib", {plain = true})
+            io.replace("makefile", "mv $(STATICLIB) lib-static/", "cmd /c move $(STATICLIB) lib-static", {plain = true})
+            io.replace("makefile", "mv $(DYNAMICLIB) lib/", "cmd /c move $(DYNAMICLIB) lib", {plain = true})
+            io.replace("makefile", "[ ! -f $(LIMPLIB) ] || mv $(LIMPLIB) lib/", "cmd /c if exist $(LIMPLIB) move $(LIMPLIB) lib", {plain = true})
 
             io.replace("makefile", "\" $(FMM_INSTALL_DIR) \"", "$(FMM_INSTALL_DIR)", {plain = true})
             io.replace("makefile", "\"$(FMM_INSTALL_DIR) \"", "$(FMM_INSTALL_DIR)", {plain = true})
