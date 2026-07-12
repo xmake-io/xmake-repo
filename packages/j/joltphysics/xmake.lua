@@ -160,7 +160,7 @@ package("joltphysics")
             end
         end
         if package:config("gpu_api") == nil then
-            if package:is_plat("windows", "mingw") then
+            if package:is_plat("windows") then
                 package:config_set("gpu_api", "dx12")
             elseif package:is_plat("macosx", "iphoneos") then
                 package:config_set("gpu_api", "mtl")
