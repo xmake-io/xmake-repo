@@ -19,7 +19,7 @@ package("libenvpp")
     add_configs("shared", {description = "Build shared binaries.", default = false, type = "boolean", readonly = true})
 
     add_deps("cmake")
-    add_deps("fmt >=9.1.0", {configs = {header_only = false}})
+    add_deps("fmt >=9.1.0 <12.2.0", {configs = {header_only = false}})
 
     on_install(function (package)
         local version = package:version()
