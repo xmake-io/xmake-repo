@@ -5,6 +5,7 @@ package("leancrypto")
     add_urls("https://github.com/smuellerDD/leancrypto/archive/refs/tags/$(version).tar.gz",
              "https://github.com/smuellerDD/leancrypto.git")
 
+    add_versions("v1.8.0", "9d7cb5e0584d3c60814df90c0a9e800e2e77d54ca0b74be3b6e02475803210de")
     add_versions("v1.7.2", "9aff52dfc5c4fdb0b7d4849ad0e002430e83d6880e4136b72a3098c801224fc3")
     add_versions("v1.6.0", "b5057cfb990108c4a9f21832f1f35f3d98115012d1628e00650558e6b49e8285")
     add_versions("v1.5.1", "9c14639ea047554598a99d6a8cf2598b3cd89be0608df8cc06d80dd66087e2da")
