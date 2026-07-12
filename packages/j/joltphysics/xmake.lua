@@ -175,11 +175,11 @@ package("joltphysics")
         elseif package:config("gpu_api") == "mtl" then
             package:add("defines", "JPH_USE_MTL")
             package:add("frameworks", "Foundation", "Metal", "MetalKit")
-            package:add("deps", "directxshadercompiler", {private = true})
+            package:add("deps", "spirv-cross", {private = true})
         elseif package:config("gpu_api") == "vk" then
             package:add("defines", "JPH_USE_VK")
             package:add("deps", "vulkan-headers")
-            package:add("deps", "directxshadercompiler", {private = true})
+            package:add("deps", "spirv-cross", {private = true})
         elseif package:config("gpu_api") == "cpu" then
             package:add("defines", "JPH_USE_CPU_COMPUTE")
         end
