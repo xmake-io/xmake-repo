@@ -6,6 +6,7 @@ package("libenvpp")
     add_urls("https://github.com/ph3at/libenvpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ph3at/libenvpp.git", {submodules = false})
 
+    add_versions("v1.5.3", "c928547f93626b692aeba609d2bcd051da695a3dc05e0fe45e52f34ed6ce02b5")
     add_versions("v1.5.2", "6f341a52d2d12c831153e6b4e853e38a2c36a4da1ac3ec9626878a952d25a880")
     add_versions("v1.5.1", "3b369597958f01bf71e998e68f8909b49b870bb264f0914cb318a5597ebe548b")
     add_versions("v1.4.4", "aa5af7958092bf9546a144fe000313bef980302d5e311e5938e5b99845c701ea")
@@ -18,7 +19,7 @@ package("libenvpp")
     add_configs("shared", {description = "Build shared binaries.", default = false, type = "boolean", readonly = true})
 
     add_deps("cmake")
-    add_deps("fmt >=9.1.0", {configs = {header_only = false}})
+    add_deps("fmt >=9.1.0 <12.2.0", {configs = {header_only = false}})
 
     on_install(function (package)
         local version = package:version()
