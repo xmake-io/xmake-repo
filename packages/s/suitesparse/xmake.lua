@@ -113,7 +113,11 @@ package("suitesparse")
             elseif not package:config("graphblas") then
                 table.insert(configs, "-DSUITESPARSE_ENABLE_PROJECTS=suitesparse_config;mongoose;amd;btf;camd;ccolamd;colamd;cholmod;cxsparse;ldl;klu;umfpack;paru;rbio;spqr;spex")
             end
-            import("package.tools.cmake").install(package, configs)
+            opt = {packagedeps = {package:config("blas")}}
+            if package:is_plat("linux") then
+                opt.cxflags = "-lm"
+            end
+            import("package.tools.cmake").install(package, configs, opt)
         else
             os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
             local configs = {}
