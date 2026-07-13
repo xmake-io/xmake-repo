@@ -7,6 +7,7 @@ package("jrl-cmakemodules")
     add_urls("https://github.com/jrl-umi3218/jrl-cmakemodules/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jrl-umi3218/jrl-cmakemodules.git")
 
+    add_versions("v2.1.0", "a2427360fd3f0d53bc45b1977eb3d578a0edcb3ba899a508abd930d65762bc74")
     add_versions("v1.1.2", "66cc65863d2f40fcf80881ba6053cb6d7b73f673d46e16c7d1a5eee8b158b897")
 
     add_deps("cmake")
