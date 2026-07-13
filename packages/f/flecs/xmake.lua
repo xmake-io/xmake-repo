@@ -53,7 +53,7 @@ package("flecs")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DFLECS_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DFLECS_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DFLECS_PIC=" .. ((package:is_plat("wasm") or package:config("pic")) and "ON" or "OFF"))
+        table.insert(configs, "-DFLECS_PIC=" .. (package:config("pic") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
 
         local pdb = path.join(package:buildir(), "flecs.pdb")
