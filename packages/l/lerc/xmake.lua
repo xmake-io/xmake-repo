@@ -6,10 +6,15 @@ package("lerc")
     add_urls("https://github.com/Esri/lerc/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Esri/lerc.git")
 
+    add_versions("v4.1.1", "fe2860e10635166cd9f2144e429ec6b870d471e9957f5812ba2da0973770b022")
     add_versions("v4.1.0", "f05b24d2368becab9144873878655bb718910631550d4f786262378c16ab94a7")
     add_versions("v4.0.0", "91431c2b16d0e3de6cbaea188603359f87caed08259a645fd5a3805784ee30a0")
 
     add_deps("cmake")
+
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     on_install(function (package)
         local configs = {}
