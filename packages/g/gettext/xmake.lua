@@ -19,6 +19,9 @@ package("gettext")
     if is_plat("macosx") then
         add_frameworks("CoreFoundation")
     end
+    if is_plat("windows") then
+        add_deps("libintl")
+    end
     add_deps("libiconv")
     
     on_load(function(package)
@@ -29,7 +32,7 @@ package("gettext")
         end
     end)
 
-    on_install("macosx", "linux", "android", function (package)
+    on_install("macosx", "linux", "android", "windows", function (package)
         local configs = {"--disable-dependency-tracking",
                          "--disable-silent-rules",
                          "--with-included-glib",
