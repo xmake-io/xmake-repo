@@ -23,7 +23,7 @@ package("netcdf-c")
             "-DENABLE_FILTER_TESTING=OFF",
             "-DENABLE_DAP_REMOTE_TESTS=OFF",
             "-DDISABLE_INSTALL_DEPENDENCIES=ON",
-            "-DNETCDF_USE_STATIC_CRT=" .. package:runtimes():startswith("MT") and "ON" or "OFF",
+            "-DNETCDF_USE_STATIC_CRT=" .. (package:runtimes():startswith("MT") and "ON" or "OFF"),
         }
         if is_plat("windows") and package:config("shared") then
             table.insert(configs, "-DNETCDF_ENABLE_DLL=ON")
