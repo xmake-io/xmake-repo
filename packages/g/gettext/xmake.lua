@@ -23,6 +23,16 @@ package("gettext")
         add_deps("libintl")
     end
     add_deps("libiconv")
+
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
+            local ndkver = ndk and ndk:config("ndkver")
+            if package:version() and package:version():ge("1.0") and ndkver and tonumber(ndkver) < 27 then
+                raise("package(gettext >= 1.0) does not support NDK versions earlier than r27")
+            end
+        end)
+    end
     
     on_load(function(package)
         if is_subhost("windows") then
@@ -32,7 +42,7 @@ package("gettext")
         end
     end)
 
-    on_install("macosx", "linux", "android", "windows", function (package)
+    on_install("macosx", "linux", "android", "windows|x64", function (package)
         local configs = {"--disable-dependency-tracking",
                          "--disable-silent-rules",
                          "--with-included-glib",

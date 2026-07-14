@@ -7,6 +7,7 @@ package("msys2-base")
             return version:gsub("%.", "-")  .. "/msys2-base-x86_64-" .. version:gsub("%.", "")
         end})
 
+    add_versions("2026.06.11", "a2d047e8ee213c3c6a49a8de427eb1069df12207c0422ff1b3cbb5c905c34221")
     add_versions("2025.08.30", "780d7546aa86b781e0ded37c7b8f71f1b8572219494fe88259d8d4b78752b2e2")
     add_versions("2024.01.13", "04456a44a956d3c0b5f9b6c754918bf3a8c3d87c858be7a0c94c9171ab13c58c")
 
