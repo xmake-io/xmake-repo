@@ -6,6 +6,7 @@ package("ompl")
     add_urls("https://github.com/ompl/ompl/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ompl/ompl.git", {submodules = false})
 
+    add_versions("2.0.1", "365f052d5fb4419ed016394ddb26ab83dee6514b90565ad30af044a09b122aef")
     add_versions("2.0.0", "643d3218aca72ea9007daea0b5871d534b9cd3239d2e4cc140b152be86c8eb2c")
     add_versions("1.7.0", "e2e2700dfb0b4c2d86e216736754dd1b316bd6a46cc8818e1ffcbce4a388aca9")
 
@@ -21,6 +22,8 @@ package("ompl")
         add_syslinks("psapi", "ws2_32")
     elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
+    elseif is_plat("wasm") then
+        add_cxxflags("-fPIC")
     end
 
     add_deps("cmake")
