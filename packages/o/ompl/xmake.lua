@@ -74,9 +74,11 @@ package("ompl")
         table.insert(configs, "-DOMPL_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DOMPL_BUILD_VAMP=" .. (package:config("vamp") and "ON" or "OFF"))
         table.insert(configs, "-DOMPL_BUILD_PYBINDINGS=" .. (package:config("python") and "ON" or "OFF"))
-        local cxflags
+        local cxflags = {}
         if package:is_plat("windows", "mingw") then
-            cxflags = "-D_USE_MATH_DEFINES"
+            table.insert(cxflags, "-D_USE_MATH_DEFINES")
+        elseif package:is_plat("wasm") then
+            table.insert(cxflags, "-fPIC")
         end
         import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
     end)
