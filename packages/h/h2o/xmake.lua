@@ -33,6 +33,12 @@ package("h2o")
         if package:config("uv") then
             package:add("deps", "libuv")
         end
+        if package:config("brotli") then
+            package:add("deps", "brotli")
+        end
+        if package:config("zstd") then
+            package:add("deps", "zstd")
+        end
     end)
 
     on_install(function (package)
