@@ -7,6 +7,7 @@ package("libjxl")
              "https://github.com/libjxl/libjxl.git",
              "https://gitlab.com/wg1/jpeg-xl.git", {submodules = false})
 
+    add_versions("v0.12.0", "03e9be69a30be4011f559da75328b6d7cea8ad921fabfbd551ce10bf45cdc992")
     add_versions("v0.11.2", "ab38928f7f6248e2a98cc184956021acb927b16a0dee71b4d260dc040a4320ea")
     add_versions("v0.11.1", "1492dfef8dd6c3036446ac3b340005d92ab92f7d48ee3271b5dac1d36945d3d9")
 
