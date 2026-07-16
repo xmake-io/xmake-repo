@@ -47,14 +47,23 @@ index b644463..f7edce1 100644
  
  all: all-am
 diff --git a/Makefile.am b/Makefile.am
+index 0ae350d..53295a8 100644
 --- a/Makefile.am
 +++ b/Makefile.am
-@@ -53 +52,0 @@ SUBDIRS += \
+@@ -50,8 +50,6 @@ SUBDIRS += \
+ 	src/tools/profile \
+ 	bindings/go \
+ 	bindings/java \
 -	test/apps \
+-	examples \
+ 	cmake \
+ 	config
+ 
 diff --git a/Makefile.in b/Makefile.in
+index 52380c2..62d0c9f 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -617,7 +617,7 @@ top_top_srcdir = @top_top_srcdir@
+@@ -617,7 +617,7 @@ doc_dir = $(pkgdatadir)/doc
  @DOCS_ONLY_FALSE@SUBDIRS = src/ucm src/ucs src/uct src/ucp \
  @DOCS_ONLY_FALSE@	src/tools/vfs src/tools/info src/tools/perf \
  @DOCS_ONLY_FALSE@	src/tools/profile bindings/go bindings/java \
