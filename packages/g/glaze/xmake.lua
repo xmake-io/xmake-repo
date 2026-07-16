@@ -7,6 +7,7 @@ package("glaze")
     add_urls("https://github.com/stephenberry/glaze/archive/refs/tags/$(version).tar.gz",
              "https://github.com/stephenberry/glaze.git")
 
+    add_versions("v7.9.0", "8f2c80483b675c86dd2914c140087f1a73d9ca6fc59bad5375d9a1ecba5f7d34")
     add_versions("v7.0.2", "febbec555648b310c2a1975ca750939cd00c4801dede8362fcf84cab7b3ae46f")
     add_versions("v7.0.0", "8a6c67d3b3320017100252ad7a84af4f7eb619421e011b3c860ad71f11f7fac9")
     add_versions("v6.1.0", "4ec01e893363701735d1ef3842fa77a74c4a664edaf08d6a1da0e744900d4125")
@@ -75,12 +76,16 @@ package("glaze")
                 assert(ndk and tonumber(ndk) >= 27, "package(glaze) require ndk version >= 27")
             end
 
-            if package:has_tool("cxx", "gcc") then
+            local version = package:version()
+            -- v7.2.3 dropped its workaround for constexpr static variables on older Clang.
+            if package:has_tool("cxx", "gcc") or
+               (version and version:ge("7.2.3") and package:has_tool("cxx", "clang", "clangxx")) then
                 assert(package:check_cxxsnippets({test = [[
                     constexpr void f() {
                         static constexpr int g = 1;
                     }
-                ]]}, {configs = {languages = "c++2b"}}), "package(glaze) require >= c++23")
+                ]]}, {configs = {languages = "c++2b"}}),
+                       "package(glaze) require a compiler with C++23 constexpr static support")
             end
 
             assert(package:check_cxxsnippets({test = [[
