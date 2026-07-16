@@ -19,8 +19,6 @@ package("libui")
 
     on_install("linux", "macosx", "windows", function (package)
         local configs = {"-Dexamples=false", "-Dtests=false"}
-        -- this causes an error because both `--default-library` and `-Ddefault_library` being set
-        --table.insert(configs, "--default-library=" .. (package:config("shared") and "shared" or "static"))
         import("package.tools.meson").install(package, configs)
     end)
 
