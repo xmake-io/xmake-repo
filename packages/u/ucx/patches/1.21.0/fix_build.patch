@@ -25,29 +25,24 @@ index a90c998..a099519 100644
 +#endif
    {
      /*
-     * Naive non-blocking barrier implementation over send/recv, to call user
-diff --git a/src/ucm/event/event.c b/src/ucm/event/event.c
-index 3502c64..368972d 100644
---- a/src/ucm/event/event.c
-+++ b/src/ucm/event/event.c
-@@ -521,7 +521,9 @@ void ucm_event_handler_remove(ucm_event_handler_t *handler)
+      * Naive non-blocking barrier implementation over send/recv, to call user
+diff --git a/src/tools/profile/Makefile.am b/src/tools/profile/Makefile.am
+index a0952c2..2dd667c 100644
+--- a/src/tools/profile/Makefile.am
++++ b/src/tools/profile/Makefile.am
+@@ -10,3 +10,4 @@ ucx_read_profile_CFLAGS   = $(BASE_CFLAGS)
+ ucx_read_profile_SOURCES  = read_profile.c
+ ucx_read_profile_LDADD    = \
++    -Wl,--undefined=ucs_init \
+     $(abs_top_builddir)/src/ucs/libucs.la
+diff --git a/src/tools/profile/Makefile.in b/src/tools/profile/Makefile.in
+index b644463..f7edce1 100644
+--- a/src/tools/profile/Makefile.in
++++ b/src/tools/profile/Makefile.in
+@@ -479,5 +479,6 @@ ucx_read_profile_CFLAGS = $(BASE_CFLAGS)
+ ucx_read_profile_SOURCES = read_profile.c
+ ucx_read_profile_LDADD = \
++    -Wl,--undefined=ucs_init \
+     $(abs_top_builddir)/src/ucs/libucs.la
  
- static ucs_status_t ucm_event_install(int events)
- {
-+#ifdef UCX_SHARED_LIB
-     UCS_MODULE_FRAMEWORK_DECLARE(ucm);
-+#endif
-     ucm_event_installer_t *event_installer;
-     int malloc_events;
-     ucs_status_t status;
-@@ -547,8 +549,10 @@ static ucs_status_t ucm_event_install(int events)
- 
-     ucm_debug("malloc hooks are ready");
- 
-+#ifdef UCX_SHARED_LIB
-     /* Call extra event installers */
-     UCS_MODULE_FRAMEWORK_LOAD(ucm, UCS_MODULE_LOAD_FLAG_NODELETE);
-+#endif
-     ucs_list_for_each(event_installer, &ucm_event_installer_list, list) {
-         status = event_installer->install(events);
-         if (status != UCS_OK) {
+ all: all-am

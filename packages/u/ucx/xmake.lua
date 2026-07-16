@@ -13,7 +13,7 @@ package("ucx")
     add_versions("1.15.0", "4b202087076bc1c98f9249144f0c277a8ea88ad4ca6f404f94baa9cb3aebda6d")
     add_versions("1.11.0", "b7189b69fe0e16e3c03784ef674e45687a9c520750bd74a45125c460ede37647")
 
-    add_patches("1.21.0", "patches/1.21.0/fix_build.patch", "b32feccefd6f2c546e43c0e6faedb88eb0011f2cbc0f9fad1ce34326ecb7f399")
+    add_patches("1.21.0", "patches/1.21.0/fix_build.patch", "713ca5cc24f81ed305a8d8316ce7200a3fbf0ebd0cdee83b82017db7d0cb11d0")
     add_patches("1.16.0", "patches/1.16.0/unused_variable.patch", "dd40219cf1989cd42ea19f334ea5c3e4e57736bcbad62fa6741f00a1bb89f0fc")
 
     add_configs("cuda", {description = "Enable CUDA support.", default = false, type = "boolean"})
