@@ -25,7 +25,10 @@ package("pthreads4w")
         end
         import("package.tools.nmake").build(package, {"-f", "Makefile", target})
         os.cp("*.lib", package:installdir("lib"))
-        os.cp("*.h", package:installdir("include/pthread"))
+        os.cp("_ptw32.h", package:installdir("include"))
+        os.cp("pthread.h", package:installdir("include"))
+        os.cp("sched.h", package:installdir("include"))
+        os.cp("semaphore.h", package:installdir("include"))
         if package:config("shared") then
             os.cp("*.dll", package:installdir("bin"))
             package:addenv("PATH", "bin")
