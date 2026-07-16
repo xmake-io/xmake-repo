@@ -20,21 +20,29 @@ package("h5cpp")
 
     on_load(function (package)
         package:add("deps", "hdf5", { configs = {shared = package:config("shared")} })
+        if package:is_plat("windows") and package:config("shared") then
+            package:add("defines", "H5CPP_BUILD_SHARED")
+        end
     end)
 
     on_install("windows", "macosx", "linux", function (package)
         os.rm("cmake/FindHDF5.cmake")
+        if os.isfile("cmake/BuildInfo.cmake") then
+            io.replace("cmake/BuildInfo.cmake", "OUTPUT_STRIP_TRAILING_WHITESPACE)", "OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)", {plain = true})
+        end
         local configs = {
             "-DH5CPP_WITH_BOOST=OFF",
             "-DH5CPP_CONAN=DISABLE",
             "-DH5CPP_DISABLE_TESTS=ON",
-            "-DH5CPP_BUILD_DOCS=OFF"
+            "-DH5CPP_BUILD_DOCS=OFF",
+            "-DCMAKE_POLICY_DEFAULT_CMP0074=NEW"
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DH5CPP_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DHDF5_USE_STATIC_LIBRARIES=" .. (package:config("shared") and "OFF" or "ON"))
-        if is_plat("windows") and package:config("shared") then
-            package:add("defines", "H5_BUILT_AS_DYNAMIC_LIB")
+        local hdf5 = package:dep("hdf5")
+        if hdf5 and not hdf5:is_system() then
+            table.insert(configs, "-DHDF5_ROOT=" .. hdf5:installdir())
         end
         import("package.tools.cmake").install(package, configs, {packagedeps = {"hdf5"}})
         package:addenv("PATH", package:installdir("bin"))

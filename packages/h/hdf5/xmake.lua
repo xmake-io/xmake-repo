@@ -42,6 +42,9 @@ package("hdf5")
         if package:config("szip") then
             package:add("deps", "szip")
         end
+        if package:is_plat("windows") and package:config("shared") then
+            package:add("defines", "H5_BUILT_AS_DYNAMIC_LIB")
+        end
 
         local libs = {"hdf5_hl_cpp", "hdf5_cpp", "hdf5_hl", "hdf5_tools", "hdf5"}
         local prefix = (package:is_plat("windows") and not package:config("shared")) and "lib" or ""
@@ -49,8 +52,7 @@ package("hdf5")
             package:add("links", prefix .. lib)
         end
 
-        package:addenv("HDF5_ROOT", "cmake")
-        package:addenv("PATH", "bin")
+        package:mark_as_pathenv("HDF5_ROOT")
     end)
 
     on_install("windows", "macosx", "linux", "bsd", function (package)
@@ -79,6 +81,8 @@ package("hdf5")
         table.insert(configs, "-DHDF5_ENABLE_Z_LIB_SUPPORT=" .. (package:config("zlib") and "ON" or "OFF"))
         table.insert(configs, "-DHDF5_ENABLE_SZIP_SUPPORT=" .. (package:config("szip") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
+        package:addenv("HDF5_ROOT", "cmake")
+        package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)
