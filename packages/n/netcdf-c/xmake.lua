@@ -25,7 +25,7 @@ package("netcdf-c")
             "-DENABLE_DAP_REMOTE_TESTS=OFF",
             "-DDISABLE_INSTALL_DEPENDENCIES=ON",
         }
-        if is_plat("windows") then
+        if package:is_plat("windows") then
             table.insert(configs, "-DNETCDF_USE_STATIC_CRT=" .. (package:runtimes():startswith("MT") and "ON" or "OFF"))
             if package:config("shared") then
                 table.insert(configs, "-DNETCDF_ENABLE_DLL=ON")
