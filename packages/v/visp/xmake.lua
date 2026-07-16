@@ -35,7 +35,7 @@ package("visp")
         end
     end)
 
-    on_install("linux", "macosx", "windows", "bsd", function (package)
+    on_install("linux", "macosx", "windows|!arm64", "bsd", function (package)
         local configs = {
             "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
             "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"),
