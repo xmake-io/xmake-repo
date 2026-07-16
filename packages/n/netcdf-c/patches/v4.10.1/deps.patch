@@ -1,5 +1,5 @@
 diff --git a/cmake/dependencies.cmake b/cmake/dependencies.cmake
-index d06a276..b7ada29 100644
+index 95cf645..46a5dbf 100644
 --- a/cmake/dependencies.cmake
 +++ b/cmake/dependencies.cmake
 @@ -134,7 +134,14 @@ if(USE_HDF5)
@@ -32,7 +32,7 @@ index d06a276..b7ada29 100644
  
    # Check to see if H5Z_SZIP exists in HDF5_Libraries. If so, we must use szip library.
    check_hdf5_feature(HAVE_H5Z_SZIP H5_HAVE_FILTER_SZIP)
-@@ -466,8 +480,8 @@ endif()
+@@ -474,8 +488,8 @@ endif()
  ################################
  # see if we have libxml2
  if(NETCDF_ENABLE_LIBXML2)
@@ -69,7 +69,7 @@ index b8fa4b2..f881a92 100644
    target_include_directories(ncxml
    PUBLIC
 diff --git a/libncxml/ncxml_xml2.c b/libncxml/ncxml_xml2.c
-index 12132a7..7da27d5 100644
+index dc62972..3a911f4 100644
 --- a/libncxml/ncxml_xml2.c
 +++ b/libncxml/ncxml_xml2.c
 @@ -3,7 +3,7 @@
@@ -82,7 +82,7 @@ index 12132a7..7da27d5 100644
  #include "ncxml.h"
  
 diff --git a/netCDFConfig.cmake.in b/netCDFConfig.cmake.in
-index 987b2ad..32eba6d 100644
+index bef7788..729f72a 100644
 --- a/netCDFConfig.cmake.in
 +++ b/netCDFConfig.cmake.in
 @@ -40,9 +40,14 @@ set(netCDF_HAS_DAP2 @HAS_DAP2@)

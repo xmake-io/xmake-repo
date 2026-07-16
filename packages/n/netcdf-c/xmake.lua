@@ -7,13 +7,14 @@ package("netcdf-c")
              "https://github.com/Unidata/netcdf-c.git")
     add_versions("v4.10.1", "33c27231c478c3b35da7c7758fbdd02da1fe407abcb16ddfe195f69d164f930d")
     add_versions("v4.9.3", "990f46d49525d6ab5dc4249f8684c6deeaf54de6fec63a187e9fb382cc0ffdff")
-    add_patches("v4.10.1", "patches/v4.10.1/deps.patch", "97590db21692f9ca9b2327f69ac524dfea38e5e4567239f4a64decba79ba25b3")
+    add_patches("v4.10.1", "patches/v4.10.1/deps.patch", "ed8020780b49d87c212481d6c18c5981eb1a9db2a574a350918ae149fbb5d00a")
     add_patches("v4.9.3", "patches/v4.9.3/deps.patch", "b66fdf04a6d0d220ef14e078ca17ca09d33491f19ef408dc971c5c1fac6e7d6d")
 
     add_deps("cmake", "libcurl", "libxml2", "libzip", "zlib")
     add_deps("hdf5", {configs = {zlib = true}})
 
     on_install("windows", "linux", "macosx", "bsd", function (package)
+        io.replace("config.h.cmake.in", "#ifndef __clang__", "#if !defined(_MSC_VER) && !defined(__clang__)", {plain = true})
         local configs = {
             "-DNCNN_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"),
             "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
