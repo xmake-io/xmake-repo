@@ -46,7 +46,9 @@ package("liblo")
     endif()]], {plain = true})
         import("package.tools.cmake").install(package, configs)
         local pc = package:installdir("lib/pkgconfig/liblo.pc")
-        io.replace(pc, "-llo", "-lliblo", {plain = true})
+        if package:is_plat("windows") then
+            io.replace(pc, "-llo", "-lliblo", {plain = true})
+        end
     end)
 
     on_test(function (package)
