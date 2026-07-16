@@ -46,3 +46,20 @@ index b644463..f7edce1 100644
      $(abs_top_builddir)/src/ucs/libucs.la
  
  all: all-am
+diff --git a/Makefile.am b/Makefile.am
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -53 +52,0 @@ SUBDIRS += \
+-	test/apps \
+diff --git a/Makefile.in b/Makefile.in
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -617,7 +617,7 @@ top_top_srcdir = @top_top_srcdir@
+ @DOCS_ONLY_FALSE@SUBDIRS = src/ucm src/ucs src/uct src/ucp \
+ @DOCS_ONLY_FALSE@	src/tools/vfs src/tools/info src/tools/perf \
+ @DOCS_ONLY_FALSE@	src/tools/profile bindings/go bindings/java \
+-@DOCS_ONLY_FALSE@	test/apps examples cmake config \
++@DOCS_ONLY_FALSE@	cmake config \
+ @DOCS_ONLY_FALSE@	$(am__append_1) $(am__append_2)
+ @HAVE_LCOV_TRUE@LCOV_DIR = lcov_data
+ @HAVE_LCOV_TRUE@LCOV_INFO = lcov.info
