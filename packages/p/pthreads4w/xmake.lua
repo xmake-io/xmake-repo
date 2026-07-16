@@ -9,8 +9,6 @@ package("pthreads4w")
 
     add_versions("3.0.0", "31f20963840c26d78fb20224577b7e677018b3eb3000c3570db88528043adc20")
 
-    add_includedirs("include/pthread")
-
     if is_host("linux", "macosx") and is_plat("mingw") then
         add_deps("autoconf", "automake")
     end
