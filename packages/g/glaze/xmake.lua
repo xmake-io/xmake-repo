@@ -76,12 +76,16 @@ package("glaze")
                 assert(ndk and tonumber(ndk) >= 27, "package(glaze) require ndk version >= 27")
             end
 
-            if package:has_tool("cxx", "gcc") then
+            local version = package:version()
+            -- v7.2.3 dropped its workaround for constexpr static variables on older Clang.
+            if package:has_tool("cxx", "gcc") or
+               (version and version:ge("7.2.3") and package:has_tool("cxx", "clang", "clangxx")) then
                 assert(package:check_cxxsnippets({test = [[
                     constexpr void f() {
                         static constexpr int g = 1;
                     }
-                ]]}, {configs = {languages = "c++2b"}}), "package(glaze) require >= c++23")
+                ]]}, {configs = {languages = "c++2b"}}),
+                       "package(glaze) require a compiler with C++23 constexpr static support")
             end
 
             assert(package:check_cxxsnippets({test = [[
