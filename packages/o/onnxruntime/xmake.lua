@@ -125,18 +125,18 @@ package("onnxruntime")
     end)
 
     on_install("windows", "linux|arm64", "linux|x86_64", "macosx", function (package)
+        local cmake_file = "lib/cmake/onnxruntime/onnxruntimeTargets.cmake"
+        if os.isfile(cmake_file) then
+            io.replace(cmake_file, "include/onnxruntime", "include", {plain = true})
+        end
+        cmake_file = "lib/cmake/onnxruntime/onnxruntimeTargets-release.cmake"
+        if os.isfile(cmake_file) then
+            io.replace(cmake_file, "lib64", "lib", {plain = true})
+        end
         if package:is_plat("windows") then
             os.mv("lib/*.dll", package:installdir("bin"))
         end
         os.cp("*", package:installdir())
-        local cmake_file = package:installdir("lib/cmake/onnxruntime/onnxruntimeTargets.cmake")
-        if os.isfile(cmake_file) then
-            io.replace(cmake_file, "include/onnxruntime", "include", {plain = true})
-        end
-        cmake_file = package:installdir("lib/cmake/onnxruntime/onnxruntimeTargets-release.cmake")
-        if os.isfile(cmake_file) then
-            io.replace(cmake_file, "lib64", "lib", {plain = true})
-        end
     end)
 
     on_test(function (package)
