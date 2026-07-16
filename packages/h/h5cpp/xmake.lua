@@ -12,8 +12,8 @@ package("h5cpp")
     add_versions("v0.5.1", "8fcab57ffbc2d799fe315875cd8fcf67e8b059cccc441ea45a001c03f6a9fd25")
 
     add_patches(">=0.5.1 <0.7.1", path.join(os.scriptdir(), "patches", "0.5.1", "fix-find-hdf5.patch"), "25f26ec6994d387571d7c068ba0405a34db45480a9c17fe3ea6402042e7de87c")
-    add_patches(">=0.5.1", path.join(os.scriptdir(), "patches", "0.5.1", "windows.patch"), "ce79d38e130ae15ba273892306295660446c3e3649e00c742d74c72d3ae0096d")
-    add_patches(">=0.7.1", path.join(os.scriptdir(), "patches", "0.7.1", "cmake.patch"), "53e3de0fc93cbc132942185647493199eabbdfbb72c8d0de6a03761e0576ee76")
+    add_patches(">=0.5.1 <0.8.0", path.join(os.scriptdir(), "patches", "0.5.1", "windows.patch"), "ce79d38e130ae15ba273892306295660446c3e3649e00c742d74c72d3ae0096d")
+    add_patches(">=0.7.1 <0.8.0", path.join(os.scriptdir(), "patches", "0.7.1", "cmake.patch"), "53e3de0fc93cbc132942185647493199eabbdfbb72c8d0de6a03761e0576ee76")
 
     add_deps("cmake")
     add_deps("zlib")
@@ -32,6 +32,7 @@ package("h5cpp")
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DH5CPP_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DHDF5_USE_STATIC_LIBRARIES=" .. (package:config("shared") and "OFF" or "ON"))
         if is_plat("windows") and package:config("shared") then
             package:add("defines", "H5_BUILT_AS_DYNAMIC_LIB")
         end
