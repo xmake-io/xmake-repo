@@ -9,6 +9,7 @@ package("doctest")
              "https://github.com/onqtam/doctest/archive/$(version).tar.gz",
              "https://github.com/onqtam/doctest.git")
 
+    add_versions("2.5.3", "174ebc4e769928959614789c5b4e9c3d0a0f81a62bb608756b127bfebfb21331")
     add_versions("2.5.2", "9189960c2bbbc4f3382ce0773b2bb5f13e3afd8fed47f55f193e11e85a4f9854")
     add_versions("2.5.0", "eb917c80bef7aceb9eca59d9328142351facdcdabe90b5242632b93c34b9e345")
     add_versions("2.4.12", "73381c7aa4dee704bd935609668cf41880ea7f19fa0504a200e13b74999c2d70")
