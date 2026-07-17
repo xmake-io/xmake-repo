@@ -57,6 +57,7 @@ package("lastools")
     end)
 
     on_test(function (package)
+        local languages = package:version() and package:version():ge("2.0.5") and "c++17" or "c++14"
         assert(package:check_cxxsnippets({test = [[
             #include <LASlib/lasreader.hpp>
             #include <LASlib/laswriter.hpp>
@@ -64,5 +65,5 @@ package("lastools")
                 LASreadOpener lasreadopener;
                 LASwriteOpener laswriteopener;
             }
-        ]]}, {configs = {languages = "c++14"}}))
+        ]]}, {configs = {languages = languages}}))
     end)
