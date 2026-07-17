@@ -30,6 +30,10 @@ package("lastools")
         end
 
         if package:is_plat("mingw") then
+            if package:version() and package:version():eq("2.0.5") then
+                -- MinGW's stat64() expects struct stat64, but las_stat_t aliases struct _stat64.
+                io.replace("LASzip/src/mydefs.hpp", "return stat64(path, buf);", "return _stat64(path, buf);", {plain = true})
+            end
             if package:version() and package:version():ge("2.0.4") then
                 io.replace("LASzip/src/mydefs.cpp", "#ifdef _MSC_VER\n#include <windows.h>", "#ifdef _WIN32\n#include <windows.h>", {plain = true})
                 io.replace("LASzip/src/mydefs.cpp", "#ifdef _MSC_VER\n  GetCurrentDirectory", "#ifdef _WIN32\n  GetCurrentDirectory", {plain = true})
