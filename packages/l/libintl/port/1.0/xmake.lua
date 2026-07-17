@@ -98,6 +98,7 @@ else
     end
 end
 configvar_check_ctypes("HAVE_STDINT_H_WITH_UINTMAX", "uintmax_t", {includes = "stdint.h"})
+configvar_check_cincludes("HAVE_STDINT_H", "stdint.h")
 if is_plat("android") then
     configvar_check_cfuncs("HAVE_PTHREAD_API", "pthread_create", {includes = "pthread.h"})
 else
@@ -227,6 +228,36 @@ configvar_check_cfuncs("HAVE_WPRINTF", "wprintf", {includes = "wchar.h", default
 configvar_check_cfuncs("HAVE_SNPRINTF", "snprintf", {includes = "stdio.h", default = 0})
 configvar_check_cfuncs("HAVE_ASPRINTF", "asprintf", {includes = "stdio.h", default = 0})
 
+if is_plat("mingw", "macosx") then
+    configvar_check_cincludes("HAVE_UCHAR_H", "uchar.h")
+    set_configvar("CXX_HAVE_UCHAR_H", 0)
+    set_configvar("CXX_HAS_CHAR8_TYPE", 0)
+    set_configvar("CXX_HAS_UCHAR_TYPES", 0)
+    set_configvar("GNULIBHEADERS_OVERRIDE_CHAR8_T", 0)
+    set_configvar("GNULIBHEADERS_OVERRIDE_CHAR16_T", 0)
+    set_configvar("GNULIBHEADERS_OVERRIDE_CHAR32_T", 0)
+    set_configvar("SMALL_WCHAR_T", is_plat("mingw") and 1 or 0)
+    if is_plat("mingw") then
+        set_configvar("INCLUDE_NEXT", "include_next", {quote = false})
+        set_configvar("NEXT_UCHAR_H", "<uchar.h>", {quote = false})
+    end
+    set_configvar("GNULIB_C32ISALNUM", 1)
+    set_configvar("GNULIB_C32ISALPHA", 1)
+    set_configvar("GNULIB_C32ISBLANK", 1)
+    set_configvar("GNULIB_C32ISCNTRL", 1)
+    set_configvar("GNULIB_C32ISDIGIT", 1)
+    set_configvar("GNULIB_C32ISGRAPH", 1)
+    set_configvar("GNULIB_C32ISLOWER", 1)
+    set_configvar("GNULIB_C32ISPRINT", 1)
+    set_configvar("GNULIB_C32ISPUNCT", 1)
+    set_configvar("GNULIB_C32ISSPACE", 1)
+    set_configvar("GNULIB_C32ISUPPER", 1)
+    set_configvar("GNULIB_C32ISXDIGIT", 1)
+    set_configvar("GNULIB_C32TOLOWER", 1)
+    set_configvar("GNULIB_C32TOUPPER", 1)
+    set_configvar("GNULIB_C32WIDTH", 1)
+end
+
 target("intl")
     set_kind("$(kind)")
     add_defines("HAVE_CONFIG_H", "NO_XMALLOC", "IN_LIBRARY", "BUILDING_LIBRARY", "IN_LIBINTL")
@@ -256,7 +287,9 @@ target("intl")
 
     remove_files("gettext-runtime/intl/os2compat.c")
     remove_files("gettext-runtime/intl/intl-exports.c")
-    remove_files("gettext-runtime/intl/gnulib-lib/c32*.c")
+    if not is_plat("mingw", "macosx") then
+        remove_files("gettext-runtime/intl/gnulib-lib/c32*.c")
+    end
     remove_files("gettext-runtime/intl/gnulib-lib/frexp*.c")
     remove_files("gettext-runtime/intl/gnulib-lib/getcwd-lgpl.c")
     remove_files("gettext-runtime/intl/gnulib-lib/getlocalename_l-unsafe.c")
@@ -361,6 +394,22 @@ extern wchar_t *wgetcwd (wchar_t *, size_t);
         io.gsub("gettext-runtime/intl/gnulib-lib/tsearch.h", "(definition of _GL_ARG_NONNULL.-)\n", "%1\n#include <arg-nonnull.h>\n")
         io.gsub("gettext-runtime/intl/gnulib-lib/tsearch.h", "(definition of _GL_WARN_ON_USE.-)\n", "%1\n#include <warn-on-use.h>\n")
         io.replace("gettext-runtime/intl/gnulib-lib/tsearch.c", "#include <search.h>", "#include <tsearch.h>", {plain = true})
+        -- For MinGW/macOS relating to uchar
+        if is_plat("mingw", "macosx") then
+            local uchar_src = path.join(os.projectdir(), "gettext-runtime/intl/gnulib-lib/uchar.in.h")
+            local uchar_dst = path.join(os.projectdir(), "gettext-runtime/intl/gnulib-lib/uchar.h")
+            local uchar = io.readfile(uchar_src)
+            uchar = uchar:gsub("@(.-)@", function(name)
+                local v = cvars[name]
+                if v == nil then return "0" end
+                return (type(v) == "number" and tostring(v)) or
+                       (type(v) == "boolean" and (v and "1" or "0")) or v
+            end)
+            io.writefile(uchar_dst, uchar)
+            io.gsub(uchar_dst, "(definitions of _GL_FUNCDECL_RPL etc.-)\n", "%1\n#include <c++defs.h>\n")
+            io.gsub(uchar_dst, "(definition of _GL_ARG_NONNULL.-)\n", "%1\n#include <arg-nonnull.h>\n")
+            io.gsub(uchar_dst, "(definition of _GL_WARN_ON_USE.-)\n", "%1\n#include <warn-on-use.h>\n")
+        end
         os.cp("gettext-runtime/intl/libgnuintl.h", "gettext-runtime/intl/libintl.h")
 
         local lines = io.readfile("gettext-runtime/intl/export.h")
