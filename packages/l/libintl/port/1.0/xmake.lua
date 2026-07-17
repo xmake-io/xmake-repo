@@ -174,6 +174,18 @@ set_configvar("SETLOCALE_NULL_ONE_MTSAFE", 1)
 configvar_check_cincludes("HAVE_SEARCH_H", "search.h")
 configvar_check_cincludes("HAVE_STDBOOL_H", "stdbool.h")
 configvar_check_cincludes("HAVE_UNISTD_H", "unistd.h")
+configvar_check_cincludes("HAVE_XLOCALE_H", "xlocale.h")
+
+if is_plat("macosx") then
+    set_configvar("HAVE_GOOD_USELOCALE", 1)
+end
+
+if is_plat("android") then
+    local ndk_sdkver = get_config("ndk_sdkver")
+    if ndk_sdkver and tonumber(ndk_sdkver) >= 23 then
+        set_configvar("HAVE_MEMPCPY", 1)
+    end
+end
 
 -- search.h variables
 set_configvar("GUARD_PREFIX", "GL", {quote = false})
