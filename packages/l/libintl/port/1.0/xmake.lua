@@ -174,6 +174,9 @@ set_configvar("SETLOCALE_NULL_ONE_MTSAFE", 1)
 configvar_check_cincludes("HAVE_SEARCH_H", "search.h")
 configvar_check_cincludes("HAVE_STDBOOL_H", "stdbool.h")
 configvar_check_cincludes("HAVE_UNISTD_H", "unistd.h")
+if is_plat("android") then
+    set_configvar("HAVE_MEMPCPY", 1)
+end
 
 -- search.h variables
 set_configvar("GUARD_PREFIX", "GL", {quote = false})
@@ -287,9 +290,7 @@ target("intl")
 
     remove_files("gettext-runtime/intl/os2compat.c")
     remove_files("gettext-runtime/intl/intl-exports.c")
-    if not is_plat("mingw", "macosx") then
-        remove_files("gettext-runtime/intl/gnulib-lib/c32*.c")
-    end
+    remove_files("gettext-runtime/intl/gnulib-lib/c32*.c")
     remove_files("gettext-runtime/intl/gnulib-lib/frexp*.c")
     remove_files("gettext-runtime/intl/gnulib-lib/getcwd-lgpl.c")
     remove_files("gettext-runtime/intl/gnulib-lib/getlocalename_l-unsafe.c")
@@ -394,8 +395,8 @@ extern wchar_t *wgetcwd (wchar_t *, size_t);
         io.gsub("gettext-runtime/intl/gnulib-lib/tsearch.h", "(definition of _GL_ARG_NONNULL.-)\n", "%1\n#include <arg-nonnull.h>\n")
         io.gsub("gettext-runtime/intl/gnulib-lib/tsearch.h", "(definition of _GL_WARN_ON_USE.-)\n", "%1\n#include <warn-on-use.h>\n")
         io.replace("gettext-runtime/intl/gnulib-lib/tsearch.c", "#include <search.h>", "#include <tsearch.h>", {plain = true})
-        -- For MinGW/macOS relating to uchar
-        if is_plat("mingw", "macosx") then
+        -- For MinGW/macOS relating to uchar/c32* symbols
+        if is_plat("macosx") then
             local uchar_src = path.join(os.projectdir(), "gettext-runtime/intl/gnulib-lib/uchar.in.h")
             local uchar_dst = path.join(os.projectdir(), "gettext-runtime/intl/gnulib-lib/uchar.h")
             local uchar = io.readfile(uchar_src)
@@ -409,6 +410,38 @@ extern wchar_t *wgetcwd (wchar_t *, size_t);
             io.gsub(uchar_dst, "(definitions of _GL_FUNCDECL_RPL etc.-)\n", "%1\n#include <c++defs.h>\n")
             io.gsub(uchar_dst, "(definition of _GL_ARG_NONNULL.-)\n", "%1\n#include <arg-nonnull.h>\n")
             io.gsub(uchar_dst, "(definition of _GL_WARN_ON_USE.-)\n", "%1\n#include <warn-on-use.h>\n")
+        end
+        if is_plat("mingw") then
+            io.writefile(path.join(os.projectdir(), "gettext-runtime/intl/gnulib-lib/uchar.h"), [[
+#ifndef _GL_UCHAR_H
+#define _GL_UCHAR_H
+
+#include_next <uchar.h>
+#include <wchar.h>
+#include <wctype.h>
+#include <stdint.h>
+
+/* Inline c32* functions missing from MinGW's <uchar.h> */
+/* wchar_t is 16-bit on MinGW; for values > 0xFFFF return safe defaults. */
+
+static inline int c32isalnum(char32_t wc) { return (wc <= 0xFFFF) ? iswalnum((wint_t)wc) : 0; }
+static inline int c32isalpha(char32_t wc) { return (wc <= 0xFFFF) ? iswalpha((wint_t)wc) : 0; }
+static inline int c32isblank(char32_t wc) { return (wc <= 0xFFFF) ? iswblank((wint_t)wc) : 0; }
+static inline int c32iscntrl(char32_t wc) { return (wc <= 0xFFFF) ? iswcntrl((wint_t)wc) : 0; }
+static inline int c32isdigit(char32_t wc) { return (wc <= 0xFFFF) ? iswdigit((wint_t)wc) : 0; }
+static inline int c32isgraph(char32_t wc) { return (wc <= 0xFFFF) ? iswgraph((wint_t)wc) : 0; }
+static inline int c32islower(char32_t wc) { return (wc <= 0xFFFF) ? iswlower((wint_t)wc) : 0; }
+static inline int c32isprint(char32_t wc) { return (wc <= 0xFFFF) ? iswprint((wint_t)wc) : 0; }
+static inline int c32ispunct(char32_t wc) { return (wc <= 0xFFFF) ? iswpunct((wint_t)wc) : 0; }
+static inline int c32isspace(char32_t wc) { return (wc <= 0xFFFF) ? iswspace((wint_t)wc) : 0; }
+static inline int c32isupper(char32_t wc) { return (wc <= 0xFFFF) ? iswupper((wint_t)wc) : 0; }
+static inline int c32isxdigit(char32_t wc) { return (wc <= 0xFFFF) ? iswxdigit((wint_t)wc) : 0; }
+static inline int c32width(char32_t wc) { return (wc <= 0xFFFF) ? wcwidth((wchar_t)wc) : 2; }
+static inline char32_t c32tolower(char32_t wc) { return (wc <= 0xFFFF) ? towlower((wint_t)wc) : wc; }
+static inline char32_t c32toupper(char32_t wc) { return (wc <= 0xFFFF) ? towupper((wint_t)wc) : wc; }
+
+#endif
+]])
         end
         os.cp("gettext-runtime/intl/libgnuintl.h", "gettext-runtime/intl/libintl.h")
 
