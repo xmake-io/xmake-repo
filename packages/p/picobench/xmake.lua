@@ -29,5 +29,5 @@ package("picobench")
                 }
             }
             PICOBENCH(rand_vector); // Register the above function with picobench
-        ]]}))
+        ]]}, {configs = {languages = "c++11"}}))
     end)
