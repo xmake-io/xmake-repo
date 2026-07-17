@@ -31,7 +31,15 @@ if has_config("tools") then
     target("tools_objects")
         set_kind("object")
         set_languages("c++17")
+        add_includedirs("src")
+        -- Do not glob src/*.cpp: it contains tool entry points with main() and tool-specific sources.
+        -- Some shared sources, such as proj_wrapper.cpp, are not available in older releases.
         add_files("src/geoprojectionconverter.cpp", "src/proj_loader.cpp")
+        for _, filename in ipairs({"wktparser.cpp", "proj_wrapper.cpp"}) do
+            if os.isfile("src/" .. filename) then
+                add_files("src/" .. filename)
+            end
+        end
         add_deps("LASlib")
 
     local tools = {
@@ -52,6 +60,9 @@ if has_config("tools") then
             set_kind("binary")
             set_languages("c++17")
             add_files("src/" .. tool .. ".cpp")
+            if is_plat("linux", "android") then
+                add_syslinks("dl")
+            end
             add_deps("tools_objects", "LASlib")
     end
 end

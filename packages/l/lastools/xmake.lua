@@ -23,6 +23,12 @@ package("lastools")
     end)
 
     on_install(function (package)
+        if package:version() and package:version():eq("2.0.5") then
+            for _, filename in ipairs({"laszipper.cpp", "lasunzipper.cpp"}) do
+                io.replace(path.join("LASzip", "src", filename), "IS_LITTLE_ENDIAN()", "Endian::IS_LITTLE_ENDIAN", {plain = true})
+            end
+        end
+
         if package:is_plat("mingw") then
             if package:version() and package:version():ge("2.0.4") then
                 io.replace("LASzip/src/mydefs.cpp", "#ifdef _MSC_VER\n#include <windows.h>", "#ifdef _WIN32\n#include <windows.h>", {plain = true})
