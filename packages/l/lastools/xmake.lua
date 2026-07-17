@@ -13,6 +13,16 @@ package("lastools")
     add_configs("cmake", {description = "Use cmake buildsystem", default = false, type = "boolean"})
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
 
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
+            local ndk_sdkver = ndk and ndk:config("ndk_sdkver")
+            if package:version() and package:version():ge("2.0.5") and ndk_sdkver and tonumber(ndk_sdkver) < 30 then
+                raise("package(lastools >= 2.0.5) does not support Android API levels earlier than 30")
+            end
+        end)
+    end
+
     on_load(function (package)
         if package:config("cmake") then
             package:add("deps", "cmake")
