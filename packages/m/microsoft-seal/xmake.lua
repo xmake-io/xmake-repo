@@ -6,6 +6,7 @@ package("microsoft-seal")
     add_urls("https://github.com/microsoft/SEAL/archive/refs/tags/$(version).tar.gz",
              "https://github.com/microsoft/SEAL.git")
 
+    add_versions("v4.3.3", "423e5fde0e49c761785ebd849dc0c71fcd94ce2c663f1d52e0fe01a60e0fea80")
     add_versions("v4.3.2", "90c36b28bda750327f9ae172a4b15ad0706412f7d8239471636b94f944dfcac6")
     add_versions("v4.1.2", "acc2a1a127a85d1e1ffcca3ffd148f736e665df6d6b072df0e42fff64795a13c")
 
