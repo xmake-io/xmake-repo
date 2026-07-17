@@ -174,9 +174,6 @@ set_configvar("SETLOCALE_NULL_ONE_MTSAFE", 1)
 configvar_check_cincludes("HAVE_SEARCH_H", "search.h")
 configvar_check_cincludes("HAVE_STDBOOL_H", "stdbool.h")
 configvar_check_cincludes("HAVE_UNISTD_H", "unistd.h")
-if is_plat("android") then
-    set_configvar("HAVE_MEMPCPY", 1)
-end
 
 -- search.h variables
 set_configvar("GUARD_PREFIX", "GL", {quote = false})
@@ -337,7 +334,9 @@ target("intl")
             content = content .. "\n\n#ifndef SETLOCALE_NULL_ALL_MAX\n#define SETLOCALE_NULL_ALL_MAX (148+12*256+1)\n#define SETLOCALE_NULL_MAX (256+1)\n#endif\n"
         end
         if not content:find("\\n#define locale_t", 1, true) then
-            content = content .. "\n#ifndef locale_t\n#define locale_t _locale_t\n#endif\n"
+            if is_plat("windows", "mingw") then
+                content = content .. "\n#ifndef locale_t\n#define locale_t _locale_t\n#endif\n"
+            end
         end
         if not content:find("\\nextern wchar_t", 1, true) and is_plat("mingw") then
             content = content .. [[
