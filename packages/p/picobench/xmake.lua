@@ -5,6 +5,7 @@ package("picobench")
     set_license("MIT")
 
     add_urls("https://github.com/iboB/picobench/archive/refs/tags/v$(version).tar.gz")
+    add_versions("2.10.0", "65bdee215110c95a48a3d2aead7e38a89a8260fb7ba1c5f982e2df1690822c81")
     add_versions("2.9.0", "1da93456d5baa2420b32e0e2c411a3b429bbbdb3b0ca1fa42b809fc36e4181f3")
     add_versions("2.08", "7002cede527d661bc599a59dcd492ec6a0943f695603f581bf9f0569dcd9c866")
     add_versions("2.07", "c7f8e279cd5138a66a9a417caf1012ed7b15ba2652aec96ef8dd5e6e3e07d7a0")
