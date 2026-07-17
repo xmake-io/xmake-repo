@@ -6,11 +6,22 @@ package("lastools")
     add_urls("https://github.com/LAStools/LAStools/archive/refs/tags/$(version).tar.gz",
              "https://github.com/LAStools/LAStools.git")
 
+    add_versions("v2.0.5", "3d66320076faed754c2b0bf353a00c5ba8c11d78a9cc4903289ca99a9cb308fe")
     add_versions("v2.0.4", "40009d74dd7e782e2f245f4e35d063db06e74b2948a47157ee41f1cf63057090")
     add_versions("v2.0.3", "b6c6ac33835ead2c69d05e282febc266048ba071a71dae6fdad321d532dfcf78")
 
     add_configs("cmake", {description = "Use cmake buildsystem", default = false, type = "boolean"})
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
+
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
+            local ndk_sdkver = ndk and ndk:config("ndk_sdkver")
+            if package:version() and package:version():ge("2.0.5") and ndk_sdkver and tonumber(ndk_sdkver) < 30 then
+                raise("package(lastools >= 2.0.5) does not support Android API levels earlier than 30")
+            end
+        end)
+    end
 
     on_load(function (package)
         if package:config("cmake") then
@@ -22,7 +33,17 @@ package("lastools")
     end)
 
     on_install(function (package)
+        if package:version() and package:version():eq("2.0.5") then
+            for _, filename in ipairs({"laszipper.cpp", "lasunzipper.cpp"}) do
+                io.replace(path.join("LASzip", "src", filename), "IS_LITTLE_ENDIAN()", "Endian::IS_LITTLE_ENDIAN", {plain = true})
+            end
+        end
+
         if package:is_plat("mingw") then
+            if package:version() and package:version():eq("2.0.5") then
+                -- MinGW's stat64() expects struct stat64, but las_stat_t aliases struct _stat64.
+                io.replace("LASzip/src/mydefs.hpp", "return stat64(path, buf);", "return _stat64(path, buf);", {plain = true})
+            end
             if package:version() and package:version():ge("2.0.4") then
                 io.replace("LASzip/src/mydefs.cpp", "#ifdef _MSC_VER\n#include <windows.h>", "#ifdef _WIN32\n#include <windows.h>", {plain = true})
                 io.replace("LASzip/src/mydefs.cpp", "#ifdef _MSC_VER\n  GetCurrentDirectory", "#ifdef _WIN32\n  GetCurrentDirectory", {plain = true})
@@ -56,6 +77,7 @@ package("lastools")
     end)
 
     on_test(function (package)
+        local languages = package:version() and package:version():ge("2.0.5") and "c++17" or "c++14"
         assert(package:check_cxxsnippets({test = [[
             #include <LASlib/lasreader.hpp>
             #include <LASlib/laswriter.hpp>
@@ -63,5 +85,5 @@ package("lastools")
                 LASreadOpener lasreadopener;
                 LASwriteOpener laswriteopener;
             }
-        ]]}, {configs = {languages = "c++14"}}))
+        ]]}, {configs = {languages = languages}}))
     end)
