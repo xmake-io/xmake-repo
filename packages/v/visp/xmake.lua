@@ -7,7 +7,7 @@ package("visp")
              "https://github.com/lagadic/visp.git")
     add_versions("v3.7.0", "997f247f3702c83f0a8a6dc2f72ff98cfe3a5dcbd82f7c9f01d37ccd3b8ea97a")
 
-    add_deps("cmake", "eigen", "ffmpeg", "libjpeg", "libpng", "nlohmann_json", "openblas", "opencv", "openmp", "zlib")
+    add_deps("cmake", "eigen", "ffmpeg", "libjpeg", "libpng", "nlohmann_json", "openblas", "openmp", "zlib")
 
     add_configs("python",    {description = "Build Python bindings", default = false, type = "boolean"})
     add_configs("java",      {description = "Build Java bindings",   default = false, type = "boolean"})
@@ -26,6 +26,11 @@ package("visp")
         ["2026"] = "vc18"
     }
     on_load(function (package)
+        if package:is_plat("linux", "macosx", "bsd") and package:config("shared") then
+            package:add("deps", "opencv", {configs = {shared = true}})
+        else
+            package:add("deps", "opencv")
+        end
         if package:is_plat("windows") then
             local arch = package:arch()
             local linkdir = (package:config("shared") and "lib" or "staticlib")
