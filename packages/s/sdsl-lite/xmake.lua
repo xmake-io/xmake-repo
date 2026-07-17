@@ -6,6 +6,7 @@ package("sdsl-lite")
     add_urls("https://github.com/xxsds/sdsl-lite/archive/refs/tags/$(version).tar.gz",
              "https://github.com/xxsds/sdsl-lite.git")
 
+    add_versions("v3.0.4", "9bade92986d5b6dae15b723f6b2d87b14842e56295558f88c8daaeb33c46967e")
     add_versions("v3.0.3", "7b3281139f7a6c38049e967dcf1ca1d0cc9b65e62153c2ea163d2c8077dd864b")
 
     add_configs("cereal", {description = "support for serialisation via cereal", default = false, type = "boolean"})
