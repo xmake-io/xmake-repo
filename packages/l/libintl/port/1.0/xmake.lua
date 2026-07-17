@@ -167,6 +167,8 @@ void test() {
 ]])
 if is_plat("windows", "mingw") then
     set_configvar("WOE32DLL", is_kind("shared") and 1 or 0)
+else
+    set_configvar("WOE32DLL", 0)
 end
 set_configvar("SETLOCALE_NULL_ALL_MTSAFE", is_plat("windows", "linux") and 1 or 0)
 set_configvar("SETLOCALE_NULL_ONE_MTSAFE", 1)
@@ -279,7 +281,7 @@ target("intl")
         remove_files("gettext-runtime/intl/gnulib-lib/windows-*.c")
     end
     before_build(function (target)
-        -- Generate config.h from config.h.in
+        -- Generate config.h from config.h.in, with extra patches
         local src = path.join(os.projectdir(), "gettext-runtime/intl/config.h.in")
         local dst = path.join(target:configdir(), "config.h")
         local cvars = target:get("configvar") or {}
@@ -330,6 +332,12 @@ target("intl")
         end
         if not content:find("\\n#define locale_t", 1, true) then
             content = content .. "\n#ifndef locale_t\n#define locale_t _locale_t\n#endif\n"
+        end
+        if not content:find("\\nextern wchar_t", 1, true) and is_plat("mingw") then
+            content = content .. [[
+#include <stddef.h>
+extern wchar_t *wgetcwd (wchar_t *, size_t);
+]]
         end
         if not content:find("\\n#define streq", 1, true) then
             content = content .. [[
