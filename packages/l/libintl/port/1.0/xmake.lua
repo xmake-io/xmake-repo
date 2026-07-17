@@ -231,36 +231,6 @@ configvar_check_cfuncs("HAVE_WPRINTF", "wprintf", {includes = "wchar.h", default
 configvar_check_cfuncs("HAVE_SNPRINTF", "snprintf", {includes = "stdio.h", default = 0})
 configvar_check_cfuncs("HAVE_ASPRINTF", "asprintf", {includes = "stdio.h", default = 0})
 
-if is_plat("mingw", "macosx") then
-    configvar_check_cincludes("HAVE_UCHAR_H", "uchar.h")
-    set_configvar("CXX_HAVE_UCHAR_H", 0)
-    set_configvar("CXX_HAS_CHAR8_TYPE", 0)
-    set_configvar("CXX_HAS_UCHAR_TYPES", 0)
-    set_configvar("GNULIBHEADERS_OVERRIDE_CHAR8_T", 0)
-    set_configvar("GNULIBHEADERS_OVERRIDE_CHAR16_T", 0)
-    set_configvar("GNULIBHEADERS_OVERRIDE_CHAR32_T", 0)
-    set_configvar("SMALL_WCHAR_T", is_plat("mingw") and 1 or 0)
-    if is_plat("mingw") then
-        set_configvar("INCLUDE_NEXT", "include_next", {quote = false})
-        set_configvar("NEXT_UCHAR_H", "<uchar.h>", {quote = false})
-    end
-    set_configvar("GNULIB_C32ISALNUM", 1)
-    set_configvar("GNULIB_C32ISALPHA", 1)
-    set_configvar("GNULIB_C32ISBLANK", 1)
-    set_configvar("GNULIB_C32ISCNTRL", 1)
-    set_configvar("GNULIB_C32ISDIGIT", 1)
-    set_configvar("GNULIB_C32ISGRAPH", 1)
-    set_configvar("GNULIB_C32ISLOWER", 1)
-    set_configvar("GNULIB_C32ISPRINT", 1)
-    set_configvar("GNULIB_C32ISPUNCT", 1)
-    set_configvar("GNULIB_C32ISSPACE", 1)
-    set_configvar("GNULIB_C32ISUPPER", 1)
-    set_configvar("GNULIB_C32ISXDIGIT", 1)
-    set_configvar("GNULIB_C32TOLOWER", 1)
-    set_configvar("GNULIB_C32TOUPPER", 1)
-    set_configvar("GNULIB_C32WIDTH", 1)
-end
-
 target("intl")
     set_kind("$(kind)")
     add_defines("HAVE_CONFIG_H", "NO_XMALLOC", "IN_LIBRARY", "BUILDING_LIBRARY", "IN_LIBINTL")
@@ -310,6 +280,9 @@ target("intl")
     remove_files("gettext-runtime/intl/gnulib-lib/wcwidth.c")
     remove_files("gettext-runtime/intl/gnulib-lib/mbrtoc32.c")
     remove_files("gettext-runtime/intl/gnulib-lib/isnan.c")
+    remove_files("gettext-runtime/intl/gnulib-lib/mbchar.c")
+    remove_files("gettext-runtime/intl/gnulib-lib/mbiterf.c")
+    remove_files("gettext-runtime/intl/gnulib-lib/mbsnlen.c")
     if not is_plat("windows", "mingw") then
         remove_files("gettext-runtime/intl/gnulib-lib/windows-*.c")
     end
@@ -395,54 +368,6 @@ extern wchar_t *wgetcwd (wchar_t *, size_t);
         io.gsub("gettext-runtime/intl/gnulib-lib/tsearch.h", "(definition of _GL_ARG_NONNULL.-)\n", "%1\n#include <arg-nonnull.h>\n")
         io.gsub("gettext-runtime/intl/gnulib-lib/tsearch.h", "(definition of _GL_WARN_ON_USE.-)\n", "%1\n#include <warn-on-use.h>\n")
         io.replace("gettext-runtime/intl/gnulib-lib/tsearch.c", "#include <search.h>", "#include <tsearch.h>", {plain = true})
-        -- For MinGW/macOS relating to uchar/c32* symbols
-        if is_plat("macosx") then
-            local uchar_src = path.join(os.projectdir(), "gettext-runtime/intl/gnulib-lib/uchar.in.h")
-            local uchar_dst = path.join(os.projectdir(), "gettext-runtime/intl/gnulib-lib/uchar.h")
-            local uchar = io.readfile(uchar_src)
-            uchar = uchar:gsub("@(.-)@", function(name)
-                local v = cvars[name]
-                if v == nil then return "0" end
-                return (type(v) == "number" and tostring(v)) or
-                       (type(v) == "boolean" and (v and "1" or "0")) or v
-            end)
-            io.writefile(uchar_dst, uchar)
-            io.gsub(uchar_dst, "(definitions of _GL_FUNCDECL_RPL etc.-)\n", "%1\n#include <c++defs.h>\n")
-            io.gsub(uchar_dst, "(definition of _GL_ARG_NONNULL.-)\n", "%1\n#include <arg-nonnull.h>\n")
-            io.gsub(uchar_dst, "(definition of _GL_WARN_ON_USE.-)\n", "%1\n#include <warn-on-use.h>\n")
-        end
-        if is_plat("mingw") then
-            io.writefile(path.join(os.projectdir(), "gettext-runtime/intl/gnulib-lib/uchar.h"), [[
-#ifndef _GL_UCHAR_H
-#define _GL_UCHAR_H
-
-#include_next <uchar.h>
-#include <wchar.h>
-#include <wctype.h>
-#include <stdint.h>
-
-/* Inline c32* functions missing from MinGW's <uchar.h> */
-/* wchar_t is 16-bit on MinGW; for values > 0xFFFF return safe defaults. */
-
-static inline int c32isalnum(char32_t wc) { return (wc <= 0xFFFF) ? iswalnum((wint_t)wc) : 0; }
-static inline int c32isalpha(char32_t wc) { return (wc <= 0xFFFF) ? iswalpha((wint_t)wc) : 0; }
-static inline int c32isblank(char32_t wc) { return (wc <= 0xFFFF) ? iswblank((wint_t)wc) : 0; }
-static inline int c32iscntrl(char32_t wc) { return (wc <= 0xFFFF) ? iswcntrl((wint_t)wc) : 0; }
-static inline int c32isdigit(char32_t wc) { return (wc <= 0xFFFF) ? iswdigit((wint_t)wc) : 0; }
-static inline int c32isgraph(char32_t wc) { return (wc <= 0xFFFF) ? iswgraph((wint_t)wc) : 0; }
-static inline int c32islower(char32_t wc) { return (wc <= 0xFFFF) ? iswlower((wint_t)wc) : 0; }
-static inline int c32isprint(char32_t wc) { return (wc <= 0xFFFF) ? iswprint((wint_t)wc) : 0; }
-static inline int c32ispunct(char32_t wc) { return (wc <= 0xFFFF) ? iswpunct((wint_t)wc) : 0; }
-static inline int c32isspace(char32_t wc) { return (wc <= 0xFFFF) ? iswspace((wint_t)wc) : 0; }
-static inline int c32isupper(char32_t wc) { return (wc <= 0xFFFF) ? iswupper((wint_t)wc) : 0; }
-static inline int c32isxdigit(char32_t wc) { return (wc <= 0xFFFF) ? iswxdigit((wint_t)wc) : 0; }
-static inline int c32width(char32_t wc) { return (wc <= 0xFFFF) ? wcwidth((wchar_t)wc) : 2; }
-static inline char32_t c32tolower(char32_t wc) { return (wc <= 0xFFFF) ? towlower((wint_t)wc) : wc; }
-static inline char32_t c32toupper(char32_t wc) { return (wc <= 0xFFFF) ? towupper((wint_t)wc) : wc; }
-
-#endif
-]])
-        end
         os.cp("gettext-runtime/intl/libgnuintl.h", "gettext-runtime/intl/libintl.h")
 
         local lines = io.readfile("gettext-runtime/intl/export.h")
