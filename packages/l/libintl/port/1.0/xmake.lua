@@ -92,9 +92,7 @@ else
         add_cincludes("threads.h")
     option_end()
     if has_config("USE_ISOC_THREADS") then
-        set_configvar("USE_ISOC_THREADS", 1)
         set_configvar("USE_ISOC_AND_POSIX_THREADS", 1)
-        set_configvar("USE_POSIX_THREADS", 1)
     else
         set_configvar("USE_POSIX_THREADS", 1)
     end
@@ -174,6 +172,7 @@ set_configvar("SETLOCALE_NULL_ALL_MTSAFE", is_plat("windows", "linux") and 1 or 
 set_configvar("SETLOCALE_NULL_ONE_MTSAFE", 1)
 configvar_check_cincludes("HAVE_SEARCH_H", "search.h")
 configvar_check_cincludes("HAVE_STDBOOL_H", "stdbool.h")
+configvar_check_cincludes("HAVE_UNISTD_H", "unistd.h")
 
 -- search.h variables
 set_configvar("GUARD_PREFIX", "GL", {quote = false})
@@ -339,6 +338,7 @@ target("intl")
 extern wchar_t *wgetcwd (wchar_t *, size_t);
 ]]
         end
+        content = content .. "\n#include \"setlocale_null.h\"\n"
         if not content:find("\\n#define streq", 1, true) then
             content = content .. [[
 #ifndef streq
