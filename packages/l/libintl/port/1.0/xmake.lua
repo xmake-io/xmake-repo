@@ -258,7 +258,7 @@ target("intl")
     end
 
     if is_plat("mingw") and is_kind("shared") then
-      add_ldflags("-Wl,--export-all-symbols")
+        add_ldflags("-Wl,--export-all-symbols")
     end
 
     set_configvar("HAVE_ICONV", 0)
