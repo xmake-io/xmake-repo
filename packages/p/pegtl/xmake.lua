@@ -7,6 +7,7 @@ package("pegtl")
     add_urls("https://github.com/taocpp/PEGTL/archive/refs/tags/$(version).tar.gz",
              "https://github.com/taocpp/PEGTL.git")
 
+    add_versions("4.0.0", "6181ea42478e0aba84512be59595476adac781881b5e372224ed9b730994bd8e")
     add_versions("2.8.3", "88b8e4ded6ea1f3f2223cc3e37072e2db1e123b90d36c309816341ae9d966723")
     add_versions("3.2.2", "c6616275e78c618c016b79054eed0a0bdf4c1934f830d3ab33d3c3dac7320b03")
     add_versions("3.2.5", "4ecefe4151b14684a944dde57e68c98e00224e5fea055c263e1bfbed24a99827")
