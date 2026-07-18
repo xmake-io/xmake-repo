@@ -108,7 +108,9 @@ configvar_check_ctypes("HAVE_PTHREAD_RWLOCK", "pthread_rwlock_t", {includes = "p
 if not is_plat("windows", "mingw") then
     configvar_check_csnippets("HAVE_PTHREAD_MUTEX_RECURSIVE", [[#include <pthread.h>
 int test() { int x = PTHREAD_MUTEX_RECURSIVE; return !x; }]])
-    configvar_check_csnippets("HAVE_WEAK_SYMBOLS", [[__attribute__((__weak__)) void *f(void);]], {default = 0})
+    if not is_plat("macosx") then
+        configvar_check_csnippets("HAVE_WEAK_SYMBOLS", [[__attribute__((__weak__)) void *f(void);]], {default = 0})
+    end
     configvar_check_cincludes("HAVE_THREADS_H", "threads.h")
     configvar_check_cincludes("HAVE_SYS_SINGLE_THREADED_H", "sys/single_threaded.h")
 end
@@ -353,9 +355,9 @@ target("intl")
             content = content .. "\n\n#ifndef SETLOCALE_NULL_ALL_MAX\n#define SETLOCALE_NULL_ALL_MAX (148+12*256+1)\n#define SETLOCALE_NULL_MAX (256+1)\n#endif\n"
         end
         if not content:find("\\n#define locale_t", 1, true) then
-            if is_plat("windows", "mingw") then
+            if package:is_plat("windows", "mingw") then
                 content = content .. "\n#ifndef locale_t\n#define locale_t _locale_t\n#endif\n"
-            elseif is_plat("macosx") then
+            elseif package:is_plat("macosx") then
                 content = content .. "\n#include <xlocale.h>\n"
             end
         end
