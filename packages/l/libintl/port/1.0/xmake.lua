@@ -355,9 +355,9 @@ target("intl")
             content = content .. "\n\n#ifndef SETLOCALE_NULL_ALL_MAX\n#define SETLOCALE_NULL_ALL_MAX (148+12*256+1)\n#define SETLOCALE_NULL_MAX (256+1)\n#endif\n"
         end
         if not content:find("\\n#define locale_t", 1, true) then
-            if package:is_plat("windows", "mingw") then
+            if is_plat("windows", "mingw") then
                 content = content .. "\n#ifndef locale_t\n#define locale_t _locale_t\n#endif\n"
-            elseif package:is_plat("macosx") then
+            elseif is_plat("macosx") then
                 content = content .. "\n#include <xlocale.h>\n"
             end
         end
