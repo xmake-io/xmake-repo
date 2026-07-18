@@ -19,6 +19,10 @@ package("libintl")
         add_syslinks("pthread")
     end
 
+    if is_plat("mingw") and is_kind("shared") then
+        add_ldflags("-Wl,--export-all-symbols")
+    end
+
     on_fetch(function (package, opt)
         if opt.system then
             return package:find_package("system::intl", {includes = "libintl.h"})
