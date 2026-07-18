@@ -277,7 +277,6 @@ target("intl")
     remove_files("gettext-runtime/intl/gnulib-lib/c32*.c")
     remove_files("gettext-runtime/intl/gnulib-lib/frexp*.c")
     remove_files("gettext-runtime/intl/gnulib-lib/getcwd-lgpl.c")
-    remove_files("gettext-runtime/intl/gnulib-lib/getlocalename_l-unsafe.c")
     remove_files("gettext-runtime/intl/gnulib-lib/pthread-once.c")
     remove_files("gettext-runtime/intl/gnulib-lib/unistd.c")
     remove_files("gettext-runtime/intl/gnulib-lib/localeconv.c")
@@ -297,6 +296,9 @@ target("intl")
     remove_files("gettext-runtime/intl/gnulib-lib/mbchar.c")
     remove_files("gettext-runtime/intl/gnulib-lib/mbiterf.c")
     remove_files("gettext-runtime/intl/gnulib-lib/mbsnlen.c")
+    if not is_plat("macosx") then
+        remove_files("gettext-runtime/intl/gnulib-lib/getlocalename_l-unsafe.c")
+    end
     if not is_plat("windows", "mingw") then
         remove_files("gettext-runtime/intl/gnulib-lib/windows-*.c")
     end
