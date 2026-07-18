@@ -19,10 +19,6 @@ package("libintl")
         add_syslinks("pthread")
     end
 
-    if is_plat("mingw") and is_kind("shared") then
-        add_ldflags("-Wl,--export-all-symbols")
-    end
-
     on_fetch(function (package, opt)
         if opt.system then
             return package:find_package("system::intl", {includes = "libintl.h"})
@@ -36,7 +32,12 @@ package("libintl")
             io.replace(conffile, "$", "", {plain = true})
             io.replace(conffile, "# ?undef (.-)\n", "${define %1}\n")
         end
+        local opt = {}
+        if package:is_plat("mingw") and package:config("shared") then
+            opt.shflags = "-Wl,--export-all-symbols"
+        end
         import("package.tools.xmake").install(package, {
+            opt,
             vers = package:version_str(),
             relocatable = true,
             installprefix = package:installdir():gsub("\\", "/")
