@@ -56,6 +56,17 @@ package("pthreads4w")
             target = target .. "-debug"
         end
         os.vrunv("make", {"V=1", target})
+
+        os.cp("_ptw32.h", package:installdir("include"))
+        os.cp("pthread.h", package:installdir("include"))
+        os.cp("sched.h", package:installdir("include"))
+        os.cp("semaphore.h", package:installdir("include"))
+        os.cp("*.a", package:installdir("lib"))
+        if package:config("shared") then
+            os.cp("*.dll", package:installdir("bin"))
+            os.cp("*.dll.a", package:installdir("lib"))
+            package:addenv("PATH", "bin")
+        end
     end)
 
     on_test(function (package)
