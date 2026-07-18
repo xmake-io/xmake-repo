@@ -254,6 +254,11 @@ target("intl")
     elseif is_plat("bsd") then
         add_syslinks("pthread")
     end
+
+    if is_plat("mingw") and is_kind("shared") then
+      add_ldflags("-Wl,--export-all-symbols")
+    end
+
     set_configvar("HAVE_ICONV", 0)
     set_configvar("HAVE_ICONV_H", 0)
     add_defines("DEPENDS_ON_LIBICONV=0")
@@ -348,6 +353,8 @@ target("intl")
         if not content:find("\\n#define locale_t", 1, true) then
             if is_plat("windows", "mingw") then
                 content = content .. "\n#ifndef locale_t\n#define locale_t _locale_t\n#endif\n"
+            elseif is_plat("macosx") then
+                content = content .. "\n#include <xlocale.h>\n"
             end
         end
         if not content:find("\\nextern wchar_t", 1, true) and is_plat("mingw") then
