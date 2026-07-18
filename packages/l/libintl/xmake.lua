@@ -32,16 +32,15 @@ package("libintl")
             io.replace(conffile, "$", "", {plain = true})
             io.replace(conffile, "# ?undef (.-)\n", "${define %1}\n")
         end
-        local opt = {}
-        if package:is_plat("mingw") and package:config("shared") then
-            opt.shflags = "-Wl,--export-all-symbols"
-        end
-        import("package.tools.xmake").install(package, {
-            opt,
+        local opt = {
             vers = package:version_str(),
             relocatable = true,
             installprefix = package:installdir():gsub("\\", "/")
-        })
+        }
+        if package:is_plat("mingw") and package:config("shared") then
+            opt.shflags = "-Wl,--export-all-symbols"
+        end
+        import("package.tools.xmake").install(package, opt)
     end)
 
     on_test(function (package)
