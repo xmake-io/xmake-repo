@@ -61,11 +61,12 @@ package("pthreads4w")
         os.cp("pthread.h", package:installdir("include"))
         os.cp("sched.h", package:installdir("include"))
         os.cp("semaphore.h", package:installdir("include"))
-        os.cp("*.a", package:installdir("lib"))
         if package:config("shared") then
             os.cp("*.dll", package:installdir("bin"))
             os.cp("*.dll.a", package:installdir("lib"))
             package:addenv("PATH", "bin")
+        else
+            os.cp("*.a", package:installdir("lib"))
         end
     end)
 
