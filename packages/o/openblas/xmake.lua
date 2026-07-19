@@ -20,6 +20,7 @@ package("openblas")
             add_versions("0.3.27", "7b4d7504f274f8e26001aab4e25ec05032d90b8785b0355dc0d09247858d9f1e")
             add_versions("0.3.28", "4cbd0e5daa3fb083b18f5e5fa6eefe79e2f2c51a6d539f98a3c6309a21160042")
             add_versions("0.3.30", "8b04387766efc05c627e26d24797ec0d4ed4c105ec14fa7400aa84a02db22b66")
+            add_versions("0.3.34", "e9cb6134541f36c27346d5fc5995652f060fba227cebbbabcbda5a5a44d7c76b")
         elseif is_arch("x86") then
             add_urls("https://github.com/OpenMathLib/OpenBLAS/releases/download/v$(version)/OpenBLAS-$(version)-x86.zip")
             add_versions("0.3.15", "bcde933737b477813eaac290de5cb8756d3b42199e8ef5f44b23ae5f06fe0834")
@@ -33,6 +34,7 @@ package("openblas")
             add_versions("0.3.27", "0cb61cff9eac7fcc07036880dfeec7a2e194d0412524901bf03e55208f51f900")
             add_versions("0.3.28", "4a14ba2b43937278616cd0883e033cc07ee1331afdd2d264ad81432bd7b16c7b")
             add_versions("0.3.30", "5eb9df2ccaacf686028f1d08444b9116c0e55c5264f462dafd0b036a2979737a")
+            add_versions("0.3.34", "6e3a4ba694bd367e9094f5ca0e80efb65aa90d894d05babc907edc74600506f1")
         end
 
         add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
@@ -53,6 +55,7 @@ package("openblas")
         add_versions("0.3.27", "aa2d68b1564fe2b13bc292672608e9cdeeeb6dc34995512e65c3b10f4599e897")
         add_versions("0.3.28", "f1003466ad074e9b0c8d421a204121100b0751c96fc6fcf3d1456bd12f8a00a1")
         add_versions("0.3.30", "27342cff518646afb4c2b976d809102e368957974c250a25ccc965e53063c95d")
+        add_versions("0.3.34", "cd7e129868320cc2d033afa920e31202dfe0b8066a5b66661900ccc0f197dfed")
 
         add_configs("lapack",            {description = "Build LAPACK.",                                                                                                                    default = true,   type = "boolean"})
         add_configs("lapacke",           {description = "Build the C interface to LAPACK.",                                                                                                 default = true,   type = "boolean"})
