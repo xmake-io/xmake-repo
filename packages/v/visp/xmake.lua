@@ -26,7 +26,7 @@ package("visp")
         ["2026"] = "vc18"
     }
     on_load(function (package)
-        if package:is_plat("linux", "macosx", "bsd") and package:config("shared") then
+        if package:is_plat("linux", "macosx") and package:config("shared") then
             package:add("deps", "opencv", {configs = {shared = true}})
         else
             package:add("deps", "opencv")
@@ -40,7 +40,7 @@ package("visp")
         end
     end)
 
-    on_install("linux", "macosx", "windows|!arm64", "bsd", function (package)
+    on_install("linux", "macosx", "windows|!arm64", function (package)
         local configs = {
             "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
             "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"),
