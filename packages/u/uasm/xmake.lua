@@ -6,6 +6,7 @@ package("uasm")
     add_urls("https://github.com/Terraspace/UASM/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Terraspace/UASM.git")
 
+    add_versions("v213", "e6b75408d80f4ddc68412a51b2b42bb0db860a8adaaa76c29bd166bacf76875f")
     add_versions("v2.57r", "09fa69445f2af47551e82819d024e6b4b629fcfd47af4a22ccffbf37714230e5")
 
     if not is_plat("windows") then
