@@ -7,6 +7,7 @@ package("opencl-headers")
 
     add_urls("https://github.com/KhronosGroup/OpenCL-Headers/archive/refs/tags/$(version).tar.gz",
              "https://github.com/KhronosGroup/OpenCL-Headers.git")
+    add_versions("v2026.05.29", "d9e6c48357de5002da11ce45de600e0c3ffe6ab4f628a3b9fe2b38603161658a")
     add_versions("v2025.07.22", "98f0a3ea26b4aec051e533cb1750db2998ab8e82eda97269ed6efe66ec94a240")
     add_versions("v2025.06.13", "8bf2fda271c3511ee1cd9780b97446e9fa0cf2b0765cdd54aee60074a4567644")
     add_versions("v2024.10.24", "159f2a550592bae49859fee83d372acd152328fdf95c0dcd8b9409f8fad5db93")
