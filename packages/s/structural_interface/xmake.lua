@@ -38,10 +38,7 @@ package("structural_interface")
         ]]}, {
             configs = {
                 languages = "c++26",
-                cxflags = "-freflection",
-                force = {
-                    cxflags = "-freflection"
-                }
+                cxflags = "-freflection"
             }
         }))
     end)
