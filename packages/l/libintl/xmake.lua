@@ -7,6 +7,7 @@ package("libintl")
              "https://ftp.gnu.org/gnu/gettext/gettext-$(version).tar.xz")
     add_versions("0.21", "d20fcbb537e02dcf1383197ba05bd0734ef7bf5db06bdb241eb69b7d16b73192")
     add_versions("0.22.3", "b838228b3f8823a6c1eddf07297197c4db13f7e1b173b9ef93f3f945a63080b6")
+    add_versions("1.0", "71132a3fb71e68245b8f2ac4e9e97137d3e5c02f415636eb508ae607bc01add7")
 
     if is_plat("mingw") then
         add_patches("0.22.3", "patches/0.22.3/fix-mingw-build-wgetcwd.diff", "4db86b836cf332151558d5cd4553ed2e8a6dc88676b5d66dda486f55dcd6785c")
@@ -31,11 +32,15 @@ package("libintl")
             io.replace(conffile, "$", "", {plain = true})
             io.replace(conffile, "# ?undef (.-)\n", "${define %1}\n")
         end
-        import("package.tools.xmake").install(package, {
+        local opt = {
             vers = package:version_str(),
             relocatable = true,
             installprefix = package:installdir():gsub("\\", "/")
-        })
+        }
+        if package:is_plat("mingw") and package:config("shared") then
+            opt.shflags = "-Wl,--export-all-symbols"
+        end
+        import("package.tools.xmake").install(package, opt)
     end)
 
     on_test(function (package)

@@ -14,6 +14,7 @@ package("glib")
     add_versions("home:2.85.0", "97cfb0466ae41fca4fa2a57a15440bee15b54ae76a12fb3cbff11df947240e48")
     add_versions("home:2.88.1", "51ab804c56f6eab3e5045c774d1290ac5e4c923d4f9a3d8e33123bee45c1840e")
     add_versions("home:2.89.1", "74447129c31afe141810f995626e8b99ab677413dae76ee3cf5a9cc6e75a486e")
+    add_versions("home:2.89.2", "894fd527e305041f7723071297d79a78af4719dbd0d8fb77f6b1a85c9f5475b9")
 
     add_patches("2.71.0", path.join(os.scriptdir(), "patches", "2.71.0", "macosx.patch"), "a0c928643e40f3a3dfdce52950486c7f5e6f6e9cfbd76b20c7c5b43de51d6399")
 
@@ -145,7 +146,7 @@ package("glib")
         for _, depname in ipairs({"libintl", "libiconv"}) do
             if package:dep(depname) and not package:dep(depname):is_system() then
                 for _, pc in ipairs(pcs) do
-                    add_to_pc(path.join(pc_dir, pc), "Requires.private", depname)
+                    add_to_pc(path.join(pc_dir, pc), "Requires", depname)
                 end
             end
         end

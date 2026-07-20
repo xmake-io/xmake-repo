@@ -45,6 +45,10 @@ package("liblo")
         set_target_properties(${LIBRARY_SHARED} PROPERTIES EXCLUDE_FROM_ALL 1)
     endif()]], {plain = true})
         import("package.tools.cmake").install(package, configs)
+        local pc = package:installdir("lib/pkgconfig/liblo.pc")
+        if package:is_plat("windows") then
+            io.replace(pc, "-llo", "-lliblo", {plain = true})
+        end
     end)
 
     on_test(function (package)
