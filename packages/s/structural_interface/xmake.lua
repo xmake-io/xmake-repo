@@ -13,11 +13,6 @@ package("structural_interface")
         end
     end)
 
-    add_cxxflags("-std=c++26", "-freflection", {
-        tools = "gcc",
-        force = true
-    })
-
     on_install(function(package)
         os.cp("include", package:installdir())
     end)
