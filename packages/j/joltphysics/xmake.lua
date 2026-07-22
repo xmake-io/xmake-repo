@@ -160,13 +160,15 @@ package("joltphysics")
             end
         end
         if package:config("gpu_api") == nil then
-            if package:is_plat("windows") then
+            -- in the future this package should be updated to enable GPU backend (currently blocked by supported platforms of required packages)
+            package:config_set("gpu_api", "cpu")
+            --[[if package:is_plat("windows") then
                 package:config_set("gpu_api", "dx12")
             elseif package:is_plat("macosx", "iphoneos") then
                 package:config_set("gpu_api", "mtl")
             else
                 package:config_set("gpu_api", "vk")
-            end
+            end]]
         end
         if package:config("gpu_api") == "dx12" then
             package:add("defines", "JPH_USE_DX12")
