@@ -5,11 +5,13 @@ package("gdcm")
 
     add_urls("https://github.com/malaterre/GDCM/archive/refs/tags/$(version).tar.gz",
              "https://github.com/malaterre/GDCM.git")
+    add_versions("v3.2.10", "94549490048ef7125e8af35569c20e8106b96c3d955178135dc75be561a14b76")
     add_versions("v3.2.7", "b7b17b70c009677cf244cc7837b88386441e097f8861fdeee83aa27d1bc1b090")
     add_versions("v3.2.5", "1763d94228ef31babe68a2b5f3b0d4fc66bc0afae641d9a4c38ea5269e06ba5d")
     add_versions("v3.2.1", "63d4fbbb487d450bc8004542892a45349bdc9f4400f7010c07170c127ef0f9e3")
     add_versions("v3.0.24", "d88519a094797c645ca34797a24a14efc10965829c4c3352c8ef33782a556336")
     add_patches(">3.0", "patches/cmake.patch", "2583f0f0beb829f7c67bc2ee56f1d976245153aa006973f89e5bc42e659afea6")
+    add_patches(">=3.2.10", "patches/expat.patch", "a24e45f269fbfb494289f33878af88d278ed3880694db08a9197b67a0821edaa")
 
     add_deps("cmake", "charls", "expat", "openjpeg", "pkgconf", "zlib")
 

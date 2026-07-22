@@ -1,0 +1,11 @@
+diff --git a/Source/InformationObjectDefinition/CMakeLists.txt b/Source/InformationObjectDefinition/CMakeLists.txt
+--- a/Source/InformationObjectDefinition/CMakeLists.txt
++++ b/Source/InformationObjectDefinition/CMakeLists.txt
+@@ -47,6 +47,7 @@ endif()
+ add_library(gdcmIOD ${IOD_SRCS})
+ target_link_libraries(gdcmIOD LINK_PUBLIC gdcmDSED gdcmCommon)
+ target_link_libraries(gdcmIOD LINK_PRIVATE ${GDCM_EXPAT_LIBRARIES})
++target_include_directories(gdcmIOD PRIVATE ${EXPAT_INCLUDE_DIRS})
+ set_target_properties(gdcmIOD PROPERTIES ${GDCM_LIBRARY_PROPERTIES})
+ 
+ # libs
