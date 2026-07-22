@@ -6,6 +6,7 @@ package("libpsl")
     add_urls("https://github.com/rockdaboot/libpsl/releases/download/$(version)/libpsl-$(version).tar.gz",
              "https://github.com/rockdaboot/libpsl.git")
 
+    add_versions("0.23.0", "f39b9631b3d369a21259ea4654f8875c0ec6995ce9551c0eb5d423e4c011f911")
     add_versions("0.21.5", "1dcc9ceae8b128f3c0b3f654decd0e1e891afc6ff81098f227ef260449dae208")
     add_versions("0.21.1", "ac6ce1e1fbd4d0254c4ddb9d37f1fa99dec83619c1253328155206b896210d4c")
 
