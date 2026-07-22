@@ -5,6 +5,7 @@ package("randx")
 
     add_urls("https://github.com/lidaixingchen/RandX/archive/refs/tags/v$(version).tar.gz")
 
+    add_versions("1.4.0", "ecf611c6f340986df2abf3191def2222a3287f5e20ec4280c88996770a95eec7")
     add_versions("1.3.1", "f271bbcb26bea7747ee292646df895c2305b696bb0d58d69b54e84fe96fab3c1")
 
     on_load(function (package)
