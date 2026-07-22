@@ -24,7 +24,7 @@ package("fastgltf")
     add_deps("cmake")
     add_deps("simdjson")
 
-    on_install("windows|x64", "mingw|x86_64", "macosx|x86_64", "linux|x86_64", "linux|arm64", function (package)
+    on_install("windows|x64", "mingw|x86_64", "macosx|x86_64", "macosx|arm64", "linux|x86_64", "linux|arm64", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
