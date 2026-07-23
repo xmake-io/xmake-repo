@@ -136,6 +136,7 @@ function main(package)
         _iostreams(package, snippets)
         _filesystem(package, snippets)
         _date_time(package, snippets)
+        _uuid(package, snippets)
     end
 
     local opt = {configs = {languages = "c++14"}}
