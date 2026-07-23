@@ -35,7 +35,9 @@ local sorted_libs = {
   "system",
   "charconv",
   "atomic",
-  "spirit"
+  "spirit",
+  "config",
+  "uuid"
 }
 
 local libs_dep = {
@@ -162,6 +164,10 @@ local libs_dep = {
   },
   spirit = {
     "thread",
+  },
+  config = { },
+  uuid = {
+    "config"
   }
 }
 
