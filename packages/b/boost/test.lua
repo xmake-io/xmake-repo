@@ -58,6 +58,23 @@ function _filesystem(package, snippets)
     end
 end
 
+function _uuid(package, snippets)
+    if package:config("uuid") then
+        table.insert(snippets,
+            [[
+                #include <boost/uuid.hpp>
+                #include <cassert>
+                void test() {
+                    using namespace boost::uuids;
+                    uuid u;
+                    assert( u.size() == 16 );
+                    static_assert( uuid::static_size() == 16 );
+                }
+            ]]
+        )
+    end
+end
+
 function _date_time(package, snippets)
     if package:config("date_time") then
         table.insert(snippets,
