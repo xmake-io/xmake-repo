@@ -178,6 +178,8 @@ local header_only_buildable = {
   "regex",
   "math",
   "container",
+  "config",
+  "uuid",
 }
 
 function get_libs()
