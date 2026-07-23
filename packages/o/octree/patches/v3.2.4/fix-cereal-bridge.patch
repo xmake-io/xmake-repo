@@ -1,0 +1,14 @@
+diff --git a/include/orthotree/serialization/nvp.h b/include/orthotree/serialization/nvp.h
+index 24c392d..35bcb47 100644
+--- a/include/orthotree/serialization/nvp.h
++++ b/include/orthotree/serialization/nvp.h
+@@ -214,7 +214,8 @@ namespace OrthoTree
+   {
+     if constexpr (detail::is_cereal_archive_v<TArchive>)
+     {
+-      std::size_t cerealSize = static_cast<std::size_t>(tag.value);
++      using CerealSize = std::conditional_t<detail::is_cereal_archive_v<TArchive>, std::size_t, T>;
++      CerealSize cerealSize = static_cast<CerealSize>(tag.value);
+       ar(::cereal::make_size_tag(cerealSize));
+       tag.value = static_cast<T>(cerealSize);
+     }
