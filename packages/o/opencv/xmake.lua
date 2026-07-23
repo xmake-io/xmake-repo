@@ -5,6 +5,7 @@ package("opencv")
 
     add_urls("https://github.com/opencv/opencv/archive/$(version).tar.gz",
              "https://github.com/opencv/opencv.git")
+    add_versions("4.14.0", "ee8fb9b30eb60850431b4656447080e3737b56e45719c92b67f245950609f86e")
     add_versions("4.13.0", "1d40ca017ea51c533cf9fd5cbde5b5fe7ae248291ddf2af99d4c17cf8e13017d")
     add_versions("4.12.0", "44c106d5bb47efec04e531fd93008b3fcd1d27138985c5baf4eafac0e1ec9e9d")
     add_versions("4.11.0", "9a7c11f924eff5f8d8070e297b322ee68b9227e003fd600d4b8122198091665f")
@@ -23,6 +24,7 @@ package("opencv")
     add_patches("4.11.0", "https://github.com/opencv/opencv/commit/767dd838d3074409fd72a4d76c320b1370e95943.diff", "376dd90500ab7205084fd4298ff26137ce9678b00233ad20ca2189ef9eca3a58")
     add_patches("4.12.0", "https://github.com/opencv/opencv/pull/27691/commits/90c444abd387ffa70b2e72a34922903a2f0f4f5a.patch", "4811cf490195a7b2952e075c4d713593326bc54fcfa42a33e19d7ed025bb5b6f")
 
+    add_resources("4.14.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.14.0.tar.gz", "4f17abd1bc7f88e19c3380c8de7cbf2d863aced5b5ee8d8934cc7902b67d42c9")
     add_resources("4.13.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.13.0.tar.gz", "1e0077a4fd2960a7d2f4c9e49d6ba7bb891cac2d1be36d7e8e47aa97a9d1039b")
     add_resources("4.12.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.12.0.tar.gz", "4197722b4c5ed42b476d42e29beb29a52b6b25c34ec7b4d589c3ae5145fee98e")
     add_resources("4.11.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.11.0.tar.gz", "2dfc5957201de2aa785064711125af6abb2e80a64e2dc246aca4119b19687041")
