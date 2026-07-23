@@ -5,6 +5,7 @@ package("joltphysics")
 
     add_urls("https://github.com/jrouwe/JoltPhysics/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jrouwe/JoltPhysics.git")
+    add_versions("v5.6.0", "6e069ee0172478cc78182047aac87e5310ba14a67a53348ae14cc37801fd3f8e")
     add_versions("v5.5.0", "3dae862a32c9092fca5b17f8e5d32cd57e035d30c3145c00040f13ca58a866df")
     add_versions("v5.4.0", "1d2fdc33ef9a2da69efd704adc0a97da7c6ed698c2bded04b0c36f31207b0829")
     add_versions("v5.3.0", "e7f9621e480646c434150e1fbe3a9410f4ec4b04ffe54791e0678326b741b918")
@@ -34,6 +35,7 @@ package("joltphysics")
     add_configs("debug_renderer", { description = "Adds support to draw lines and triangles, used to be able to debug draw the state of the world", default = true, type = "boolean" })
     add_configs("double_precision", { description = "Compiles the library so that all positions are stored in doubles instead of floats. This makes larger worlds possible", default = false, type = "boolean" })
     add_configs("exceptions", { description = "Compile the library with C++ exceptions enabled. This adds some overhead and Jolt doesn't use exceptions so by default it is off.", default = false, type = "boolean" })
+    add_configs("gpu_api", { description = "Compute backends. Used to perform computations on the GPU", default = nil, type = "string", values = {"cpu", "dx12", "mtl", "vk"}})
     add_configs("object_layer_bits", {description = "Number of bits to use in ObjectLayer. Can be 16 or 32.", default = "16", type = "string", values = {"16", "32"}})
     add_configs("object_stream", { description = "Compile the ObjectStream class and RTTI attribute information", default = true, type = "boolean" })
     add_configs("rtti", { description = "Compile the library with C++ RTTI enabled. This adds some overhead and Jolt doesn't use RTTI so by default it is off.", default = false, type = "boolean" })
@@ -157,6 +159,32 @@ package("joltphysics")
         		package:add("defines", "JPH_USE_FMADD")
             end
         end
+        if package:config("gpu_api") == nil then
+            -- in the future this package should be updated to enable GPU backend (currently blocked by supported platforms of required packages)
+            package:config_set("gpu_api", "cpu")
+            --[[if package:is_plat("windows") then
+                package:config_set("gpu_api", "dx12")
+            elseif package:is_plat("macosx", "iphoneos") then
+                package:config_set("gpu_api", "mtl")
+            else
+                package:config_set("gpu_api", "vk")
+            end]]
+        end
+        if package:config("gpu_api") == "dx12" then
+            package:add("defines", "JPH_USE_DX12")
+            package:add("deps", "directx12-agility")
+            package:add("deps", "directxshadercompiler", {host = true, private = true})
+        elseif package:config("gpu_api") == "mtl" then
+            package:add("defines", "JPH_USE_MTL")
+            package:add("frameworks", "Foundation", "Metal", "MetalKit")
+            package:add("deps", "spirv-cross", {host = true, private = true})
+        elseif package:config("gpu_api") == "vk" then
+            package:add("defines", "JPH_USE_VK")
+            package:add("deps", "vulkan-headers")
+            package:add("deps", "spirv-cross", {host = true, private = true})
+        elseif package:config("gpu_api") == "cpu" then
+            package:add("defines", "JPH_USE_CPU_COMPUTE")
+        end
     end)
 
     on_install("windows", "mingw", "linux", "macosx", "iphoneos", "android", "wasm", "bsd", function (package)
@@ -194,6 +222,10 @@ package("joltphysics")
             table.insert(configs, "-DUSE_SSE4_1=" .. (package:config("inst_sse4_1") and "ON" or "OFF"))
             table.insert(configs, "-DUSE_SSE4_2=" .. (package:config("inst_sse4_2") and "ON" or "OFF"))
             table.insert(configs, "-DUSE_TZCNT=" .. (package:config("inst_tzcnt") and "ON" or "OFF"))
+            table.insert(configs, "-DJPH_USE_CPU_COMPUTE=" .. (package:config("gpu_api") == "cpu" and "ON" or "OFF"))
+            table.insert(configs, "-DJPH_USE_DX12=" .. (package:config("gpu_api") == "dx12" and "ON" or "OFF"))
+            table.insert(configs, "-DJPH_USE_MTL=" .. (package:config("gpu_api") == "mtl" and "ON" or "OFF"))
+            table.insert(configs, "-DJPH_USE_VK=" .. (package:config("gpu_api") == "vk" and "ON" or "OFF"))
             if package:is_debug() or package:config("symbols") then
                 table.insert(configs, "-DGENERATE_DEBUG_SYMBOLS=ON")
                 table.insert(configs, "-DJPH_DEBUG_SYMBOL_FORMAT=" .. package:config("symbol_format"))
