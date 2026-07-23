@@ -64,6 +64,9 @@ function _uuid(package, snippets)
             [[
                 #include <boost/uuid.hpp>
                 #include <cassert>
+            #if defined(BOOST_NO_EXCEPTIONS)
+                namespace boost { BOOST_NORETURN inline void throw_exception(std::exception const & e) {} }
+            #endif
                 void test() {
                     using namespace boost::uuids;
                     uuid u;
