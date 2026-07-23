@@ -25,11 +25,11 @@ package("glibmm")
 
         if package:version():lt("2.68") then
             package:add("deps", "libsigcplusplus <3.0.0")
-            package:add("deps", "glib >=2.61.2")
+            package:add("deps", "glib >=2.61.2 <2.89.2")
             package:add("languages", "c++11")
         else
             package:add("deps", "libsigcplusplus >=3.0.0")
-            package:add("deps", "glib >=2.87.3")
+            package:add("deps", "glib >=2.87.3 <2.89.2")
             package:add("languages", "c++17")
         end
 
