@@ -17,7 +17,31 @@ package("boost_config")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+            #include <iostream>
             #include <boost/config.hpp>
-            void test() { }
+            int main()
+            {
+            #ifdef BOOST_MSVC
+                std::cout << "Compiled with MSVC\n";
+            #endif
+            #ifdef BOOST_GCC
+                std::cout << "Compiled with GCC\n";
+            #endif
+            #ifdef BOOST_CLANG
+                std::cout << "Compiled with Clang\n";
+            #endif
+            #ifdef BOOST_WINDOWS
+                std::cout << "Running on Windows\n";
+            #endif
+            #ifdef BOOST_LINUX
+                std::cout << "Running on Linux\n";
+            #endif
+            #ifdef BOOST_NO_CXX17_IF_CONSTEXPR
+                std::cout << "if constexpr is NOT supported\n";
+            #else
+                std::cout << "if constexpr is supported\n";
+            #endif
+                return 0;
+            }
         ]]}, {configs = {languages = "c++17"}}))
     end)
