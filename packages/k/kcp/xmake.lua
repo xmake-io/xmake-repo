@@ -14,25 +14,27 @@ package("kcp")
             add_rules("mode.debug", "mode.release")
             target("kcp")
                 set_kind("$(kind)")
-                add_rules("utils.symbols.export_list", {symbols = {
-                    "ikcp_create",
-                    "ikcp_release",
-                    "ikcp_setoutput",
-                    "ikcp_recv",
-                    "ikcp_send",
-                    "ikcp_update",
-                    "ikcp_check",
-                    "ikcp_input",
-                    "ikcp_flush",
-                    "ikcp_peeksize",
-                    "ikcp_setmtu",
-                    "ikcp_wndsize",
-                    "ikcp_waitsnd",
-                    "ikcp_nodelay",
-                    "ikcp_log",
-                    "ikcp_allocator",
-                    "ikcp_getconv"
-                }})
+                if is_plat("windows", "mingw") and is_kind("shared") then
+                    add_rules("utils.symbols.export_list", {symbols = {
+                        "ikcp_create",
+                        "ikcp_release",
+                        "ikcp_setoutput",
+                        "ikcp_recv",
+                        "ikcp_send",
+                        "ikcp_update",
+                        "ikcp_check",
+                        "ikcp_input",
+                        "ikcp_flush",
+                        "ikcp_peeksize",
+                        "ikcp_setmtu",
+                        "ikcp_wndsize",
+                        "ikcp_waitsnd",
+                        "ikcp_nodelay",
+                        "ikcp_log",
+                        "ikcp_allocator",
+                        "ikcp_getconv"
+                    }})
+                end
                 add_files("ikcp.c")
                 add_headerfiles("ikcp.h")
         ]])
