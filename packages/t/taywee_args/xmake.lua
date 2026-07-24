@@ -7,6 +7,7 @@ package("taywee_args")
 
     add_urls("https://github.com/Taywee/args/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Taywee/args.git")
+    add_versions("6.6.0", "9949b763e4b43ad3362d5da365e7f6118df296bc29c1d2dff415baac1e430c43")
     add_versions("6.4.16", "13fd2c21c4941672f02d67ac666fe6507fe2c2e0f17f95a0c2f17fddb4023000")
     add_versions("6.4.8", "52ecaceb92c3865c8a210091f288b4902e0a08280327a80c4b8d8aec5d7a3bbe")
     add_versions("6.4.7", "ae53d120609ecf44ff079b6992b4b54d6c25e9d647d06f46d9f68fe1476c0454")
