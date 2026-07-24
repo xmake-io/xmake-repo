@@ -7,6 +7,7 @@ package("verilator")
     add_urls("https://github.com/verilator/verilator/archive/refs/tags/$(version).tar.gz",
              "https://github.com/verilator/verilator.git")
 
+    add_versions("v5.050", "ec6723f30c1798b1fbbbed97364f09c431fb4875577c314f37240e99b60a4a04")
     add_versions("v5.048", "02d934b3f972c6d9b792350634d81eadfc9e61f347e3f3bdcaad40960b9fcb53")
     add_versions("v5.046", "002bc6d92b203eb8b4612e1d198d8108517d4ec9859e131ef328015352fe6d0c")
     add_versions("v5.044", "ded2a4a96e3b836ddc9fd5d01127999d981adee4d19133ff819b7129897d801a")
@@ -16,6 +17,9 @@ package("verilator")
     add_versions("v5.034", "002da98e316ca6eee40407f5deb7d7c43a0788847d39c90d4d31ddbbc03020e8")
     add_versions("v5.032", "5a262564b10be8bdb31ff4fb67d77bcf5f52fc1b4e6c88d5ca3264fb481f1e41")
     add_versions("v5.016", "66fc36f65033e5ec904481dd3d0df56500e90c0bfca23b2ae21b4a8d39e05ef1")
+
+    add_patches("v5.050", path.join(os.scriptdir(), "patches", "v5.050", "fix-memory-leak-in-VerilatedFst-close.patch"),
+                "35bfd6177053fc31365fb0dedee850ebae89849500a5b23e100d21129f5c235c")
 
     add_deps("cmake")
 
