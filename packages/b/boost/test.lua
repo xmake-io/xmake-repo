@@ -89,9 +89,8 @@ function _ptr_container(package, snippets)
             #endif
                 void test() {
                     boost::ptr_set<std::string> set;
-                    std::string bobo = "bobo", anna = "anna";
-                    set.insert( bobo );
-                    set.insert( anna );
+                    set.insert( new std::string("bobo") );
+                    set.insert( new std::string("anna") );
                     assert( set.size() == 2);
                 }
             ]]
