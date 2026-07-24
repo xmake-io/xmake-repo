@@ -78,6 +78,27 @@ function _uuid(package, snippets)
     end
 end
 
+function _ptr_container(package, snippets)
+    if package:config("ptr_container") then
+        table.insert(snippets,
+            [[
+               #include <boost/ptr_container/ptr_set.hpp>
+               #include <string>
+            #if defined(BOOST_NO_EXCEPTIONS)
+                namespace boost { BOOST_NORETURN inline void throw_exception(std::exception const & e) {} }
+            #endif
+                void test() {
+                    boost::ptr_set<std::string> set;
+                    set.insert( new std::string("bobo") );
+                    set.insert( new std::string("anna") );
+                    assert( set.size() == 2);
+                }
+            ]]
+        )
+    end
+end
+
+
 function _date_time(package, snippets)
     if package:config("date_time") then
         table.insert(snippets,
@@ -137,6 +158,7 @@ function main(package)
         _filesystem(package, snippets)
         _date_time(package, snippets)
         _uuid(package, snippets)
+        _ptr_container(package, snippets)
     end
 
     local opt = {configs = {languages = "c++14"}}
