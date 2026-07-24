@@ -35,7 +35,9 @@ local sorted_libs = {
   "system",
   "charconv",
   "atomic",
-  "spirit"
+  "spirit",
+  "uuid",
+  "config"
 }
 
 local libs_dep = {
@@ -162,7 +164,11 @@ local libs_dep = {
   },
   spirit = {
     "thread",
-  }
+  },
+  uuid = {
+    "config"
+  },
+  config = { }
 }
 
 local header_only_buildable = {
@@ -172,6 +178,8 @@ local header_only_buildable = {
   "regex",
   "math",
   "container",
+  "config",
+  "uuid",
 }
 
 function get_libs()
