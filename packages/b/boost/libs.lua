@@ -37,7 +37,8 @@ local sorted_libs = {
   "atomic",
   "spirit",
   "uuid",
-  "config"
+  "config",
+  "ptr_container"
 }
 
 local libs_dep = {
@@ -168,7 +169,8 @@ local libs_dep = {
   uuid = {
     "config"
   },
-  config = { }
+  config = { },
+  ptr_container = {}
 }
 
 local header_only_buildable = {
@@ -180,6 +182,7 @@ local header_only_buildable = {
   "container",
   "config",
   "uuid",
+  "ptr_container",
 }
 
 function get_libs()
