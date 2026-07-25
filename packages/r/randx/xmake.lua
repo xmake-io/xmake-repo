@@ -8,7 +8,6 @@ package("randx")
 
     add_versions("1.4.2", "25badb73e98b2e83456bea63bb60b1f335091576ec1d1c06ec2649ed92fc84bf")
     add_versions("1.4.0", "ecf611c6f340986df2abf3191def2222a3287f5e20ec4280c88996770a95eec7")
-    add_versions("1.3.1", "f271bbcb26bea7747ee292646df895c2305b696bb0d58d69b54e84fe96fab3c1")
 
     if is_plat("windows", "mingw") then
         add_syslinks("bcrypt")
@@ -19,6 +18,12 @@ package("randx")
     on_install(function (package)
         os.cp("RandX.hpp", package:installdir("include"))
         os.cp("RandX_Cpp17.hpp", package:installdir("include"))
+        -- Header-only: create empty archive so -lrandx resolves in find_package checks
+        if not package:is_plat("windows") then
+            local libfile = package:installdir("lib", "librandx.a")
+            os.mkdir(path.directory(libfile))
+            io.writefile(libfile, "!<arch>\n")
+        end
     end)
 
     on_test(function (package)
