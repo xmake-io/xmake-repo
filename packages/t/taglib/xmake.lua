@@ -32,6 +32,11 @@ package("taglib")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
+        local pc = package:installdir("lib/pkgconfig/taglib.pc")
+        if package:is_plat("windows") then
+            io.replace(pc, "-ltag -lz", "-ltag", {plain = true})
+            io.replace(pc, "Requires:\r?\n", "Requires: zlib\r\n")
+        end
     end)
 
     on_test(function (package)
