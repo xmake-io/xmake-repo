@@ -18,7 +18,8 @@ package("fontconfig")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    add_deps("meson", "ninja", "gperf", "python 3.x", {kind = "binary"})
+    add_deps("meson", "ninja", "gperf")
+    add_deps("python 3.x", {kind = "binary"})
     if is_subhost("windows") then
         add_deps("pkgconf")
     else
