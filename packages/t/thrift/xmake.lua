@@ -6,6 +6,7 @@ package("thrift")
     add_urls("https://github.com/apache/thrift/archive/refs/tags/$(version).tar.gz",
              "https://github.com/apache/thrift.git")
 
+    add_versions("v0.24.0", "d3a60676b1df3fb9850f6ce1e8a3df9a0efac036ceb4bce8ce46ee3eca735d2d")
     add_versions("v0.23.0", "087ba9517063c8252e9e7fb4e3891a9fd85e20af80e0309e2276eff16791d75c")
     add_versions("v0.22.0", "c4649c5879dd56c88f1e7a1c03e0fbfcc3b2a2872fb81616bffba5aa8a225a37")
     add_versions("v0.21.0", "31e46de96a7b36b8b8a457cecd2ee8266f81a83f8e238a9d324d8c6f42a717bc")
@@ -16,7 +17,8 @@ package("thrift")
     add_versions("v0.17.0", "f5888bcd3b8de40c2c2ab86896867ad9b18510deb412cba3e5da76fb4c604c29")
     add_versions("v0.16.0", "df2931de646a366c2e5962af679018bca2395d586e00ba82d09c0379f14f8e7b")
 
-    add_patches(">=0.21.0", "patches/0.21.0/cmake.patch", "506f7f70d76e092a62e87ada5290410a203241a08ba362eb82afa6200fae0881")
+    add_patches(">=0.24.0", "patches/0.24.0/cmake.patch", "576c09a2d6a5bec3f04f419c8de8fccac7cc7e2c7d3917075a0aa415176aa706")
+    add_patches(">=0.21.0 <0.24.0", "patches/0.21.0/cmake.patch", "506f7f70d76e092a62e87ada5290410a203241a08ba362eb82afa6200fae0881")
     add_patches(">=0.16.0 <=0.20.0", "patches/0.16.0/cmake.patch", "8dd82f54d52a37487e64aa3529f4dbcedcda671ab46fcb7a8c0f2c521ee0be9b")
 
     add_configs("compiler", {description = "Build compiler", default = false, type = "boolean"})
