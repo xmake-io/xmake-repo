@@ -14,6 +14,7 @@ package("yy-thunks")
     })
     add_urls("https://github.com/Chuyu-Team/YY-Thunks/releases/download/v$(version)/YY-Thunks-$(version)-Binary.zip")
 
+    add_versions("1.2.2", "518ed7ef4825e8a41997fbccfa2c8090cf31a6038fd51520a2e49886f947f9fc")
     add_versions("1.2.1", "36b6cf1f8f9ac0d05863140d20d8ca70a796775e520fed2842667b517a867f52")
     add_versions("1.1.9", "c53b87f83a3a1322de22195ee43fca590e757369b713304a4ce4fcaad532f8b7")
     add_versions("1.1.8", "2c5ef3c2e8a3abc366ed1ab233f46e60951eb1250a5f1a5b1527ed6983bf4e74")
