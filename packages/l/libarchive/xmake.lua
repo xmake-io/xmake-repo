@@ -18,21 +18,45 @@ package("libarchive")
     add_versions("3.5.1", "9015d109ec00bb9ae1a384b172bf2fc1dff41e2c66e5a9eeddf933af9db37f5a")
 
     add_deps("cmake")
-    add_deps("zlib", "bzip2", "lz4", "zstd")
 
     add_configs("openssl3", {description = "Enable use of OpenSSL.", default = true, type = "boolean"})
-    add_configs("lzma", {description = "Enable use of LZMA.", default = false, type = "boolean"})
+    add_configs("lzma", {description = "Deprecated, use lib_xz config instead", type = "boolean"})
+    add_configs("lib_xz",   {description = "Enable use of LZMA.", default = true, type = "boolean"})
+    add_configs("lib_zlib", {description = "Enable use of GZIP.", default = true, type = "boolean"})
+    add_configs("lib_bzip2",{description = "Enable use of BZIP2.",default = true, type = "boolean"})
+    add_configs("lib_lz4",  {description = "Enable use of LZ4.",  default = true, type = "boolean"})
+    add_configs("lib_lzo",  {description = "Enable use of LZO.",  default = true, type = "boolean"})
+    add_configs("lib_zstd", {description = "Enable use of ZSTD.", default = true, type = "boolean"})
 
     if is_plat("windows") then
         add_syslinks("advapi32", "bcrypt", "ws2_32", "shlwapi", "user32", "crypt32")
     end
 
     on_load(function (package)
+        if package:config("lzma") ~= nil then
+            wprint("package(libarchive): config 'lzma' is deprecated, use 'lib_xz' instead")
+        end
+
         if package:config("openssl3") then
             package:add("deps", "openssl3", {configs = {shared = package:config("shared")}})
         end
-        if package:config("lzma") then
-            package:add("deps", "lzma")
+        if package:config("lib_xz") then
+            package:add("deps", "xz")
+        end
+        if package:config("lib_zlib") then
+            package:add("deps", "zlib")
+        end
+        if package:config("lib_bzip2") then
+            package:add("deps", "bzip2")
+        end
+        if package:config("lib_lz4") then
+            package:add("deps", "lz4")
+        end
+        if package:config("lib_lzo") then
+            package:add("deps", "lzo")
+        end
+        if package:config("lib_zstd") then
+            package:add("deps", "zstd")
         end
     end)
 
@@ -49,11 +73,19 @@ package("libarchive")
                          "-DENABLE_EXPAT=OFF",
                          "-DENABLE_LIBXML2=OFF",
                          "-DENABLE_LIBB2=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+
+        table.insert(configs, "-DENABLE_OPENSSL=" .. (package:config("openssl3")  and "ON" or "OFF"))
+        table.insert(configs, "-DENABLE_LZMA="    .. (package:config("lib_xz")    and "ON" or "OFF"))
+        table.insert(configs, "-DENABLE_ZLIB="    .. (package:config("lib_zlib")  and "ON" or "OFF"))
+        table.insert(configs, "-DENABLE_BZip2="   .. (package:config("lib_bzip2") and "ON" or "OFF"))
+        table.insert(configs, "-DENABLE_LZ4="     .. (package:config("lib_lz4")   and "ON" or "OFF"))
+        table.insert(configs, "-DENABLE_LZO="     .. (package:config("lib_lzo")   and "ON" or "OFF"))
+        table.insert(configs, "-DENABLE_ZSTD="    .. (package:config("lib_zstd")  and "ON" or "OFF"))
+        table.insert(configs, "-DENABLE_CNG="     .. (package:is_plat("windows")  and "ON" or "OFF"))
+
+        table.insert(configs, "-DCMAKE_BUILD_TYPE="  .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DENABLE_OPENSSL=" .. (package:config("openssl3") and "ON" or "OFF"))
-        table.insert(configs, "-DENABLE_LZMA=" .. (package:config("lzma") and "ON" or "OFF"))
-        table.insert(configs, "-DENABLE_CNG=" .. (package:is_plat("windows") and "ON" or "OFF"))
+
         if package:is_plat("windows") then
             table.insert(configs, "-DPOSIX_REGEX_LIB=NONE")
         end
