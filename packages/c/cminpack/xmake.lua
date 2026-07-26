@@ -4,6 +4,7 @@ package("cminpack")
 
     add_urls("https://github.com/devernay/cminpack/archive/refs/tags/$(version).tar.gz",
              "https://github.com/devernay/cminpack.git")
+    add_versions("v1.3.14", "10a76d214e01baa0480828fa473c2ef6209983c80941eca10b5a69df4de02cee")
     add_versions("v1.3.11", "45675fac0a721a1c7600a91a9842fe1ab313069db163538f2923eaeddb0f46de")
     add_versions("v1.3.9", "aa37bac5b5caaa4f5805ea5c4240e3834c993672f6dab0b17190ee645e251c9f")
 
