@@ -6,6 +6,7 @@ package("rpmalloc")
     add_urls("https://github.com/mjansson/rpmalloc/archive/refs/tags/$(version).tar.gz",
              "https://github.com/mjansson/rpmalloc.git")
 
+    add_versions("2.0.1", "7e91cac119f34a4c49f74c9c6eef305601871f470f65c76dd31f0c5c49db7360")
     add_versions("1.4.5", "2513626697ef72a60957acc8caed17c39931a55c1a49202707de195742683d69")
     add_versions("1.4.4", "3859620c03e6473f0b3f16a4e965e7c049594253f70e8370fb9caa0e4118accb")
 
