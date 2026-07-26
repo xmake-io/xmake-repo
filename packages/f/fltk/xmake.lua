@@ -19,7 +19,7 @@ package("fltk")
     add_configs("forms", {description = "Build forms", default = false, type = "boolean"})
 
     if is_plat("windows", "mingw") then
-        add_syslinks("ws2_32", "comctl32", "gdi32", "oleaut32", "ole32", "uuid", "shell32", "advapi32", "comdlg32", "winspool", "user32", "kernel32", "odbc32")
+        add_syslinks("ws2_32", "comctl32", "gdi32", "gdiplus", "oleaut32", "ole32", "uuid", "shell32", "advapi32", "comdlg32", "winspool", "user32", "kernel32", "odbc32")
     elseif is_plat("macosx") then 
         add_frameworks("Cocoa")
     elseif is_plat("android") then
