@@ -29,7 +29,7 @@ package("c-blosc2")
 
     if is_plat("bsd") then
         -- _XOPEN_SOURCE hides BSD extensions such as flock() on FreeBSD.
-        add_patches("3.2.1", "patches/v3.2.1/freebsd.patch", "608aa28d0a0dd5e7e67badc51b4eda85996efe0da8b933117bdf788e1ad7f0bf")
+        add_patches(">=3.2.1", "patches/v3.2.1/freebsd.patch", "608aa28d0a0dd5e7e67badc51b4eda85996efe0da8b933117bdf788e1ad7f0bf")
     end
 
     if is_plat("wasm") then
