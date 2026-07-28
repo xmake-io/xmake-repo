@@ -7,6 +7,7 @@ package("semver")
     add_urls("https://github.com/Neargye/semver/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Neargye/semver.git")
 
+    add_versions("v1.0.0", "14fe5060fa1f039811c9969e638b1968b93265e1ecc799515c38196c8c62617b")
     add_versions("v1.0.0-rc", "343a667ecf619ead05ba75ccd6bc500e7a809a450b2a79fe3ee92238f2ecf814")
 
     add_deps("cmake")
