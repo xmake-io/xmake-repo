@@ -1,31 +1,3 @@
-local features = {
-    {name = "alsa",         option = "alsa",          deps = {"alsa-lib"}},
-    {name = "pipewire-alsa", option = "pipewire-alsa", deps = {"alsa-lib"}},
-    {name = "pulseaudio",   option = "libpulse",      deps = {"pulseaudio"}},
-    {name = "jack",         option = "jack",          deps = {"jack2"}},
-    {name = "sndfile",      option = "sndfile",       deps = {"libsndfile"}},
-    {name = "gstreamer",    option = "gstreamer",     deps = {"gstreamer", "glib"}},
-    {name = "ffmpeg",       option = "ffmpeg",        deps = {"ffmpeg"}},
-    {name = "x11",          option = "x11",           deps = {"libx11"}},
-    {name = "x11-xfixes",   option = "x11-xfixes",    deps = {"libx11", "libxfixes"}},
-    {name = "libcanberra",  option = "libcanberra",   deps = {"libcanberra"}},
-    {name = "udev",         option = "udev",          deps = {"libudev"}},
-    {name = "v4l2",         option = "v4l2",          deps = {"libudev"}},
-    {name = "libusb",       option = "libusb",        deps = {"libusb"}},
-    {name = "readline",     option = "readline",      deps = {"readline"}},
-    {name = "lv2",          option = "lv2",           deps = {"lilv"}},
-    {name = "ebur128",      option = "ebur128",       deps = {"libebur128"}},
-    {name = "fftw",         option = "fftw",          deps = {"fftw"}},
-    {name = "raop",         option = "raop",          deps = {"openssl"}},
-    {name = "selinux",      option = "selinux",       deps = {"libselinux"}},
-    {name = "libsystemd",   option = "libsystemd",    deps = {"libsystemd"}},
-    {name = "vulkan",       option = "vulkan",        deps = {"vulkan-loader", "vulkan-headers", "libdrm"}},
-    {name = "sdl2",         option = "sdl2",          deps = {"libsdl2"}},
-    {name = "flatpak",      option = "flatpak",       deps = {}},
-    {name = "onnxruntime",  option = "onnxruntime",   deps = {"onnxruntime"}},
-    {name = "snap",         option = "snap",          deps = {}},
-}
-
 package("pipewire")
     set_homepage("https://pipewire.org")
     set_description("PipeWire is a server and user space API to deal with multimedia pipelines.")
@@ -38,10 +10,38 @@ package("pipewire")
     add_extsources("pacman::pipewire", "apt::libpipewire-0.3-dev")
 
     add_configs("dbus", {description = "Enable code that depends on dbus.", default = false, type = "boolean"})
+
+    local features = {
+        {name = "alsa",         option = "alsa",          deps = {"alsa-lib"}},
+        {name = "pipewirealsa", option = "pipewire-alsa", deps = {"alsa-lib"}},
+        {name = "pulseaudio",   option = "libpulse",      deps = {"pulseaudio"}},
+        {name = "jack",         option = "jack",          deps = {"jack2"}},
+        {name = "sndfile",      option = "sndfile",       deps = {"libsndfile"}},
+        {name = "gstreamer",    option = "gstreamer",     deps = {"gstreamer", "glib"}},
+        {name = "ffmpeg",       option = "ffmpeg",        deps = {"ffmpeg"}},
+        {name = "x11",          option = "x11",           deps = {"libx11"}},
+        {name = "x11xfixes",    option = "x11-xfixes",    deps = {"libx11", "libxfixes"}},
+        {name = "libcanberra",  option = "libcanberra",   deps = {"libcanberra"}},
+        {name = "udev",         option = "udev",          deps = {"libudev"}},
+        {name = "v4l2",         option = "v4l2",          deps = {"libudev"}},
+        {name = "libusb",       option = "libusb",        deps = {"libusb"}},
+        {name = "readline",     option = "readline",      deps = {"readline"}},
+        {name = "lv2",          option = "lv2",           deps = {"lilv"}},
+        {name = "ebur128",      option = "ebur128",       deps = {"libebur128"}},
+        {name = "fftw",         option = "fftw",          deps = {"fftw"}},
+        {name = "raop",         option = "raop",          deps = {"openssl"}},
+        {name = "selinux",      option = "selinux",       deps = {"libselinux"}},
+        {name = "libsystemd",   option = "libsystemd",    deps = {"libsystemd"}},
+        {name = "vulkan",       option = "vulkan",        deps = {"vulkan-loader", "vulkan-headers", "libdrm"}},
+        {name = "sdl2",         option = "sdl2",          deps = {"libsdl2"}},
+        {name = "flatpak",      option = "flatpak",       deps = {}},
+        {name = "onnxruntime",  option = "onnxruntime",   deps = {"onnxruntime"}},
+        {name = "snap",         option = "snap",          deps = {}},
+    }
     for _, feature in ipairs(features) do
         add_configs(feature.name, {description = "Enable the " .. feature.name .. " integration.", default = false, type = "boolean"})
     end
-    add_configs("session-managers", {description = "Session managers to build (meson array, e.g. ['wireplumber']).", default = "[]", type = "string"})
+    add_configs("sessionmanagers", {description = "Session managers to build (meson array, e.g. ['wireplumber']).", default = "[]", type = "string"})
 
     add_deps("meson", "ninja", "pkg-config")
 
@@ -90,7 +90,7 @@ package("pipewire")
             "-Dopus=disabled",
             "-Dlibffado=disabled",
         }
-        table.insert(configs, "-Dsession-managers=" .. package:config("session-managers"))
+        table.insert(configs, "-Dsession-managers=" .. package:config("sessionmanagers"))
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         table.insert(configs, "-Ddbus=" .. (package:config("dbus") and "enabled" or "disabled"))
         for _, feature in ipairs(features) do
