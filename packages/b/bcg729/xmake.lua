@@ -4,6 +4,7 @@ package("bcg729")
 
     add_urls("https://github.com/BelledonneCommunications/bcg729/archive/refs/tags/$(version).tar.gz",
              "https://github.com/BelledonneCommunications/bcg729.git")
+    add_versions("1.1.2", "9c22d98c2debc1e37163b8a703f05278ad5d9c03f1c6b373629d8a072092184a")
     add_versions("1.0.4", "94b3542a06cbd96306efc19f959f9febae62806a22599063f82a8c33e989d48b")
     add_versions("1.1.1", "68599a850535d1b182932b3f86558ac8a76d4b899a548183b062956c5fdc916d")
 
