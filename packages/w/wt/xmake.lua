@@ -53,7 +53,7 @@ package("wt")
         table.insert(configs, "-DENABLE_SELENIUM_TESTS=" .. (package:config("selenium_tests") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_OPENGL=" .. (package:config("opengl") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_UNWIND=" .. (package:config("unwind") and "ON" or "OFF"))
-        
+
         table.insert(configs, "-DCONNECTOR_HTTP=" .. (package:config("http") and "ON" or "OFF"))
         table.insert(configs, "-DCONNECTOR_FCGI=" .. (package:config("fastcgi") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_LIBWTDBO=" .. (package:config("dbo") and "ON" or "OFF"))
@@ -69,31 +69,31 @@ package("wt")
 
         if package:config("haru") then
             package:add("deps", "libharu")
-        end 
+        end
         if package:config("pango") then
             package:add("deps", "pango")
-        end 
+        end
         if package:config("sqlite") then
             package:add("deps", "sqlite3")
-        end 
+        end
         if package:config("postgres") then
             package:add("deps", "libpq")
-        end 
+        end
         if package:config("mysql") then
             package:add("deps", "mysql")
-        end 
+        end
         if package:config("qt5") then
             package:add("deps", "qt5base")
-        end 
+        end
         if package:config("qt6") then
             package:add("deps", "qt6base")
-        end 
+        end
         if package:config("selenium_tests") then
             package:add("deps", "python >= 3")
-        end 
+        end
         if package:config("opengl") then
             package:add("deps", "opengl", "glew")
-        end 
+        end
         if package:config("unwind") then
             package:add("deps", "libunwind")
         end
