@@ -32,7 +32,7 @@ package("wt")
     add_configs("fastcgi", {description = "Build the FastCGI connector (libwtfcgi)", type = "boolean", default = false})
     add_configs("test", {description = "Build Wt::Test", type = "boolean", default = false})
 
-    on_install(function (package)
+    on_install("macosx", "linux", "windows", "mingw", function (package)
         local configs = {}
 
         table.insert(configs, "-DBUILD_EXAMPLES=OFF")
