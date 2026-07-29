@@ -1,0 +1,30 @@
+From 83d0d8b5952e1e641fa4648ebb2ef8bcf28f5c7e Mon Sep 17 00:00:00 2001
+From: Jakub Michalski <jmichalski@antmicro.com>
+Date: Tue, 7 Jul 2026 13:30:02 +0200
+Subject: [PATCH] Fix memory leak in VerilatedFst::close()
+
+Signed-off-by: Jakub Michalski <jmichalski@antmicro.com>
+---
+ include/verilated_fst_c.cpp | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/include/verilated_fst_c.cpp b/include/verilated_fst_c.cpp
+index 0e3706725..de54d9e8e 100644
+--- a/include/verilated_fst_c.cpp
++++ b/include/verilated_fst_c.cpp
+@@ -98,8 +98,10 @@ void VerilatedFst::close() VL_MT_SAFE_EXCLUDES(m_mutex) {
+     const VerilatedLockGuard lock{m_mutex};
+     Super::closeBase();
+     emitTimeChangeMaybe();
+-    if (m_fst) m_fst->close();  // LCOV_EXCL_BR_LINE
+-    m_fst = nullptr;
++    if (m_fst) {
++        m_fst->close();
++        VL_DO_CLEAR(delete m_fst, m_fst = nullptr);
++    }
+ }
+ 
+ void VerilatedFst::flush() VL_MT_SAFE_EXCLUDES(m_mutex) {
+-- 
+2.55.0
+
