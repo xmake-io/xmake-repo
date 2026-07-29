@@ -9,7 +9,7 @@ package("wt")
 
     add_deps("cmake")
     add_deps("libpng", "zlib")
-    add_deps("boost", {configs = {asio = true, atomic = true, filesystem = true, program_options = true, system = true, thread = true}})
+    add_deps("boost", {configs = {asio = true, atomic = true, filesystem = true, program_options = true, serialization = true, system = true, thread = true}})
 
     add_configs("ssl", {description = "Enable cryptography functions, using OpenSSL", type = "boolean", default = true})
     add_configs("haru", {description = "Enable Haru Free PDF Library, which is used to provide support for painting to PDF (WPdfImage)", type = "boolean", default = false})
