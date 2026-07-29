@@ -20,7 +20,7 @@ package("h2o")
     add_configs("aegis", {description = "enable AEGIS", default = false, type = "boolean", readonly = true})
     add_configs("mptcp", {description = "whether or not to support listening on MPTCP sockets", default = true, type = "boolean"})
     add_configs("brotli", {description = "whether or not to use brotli", default = false, type = "boolean"})
-    add_configs("zstd", {description = "whether or not to use zstd", default = true, type = "boolean"})
+    add_configs("zstd", {description = "whether or not to use zstd", default = false, type = "boolean"})
 
     -- CMakeLists.txt forces -g3 -O2
     add_patches("2026.06.29", "patches/2026.06.29/c-flags.patch", "1a410958f145eea305f9e0b975611faf034c907733e5bfb57f4098583aaa3509")
