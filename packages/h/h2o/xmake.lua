@@ -19,7 +19,7 @@ package("h2o")
     add_configs("ktls", {description = "use Kernel TLS", default = true, type = "boolean"})
     add_configs("aegis", {description = "enable AEGIS", default = false, type = "boolean", readonly = true})
     add_configs("mptcp", {description = "whether or not to support listening on MPTCP sockets", default = true, type = "boolean"})
-    add_configs("brotli", {description = "whether or not to use brotli", default = true, type = "boolean"})
+    add_configs("brotli", {description = "whether or not to use brotli", default = false, type = "boolean"})
     add_configs("zstd", {description = "whether or not to use zstd", default = true, type = "boolean"})
 
     -- CMakeLists.txt forces -g3 -O2
