@@ -24,7 +24,8 @@ package("h2o")
     add_configs("zstd", {description = "whether or not to use zstd", default = true, type = "boolean"})
 
     -- CMakeLists.txt forces -g3 -O2
-    add_patches("*", "patches/c-flags.patch", "2cd316ef5317bd93a6e2592aff69ca1526c189d61b5fc13c9b25712f10743f15")
+    add_patches("2026.06.29", "patches/2026.06.29/c-flags.patch", "1a410958f145eea305f9e0b975611faf034c907733e5bfb57f4098583aaa3509")
+    add_patches("v2.2.6", "patches/v2.2.6/c-flags.patch", "6b39b402cdbe47f56baa147a56f04222e2daea7e2f5757cce08a80bf5ee3ea31")
 
     on_load(function (package)
         if package:config("uring") then
