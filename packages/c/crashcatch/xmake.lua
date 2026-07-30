@@ -6,6 +6,7 @@ package("crashcatch")
 
     add_urls("https://github.com/keithpotz/CrashCatch/archive/refs/tags/v$(version).tar.gz",
         "https://github.com/keithpotz/CrashCatch.git")
+    add_versions("1.5.0", "41bfa6776cdc143141050bc0bbc4bcf7f634f4becb80368645223390af77c7b1")
     add_versions("1.4.0", "b1b965626ee200c039cfacaa77cdf458074235014c65f1862101714ce6b1fdfc")
     add_versions("1.3.0", "9723153a76c3c840ded92f1c1e53fe5817d452bcc6d2309d5b0c2bd295de5ff0")
 
