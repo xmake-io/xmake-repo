@@ -80,7 +80,7 @@ package("wt")
             package:add("deps", "libpq")
         end
         if package:config("mysql") then
-            package:add("deps", "mysql")
+            package:add("deps", "mariadb-connector-c")
         end
         if package:config("qt5") then
             package:add("deps", "qt5base")
