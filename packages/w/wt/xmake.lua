@@ -32,6 +32,8 @@ package("wt")
     add_configs("fastcgi", {description = "Build the FastCGI connector (libwtfcgi)", type = "boolean", default = false})
     add_configs("test", {description = "Build Wt::Test", type = "boolean", default = false})
 
+    add_patches("4.14.0", "patches/4.14.0/cmake.patch", "3864335d5a0fcb8fe76c791eb7baa6c9222adf1dbe324d40f7629d344d922f84")
+
     on_install("macosx", "linux", "windows", "mingw", function (package)
         local configs = {}
 
@@ -58,6 +60,30 @@ package("wt")
         table.insert(configs, "-DCONNECTOR_FCGI=" .. (package:config("fastcgi") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_LIBWTDBO=" .. (package:config("dbo") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_LIBWTTEST=" .. (package:config("test") and "ON" or "OFF"))
+
+        table.insert(configs, "-DZLIB_PREFIX=" .. package:dep("zlib"):installdir())
+
+        if package:config("ssl") then
+            table.insert(configs, "-DSSL_PREFIX=" .. package:dep("openssl"):installdir())
+        end
+        if package:config("fastcgi") then
+            table.insert(configs, "-DFCGI_PREFIX=" .. package:dep("fcgi"):installdir())
+        end
+        if package:config("postgres") then
+            table.insert(configs, "-DPOSTGRES_PREFIX=" .. package:dep("libpq"):installdir())
+        end
+        if package:config("mysql") then
+            table.insert(configs, "-DMYSQL_PREFIX=" .. package:dep("mariadb-connector-c"):installdir())
+        end
+        if package:config("sqlite") then
+            table.insert(configs, "-DSQLITE3_PREFIX=" .. package:dep("sqlite3"):installdir())
+        end
+        if package:config("haru") then
+            table.insert(configs, "-DHARU_PREFIX=" .. package:dep("libharu"):installdir())
+        end
+        if package:config("unwind") then
+            table.insert(configs, "-DUNWIND_PREFIX=" .. package:dep("libunwind"):installdir())
+        end
 
         import("package.tools.cmake").install(package, configs)
     end)
