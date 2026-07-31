@@ -34,7 +34,7 @@ package("wt")
 
     add_patches("4.14.0", "patches/4.14.0/cmake.patch", "3864335d5a0fcb8fe76c791eb7baa6c9222adf1dbe324d40f7629d344d922f84")
 
-    on_install("macosx", "linux", "mingw", "windows", function (package)
+    on_install("macosx", "linux", "mingw@windows", "windows", function (package)
         local configs = {}
 
         table.insert(configs, "-DBUILD_EXAMPLES=OFF")
