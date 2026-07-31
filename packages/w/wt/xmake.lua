@@ -66,7 +66,6 @@ package("wt")
         for name, config in pairs(configprefixes) do
             local dep = config[1]
             local define = config[2]
-            print(dep)
             if package:config(name) then
                 table.insert(configs, "-D" .. define .. "=" .. package:dep(dep):installdir())
             end
