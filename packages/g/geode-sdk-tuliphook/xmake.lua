@@ -6,6 +6,7 @@ package("geode-sdk-tuliphook")
     add_urls("https://github.com/geode-sdk/TulipHook/archive/refs/tags/$(version).tar.gz",
              "https://github.com/geode-sdk/TulipHook.git")
 
+    add_versions("v3.1.14", "4f58a4d22081b0a49c387fefb0e19e9a4f9bd8893078ccc3a5c8ade6e0c70136")
     add_versions("v3.1.13", "eefc784bacf64bcbe14b562b9b1df816a7a0603b8cb1ce56dc74260e8ff90a5e")
     add_versions("v3.1.12", "af3cd6d58f822282d929bcb1e3b12c0f78fedaab3b66d288c55480bbc98d0aea")
     add_versions("v3.1.9", "c1b2930511e4e4abeb9b68db6c21bbdd0bc0d02869ea03498f4329011e07626c")
