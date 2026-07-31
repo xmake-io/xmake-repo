@@ -28,9 +28,9 @@ package("wt")
     add_configs("unwind", {description = "Build Wt with stacktrace support using libunwind", type = "boolean", default = false})
 
     add_configs("http", {description = "Build the stand-alone httpd connector (libwthttp)", type = "boolean", default = true})
-    add_configs("dbo", {description = "Build Wt::Dbo", type = "boolean", default = false})
+    add_configs("libwtdbo", {description = "Build Wt::Dbo", type = "boolean", default = false})
     add_configs("fastcgi", {description = "Build the FastCGI connector (libwtfcgi)", type = "boolean", default = false})
-    add_configs("test", {description = "Build Wt::Test", type = "boolean", default = false})
+    add_configs("libwttest", {description = "Build Wt::Test", type = "boolean", default = false})
 
     add_patches("4.14.0", "patches/4.14.0/cmake.patch", "3864335d5a0fcb8fe76c791eb7baa6c9222adf1dbe324d40f7629d344d922f84")
 
@@ -40,97 +40,73 @@ package("wt")
         table.insert(configs, "-DBUILD_EXAMPLES=OFF")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DSHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DENABLE_SSL=" .. (package:config("ssl") and "ON" or "OFF"))
-        table.insert(configs, "-DENABLE_HARU=" .. (package:config("haru") and "ON" or "OFF"))
-        table.insert(configs, "-DENABLE_PANGO=" .. (package:config("pango") and "ON" or "OFF"))
-        table.insert(configs, "-DENABLE_SQLITE=" .. (package:config("sqlite") and "ON" or "OFF"))
-        table.insert(configs, "-DENABLE_POSTGRES=" .. (package:config("postgres") and "ON" or "OFF"))
-        table.insert(configs, "-DENABLE_FIREBIRD=" .. (package:config("firebird") and "ON" or "OFF"))
-        table.insert(configs, "-DENABLE_MYSQL=" .. (package:config("mysql") and "ON" or "OFF"))
-        table.insert(configs, "-DENABLE_MSSQLSERVER=" .. (package:config("mssqlserver") and "ON" or "OFF"))
-        table.insert(configs, "-DENABLE_QT4=" .. (package:config("qt4") and "ON" or "OFF"))
-        table.insert(configs, "-DENABLE_QT5=" .. (package:config("qt5") and "ON" or "OFF"))
-        table.insert(configs, "-DENABLE_QT6=" .. (package:config("qt6") and "ON" or "OFF"))
-        table.insert(configs, "-DENABLE_SAML=" .. (package:config("saml") and "ON" or "OFF"))
-        table.insert(configs, "-DENABLE_SELENIUM_TESTS=" .. (package:config("selenium_tests") and "ON" or "OFF"))
-        table.insert(configs, "-DENABLE_OPENGL=" .. (package:config("opengl") and "ON" or "OFF"))
-        table.insert(configs, "-DENABLE_UNWIND=" .. (package:config("unwind") and "ON" or "OFF"))
 
-        table.insert(configs, "-DCONNECTOR_HTTP=" .. (package:config("http") and "ON" or "OFF"))
-        table.insert(configs, "-DCONNECTOR_FCGI=" .. (package:config("fastcgi") and "ON" or "OFF"))
-        table.insert(configs, "-DENABLE_LIBWTDBO=" .. (package:config("dbo") and "ON" or "OFF"))
-        table.insert(configs, "-DENABLE_LIBWTTEST=" .. (package:config("test") and "ON" or "OFF"))
+        for name, enabled in table.orderpairs(package:configs()) do
+            if name == "http" then
+                table.insert(configs, "-DCONNECTOR_HTTP=" .. (package:config(name) and "ON" or "OFF"))
+            elseif name == "fastcgi" then
+                table.insert(configs, "-DCONNECTOR_FCGI=" .. (package:config(name) and "ON" or "OFF"))
+            elseif not package:extraconf("configs", name, "builtin") then
+                table.insert(configs, "-DENABLE_" .. string.upper(name) .. "=" .. (enabled and "ON" or "OFF"))
+            end
+        end
 
         table.insert(configs, "-DZLIB_PREFIX=" .. package:dep("zlib"):installdir())
 
-        if package:config("ssl") then
-            table.insert(configs, "-DSSL_PREFIX=" .. package:dep("openssl"):installdir())
-        end
-        if package:config("fastcgi") then
-            table.insert(configs, "-DFCGI_PREFIX=" .. package:dep("fcgi"):installdir())
-        end
-        if package:config("postgres") then
-            table.insert(configs, "-DPOSTGRES_PREFIX=" .. package:dep("libpq"):installdir())
-        end
-        if package:config("mysql") then
-            table.insert(configs, "-DMYSQL_PREFIX=" .. package:dep("mariadb-connector-c"):installdir())
-        end
-        if package:config("sqlite") then
-            table.insert(configs, "-DSQLITE3_PREFIX=" .. package:dep("sqlite3"):installdir())
-        end
-        if package:config("haru") then
-            table.insert(configs, "-DHARU_PREFIX=" .. package:dep("libharu"):installdir())
-        end
-        if package:config("unwind") then
-            table.insert(configs, "-DUNWIND_PREFIX=" .. package:dep("libunwind"):installdir())
+        local configprefixes = {
+            ssl = {"openssl", "SSL_PREFIX"},
+            fastcgi = {"fcgi", "FCGI_PREFIX"},
+            postgres = {"libpq", "POSTGRES_PREFIX"},
+            mysql = {"mariadb-connector-c", "MYSQL_PREFIX"},
+            sqlite = {"sqlite3", "SQLITE3_PREFIX"},
+            haru = {"libharu", "HARU_PREFIX"},
+            unwind = {"libunwind", "UNWIND_PREFIX"}
+        }
+
+        for name, config in pairs(configprefixes) do
+            local dep = config[1]
+            local define = config[2]
+            print(dep)
+            if package:config(name) then
+                table.insert(configs, "-D" .. define .. "=" .. package:dep(dep):installdir())
+            end
         end
 
         import("package.tools.cmake").install(package, configs)
     end)
 
     on_load(function (package)
-        if package:config("ssl") then
-            package:add("deps", "openssl")
+        local configdeps = {
+            ssl = "openssl",
+            haru = "libharu",
+            pango = "pango",
+            sqlite = "sqlite3",
+            postgres = "libpq",
+            mysql = "mariadb-connector-c",
+            qt5 = "qt5base",
+            qt6 = "qt6base",
+            selenium_tests = "python >=3",
+            opengl = "glew",
+            unwind = "libunwind",
+            fastcgi = "fcgi"
+        }
+
+        for name, dep in pairs(configdeps) do
+            if package:config(name) then
+                package:add("deps", dep)
+            end
         end
-        if package:config("haru") then
-            package:add("deps", "libharu")
-        end
-        if package:config("pango") then
-            package:add("deps", "pango")
-        end
-        if package:config("sqlite") then
-            package:add("deps", "sqlite3")
-        end
-        if package:config("postgres") then
-            package:add("deps", "libpq")
-        end
-        if package:config("mysql") then
-            package:add("deps", "mariadb-connector-c")
-        end
-        if package:config("qt5") then
-            package:add("deps", "qt5base")
-        end
-        if package:config("qt6") then
-            package:add("deps", "qt6base")
-        end
-        if package:config("selenium_tests") then
-            package:add("deps", "python >=3")
-        end
-        if package:config("opengl") then
-            package:add("deps", "opengl", "glew")
-        end
-        if package:config("unwind") then
-            package:add("deps", "libunwind")
-        end
-        if package:config("http") then
-            package:add("linkorders", (package:config("debug") and "wthttpd" or "wthttp"), (package:config("debug") and "wtd" or "wt"))
-        end
-        if package:config("fastcgi") then
-            package:add("deps", "fcgi")
-            package:add("linkorders", (package:config("debug") and "wtfcgid" or "wtfcgi"), (package:config("debug") and "wtd" or "wt"))
-        end
-        if package:config("dbo") then
-            package:add("linkorders", (package:config("debug") and "wtdbod" or "wtdbo"), (package:config("debug") and "wtd" or "wt"))
+
+        local configlinks = {
+            http = "wthttp",
+            fastcgi = "wtfcgi",
+            dbo = "wtddbo"
+        }
+
+        for name, link in pairs(configlinks) do
+            if package:config(name) then
+                package:add("linkorders", (package:is_debug() and (link .. "d") or link), (package:is_debug() and "wtd" or "wt"))
+            end
         end
     end)
 
