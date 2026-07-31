@@ -43,15 +43,17 @@ package("h2o")
 
     on_install("linux", function (package)
         local configs = {}
+
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_MRUBY=" .. (package:config("mruby") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_CCACHE=" .. (package:config("ccache") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_DTRACE=" .. (package:config("dtrace") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_FUSION=" .. (package:config("fusion") and "ON" or "OFF"))
+        table.insert(configs, "-DDISABLE_LIBUV=" .. (package:config("uv") and "OFF" or "ON"))
+        table.insert(configs, "-DWITH_IO_URING=" .. (package:config("uring") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_KTLS=" .. (package:config("ktls") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_AEGIS=" .. (package:config("aegis") and "ON" or "OFF"))
-        table.insert(configs, "-DWITH_IO_URING=" .. (package:config("uring") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_MPTCP=" .. (package:config("mptcp") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_BROTLI=" .. (package:config("brotli") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_ZSTD=" .. (package:config("zstd") and "ON" or "OFF"))
