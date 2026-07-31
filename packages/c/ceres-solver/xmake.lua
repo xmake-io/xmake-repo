@@ -8,7 +8,7 @@ package("ceres-solver")
              "https://github.com/ceres-solver/ceres-solver.git")
     add_versions("2.0.0", "10298a1d75ca884aa0507d1abb0e0f04800a92871cd400d4c361b56a777a7603")
     add_versions("2.1.0", "f7d74eecde0aed75bfc51ec48c91d01fe16a6bf16bce1987a7073286701e2fc6")
-    add_versions("2.2.0", "48b2302a7986ece172898477c3bcd6deb8fb5cf19b3327bc49969aad4cede82d")
+    add_versions("2.2.0", "12efacfadbfdc1bbfa203c236e96f4d3c210bed96994288b3ff0c8e7c6f350d4")
 
     add_patches("2.1.0", "patches/2.1.0/int64.patch", "1df14f30abf1a942204b408c780eabbeac0859ba5a6db3459b55c47479583c57")
     add_patches("2.2.0", "patches/2.2.0/suitesparse.patch", "3af807aec867512dbb18ac7a912dbdb1e1f66f3c8f2976c96d09ead80456beb8")
