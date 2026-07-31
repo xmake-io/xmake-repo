@@ -32,6 +32,12 @@ package("nri")
 
     add_deps("cmake")
 
+    if on_check then
+        on_check("android", function (package)
+            assert(package:version() and package:version():lt("180"), "package(nri >=v180): unsupport android")
+        end)
+    end
+
     on_load(function(package)
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", [[NRI_API=extern "C" __declspec(dllimport)]])
