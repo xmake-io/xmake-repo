@@ -92,7 +92,6 @@ package("wt")
         if package:config("ssl") then
             package:add("deps", "openssl")
         end
-
         if package:config("haru") then
             package:add("deps", "libharu")
         end
@@ -124,14 +123,14 @@ package("wt")
             package:add("deps", "libunwind")
         end
         if package:config("http") then
-            package:add("linkorders", "wthttp", "wt")
+            package:add("linkorders", (package:config("debug") and "wthttpd" or "wtd"))
         end
         if package:config("fastcgi") then
             package:add("deps", "fcgi")
-            package:add("linkorders", "wtfcgi", "wt")
+            package:add("linkorders", (package:config("debug") and "wtfcgid" or "wtd"))
         end
         if package:config("dbo") then
-            package:add("linkorders", "wtdbo", "wt")
+            package:add("linkorders", (package:config("debug") and "wtdbod" or "wtd"))
         end
     end)
 
