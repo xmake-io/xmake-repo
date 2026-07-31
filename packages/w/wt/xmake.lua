@@ -114,7 +114,7 @@ package("wt")
             package:add("deps", "qt6base")
         end
         if package:config("selenium_tests") then
-            package:add("deps", "python >= 3")
+            package:add("deps", "python >=3")
         end
         if package:config("opengl") then
             package:add("deps", "opengl", "glew")
