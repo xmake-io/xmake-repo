@@ -34,7 +34,7 @@ package("wt")
 
     add_patches("4.14.0", "patches/4.14.0/cmake.patch", "3864335d5a0fcb8fe76c791eb7baa6c9222adf1dbe324d40f7629d344d922f84")
 
-    on_install("macosx", "linux", "windows", function (package)
+    on_install("macosx", "linux", "mingw", "windows", function (package)
         local configs = {}
 
         table.insert(configs, "-DBUILD_EXAMPLES=OFF")
@@ -107,6 +107,10 @@ package("wt")
             if package:config(name) then
                 package:add("linkorders", (package:is_debug() and (link .. "d") or link), (package:is_debug() and "wtd" or "wt"))
             end
+        end
+
+        if package:is_plat("mingw") and package:config("http") then
+            package:add("syslinks", "Mswsock", "Ole32")
         end
     end)
 
