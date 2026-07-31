@@ -123,14 +123,14 @@ package("wt")
             package:add("deps", "libunwind")
         end
         if package:config("http") then
-            package:add("linkorders", (package:config("debug") and "wthttpd" or "wtd"))
+            package:add("linkorders", (package:config("debug") and "wthttpd" or "wthttp"), (package:config("debug") and "wtd" or "wt"))
         end
         if package:config("fastcgi") then
             package:add("deps", "fcgi")
-            package:add("linkorders", (package:config("debug") and "wtfcgid" or "wtd"))
+            package:add("linkorders", (package:config("debug") and "wtfcgid" or "wtfcgi"), (package:config("debug") and "wtd" or "wt"))
         end
         if package:config("dbo") then
-            package:add("linkorders", (package:config("debug") and "wtdbod" or "wtd"))
+            package:add("linkorders", (package:config("debug") and "wtdbod" or "wtdbo"), (package:config("debug") and "wtd" or "wt"))
         end
     end)
 
