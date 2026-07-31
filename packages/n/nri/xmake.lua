@@ -6,6 +6,7 @@ package("nri")
     add_urls("https://github.com/NVIDIA-RTX/NRI/archive/refs/tags/$(version).tar.gz",
              "https://github.com/NVIDIA-RTX/NRI.git")
 
+    add_versions("v180", "1bd4f43132c8c90d30807fc727f0651d005c1ab04b77141a6afd869b40ee9bfd")
     add_versions("v179", "af8999884cfef1d07fcb6da6a3e22552508ab9a345ab9c906a712203b1c391f8")
     add_versions("v177", "3e031984f94586cea73ed351c45324736e2b9160ec825f3e6b315c2fa4d73107")
     add_versions("v176", "fddb596caca75af684af368b83a12f476263f6646b65cde57b52674668922943")
@@ -30,6 +31,12 @@ package("nri")
     add_links("NRI", "NRI_NONE", "NRI_D3D11", "NRI_D3D12", "NRI_VK", "NRI_Validation", "NRI_Shared")
 
     add_deps("cmake")
+
+    if on_check then
+        on_check("android", function (package)
+            assert(package:version() and package:version():lt("180"), "package(nri >=v180): unsupport android")
+        end)
+    end
 
     on_load(function(package)
         if package:is_plat("windows") and package:config("shared") then
