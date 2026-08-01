@@ -76,7 +76,7 @@ package("wt")
 
     on_load(function (package)
         local configdeps = {
-            ssl = "openssl",
+            ssl = "openssl3",
             haru = "libharu",
             pango = "pango",
             sqlite = "sqlite3",
