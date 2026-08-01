@@ -54,7 +54,7 @@ package("wt")
         table.insert(configs, "-DZLIB_PREFIX=" .. package:dep("zlib"):installdir())
 
         local configprefixes = {
-            ssl = {"openssl", "SSL_PREFIX"},
+            ssl = {"openssl3", "SSL_PREFIX"},
             fastcgi = {"fcgi", "FCGI_PREFIX"},
             postgres = {"libpq", "POSTGRES_PREFIX"},
             mysql = {"mariadb-connector-c", "MYSQL_PREFIX"},
