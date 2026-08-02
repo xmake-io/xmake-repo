@@ -36,7 +36,7 @@ package("libpg_query")
         end
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows", "linux", "macosx|!x86_64", function (package)
         local configs = {}
 
         if package:config("shared") then
