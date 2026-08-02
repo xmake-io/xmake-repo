@@ -40,6 +40,7 @@ package("lsp-framework")
     on_install("windows", "linux", "macosx", "mingw@windows", "bsd", function (package)
         local configs = {}
         if package:version():ge("1.3.0") then
+            io.replace("CMakeLists.txt", "COMMAND%s+lspgen%s+", "COMMAND $<TARGET_FILE:lspgen> ", {plain = false})
             io.replace("CMakeLists.txt", "install(TARGETS lsp EXPORT lsp ARCHIVE LIBRARY)", "install(TARGETS lsp EXPORT lsp RUNTIME ARCHIVE LIBRARY)", {plain = true})
             table.insert(configs, "-DCMAKE_INSTALL_LIBDIR=lib")
         end
