@@ -5,6 +5,7 @@ package("libseccomp")
 
     add_urls("https://github.com/seccomp/libseccomp/releases/download/v$(version)/libseccomp-$(version).tar.gz",
              "https://github.com/seccomp/libseccomp.git")
+    add_versions("2.6.1", "501f66c667225d53791b97e1d7cf85ab764c297d04881f60f38f451c4b0ee1be")
     add_versions("2.6.0", "83b6085232d1588c379dc9b9cae47bb37407cf262e6e74993c61ba72d2a784dc")
 
     add_configs("tools", {description = "Build tools.", default = false, type = "boolean"})
