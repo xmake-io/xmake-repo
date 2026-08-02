@@ -111,6 +111,10 @@ package("wt")
         if package:is_plat("mingw") and package:config("http") then
             package:add("syslinks", "Mswsock", "Ole32")
         end
+
+        if package:is_plat("windows") and package:config("ssl") then
+            package:add("syslinks", "crypt32")
+        end
     end)
 
     on_test(function (package)
