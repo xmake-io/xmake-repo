@@ -26,6 +26,11 @@ package("h2o")
     add_patches("2026.06.29", "patches/2026.06.29/c-flags.patch", "1a410958f145eea305f9e0b975611faf034c907733e5bfb57f4098583aaa3509")
     add_patches("v2.2.6", "patches/v2.2.6/c-flags.patch", "6b39b402cdbe47f56baa147a56f04222e2daea7e2f5757cce08a80bf5ee3ea31")
 
+    on_check("linux", function (package)
+        -- the bug is not related to xmake
+        assert(not (package:is_debug() and package:config("shared")), "package(h2o): the package cannot be built in shared and debug mode at the same time")
+    end)
+
     on_load(function (package)
         if package:config("uring") then
             package:add("deps", "liburing")
