@@ -6,6 +6,7 @@ package("rgfw")
     add_urls("https://github.com/ColleagueRiley/RGFW/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ColleagueRiley/RGFW.git")
 
+    add_versions("1.70", "96245d05a8b2b83d3288e86ecd83081e8abbf2573d7089aad6332af8c85cbaca")
     add_versions("1.8.1", "39f9dc8f89e86926fe2be4ffd6cdc877c1e7d179e24e3c803389ece50d6aef60")
 
     add_configs("headeronly", { description = "Use RGFW as a single-header library.", default = true, type = "boolean" })
