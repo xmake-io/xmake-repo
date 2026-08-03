@@ -128,6 +128,7 @@ package("reflect-cpp")
             }
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+            table.insert(configs, "-DREFLECTCPP_JSON=" .. (package:config("yyjson") and "ON" or "OFF"))
             table.insert(configs, "-DREFLECTCPP_BSON=" .. (package:config("bson") and "ON" or "OFF"))
             table.insert(configs, "-DREFLECTCPP_CBOR=" .. (package:config("cbor") and "ON" or "OFF"))
             table.insert(configs, "-DREFLECTCPP_CAPNPROTO=" .. (package:config("capnproto") and "ON" or "OFF"))
@@ -146,22 +147,41 @@ package("reflect-cpp")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <rfl/json.hpp>
-            #include <rfl.hpp>
-            #include <rfl/DefaultIfMissing.hpp>
             struct Person {
                 std::string first_name;
                 std::string last_name;
                 int age;
             };
             const auto homer = Person{.first_name = "Homer",
-                                      .last_name = "Simpson",
-                                      .age = 45};
+                                    .last_name = "Simpson",
+                                    .age = 45};
             void test() {
-                const std::string json_string = rfl::json::write(homer);
-                auto homer2 = rfl::json::read<Person, rfl::DefaultIfMissing>(json_string).value();
+                const auto first_name = rfl::get<"first_name">(rfl::to_named_tuple(homer));
+                rfl::to_named_tuple(homer).apply([](const auto& f) {
+                    auto field_name = f.name();
+                    const auto& value = f.value();
+                });
             }
-        ]]}, {configs = {languages = "c++20"}}))
+        ]]}, {configs = {languages = "c++20"}, includes = "rfl.hpp"}))
+        if package:config("yyjson") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <rfl/json.hpp>
+                #include <rfl.hpp>
+                #include <rfl/DefaultIfMissing.hpp>
+                struct Person {
+                    std::string first_name;
+                    std::string last_name;
+                    int age;
+                };
+                const auto homer = Person{.first_name = "Homer",
+                                        .last_name = "Simpson",
+                                        .age = 45};
+                void test() {
+                    const std::string json_string = rfl::json::write(homer);
+                    auto homer2 = rfl::json::read<Person, rfl::DefaultIfMissing>(json_string).value();
+                }
+            ]]}, {configs = {languages = "c++20"}}))
+        end
         if package:config("msgpack") then
             assert(package:check_cxxsnippets({test = [[
                 #include <rfl/msgpack.hpp>
