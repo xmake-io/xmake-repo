@@ -13,6 +13,8 @@ package("eui-neo")
     add_configs("markdown", {description = "Enable MD4C Markdown parsing support", default = true, type = "boolean"})
     add_configs("vulkan_low_latency", {description = "Prefer low-latency Vulkan presentation", default = false, type = "boolean"})
 
+    add_includedirs("include", "include/eui-neo")
+
     add_deps("cmake")
     add_deps("freetype", "libpng", "zlib")
 
@@ -27,7 +29,7 @@ package("eui-neo")
             package:add("deps", "vulkan")
         end
         if not package:is_plat("windows", "mingw") then
-            package:add("deps", "curl")
+            package:add("deps", "libcurl")
         end
     end)
 
@@ -48,6 +50,23 @@ package("eui-neo")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+            namespace app {
+                const DslAppConfig& dslAppConfig() {
+                    static const DslAppConfig config = DslAppConfig{}
+                        .title("Test app")
+                        .pageId("test_app")
+                        .windowSize(1440, 920)
+                        .fps(90.0);
+                    return config;
+                }
+                void compose(eui::Ui& ui, const eui::Screen& screen) {
+                    const bool compactHeader = screen.width < 850.0f;
+                    const float headerHeight = compactHeader ? 118.0f : 92.0f;
+                    ui.stack("root").size(screen.width, screen.height).content([&] {
+                        ui.rect("root.background").size(screen.width, screen.height).build();
+                    }).build();
+                }
+            }
             void test() {
                 eui::Ui ui;
                 ui.stack("root");
