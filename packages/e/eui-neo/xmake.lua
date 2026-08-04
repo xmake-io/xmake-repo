@@ -37,7 +37,7 @@ package("eui-neo")
         end
     end)
 
-    on_install(function(package)
+    on_install("windows", "mingw", "linux", "macosx", function(package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         local configs = {}
         configs.window_backend = package:config("window_backend")
