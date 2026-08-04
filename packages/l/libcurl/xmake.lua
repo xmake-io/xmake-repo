@@ -38,12 +38,14 @@ package("libcurl")
 
     -- we init all configurations in on_load, because package("curl") need it.
     on_load(function (package)
-        if package:is_plat("linux", "bsd", "android", "cross") then
+        local version = package:version()
+        local needs_openssl_on_apple = package:is_plat("macosx", "iphoneos") and version and version:ge("8.15.0")
+        if package:is_plat("linux", "bsd", "android", "cross") or needs_openssl_on_apple then
             -- if no TLS backend has been enabled nor disabled, prefer openssl3 on modern systems
             if package:config("openssl") == nil and package:config("openssl3") == nil and package:config("mbedtls") == nil then
-                -- Default to OpenSSL 3.0+ on Linux systems (Ubuntu 22.04+, Fedora 36+, etc.)
-                -- This helps avoid conflicts with other packages like libgit2 that use OpenSSL 3.0+
-                if package:is_plat("linux") or (package:version() and package:version():ge("8.18.0")) then
+                -- Prefer OpenSSL 3 on Linux and curl 8.18+.
+                -- This also avoids conflicts with packages such as libgit2 that use OpenSSL 3.
+                if package:is_plat("linux") or (version and version:ge("8.18.0")) then
                     package:config_set("openssl3", true)
                 else
                     package:config_set("openssl", true)
@@ -135,7 +137,8 @@ package("libcurl")
         if package:is_plat("windows", "mingw") then
             table.insert(configs, (version:ge("7.80") and "-DCURL_USE_SCHANNEL=ON" or "-DCMAKE_USE_SCHANNEL=ON"))
         end
-        if package:is_plat("macosx", "iphoneos") then
+        -- Secure Transport was removed in curl 8.15.0.
+        if package:is_plat("macosx", "iphoneos") and version:lt("8.15.0") then
             table.insert(configs, (version:ge("7.65") and "-DCURL_USE_SECTRANSP=ON" or "-DCMAKE_USE_DARWINSSL=ON"))
         end
         if package:is_plat("windows") then
