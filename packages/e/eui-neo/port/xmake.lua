@@ -101,7 +101,7 @@ if render_backend == "vulkan" then
     add_requires("vulkan")
 end
 if not is_plat("windows") then
-    add_requires("curl", {configs = {shared = false}})
+    add_requires("libcurl", {configs = {shared = false}})
 end
 -- =============================================================================
 -- Compile / link option helpers
@@ -267,12 +267,12 @@ target("eui_neo")
     elseif window_backend == "sdl2" then
         add_packages("sdl2", {public = true})
     end
-    add_packages("curl", {public = true, optional = true})
-    if not is_plat("windows") and has_package("curl") then
+    add_packages("libcurl", {public = true, optional = true})
+    if not is_plat("windows", "mingw") and has_package("libcurl") then
         add_defines("EUI_HAS_CURL=1", {public = true})
     end
 
-    if not is_plat("windows") then
+    if not is_plat("windows", "mingw") then
         add_syslinks("pthread", {public = true})
     end
 
