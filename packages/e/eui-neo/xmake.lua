@@ -3,13 +3,13 @@ package("eui-neo")
     set_description("Cross-platform, high-performance, low-overhead C++17 GPUI framework")
     set_license("Apache-2.0")
 
-    set_urls("https://github.com/lilyco-42/EUI-NEO.git")
+    add_urls("https://github.com/sudoevolve/EUI-NEO/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/sudoevolve/EUI-NEO.git")
 
-    add_versions("v0.5.5", "df2399495a139a21290bf8a9288f5efba2c52bde")
+    add_versions("v0.5.5", "cf0da91d7544fe406b704922137fd4d55ed080b3e647501e0ca5303abb00eb98")
 
     add_configs("window_backend", {description = "Window backend", default = "glfw", values = {"glfw", "sdl2"}})
     add_configs("render_backend", {description = "Render backend", default = "opengl", values = {"auto", "opengl", "vulkan"}})
-    add_configs("shared", {description = "Build eui_neo as a shared library", default = false, type = "boolean"})
     add_configs("markdown", {description = "Enable MD4C Markdown parsing support", default = true, type = "boolean"})
     add_configs("vulkan_low_latency", {description = "Prefer low-latency Vulkan presentation", default = false, type = "boolean"})
 
@@ -22,6 +22,9 @@ package("eui-neo")
         if package:config("window_backend") == "sdl2" then
             package:add("deps", "sdl2")
         end
+        if package:config("render_backend") == "opengl" then
+            package:add("deps", "glad")
+        end
         if package:config("render_backend") == "vulkan" then
             package:add("deps", "vulkan")
         end
@@ -31,10 +34,10 @@ package("eui-neo")
     end)
 
     on_install(function(package)
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         local configs = {}
         configs.window_backend = package:config("window_backend")
         configs.render_backend = package:config("render_backend")
-        configs.shared = package:config("shared")
         configs.markdown = package:config("markdown")
         configs.vulkan_low_latency = package:config("vulkan_low_latency")
         configs.apps = false
