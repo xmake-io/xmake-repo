@@ -185,13 +185,24 @@ target("eui_neo")
         "core/window/window_backend.cpp"
     )
 
-    -- C files: force /TC on MSVC so they compile as C, not C++
-    add_files(
-        "core/platform/native_bridge.c",
-        "core/platform/tray_bridge.c",
-        "3rd/yyjson-0.12.0/src/yyjson.c",
-        {force = {cxflags = {is_plat("windows") and "/TC" or ""}}}
-    )
+    -- C files: force /TC on MSVC so they compile as C, not C++.
+    local c_flags = {}
+    if is_plat("windows") then
+        table.insert(c_flags, "/TC")
+    end
+
+    -- The native bridge files contain Objective-C (Cocoa/AppKit) code on
+    -- macOS, so compile them with the ObjC frontend there, mirroring
+    -- upstream CMake's LANGUAGE OBJC source property.
+    local bridge_flags = table.copy(c_flags)
+    if is_plat("macosx") then
+        table.insert(bridge_flags, "-x")
+        table.insert(bridge_flags, "objective-c")
+    end
+
+    add_files("3rd/yyjson-0.12.0/src/yyjson.c", {force = {cxflags = c_flags}})
+    add_files("core/platform/native_bridge.c", "core/platform/tray_bridge.c",
+        {force = {cxflags = bridge_flags}})
 
     if render_backend == "opengl" then
         add_files(
@@ -215,7 +226,7 @@ target("eui_neo")
 
     if window_backend == "glfw" then
         add_files("core/platform/ime_bridge.c",
-            {force = {cxflags = {is_plat("windows") and "/TC" or ""}}})
+            {force = {cxflags = bridge_flags}})
     end
 
     add_includedirs("include", ".", "3rd/tray", {public = true})
