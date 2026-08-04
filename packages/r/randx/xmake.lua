@@ -17,7 +17,7 @@ package("randx")
     end
 
     on_install(function (package)
-        io.replace("RandX_Cpp17.hpp", [[#	elif defined(__linux__) && __has_include(<sys/random.h>)]], [[#	elif defined(__linux__) && __has_include(<sys/random.h>)
+        io.replace("", [[# pragma once]], [[# pragma once
 #if defined(__ANDROID__) && __ANDROID_API__ < 28
 #  include <unistd.h>
 #  include <sys/syscall.h>
