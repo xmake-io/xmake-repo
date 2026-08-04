@@ -12,6 +12,8 @@ package("fltk")
     add_versions("githubsource:1.4.5", "eede1fb2b8e9c2e581e77082e15252145855c79aad30070ee3b24aabe2f926f1")
 
     add_patches("1.3.9", "patches/1.3.9/cmake-fluid.patch", "06ee1e82a74651a0b4ba4b386e5e5436d8b95584330d02a8a2c53351210a9127")
+    add_patches("1.4.5", "patches/1.4.5/resources-freetype.patch", "cbec5a824bd9d5c07350d309f42f84edf1cb10ddad1054f2e3b413ef04fa6fdd")
+    add_patches("1.4.5", "patches/1.4.5/src-freetype.patch", "a9497ea7b1bd1ce5d359a243358bad244697b693c61929ac964de1c7d3c33cc1")
 
     if is_plat("linux") then
         add_configs("pango", {description = "Use pango for font support", default = false, type = "boolean"})
@@ -29,7 +31,7 @@ package("fltk")
         add_syslinks("dl")
     elseif is_plat("linux") then
         add_syslinks("dl", "pthread")
-        add_deps("libx11", "libxext", "libxinerama", "libxcursor", "libxrender", "libxfixes", "fontconfig") 
+        add_deps("libx11", "libxext", "libxinerama", "libxcursor", "libxrender", "libxfixes", "fontconfig", "freetype")
     end
 
     add_deps("cmake")
@@ -74,6 +76,7 @@ package("fltk")
             table.insert(configs, "-DOPTION_USE_PANGO=" .. (package:config("pango") and "ON" or "OFF"))
             table.insert(configs, "-DOPTION_USE_XFT=" .. (package:config("xft") and "ON" or "OFF"))
         end
+        io.replace("CMake/options.cmake", [[set(FLTK_USE_BUNDLED_JPEG TRUE)]], [[set(FLTK_USE_BUNDLED_JPEG FALSE)]], {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
 
