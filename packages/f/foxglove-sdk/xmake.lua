@@ -50,7 +50,7 @@ package("foxglove-sdk")
             if package:is_plat("windows") then
                 package:add("syslinks", "Bcrypt", "SChannel", "Crypt32", "Ncrypt")
             elseif package:is_plat("macosx") then
-                package:add("frameworks", "Security", "CoreFoundation")
+                package:add("frameworks", "Security", "CoreFoundation", "IOKit")
             else
                 package:add("syslinks", "pthread", "dl", "m")
             end
