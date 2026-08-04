@@ -48,7 +48,7 @@ package("foxglove-sdk")
         elseif not package:config("shared") then
             package:add("links", "foxglove")
             if package:is_plat("windows") then
-                package:add("syslinks", "Bcrypt", "SChannel", "Crypt32", "Ncrypt")
+                package:add("syslinks", "Bcrypt", "SChannel", "Crypt32", "Ncrypt", "ntdll")
             elseif package:is_plat("macosx") then
                 package:add("frameworks", "Security", "CoreFoundation", "IOKit")
             else
