@@ -32,9 +32,11 @@ package("wt")
     add_configs("fastcgi", {description = "Build the FastCGI connector (libwtfcgi)", type = "boolean", default = false})
     add_configs("libwttest", {description = "Build Wt::Test", type = "boolean", default = false})
 
-    add_patches("4.14.0", "patches/4.14.0/cmake.patch", "3864335d5a0fcb8fe76c791eb7baa6c9222adf1dbe324d40f7629d344d922f84")
+    if is_plat("windows") then
+        add_patches("4.14.0", "patches/4.14.0/cmake.patch", "8a8259bd8e8d4c835d8244bdf264787b933e61057cd0ab6551bfc95922674386")
+    end
 
-    on_install("macosx", "linux", "mingw@windows", "windows", function (package)
+    on_install("macosx", "linux", "windows", function (package)
         local configs = {}
 
         table.insert(configs, "-DBUILD_EXAMPLES=OFF")

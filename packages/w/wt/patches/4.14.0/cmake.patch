@@ -1,38 +1,12 @@
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 949e350c..f2310c56 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -182,33 +182,6 @@ ELSE(DEFINED BOOST_DIR)
-     "Installation prefix of boost libraries")
- ENDIF(DEFINED BOOST_DIR)
- 
--SET(FCGI_PREFIX ${USERLIB_PREFIX} CACHE PATH
--  "Installation prefix of fcgi library (overrides USERLIB_PREFIX)")
--SET(POSTGRES_PREFIX ${USERLIB_PREFIX} CACHE PATH
--  "Installation prefix of postgresql library (overrides USERLIB_PREFIX)")
--SET(ODBC_PREFIX ${USERLIB_PREFIX} CACHE PATH
--  "Installation prefix of ODBC (unixODBC), required for MS SQL Server, not necessary on Windows (overrides USERLIB_PREFIX)")
--SET(FIREBIRD_PREFIX ${USERLIB_PREFIX} CACHE PATH
--  "Installation prefix of FirebirdSql library. (overrides USERLIB_PREFIX)")
--SET(IBPP_SRC_DIRECTORY CACHE PATH
--  "Path to the SOURCE directory of the IBPP library (C++ Firebird client library, see ibpp.org), Wt includes an ibpp distribution which is used by default. To use a custom IBPP library configure this variable and enable the USE_SYSTEM_IBPP option.")
--SET(MYSQL_PREFIX ${USERLIB_PREFIX} CACHE PATH
--  "Installation prefix of mariadb client libraries (overrides USERLIB_PREFIX)")
--SET(SQLITE3_PREFIX ${USERLIB_PREFIX} CACHE PATH
--  "Installation prefix of sqlite3 library (overrides USERLIB_PREFIX)")
--SET(HARU_PREFIX ${USERLIB_PREFIX} CACHE PATH
--  "Installation prefix of libharu library (overrides USERLIB_PREFIX)")
--SET(SSL_PREFIX ${USERLIB_PREFIX} CACHE PATH
--  "Installation prefix of SSL library (overrides USERLIB_PREFIX)")
--SET(ZLIB_PREFIX ${USERLIB_PREFIX} CACHE PATH
--  "Installation prefix of zlib library (overrides USERLIB_PREFIX)")
--SET(GM_PREFIX ${USERLIB_PREFIX} CACHE PATH
--  "Installation prefix of GraphicsMagick library (overrides USERLIB_PREFIX)")
--SET(ASIO_PREFIX ${USERLIB_PREFIX} CACHE PATH
--  "Prefix of Asio (overrides USERLIB_PREFIX), only used when WT_ASIO_IMPLEMENTATION is standalone")
--SET(UNWIND_PREFIX ${UNWIND_PREFIX} CACHE PATH
--  "Prefix of unwind library (overrides USERLIB_PREFIX)")
--
- OPTION(DEBUG "Support for debugging, must be enabled also in wt_config.xml" OFF)
- 
- IF(CYGWIN)
+diff --git a/src/http/CMakeLists.txt b/src/http/CMakeLists.txt
+index 0c7bccc8..50a43763 100644
+--- a/src/http/CMakeLists.txt
++++ b/src/http/CMakeLists.txt
+@@ -99,6 +99,7 @@ IF(CONNECTOR_HTTP)
+   TARGET_LINK_LIBRARIES(wthttp
+     PUBLIC
+       wt
++      crypt32
+     PRIVATE
+       ${MY_ZLIB_LIBS}
+       ${MY_SSL_LIBS}
