@@ -59,10 +59,14 @@ package("fltk")
             "-DFLTK_BUILD_EXAMPLES=OFF",
             "-DOPTION_USE_SYSTEM_LIBPNG=ON",
             "-DOPTION_USE_SYSTEM_ZLIB=ON",
-            "-DOPTION_USE_SYSTEM_LIBJPEG=ON"
+            "-DOPTION_USE_SYSTEM_LIBJPEG=ON",
+            "-DFLTK_USE_SYSTEM_LIBPNG=ON",
+            "-DFLTK_USE_SYSTEM_ZLIB=ON",
+            "-DFLTK_USE_SYSTEM_LIBJPEG=ON"
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DOPTION_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DFLTK_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DFLTK_MSVC_RUNTIME_DLL=" .. (package:has_runtime("MD") and "ON" or "OFF"))
         table.insert(configs, "-DFLTK_BUILD_FLUID=" .. (package:config("fluid") and "ON" or "OFF"))
         table.insert(configs, "-DFLTK_BUILD_FORMS=" .. (package:config("forms") and "ON" or "OFF"))
