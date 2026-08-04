@@ -5,6 +5,7 @@ package("vcpkg")
     set_license("MIT")
 
     add_urls("https://github.com/microsoft/vcpkg/archive/refs/tags/$(version).tar.gz")
+    add_versions("2026.07.29", "6b1a5b0170fda8e585b258fa416e4251197bba4633414d2ac00f02625c78194e")
     add_versions("2026.06.01", "d394626f9205790915c70e1281eb08554e8d72ac0677334893e32636ae08ec3d")
     add_versions("2026.04.27", "d16031ddc44ca990052a6cee0e76aa240fa01397930dbc5eb054852d1816d860")
     add_versions("2026.03.18", "96bd7fa4745c8b42c16f585c47ddf09d5eef3fc35714654f755de379294f5245")
