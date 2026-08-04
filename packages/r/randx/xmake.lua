@@ -17,6 +17,11 @@ package("randx")
     end
 
     on_install(function (package)
+        io.replace("RandX_Cpp17.hpp", [[#	elif defined(__linux__) && __has_include(<sys/random.h>)]], [[#	elif defined(__linux__) && __has_include(<sys/random.h>)
+#if defined(__ANDROID__) && __ANDROID_API__ < 28
+#  include <syscall.h>
+#  define getrandom(buf, buflen, flags) syscall(SYS_getrandom, buf, buflen, flags)
+#endif]], {plain = true})
         os.cp("RandX.hpp", package:installdir("include"))
         os.cp("RandX_Cpp17.hpp", package:installdir("include"))
     end)
