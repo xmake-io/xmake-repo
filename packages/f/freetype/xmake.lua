@@ -119,6 +119,10 @@ package("freetype")
         add_dep({conf = "harfbuzz", pkg = "harfbuzz", cmakewith = "HARFBUZZ", cmakedisable = "HarfBuzz", cmakeinclude = "HarfBuzz_INCLUDE_DIR", cmakelib = "HarfBuzz_LIBRARY"})
 
         import("package.tools.cmake").install(package, configs)
+        if package:is_plat("windows") and package:debug() then
+            io.replace(package:installdir("lib/pkgconfig/freetype2.pc"),
+                       "%-lfreetype(\r?\n)", "-lfreetyped%1")
+        end
     end)
 
     on_test(function (package)
