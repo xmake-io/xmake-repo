@@ -23,7 +23,7 @@ package("fltk")
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32", "comctl32", "gdi32", "gdiplus", "oleaut32", "ole32", "uuid", "shell32", "advapi32", "comdlg32", "winspool", "user32", "kernel32", "odbc32")
     elseif is_plat("macosx") then 
-        add_frameworks("Cocoa")
+        add_frameworks("Cocoa", "UniformTypeIdentifiers", "ScreenCaptureKit")
     elseif is_plat("android") then
         add_syslinks("android")
         add_syslinks("dl")
