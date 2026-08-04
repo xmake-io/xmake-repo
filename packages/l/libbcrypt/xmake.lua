@@ -9,7 +9,7 @@ package("libbcrypt")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("!windows and !mingw", function (package)
         local configs = {}
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
