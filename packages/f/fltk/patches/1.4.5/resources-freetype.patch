@@ -1,0 +1,68 @@
+diff --git a/CMake/resources.cmake b/CMake/resources.cmake
+index bad4279..c019e5d 100644
+--- a/CMake/resources.cmake
++++ b/CMake/resources.cmake
+@@ -204,23 +204,49 @@ endif(NOT HAVE_DIRENT_H)
+ # headers to be able to #include <ft2build.h> in Xft.h.
+ 
+ # where to find freetype headers
++# Prefer the CMake package installed by freetype itself, found via
++# CMAKE_PREFIX_PATH (e.g. a freetype package provided by the package
++# manager), and fall back to CMake's FindFreetype module, which honors
++# CMAKE_INCLUDE_PATH (e.g. a system-provided freetype). Freetype is
++# required on the X11 backend, where Xft.h includes <ft2build.h>.
++
++find_package(Freetype CONFIG QUIET)
++if(NOT Freetype_FOUND)
++  if(FLTK_BACKEND_X11)
++    find_package(Freetype REQUIRED)
++  else()
++    find_package(Freetype QUIET)
++  endif()
++endif()
+ 
+-find_path(FREETYPE_PATH freetype.h PATH_SUFFIXES freetype2)
+-find_path(FREETYPE_PATH freetype/freetype.h PATH_SUFFIXES freetype2)
++if(TARGET Freetype::Freetype)
++  get_target_property(_fltk_freetype_path Freetype::Freetype INTERFACE_INCLUDE_DIRECTORIES)
++endif()
++if(NOT _fltk_freetype_path AND TARGET freetype)
++  get_target_property(_fltk_freetype_path freetype INTERFACE_INCLUDE_DIRECTORIES)
++endif()
++if(_fltk_freetype_path AND NOT _fltk_freetype_path MATCHES "-NOTFOUND$")
++  set(FREETYPE_PATH ${_fltk_freetype_path})
++endif()
+ 
+ if(FREETYPE_PATH AND ((NOT APPLE) OR FLTK_BACKEND_X11))
+   list(APPEND FLTK_BUILD_INCLUDE_DIRECTORIES ${FREETYPE_PATH})
+ endif(FREETYPE_PATH AND ((NOT APPLE) OR FLTK_BACKEND_X11))
+ 
+-mark_as_advanced(FREETYPE_PATH)
+-
+ #######################################################################
+ # libraries
+ find_library(LIB_dl dl)
+ if((NOT APPLE) OR FLTK_BACKEND_X11)
+   find_library(LIB_fontconfig fontconfig)
+ endif((NOT APPLE) OR FLTK_BACKEND_X11)
+-find_library(LIB_freetype freetype)
++if(TARGET freetype)
++  get_target_property(_fltk_freetype_lib freetype LOCATION)
++elseif(FREETYPE_LIBRARIES)
++  set(LIB_freetype ${FREETYPE_LIBRARIES})
++endif()
++if(_fltk_freetype_lib AND NOT _fltk_freetype_lib MATCHES "-NOTFOUND$")
++  set(LIB_freetype ${_fltk_freetype_lib})
++endif()
+ find_library(LIB_GL GL)
+ find_library(LIB_MesaGL MesaGL)
+ find_library(LIB_jpeg jpeg)
+@@ -228,7 +254,7 @@ find_library(LIB_png png)
+ find_library(LIB_zlib z)
+ find_library(LIB_m m)
+ 
+-mark_as_advanced(LIB_dl LIB_fontconfig LIB_freetype)
++mark_as_advanced(LIB_dl LIB_fontconfig)
+ mark_as_advanced(LIB_GL LIB_MesaGL)
+ mark_as_advanced(LIB_jpeg LIB_png LIB_zlib)
+ mark_as_advanced(LIB_m)
