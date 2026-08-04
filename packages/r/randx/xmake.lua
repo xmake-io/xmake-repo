@@ -13,7 +13,7 @@ package("randx")
 
     if is_plat("windows", "mingw") then
         add_syslinks("bcrypt")
-    elseif is_plat("macosx") then
+    elseif is_plat("macosx", "iphoneos") then
         add_frameworks("Security")
     end
 
@@ -30,5 +30,5 @@ package("randx")
                 std::uint64_t v = RandX::RandInt<std::uint64_t>(0, 1000);
                 (void)v;
             }
-        ]]}, {configs = {languages = "c++23"}}i)'
+        ]]}, {configs = {languages = "c++23"}}))
     end)
