@@ -25,8 +25,8 @@ package("eui-neo")
         if package:config("render_backend") == "vulkan" then
             package:add("deps", "vulkan")
         end
-        if not package:is_plat("windows") then
-            package:add("deps", "curl")
+        if not package:is_plat("windows", "mingw") then
+            package:add("deps", "libcurl")
         end
     end)
 
