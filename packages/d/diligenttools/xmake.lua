@@ -29,7 +29,7 @@ package("diligenttools")
 
     add_deps("cmake", "pkgconf")
     add_deps("python 3.x", {kind = "binary"})
-    add_deps("diligentcore", "libpng", "libtiff", "zlib", "libjpeg", "taywee_args", "nlohmann_json", "stb", "tinygltf")
+    add_deps("diligentcore", "libpng", "libtiff", "zlib", "libjpeg", "taywee_args", "nlohmann_json", "stb", "tinygltf v2.9.7")
 
     if is_plat("windows") then
         add_deps("imgui 1.89", {configs = {win32 = true}})
