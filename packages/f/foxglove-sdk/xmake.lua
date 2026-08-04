@@ -62,7 +62,7 @@ package("foxglove-sdk")
 
     on_install("linux", "macosx", "windows", function (package)
         local source_root = os.isdir("foxglove") and "foxglove" or "."
-        os.cp(path.join(package:scriptdir(), "port", "CMakeLists.txt"), path.join(source_root, "CMakeLists.txt"))
+        os.cp(path.join(package:scriptdir(), "port", "cmakelists.txt"), path.join(source_root, "CMakeLists.txt"))
         os.cd(source_root)
 
         local configs = {
