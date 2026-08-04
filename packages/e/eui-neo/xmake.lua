@@ -44,8 +44,6 @@ package("eui-neo")
         configs.render_backend = package:config("render_backend")
         configs.markdown = package:config("markdown")
         configs.vulkan_low_latency = package:config("vulkan_low_latency")
-        configs.apps = false
-        configs.user_apps = false
         import("package.tools.xmake").install(package, configs)
     end)
 
