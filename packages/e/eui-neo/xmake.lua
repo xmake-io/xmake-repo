@@ -15,6 +15,10 @@ package("eui-neo")
 
     add_deps("freetype", "libpng", "zlib")
 
+    if is_plat("windows", "mingw") then
+        add_syslinks("imm32", "urlmon", "comdlg32")
+    end
+
     on_load(function(package)
         if package:config("window_backend") == "glfw" then
             package:add("deps", "glfw")
