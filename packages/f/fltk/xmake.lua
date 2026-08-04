@@ -14,6 +14,7 @@ package("fltk")
     add_patches("1.3.9", "patches/1.3.9/cmake-fluid.patch", "06ee1e82a74651a0b4ba4b386e5e5436d8b95584330d02a8a2c53351210a9127")
     add_patches("1.4.5", "patches/1.4.5/resources-freetype.patch", "cbec5a824bd9d5c07350d309f42f84edf1cb10ddad1054f2e3b413ef04fa6fdd")
     add_patches("1.4.5", "patches/1.4.5/src-freetype.patch", "a9497ea7b1bd1ce5d359a243358bad244697b693c61929ac964de1c7d3c33cc1")
+    add_patches("1.4.5", "patches/1.4.5/options-jpeg.patch", "ee36b3ece213fee42b0b71a4a9f221ff92daa5fe65450f546e168c5cd2287528")
 
     if is_plat("linux") then
         add_configs("pango", {description = "Use pango for font support", default = false, type = "boolean"})
