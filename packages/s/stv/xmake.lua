@@ -12,5 +12,5 @@ package("stv")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("stv_new", {includes = "stv.h"}))
+        assert(package:has_cfuncs("stv_new", {includes = {"stv.h"}, configs = {languages = (package:is_plat("windows") and "c11" or "c99")}}))
     end)
