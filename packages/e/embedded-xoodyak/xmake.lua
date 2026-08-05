@@ -8,7 +8,7 @@ package("embedded-xoodyak")
 
     add_versions("0.1.0", "37b977a4233efbb86270a67a02aaf6a897548ce4b95e624d532c1296d113e756")
 
-    add_patches("0.1.0", "patches/0.1.0/fix-msvc-asm.patch", "a19489a70ae12f792bc4dad975e93e9c9a706b19dd4300971e48650589ed4498")
+    add_patches("0.1.0", "patches/0.1.0/fix-msvc-asm.patch", "9f6a313b32a1dfea3dd0f2ada3dfd256432220edfc2745b6e24000615d44208c")
 
     on_install(function (package)
         import("package.tools.xmake").install(package)
