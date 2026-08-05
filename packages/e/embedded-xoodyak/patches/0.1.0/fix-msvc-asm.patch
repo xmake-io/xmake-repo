@@ -1,0 +1,18 @@
+diff --git a/xmake.lua b/xmake.lua
+--- a/xmake.lua
++++ b/xmake.lua
+@@ -26,9 +26,12 @@
+     add_files("src/Xoodyak.c")
+     add_files("src/Xoodoo-portable.c")
+     add_files("src/Xoodoo-helpers.c")
+-    add_files("src/Xoodoo-lx106.S")
+-    add_files("src/Xoodoo-armv6m.S")
+-    add_files("src/Xoodoo-armv7m.S")
++    if not is_plat("windows") then
++        add_files("src/Xoodoo-lx106.S")
++        add_files("src/Xoodoo-armv6m.S")
++        add_files("src/Xoodoo-armv7m.S")
++    end
+     add_includedirs("include", {public = true})
+     add_headerfiles("include/*.h")
+     set_languages("c99")
