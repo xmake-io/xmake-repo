@@ -1,10 +1,10 @@
-task("hello")
-    set_category("plugin")
-    on_run("main")
-    set_menu {
-        usage = "xmake hello [options]",
-        description = "Say hello to the world.",
-        options = {
-            {'n', "name", "kv", nil, "Set the name to say hello to."}
-        }
-    }
+package("hello-world")
+    set_kind("plugin")
+    set_description("Say hello to the world.")
+
+    set_sourcedir(path.join(os.scriptdir(), "plugins"))
+
+    on_test(function (package)
+        os.vrun("xmake hello")
+        os.vrun("xmake hello -n xmake")
+    end)
