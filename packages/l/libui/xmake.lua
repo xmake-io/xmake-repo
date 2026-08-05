@@ -13,9 +13,16 @@ package("libui")
     elseif is_plat("windows") then
         -- the windows meson build file links all of these with a todo to prune the list
         add_syslinks("user32", "kernel32", "gdi32", "comctl32", "uxtheme", "msimg32", "comdlg32", "d2d1", "dwrite", "ole32", "oleaut32", "oleacc", "uuid", "windowscodecs")
-    elseif is_plat("linux") then
-        add_deps("gtk3", "glib", "gdk-pixbuf", "shared-mime-info")
     end
+
+    on_load("linux", function (package)
+        if package:config("shared") then
+            package:add("deps", "gtk3", {configs = {shared = true}})
+        else
+            package:add("deps", "gtk3")
+        end
+        package:add("deps", "glib", "gdk-pixbuf", "shared-mime-info")
+    end)
 
     on_install("linux", "macosx", "windows", function (package)
         local configs = {"-Dexamples=false", "-Dtests=false"}
