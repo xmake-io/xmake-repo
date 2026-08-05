@@ -1,7 +1,7 @@
 diff --git a/xmake.lua b/xmake.lua
 --- a/xmake.lua
 +++ b/xmake.lua
-@@ -26,9 +26,12 @@
+@@ -26,9 +26,11 @@
      add_files("src/Xoodyak.c")
      add_files("src/Xoodoo-portable.c")
      add_files("src/Xoodoo-helpers.c")
