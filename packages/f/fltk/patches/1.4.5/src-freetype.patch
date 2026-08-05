@@ -1,0 +1,66 @@
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index ee6715a..097feb6 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -692,6 +692,10 @@ if(USE_THREADS)
+ endif(USE_THREADS)
+ 
+ if(FLTK_USE_X11)
++  # Xext must be linked after Xinerama, Xcursor, Xfixes and Xrender
++  # when these are built as static libraries (see below), so strip it
++  # from X11_LIBRARIES here to avoid a duplicate on the link line.
++  list(REMOVE_ITEM X11_LIBRARIES ${X11_Xext_LIB})
+   list(APPEND OPTIONAL_LIBS ${X11_LIBRARIES})
+   list(APPEND OPTIONAL_INCLUDES ${X11_INCLUDE_DIR})
+ endif(FLTK_USE_X11)
+@@ -707,18 +711,24 @@ if(HAVE_XINERAMA)
+   list(APPEND OPTIONAL_LIBS ${X11_Xinerama_LIB})
+ endif(HAVE_XINERAMA)
+ 
+-if(HAVE_XFIXES)
+-  list(APPEND OPTIONAL_LIBS ${X11_Xfixes_LIB})
+-endif(HAVE_XFIXES)
+-
+ if(HAVE_XCURSOR)
+   list(APPEND OPTIONAL_LIBS ${X11_Xcursor_LIB})
+ endif(HAVE_XCURSOR)
+ 
++if(HAVE_XFIXES)
++  list(APPEND OPTIONAL_LIBS ${X11_Xfixes_LIB})
++endif(HAVE_XFIXES)
++
+ if(HAVE_XRENDER)
+   list(APPEND OPTIONAL_LIBS ${X11_Xrender_LIB})
+ endif(HAVE_XRENDER)
+ 
++# Xinerama, Xcursor, Xfixes and Xrender depend on Xext, so it must be
++# linked after them when they are built as static libraries.
++if(X11_Xext_LIB)
++  list(APPEND OPTIONAL_LIBS ${X11_Xext_LIB})
++endif(X11_Xext_LIB)
++
+ if(USE_PANGO)
+   list(APPEND OPTIONAL_LIBS ${HAVE_LIB_PANGO})
+   append_optional_libs(PkgConfig::PANGOCAIRO)
+@@ -733,6 +743,21 @@ if(USE_XFT)
+   if(LIB_fontconfig)
+     list(APPEND OPTIONAL_LIBS ${LIB_fontconfig})
+   endif(LIB_fontconfig)
++  # Fontconfig and freetype are often built as static libraries which
++  # link expat (fontconfig) and zlib (freetype) themselves, so link
++  # these libraries explicitly to satisfy their unresolved symbols.
++  if(TARGET Freetype::Freetype)
++    append_optional_libs(Freetype::Freetype)
++  elseif(LIB_freetype)
++    list(APPEND OPTIONAL_LIBS ${LIB_freetype})
++  endif()
++  find_package(EXPAT QUIET)
++  if(EXPAT_FOUND)
++    list(APPEND OPTIONAL_LIBS ${EXPAT_LIBRARIES})
++  endif()
++  if(LIB_zlib)
++    list(APPEND OPTIONAL_LIBS ${LIB_zlib})
++  endif(LIB_zlib)
+ endif(USE_XFT)
+ 
+ if(UNIX AND FLTK_BACKEND_WAYLAND)
