@@ -57,6 +57,8 @@ package("openblas")
         add_versions("0.3.30", "27342cff518646afb4c2b976d809102e368957974c250a25ccc965e53063c95d")
         add_versions("0.3.34", "cd7e129868320cc2d033afa920e31202dfe0b8066a5b66661900ccc0f197dfed")
 
+        add_patches("0.3.34", "patches/0.3.34/msvc-arm64-neon-omatcopy.patch", "9717d8e653dcfbb9ac138b7a59b5ff90691fa8978442dd3256cac5d1eb40ea7c")
+
         add_configs("lapack",            {description = "Build LAPACK.",                                                                                                                    default = true,   type = "boolean"})
         add_configs("lapacke",           {description = "Build the C interface to LAPACK.",                                                                                                 default = true,   type = "boolean"})
         add_configs("lapack_deprecated", {description = "When building LAPACK, include also some older, deprecated routines.",                                                              default = true,   type = "boolean"})
