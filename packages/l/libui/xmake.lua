@@ -14,11 +14,12 @@ package("libui")
         -- the windows meson build file links all of these with a todo to prune the list
         add_syslinks("user32", "kernel32", "gdi32", "comctl32", "uxtheme", "msimg32", "comdlg32", "d2d1", "dwrite", "ole32", "oleaut32", "oleacc", "uuid", "windowscodecs")
     elseif is_plat("linux") then
-        add_deps("gtk3", "glib")
+        add_deps("gtk3", "glib", "gdk-pixbuf", "shared-mime-info")
     end
 
     on_install("linux", "macosx", "windows", function (package)
         local configs = {"-Dexamples=false", "-Dtests=false"}
+        table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         import("package.tools.meson").install(package, configs)
     end)
 
