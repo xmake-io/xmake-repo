@@ -40,7 +40,7 @@ package("simdjson")
 
     on_load("windows|x64", function (package)
         if package:config("shared") then
-            package:add("defines", "SIMDJSON_USING_WINDOWS_DYNAMIC_LIBRARY")
+            package:add("defines", "SIMDJSON_VISUAL_STUDIO", "SIMDJSON_USING_WINDOWS_DYNAMIC_LIBRARY")
         end
     end)
 
