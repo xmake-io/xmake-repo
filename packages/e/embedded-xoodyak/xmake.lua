@@ -10,6 +10,10 @@ package("embedded-xoodyak")
 
     add_patches("0.1.0", "patches/0.1.0/fix-msvc-asm.patch", "2011966e92938663d5c6df833e5b89096c8a2e861ced040cf164e04b62d36f09")
 
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared binaries.", default = false, type = "boolean", readonly = true})
+    end
+
     on_install(function (package)
         import("package.tools.xmake").install(package)
     end)
