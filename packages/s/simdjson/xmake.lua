@@ -37,24 +37,47 @@ package("simdjson")
     add_configs("threads",      { description = "Enable threads.",     default = true,  type = "boolean"})
     add_configs("noexceptions", { description = "Disable exceptions.", default = false, type = "boolean"})
     add_configs("logging",      { description = "Enable logging.",     default = false, type = "boolean"})
+    add_configs("build",        { description = "Buildsystem to build simdjson.", type = "string", values = {"cmake", "xmake"}})
 
-    on_load("windows|x64", function (package)
-        if package:config("shared") then
+    on_load(function (package)
+        if package:config("build") == nil then
+            if package:gitref() or (package:version() and package:version():ge("4.6.6")) then
+                package:config_set("build", "cmake")
+                package:add("deps", "cmake")
+            else
+                package:config_set("build", "xmake")
+            end
+        end
+        if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "SIMDJSON_VISUAL_STUDIO", "SIMDJSON_USING_WINDOWS_DYNAMIC_LIBRARY")
         end
     end)
 
-    on_install("windows|x64", "mingw|x86_64", "macosx|x86_64", "macosx|arm64", "linux|x86_64", "linux|arm64", "iphoneos|arm64", function(package)
-        local configs = {}
-        if package:config("shared") then
-            configs.kind = "shared"
-        end
-        configs.threads = package:config("threads")
-        configs.noexceptions = package:config("noexceptions")
-        configs.logging = package:config("logging")
+    on_install(function(package)
+        if package:config("build") == "cmake" then
+            local configs = {}
+            table.insert(configs, "-DSIMDJSON_JUST_LIBRARY=ON")
+            table.insert(configs, "-DSIMDJSON_SANITIZE_UNDEFINED=OFF")
+            table.insert(configs, "-DSIMDJSON_SANITIZE=OFF")
+            table.insert(configs, "-DSIMDJSON_SANITIZE_THREADS=OFF")
+            table.insert(configs, "-DSIMDJSON_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
+            table.insert(configs, "-DSIMDJSON_DEVELOPMENT_CHECKS=OFF")
+            table.insert(configs, "-DSIMDJSON_VERBOSE_LOGGING=" .. (package:config("logging") and "ON" or "OFF"))
+            table.insert(configs, "-DSIMDJSON_EXCEPTIONS=" .. (package:config("noexceptions") and "OFF" or "ON"))
+            table.insert(configs, "-DSIMDJSON_ENABLE_THREADS=" .. (package:config("threads") and "ON" or "OFF"))
+            import("package.tools.cmake").install(package, configs)
+        else
+            local configs = {}
+            if package:config("shared") then
+                configs.kind = "shared"
+            end
+            configs.threads = package:config("threads")
+            configs.noexceptions = package:config("noexceptions")
+            configs.logging = package:config("logging")
 
-        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        import("package.tools.xmake").install(package, configs)
+            os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+            import("package.tools.xmake").install(package, configs)
+        end
     end)
 
     on_test(function(package)
