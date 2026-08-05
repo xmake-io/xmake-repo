@@ -1,5 +1,4 @@
 package("foxglove-sdk")
-
     set_homepage("https://github.com/foxglove/foxglove-sdk")
     set_description("SDK for connecting live robotics and embodied AI data to Foxglove")
     set_license("MIT")
@@ -48,9 +47,9 @@ package("foxglove-sdk")
         elseif not package:config("shared") then
             package:add("links", "foxglove")
             if package:is_plat("windows") then
-                package:add("syslinks", "Bcrypt", "SChannel", "Crypt32", "Ncrypt")
+                package:add("syslinks", "ntdll", "bcrypt", "schannel", "crypt32", "ncrypt")
             elseif package:is_plat("macosx") then
-                package:add("frameworks", "Security", "CoreFoundation")
+                package:add("frameworks", "IOKit", "Security", "CoreFoundation")
             else
                 package:add("syslinks", "pthread", "dl", "m")
             end
