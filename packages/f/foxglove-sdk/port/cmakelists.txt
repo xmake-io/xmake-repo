@@ -24,6 +24,14 @@ foxglove_sdk_add_cpp_library(
     REMOTE_ACCESS ${FOXGLOVE_REMOTE_ACCESS}
 )
 
+if(WIN32)
+    target_link_libraries(foxglove_cpp PRIVATE ntdll)
+endif()
+if(APPLE)
+    find_library(IOKIT_LIBRARY IOKit REQUIRED)
+    target_link_libraries(foxglove_cpp PRIVATE ${IOKIT_LIBRARY})
+endif()
+
 install(
     TARGETS foxglove_cpp
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
