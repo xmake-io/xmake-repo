@@ -6,6 +6,7 @@ package("manifold")
     set_urls("https://github.com/elalish/manifold/archive/refs/tags/$(version).tar.gz",
              "https://github.com/elalish/manifold.git")
 
+    add_versions("v3.5.2", "35cb5e0d78882f461ec39b17d8f09c2aceca761356f3ce948e3f3908289b8f2e")
     add_versions("v3.5.1", "1b42f28d7c1c6d07df7244ca22cb7d82de980899001969c9985c2662a77eb43c")
     add_versions("v3.5.0", "7002091f992c80bec49b69e49c85769d862bb97169781e23b9909a4b72b6a618")
     add_versions("v3.3.2", "92a37034c407156f71446f9ca03bd4487adeb1b8246a03d1c047b859b1b9d211")
