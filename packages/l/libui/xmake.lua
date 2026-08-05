@@ -28,25 +28,6 @@ package("libui")
         local configs = {"-Dexamples=false", "-Dtests=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         import("package.tools.meson").install(package, configs)
-        -- get links and ensure link order
-        import("core.base.graph")
-        local dag = graph.new(true)
-        local pkgconfigdir = package:installdir("lib", "pkgconfig")
-        for _, pcfile in ipairs(os.files(path.join(pkgconfigdir, "*.pc"))) do
-            local link = path.basename(pcfile)
-            local content = io.readfile(pcfile)
-            for _, line in ipairs(content:split("\n")) do
-                if line:startswith("Requires: ") then
-                    local requires = line:sub(10):split(",")
-                    for _, dep in ipairs(requires) do
-                        dep = dep:split("=")[1]:trim()
-                        dag:add_edge(link, dep)
-                    end
-                end
-            end
-        end
-        local links = dag:topological_sort()
-        package:add("links", links)
     end)
 
     on_test(function (package)
