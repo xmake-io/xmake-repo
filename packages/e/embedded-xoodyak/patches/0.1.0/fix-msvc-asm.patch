@@ -1,7 +1,7 @@
 diff --git a/xmake.lua b/xmake.lua
 --- a/xmake.lua
 +++ b/xmake.lua
-@@ -26,9 +26,11 @@
+@@ -26,12 +26,16 @@
      add_files("src/Xoodyak.c")
      add_files("src/Xoodoo-portable.c")
      add_files("src/Xoodoo-helpers.c")
@@ -15,4 +15,18 @@ diff --git a/xmake.lua b/xmake.lua
 +    end
      add_includedirs("include", {public = true})
      add_headerfiles("include/*.h")
-     set_languages("c99")
+-    set_languages("c99")
++    if not is_plat("windows") then
++        set_languages("c99")
++    end
+ 
+ target("test_embedded_xoodyak")
+     set_kind("binary")
+@@ -39,4 +43,6 @@
+     add_includedirs("include")
+     add_deps("xoodyak")
+     add_packages("unity")
+-    set_languages("c99")
++    if not is_plat("windows") then
++        set_languages("c99")
++    end
