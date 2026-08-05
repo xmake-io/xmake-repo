@@ -1,11 +1,11 @@
 package("simdjson")
-
     set_homepage("https://simdjson.org")
     set_description("Ridiculously fast JSON parsing, UTF-8 validation and JSON minifying for popular 64 bit systems.")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/simdjson/simdjson/archive/refs/tags/$(version).tar.gz",
              "https://github.com/simdjson/simdjson.git")
+    add_versions("v4.6.6", "1cd4c4c18263d2ae1f0cd5d4ba8b14e679b5a419ca15988a0da4cf43c514f28d")
     add_versions("v4.2.4", "6f942d018561a6c30838651a386a17e6e4abbfc396afd0f62740dea1810dedea")
     add_versions("v4.2.2", "3efae22cb41f83299fe0b2e8a187af543d3dda93abbb910586f897df670f9eaa")
     add_versions("v4.2.1", "72c60a0fa6871073a4a458e80947dd75894fa1ff69550c7c77f9f4e695dff7f1")
@@ -37,24 +37,47 @@ package("simdjson")
     add_configs("threads",      { description = "Enable threads.",     default = true,  type = "boolean"})
     add_configs("noexceptions", { description = "Disable exceptions.", default = false, type = "boolean"})
     add_configs("logging",      { description = "Enable logging.",     default = false, type = "boolean"})
+    add_configs("build",        { description = "Buildsystem to build simdjson.", type = "string", values = {"cmake", "xmake"}})
 
-    on_load("windows|x64", function (package)
-        if package:config("shared") then
-            package:add("defines", "SIMDJSON_USING_WINDOWS_DYNAMIC_LIBRARY")
+    on_load(function (package)
+        if package:config("build") == nil then
+            if package:gitref() or (package:version() and package:version():ge("4.6.6")) then
+                package:config_set("build", "cmake")
+                package:add("deps", "cmake")
+            else
+                package:config_set("build", "xmake")
+            end
+        end
+        if package:is_plat("windows") and package:config("shared") then
+            package:add("defines", "SIMDJSON_VISUAL_STUDIO", "SIMDJSON_USING_WINDOWS_DYNAMIC_LIBRARY")
         end
     end)
 
-    on_install("windows|x64", "mingw|x86_64", "macosx|x86_64", "macosx|arm64", "linux|x86_64", "linux|arm64", "iphoneos|arm64", function(package)
-        local configs = {}
-        if package:config("shared") then
-            configs.kind = "shared"
-        end
-        configs.threads = package:config("threads")
-        configs.noexceptions = package:config("noexceptions")
-        configs.logging = package:config("logging")
+    on_install(function(package)
+        if package:config("build") == "cmake" then
+            local configs = {}
+            table.insert(configs, "-DSIMDJSON_JUST_LIBRARY=ON")
+            table.insert(configs, "-DSIMDJSON_SANITIZE_UNDEFINED=OFF")
+            table.insert(configs, "-DSIMDJSON_SANITIZE=OFF")
+            table.insert(configs, "-DSIMDJSON_SANITIZE_THREADS=OFF")
+            table.insert(configs, "-DSIMDJSON_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
+            table.insert(configs, "-DSIMDJSON_DEVELOPMENT_CHECKS=OFF")
+            table.insert(configs, "-DSIMDJSON_VERBOSE_LOGGING=" .. (package:config("logging") and "ON" or "OFF"))
+            table.insert(configs, "-DSIMDJSON_EXCEPTIONS=" .. (package:config("noexceptions") and "OFF" or "ON"))
+            table.insert(configs, "-DSIMDJSON_ENABLE_THREADS=" .. (package:config("threads") and "ON" or "OFF"))
+            import("package.tools.cmake").install(package, configs)
+        else
+            local configs = {}
+            if package:config("shared") then
+                configs.kind = "shared"
+            end
+            configs.threads = package:config("threads")
+            configs.noexceptions = package:config("noexceptions")
+            configs.logging = package:config("logging")
 
-        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        import("package.tools.xmake").install(package, configs)
+            os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+            import("package.tools.xmake").install(package, configs)
+        end
     end)
 
     on_test(function(package)
