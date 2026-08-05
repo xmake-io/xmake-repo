@@ -12,11 +12,5 @@ package("stv")
     end)
 
     on_test(function (package)
-        local language = (package:is_plat("windows") and "c11" or "c99")
-        assert(package:check_csnippets({test = [[
-            #include <stv.h>
-            void test() {
-                stv_new("Hello world");
-            }
-        ]]}, {configs = {languages = language}}))
+        assert(package:has_cfuncs("stv_new", {includes = "stv.h"}))
     end)
