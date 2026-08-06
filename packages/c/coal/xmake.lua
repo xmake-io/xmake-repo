@@ -6,7 +6,7 @@ package("coal")
     add_urls("https://github.com/coal-library/coal/archive/refs/tags/$(version).tar.gz",
              "https://github.com/coal-library/coal.git", {submodules = false})
 
-    add_versions("v3.0.2", "86d47608d748762b343990095b6a7c79ee20182e3193da92c17545c5aae780b7")
+    add_versions("v3.0.4", "0a4f58e55b88a3d9f873ce79979aecc08491d212ea0b9311df013df3b22bffac")
 
     add_configs("logging", {description = "Activate logging for warnings or error messages. Turned on by default in Debug.", default = false, type = "boolean"})
     add_configs("hpp_fcl", {description = "Make Coal retro-compatible with HPP-FCL.", default = false, type = "boolean"})
