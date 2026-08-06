@@ -43,6 +43,8 @@ package("bgfx")
     end)
 
     on_install("windows|native", "macosx", "linux", "iphoneos", function (package)
+        io.replace("3rdparty/glslang/SPIRV/SpvBuilder.h", [[#include "spirv.hpp"]], [[#include "spirv.hpp"
+#include <cstdint>]], {plain = true})
         local bxdir = package:resourcefile("bx")
         local bimgdir = package:resourcefile("bimg")
         local genie = is_host("windows") and "genie.exe" or "genie"
