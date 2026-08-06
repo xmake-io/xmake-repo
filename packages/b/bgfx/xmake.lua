@@ -1,5 +1,4 @@
 package("bgfx")
-
     set_homepage("https://bkaradzic.github.io/bgfx/")
     set_description("Cross-platform, graphics API agnostic, “Bring Your Own Engine/Framework” style rendering library")
     set_license("BSD-2-Clause")
@@ -10,6 +9,8 @@ package("bgfx")
     add_versions("8674", "f42134876038027667ef7e47c9a612dca1051ef2")
     add_versions("8752", "61c770b0f5f57cf10547107974099e604358bf69")
     add_versions("9392", "34deeda1094ade66bc48215d3a276e7cce547c0c")
+    add_patches("<=8752", "patches/cstdint.patch")
+    add_patches(">=9392", "patches/9392/apple_clang_overloaded.patch")
 
     add_resources("7816", "bx", "https://github.com/bkaradzic/bx.git", "51f25ba638b9cb35eb2ac078f842a4bed0746d56")
     add_resources("8203", "bx", "https://github.com/bkaradzic/bx.git", "b9501348c596b68e5e655a8308df5c55f61ecd80")
@@ -25,7 +26,7 @@ package("bgfx")
     if is_plat("windows") then
         add_syslinks("user32", "gdi32", "psapi")
         add_includedirs("include", "include/compat/msvc")
-        add_cxxflags("/Zc:__cplusplus")
+        add_cxxflags("/Zc:__cplusplus", {tools = {"msvc", "cl", "clang_cl", "clang-cl"}})
     elseif is_plat("macosx") then
         add_frameworks("Metal", "QuartzCore", "Cocoa", "IOKit")
     elseif is_plat("iphoneos") then
@@ -38,11 +39,11 @@ package("bgfx")
     add_deps("genie")
 
     on_load("windows", "macosx", "linux", "iphoneos", function (package)
-        local suffix = package:debug() and "Debug" or "Release"
+        local suffix = package:is_debug() and "Debug" or "Release"
         for _, lib in ipairs({"bgfx", "bimg", "bx"}) do
             package:add("links", lib .. suffix)
         end
-        package:add("defines", "BX_CONFIG_DEBUG=" .. (package:debug() and "1" or "0"))
+        package:add("defines", "BX_CONFIG_DEBUG=" .. (package:is_debug() and "1" or "0"))
     end)
 
     on_install("windows|native", "macosx", "linux", "iphoneos", function (package)
@@ -60,16 +61,20 @@ package("bgfx")
         os.trycp(path.join(bxdir, "include", "*"), package:installdir("include"))
         os.trycp(path.join(bimgdir, "include", "*"), package:installdir("include"))
 
-        local mode = package:debug() and "Debug" or "Release"
+        local mode = package:is_debug() and "Debug" or "Release"
         if package:is_plat("windows") then
             import("package.tools.msbuild")
             import("core.tool.toolchain")
 
             local msvc = toolchain.load("msvc")
+            local vs = msvc:config("vs")
+            if tonumber(vs) >= 2022 then
+                vs = "2022"
+            end
             if package:has_runtime("MD", "MDd") then
                 table.insert(args, "--with-dynamic-runtime")
             end
-            table.insert(args, "vs" .. msvc:config("vs"))
+            table.insert(args, "vs" .. vs)
 
             local envs = msbuild.buildenvs(package)
             envs.BX_DIR = bxdir
@@ -80,7 +85,7 @@ package("bgfx")
             table.insert(configs, "/p:Configuration=" .. mode)
             table.insert(configs, "/p:Platform=" .. (package:is_arch("x64") and "x64" or "Win32"))
             table.insert(configs, "bgfx.sln")
-            os.cd(format(".build/projects/vs%s", msvc:config("vs")))
+            os.cd(format(".build/projects/vs%s", vs))
             msbuild.build(package, configs)
 
             os.trycp("../../win*_vs*/bin/*.lib|*example*", package:installdir("lib"))
@@ -117,7 +122,15 @@ package("bgfx")
             local envs = make.buildenvs(package)
             envs.BX_DIR = bxdir
             envs.BIMG_DIR = bimgdir
+
+            if package:version() and package:version():ge("9392") and package:is_plat("iphoneos") then
+                io.replace("scripts/bgfx.lua", 'configuration { "osx*" }', 'configuration { "ios*" }\n\t\tbuildoptions { "-x objective-c++" }\n\tconfiguration { "osx*" }', {plain = true})
+            end
             os.vrunv(genie, args, {envs = envs})
+
+            if package:is_plat("linux") and os.isdir(".build/projects/gmake-linux-gcc") then
+                configs[2] = ".build/projects/gmake-linux-gcc"
+            end
             make.build(package, configs)
 
             if package:is_plat("macosx", "iphoneos") then
@@ -134,10 +147,17 @@ package("bgfx")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
+        local test_new = [[
             void test() {
                 bgfx::Init init;
                 bgfx::init(init);
             }
-        ]]}, {configs = {languages = "c++17"}, includes = "bgfx/bgfx.h"}))
+        ]]
+        local test_old = [[
+            void test() {
+                bgfx::init();
+            }
+        ]]
+        assert(package:check_cxxsnippets({test = test_new}, {configs = {languages = "c++17"}, includes = "bgfx/bgfx.h"}) or
+               package:check_cxxsnippets({test = test_old}, {configs = {languages = "c++17"}, includes = "bgfx/bgfx.h"}))
     end)
