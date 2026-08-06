@@ -57,7 +57,7 @@ package("coal")
                 "#if _MSC_VER\n#define COAL_PRETTY_FUNCTION __FUNCSIG__", {plain = true})
         end
 
-        local configs = {"-DBUILD_TESTING=OFF", "-DBUILD_PYTHON_INTERFACE=OFF"}
+        local configs = {"-DBUILD_TESTING=OFF", "-DBUILD_PYTHON_INTERFACE=OFF", "-DCMAKE_CXX_STANDARD=17"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCOAL_ENABLE_LOGGING=" .. (package:config("logging") and "ON" or "OFF"))
@@ -96,5 +96,5 @@ package("coal")
                 std::shared_ptr<coal::Ellipsoid> shape1 = std::make_shared<coal::Ellipsoid>(0.7, 1.0, 0.8);
                 std::shared_ptr<coal::ConvexBase> shape2 = loadConvexMesh("../path/to/mesh/file.obj");
             }
-        ]]}, {configs = {languages = "c++14"}}))
+        ]]}, {configs = {languages = "c++17"}}))
     end)
