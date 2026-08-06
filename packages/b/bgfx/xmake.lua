@@ -9,8 +9,6 @@ package("bgfx")
     add_versions("8674", "f42134876038027667ef7e47c9a612dca1051ef2")
     add_versions("8752", "61c770b0f5f57cf10547107974099e604358bf69")
     add_versions("9392", "34deeda1094ade66bc48215d3a276e7cce547c0c")
-    add_patches("<=8752", "patches/cstdint.patch")
-    add_patches(">=9392", "patches/9392/apple_clang_overloaded.patch")
 
     add_resources("7816", "bx", "https://github.com/bkaradzic/bx.git", "51f25ba638b9cb35eb2ac078f842a4bed0746d56")
     add_resources("8203", "bx", "https://github.com/bkaradzic/bx.git", "b9501348c596b68e5e655a8308df5c55f61ecd80")
