@@ -17,7 +17,7 @@ package("pkg-config")
     end)
 
     on_install("@macosx", "@linux", "@bsd", function (package)
-        local pcpath = {"/usr/local/lib/pkgconfig", "/usr/lib/pkgconfig"}
+        local pcpath = {"/usr/local/lib/pkgconfig", "/usr/lib/pkgconfig", "/usr/share/pkgconfig"}
         if package:is_plat("linux") and package:is_arch("x86_64") then
             table.insert(pcpath, "/usr/lib64/pkgconfig")
             table.insert(pcpath, "/usr/lib/x86_64-linux-gnu/pkgconfig")

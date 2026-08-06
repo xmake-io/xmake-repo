@@ -65,6 +65,13 @@ package("gdk-pixbuf")
         io.gsub("meson.build", "subdir%('fuzzing'%)", "")
         io.gsub("meson.build", "subdir%('docs'%)", "")
 
+        -- shared-mime-info has no libraries/includes, it only provides the mime database which
+        -- gdk-pixbuf uses at build time. Keeping it in gdk_pixbuf_deps makes it leak into the
+        -- generated gdk-pixbuf-2.0.pc (as Requires/Requires.private), hard-failing every consumer
+        -- (e.g. libui/gtk3 meson) on systems without a system shared-mime-info.pc, because
+        -- shared-mime-info is a binary package and its share/pkgconfig is not in PKG_CONFIG_PATH.
+        io.gsub("meson.build", "shared_mime_dep,%s*\r?\n", "")
+
         if not package:is_plat("linux") then
             io.replace("meson.build", "cc.find_library('intl', required: false)", "dependency('libintl')", {plain = true})
         end

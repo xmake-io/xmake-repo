@@ -4,20 +4,31 @@ package("libui")
 
     set_urls("https://github.com/libui-ng/libui-ng.git")
     add_versions("2022.12.3", "8c82e737eea2f8ab3667e227142abd2fd221f038")
+    add_versions("2025.3.15", "43ba1ef553c8993a43a67f1ce6e35983a2660d8c")
 
     add_deps("meson", "ninja")
 
     if is_plat("macosx") then
         add_frameworks("CoreGraphics", "CoreText", "Foundation", "AppKit")
-    elseif is_plat("windows") then
-        add_syslinks("user32", "ole32", "gdi32", "d2d1", "dwrite", "comctl32", "windowscodecs")
     elseif is_plat("linux") then
-        add_deps("gtk+3", "glib")
+        add_links("ui", "pango-1.0", "pangoxft-1.0", "pangocairo-1.0", "pangoft2-1.0")
+    elseif is_plat("windows") then
+        -- the windows meson build file links all of these with a todo to prune the list
+        add_syslinks("user32", "kernel32", "gdi32", "comctl32", "uxtheme", "msimg32", "comdlg32", "d2d1", "dwrite", "ole32", "oleaut32", "oleacc", "uuid", "windowscodecs")
     end
+
+    on_load("linux", function (package)
+        if package:config("shared") then
+            package:add("deps", "gtk3", {configs = {shared = true}})
+        else
+            package:add("deps", "gtk3")
+        end
+        package:add("deps", "glib", "gdk-pixbuf", "shared-mime-info")
+    end)
 
     on_install("linux", "macosx", "windows", function (package)
         local configs = {"-Dexamples=false", "-Dtests=false"}
-        table.insert(configs, "--default-library=" .. (package:config("shared") and "shared" or "static"))
+        table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         import("package.tools.meson").install(package, configs)
     end)
 
