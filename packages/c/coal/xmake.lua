@@ -45,6 +45,10 @@ package("coal")
         if not package:config("shared") then
             package:add("defines", "COAL_STATIC")
         end
+        if package:is_plat("wasm") then
+            package:add("cxflags", "-fexceptions")
+            package:add("ldflags", "-fexceptions")
+        end
     end)
 
     on_install(function (package)
