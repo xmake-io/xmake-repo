@@ -1,0 +1,40 @@
+diff --git a/xmake.lua b/xmake.lua
+--- a/xmake.lua
++++ b/xmake.lua
+@@ -22,16 +22,23 @@
+ add_requires("unity master")
+ 
+ target("xoodyak")
+-    set_kind("static")
++    set_kind("$(kind)")
+     add_files("src/Xoodyak.c")
+     add_files("src/Xoodoo-portable.c")
+     add_files("src/Xoodoo-helpers.c")
+-    add_files("src/Xoodoo-lx106.S")
+-    add_files("src/Xoodoo-armv6m.S")
+-    add_files("src/Xoodoo-armv7m.S")
++    if not is_plat("windows") then
++        add_files("src/Xoodoo-lx106.S")
++        add_files("src/Xoodoo-armv6m.S")
++        add_files("src/Xoodoo-armv7m.S")
++    end
++    if is_plat("windows") and is_kind("shared") then
++        add_rules("utils.symbols.export_all")
++    end
+     add_includedirs("include", {public = true})
+     add_headerfiles("include/*.h")
+-    set_languages("c99")
++    if not is_plat("windows") then
++        set_languages("c99")
++    end
+ 
+ target("test_embedded_xoodyak")
+     set_kind("binary")
+@@ -39,4 +46,6 @@
+     add_includedirs("include")
+     add_deps("xoodyak")
+     add_packages("unity")
+-    set_languages("c99")
++    if not is_plat("windows") then
++        set_languages("c99")
++    end
