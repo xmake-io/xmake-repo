@@ -31,6 +31,8 @@ package("pango")
 
     add_includedirs("include", "include/pango-1.0")
 
+    add_links("pangocairo-1.0", "pangoxft-1.0", "pangoft2-1.0", "pango-1.0")
+
     on_load(function (package)
         for _, name in ipairs({"fontconfig", "cairo", "freetype", "libthai"}) do
             if package:config(name) then
