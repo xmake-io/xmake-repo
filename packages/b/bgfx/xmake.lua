@@ -78,7 +78,7 @@ package("bgfx")
             local configs = {}
             table.insert(configs, "/p:Configuration=" .. mode)
             table.insert(configs, "/p:Platform=" .. (package:is_arch("x64") and "x64" or "Win32"))
-            table.insert(configs, "bgfx.sln")
+            table.insert(configs, tonumber(vs) >= 2026 and "bgfx.slnx" or "bgfx.sln")
             os.cd(format(".build/projects/vs%s", msvc:config("vs")))
             msbuild.build(package, configs)
 
@@ -120,6 +120,9 @@ package("bgfx")
 
             if package:version() and package:version():ge("9392") and package:is_plat("iphoneos") then
                 io.replace("scripts/bgfx.lua", 'configuration { "osx*" }', 'configuration { "ios*" }\n\t\tbuildoptions { "-x objective-c++" }\n\tconfiguration { "osx*" }', {plain = true})
+            end
+            if package:version() and package:version():ge("9392") and package:is_plat("macosx", "iphoneos") then
+                io.replace("3rdparty/dawn/src/tint/lang/core/ir/transform/multiplanar_external_texture.cc", 'using MultiplanarTexture = tint::transform::multiplanar::MultiplanarTexture;', 'template <class... Ts>\noverloaded(Ts...) -> overloaded<Ts...>;\nusing MultiplanarTexture = tint::transform::multiplanar::MultiplanarTexture;', {plain = true})
             end
             os.vrunv(genie, args, {envs = envs})
 
