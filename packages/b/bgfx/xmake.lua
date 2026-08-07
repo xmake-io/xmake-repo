@@ -119,7 +119,7 @@ package("bgfx")
             envs.BIMG_DIR = bimgdir
             
             if package:version() and package:version():ge("9392") and package:is_plat("windows") and package:is_arch("arm64") then
-                io.replace(path.join(bxdir, "include/bx/simd_t.h"), '#include <arm_neon.h>', '#include <stdint.h>\n#include <arm_neon.h>', {plain = true})
+                io.replace(path.join(bxdir, "include/bx/simd_t.h"), '#\tinclude <arm_neon.h>', '#\tinclude <stdint.h>\n#\tinclude <arm_neon.h>', {plain = true})
             end
             if package:version() and package:version():ge("9392") and package:is_plat("iphoneos") then
                 io.replace("scripts/bgfx.lua", 'configuration { "osx*" }', 'configuration { "ios*" }\n\t\tbuildoptions { "-x objective-c++" }\n\tconfiguration { "osx*" }', {plain = true})
