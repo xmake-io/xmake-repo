@@ -26,9 +26,9 @@ package("bgfx")
         add_includedirs("include", "include/compat/msvc")
         add_cxxflags("/Zc:__cplusplus", {tools = {"msvc", "cl", "clang_cl", "clang-cl"}})
     elseif is_plat("macosx") then
-        add_frameworks("Metal", "QuartzCore", "Cocoa", "IOKit")
+        add_frameworks("Metal", "QuartzCore", "Cocoa", "IOKit", "VideoToolbox")
     elseif is_plat("iphoneos") then
-        add_frameworks("OpenGLES", "CoreGraphics", "Metal", "QuartzCore", "UIKit")
+        add_frameworks("OpenGLES", "CoreGraphics", "Metal", "QuartzCore", "UIKit", "VideoToolbox")
     elseif is_plat("linux") then
         add_deps("libx11")
         add_syslinks("GL", "pthread", "dl")
@@ -44,7 +44,7 @@ package("bgfx")
         package:add("defines", "BX_CONFIG_DEBUG=" .. (package:is_debug() and "1" or "0"))
     end)
 
-    on_install("windows|native", "macosx", "linux", "iphoneos", function (package)
+    on_install("windows|native", "macosx", "linux|x86_64", "iphoneos", function (package)
         local bxdir = package:resourcefile("bx")
         local bimgdir = package:resourcefile("bimg")
         local genie = is_host("windows") and "genie.exe" or "genie"
@@ -79,7 +79,7 @@ package("bgfx")
             table.insert(configs, "/p:Configuration=" .. mode)
             table.insert(configs, "/p:Platform=" .. (package:is_arch("x64") and "x64" or "Win32"))
             table.insert(configs, "bgfx.sln")
-            os.cd(format(".build/projects/vs%s", vs))
+            os.cd(format(".build/projects/vs%s", msvc:config("vs")))
             msbuild.build(package, configs)
 
             os.trycp("../../win*_vs*/bin/*.lib|*example*", package:installdir("lib"))
@@ -94,6 +94,7 @@ package("bgfx")
             if package:is_plat("macosx") then
                 target = (package:is_arch("x86_64") and "osx-x64" or "osx-arm64")
                 table.insert(args, "--gcc=" .. target)
+                table.insert(args, "--with-macos=15.0")
                 configs = {"-C",
                            ".build/projects/gmake-" .. target,
                            "config=" .. mode:lower()}
