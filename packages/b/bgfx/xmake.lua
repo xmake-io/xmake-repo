@@ -26,9 +26,9 @@ package("bgfx")
         add_includedirs("include", "include/compat/msvc")
         add_cxxflags("/Zc:__cplusplus", {tools = {"msvc", "cl", "clang_cl", "clang-cl"}})
     elseif is_plat("macosx") then
-        add_frameworks("Metal", "QuartzCore", "Cocoa", "IOKit", "VideoToolbox")
+        add_frameworks("Metal", "QuartzCore", "Cocoa", "IOKit", "VideoToolbox", "CoreMedia", "CoreVideo")
     elseif is_plat("iphoneos") then
-        add_frameworks("OpenGLES", "CoreGraphics", "Metal", "QuartzCore", "UIKit", "VideoToolbox")
+        add_frameworks("OpenGLES", "CoreGraphics", "Metal", "QuartzCore", "UIKit", "VideoToolbox", "CoreMedia", "CoreVideo")
     elseif is_plat("linux") then
         add_deps("libx11")
         add_syslinks("GL", "pthread", "dl")
@@ -78,7 +78,7 @@ package("bgfx")
             local configs = {}
             table.insert(configs, "/p:Configuration=" .. mode)
             table.insert(configs, "/p:Platform=" .. (package:is_arch("x64") and "x64" or "Win32"))
-            table.insert(configs, tonumber(vs) >= 2026 and "bgfx.slnx" or "bgfx.sln")
+            table.insert(configs, tonumber(msvc:config("vs")) >= 2026 and "bgfx.slnx" or "bgfx.sln")
             os.cd(format(".build/projects/vs%s", msvc:config("vs")))
             msbuild.build(package, configs)
 
