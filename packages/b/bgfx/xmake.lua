@@ -77,7 +77,7 @@ package("bgfx")
 
             local configs = {}
             table.insert(configs, "/p:Configuration=" .. mode)
-            table.insert(configs, "/p:Platform=" .. (package:is_arch("x86_64") and "x64" or (package:is_arch("arm64") and "ARM64" or (package:is_arch("arm") and "ARM" or "Win32"))))
+            table.insert(configs, "/p:Platform=" .. (package:is_arch("x64") and "x64" or (package:is_arch("arm64") and "ARM64" or (package:is_arch("arm") and "ARM" or "Win32"))))
             table.insert(configs, tonumber(msvc:config("vs")) >= 2026 and "bgfx.slnx" or "bgfx.sln")
             os.cd(format(".build/projects/vs%s", msvc:config("vs")))
             msbuild.build(package, configs)
