@@ -34,7 +34,7 @@ package("bgfx")
         add_syslinks("GL", "pthread", "dl")
     end
 
-    add_deps("genie")
+    add_deps("genie 1204")
 
     on_load("windows", "macosx", "linux", "iphoneos", function (package)
         local suffix = package:is_debug() and "Debug" or "Release"
@@ -65,14 +65,10 @@ package("bgfx")
             import("core.tool.toolchain")
 
             local msvc = toolchain.load("msvc")
-            local vs = msvc:config("vs")
-            if tonumber(vs) >= 2022 then
-                vs = "2022"
-            end
             if package:has_runtime("MD", "MDd") then
                 table.insert(args, "--with-dynamic-runtime")
             end
-            table.insert(args, "vs" .. vs)
+            table.insert(args, "vs" .. msvc:config("vs"))
 
             local envs = msbuild.buildenvs(package)
             envs.BX_DIR = bxdir
