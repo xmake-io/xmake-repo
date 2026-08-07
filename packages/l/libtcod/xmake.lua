@@ -6,6 +6,7 @@ package("libtcod")
     add_urls("https://github.com/libtcod/libtcod/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libtcod/libtcod.git", {submodules = false})
 
+    add_versions("2.2.2", "69f30fe65df1c84049a8f4f4b1ea0894191221da3a671be61832e33e75df898e")
     add_versions("2.1.1", "ee9cc60140f480f72cb2321d5aa50beeaa829b0a4a651e8a37e2ba938ea23caa")
     add_patches("2.1.1", "patches/2.1.1/debundle.diff", "1e0697f13d179164eac0293db4917425b90ddc0f5275388f59f020ebeeb0aed0")
 
