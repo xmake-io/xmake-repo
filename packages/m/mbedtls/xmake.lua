@@ -48,10 +48,27 @@ package("mbedtls")
 
     on_install(function (package)
         if package:config("shared") and package:is_plat("windows") then
-            io.replace("library/constant_time_impl.h", "extern volatile", "__declspec(dllimport) volatile", {plain = true})
+            local constant_time_impl
+            local patch_psa_to_ssl_errors = false
+
+            if package:version() and package:version():ge("4.1.0") and package:version():lt("5.0.0") then
+                constant_time_impl = "tf-psa-crypto/utilities/constant_time_impl.h"
+            elseif package:version() and package:version():ge("4.0.0") and package:version():lt("4.1.0") then
+                constant_time_impl = "tf-psa-crypto/drivers/builtin/src/constant_time_impl.h"
+            elseif package:version() and package:version():lt("4.0.0") then
+                constant_time_impl = "library/constant_time_impl.h"
+                patch_psa_to_ssl_errors = true
+            else
+                raise("package(mbedtls): unsupported version for windows shared dllimport patch: " .. tostring(package:version()))
+            end
+
+            io.replace(constant_time_impl, "extern volatile", "__declspec(dllimport) volatile", {plain = true})
             io.replace("include/mbedtls/x509_crt.h", "extern const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_suiteb;", "__declspec(dllimport) const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_suiteb;", {plain = true})
             io.replace("include/mbedtls/x509_crt.h", "extern const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_default;", "__declspec(dllimport) const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_default;", {plain = true})
-            io.replace("library/psa_util_internal.h", "extern const mbedtls_error_pair_t psa_to_ssl_errors[7];", "__declspec(dllimport) const mbedtls_error_pair_t psa_to_ssl_errors[7];", {plain = true})
+
+            if patch_psa_to_ssl_errors then
+                io.replace("library/psa_util_internal.h", "extern const mbedtls_error_pair_t psa_to_ssl_errors[7];", "__declspec(dllimport) const mbedtls_error_pair_t psa_to_ssl_errors[7];", {plain = true})
+            end
         end
 
         local configs = {"-DENABLE_TESTING=OFF", "-DENABLE_PROGRAMS=OFF", "-DMBEDTLS_FATAL_WARNINGS=OFF"}
