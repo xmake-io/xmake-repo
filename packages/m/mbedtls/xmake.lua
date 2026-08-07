@@ -15,6 +15,9 @@ package("mbedtls")
     end})
     add_urls("https://github.com/Mbed-TLS/mbedtls.git")
 
+    add_versions("v4.2.0", "2bed9d713b4668f76553b097e72b8aa30bc8f112a940d7ae228d524bbde6ffea")
+    add_versions("v4.1.1", "3359a349e23db3d5536fcee032ae7b2ecbfc08972fab643089b5cbf2a375c98c")
+    add_versions("v4.0.0", "2f3a47f7b3a541ddef450e4867eeecb7ce2ef7776093f3a11d6d43ead6bf2827")
     add_versions("v3.6.7", "a7e8bcbec0e6f761b4af24f25677626b35f762f68eef79c08677a363212d11f6")
     add_versions("v3.6.1", "fc8bef0991b43629b7e5319de6f34f13359011105e08e3e16eed3a9fe6ffd3a3")
     add_versions("v3.6.0", "3ecf94fcfdaacafb757786a01b7538a61750ebd85c4b024f56ff8ba1490fcd38")
@@ -29,7 +32,13 @@ package("mbedtls")
 
     add_deps("cmake")
 
-    add_links("mbedtls", "mbedx509", "mbedcrypto")
+    on_load(function (package)
+        if package:version() and package:version():ge("4.0.0") then
+            package:add("links", "mbedtls", "mbedx509", "tfpsacrypto")
+        else
+            package:add("links", "mbedtls", "mbedx509", "mbedcrypto")
+        end
+    end)
 
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32", "advapi32", "bcrypt")
@@ -69,10 +78,8 @@ package("mbedtls")
         assert(package:has_cfuncs("mbedtls_ssl_init", {includes = "mbedtls/ssl.h"}))
         assert(package:check_cxxsnippets({test = [[
             void test() {
-                mbedtls_aes_context ctx;
-
-                unsigned char key[32]; 
-                mbedtls_aes_setkey_enc(&ctx, key, 256);
+                psa_status_t status = psa_crypto_init();
+                (void)status;
             }
-        ]]}, {includes = "mbedtls/aes.h"}))
+        ]]}, {includes = "psa/crypto.h"}))
     end)
