@@ -9,6 +9,7 @@ package("genie")
     add_versions("1160", "f9bd455a8439dbcb807816c0be9e4aedf5991bc3")
     add_versions("1165", "5461c5ab94d0365c40031fef8f459b9c21b4d37a")
     add_versions("1170", "22cc907a4351db46c55f73e6aa901f1b2f0c52ad")
+    add_versions("1204", "5c323f617444db5d77881108c665a1538546b74e")
 
     add_configs("debug", {description = "Enable debug scripts.", default = false, type = "boolean", readonly = true})
 
