@@ -46,8 +46,8 @@ package("coal")
             package:add("defines", "COAL_STATIC")
         end
         if package:is_plat("wasm") then
-            package:add("cxflags", "-fexceptions")
-            package:add("ldflags", "-fexceptions")
+            package:add("cxflags", "-fwasm-exceptions")
+            package:add("ldflags", "-fwasm-exceptions")
         end
     end)
 
