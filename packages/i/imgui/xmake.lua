@@ -134,6 +134,10 @@ package("imgui")
     add_configs("wgpu",             {description = "Enable the wgpu backend", default = false, type = "boolean"})
     add_configs("wgpu_backend",     {description = "Use specific wgpu backend", default = "wgpu", type = "string", values = {"wgpu", "dawn"}})
     add_configs("freetype",         {description = "Use FreeType to build and rasterize the font atlas", default = false, type = "boolean"})
+    add_configs("no_demo_windows",  {description = "Disable ImGui demo windows", default = false, type = "boolean"})
+    add_configs("no_debug_tools",   {description = "Disable ImGui metrics and debug tools", default = false, type = "boolean"})
+    add_configs("no_obsolete_functions", {description = "Disable obsolete ImGui APIs", default = false, type = "boolean"})
+    add_configs("builtin_math_operations", {description = "Enable built-in ImVec2 and ImVec4 operators", default = false, type = "boolean"})
     add_configs("user_config",      {description = "Use user config (disables test!)", default = nil, type = "string"})
     add_configs("wchar32",          {description = "Use 32-bit for ImWchar (default is 16-bit)", default = false, type = "boolean"})
 
@@ -235,6 +239,10 @@ package("imgui")
             osx              = package:config("osx"),
             wgpu             = package:config("wgpu"),
             freetype         = package:config("freetype"),
+            no_demo_windows  = package:config("no_demo_windows"),
+            no_debug_tools   = package:config("no_debug_tools"),
+            no_obsolete_functions = package:config("no_obsolete_functions"),
+            builtin_math_operations = package:config("builtin_math_operations"),
             user_config      = package:config("user_config"),
             wchar32          = package:config("wchar32")
         }

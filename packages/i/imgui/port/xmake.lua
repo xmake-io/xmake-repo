@@ -24,6 +24,10 @@ option("osx",              {showmenu = true,  default = false})
 option("wgpu",             {showmenu = true,  default = false})
 option("wgpu_backend",     {showmenu = true,  default = "wgpu", type = "string", values = {"wgpu", "dawn"}})
 option("freetype",         {showmenu = true,  default = false})
+option("no_demo_windows",  {showmenu = true,  default = false})
+option("no_debug_tools",   {showmenu = true,  default = false})
+option("no_obsolete_functions", {showmenu = true,  default = false})
+option("builtin_math_operations", {showmenu = true,  default = false})
 option("user_config",      {showmenu = true,  default = nil, type = "string"})
 option("wchar32",          {showmenu = true,  default = false})
 
@@ -200,6 +204,22 @@ target("imgui")
         add_defines("IMGUI_ENABLE_FREETYPE")
     end
 
+    if has_config("no_demo_windows") then
+        add_defines("IMGUI_DISABLE_DEMO_WINDOWS")
+    end
+
+    if has_config("no_debug_tools") then
+        add_defines("IMGUI_DISABLE_DEBUG_TOOLS")
+    end
+
+    if has_config("no_obsolete_functions") then
+        add_defines("IMGUI_DISABLE_OBSOLETE_FUNCTIONS")
+    end
+
+    if has_config("builtin_math_operations") then
+        add_defines("IMGUI_DEFINE_MATH_OPERATORS")
+    end
+
     if has_config("user_config") then
         local user_config = get_config("user_config")
         add_defines("IMGUI_USER_CONFIG=\"".. user_config .."\"")
@@ -216,5 +236,17 @@ target("imgui")
         end
         if has_config("freetype") then
             io.gsub(config_file, "//#define IMGUI_ENABLE_FREETYPE", "#define IMGUI_ENABLE_FREETYPE")
+        end
+        if has_config("no_demo_windows") then
+            io.gsub(config_file, "//#define IMGUI_DISABLE_DEMO_WINDOWS", "#define IMGUI_DISABLE_DEMO_WINDOWS")
+        end
+        if has_config("no_debug_tools") then
+            io.gsub(config_file, "//#define IMGUI_DISABLE_DEBUG_TOOLS", "#define IMGUI_DISABLE_DEBUG_TOOLS")
+        end
+        if has_config("no_obsolete_functions") then
+            io.gsub(config_file, "//#define IMGUI_DISABLE_OBSOLETE_FUNCTIONS", "#define IMGUI_DISABLE_OBSOLETE_FUNCTIONS")
+        end
+        if has_config("builtin_math_operations") then
+            io.gsub(config_file, "//#define IMGUI_DEFINE_MATH_OPERATORS", "#define IMGUI_DEFINE_MATH_OPERATORS")
         end
     end)
