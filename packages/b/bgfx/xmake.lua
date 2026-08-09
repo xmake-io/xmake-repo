@@ -122,6 +122,9 @@ package("bgfx")
             envs.BX_DIR = bxdir
             envs.BIMG_DIR = bimgdir
             
+            if package:version() and package:version():ge("9392") and package:is_plat("iphoneos") then
+                io.replace("scripts/bgfx.lua", 'configuration { "osx*" }', 'configuration { "ios*" }\n\t\tbuildoptions { "-x objective-c++" }\n\tconfiguration { "osx*" }', {plain = true})
+            end
             if package:version() and package:version():ge("9392") and package:is_plat("macosx", "iphoneos") then
                 io.replace("3rdparty/dawn/src/tint/lang/core/ir/transform/multiplanar_external_texture.cc", 'using MultiplanarTexture = tint::transform::multiplanar::MultiplanarTexture;', 'template <class... Ts>\noverloaded(Ts...) -> overloaded<Ts...>;\nusing MultiplanarTexture = tint::transform::multiplanar::MultiplanarTexture;', {plain = true})
             end
