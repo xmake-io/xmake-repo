@@ -36,6 +36,10 @@ package("bgfx")
 
     add_deps("genie")
 
+    on_check("linux", function (package)
+        assert(package:version() and package:version():eq("9392") and package:is_arch("arm.*"), "package(bgfx == 9393): unsupport linux arm")
+    end)
+
     on_load("windows", "macosx", "linux", "iphoneos", function (package)
         local suffix = package:is_debug() and "Debug" or "Release"
         for _, lib in ipairs({"bgfx", "bimg", "bx"}) do
@@ -44,7 +48,7 @@ package("bgfx")
         package:add("defines", "BX_CONFIG_DEBUG=" .. (package:is_debug() and "1" or "0"))
     end)
 
-    on_install("windows|native", "macosx", "linux|x86_64", "iphoneos", function (package)
+    on_install("windows|native", "macosx", "linux", "iphoneos", function (package)
         local bxdir = package:resourcefile("bx")
         local bimgdir = package:resourcefile("bimg")
         local genie = is_host("windows") and "genie.exe" or "genie"
