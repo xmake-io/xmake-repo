@@ -34,7 +34,7 @@ package("bgfx")
         add_syslinks("GL", "pthread", "dl")
     end
 
-    add_deps("genie 1204")
+    add_deps("genie")
 
     on_load("windows", "macosx", "linux", "iphoneos", function (package)
         local suffix = package:is_debug() and "Debug" or "Release"
@@ -64,6 +64,10 @@ package("bgfx")
             import("package.tools.msbuild")
             import("core.tool.toolchain")
 
+            if package:is_arch("arm64") then
+                os.tryrm("3rdparty/glsl-optimizer/include/c99/stdint.h")
+            end
+
             local msvc = toolchain.load("msvc")
             if package:has_runtime("MD", "MDd") then
                 table.insert(args, "--with-dynamic-runtime")
@@ -78,7 +82,7 @@ package("bgfx")
             local configs = {}
             table.insert(configs, "/p:Configuration=" .. mode)
             table.insert(configs, "/p:Platform=" .. (package:is_arch("x64") and "x64" or (package:is_arch("arm64") and "ARM64" or (package:is_arch("arm") and "ARM" or "Win32"))))
-            table.insert(configs, tonumber(msvc:config("vs")) >= 2026 and "bgfx.slnx" or "bgfx.sln")
+            table.insert(configs, os.isfile(format(".build/projects/vs%s/bgfx.sln", msvc:config("vs"))) and "bgfx.sln" or "bgfx.slnx")
             os.cd(format(".build/projects/vs%s", msvc:config("vs")))
             msbuild.build(package, configs)
 
@@ -118,12 +122,6 @@ package("bgfx")
             envs.BX_DIR = bxdir
             envs.BIMG_DIR = bimgdir
             
-            if package:is_plat("windows") and package:is_arch("arm64") then
-                os.rm("3rdparty/glsl-optimizer/include/c99/stdint.h")
-            end
-            if package:version() and package:version():ge("9392") and package:is_plat("iphoneos") then
-                io.replace("scripts/bgfx.lua", 'configuration { "osx*" }', 'configuration { "ios*" }\n\t\tbuildoptions { "-x objective-c++" }\n\tconfiguration { "osx*" }', {plain = true})
-            end
             if package:version() and package:version():ge("9392") and package:is_plat("macosx", "iphoneos") then
                 io.replace("3rdparty/dawn/src/tint/lang/core/ir/transform/multiplanar_external_texture.cc", 'using MultiplanarTexture = tint::transform::multiplanar::MultiplanarTexture;', 'template <class... Ts>\noverloaded(Ts...) -> overloaded<Ts...>;\nusing MultiplanarTexture = tint::transform::multiplanar::MultiplanarTexture;', {plain = true})
             end
