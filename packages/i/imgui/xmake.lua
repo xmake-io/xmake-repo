@@ -7,6 +7,9 @@ package("imgui")
     add_urls("https://github.com/ocornut/imgui.git", {alias = "git"})
 
     -- don't forget to add the docking versions as well
+    add_versions("v1.92.9b", "21d8a0a565e85dce943e375db00812c2f3f0ab21f3f0f7964e364a63422d7f99")
+    add_versions("v1.92.9", "af97ed649182c39314320514a672b82008ab462b9293fe23d37b30bfa5d05519")
+    add_versions("v1.92.8", "fecb33d33930e12ff53a34064e9d3a06c8f7c3e04408f14cd36c80e3faac863b")
     add_versions("v1.92.7", "b21b14ce1ef6dd4d85fa54f68f8449a9be94f3b453aba7fe4ea2a9764e43a5ef")
     add_versions("v1.92.6", "5b17c01f69545bde732b14936d89ce0f508adb83e8b56fa82448371845172bc3")
     add_versions("v1.92.5", "0eb50fe9aeba1a51f96b5843c7f630a32ed2e9362d693c61b87e4fa870cf826d")
@@ -59,6 +62,9 @@ package("imgui")
     add_versions("v1.76",   "e482dda81330d38c87bd81597cacaa89f05e20ed2c4c4a93a64322e97565f6dc")
     add_versions("v1.75",   "1023227fae4cf9c8032f56afcaea8902e9bfaad6d9094d6e48fb8f3903c7b866")
 
+    add_versions("v1.92.9b-docking", "90ded916bd57db2e0e171b6b098940a47c6f5042725dcdc67fb19940ca8bfdcc")
+    add_versions("v1.92.9-docking", "61f2ec7ef19702e47689b77cc602e3aeeda423941bfbc5d8ecb6a02d05a9dd73")
+    add_versions("v1.92.8-docking", "ca0653454ed371b7a87e9b0bc29a5d15c9be7f7c0fbe778042fc48c71df1d3d8")
     add_versions("v1.92.7-docking", "123926eb22d4990dea06bec0739d92f7790c8ee505b3d903fe2de7e5940f2c27")
     add_versions("v1.92.6-docking", "5e84cdaa6a6041586a0d11a3071b749734a0439d66fdbdad37ae5b27e37d396c")
 
@@ -128,6 +134,10 @@ package("imgui")
     add_configs("wgpu",             {description = "Enable the wgpu backend", default = false, type = "boolean"})
     add_configs("wgpu_backend",     {description = "Use specific wgpu backend", default = "wgpu", type = "string", values = {"wgpu", "dawn"}})
     add_configs("freetype",         {description = "Use FreeType to build and rasterize the font atlas", default = false, type = "boolean"})
+    add_configs("no_demo_windows",  {description = "Disable ImGui demo windows", default = false, type = "boolean"})
+    add_configs("no_debug_tools",   {description = "Disable ImGui metrics and debug tools", default = false, type = "boolean"})
+    add_configs("no_obsolete_functions", {description = "Disable obsolete ImGui APIs", default = false, type = "boolean"})
+    add_configs("builtin_math_operations", {description = "Enable built-in ImVec2 and ImVec4 operators", default = false, type = "boolean"})
     add_configs("user_config",      {description = "Use user config (disables test!)", default = nil, type = "string"})
     add_configs("wchar32",          {description = "Use 32-bit for ImWchar (default is 16-bit)", default = false, type = "boolean"})
 
@@ -229,6 +239,10 @@ package("imgui")
             osx              = package:config("osx"),
             wgpu             = package:config("wgpu"),
             freetype         = package:config("freetype"),
+            no_demo_windows  = package:config("no_demo_windows"),
+            no_debug_tools   = package:config("no_debug_tools"),
+            no_obsolete_functions = package:config("no_obsolete_functions"),
+            builtin_math_operations = package:config("builtin_math_operations"),
             user_config      = package:config("user_config"),
             wchar32          = package:config("wchar32")
         }
