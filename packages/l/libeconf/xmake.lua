@@ -6,6 +6,7 @@ package("libeconf")
     add_urls("https://github.com/openSUSE/libeconf/archive/refs/tags/$(version).tar.gz",
              "https://github.com/openSUSE/libeconf.git")
 
+    add_versions("v0.8.4", "7c311d55237f1fc6ac437caca194d170c9cae314235d60a9fbf11e980114e25e")
     add_versions("v0.8.3", "c8855f08d64c06b57a5028a14eec6ddde5e35124f9718031d592b44d8e091f83")
     add_versions("v0.8.2", "00f1f5d6a053e7934375eb7a9faddf5eec26ddc6c702b579cf50ef598dead9df")
     add_versions("v0.8.0", "d50b7135483f13c1a6229a293bd5fdac77b1d827607c72cc61d13be56f58aaa2")
