@@ -6,6 +6,7 @@ package("lief")
     set_urls("https://github.com/lief-project/LIEF/archive/refs/tags/$(version).tar.gz",
              "https://github.com/lief-project/LIEF.git")
 
+    add_versions("1.0.0", "2cf412695ff739d82e129db441e5c2025f3bb4873a3d3a1d3dd4cf300b682abd")
     add_versions("0.17.6", "5fbbd19c85912d417eabbaef2b98e70144496356964685b82e0792d708b9be87")
     add_versions("0.17.3", "00158beac9432b350fb528d571457a0bea8de154633a31735524a74fa69ea196")
     add_versions("0.17.2", "bece1be25aa657b94d1c97ddf88c47e0b94faa1d971c42532c4eb59fbb507fc2")
@@ -46,8 +47,19 @@ package("lief")
 
     add_deps("cmake")
     add_deps("spdlog", {configs = {header_only = false, noexcept = true}})
-    add_deps("nlohmann_json", {configs = {cmake = true}})
-    add_deps("tl_expected", "utfcpp", "mbedtls <3.6.0", "tcb-span", "frozen")
+    add_deps("nlohmann_json", {configs = {cmake = true}, private = true})
+    add_deps("tl_expected", "utfcpp", "tcb-span", "frozen", {private = true})
+
+    -- mbedtls: 1.0.0 requires mbedtls >= 4.0.0 (PSA Crypto / tf-psa-crypto target);
+    -- older versions still need mbedtls < 3.6.0 (mbedcrypto target). The latter does
+    -- not support arm, so keep the arm guard only for pre-1.0.0 builds.
+    on_load(function (package)
+        if package:version() and package:version():ge("1.0.0") then
+            package:add("deps", "mbedtls >=4.0.0")
+        else
+            package:add("deps", "mbedtls <3.6.0")
+        end
+    end)
 
     if on_check then
         on_check(function (package)
@@ -56,10 +68,10 @@ package("lief")
                 if vs_toolset then
                     local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
                     local minor = vs_toolset_ver:minor()
-                    assert(minor and minor >= 30, "package(lief) require vs_toolset >= 14.3")
+                    assert(minor and minor >= 30, "package(lief) requires vs_toolset >= 14.3")
                 end
             end
-            if package:is_arch("arm.*") then
+            if package:is_arch("arm.*") and package:version() and package:version():lt("1.0.0") then
                 raise("package(lief) dep(mbedtls <3.6.0) unsupported arm arch")
             end
         end)
@@ -74,7 +86,10 @@ package("lief")
             os.rm("third-party")
         end
 
-        io.replace("CMakeLists.txt", "target_link_libraries(LIB_LIEF PRIVATE utf8cpp)", "target_link_libraries(LIB_LIEF PRIVATE utf8cpp::utf8cpp)", {plain = true})
+        -- LIEF 1.0.0 already links utf8cpp via utf8cpp::utf8cpp natively.
+        if package:version():lt("1.0.0") then
+            io.replace("CMakeLists.txt", "target_link_libraries(LIB_LIEF PRIVATE utf8cpp)", "target_link_libraries(LIB_LIEF PRIVATE utf8cpp::utf8cpp)", {plain = true})
+        end
 
         io.replace("CMakeLists.txt", "target_link_libraries(LIB_LIEF PRIVATE lief_spdlog)", "find_package(spdlog CONFIG REQUIRED)\ntarget_link_libraries(LIB_LIEF PRIVATE spdlog::spdlog)", {plain = true})
         io.replace("CMakeLists.txt", "TARGETS LIB_LIEF lief_spdlog", "TARGETS LIB_LIEF", {plain = true})
