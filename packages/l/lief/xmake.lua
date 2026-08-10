@@ -8,6 +8,8 @@ package("lief")
 
     add_versions("1.0.0", "2cf412695ff739d82e129db441e5c2025f3bb4873a3d3a1d3dd4cf300b682abd")
     add_versions("0.17.6", "5fbbd19c85912d417eabbaef2b98e70144496356964685b82e0792d708b9be87")
+    add_versions("0.17.5", "9c15587967d92767573c829a8b5cfe0cd9732db0c07ae78d47dd5baa44f9ab6e")
+    add_versions("0.17.4", "cc1c8c563faaddf497d1a2d8f2712257f15e680e6a5ef4ea1e29ba8e19fb6248")
     add_versions("0.17.3", "00158beac9432b350fb528d571457a0bea8de154633a31735524a74fa69ea196")
     add_versions("0.17.2", "bece1be25aa657b94d1c97ddf88c47e0b94faa1d971c42532c4eb59fbb507fc2")
     add_versions("0.17.1", "9dea0f09c7b98e8d0c9a47f8629fbd1646ddc9bf1cae7c2f4ce42fe8934dc315")
