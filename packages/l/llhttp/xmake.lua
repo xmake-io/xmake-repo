@@ -13,10 +13,6 @@ package("llhttp")
     add_versions("v8.1.0", "9da0d23453e8e242cf3b2bc5d6fb70b1517b8a70520065fcbad6be787e86638e")
     add_versions("v3.0.0", "02931556e69f8d075edb5896127099e70a093c104a994a57b4d72c85b48d25b0")
 
-    if is_plat("wasm") then
-        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-    end
-
     on_load(function (package)
         if package:version():ge("9.2.1") then
             package:add("deps", "cmake")
@@ -24,6 +20,11 @@ package("llhttp")
     end)
 
     on_install(function (package)
+        if package:is_plat("wasm") then
+            -- Only llhttp's standalone WASI wrapper supplies these callback imports.
+            io.replace("src/api.c", "#if defined(__wasm__)",
+                       "#if defined(__wasm__) && !defined(__EMSCRIPTEN__)", {plain = true})
+        end
         io.replace("include/llhttp.h", "__wasm__", "__GNUC__", {plain = true})
         io.replace("include/llhttp.h", "_WIN32", "_MSC_VER", {plain = true})
         if not package:config("shared") then
