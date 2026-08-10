@@ -18,17 +18,25 @@ package("emhash")
         if package:config("cmake") then
             package:add("deps", "cmake")
         end
+        if package:version() and package:version():ge("1.2.0") then
+            package:add("includedirs", "include", "include/emhash", "include/emilib")
+        end
     end)
 
     on_install(function (package)
         if package:config("cmake") then
             import("package.tools.cmake").install(package, {"-DWITH_BENCHMARKS=OFF"})
         else
-            os.cp("*.hpp", package:installdir("include"))
+            if package:version() and package:version():lt("1.2.0") then
+                os.cp("*.hpp", package:installdir("include"))
+            else
+                os.cp("include/*", package:installdir("include"))
+            end
         end
     end)
 
     on_test(function (package)
+        local languages = package:version() and package:version():ge("1.2.0") and "c++17" or "c++11"
         assert(package:check_cxxsnippets({test = [[
             void test() {
                 emhash5::HashMap<int, int> m1(4);
@@ -39,5 +47,5 @@ package("emhash")
                     {2, "baz"},
                 };
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "hash_table5.hpp"}))
+        ]]}, {configs = {languages = languages}, includes = "hash_table5.hpp"}))
     end)
