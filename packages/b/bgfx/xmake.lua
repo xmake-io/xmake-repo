@@ -37,7 +37,8 @@ package("bgfx")
     add_deps("genie")
 
     on_check("linux", function (package)
-        assert(package:version() and package:version():eq("9392") and package:is_arch("arm.*"), "package(bgfx == 9393): unsupport linux arm")
+        assert(not (package:version():eq("9392") and package:is_arch("arm.*")),
+        "package(bgfx == 9392): unsupported on linux arm")
     end)
 
     on_load("windows", "macosx", "linux", "iphoneos", function (package)
