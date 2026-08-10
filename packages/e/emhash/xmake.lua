@@ -7,6 +7,7 @@ package("emhash")
     add_urls("https://github.com/ktprime/emhash/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ktprime/emhash.git")
 
+    add_versions("v1.2.0", "dead6c7f83233eb0d1531353642728eba379a5bfbb2031dc01a11a923027c923")
     add_versions("v1.1.0", "16bc5c16eb3795e20930b7c613d2485dbac1db26f271aed865768c860511c601")
     add_versions("v1.0.1", "dbcce726c5ccce4a260a2c5ca9aa239e4d6109aacb3b5097ebfa465247708a7b")
     add_versions("v1.0.0", "9de79897a94e8c2545a401bb441ee6f6c293124e46bf9cf3023be6b1632e708b")
@@ -17,17 +18,25 @@ package("emhash")
         if package:config("cmake") then
             package:add("deps", "cmake")
         end
+        if package:version() and package:version():ge("1.2.0") then
+            package:add("includedirs", "include", "include/emhash", "include/emilib")
+        end
     end)
 
     on_install(function (package)
         if package:config("cmake") then
             import("package.tools.cmake").install(package, {"-DWITH_BENCHMARKS=OFF"})
         else
-            os.cp("*.hpp", package:installdir("include"))
+            if package:version() and package:version():lt("1.2.0") then
+                os.cp("*.hpp", package:installdir("include"))
+            else
+                os.cp("include/*", package:installdir("include"))
+            end
         end
     end)
 
     on_test(function (package)
+        local languages = package:version() and package:version():ge("1.2.0") and "c++17" or "c++11"
         assert(package:check_cxxsnippets({test = [[
             void test() {
                 emhash5::HashMap<int, int> m1(4);
@@ -38,5 +47,5 @@ package("emhash")
                     {2, "baz"},
                 };
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "hash_table5.hpp"}))
+        ]]}, {configs = {languages = languages}, includes = "hash_table5.hpp"}))
     end)
