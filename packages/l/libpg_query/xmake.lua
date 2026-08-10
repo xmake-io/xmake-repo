@@ -60,7 +60,7 @@ package("libpg_query")
             os.trycp("*.lib", package:installdir("lib"))
         else
             os.trycp("*.dll", package:installdir("bin"))
-            os.trycp("*.so", package:installdir("lib"))
+            os.trycp("*.so*", package:installdir("lib"))
             os.trycp("*.dylib", package:installdir("lib"))
         end
     end)
