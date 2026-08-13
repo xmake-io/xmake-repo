@@ -6,6 +6,7 @@ package("libcbor")
     add_urls("https://github.com/pjk/libcbor/archive/refs/tags/$(version).tar.gz",
              "https://github.com/pjk/libcbor.git", {submodules = false})
 
+    add_versions("v0.14.0", "a8c1516e741562cf95aa4479c64916c3d4d2623e24fdc35e414e2320e7300aae")
     add_versions("v0.13.0", "95a7f0dd333fd1dce3e4f92691ca8be38227b27887599b21cd3c4f6d6a7abb10")
     add_versions("v0.12.0", "5368add109db559f546d7ed10f440f39a273b073daa8da4abffc83815069fa7f")
     add_versions("v0.11.0", "89e0a83d16993ce50651a7501355453f5250e8729dfc8d4a251a78ea23bb26d7")
