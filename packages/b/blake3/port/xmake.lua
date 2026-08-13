@@ -6,7 +6,7 @@ target("blake3")
     add_headerfiles("c/blake3.h")
 
     if is_arch("x86_64", "x64") then
-        if is_subhost("msys", "cygwin") then
+        if is_plat("mingw", "msys", "cygwin") then
             add_files("c/*x86-64_windows_gnu.S")
         elseif is_plat("windows") then
             add_files("c/*x86-64_windows_msvc.asm")
