@@ -75,10 +75,17 @@ package("stringzilla")
 
     on_install("android|!armeabi-v7a or (!android and !cross)", function (package)
         if package:version():ge("4.0.0") then
-            os.cp("include/stringzilla/*.h", package:installdir("include/stringzilla"))
-            if package:config("cpp") then
-                os.cp("include/stringzilla/*.hpp", package:installdir("include/stringzilla"))
-                os.cp("include/stringzilla/module.modulemap", package:installdir("include/stringzilla"))
+            if package:version():ge("5.0.0") then
+                os.cp("include/stringzilla/**.h", package:installdir("include/stringzilla"), {rootdir = "include/stringzilla"})
+                if package:config("cpp") then
+                    os.cp("include/stringzilla/**.hpp", package:installdir("include/stringzilla"), {rootdir = "include/stringzilla"})
+                end
+            else
+                os.cp("include/stringzilla/*.h", package:installdir("include/stringzilla"))
+                if package:config("cpp") then
+                    os.cp("include/stringzilla/*.hpp", package:installdir("include/stringzilla"))
+                    os.cp("include/stringzilla/module.modulemap", package:installdir("include/stringzilla"))
+                end
             end
             if not package:is_plat("android", "iphoneos", "wasm") and package:config("stringzillas") then
                 os.cp("include/stringzillas", package:installdir("include/stringzillas"))
@@ -108,17 +115,18 @@ package("stringzilla")
         if package:version():gt("3.0.0") then
             if package:config("cpp") then
                 assert(package:check_cxxsnippets({test = [[
+                    #include <cassert>
                     #include <stringzilla/stringzilla.hpp>
                     static void test() {
                         ashvardanian::stringzilla::string s = "hello";
                         assert(s == "hello");
                     }
                 ]]}, {configs = {languages = "c++11"}, includes = "stringzilla/stringzilla.hpp"}))
-                if package:version():ge("4.0.0") then
-                    assert(package:has_cfuncs("sz_sequence_argsort", {includes = "stringzilla/sort.h"}))
-                else
-                    assert(package:has_cfuncs("sz_sort", {includes = "stringzilla/stringzilla.h"}))
-                end
+            end
+            if package:version():ge("4.0.0") then
+                assert(package:has_cfuncs("sz_sequence_argsort", {includes = "stringzilla/sort.h"}))
+            else
+                assert(package:has_cfuncs("sz_sort", {includes = "stringzilla/stringzilla.h"}))
             end
         elseif package:version():gt("2.0.0") then
             assert(package:has_cfuncs("sz_sort", {includes = "stringzilla/stringzilla.h"}))
