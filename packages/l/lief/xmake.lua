@@ -52,14 +52,14 @@ package("lief")
     add_deps("nlohmann_json", {configs = {cmake = true}, private = true})
     add_deps("tl_expected", "utfcpp", "tcb-span", "frozen", {private = true})
 
-    -- mbedtls: 1.0.0 requires mbedtls >= 4.0.0 (PSA Crypto / tf-psa-crypto target);
-    -- older versions still need mbedtls < 3.6.0 (mbedcrypto target). The latter does
-    -- not support arm, so keep the arm guard only for pre-1.0.0 builds.
+    -- mbedtls: LIEF 1.0.0 requires mbedtls >= 4.0.0 (find_package(MbedTLS 4.0.0)
+    -- + MbedTLS::tfpsacrypto target); older LIEF releases use the 3.6.x LTS line
+    -- (mbedcrypto target), which also supports arm.
     on_load(function (package)
         if package:version() and package:version():ge("1.0.0") then
             package:add("deps", "mbedtls >=4.0.0")
         else
-            package:add("deps", "mbedtls <3.6.0")
+            package:add("deps", "mbedtls >=3.6.0 <3.7.0")
         end
     end)
 
@@ -72,9 +72,6 @@ package("lief")
                     local minor = vs_toolset_ver:minor()
                     assert(minor and minor >= 30, "package(lief) requires vs_toolset >= 14.3")
                 end
-            end
-            if package:is_arch("arm.*") and package:version() and package:version():lt("1.0.0") then
-                raise("package(lief) dep(mbedtls <3.6.0) unsupported arm arch")
             end
         end)
     end
