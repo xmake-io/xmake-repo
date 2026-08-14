@@ -6,6 +6,7 @@ package("bhook")
     add_urls("https://github.com/bytedance/bhook/archive/refs/tags/$(version).tar.gz",
              "https://github.com/bytedance/bhook.git")
 
+    add_versions("v1.1.2", "d8b7a968de4a681653486c89dc0eddd6fc2b45a3e4e8628e71cfd704167c716d")
     add_versions("v1.1.1", "10b501045d89d24a46c2527e516d98f4b38208663a83da21270f5068d9c27e31")
 
     add_deps("linux-syscall-support")
