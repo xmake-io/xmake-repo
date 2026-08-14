@@ -6,6 +6,7 @@ package("anari")
     add_urls("https://github.com/KhronosGroup/ANARI-SDK/archive/refs/tags/$(version).tar.gz",
              "https://github.com/KhronosGroup/ANARI-SDK.git")
 
+    add_versions("v0.16.0", "657d995e834ec534b9ac8b57b01f16912320a015fe07ff0ef687e2f3611966b9")
     add_versions("v0.15.0", "8fe0fa1a7eea6768fe69a46313ba405b62b2667b1bae5e843bc751a90a53fad3")
     add_versions("v0.14.1", "a1df9e917bdb0b6edb0ad4b8e59e1171468a446f850559c74ad5731317201e16")
     add_versions("v0.13.1", "b8979ab0dea22cf71c2eacf9421b0cf3fe5807224147c63686d6ed07e65873f4")
