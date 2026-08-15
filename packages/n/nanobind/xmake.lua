@@ -18,6 +18,8 @@ package("nanobind")
     add_deps("cmake")
     add_deps("robin-map", "python >=3.8")
 
+    add_configs("stable_abi", {description = "stable ABI version", default = 0, type = "number"})
+
     on_install("windows|x64", "linux", "macosx", "bsd", function (package)
         local builddir = path.join(os.curdir(), "build")
 
@@ -46,6 +48,14 @@ package("nanobind")
             if not package:is_plat("windows", "macosx") then
                 package:add("cxflags", "-ffunction-sections", "-fdata-sections")
                 package:add("ldflags", "-Wl,--gc-sections")
+            end
+        end
+
+        if package:config("stable_abi") ~= 0 then
+            if package:config("stable_abi") >= 0x030C0000 then
+                package:add("defines", "Py_LIMITED_API=" .. package:config("stable_abi"))
+            else
+                raise("stable_abi=0x%08X is too old, requires >= 0x030C0000", package:config("stable_abi"))
             end
         end
     end)
