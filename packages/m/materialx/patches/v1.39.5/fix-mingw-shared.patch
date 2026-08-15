@@ -1,0 +1,124 @@
+diff --git a/source/MaterialXCore/Library.h b/source/MaterialXCore/Library.h
+index e13f10d..55c1a44 100644
+--- a/source/MaterialXCore/Library.h
++++ b/source/MaterialXCore/Library.h
+@@ -35,8 +35,8 @@
+         #pragma warning(disable : 4661)
+         #define MATERIALX_SYMBOL_EXPORT __declspec(dllexport)
+         #define MATERIALX_SYMBOL_IMPORT __declspec(dllimport)
+-        #define MATERIALX_EXPORT_EXTERN_TEMPLATE(...) template class __VA_ARGS__
+-        #define MATERIALX_IMPORT_EXTERN_TEMPLATE(...) extern template class __VA_ARGS__
++        #define MATERIALX_EXPORT_EXTERN_TEMPLATE(...) template class MATERIALX_SYMBOL_EXPORT __VA_ARGS__
++        #define MATERIALX_IMPORT_EXTERN_TEMPLATE(...) extern template class MATERIALX_SYMBOL_IMPORT __VA_ARGS__
+     #else
+         #define MATERIALX_SYMBOL_EXPORT __attribute__((__visibility__("default")))
+         #define MATERIALX_SYMBOL_IMPORT __attribute__((__visibility__("default")))
+diff --git a/source/MaterialXCore/Value.cpp b/source/MaterialXCore/Value.cpp
+index 5d61709..a5439f2 100644
+--- a/source/MaterialXCore/Value.cpp
++++ b/source/MaterialXCore/Value.cpp
+@@ -425,15 +425,15 @@ template <class T> class ValueRegistry
+ // Template instantiations
+ //
+ 
+-#define INSTANTIATE_TYPE(T, name)                                                                            \
+-    template <> MX_CORE_API const string TypedValue<T>::TYPE = name;                                         \
+-    template <> MX_CORE_API const string& TypedValue<T>::getTypeString() const { return TYPE; }              \
+-    template <> MX_CORE_API string TypedValue<T>::getValueString() const { return toValueString<T>(_data); } \
+-    template MX_CORE_API bool Value::isA<T>() const;                                                         \
+-    template MX_CORE_API const T& Value::asA<T>() const;                                                     \
+-    template MX_CORE_API const string& getTypeString<T>();                                                   \
+-    template MX_CORE_API string toValueString(const T& data);                                                \
+-    template MX_CORE_API T fromValueString(const string& value);                                             \
++#define INSTANTIATE_TYPE(T, name)                                                                \
++    template <> const string TypedValue<T>::TYPE = name;                                         \
++    template <> const string& TypedValue<T>::getTypeString() const { return TYPE; }              \
++    template <> string TypedValue<T>::getValueString() const { return toValueString<T>(_data); } \
++    template MX_CORE_API bool Value::isA<T>() const;                                             \
++    template MX_CORE_API const T& Value::asA<T>() const;                                         \
++    template MX_CORE_API const string& getTypeString<T>();                                       \
++    template MX_CORE_API string toValueString(const T& data);                                    \
++    template MX_CORE_API T fromValueString(const string& value);                                 \
+     ValueRegistry<T> registry##T;
+ 
+ // Base types
+diff --git a/source/MaterialXCore/Value.h b/source/MaterialXCore/Value.h
+index fceff4c..a35ec4c 100644
+--- a/source/MaterialXCore/Value.h
++++ b/source/MaterialXCore/Value.h
+@@ -124,51 +124,51 @@ class MX_CORE_API Value
+ };
+ 
+ /// The class template for typed subclasses of Value
+-template <class T> class TypedValue : public Value
++template <class T> class MX_CORE_API TypedValue : public Value
+ {
+   public:
+-    MX_CORE_API TypedValue() :
++    TypedValue() :
+         _data{}
+     {
+     }
+-    MX_CORE_API explicit TypedValue(const T& value) :
++    explicit TypedValue(const T& value) :
+         _data(value)
+     {
+     }
+-    MX_CORE_API virtual ~TypedValue() { }
++    virtual ~TypedValue() { }
+ 
+     /// Create a deep copy of the value.
+-    MX_CORE_API ValuePtr copy() const override
++    ValuePtr copy() const override
+     {
+         return Value::createValue<T>(_data);
+     }
+ 
+     /// Set stored data object.
+-    MX_CORE_API void setData(const T& value)
++    void setData(const T& value)
+     {
+         _data = value;
+     }
+ 
+     /// Set stored data object.
+-    MX_CORE_API void setData(const TypedValue<T>& value)
++    void setData(const TypedValue<T>& value)
+     {
+         _data = value._data;
+     }
+ 
+     /// Return stored data object.
+-    MX_CORE_API const T& getData() const
++    const T& getData() const
+     {
+         return _data;
+     }
+ 
+     /// Return type string.
+-    MX_CORE_API const string& getTypeString() const override;
++    const string& getTypeString() const override;
+ 
+     /// Return value string.
+-    MX_CORE_API string getValueString() const override;
++    string getValueString() const override;
+ 
+     // Returns true if value data matches.
+-    MX_CORE_API bool isEqual(ConstValuePtr other) const override
++    bool isEqual(ConstValuePtr other) const override
+     {
+         if (!other || !other->isA<T>())
+         {
+@@ -184,10 +184,10 @@ template <class T> class TypedValue : public Value
+     /// Create a new value of this type from a value string.
+     /// @return A shared pointer to a typed value, or an empty shared pointer
+     ///    if the conversion to the given data type cannot be performed.
+-    MX_CORE_API static ValuePtr createFromString(const string& value);
++    static ValuePtr createFromString(const string& value);
+ 
+   public:
+-    MX_CORE_API static const string TYPE;
++    static const string TYPE;
+ 
+   private:
+     T _data;

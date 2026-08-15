@@ -12,6 +12,11 @@ package("materialx")
     add_versions("v1.39.0", "cc470da839cdc0e31e4b46ee46ff434d858c38c803b1d4a1012ed12546ace541")
     add_versions("v1.38.10", "706f44100188bc283a135ad24b348e55b405ac9e70cb64b7457c381383cc2887")
 
+    if is_plat("mingw") then
+        -- fix https://github.com/AcademySoftwareFoundation/MaterialX/issues/2948
+        add_patches("v1.39.5", "patches/v1.39.5/fix-mingw-shared.patch", "bb7b35b0e7d99caad6747b6965e758f7dedf49fe65f33f28e25827542dcc28de")
+    end
+
     add_configs("glsl", {description = "Build the GLSL shader generator back-end.", default = false, type = "boolean"})
     add_configs("osl", {description = "Build the OSL shader generator back-end.", default = false, type = "boolean"})
     add_configs("mdl", {description = "Build the MDL shader generator back-end.", default = false, type = "boolean"})
@@ -77,7 +82,7 @@ package("materialx")
         table.insert(configs, "-DMATERIALX_BUILD_OCIO=" .. (package:config("opencolorio") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
 
-        os.trycp(path.join(package:buildir(), "source/MaterialXCore/Generated.h"), package:installdir("include/MaterialXCore"))
+        os.trycp(path.join(package:builddir(), "source/MaterialXCore/Generated.h"), package:installdir("include/MaterialXCore"))
         os.tryrm(package:installdir("*.md"))
         os.tryrm(package:installdir("LICENSE"))
     end)
