@@ -7,6 +7,7 @@ package("esp32-devel")
     add_urls("https://github.com/xmake-addons/esp32-devel/archive/refs/tags/$(version).tar.gz",
              "https://github.com/xmake-addons/esp32-devel.git")
     add_versions("v1.0.4", "737c1f062a26c58b05daf60082aa91a3c3c37583d9f51083def8d5aa903bbf90")
+    add_versions("v1.0.5", "0fc91165770a6f4d42438b188efd0ffd6b2f7eec6abf71919f2b727cf02bde9b")
 
     add_deps("serial-tools", {kind = "addon"})
 
