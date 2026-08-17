@@ -29,7 +29,7 @@ package("lief")
 
     add_patches("1.0.0", "patches/1.0.0/psa-header.patch", "c175dd9f3813c72188c24e59b1a8c9f3e61ae6c8125ae09a4035934b18fe41d5")
     add_patches("1.0.0", "patches/1.0.0/freebsd-major-minor.patch", "38593e555c5e31ab2b60aa9b51b087720336b3b1349b71c52515abeb154212f5")
-    add_patches("1.0.0", "patches/1.0.0/emscripten-link-options.patch", "7803432db2e28c7f7b9882773cd0138cc7fe4adab33d1599581d629a8ab2e96f")
+    add_patches("1.0.0", "patches/1.0.0/emscripten-link-options.patch", "6f9928e45b27c91e9d2ca0cc0a995e47ea092fb0a36d4fc7adbcbddb9958a675")
     add_patches("1.0.0", "patches/1.0.0/runtime-cxx-std.patch", "1a7caab84da1cb76f4e28d4b7d221cdd43802fcdf54c2d9d2154c398e1376052")
     add_patches("0.15.1", "patches/0.15.1/algorithm.patch", "3e110539c3db037b2b24cd32f97ad8cc6241b1f69d4a65dab9fd6c84e482bbd9")
     add_patches("0.16.0", "https://github.com/lief-project/LIEF/commit/41166332a2435fdb7d2bdc5c73f9ff9b442c5459.patch", "e42e5dd7e4c7a24bf712c1a7c9efa19c9daf835fc85dd35c8ab4b81d1807d833")
