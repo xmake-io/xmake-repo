@@ -5,6 +5,7 @@ package("units")
     set_license("MIT")
 
     add_urls("https://github.com/nholthaus/units/archive/refs/tags/$(version).tar.gz", "https://github.com/nholthaus/units.git")
+    add_versions("v3.3.0", "35964417094252a92e5ec041ed3447108644b7aeca53754d0f74ce4b848ddf81")
     add_versions("v2.3.4", "e7c7d307408c30bfd30c094beea8d399907ffaf9ac4b08f4045c890f2e076049")
     add_versions("v2.3.3", "b1f3c1dd11afa2710a179563845ce79f13ebf0c8c090d6aa68465b18bd8bd5fc")
 
