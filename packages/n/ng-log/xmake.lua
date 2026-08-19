@@ -6,6 +6,7 @@ package("ng-log")
     add_urls("https://github.com/ng-log/ng-log/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ng-log/ng-log.git")
 
+    add_versions("v0.8.4", "e154857d99d4ab6246a1bbde607ddb60f4bd6b1912c4f044a81f688cc89fcdd0")
     add_versions("v0.8.2", "4d7467025b800828d3b2eb87eb506b310d090171788857601a708a46825953a8")
 
     local configdeps = {gtest = "gtest", gflags = "gflags", unwind = "libunwind"}
