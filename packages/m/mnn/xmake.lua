@@ -6,6 +6,7 @@ package("mnn")
     add_urls("https://github.com/alibaba/MNN/archive/refs/tags/$(version).zip",
              "https://github.com/alibaba/MNN.git")
 
+    add_versions("3.6.1", "93d60848879e68be554c247afe376657630a30652a7d8ec713e9e7d1bbf69260")
     add_versions("3.4.1", "636ed4c1a72dc85e4b520108f8989d12ff3731939dc17fdcb370f59a1138f2de")
     add_versions("3.3.0", "08424890d610b01a62df3f9dfa654cd37dd39bf921521639a1c233cc062c58c1")
     add_versions("3.2.4", "46fd6179e5817bcb2e523b958d18674da0acaa6cc30c937b834385b3ab8bff8a")
