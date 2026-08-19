@@ -32,8 +32,8 @@ package("libheif")
         end
     end)
 
-    on_load("windows", function (package)
-        if not package:config("shared") then
+    on_load("windows", "macosx", "linux", "cross", function (package)
+        if package:is_plat("windows") and not package:config("shared") then
             package:add("defines", "LIBHEIF_STATIC_BUILD")
         end
         for _, conf in ipairs(configdeps) do
