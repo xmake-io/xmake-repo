@@ -6,6 +6,7 @@ package("khaledhosny-ots")
     add_urls("https://github.com/khaledhosny/ots/archive/refs/tags/$(version).tar.gz",
              "https://github.com/khaledhosny/ots.git")
 
+    add_versions("v9.3.0", "9a961781fee181f1cdf2d91bf822a820b8957ffc8ce37f57139eddc43311ad22")
     add_versions("v9.2.0", "c2b786a334d79a7841549c4f10a49cb62389431fd38d63aeeb98a0bcdb50ad11")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
