@@ -11,6 +11,8 @@ package("libde265")
     add_versions("1.0.15", "00251986c29d34d3af7117ed05874950c875dd9292d016be29d3b3762666511d")
     add_versions("1.0.8", "24c791dd334fa521762320ff54f0febfd3c09fc978880a8c5fbc40a88f21d905")
 
+    add_patches("1.1.1", "patches/1.1.1/fix-msvc-static-build.patch", "5bfab804e4b6651fe1fe977bc3d9a8449094b1491038460741aad1b229dacaf8")
+
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
 
     if is_plat("linux", "bsd") then
