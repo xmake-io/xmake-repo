@@ -1,0 +1,27 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 334f6f8..83f3542 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -338,7 +338,12 @@ endif()
+ 
+ 
+ if(UNIX AND NOT APPLE)
+-  target_link_options(LIB_LIEF PRIVATE -Wl,--gc-sections -Wl,--exclude-libs,ALL)
++  if(EMSCRIPTEN)
++    # wasm-ld does not support --exclude-libs
++    target_link_options(LIB_LIEF PRIVATE -Wl,--gc-sections)
++  else()
++    target_link_options(LIB_LIEF PRIVATE -Wl,--gc-sections -Wl,--exclude-libs,ALL)
++  endif()
+ endif()
+ 
+ target_compile_definitions(LIB_LIEF PUBLIC -D_GLIBCXX_USE_CXX11_ABI=1)
+@@ -458,7 +463,7 @@ endif()
+ # Post-build operations
+ # ======================
+ if(BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MATCHES "Release")
+-  if(UNIX AND NOT APPLE)
++  if(UNIX AND NOT APPLE AND NOT EMSCRIPTEN)
+       add_custom_command(
+         TARGET LIB_LIEF
+         COMMENT "Strip LIEF shared library"

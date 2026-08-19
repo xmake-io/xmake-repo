@@ -1,0 +1,29 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 1b9d370..1b8d146 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -330,8 +330,13 @@ set_target_properties(LIB_LIEF
+              C_VISIBILITY_PRESET       hidden)
+ 
+ if(UNIX AND NOT APPLE)
+-  set_property(TARGET LIB_LIEF APPEND
+-               PROPERTY LINK_FLAGS "-Wl,--gc-sections -Wl,--exclude-libs,ALL")
++  if(NOT EMSCRIPTEN)
++    set_property(TARGET LIB_LIEF APPEND
++                 PROPERTY LINK_FLAGS "-Wl,--gc-sections -Wl,--exclude-libs,ALL")
++  else()
++    set_property(TARGET LIB_LIEF APPEND
++                 PROPERTY LINK_FLAGS "-Wl,--gc-sections")
++  endif()
+ endif()
+ 
+ target_compile_definitions(LIB_LIEF PUBLIC -D_GLIBCXX_USE_CXX11_ABI=1)
+@@ -454,7 +459,7 @@ endif()
+ # Post-build operations
+ # ======================
+ if(BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MATCHES "Release")
+-  if(UNIX AND NOT APPLE)
++  if(UNIX AND NOT APPLE AND NOT EMSCRIPTEN)
+       add_custom_command(
+         TARGET LIB_LIEF
+         COMMENT "Strip LIEF shared library"
