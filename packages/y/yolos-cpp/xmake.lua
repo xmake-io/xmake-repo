@@ -6,6 +6,7 @@ package("yolos-cpp")
 
     add_urls("https://github.com/Geekgineer/YOLOs-CPP/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Geekgineer/YOLOs-CPP.git")
+    add_versions("v1.1.0", "d764a13a8e51b43101251595536b0a96dce30d5d13c8c688eb64e4ee71392338")
     add_versions("v1.0.0", "2be86dbd0344468f03afab473865171c49e65561d13b00a5ef91e294c218c556")
 
     add_configs("gpu", {description = "Enable GPU support.", default = false, type = "boolean"})
