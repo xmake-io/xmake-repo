@@ -6,6 +6,7 @@ package("glad")
     add_urls("https://github.com/Dav1dde/glad/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Dav1dde/glad.git")
 
+    add_versions("v2.0.8",  "44f06f9195427c7017f5028d0894f57eb216b0a8f7c4eda7ce883732aeb2d0fc")
     add_versions("v0.1.36", "8470ed1b0e9fbe88e10c34770505c8a1dc8ccb78cadcf673331aaf5224f963d2")
     add_versions("v0.1.34", "4be2900ff76ac71a2aab7a8be301eb4c0338491c7e205693435b09aad4969ecd")
 
@@ -33,20 +34,29 @@ package("glad")
     end)
 
     on_install("windows", "linux", "macosx", "mingw", function (package)
-        local configs = {"-DGLAD_INSTALL=ON"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        if package:is_plat("windows") then
-            table.insert(configs, "-DUSE_MSVC_RUNTIME_LIBRARY_DLL=" .. (package:config("vs_runtime"):startswith("MT") and "OFF" or "ON"))
+        if package:gitref() or package:version():ge("2.0.0") then
+            os.cd("cmake")
+            local configs = {}
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+
+            import("package.tools.cmake").install(package, configs)
+        else
+            local configs = {"-DGLAD_INSTALL=ON"}
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+            if package:is_plat("windows") then
+                table.insert(configs, "-DUSE_MSVC_RUNTIME_LIBRARY_DLL=" .. (package:config("vs_runtime"):startswith("MT") and "OFF" or "ON"))
+            end
+            table.insert(configs, "-DGLAD_NO_LOADER=" .. (package:config("loader") and "OFF" or "ON"))
+            table.insert(configs, "-DGLAD_REPRODUCIBLE=" .. (package:config("reproducible") and "ON" or "OFF"))
+            table.insert(configs, "-DGLAD_PROFILE=" .. package:config("profile"))
+            table.insert(configs, "-DGLAD_API=" .. package:config("api"))
+            table.insert(configs, "-DGLAD_EXTENSIONS=" .. package:config("extensions"))
+            table.insert(configs, "-DGLAD_GENERATOR=" .. package:config("generator"))
+            table.insert(configs, "-DGLAD_SPEC=" .. package:config("spec"))
+            import("package.tools.cmake").install(package, configs)
         end
-        table.insert(configs, "-DGLAD_NO_LOADER=" .. (package:config("loader") and "OFF" or "ON"))
-        table.insert(configs, "-DGLAD_REPRODUCIBLE=" .. (package:config("reproducible") and "ON" or "OFF"))
-        table.insert(configs, "-DGLAD_PROFILE=" .. package:config("profile"))
-        table.insert(configs, "-DGLAD_API=" .. package:config("api"))
-        table.insert(configs, "-DGLAD_EXTENSIONS=" .. package:config("extensions"))
-        table.insert(configs, "-DGLAD_GENERATOR=" .. package:config("generator"))
-        table.insert(configs, "-DGLAD_SPEC=" .. package:config("spec"))
-        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
