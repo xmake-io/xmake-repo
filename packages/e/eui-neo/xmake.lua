@@ -6,6 +6,7 @@ package("eui-neo")
     add_urls("https://github.com/sudoevolve/EUI-NEO/archive/refs/tags/$(version).tar.gz",
              "https://github.com/sudoevolve/EUI-NEO.git")
 
+    add_versions("v0.5.6", "0df8d79897a480566b0989060f206431d12c4a83eb7aef50b8e5d21f1676abf8")
     add_versions("v0.5.5", "cf0da91d7544fe406b704922137fd4d55ed080b3e647501e0ca5303abb00eb98")
 
     add_configs("window_backend", {description = "Window backend", default = "glfw", values = {"glfw", "sdl2"}})
