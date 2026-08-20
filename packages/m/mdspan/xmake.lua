@@ -13,7 +13,7 @@ package("mdspan")
     add_versions("0.3.0", "275ac02b456a31a5b8c0cb773fca3fe59f6df8a441124dcc1e7a88ef8069f974")
     add_versions("0.2.0", "1ce8e2be0588aa6f2ba34c930b06b892182634d93034071c0157cb78fa294212")
 
-    on_install(function (package)
+    on_install("!windows", function (package)
         os.cp("include/*", package:installdir("include"))
     end)
 
