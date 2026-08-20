@@ -6,6 +6,7 @@ package("or-tools")
     add_urls("https://github.com/google/or-tools/archive/refs/tags/$(version).tar.gz",
              "https://github.com/google/or-tools.git")
 
+    add_versions("v2016-04", "6983b7b640125570ad342416a9aa25aaa715454fe022e05501c205583ab3106b")
     add_versions("v9.15", "6395a00a97ff30af878ee8d7fd5ad0ab1c7844f7219182c6d71acbee1b5f3026")
 
     add_configs("glpk", {description = "Enable GLPK support", default = false, type = "boolean"})
