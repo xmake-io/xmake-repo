@@ -7,6 +7,7 @@ package("zeus_expected")
     add_urls("https://github.com/zeus-cpp/expected/archive/refs/tags/$(version).tar.gz",
              "https://github.com/zeus-cpp/expected.git")
 
+    add_versions("v1.4.0", "70f7118651be51f5c02c0aa10bfb903f5a6c0bcd13ae726dfe34bf8836aaece0")
     add_versions("v1.3.1", "c70f6d15198f7a033715393c5f33a07851b399784dbc1eb3f27a2e5c4b7af23a")
     add_versions("v1.2.0", "460da641f212c793f46a5a8f29107c9b9540a17a91f197e2dc396dac0269a2b5")
     add_versions("v1.1.1", "47b411677ffb2fa0d43b308797542509ae2bdb101426cf0d4777e3c162b1d726")
