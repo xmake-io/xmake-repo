@@ -116,6 +116,7 @@ package("zxing-cpp")
     end)
 
     on_test(function (package)
+        local languages = package:version() and package:version():ge("3.1.0") and "c++20" or "c++17"
         assert(package:check_cxxsnippets({test = [[
             #include <ZXing/ReadBarcode.h>
             void test() {
@@ -123,7 +124,7 @@ package("zxing-cpp")
                 unsigned char* data;
                 auto image = ZXing::ImageView(data, width, height, ZXing::ImageFormat::Lum);
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = {languages = languages}}))
 
         if package:config("c_api") then
             if package:version() and package:version():ge("2.3.0") then
