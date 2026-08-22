@@ -1,19 +1,19 @@
 package("argp-standalone")
 
-    set_homepage("https://www.lysator.liu.se/~nisse/misc/")
+    set_homepage("https://github.com/argp-standalone/argp-standalone")
     set_description("Standalone version of arguments parsing functions from GLIBC")
+    set_license("LGPL-2.1-or-later")
 
-    add_urls("https://www.lysator.liu.se/~nisse/misc/argp-standalone-$(version).tar.gz")
-    add_versions("1.3", "dec79694da1319acd2238ce95df57f3680fea2482096e483323fddf3d818d8be")
+    add_urls("https://github.com/argp-standalone/argp-standalone/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/argp-standalone/argp-standalone.git")
+    add_versions("1.5.0", "c29eae929dfebd575c38174f2c8c315766092cec99a8f987569d0cad3c6d64f6")
+
+    add_deps("libintl")
 
     on_install("macosx", "android", function (package)
-        local cxflags
-        if package:config("pic") ~= false then
-            cxflags = "-fPIC"
-        end
-        import("package.tools.autoconf").install(package, {}, {cxflags = cxflags})
-        os.vcp("libargp.a", package:installdir("lib"))
-        os.vcp("argp.h", package:installdir("include"))
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        os.cp(path.join(package:scriptdir(), "port", "config.h.in"), "config.h.in")
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)

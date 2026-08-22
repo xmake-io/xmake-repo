@@ -48,3 +48,4 @@ index 99d9d281..9419a4b3 100644
  #if AUI_COMPILER_CLANG
              auto end = s.rfind(']');
  #else
+ 

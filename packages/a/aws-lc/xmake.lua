@@ -1,10 +1,28 @@
 package("aws-lc")
     set_homepage("https://github.com/aws/aws-lc")
     set_description("AWS-LC is a general-purpose cryptographic library maintained by the AWS Cryptography team for AWS and their customers. It іs based on code from the Google BoringSSL project and the OpenSSL project.")
+    set_license("Apache-2.0")
 
     add_urls("https://github.com/aws/aws-lc/archive/refs/tags/$(version).tar.gz",
              "https://github.com/aws/aws-lc.git")
 
+    add_versions("v5.5.0", "d79a5beb1c2f7fd86a17d91eb230ae12da71dc28bedeb775c179863cf279c650")
+    add_versions("v5.3.0", "57a94720571684b824a34cc5746f75d91c7c25617259e24e0d92c935111833e9")
+    add_versions("v5.1.0", "a6bf6adfc5f9bba559d28554b7d3581b15f2813f03bc9f2ae19f0d915e97dadf")
+    add_versions("v5.0.0", "b4e1ea639d526c54243b8fbd9d21e101360423965bca5cbd72b862e7c9efdb12")
+    add_versions("v1.73.0", "e33ae89e7d09d7b23a900f68b62088d8813c260ac564b016e543ee3540ebcce3")
+    add_versions("v1.72.1", "7ea49769625a20b7e21230be3692286877473cc075f214ce28231d427e2e757e")
+    add_versions("v1.72.0", "f214c0e06e043c4f18b836059ccb5ecbed781173e8eed106839ee2dd4f4cc157")
+    add_versions("v1.71.0", "31b1eed775294825f084c0d4e09df53e1cf036fb98a202a8c2c342543828a985")
+    add_versions("v1.70.0", "533dd3f35639f44784c8ad9b73c279ec3959aba79c63b9726dd8066564b2058f")
+    add_versions("v1.69.0", "cdaa8dcd5f4ead8c82646fabef3c811381c4c7906de4489415e3fdf2558922f8")
+    add_versions("v1.67.0", "e592fc107d2376cc820b01b394f718cc1ef2ab92f12a4960a2294c621bc5df66")
+    add_versions("v1.66.2", "d64a46b4f75fa5362da412f1e96ff5b77eed76b3a95685651f81a558c5c9e126")
+    add_versions("v1.66.1", "44436ec404511e822c039acd903d4932e07d2a0a94a4f0cea4c545859fa2d922")
+    add_versions("v1.65.1", "d4cf3b19593fc7876b23741e8ca7c48e0043679cec393fe24b138c3f1ffd6254")
+    add_versions("v1.65.0", "27d2ac24a961888efb1fcc6443ea5e611942f783e017e0c178af95d05431b808")
+    add_versions("v1.64.0", "54646e5956f5394473ebe32741d2bf1509f2b556424899aed116647856f1e041")
+    add_versions("v1.63.0", "8cbfe34e49c9a8ab836a72173e8b919b12dc9605252f25c667358ddc3f2d9c6b")
     add_versions("v1.53.0", "b7c3a456df40c0d19621848e8c7b70c1fa333f9e8f5aa72755890fb50c9963de")
     add_versions("v1.51.2", "7df65427f92a4c3cd3db6923e1d395014e41b1fcc38671806c1e342cb6fa02f6")
     add_versions("v1.49.1", "2fa2e31efab7220b2e0aac581fc6d4f2a6e0e16a26b9e6037f5f137d5e57b4df")
@@ -43,6 +61,11 @@ package("aws-lc")
         on_check("wasm", function (target)
             if package:version() and package:version():eq("1.45.0") then
                 raise("package(aws-lc 1.45.0) unsupported version")
+            end
+        end)
+        on_check("mingw", function (target)
+            if package:version() and package:version():ge("1.52.0") then
+                raise("package(aws-lc >=1.52.0) unsupported version")
             end
         end)
     end

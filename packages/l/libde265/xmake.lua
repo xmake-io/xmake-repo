@@ -6,9 +6,12 @@ package("libde265")
     add_urls("https://github.com/strukturag/libde265/releases/download/v$(version)/libde265-$(version).tar.gz",
              "https://github.com/strukturag/libde265.git")
 
+    add_versions("1.1.1", "fd48a927e94ed74fc7ce8829d222b9d8599fcbfe8b6448ba66705babc56ab219")
     add_versions("1.0.16", "b92beb6b53c346db9a8fae968d686ab706240099cdd5aff87777362d668b0de7")
     add_versions("1.0.15", "00251986c29d34d3af7117ed05874950c875dd9292d016be29d3b3762666511d")
     add_versions("1.0.8", "24c791dd334fa521762320ff54f0febfd3c09fc978880a8c5fbc40a88f21d905")
+
+    add_patches("1.1.1", "patches/1.1.1/fix-msvc-static-build.patch", "5bfab804e4b6651fe1fe977bc3d9a8449094b1491038460741aad1b229dacaf8")
 
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
 

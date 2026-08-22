@@ -13,10 +13,12 @@ package("libsdl3_image")
 
     add_urls("https://www.libsdl.org/projects/SDL_image/release/SDL3_image-$(version).zip",
              "https://github.com/libsdl-org/SDL_image/releases/download/release-$(version)/SDL3_image-$(version).zip", { alias = "archive" })
-    add_urls("https://github.com/libsdl-org/SDL_image", { alias = "github" })
+    add_urls("https://github.com/libsdl-org/SDL_image.git", { alias = "github" })
 
+    add_versions("archive:3.4.0", "158d89a217afc9869d85dcef58800ea90626fa0c96c588979055cb34f567bd7f")
     add_versions("archive:3.2.0", "144715a6afae430adc275fd3ab0e3e96177a2752cc10a49ca78511b1e665964e")
 
+    add_versions("github:3.4.0", "release-3.4.0")
     add_versions("github:3.2.0", "release-3.2.0")
 
     if is_plat("macosx", "iphoneos") then

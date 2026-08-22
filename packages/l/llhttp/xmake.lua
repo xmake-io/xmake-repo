@@ -5,18 +5,14 @@ package("llhttp")
 
     add_urls("https://github.com/nodejs/llhttp/archive/refs/tags/release/$(version).tar.gz")
 
+    add_versions("v9.4.3", "1eb813c7437b31a87496a1cd3ed79f00746720f5e7e29c79b42c02cb69f36c39")
+    add_versions("v9.4.2", "ba717a2f99f340a0ee9796aaf2b1acca057e1e37682ffd2bc4def4d3b6bc4005")
+    add_versions("v9.4.1", "86a8c16759fdcc7aa2c9841fbe8ba2e77ea98be7d5d45615f2604776d0ff78c7")
+    add_versions("v9.3.1", "c14a93f287d3dbd6580d08af968294f8bcc61e1e1e3c34301549d00f3cf09365")
     add_versions("v9.3.0", "1a2b45cb8dda7082b307d336607023aa65549d6f060da1d246b1313da22b685a")
     add_versions("v9.2.1", "3c163891446e529604b590f9ad097b2e98b5ef7e4d3ddcf1cf98b62ca668f23e")
     add_versions("v8.1.0", "9da0d23453e8e242cf3b2bc5d6fb70b1517b8a70520065fcbad6be787e86638e")
     add_versions("v3.0.0", "02931556e69f8d075edb5896127099e70a093c104a994a57b4d72c85b48d25b0")
-
-    if on_check then
-        on_check("cross", function (package)
-            if package:version():ge("9.3.0") then
-                raise("package(llhttp >=9.3.0) unsupported cross pltform")
-            end
-        end)
-    end
 
     on_load(function (package)
         if package:version():ge("9.2.1") then
@@ -25,6 +21,11 @@ package("llhttp")
     end)
 
     on_install(function (package)
+        if package:is_plat("wasm") then
+            -- Only llhttp's standalone WASI wrapper supplies these callback imports.
+            io.replace("src/api.c", "#if defined(__wasm__)",
+                       "#if defined(__wasm__) && !defined(__EMSCRIPTEN__)", {plain = true})
+        end
         io.replace("include/llhttp.h", "__wasm__", "__GNUC__", {plain = true})
         io.replace("include/llhttp.h", "_WIN32", "_MSC_VER", {plain = true})
         if not package:config("shared") then
@@ -35,16 +36,24 @@ package("llhttp")
         if package:version():ge("9.2.1") then
             -- Get cmake config file
             local configs = {}
+            local opt = {}
+            if package:is_plat("cross") then
+                opt.cflags = {"-flax-vector-conversions"}
+            end
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-            table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
-            import("package.tools.cmake").install(package, configs)
+            if package:version():ge("9.3.1") then
+                table.insert(configs, "-DLLHTTP_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+                table.insert(configs, "-DLLHTTP_BUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
+            else
+                table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+                table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
+            end
+            import("package.tools.cmake").install(package, configs, opt)
         else
             xmake_configs.export_symbol = true
+            os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+            import("package.tools.xmake").install(package, xmake_configs)
         end
-        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        import("package.tools.xmake").install(package, xmake_configs)
-
         if package:config("shared") then
             io.replace(package:installdir("include/llhttp.h"), "__declspec(dllexport)", "__declspec(dllimport)", {plain = true})
         end

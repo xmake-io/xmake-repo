@@ -1,14 +1,33 @@
 package("freerdp")
-    set_homepage("http://www.freerdp.com")
+    set_homepage("https://www.freerdp.com/")
     set_description("FreeRDP is a free remote desktop protocol library and clients ")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/FreeRDP/FreeRDP/releases/download/$(version)/freerdp-$(version).tar.gz",
              "https://github.com/FreeRDP/FreeRDP.git")
 
+    add_versions("3.30.0", "e2687d02dea6fede004d36391dac1a74ce57a210f8867fd95033171d4909590c")
+    add_versions("3.29.0", "01ceccc39421bfb234cf668dac8f05844a908020dc4a9eebfbc706a64212f230")
+    add_versions("3.27.1", "a9f8a75b81f67790df015d0d33c69241a50188092bfb658991ad7780604321bf")
+    add_versions("3.26.0", "55fa5c3159399886ba4adbe2c8a10d0b1c0484022efdf3827f68adc478b944d5")
+    add_versions("3.25.0", "2d8f8ef34f607f4c5b978e3d0d96d936d88099f4918d21ba84ac334a89219f7f")
+    add_versions("3.24.0", "168011bd58eae8d898842ef39c6c9bf5761ab617a68ccad80d623a3e535d0367")
+    add_versions("3.23.0", "929273003f35b0b4f211e48d5abed4ebcef99da94784a50b6dc85cd0b7e257b1")
+    add_versions("3.22.0", "656670f3aac2c995cb4b1ba181549cc122cc9c95ec31be68a582c1182f474376")
+    add_versions("3.21.0", "ec1409ce88020eeebc54e20cc0766cbe7d2e2f4bd382c7061c86f89231a9f44d")
+    add_versions("3.20.0", "96631873b00c8a872c9fe4e668957c3e4e0808f81ccb71f6ac028096a2682806")
+    add_versions("3.19.1", "0886818968884464d72f8c363b633e97561bd438d84fce7331cb0df07b088919")
+    add_versions("3.18.0", "70e89fdc92e3c2a429a7e61015ffd55bda4f6fefd76bb2978a91134d94869462")
     add_versions("3.17.2", "c42c712ad879bf06607b78b8c3fad98e08c82f73f4e0bc1693552900041e692a")
     add_versions("3.16.0", "385af54245560493698730b688b5e6e5d56d5c7ecf2fa7c1d7cedfde8a4ba456")
     add_versions("3.15.0", "e8cd58decef4c970faea2fbea675970eea60e440ebe8033c54889acb83787371")
+
+    if is_plat("windows") and is_arch("x86") then
+        add_patches("3.27.1", "patches/3.27.1/msvc-x86-callback.patch", "60e03fc1b0e2610af031a615b618981ffc0f5d9643bba28980fd01c80e470e93")
+    end
+    if is_plat("mingw") then
+        add_patches(">=3.19.1", "patches/3.19.1/mingw-c11.patch", "84083315e41f8e2800c838ef9d36a7db3ea6470ae86c30ed691af30a017b5870")
+    end
 
     add_configs("client", {description = "Build client", default = false, type = "boolean"})
     add_configs("client_channels", {description = "Build virtual channel plugins", default = false, type = "boolean"})
@@ -114,7 +133,7 @@ package("freerdp")
         end
     end)
 
-    on_install("!bsd and !iphoneos", function (package)
+    on_install("!bsd and !iphoneos and !wasm", function (package)
         if package:is_plat("mingw") then
             io.replace("winpr/include/winpr/wtypes.h", "typedef ssize_t SSIZE_T;", "#ifndef _SSIZE_T_DEFINED\ntypedef ssize_t SSIZE_T;\n#endif", {plain = true})
         end
@@ -148,6 +167,35 @@ package("freerdp")
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+
+        local openssl3 = package:dep("openssl3")
+        if openssl3 then
+            if not openssl3:is_system() then
+                table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl3:installdir())
+            end
+            local fetchinfo = openssl3:fetch({external = false})
+            local libconfig = {
+                OPENSSL_CRYPTO_LIBRARY = "crypto",
+                OPENSSL_SSL_LIBRARY = "ssl"
+            }
+            if fetchinfo then
+                local includedirs = fetchinfo.includedirs or fetchinfo.sysincludedirs
+                if includedirs and #includedirs > 0 then
+                    table.insert(configs, "-DOPENSSL_INCLUDE_DIR=" .. table.concat(includedirs, ";"):gsub("\\", "/"))
+                end
+                for _, libfile in ipairs(fetchinfo.libfiles) do
+                    local libname = path.basename(libfile)
+                    if libname:startswith("lib") then
+                        libname = libname:sub(4)
+                    end
+                    for opt, suffix in pairs(libconfig) do
+                        if libname:endswith(suffix) then
+                            table.insert(configs, "-D" .. opt .. "=" .. libfile:gsub("\\", "/"))
+                        end
+                    end
+                end
+            end
+        end
 
         local dep = package:config("json")
         table.insert(configs, "-DWITH_JSON_DISABLED=" .. (dep and "OFF" or "ON"))

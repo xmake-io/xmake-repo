@@ -6,6 +6,20 @@ package("aws-c-s3")
     add_urls("https://github.com/awslabs/aws-c-s3/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-s3.git")
 
+    add_versions("v0.13.5", "d61313aa30575141afd9dfb207b7594e30d0473885719417c7c8a2a53d3ebb5f")
+    add_versions("v0.13.1", "30cd8deec12a6995b8dda32d8f3a53b3c1f2d2dcad56287aab64dfee80eb7630")
+    add_versions("v0.12.7", "daa717ccac1136cf73b69cd4057d3d302b4037f0ebfa6552a8f532f79f8032f8")
+    add_versions("v0.12.6", "d70061a523ee1fb6f0127e52653e7cc252347893295d675797b3d387e0e46049")
+    add_versions("v0.12.5", "1d039ef1fb7df6696757b3fe219ce03a52c244c79e38d637c49d99b4f5871e14")
+    add_versions("v0.12.4", "0775d5410cbca2317504a7f0a22dea12eed4bdacecc09d1e6901e3803e5903c2")
+    add_versions("v0.12.3", "65dcc547b8680c8598754ff3273a00a898ad357cff6d0056bc0f1d1bea550760")
+    add_versions("v0.12.2", "76348249b4bc305c1a40d089270a5a419f58c03c231b757de0a49a7a234eec76")
+    add_versions("v0.12.0", "1a8a8ceda0585d52028a1f3daa5861f924e7d8d2f6a17bec05813dc0b74d6eed")
+    add_versions("v0.11.5", "bc76ad6e4ef40703477cd2e411553b85216def71a0073cfe8b7fad8d3728b37c")
+    add_versions("v0.11.4", "4a2d34a92eafe66f0edfe2483ca4fb16c48b610bfc9cccb13b00108d587fe9c9")
+    add_versions("v0.11.3", "b8350a10050015493345453167d619f1b407c4970fa3fe5aaaf2b42ab93b7b6b")
+    add_versions("v0.11.2", "ef99f5f49ac65fe48f87d514ea751cb0c908126b0a6f45862b4525727bdb73dc")
+    add_versions("v0.9.2", "70ddd1e69fed7788ff5499b03158f36fb8137d82bd7b1af7bcdf57facbdb1557")
     add_versions("v0.8.7", "bbe1159f089ac4e5ddcdf5ef96941489240a3f780c5e140f3c8462df45e787ac")
     add_versions("v0.8.6", "583fb207c20a2e68a8e2990d62668b96c9662cf864f7c13c87d9ede09d61f8e5")
     add_versions("v0.8.3", "c1c233317927091ee966bb297db2e6adbb596d6e5f981dbc724b0831b7e8f07d")
@@ -29,7 +43,7 @@ package("aws-c-s3")
     add_deps("cmake")
     add_deps("aws-checksums", "aws-c-io", "aws-c-http", "aws-c-auth")
 
-    on_install("!wasm and (!mingw or mingw|!i386)", function (package)
+    on_install("windows", "linux", "bsd", "cross", "android", "mingw|!i386", "macosx|arm64", function (package)
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "WIN32", "AWS_S3_USE_IMPORT_EXPORT")
         end
@@ -49,7 +63,7 @@ package("aws-c-s3")
         table.insert(configs, "-DENABLE_SANITIZERS=" .. (package:config("asan") and "ON" or "OFF"))
         table.insert(configs, "-DASSERT_LOCK_HELD=" .. (package:config("assert_lock_help") and "ON" or "OFF"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DAWS_STATIC_MSVC_RUNTIME_LIBRARY=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DAWS_STATIC_MSVC_RUNTIME_LIBRARY=" .. (package:runtimes():startswith("MT") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
     end)

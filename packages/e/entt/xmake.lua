@@ -7,6 +7,8 @@ package("entt")
     set_urls("https://github.com/skypjack/entt/archive/refs/tags/$(version).tar.gz",
              "https://github.com/skypjack/entt.git")
 
+    add_versions("v4.0.0", "32a2ff2c72cb047dfd57306006ef238820b70da7c6ce4e7e8a507ac63365212e")
+    add_versions("v3.16.0", "7d7b4037b737992342049ffab14f22fa10243e01664f8c3a0657aa247ac52f71")
     add_versions("v3.15.0", "01466fcbf77618a79b62891510c0bbf25ac2804af5751c84982b413852234d66")
     add_versions("v3.14.0", "e31f6e95a30e2977a50449ef9a607a9ff40febe6f9da2a8144a183f8606f7719")
     add_versions("v3.13.2", "cb556aa543d01177b62de41321759e02d96078948dda72705b3d7fe68af88489")
@@ -30,7 +32,7 @@ package("entt")
     add_patches("v3.14.0", "https://github.com/xmake-mirror/entt/releases/download/v3.14.0/0a3c2cc4006157241665c6ccefc8b9676c1c752e.patch", "3f059d322244d64233ff2f37e9c80c8b28d92bf5b1bbef39e95cbc4d9ef0b132")
 
     add_deps("cmake")
-    
+
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::entt")
     end
@@ -52,10 +54,12 @@ package("entt")
     end)
 
     on_test(function (package)
+        local languages = package:version():ge("4.0.0") and "c++20" or "c++17"
+
         assert(package:check_cxxsnippets({test = [[
             #include <entt/entt.hpp>
             void test() {
                 entt::registry r;
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = {languages = languages}}))
     end)

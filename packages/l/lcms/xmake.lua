@@ -1,13 +1,14 @@
 package("lcms")
-
     set_homepage("https://www.littlecms.com/")
     set_description("A free, open source, CMM engine. It provides fast transforms between ICC profiles.")
     set_license("MIT")
 
-    add_urls("https://github.com/mm2/Little-CMS/archive/refs/tags/lcms$(version).tar.gz",
-             "https://github.com/mm2/Little-CMS.git")
+    add_urls("https://github.com/mm2/Little-CMS/archive/refs/tags/lcms$(version).tar.gz")
+    add_urls("https://github.com/mm2/Little-CMS.git", {alias = "git"})
 
     add_versions("2.17", "6e6f6411db50e85ae8ff7777f01b2da0614aac13b7b9fcbea66dc56a1bc71418")
+
+    add_versions("git:2.18", "lcms2.18rc_1")
 
     add_patches("2.17", "https://github.com/mm2/Little-CMS/commit/1723db795a477de2b010db7a53b2d159ab94c3fa.diff",
                         "5f47d872f0439ec340e6f59089abbd6ea579539f85a31634787dfbbd9c0bb8aa")

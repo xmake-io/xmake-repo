@@ -6,6 +6,7 @@ package("jansson")
     add_urls("https://github.com/akheron/jansson/releases/download/v$(version)/jansson-$(version).tar.gz",
              "https://github.com/akheron/jansson.git")
 
+    add_versions("2.15.0", "070a629590723228dc3b744ae90e965a569efb9c535b3309b52e80e75d8eb3be")
     add_versions("2.14.1", "2521cd51a9641d7a4e457f7215a4cd5bb176f690bc11715ddeec483e85d9e2b3")
     add_versions("2.14", "5798d010e41cf8d76b66236cfb2f2543c8d082181d16bc3085ab49538d4b9929")
 

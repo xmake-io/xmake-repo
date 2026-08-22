@@ -6,6 +6,13 @@ package("c4core")
     add_urls("https://github.com/biojppm/c4core/releases/download/v$(version)/c4core-$(version)-src.zip",
              "https://github.com/biojppm/c4core.git")
 
+    add_versions("0.6.0", "d33c5a3bd86f1a75a32fc2506ef83b2e01c116535fb7fecd74500e881539075c")
+    add_versions("0.4.0", "e36336ab9ddddda8633a26df591f92796b7925a607c44df453210c9e4eff2f34")
+    add_versions("0.3.0", "f144f771cff7282ffdb4684275b812dcb954d4a7f7be5a3b4096d2a5c7e93362")
+    add_versions("0.2.11", "5f667922c299434a9eeb34fb7fcf5e74de86d890d7788dea849a423fc429b87a")
+    add_versions("0.2.10", "8560011998c714a7faeafc1f4fea8d8b579bb6971cd9b38fddcc965a5bb4ae17")
+    add_versions("0.2.8", "50ddd86571d66f007c7ea84025b201b39eb0d182983344b93822de2e2db8978a")
+    add_versions("0.2.7", "84cb22610ee822a3ce50927c4b290693fcbcc37dbabc446f15fd15903af314e0")
     add_versions("0.2.6", "4dbb64c0d1450a05af427541959f4117b6951b560df91cfead4c3b3ed88c9634")
     add_versions("0.2.5", "3d87765a612d72182d161f0bea401adf6f0df1c65fba54fb7f0727fa8585d0d2")
     add_versions("0.2.2", "5a9508385daa5b2608ed007784d76586af21c5367411efe9ae26d5b4aea03305")

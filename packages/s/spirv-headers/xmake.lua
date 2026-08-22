@@ -28,6 +28,7 @@ package("spirv-headers")
     add_versions("1.3.283+0", "a68a25996268841073c01514df7bab8f64e2db1945944b45087e5c40eed12cb9")
     add_versions("1.3.290+0", "1b9ff8a33e07814671dee61fe246c67ccbcfc9be6581f229e251784499700e24")
     add_versions("1.4.309+0", "a96f8b4f2dfb18f7432e5c523e220ab0075372a9509e0c25fbff21c76af0de7c")
+    add_versions("1.4.335+0", "1c47ca6342ebe86f57b46b8dbeb266fa655a1ca8e10d07e45370ff2d9c36312e")
 
     add_patches("1.3.261+1", "https://github.com/KhronosGroup/SPIRV-Headers/commit/c43effd54686240d8b13762279d5392058d10e27.patch", "b97a05c35c00620519a5f3638a974fc2a01f062bf6e86b74b49a234f82cc55ce")
 

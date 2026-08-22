@@ -7,6 +7,7 @@ package("patchelf")
     add_urls("https://github.com/NixOS/patchelf/archive/refs/tags/$(version).tar.gz",
              "https://github.com/NixOS/patchelf.git")
 
+    add_versions("0.19.1", "39cd33c4810f10ec479d22b8ee6cf8e7acb77c356f3864e3270e2d45f7d23448")
     add_versions("0.18.0", "1451d01ee3a21100340aed867d0b799f46f0b1749680028d38c3f5d0128fb8a7")
 
     add_deps("autoconf", "automake", "libtool")

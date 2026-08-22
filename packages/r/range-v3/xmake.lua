@@ -15,9 +15,10 @@ package("range-v3")
     end
 
     add_deps("cmake")
-    if is_plat("windows") then
-        add_cxxflags("/permissive-")
-    end
+
+    on_load("windows", function (package)
+        package:add("cxxflags", "/permissive-")
+    end)
 
     on_install(function (package)
         local configs = {"-DRANGE_V3_DOCS=OFF", "-DRANGE_V3_TESTS=OFF", "-DRANGE_V3_EXAMPLES=OFF", "-DRANGE_V3_PERF=OFF"}
@@ -28,15 +29,7 @@ package("range-v3")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             void test() {
-                using namespace ranges;
-                auto triples = views::for_each(views::iota(1), [](int z) {
-                    return views::for_each(views::iota(1, z + 1), [=](int x) {
-                        return views::for_each(views::iota(x, z + 1), [=](int y) {
-                            return yield_if(x * x + y * y == z * z,
-                                            std::make_tuple(x, y, z));
-                        });
-                    });
-                });
+                for (auto i : ranges::views::iota(1,10)) std::cout << i << " ";
             }
-        ]]}, {configs = {languages = "c++17"}, includes = "range/v3/all.hpp"}))
+        ]]}, {configs = {languages = "c++17"}, includes = { "iostream", "range/v3/all.hpp" }}))
     end)

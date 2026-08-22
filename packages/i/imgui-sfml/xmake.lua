@@ -11,7 +11,6 @@ package("imgui-sfml")
     add_versions("v2.5", "3775c9303f656297f2392e91ffae2021e874ee319b4139c60076d6f757ede109")
 
     add_deps("cmake")
-    add_deps("imgui")
     add_deps("opengl", {optional = true})
 
     if is_plat("windows", "mingw") then
@@ -21,6 +20,11 @@ package("imgui-sfml")
     add_links("ImGui-SFML")
 
     on_load(function(package)
+        if package:version():eq("v3.0") then
+            package:add("deps", "imgui >=1.91.1 <=1.91.9")
+        else
+            package:add("deps", "imgui")
+        end
         if package:is_plat("linux") and package:config("shared") then
             package:add("deps", "sfml", {configs = {shared = true}})
         else
@@ -73,10 +77,11 @@ package("imgui-sfml")
             #include <SFML/Graphics/RenderWindow.hpp>
             #include <SFML/System/Clock.hpp>
             #include <SFML/Window/Event.hpp>
+            #include <tuple>
             void test() {
-                sf::RenderWindow window(sf::VideoMode({640, 480}), "ImGui + SFML = <3");
+                sf::RenderWindow window(sf::VideoMode({640, 480}), "ImGui + SFML");
                 window.setFramerateLimit(60);
-                ImGui::SFML::Init(window);
+                std::ignore = ImGui::SFML::Init(window);
             }
         ]]}, {configs = {languages = "c++17"}}))
     end)

@@ -8,21 +8,24 @@ package("aui")
 
     add_versions("v7.1.2", "a4cf965c50d75e20a319c9c8b231ad9c13c25a06ad303e1eb65d1ff141b1f85c")
 
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-audio.diff", "464d798caaf366f3fadb689504584ad38b15af05c4f044c74c8290a151b082d9")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-build.diff", "92bfd68e28a703518c12cf51b898a6b75cacae1fec9384328562c47b003e9577")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-core.diff", "0b3cf2140767e2f5232a3769301f1ca8af8c5e07ded55a8f8a98e627a597fd64")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-crypt.diff", "58045d168a8c7f2658554e0a3010579ec53b54e2c51f524a4fb61e5e4d6fc0a7")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-curl.diff", "937280a828ce0bc30a590606e7d65de55c9421d0650897c2d775e3731405a4b0")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-image.diff", "44bb7e78eab9629c92ef953ec1e0aca9e80712fe2488d6ffa804924d418ebf05")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-json-network.diff", "6d7d8da64cf85212e14757f7d24ac5ac6501dfd0ff3a4fcbe973c7c58c4f213c")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-main.diff", "c1cac9dfbae14baaddb68837055a7a858c08786750a16cbbfe955a1f18e5878d")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-sqlite.diff", "1728a4b9afc473acc81b16c544239e6f70a147c0623d894d59dd124e27c94311")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-toolbox.diff", "1ec1abf993eb7e583d32602e1ae8ee4d3358d156e9fac185c0d19ed85660bd3b")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-uitests.diff", "831a208eff22c5536ada4ea4a4e2496868977c2ee9b7d7e534bc6bdeae537d86")
-    add_patches("v7.1.2", "patches/v7.1.2/debundle-views.diff", "b691b46fc425f7c497de18b77b4ad2ac62cf61c983688f2402a50d727770e28f")
-    add_patches("v7.1.2", "patches/v7.1.2/fix-backport-lunasvg.diff", "daf24391b88e44bdb801b2c1ba36a695f95384d8157ccb23cfc635d5f30bea4a")
-    add_patches("v7.1.2", "patches/v7.1.2/fix-msvc-pretty-function.diff", "268f66f42594f0188fe50d33f5783e66f66024087097ebfdfef60c9768e151fd")
-    add_patches("v7.1.2", "patches/v7.1.2/fix-osx-enforce-cpp-template.diff", "eef4147a8b037552887777cd497c190ecc22514bb11fb3a3d6ea433a78cce61b")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-audio.diff", "199f93a75085f9b60c7e735e91cfa47d4316183740c97de9c59988aaf28a0279")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-build.diff", "136de2ca2729b02f729c3bbdb31589436801c27c93622b654e55bc1a72ce3d83")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-core.diff", "708081ddce4be722d81c3cc42c5a11c1b7b2b1aa31a2748c9f94117c48540e58")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-crypt.diff", "92e4ab69e13e0f8743cd581f7c940b10a6ee4830df5c7ea19f721d8986f4a639")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-curl.diff", "322bed6bb924faa82995a4cd5f7cf1cdf3b1e5c09f1ac6b0c7a0cbb55f3f242c")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-image.diff", "4f8f0fb64de19d3fae8aabc08398073963cb956edb1967a6877c958d3d5f8e49")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-json-network.diff", "d71f6bb1cc39ec14e4718c8d401a858a0e514cf0687537c451ded350a3ac2fc5")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-main.diff", "22f975c944d6c59b4fca2ece11176476e6e9423b10b91cc5ddfc5c820ec9821d")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-sqlite.diff", "f27b236e4f9beebcb090d288523f4c64d37700c7e56b6a6ed1776bfaa84c8309")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-toolbox.diff", "10cad07fafef39eba0776cf8a8195040d02532b70e7bbc9599fe29a14f4e23d3")
+    add_patches("v7.1.2", "patches/v7.1.2/debundle-views.diff", "6301f160aad25f35af358cc043b417636b8896b6e4231be472a692e789f2535e")
+    add_patches("v7.1.2", "patches/v7.1.2/fix-backport-lunasvg.diff", "4a30826ddba1ba708d781593b93cae8c9521be7a157fff514c8f7b805477e6d4")
+    add_patches("v7.1.2", "patches/v7.1.2/fix-msvc-pretty-function.diff", "501353756941a706c795b61b25a788bc754f2556fe37bfb4bdd9341d48947c46")
+    add_patches("v7.1.2", "patches/v7.1.2/fix-osx-enforce-cpp-template.diff", "e8b11cb86dcf4b6d7ceddb2c70e926385c476515ece94e2149fb9a365475b7f5")
+    add_patches("v7.1.2", "patches/v7.1.2/fixup-network.diff", "5a385f757f76d6653e51c4582747a30837f0a852aff8a7210bcc1007edbd188d")
+    add_patches("v7.1.2", "patches/v7.1.2/fix-glm.diff", "7bbd5ae3db67b7b372b745b9e7d104292a98dc789457c7e7213d0d7f4ab395f3")
+    add_patches("v7.1.2", "patches/v7.1.2/fix-jni-env-duplicate-symbol.diff", "72bbb655c1ea336ca8e1232a603950df5ecb5a43dce9c30612597ac0915583e1")
+    add_patches("v7.1.2", "patches/v7.1.2/fix-wasm.diff", "1bda0ef634d101f1cbd318abfa91f6d26f6ff191721fd59b3428fd584474c243")
 
     add_deps("cmake")
     if is_subhost("windows") then
@@ -32,13 +35,45 @@ package("aui")
     end
     add_deps("zlib")
 
+    add_links(
+        "aui.audio",
+        "aui.json",
+        "aui.views",
+        "aui.xml",
+        "aui.image",
+        "aui.curl",
+        "aui.crypt",
+        "aui.network",
+        "aui.core"
+    )
+
+    if on_check then
+        on_check(function (package)
+            assert(package:check_cxxsnippets({test = [[
+                #include <type_traits>
+                template<typename T>
+                concept not_overloaded_lambda = requires {
+                    &T::operator();
+                };
+                static_assert(not_overloaded_lambda<decltype([]{})>, "aui::not_overloaded_lambda failed");
+                int main() {
+                    return 0;
+                }]]}, {configs = {languages = "c++20"}}), "package(aui): Your compiler does not support lambdas in unevaluated contexts (a C++20 feature).")
+            if package:is_plat("android") then
+                local ndk = package:toolchain("ndk")
+                local ndk_sdkver = ndk:config("ndk_sdkver")
+                assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(aui) require ndk api >= 24")
+            end
+        end)
+    end
+
     -- aui.audio
     on_component("audio", function (package, component)
         package:add("includedirs", "aui.audio/include")
         component:add("links", "aui.audio")
         package:add("deps", "libopus", "soxr")
         if package:is_plat("linux") then
-            component:add("syslinks", "pulse")
+            package:add("deps", "pulseaudio")
         elseif package:is_plat("android") then
             package:add("deps", "oboe")
         elseif package:is_plat("windows", "mingw") then
@@ -55,10 +90,11 @@ package("aui")
     on_component("core", function (package, component)
         package:add("includedirs", "aui.core/include")
         component:add("links", "aui.core")
-        package:add("deps", "fmt 9.1.0", "range-v3", "glm")
+        package:add("deps", "fmt 9.1.0", "range-v3")
+        package:add("deps", "glm", {configs = {header_only = false}})
         if package:is_plat("linux") then
             package:add("deps", "libbacktrace")
-            component:add("syslinks", "threads", "dl")
+            component:add("syslinks", "pthread", "dl")
         elseif package:is_plat("windows", "mingw") then
             component:add("syslinks", "dbghelp", "shell32", "shlwapi", "kernel32", "psapi")
         elseif package:is_plat("android") then
@@ -72,7 +108,7 @@ package("aui")
         component:add("links", "aui.crypt")
         package:add("deps", "openssl3")
         if package:is_plat("windows", "mingw") then
-            component:add("syslinks", "wsock32", "ws2_32")
+            component:add("syslinks", "wsock32", "ws2_32", "crypt32")
         end
     end)
 
@@ -110,13 +146,6 @@ package("aui")
         package:add("includedirs", "aui.toolbox/include")
     end)
 
-    -- aui.uitests
-    on_component("uitests", function (package, component)
-        package:add("includedirs", "aui.uitests/include")
-        component:add("links", "aui.uitests")
-        package:add("deps", "gtest", "benchmark")
-    end)
-
     -- aui.views
     on_component("views", function (package, component)
         package:add("includedirs", "aui.views/include")
@@ -129,13 +158,16 @@ package("aui")
             package:add("deps", "libx11", "dbus", "gtk3", "fontconfig")
         end
         if package:is_plat("windows", "mingw") then
-            component:add("syslinks", "dwmapi", "winmm", "shlwapi")
+            component:add("syslinks", "dwmapi", "winmm", "shlwapi", "gdi32", "ole32", "opengl32")
+            if package:is_plat("mingw") then
+                component:add("syslinks", "uuid")
+            end
         elseif package:is_plat("android") then
             component:add("syslinks", "EGL", "GLESv2", "GLESv3")
         elseif package:is_plat("iphoneos") then
-            component:add("frameworks", "OpenGLES")
+            component:add("frameworks", "OpenGLES", "UIKit", "QuartzCore")
         elseif package:is_plat("macosx") then
-            component:add("frameworks", "AppKit", "Cocoa", "CoreData", "Foundation", "QuartzCore", "UniformTypeIdentifiers")
+            component:add("frameworks", "AppKit", "Cocoa", "CoreData", "Foundation", "QuartzCore", "UniformTypeIdentifiers", "OpenGL")
         end
     end)
 
@@ -146,47 +178,251 @@ package("aui")
     end)
 
     on_load(function (package)
-        package:add("components", "audio", "core", "crypt", "curl", "image", "json", "network", "toolbox", "uitests", "views", "xml")
+        package:add("components", "audio", "core", "crypt", "curl", "image", "json", "network", "toolbox", "views", "xml")
         if not package:config("shared") then
             package:add("defines", "AUI_STATIC")
         end
         package:add("defines", "AUI_DEBUG=" .. (package:is_debug() and "1" or "0"))
-        package:add("defines", "API_AUI_CORE=AUI_IMPORT")
+        package:add("defines",
+            "API_AUI_AUDIO=AUI_IMPORT",
+            "API_AUI_CORE=AUI_IMPORT",
+            "API_AUI_CRYPT=AUI_IMPORT",
+            "API_AUI_CURL=AUI_IMPORT",
+            "API_AUI_DATA=AUI_IMPORT",
+            "API_AUI_IMAGE=AUI_IMPORT",
+            "API_AUI_JSON=AUI_IMPORT",
+            "API_AUI_NETWORK=AUI_IMPORT",
+            "API_AUI_UPDATER=AUI_IMPORT",
+            "API_AUI_VIEWS=AUI_IMPORT",
+            "API_AUI_XML=AUI_IMPORT"
+        )
+        ----------------------------------------------------------------
+        -- helper
+        ----------------------------------------------------------------
+        function add_flags(pkg, flags, names)
+            local defs = {}
+            for _, name in ipairs(names) do
+                local val = flags[name] or 0
+                defs[#defs+1] = string.format("%s=%d", name, val)
+            end
+            pkg:add("defines", table.unpack(defs))
+        end
+        ----------------------------------------------------------------
+        -- platform
+        ----------------------------------------------------------------
+        local platform_names = {
+            "AUI_PLATFORM_WIN",
+            "AUI_PLATFORM_LINUX",
+            "AUI_PLATFORM_APPLE",
+            "AUI_PLATFORM_MACOS",
+            "AUI_PLATFORM_IOS",
+            "AUI_PLATFORM_ANDROID",
+            "AUI_PLATFORM_UNIX",
+            "AUI_PLATFORM_EMSCRIPTEN"
+        }
+
+        local platform_map = {
+            windows  = { AUI_PLATFORM_WIN = 1 },
+            linux    = { AUI_PLATFORM_LINUX = 1,    AUI_PLATFORM_UNIX = 1 },
+            macosx   = { AUI_PLATFORM_APPLE = 1,    AUI_PLATFORM_MACOS = 1, AUI_PLATFORM_UNIX = 1 },
+            android  = { AUI_PLATFORM_ANDROID = 1,  AUI_PLATFORM_UNIX = 1 },
+            iphoneos = { AUI_PLATFORM_APPLE = 1,    AUI_PLATFORM_IOS = 1,   AUI_PLATFORM_UNIX = 1 },
+            wasm     = { AUI_PLATFORM_EMSCRIPTEN = 1 },
+        }
+
+        for key, flags in pairs(platform_map) do
+            local plats = (key == "windows") and {"windows", "mingw"} or {key}
+            if package:is_plat(table.unpack(plats)) then
+                add_flags(package, flags, platform_names)
+                break
+            end
+        end
+        ----------------------------------------------------------------
+        -- compiler
+        ----------------------------------------------------------------
+        local compiler_names = {
+            "AUI_COMPILER_CLANG",
+            "AUI_COMPILER_GCC",
+            "AUI_COMPILER_MSVC",
+        }
+
+        local compiler_map = {
+            clang = { tools = {"clang", "clangxx", "clang++"}, flags = { AUI_COMPILER_CLANG = 1 } },
+            gcc   = { tools = {"gcc",   "gxx",      "g++"   }, flags = { AUI_COMPILER_GCC   = 1 } },
+            msvc  = { tools = {"cl",    "clang-cl"          }, flags = { AUI_COMPILER_MSVC  = 1 } },
+        }
+
+        for _, info in pairs(compiler_map) do
+            if package:has_tool("cxx", table.unpack(info.tools)) then
+                add_flags(package, info.flags, compiler_names)
+                break
+            end
+        end
+        ----------------------------------------------------------------
+        -- architecture
+        ----------------------------------------------------------------
+        local arch_names = {
+            "AUI_ARCH_X86",
+            "AUI_ARCH_X86_64",
+            "AUI_ARCH_ARM_64",
+            "AUI_ARCH_ARM_V7"
+        }
+
+        local ptrsize = package:check_sizeof("void*")
+        local arch_flags
+
+        if package:is_arch("arm.*") then
+            arch_flags = (ptrsize == "4")
+                and {AUI_ARCH_ARM_V7 = 1}
+                or  {AUI_ARCH_ARM_64 = 1}
+        else
+            arch_flags = (ptrsize == "4")
+                and {AUI_ARCH_X86   = 1}
+                or  {AUI_ARCH_X86_64 = 1}
+        end
+
+        add_flags(package, arch_flags, arch_names)
+
         package:add("defines", "GLM_ENABLE_EXPERIMENTAL=1")
+
+        if package:is_cross() then
+            package:add("deps", "aui-toolbox", {host = true})
+        end
     end)
 
-    on_install("windows|!arm*", "macosx", function (package)
+    on_install("windows", "macosx", "linux", "android", "iphoneos", "wasm", function (package)
         local configs = {
             "-DAUI_INSTALL_RUNTIME_DEPENDENCIES=OFF",
             "-DAUIB_NO_PRECOMPILED=TRUE",
-            "-DAUIB_DISABLE=ON"
+            "-DAUIB_DISABLE=ON",
         }
         local opt = {}
-        if package:is_plat("macosx") then
-            if package:config("shared") then
-                opt.packagedeps = {"gtest"}
-            end
-        elseif package:is_plat("windows") then
-            if package:config("shared") then
-                opt.packagedeps = {"glew", "gtest"}
-            end
+        if package:is_plat("windows", "mingw") then
             if package:has_tool("cxx", "cl", "clang_cl") then
                 opt.cxflags = {"/EHsc"}
             end
         end
+        -- cmake's AUI_ARCH_* detection uses CMAKE_SYSTEM_PROCESSOR which may not be
+        -- set correctly for cross-compilation (e.g. iOS with Xcode generator uses the
+        -- host processor). Pass the flags explicitly so cmake skips its own detection.
+        if package:is_arch("arm64.*") then
+            table.insert(configs, "-DAUI_ARCH_ARM_64=1")
+            table.insert(configs, "-DAUI_ARCH_ARM_V7=0")
+            table.insert(configs, "-DAUI_ARCH_X86=0")
+            table.insert(configs, "-DAUI_ARCH_X86_64=0")
+        elseif package:is_arch("arm.*") then
+            table.insert(configs, "-DAUI_ARCH_ARM_64=0")
+            table.insert(configs, "-DAUI_ARCH_ARM_V7=1")
+            table.insert(configs, "-DAUI_ARCH_X86=0")
+            table.insert(configs, "-DAUI_ARCH_X86_64=0")
+        elseif package:is_arch("x86", "i386") then
+            table.insert(configs, "-DAUI_ARCH_ARM_64=0")
+            table.insert(configs, "-DAUI_ARCH_ARM_V7=0")
+            table.insert(configs, "-DAUI_ARCH_X86=1")
+            table.insert(configs, "-DAUI_ARCH_X86_64=0")
+        else
+            table.insert(configs, "-DAUI_ARCH_ARM_64=0")
+            table.insert(configs, "-DAUI_ARCH_ARM_V7=0")
+            table.insert(configs, "-DAUI_ARCH_X86=0")
+            table.insert(configs, "-DAUI_ARCH_X86_64=1")
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs, opt)
+        if package:is_cross() then
+            local toolbox_pkg = package:dep("aui-toolbox")
+            if toolbox_pkg then
+                local suffix = is_host("windows") and ".exe" or ""
+                local toolbox_exe = path.join(toolbox_pkg:installdir("bin"), "aui.toolbox" .. suffix)
+                if os.isfile(toolbox_exe) then
+                    table.insert(configs, "-DAUI_TOOLBOX_EXE=" .. toolbox_exe)
+                end
+            end
+        end
+        local cmake = import("package.tools.cmake")
+        -- gdk-pixbuf-2.0.pc has Requires.private: shared-mime-info when gio_sniffing=true.
+        -- shared-mime-info is a binary package so it's not in PKG_CONFIG_PATH, causing
+        -- pkg_check_modules(GTK3) to fail. Add it manually.
+        if is_host("linux") then
+            local envs = cmake.buildenvs(package, opt)
+            local pc_path = path.splitenv(envs.PKG_CONFIG_PATH or "")
+            -- Setting PKG_CONFIG_PATH overrides pkg-config's built-in default paths,
+            -- so system packages (e.g. xproto from x11proto-dev) become invisible.
+            -- Re-add the standard system paths so transitive deps of gtk+-3.0 resolve.
+            local find_tool = import("lib.detect.find_tool")
+            local pkg_config = find_tool("pkg-config") or find_tool("pkgconf")
+            if pkg_config then
+                local sys_paths = try {function()
+                    return os.iorunv(pkg_config.program, {"--variable=pc_path", "pkg-config"})
+                end}
+                if sys_paths then
+                    for _, p in ipairs(sys_paths:trim():split(path.envsep())) do
+                        if not table.contains(pc_path, p) then
+                            table.insert(pc_path, p)
+                        end
+                    end
+                end
+            end
+            -- shared-mime-info is a binary package (excluded from librarydeps) but
+            -- gdk-pixbuf-2.0.pc requires it. Add its share/pkgconfig manually.
+            local smi = package:dep("shared-mime-info")
+            if smi then
+                local smi_pc = path.join(smi:installdir(), "share", "pkgconfig")
+                if os.isdir(smi_pc) and not table.contains(pc_path, smi_pc) then
+                    table.insert(pc_path, smi_pc)
+                end
+            end
+            envs.PKG_CONFIG_PATH = path.joinenv(pc_path)
+            opt.envs = envs
+        end
+        if is_host("windows") then
+            local pkgconf_dep = package:dep("pkgconf")
+            if pkgconf_dep then
+                local bindir = pkgconf_dep:installdir("bin")
+                local pkgconf_exe = path.join(bindir, "pkg-config.exe")
+                if not os.isfile(pkgconf_exe) then
+                    pkgconf_exe = path.join(bindir, "pkgconf.exe")
+                end
+                if os.isfile(pkgconf_exe) then
+                    table.insert(configs, "-DPKG_CONFIG_EXECUTABLE=" .. pkgconf_exe)
+                end
+            end
+        end
+        cmake.install(package, configs, opt)
     end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+            #include <AUI/Platform/AWindow.h>
+            #include <AUI/Util/UIBuildingHelpers.h>
+            #include <AUI/View/ALabel.h>
+            #include <AUI/View/AButton.h>
+            #include <AUI/Platform/APlatform.h>
             #include <AUI/Platform/Entry.h>
-            #include <AUI/Logging/ALogger.h>
-            #include <AUI/Common/AByteBuffer.h>
-            #include <AUI/Url/AUrl.h>
+            using namespace declarative;
+            class MainWindow: public AWindow {
+            public:
+                MainWindow();
+            };
+            MainWindow::MainWindow(): AWindow("Project template app", 300_dp, 200_dp) {
+                setContents(
+                    Centered{
+                        Vertical{
+                            Centered { Label { "Hello world from AUI!" } },
+                            _new<AButton>("Visit GitHub repo").connect(&AView::clicked, this, [] {
+                                APlatform::openUrl("https://github.com/aui-framework/aui");
+                            }),
+                            _new<AButton>("Visit docs").connect(&AView::clicked, this, [] {
+                                APlatform::openUrl("https://aui-framework.github.io/");
+                            }),
+                            _new<AButton>("Submit an issue").connect(&AView::clicked, this, [] {
+                                APlatform::openUrl("https://github.com/aui-framework/aui/issues/new");
+                            }),
+                        }
+                    }
+                );
+            }
             void test() {
-                auto buf = AByteBuffer::fromStream(AUrl(":test.txt").open());
+                _new<MainWindow>()->show();
             }
         ]]}, {configs = {languages = "c++20"}}))
     end)

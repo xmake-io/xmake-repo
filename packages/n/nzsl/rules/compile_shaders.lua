@@ -26,7 +26,7 @@ rule("compile.shaders")
 		if not table.empty(archives) then
 			assert(target:rule("@nzsl/archive.shaders"), "you must add the @nzsl/archive.shaders rule to the target")
 			for archive, archivefiles in table.orderpairs(archives) do
-				local args = { rule = "@nzsl/archive.shaders", always_added = true, compress = true, files = archivefiles }
+				local args = { always_added = true, compress = true, files = archivefiles }
 				if archive:endswith(".nzsla.h") or archive:endswith(".nzsla.hpp") then
 					args.header = path.extension(archive)
 					archive = archive:sub(1, -#args.header - 1) -- foo.nzsla.h => foo.nzsla
@@ -38,6 +38,8 @@ rule("compile.shaders")
 	end)
 
 	before_buildcmd_file(function (target, batchcmds, shaderfile, opt)
+		import("core.base.semver")
+
 		local outputdir = target:data("nzsl_includedirs")
 		local nzslc = target:data("nzslc")
 		local runenvs = target:data("nzsl_runenv")
@@ -49,6 +51,9 @@ rule("compile.shaders")
 		-- add commands
 		batchcmds:show_progress(opt.progress, "${color.build.object}compiling.shader %s", shaderfile)
 		local argv = { "--compile=nzslb" .. (header and "-header" or ""), "--partial", "--optimize" }
+		if semver.compare(nzslc.version, "1.1.0") >= 0 then
+			table.insert(argv, "--skip-unchanged")
+		end
 		if outputdir then
 			batchcmds:mkdir(outputdir)
 			table.insert(argv, "--output=" .. outputdir)

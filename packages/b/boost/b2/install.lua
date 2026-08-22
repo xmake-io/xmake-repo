@@ -28,10 +28,17 @@ function _get_compiler(package, toolchain)
         -- from the latest installed msvc version.
         return format("using %s : %s : \"%s\" ;", win_toolset, msvc_ver, cxx:gsub("\\", "\\\\"))
     else
-        cxx = cxx:gsub("gcc$", "g++")
-        cxx = cxx:gsub("gcc%-", "g++-")
-        cxx = cxx:gsub("clang$", "clang++")
-        cxx = cxx:gsub("clang%-", "clang++-")
+        local basename = path.filename(cxx)
+        local dirname = path.directory(cxx)
+        basename = basename:gsub("gcc$", "g++")
+        basename = basename:gsub("gcc%-", "g++-")
+        basename = basename:gsub("clang$", "clang++")
+        basename = basename:gsub("clang%-", "clang++-")
+        if dirname == "." or #dirname == 0 then
+            cxx = basename
+        else
+            cxx = path.join(dirname, basename)
+        end
         if cxx and cxx:find("clang", 1, true) then
             return format("using clang : : \"%s\" ;", cxx:gsub("\\", "/"))
         else

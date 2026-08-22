@@ -1,5 +1,4 @@
 package("libxtst")
-
     set_homepage("https://www.x.org/")
     set_description("X.Org: Client API for the XTEST & RECORD extensions")
     set_license("MIT")
@@ -13,8 +12,12 @@ package("libxtst")
     end
 
     if is_plat("macosx", "linux") then
-        add_deps("pkg-config", "util-macros", "libxi", "xorgproto")
+        add_deps("pkg-config", "util-macros", "xorgproto")
     end
+
+    on_load(function (package)
+        package:add("deps", "libxi", { configs = { shared = package:config("shared") } })
+    end)
 
     on_install("macosx", "linux", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),

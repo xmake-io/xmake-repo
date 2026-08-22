@@ -12,3 +12,4 @@ index 6afd58f4..78a2a593 100644
 +    aui_enable_tests(aui.sqlite)
 +endif ()
 \ No newline at end of file
+ 

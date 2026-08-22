@@ -1,0 +1,42 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index d2897e7..8b6fcd9 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -86,15 +86,16 @@ endif()
+ # ------------
+ 
+ find_package(OpenSSL REQUIRED)
+-find_package(unofficial-curlpp CONFIG REQUIRED)
+-find_package(unofficial-inih CONFIG REQUIRED)
++find_package(CURL REQUIRED)
++include(FindPkgConfig)
++pkg_search_module(curlpp REQUIRED IMPORTED_TARGET curlpp)
++pkg_search_module(inih REQUIRED IMPORTED_TARGET inih)
+ find_package(nlohmann_json CONFIG REQUIRED)
+ find_package(pugixml CONFIG REQUIRED)
+ find_package(ZLIB REQUIRED)
+ 
+ list(APPEND MINIO_CPP_LIBS
+-  unofficial::curlpp::curlpp
+-  unofficial::inih::inireader
++  PkgConfig::curlpp CURL::libcurl PkgConfig::inih
+   nlohmann_json::nlohmann_json
+   pugixml
+   OpenSSL::SSL OpenSSL::Crypto
+@@ -163,7 +164,7 @@ IF (BUILD_SHARED_LIBS)
+     add_library(miniocpp SHARED ${MINIO_CPP_SOURCES} ${MINIO_CPP_HEADERS})
+   ENDIF ()
+ ELSE ()
+-  add_library(miniocpp STATIC ${MINIO_CPP_SOURCES} ${MINIO_CPP_HEADERS})
++  add_library(miniocpp  ${MINIO_CPP_SOURCES} ${MINIO_CPP_HEADERS})
+ ENDIF ()
+ 
+ target_compile_options(miniocpp PRIVATE ${MINIO_CPP_CFLAGS})
+@@ -178,7 +179,6 @@ if (MINIO_CPP_ENABLE_RDMA)
+   target_compile_definitions(miniocpp PUBLIC MINIO_CPP_RDMA)
+ endif()
+ set_target_properties(miniocpp PROPERTIES VERSION "${MINIO_CPP_VERSION_STRING}")
+-set_target_properties(miniocpp PROPERTIES POSITION_INDEPENDENT_CODE ON)
+ 
+ # Add a cmake alias - this is how users should use minio-cpp in their cmake projects.
+ add_library(miniocpp::miniocpp ALIAS miniocpp)

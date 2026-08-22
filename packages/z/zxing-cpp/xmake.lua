@@ -6,6 +6,7 @@ package("zxing-cpp")
     add_urls("https://github.com/zxing-cpp/zxing-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/zxing-cpp/zxing-cpp.git", {submodules = false})
 
+    add_versions("v3.0.2", "b063dacf384c7bb93ab2c3eea247cc06b4525330f0efa631907aa3029f7e2144")
     add_versions("v2.3.0", "64e4139103fdbc57752698ee15b5f0b0f7af9a0331ecbdc492047e0772c417ba")
     add_versions("v2.2.1", "02078ae15f19f9d423a441f205b1d1bee32349ddda7467e2c84e8f08876f8635")
 
@@ -20,6 +21,15 @@ package("zxing-cpp")
     end
 
     add_deps("cmake")
+
+    if on_check then
+        on_check("android", function (package)
+            if package:version() and package:version():ge("3.0.2") then
+                local ndk = package:toolchain("ndk"):config("ndkver")
+                assert(ndk and tonumber(ndk) > 22, "package(zxing-cpp >=3.0.2) require ndk version > 22")
+            end
+        end)
+    end
 
     on_load(function (package)
         if package:config("c_api") or package:config("writer") then
@@ -39,8 +49,14 @@ package("zxing-cpp")
     end)
 
     on_install(function (package)
-        if package:config("writer") then
-            local zint = package:dep("zint")
+        if package:version() and package:version():ge("3.0.2") then
+            io.replace("core/src/CreateBarcode.cpp",
+                "std::make_unique<Data>(format, std::move(options))",
+                "std::make_unique<Data>(Data{format, std::move(options)})", {plain = true})
+        end
+
+        local zint = package:dep("zint")
+        if zint then
             if not zint:config("shared") then
                 io.replace("core/CMakeLists.txt",
                     "target_link_libraries (ZXing PRIVATE zint)",
@@ -65,6 +81,9 @@ package("zxing-cpp")
         table.insert(configs, "-DBUILD_EXPERIMENTAL_API=" .. (package:config("experimental") and "ON" or "OFF"))
         table.insert(configs, "-DZXING_EXPERIMENTAL_API=" .. (package:config("experimental") and "ON" or "OFF"))
         table.insert(configs, "-DZXING_C_API=" .. (package:config("c_api") and "ON" or "OFF"))
+        if zint then
+            table.insert(configs, "-DZINT_STATIC=" .. (zint:config("shared") and "OFF" or "ON"))
+        end
 
         local opt = {cxflags = {}}
         if package:has_tool("cxx", "cl") then

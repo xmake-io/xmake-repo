@@ -1,6 +1,7 @@
 package("quickjs")
     set_homepage("https://bellard.org/quickjs/")
     set_description("QuickJS is a small and embeddable Javascript engine")
+    set_license("MIT")
 
     add_urls("https://github.com/bellard/quickjs.git")
     add_versions("2021.03.27", "b5e62895c619d4ffc75c9d822c8d85f1ece77e5b")

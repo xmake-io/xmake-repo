@@ -3,6 +3,7 @@ package("libselinux")
     set_description("SELinux library and simple utilities.")
 
     add_urls("https://github.com/SELinuxProject/selinux/releases/download/$(version)/libselinux-$(version).tar.gz")
+    add_versions("3.10", "1ef216c5b56fb7e0a51cd2909787a175a17ee391e0467894807873539ebe766b")
     add_versions("3.9", "e7ee2c01dba64a0c35c9d7c9c0e06209d8186b325b0638a0d83f915cc3c101e8")
 
     add_configs("utils", {description = "Build utilities.", default = true, type = "boolean"})

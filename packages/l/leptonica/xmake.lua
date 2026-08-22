@@ -6,6 +6,7 @@ package("leptonica")
     add_urls("https://github.com/DanBloomberg/leptonica/releases/download/$(version)/leptonica-$(version).tar.gz",
              "https://github.com/DanBloomberg/leptonica.git")
 
+    add_versions("1.87.0", "c73363397f96eb1295602bf44d708a994ad42046c791bf03ea0505d829bdb6a7")
     add_versions("1.80.0", "ec9c46c2aefbb960fb6a6b7f800fe39de48343437b6ce08e30a8d9688ed14ba4")
     add_versions("1.81.1", "0f4eb315e9bdddd797f4c55fdea4e1f45fca7e3b358a2fc693fd957ce2c43ca9")
     add_versions("1.82.0", "155302ee914668c27b6fe3ca9ff2da63b245f6d62f3061c8f27563774b8ae2d6")

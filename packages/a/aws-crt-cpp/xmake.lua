@@ -6,6 +6,21 @@ package("aws-crt-cpp")
     add_urls("https://github.com/awslabs/aws-crt-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-crt-cpp.git")
 
+    add_versions("v0.43.5", "8c83897fb827527b67377f08a5b349576c50add2406fa1ff372cf2dd16fc00f4")
+    add_versions("v0.43.4", "59e508878c5809b446bbe035ac71ea42c6e3b12978bcc2705a01490d1ba62577")
+    add_versions("v0.42.1", "bf24fdba415842654f26d36978061812e38d3485e8505d2fabf0a548fcf735c4")
+    add_versions("v0.40.1", "697a8fb25167e12e704827e360b4f6b1af8ded48e11ef4d185b9cd72e17479c9")
+    add_versions("v0.40.0", "bc81a9e97d004b354fcff5085567254ca837c2566973dfbaff67419ab6e2a57b")
+    add_versions("v0.39.1", "e8f2a47737915ec36aaab68ec7bdf783f7a903f68322d3c0888d30951483b948")
+    add_versions("v0.39.0", "6f1e629734dc4c1600f10e034624b6908dab3c596863a35b6364badcf662db74")
+    add_versions("v0.38.7", "5d0010af3e072f1a2712d3ee6a94363a48e5e5f1d9c6f35c1f8d6cd4f53b50c6")
+    add_versions("v0.38.6", "ce24b6eeacdc22f38d43707d4bc1380c0f39540d282501c6f822acce4b99d582")
+    add_versions("v0.38.5", "98ede8e39fe16d5327c3915613034d114e8304a2ec957510a6712b28d353d6d9")
+    add_versions("v0.38.4", "2a0ec17b6e41d42b362d2502db26d07cf80667a2fc87a67352a27df9dfcb64a9")
+    add_versions("v0.38.1", "e8275e143c8e525de72d78ce75ff77e433e996ce580a3fab52607b137a71d07d")
+    add_versions("v0.37.4", "2bada1b314dcf6f4acbc1db648088bd4933445b02c13d8580ae1ed4f85d6ab84")
+    add_versions("v0.37.3", "8cbe1dbfa0aac9fae835f2fb1f36617c39f618f3d69445e9f504ba56ef2e8df1")
+    add_versions("v0.37.1", "b91b70c436bd2d35a8758871983312bea63696ff34ef8e44ec1b86072db28a18")
     add_versions("v0.29.8", "a693b1b6a802dd8bf0210cbb9f01fd58a95c851309a10a221e1ba7496b81384c")
     add_versions("v0.29.5", "17dd4a39537b5bd4040ff951c5a658e27c5d74d3f3cfab72831d3ecbabd58d35")
     add_versions("v0.28.3", "0d0255eb1983ff3b6f7a7e98a54f65e2e8b40a7c7d6118a96a9c656ada7afb5f")
@@ -25,7 +40,7 @@ package("aws-crt-cpp")
     add_deps("cmake", "aws-c-common", "aws-c-io", "aws-checksums", "aws-c-event-stream",
              "aws-c-http", "aws-c-mqtt", "aws-c-auth", "aws-c-s3")
 
-    on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", "msys", function (package)
+    on_install("windows", "linux", "cross", "macosx|arm64", "bsd", "msys", function (package)
         local cmakedir = package:dep("aws-c-common"):installdir("lib", "cmake")
         if package:is_plat("windows") then
             cmakedir = cmakedir:gsub("\\", "/")
@@ -36,9 +51,11 @@ package("aws-crt-cpp")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_SANITIZERS=" .. (package:config("asan") and "ON" or "OFF"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DAWS_STATIC_MSVC_RUNTIME_LIBRARY=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DAWS_STATIC_MSVC_RUNTIME_LIBRARY=" .. (package:runtimes():startswith("MT") and "ON" or "OFF"))
 
-            io.replace("include/aws/crt/Exports.h", "WIN32", "_WIN32", {plain = true})
+            if package:version():lt("0.31.2") then
+                io.replace("include/aws/crt/Exports.h", "defined(WIN32)", "defined(_WIN32)", {plain = true})
+            end
             if package:config("shared") then
                 package:add("defines", "AWS_CRT_CPP_USE_IMPORT_EXPORT")
             end

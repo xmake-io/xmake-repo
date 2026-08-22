@@ -7,6 +7,7 @@ package("cpp-jwt")
     add_urls("https://github.com/arun11299/cpp-jwt/archive/refs/tags/$(version).tar.gz",
              "https://github.com/arun11299/cpp-jwt.git")
 
+    add_versions("v1.5.1", "7e5ec6891254c8f00128952ed6b9a73d827539136c3b804563521a0042abe72c")
     add_versions("v1.5", "44a59d619b0a82cae6334bb7d430d27b7fc7595e872c9f20d46aa96d2301edb2")
     add_versions("v1.4", "1cb8039ee15bf9bf735c26082d7ff50c23d2886d65015dd6b0668c65e17dd20f")
 

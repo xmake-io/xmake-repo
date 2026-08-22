@@ -1,12 +1,16 @@
 package("urdfdom-headers")
     set_kind("library", {headeronly = true})
-    set_homepage("http://ros.org/wiki/urdf")
+    set_homepage("https://ros.org/wiki/urdf")
     set_description("Headers for URDF parsers")
     set_license("BSD-3-Clause")
 
     add_urls("https://github.com/ros/urdfdom_headers/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ros/urdfdom_headers.git")
 
+    add_versions("3.0.0", "314b322696cbc64d87c31e859f1d4e9983873c1db2706d13d7c2aa8c1a31119e")
+    add_versions("2.1.2", "3aeef6325b83f9283c9cee34f1e6f8d232acc7aeef2d47bc782a5193ae8aaec4")
+    add_versions("2.1.0", "aa5509d1931d31acb070d34cee9f46a08e1d62b1f89d50a1392405cdf4f02966")
+    add_versions("2.0.1", "3b624b05119cb9d9c89495b6580663ba8fd138b7fb28769c1f756c1d11102f52")
     add_versions("2.0.0", "e12db588ccce52958264f6e4363ca642ab86c328c372e925681a12f7c39d963a")
     add_versions("1.1.2", "7602e37c6715fbf4cec3f0ded1e860157796423dc79da062a0e5ccb1226dc8e6")
     add_versions("1.1.1", "b2ee5bffa51eea4958f64479b4fa273881d82a3bfa1d98686a16f8d8ca6c2350")

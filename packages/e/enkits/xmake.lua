@@ -6,19 +6,22 @@ package("enkits")
     add_urls("https://github.com/dougbinks/enkiTS/archive/refs/tags/$(version).tar.gz",
              "https://github.com/dougbinks/enkiTS.git")
 
+    add_versions("v1.12", "8373b6199d56816bd3ba58432eae74e2ebd5afcfdffb723073cc34730b189fd5")
     add_versions("v1.11", "b57a782a6a68146169d29d180d3553bfecb9f1a0e87a5159082331920e7d297e")
     add_versions("v1.10", "578f285fc7c2744bf831548f35b855c6ab06c0d541d08c9cc50b6b72a250811a")
 
     add_deps("cmake")
-    add_linkdirs("lib/enkiTS")
     add_links("enkiTS")
     if is_plat("linux", "bsd") then
         add_syslinks("pthread", "rt")
     end
 
-    on_load("windows", function (package)
-        if package:config("shared") then
+    on_load(function (package)
+        if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "ENKITS_DLL")
+        end
+        if package:version() and package:version():lt("1.12.0") then
+            package:add("linkdirs", "lib/enkiTS")
         end
     end)
 

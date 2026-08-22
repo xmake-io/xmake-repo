@@ -6,6 +6,12 @@ package("opentelemetry-cpp")
     add_urls("https://github.com/open-telemetry/opentelemetry-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/open-telemetry/opentelemetry-cpp.git", {submodules = false})
 
+    add_versions("v1.28.0", "8c359919175d77c502515f5a783907d031cc6a172e44426dbe9bee3c1532201e")
+    add_versions("v1.27.0", "d09c2e8dd95bbc1d6ee493a89f32a4736879948d0eb59ad58c855022d1f55cc1")
+    add_versions("v1.26.0", "8a878777a18a013e0ee6604629d1b5f29b162354c14489ad1dccd370f14ac372")
+    add_versions("v1.25.0", "a0c944a9de981fe1874b31d1fe44b830fc30ee030efa27ee23fc73012a3a13e9")
+    add_versions("v1.24.0", "7b8e966affca1daf1906272f4d983631cad85fb6ea60fb6f55dcd1811a730604")
+    add_versions("v1.23.0", "148ef298a4ef9e016228d53d7208ab9359d4fdf87f55649d60d07ffacc093b33")
     add_versions("v1.22.0", "3428f433f4b435ed1fad64cbdbe75b7288c06f6297786a7036d65d5b9a1d215b")
     add_versions("v1.21.0", "98e5546f577a11b52a57faed1f4cc60d8c1daa44760eba393f43eab5a8ec46a2")
     add_versions("v1.19.0", "e0330194b72f2fe4c0ce3ece06b02dc4aa0ab491eb75bf42c6f5e283912e468c")
@@ -17,6 +23,7 @@ package("opentelemetry-cpp")
     add_configs("otlp_grpc", {description = "Whether to include the OTLP gRPC exporter in the SDK.", default = false, type = "boolean"})
     add_configs("otlp_http", {description = "Whether to include the OTLP http exporter in the SDK.", default = false, type = "boolean"})
     add_configs("otlp_file", {description = "Whether to include the OTLP file exporter in the SDK.", default = false, type = "boolean"})
+    add_configs("abi_version_2", {description = "Sets the package ABI version from 1 to 2.", default = false, type = "boolean"})
     add_configs("prometheus", {description = "Enable building prometheus exporter.", default = false, type = "boolean"})
     add_configs("stl", {description = "Which version of the Standard Library for C++ to use. (true, false, cxx11, cxx14, cxx17, cxx20 or cxx23)", default = "false", type = "string", values = {"true", "false", "cxx11", "cxx14", "cxx17", "cxx20", "cxx23", "cxx26"}})
 
@@ -86,6 +93,12 @@ package("opentelemetry-cpp")
             package:add("deps", "libcurl")
         end
 
+        -- Required in addition to setting cmake.install with `-DWITH_ABI_VERSION_2=ON`
+        -- as it is also part of the distributed headers.
+        if package:config("abi_version_2") then
+            package:add("defines", "OPENTELEMETRY_ABI_VERSION_NO=2")
+        end
+
         if package:config("shared") and package:is_plat("windows") then
             package:add("defines", "OPENTELEMETRY_BUILD_IMPORT_DLL")
         end
@@ -152,6 +165,14 @@ package("opentelemetry-cpp")
         stl = string.upper(stl)
         table.insert(configs, "-DWITH_STL=" .. stl)
 
+        if package:config("abi_version_2") then
+            table.insert(configs, "-DWITH_ABI_VERSION_1=OFF")
+            table.insert(configs, "-DWITH_ABI_VERSION_2=ON")
+        else
+            table.insert(configs, "-DWITH_ABI_VERSION_2=OFF")
+            table.insert(configs, "-DWITH_ABI_VERSION_1=ON")
+        end
+
         if package:version() and package:version():lt("1.21.0") then
             local abseil = (package:config("abseil") or package:config("otlp_grpc") or package:config("otlp_http") or package:config("otlp_file")) and "ON" or "OFF"
             table.insert(configs, "-DWITH_ABSEIL=" .. abseil)
@@ -165,5 +186,13 @@ package("opentelemetry-cpp")
             assert(package:has_cxxincludes("opentelemetry/version.h"))
         else
             assert(package:has_cxxfuncs("opentelemetry::exporter::trace::OStreamSpanExporterFactory::Create()", {configs = {languages = "c++" ..  package:data("cxx_standard")}, includes = "opentelemetry/exporters/ostream/span_exporter_factory.h"}))
+
+            if package:config("abi_version_2") then
+                assert(package:check_cxxsnippets({test = [[
+                    void test() {
+                        using opentelemetry::metrics::Gauge;
+                    }
+                ]]}, {configs = {languages = "c++" ..  package:data("cxx_standard")}, includes = "opentelemetry/metrics/sync_instruments.h"}))
+            end
         end
     end)

@@ -65,9 +65,8 @@ package("openssl")
     end)
 
     on_install("windows", function (package)
-        local working_dir = try {function() return os.iorunv("perl", {"-MFile::Spec::Functions=rel2abs", "-e", "print rel2abs('.')"}) end}
-        assert(working_dir, "package(openssl): perl not found!")
         -- Check if Perl is using Unix-style paths
+        local working_dir = os.iorunv("perl", {"-MFile::Spec::Functions=rel2abs", "-e", "print rel2abs('.')"})
         local unix_perl = working_dir:find("/") == 1
         if (unix_perl and package:is_plat("windows")) or (not unix_perl and not package:is_plat("windows")) then
             wprint("package(openssl): Detected Perl may not match your build platform. "..
@@ -115,7 +114,7 @@ package("openssl")
         end
     end)
 
-    on_install("linux", "macosx", "bsd", "cross", "android", "iphoneos", "mingw", function (package)
+    on_install("linux", "macosx", "bsd", "cross", "android", "iphoneos", "mingw", "harmony", function (package)
         -- https://wiki.openssl.org/index.php/Compilation_and_Installation#PREFIX_and_OPENSSLDIR
         local configs = (not package:version():le("1.1.0")) and {"no-tests"} or {}
         if package:is_cross() or package:is_plat("mingw") then
@@ -151,6 +150,15 @@ package("openssl")
                     target_arch = "riscv64"
                 elseif package:is_arch(".*64") then
                     target_arch = "generic64"
+                end
+            elseif package:is_plat("harmony") then
+                target_plat = "ohos"
+                if package:is_arch("x86_64") then
+                    target_arch = "x86_64"
+                elseif package:is_arch("arm64", "arm64-v8a") then
+                    target_arch = "aarch64"
+                elseif package:is_arch("arm.*") then
+                    target_arch = "arm"
                 end
             else
                 target_plat = "linux"

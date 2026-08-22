@@ -6,6 +6,7 @@ package("openvr")
 
     add_urls("https://github.com/ValveSoftware/openvr/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ValveSoftware/openvr.git")
+    add_versions("v2.15.6", "e184cb625010fab7043a9d5e1e000fdeb3067a152bb3169ef53f64dfac37164c")
     add_versions("v2.12.14", "becc2e6b956d1b98d66e2cc75fd8b20db94eb5af584ec360a4dad7e8adec3176")
     add_versions("v2.12.1", "71a97dc98f7512f1d1a19f56058c536910989b4d047eceff57977ad09c52740f")
     add_versions("v2.5.1", "54f654fce001682d8ac608f544a6c41e03a672b005c1deca3579fa36480a537c")

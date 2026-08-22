@@ -6,6 +6,10 @@ package("mimalloc")
     set_urls("https://github.com/microsoft/mimalloc/archive/refs/tags/$(version).zip",
              "https://github.com/microsoft/mimalloc.git")
 
+    add_versions("v3.5.0", "3590f85899561c005a5aacd756a3b555c731a700dc70c87f1642030a57653007")
+    add_versions("v3.4.1", "694237baa860589f1bfbfebf099933eadc9217376da47aad2c99b4f57b651028")
+    add_versions("v3.3.2", "66539a07c48eb868a7186b03db3fd8b56dd97453b7eab8aef8695ac93a5a743f")
+    add_versions("v3.2.8", "63302742e911c8724c2bcc192aea51fc8921c7916ca8a68b037280d72126dfb5")
     add_versions("v3.1.5", "3cf724ec469198f23505d157893331f9d062e982c38b2c92a7fb789d7ddb67d9")
     add_versions("v3.0.3", "08a917e331164cd77052377f1e6d86de7febc8663dc117648319e662c0d4e6a4")
 
@@ -33,6 +37,8 @@ package("mimalloc")
     if is_plat("windows") then
         add_configs("etw", {description = "Enable Event tracing for Windows", default = false, type = "boolean"})
     end
+    add_configs("override", {description = "Override the standard malloc interface", default = false, type = "boolean"})
+    add_configs("cxx", {description = "Use the C++ compiler to compile the library", default = false, type = "boolean"})
 
     add_deps("cmake")
 
@@ -54,7 +60,6 @@ package("mimalloc")
         end
 
         local configs = {
-            "-DMI_OVERRIDE=OFF",
             "-DMI_BUILD_TESTS=OFF",
             "-DMI_BUILD_OBJECT=OFF",
         }
@@ -65,6 +70,9 @@ package("mimalloc")
         table.insert(configs, "-DMI_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DMI_SECURE=" .. (package:config("secure") and "ON" or "OFF"))
         table.insert(configs, "-DMI_TRACK_ETW=" .. (package:config("etw") and "ON" or "OFF"))
+        table.insert(configs, "-DMI_OVERRIDE=" .. (package:config("override") and "ON" or "OFF"))
+        table.insert(configs, "-DMI_USE_CXX=" .. (package:config("cxx") and "ON" or "OFF"))
+        table.insert(configs, "-DMI_TRACK_ASAN=" .. (package:config("asan") and "ON" or "OFF"))
 
         --x64:mimalloc-redirect.lib/dll x86:mimalloc-redirect32.lib/dll
         if package:version():le("2.0.1") and package:config("shared") and package:is_plat("windows") and package:is_arch("x86") then
@@ -89,10 +97,10 @@ package("mimalloc")
 
             if package:is_plat("windows") and package:is_debug() then
                 local dir = package:installdir(package:config("shared") and "bin" or "lib")
-                os.cp(path.join(package:buildir(), "mimalloc-debug.pdb"), dir)
+                os.cp(path.join(package:builddir(), "mimalloc-debug.pdb"), dir)
             end
         else
-            import("package.tools.cmake").build(package, configs, {buildir = "build", cxflags = cxflags})
+            import("package.tools.cmake").build(package, configs, {builddir = "build", cxflags = cxflags})
 
             if package:is_plat("windows") then
                 os.trycp("build/**.dll", package:installdir("bin"))
@@ -103,7 +111,7 @@ package("mimalloc")
             elseif package:is_plat("macosx") then
                 os.trycp("build/*.dylib", package:installdir("bin"))
                 os.trycp("build/*.dylib", package:installdir("lib"))
-                os.trycp("build/*.a", package:installdir("lib"))               
+                os.trycp("build/*.a", package:installdir("lib"))
             else
                 os.trycp("build/*.so", package:installdir("bin"))
                 os.trycp("build/*.so", package:installdir("lib"))

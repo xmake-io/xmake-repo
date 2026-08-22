@@ -1,0 +1,137 @@
+--- a/kernel/arm64/omatcopy_ct_neon.c
++++ b/kernel/arm64/omatcopy_ct_neon.c
+@@ -1,15 +1,28 @@
+ #include "common.h"
+ 
+ #include <arm_neon.h>
++
++/* MSVC has neither __attribute__ nor ARM64 inline asm; fall back to plain
++   vector stores (same memory layout as the non-temporal store pair). */
++#if defined(_MSC_VER)
++#define OPENBLAS_ALWAYS_INLINE
++#else
++#define OPENBLAS_ALWAYS_INLINE __attribute__((always_inline))
++#endif
+ #ifndef DOUBLE
+ #define SimdWidth 8
+ #define transpose transpose8x8
+ #define transpose_a1 transpose8x8_a1
+-static __attribute__((always_inline)) void stnp_q(float *dst, float32x4_t a, float32x4_t b) {
++static OPENBLAS_ALWAYS_INLINE void stnp_q(float *dst, float32x4_t a, float32x4_t b) {
++#ifdef _MSC_VER
++    vst1q_f32(dst, a);
++    vst1q_f32(dst + 4, b);
++#else
+     asm volatile("stnp %q[a], %q[b], [%[p]]" : : [a] "w"(a), [b] "w"(b), [p] "r"(dst) : "memory");
++#endif
+ }
+ 
+-static __attribute__((always_inline)) inline void transpose8x8_a1(FLOAT *a,
++static OPENBLAS_ALWAYS_INLINE inline void transpose8x8_a1(FLOAT *a,
+                                                                   BLASLONG lda,
+                                                                   FLOAT *b,
+                                                                   BLASLONG ldb) {
+@@ -90,7 +103,7 @@
+     stnp_q(b + 7 * ldb, m70, m71);
+ }
+ 
+-static __attribute__((always_inline)) inline void transpose8x8(FLOAT alpha,
++static OPENBLAS_ALWAYS_INLINE inline void transpose8x8(FLOAT alpha,
+                                                                FLOAT *a,
+                                                                BLASLONG lda,
+                                                                FLOAT *b,
+@@ -195,10 +208,15 @@
+ #define SimdWidth 4
+ #define transpose transpose4x4
+ #define transpose_a1 transpose4x4_a1
+-static __attribute__((always_inline)) void stnp_q(double *dst, float64x2_t a, float64x2_t b) {
++static OPENBLAS_ALWAYS_INLINE void stnp_q(double *dst, float64x2_t a, float64x2_t b) {
++#ifdef _MSC_VER
++    vst1q_f64(dst, a);
++    vst1q_f64(dst + 2, b);
++#else
+     asm volatile("stnp %q[a], %q[b], [%[p]]" : : [a] "w"(a), [b] "w"(b), [p] "r"(dst) : "memory");
++#endif
+ }
+-static __attribute__((always_inline)) inline void transpose4x4(FLOAT alpha,
++static OPENBLAS_ALWAYS_INLINE inline void transpose4x4(FLOAT alpha,
+                                                                FLOAT *a,
+                                                                BLASLONG lda,
+                                                                FLOAT *b,
+@@ -242,7 +260,7 @@
+     stnp_q(b + 2 * ldb, t10, t30);
+     stnp_q(b + 3 * ldb, t11, t31);
+ }
+-static __attribute__((always_inline)) inline void transpose4x4_a1(FLOAT *a,
++static OPENBLAS_ALWAYS_INLINE inline void transpose4x4_a1(FLOAT *a,
+                                                                   BLASLONG lda,
+                                                                   FLOAT *b,
+                                                                   BLASLONG ldb) {
+--- a/kernel/arm64/omatcopy_rt_neon.c
++++ b/kernel/arm64/omatcopy_rt_neon.c
+@@ -1,14 +1,27 @@
+ #include "common.h"
+ #include <arm_neon.h>
++
++/* MSVC has neither __attribute__ nor ARM64 inline asm; fall back to plain
++   vector stores (same memory layout as the non-temporal store pair). */
++#if defined(_MSC_VER)
++#define OPENBLAS_ALWAYS_INLINE
++#else
++#define OPENBLAS_ALWAYS_INLINE __attribute__((always_inline))
++#endif
+ #ifndef DOUBLE
+ #define SimdWidth 8
+ #define transpose transpose8x8
+ #define transpose_a1 transpose8x8_a1
+-static __attribute__((always_inline)) void stnp_q(float *dst, float32x4_t a, float32x4_t b) {
++static OPENBLAS_ALWAYS_INLINE void stnp_q(float *dst, float32x4_t a, float32x4_t b) {
++#ifdef _MSC_VER
++    vst1q_f32(dst, a);
++    vst1q_f32(dst + 4, b);
++#else
+     asm volatile("stnp %q[a], %q[b], [%[p]]" : : [a] "w"(a), [b] "w"(b), [p] "r"(dst) : "memory");
++#endif
+ }
+ 
+-static __attribute__((always_inline)) inline void transpose8x8_a1(FLOAT *a,
++static OPENBLAS_ALWAYS_INLINE inline void transpose8x8_a1(FLOAT *a,
+                                                                   BLASLONG lda,
+                                                                   FLOAT *b,
+                                                                   BLASLONG ldb) {
+@@ -89,7 +102,7 @@
+     stnp_q(b + 7 * ldb, m70, m71);
+ }
+ 
+-static __attribute__((always_inline)) inline void transpose8x8(FLOAT alpha,
++static OPENBLAS_ALWAYS_INLINE inline void transpose8x8(FLOAT alpha,
+                                                                FLOAT *a,
+                                                                BLASLONG lda,
+                                                                FLOAT *b,
+@@ -194,10 +207,15 @@
+ #define SimdWidth 4
+ #define transpose transpose4x4
+ #define transpose_a1 transpose4x4_a1
+-static __attribute__((always_inline)) void stnp_q(double *dst, float64x2_t a, float64x2_t b) {
++static OPENBLAS_ALWAYS_INLINE void stnp_q(double *dst, float64x2_t a, float64x2_t b) {
++#ifdef _MSC_VER
++    vst1q_f64(dst, a);
++    vst1q_f64(dst + 2, b);
++#else
+     asm volatile("stnp %q[a], %q[b], [%[p]]" : : [a] "w"(a), [b] "w"(b), [p] "r"(dst) : "memory");
++#endif
+ }
+-static __attribute__((always_inline)) inline void transpose4x4(FLOAT alpha,
++static OPENBLAS_ALWAYS_INLINE inline void transpose4x4(FLOAT alpha,
+                                                                FLOAT *a,
+                                                                BLASLONG lda,
+                                                                FLOAT *b,
+@@ -241,7 +259,7 @@
+     stnp_q(b + 2 * ldb, t10, t30);
+     stnp_q(b + 3 * ldb, t11, t31);
+ }
+-static __attribute__((always_inline)) inline void transpose4x4_a1(FLOAT *a,
++static OPENBLAS_ALWAYS_INLINE inline void transpose4x4_a1(FLOAT *a,
+                                                                   BLASLONG lda,
+                                                                   FLOAT *b,
+                                                                   BLASLONG ldb) {

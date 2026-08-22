@@ -1,0 +1,92 @@
+diff --git a/FloatEngine/F_Network.cpp b/FloatEngine/F_Network.cpp
+index e3a7df3..bdaf1d5 100644
+--- a/FloatEngine/F_Network.cpp
++++ b/FloatEngine/F_Network.cpp
+@@ -1,4 +1,4 @@
+-#include "F_NetWork.h"
++#include "F_Network.h"
+ #include <iostream>
+ #include <cstring>
+ #include <algorithm>
+@@ -7,10 +7,10 @@
+ // 引入 SLikeNet 头文件 (只在 .cpp 中)
+ // ----------------------------------------------------------------------------
+ #include "slikenet/peerinterface.h"
+-#include "slikenet/Peer.h"
++#include "slikenet/peer.h"
+ #include "slikenet/MessageIdentifiers.h"
+ #include "slikenet/BitStream.h"
+-#include "slikenet/Types.h"
++#include "slikenet/types.h"
+ #include "slikenet/SocketDefines.h" 
+ 
+ using namespace SLNet;
+diff --git a/FloatEngine/F_Resource.cpp b/FloatEngine/F_Resource.cpp
+index 62517bc..aa4d71a 100644
+--- a/FloatEngine/F_Resource.cpp
++++ b/FloatEngine/F_Resource.cpp
+@@ -8,11 +8,11 @@
+ #include "FloatApi.h" 
+ 
+ // Minizip-ng includes
+-#include "minizip-ng/mz.h"
+-#include "minizip-ng/mz_zip.h"
+-#include "minizip-ng/mz_strm.h"
+-#include "minizip-ng/mz_strm_mem.h"
+-#include "minizip-ng/mz_zip_rw.h"
++#include "minizip/mz.h"
++#include "minizip/mz_zip.h"
++#include "minizip/mz_strm.h"
++#include "minizip/mz_strm_mem.h"
++#include "minizip/mz_zip_rw.h"
+ 
+ // ----------------------------------------------------------------------------
+ // 构造函数 / 析构函数 / 配置 Setters
+diff --git a/FloatEngine/FloatAPI.cpp b/FloatEngine/FloatAPI.cpp
+index a00641c..8538fa2 100644
+--- a/FloatEngine/FloatAPI.cpp
++++ b/FloatEngine/FloatAPI.cpp
+@@ -5,8 +5,8 @@
+ #include <thread>
+ #include <mutex>
+ 
+-#include "gui/include/imgui.h"
+-#include "gui/include/rlImGui.h"
++#include <imgui.h>
++#include <rlImGui.h>
+ #include "nfd.hpp"
+ using namespace nlohmann;
+ int F_Debug::m_debug = 1;
+diff --git a/FloatEngine/Game.cpp b/FloatEngine/Game.cpp
+index 008e390..ebd12c2 100644
+--- a/FloatEngine/Game.cpp
++++ b/FloatEngine/Game.cpp
+@@ -3,8 +3,8 @@
+ #include <string>
+ #include "F_Console.h"
+ 
+-#include "gui/include/imgui.h"
+-#include "gui/include/rlImGui.h"
++#include <imgui.h>
++#include <rlImGui.h>
+ Game::Game()
+ {
+ 	_fps = _w = _h = 0;
+diff --git a/FloatEngine/winfuns.h b/FloatEngine/winfuns.h
+index 3fab49a..2af44a8 100644
+--- a/FloatEngine/winfuns.h
++++ b/FloatEngine/winfuns.h
+@@ -152,6 +152,13 @@ typedef long LRESULT;
+ #endif
+ 
+ #ifndef WINFUNS_HAVE_WSADATA
++#	ifndef WSADESCRIPTION_LEN
++#		define WSADESCRIPTION_LEN      256
++#	endif
++#	ifndef WSASYS_STATUS_LEN
++#		define WSASYS_STATUS_LEN       128
++#	endif
++#	include <sal.h>
+ typedef struct WSAData {
+ 	WORD                    wVersion;
+ 	WORD                    wHighVersion;

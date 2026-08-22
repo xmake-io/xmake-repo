@@ -3,15 +3,17 @@ package("cuda")
     set_homepage("https://developer.nvidia.com/cuda-zone/")
     set_description("CUDA® is a parallel computing platform and programming model developed by NVIDIA for general computing on graphical processing units (GPUs).")
 
-    if is_plat("windows") then
+    if is_host("windows") then
         add_urls("https://developer.download.nvidia.com/compute/cuda/$(version)_windows.exe", {
             version = function (version)
                 local driver_version_map = {
+                    ["12.8.1"] = "572.61",
                     ["12.6.3"] = "561.17",
                 }
                 return format("%s/local_installers/cuda_%s_%s", version, version, driver_version_map[tostring(version)])
             end})
 
+        add_versions("12.8.1", "19392bbffd0ad4ee7cb295a181e87f682187f17653679c1c548c263b7e1cd9a6")
         add_versions("12.6.3", "d73e937c75aaa8114da3aff4eee96f9cae03d4b9d70a30b962ccf3c9b4d7a8e1")
     end
 

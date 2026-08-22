@@ -4,6 +4,7 @@ package("libxcrypt")
     set_license("GPL-2.0-or-later")
 
     set_urls("https://github.com/besser82/libxcrypt/releases/download/v$(version)/libxcrypt-$(version).tar.xz")
+    add_versions("4.5.2", "71513a31c01a428bccd5367a32fd95f115d6dac50fb5b60c779d5c7942aec071")
     add_versions("4.4.38", "80304b9c306ea799327f01d9a7549bdb28317789182631f1b54f4511b4206dd6")
 
     add_configs("largefile",           {description = "Enable support for large files.", default = true, type = "boolean"})

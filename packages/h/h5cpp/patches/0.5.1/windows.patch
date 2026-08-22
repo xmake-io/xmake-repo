@@ -1,0 +1,13 @@
+diff --git a/src/h5cpp/core/windows.hpp b/src/h5cpp/core/windows.hpp
+index b1e8b13..908e884 100644
+--- a/src/h5cpp/core/windows.hpp
++++ b/src/h5cpp/core/windows.hpp
+@@ -42,7 +42,7 @@
+ #ifdef _MSC_VER
+ #if defined _M_IX86
+     using ssize_t = int;
+-#elif defined _M_X64
++#elif defined(_M_X64) || defined(_M_ARM64)
+     #include <BaseTsd.h>
+     using ssize_t = SSIZE_T;
+ #endif

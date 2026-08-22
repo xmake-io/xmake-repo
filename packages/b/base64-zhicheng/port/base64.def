@@ -1,0 +1,6 @@
+LIBRARY "base64.dll"
+
+
+EXPORTS
+     base64_encode     @1
+     base64_decode     @2

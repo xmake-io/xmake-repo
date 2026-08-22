@@ -6,6 +6,8 @@ package("igraph")
     add_urls("https://github.com/igraph/igraph/releases/download/$(version)/igraph-$(version).tar.gz",
              "https://github.com/igraph/igraph.git")
 
+    add_versions("1.0.1", "969f2d7d22f67e788d8638c9a8c96615f50d7819c08978b3ef4a787bb6daa96c")
+    add_versions("1.0.0", "91e23e080634393dec4dfb02c2ae53ac4e3837172bb9047d32e39380b16c0bb0")
     add_versions("0.10.16", "15a1540a8d270232c9aa99adeeffb7787bea96289d6bef6646ec9c91a9a93992")
     add_versions("0.10.15", "03ba01db0544c4e32e51ab66f2356a034394533f61b4e14d769b9bbf5ad5e52c")
 

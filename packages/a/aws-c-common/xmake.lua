@@ -6,6 +6,14 @@ package("aws-c-common")
     add_urls("https://github.com/awslabs/aws-c-common/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-common.git")
 
+    add_versions("v0.14.5", "103273767fea478545b75a0835c7dc60842baee0a191a112c72f904d22693c84")
+    add_versions("v0.14.2", "da518accb60eb08e0d56f641f00c3ea856c36a0972394770c978e5ff3bfc3728")
+    add_versions("v0.14.1", "85a05209b324ca330085b84fdada4faf6820592c34f252f0ceb61001f76bf04d")
+    add_versions("v0.14.0", "3684076ec5da899074336722ba58a01f7166a1a2e5ad72f846f6fd468ecdf2ec")
+    add_versions("v0.13.1", "a85bfd3a9939cc9a18dcd0cbd34c66ffbefec9b908c4b4dad2217b17e21b26ff")
+    add_versions("v0.13.0", "690939a45581c8376f96a6315466e3a2344d6b31dfa92f4d24b8f6ce96a654df")
+    add_versions("v0.12.6", "138822ecdcaff1d702f37d4751f245847d088592724921cc6bf61c232b198d6b")
+    add_versions("v0.12.5", "02d1ab905d43a33008a63f273b27dbe4859e9f090eac6f0e3eeaf8c64a083937")
     add_versions("v0.12.4", "0b7705a4d115663c3f485d353a75ed86e37583157585e5825d851af634b57fe3")
     add_versions("v0.12.3", "a4e7ac6c6f840cb6ab56b8ee0bcd94a61c59d68ca42570bca518432da4c94273")
     add_versions("v0.12.2", "ecea168ea974f2da73b5a0adc19d9c5ebca73ca4b9f733de7c37fc453ee7d1c2")
@@ -33,7 +41,7 @@ package("aws-c-common")
 
     if is_plat("windows", "mingw") then
         add_syslinks("bcrypt", "ws2_32", "shlwapi")
-    elseif is_plat("linux", "bsd") then
+    elseif is_plat("linux", "cross", "bsd") then
         add_syslinks("dl", "m", "pthread", "rt")
     elseif is_plat("macosx") then
         add_frameworks("CoreFoundation")
@@ -51,7 +59,7 @@ package("aws-c-common")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_SANITIZERS=" .. (package:config("asan") and "ON" or "OFF"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DAWS_STATIC_MSVC_RUNTIME_LIBRARY=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DAWS_STATIC_MSVC_RUNTIME_LIBRARY=" .. (package:runtimes():startswith("MT") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
     end)

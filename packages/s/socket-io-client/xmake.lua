@@ -3,8 +3,15 @@ package("socket-io-client")
     set_description("C++11 implementation of Socket.IO client")
     set_license("MIT")
 
-    add_urls("https://github.com/socketio/socket.io-client-cpp.git", {submodules = false})
-    add_versions("2024.07.17", "da779141a7379cc30c870d48295033bc16a23c66")
+    add_urls("https://github.com/socketio/socket.io-client-cpp/archive/refs/tags/$(version).tar.gz")
+    add_urls("https://github.com/socketio/socket.io-client-cpp.git", {alias = "git", submodules = false})
+
+    add_versions("git:2025.08.28", "3b7be7e4173b5bdeed393966e3274f65d513a280")
+    add_versions("git:2024.07.17", "da779141a7379cc30c870d48295033bc16a23c66")
+
+    add_versions("3.1.0", "f54dd36b8e5618d028c7c42f0c1a83a0d3a58f9239cf4b770f6b02b925909597")
+    add_versions("3.0.0", "6c11383eaea837d3dc4183d31f8d27f5ce08b3987f4903708983044115ebd95a")
+    add_versions("2.1.0", "f5bd6260403dd6c62c6dbf97ca848f5db69908edbdc0a365e28be06cdd2a44f8")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
@@ -19,6 +26,15 @@ package("socket-io-client")
     add_deps("websocketpp", "rapidjson", "openssl", "asio <=1.32.0")
 
     on_install("!wasm", function (package)
+        -- gcc14
+        io.replace("src/sio_message.h", "#include <string>", "#include <string>\n#include <cstdint>", {plain = true})
+
+        if package:version() and package:version():le("3.1.0") then
+            os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+            import("package.tools.xmake").install(package, {version = package:version_str()})
+            return
+        end
+
         io.replace("CMakeLists.txt", "find_package(asio CONFIG REQUIRED)", "find_package(PkgConfig)\npkg_check_modules(asio REQUIRED IMPORTED_TARGET asio)", {plain = true})
         io.replace("CMakeLists.txt", "asio::asio", "PkgConfig::asio", {plain = true})
         io.replace("CMakeLists.txt", " asio ", " PkgConfig::asio ", {plain = true})

@@ -6,6 +6,7 @@ package("tmxlite")
     add_urls("https://github.com/fallahn/tmxlite/archive/refs/tags/$(version).tar.gz",
              "https://github.com/fallahn/tmxlite.git")
 
+    add_versions("v1.4.5", "bf2eb1b09f736c8586be6ac0e49d24ef05a1a3ce0407f0a1237bf9ddad5f0800")
     add_versions("v1.4.4", "ec8893efc8396308f291c284cb09f007441a15aabbb0e5722096cf79c65c9e58")
 
     add_deps("cmake", "pugixml", "zlib", "zstd")

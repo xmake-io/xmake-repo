@@ -6,6 +6,7 @@ package("celero")
     add_urls("https://github.com/DigitalInBlue/Celero/archive/refs/tags/$(version).tar.gz",
              "https://github.com/DigitalInBlue/Celero.git")
 
+    add_versions("v2.10.0", "166f73a1f450396238074c7444e3295082bdda875355c62e1863af12a83be8fa")
     add_versions("v2.9.1", "c857d1fa7b20943bcec78ae043686cf77c9447d72537d8d2ba142531bfdc8fad")
     add_versions("v2.9.0", "d59df84696e0dd58022d2c42837362c06eba6d1e29bac61f7b3143bc73d779e5")
     add_versions("v2.8.5", "1f319661c4bee1f6855e45c1764be6cd38bfe27e8afa8da1ad7060c1a793aa20")

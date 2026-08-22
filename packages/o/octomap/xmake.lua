@@ -20,6 +20,8 @@ package("octomap")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
+    add_links("octomap", "octomath")
+
     add_deps("cmake")
 
     on_install("windows", "macosx", "linux", function (package)

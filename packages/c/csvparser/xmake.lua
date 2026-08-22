@@ -4,27 +4,30 @@ package("csvparser")
     set_description("A modern C++ library for reading, writing, and analyzing CSV (and similar) files (by vincentlaucsb)")
     set_license("MIT")
 
-    add_urls("https://github.com/vincentlaucsb/csv-parser/archive/refs/tags/$(version).zip")
-    add_versions("2.3.0", "17eb8e1a4f2f8cdc6679329e4626de608bb33a830d5614184a21b5d8838bbbb0")
-    add_versions("2.2.3", "83170169f2af38b171d7c3e127d9411fe381988a4b8910465f7d1c4c6169e815")
-    add_versions("2.2.2", "e8fb8693680f2a0931ef28cb67a1ea007123201c74073fc588c18f5151e29cfd")
-    add_versions("2.2.1", "96fd6a468f56fc157a11fcbc5cece6da952b06190837c46465d091eff674a813")
-    add_versions("2.2.0", "b7744b28f3ac5f92c17379f323733cb8872ea48ef2347842604dc54285d60640")
-    add_versions("2.1.1", "5fb6fc1c32196fb8cda144f192964b5bbedf61da9015d6c0edb8cb39b0dacff8")
+    add_urls("https://github.com/vincentlaucsb/csv-parser/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/vincentlaucsb/csv-parser.git")
+    add_versions("5.3.0", "66911a50cfb347c47bc109a52bb01b1bf7bb35184466b6bda8bca8770a41576c")
+    add_versions("3.1.0", "7820acdbc31657366fa394ce5341730f9ed600fcd737def6052ee711294d544a")
+    add_versions("2.5.2", "b6ceb7c75a37f3539424bdc583b7424d78a55c1986b732dadbcce0738c212058")
+    add_versions("2.4.2", "a185cbcd9dcaac584de852b6c4a39f6bed29872141379a5cd76c78d890d10325")
+    add_versions("2.3.0", "27b8ac51aa58b9a4debd8ccfb44738c8583a2e874da42f56bbdf3764b75f3af5")
+    add_versions("2.2.3", "e70ea75612fb45f9a9dd83145fb3fbf0b5929a32683de478ad429cdd85f10e4e")
+
+    add_includedirs("include")
 
     on_install(function (package)
-        os.cp("single_include/csv.hpp", package:installdir("include"))
+        os.cp("include", package:installdir())
     end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             using namespace csv;
-            void test(int argc, char** argv) {
+            void test() {
                 CSVReader reader("example.csv");
                 for (CSVRow& row: reader) {
                     for (CSVField& field: row) {
                     }
                 }
             }
-        ]]}, {includes = "csv.hpp", configs = {languages = "cxx17"}}))
+        ]]}, {includes = "csv.hpp", configs = {languages = "c++17"}}))
     end)

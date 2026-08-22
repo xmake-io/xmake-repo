@@ -66,7 +66,7 @@ package("sqlitecpp")
                     table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
                 end
             end
-            table.insert(configs, "-DSQLITECPP_USE_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DSQLITECPP_USE_STATIC_RUNTIME=" .. (package:has_runtime("MT") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
 

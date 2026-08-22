@@ -6,6 +6,12 @@ package("simplecpp")
     add_urls("https://github.com/danmar/simplecpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/danmar/simplecpp.git")
 
+    add_versions("1.7.0", "4515c9855a4a3399f6c8b2552c4a013dbf398eef5123427e6a5e6b90c9c34bc3")
+    add_versions("1.6.5", "e6c329718c6c413b0b6d2c466b1e599a9c34a9ea675ae336a7203f0e149b3164")
+    add_versions("1.6.4", "678ae74b16ccabbe6c968475d06a2e9a44dbc8aacb563d17aff338b53205e70a")
+    add_versions("1.6.3", "5ee3b2b882f062fbd035675834079d5a3f53555e62f4e32b6291fe817ca84de5")
+    add_versions("1.6.1", "d095f0e328fcadaee5300bcaee1807153f7fc5d5eabdd7a0e89f91d05f96fa97")
+    add_versions("1.5.2", "ee2b0547f2a889a509263e4b3f6d5764aea2e9536c2f9db545451cbd7994a66c")
     add_versions("1.5.1", "68c893f6f8005fd47ebe720cc5d1cb1664ae282b7607854211248b413105ee50")
 
     on_install(function (package)

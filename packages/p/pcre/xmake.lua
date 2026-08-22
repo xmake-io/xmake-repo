@@ -20,11 +20,17 @@ package("pcre")
         end
     end)
 
-    on_install("windows", function (package)
+    on_install("android", "windows", function (package)
+        io.replace("CMakeLists.txt", "CMP0026 OLD", "CMP0026 NEW", {plain = true})
+
         local configs = {"-DPCRE_BUILD_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DPCRE_SUPPORT_JIT=" .. (package:config("jit") and "ON" or "OFF"))
+        if package:is_plat("android") then
+            table.insert(configs, "-DHAVE_STRTOQ=0")
+            table.insert(configs, "-DPCRE_BUILD_PCREGREP=OFF")
+        end
         local bitwidth = package:config("bitwidth") or "8"
         if bitwidth ~= "8" then
             table.insert(configs, "-DPCRE_BUILD_PCRE8=OFF")

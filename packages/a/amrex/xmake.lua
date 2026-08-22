@@ -1,10 +1,17 @@
 package("amrex")
     set_homepage("https://amrex-codes.github.io/amrex")
     set_description("AMReX: Software Framework for Block Structured AMR")
+    set_license("BSD-3-Clause")
 
     add_urls("https://github.com/AMReX-Codes/amrex/releases/download/$(version)/amrex-$(version).tar.gz",
              "https://github.com/AMReX-Codes/amrex.git")
 
+    add_versions("26.08", "12e242e47929afd38e9f974393003c3b65f98fa7fb6d5218019aac5b46917b25")
+    add_versions("26.05", "70ec8f0e6917388b3d91a7c470648f6ce11a99096810420f1054ed98a041e315")
+    add_versions("26.03", "7139b8bb423a4311e8990bee6cb06b86a81de439363f35a3f29c808a93a003ca")
+    add_versions("26.02", "7627f0bac4f8025b555b6c7c7a26e2d4db4e7a7fda660b77b272ffe40749b7b2")
+    add_versions("26.01", "b26c8d36b3941881bb5db683147f94d5a48f9bcedfa4bcf65a36acb6f0710bcb")
+    add_versions("25.11", "be9e5f04e1f3e2252a14e5bb817fb4f2c231e0901ef85ee4e14341616f6b1ba6")
     add_versions("25.09", "9c288e502c98a9ebf62c9f46081ecd65703ad49bd8b3eaf17939146cf442163a")
     add_versions("25.08", "6e903fd02e72a3d23b438ec257a96a5a948ac07200220669ab8ff16ff047bde6")
     add_versions("25.06", "2f69c708ddeaba6d4be3a12ab6951f171952f6f7948e628c5148d667c4197838")
@@ -15,7 +22,8 @@ package("amrex")
     add_versions("24.12", "ca4b41ac73fabb9cf3600b530c9823eb3625f337d9b7b9699c1089e81c67fc67")
     add_versions("24.09", "a1435d16532d04a1facce9a9ae35d68a57f7cd21a5f22a6590bde3c265ea1449")
 
-    add_patches(">=24.09", "patches/24.09/remove-symlink.patch", "d71adb07252e488ee003f6f04fea756864d6af2232b43208c9e138e062eb6e4d")
+    add_patches(">=24.09 <26.05", "patches/24.09/remove-symlink.patch", "d71adb07252e488ee003f6f04fea756864d6af2232b43208c9e138e062eb6e4d")
+    add_patches(">=26.05", "patches/26.05/remove-symlink.patch", "c287e25c0473c0eb1046747070beb04c0c7a59ccf53d872af6761da8739cdda5")
 
     add_configs("openmp", {description = "Enable OpenMP", default = false, type = "boolean"})
     add_configs("mpi", {description = "Enable MPI", default = false, type = "boolean", readonly = true})
@@ -78,6 +86,7 @@ package("amrex")
     end)
 
     on_test(function (package)
+        local languages = package:version() and package:version():ge("26.05") and "c++20" or "c++17"
         assert(package:check_cxxsnippets({test = [[
             #include <AMReX.H>
             #include <AMReX_Print.H>
@@ -89,5 +98,5 @@ package("amrex")
                 }
                 amrex::Finalize();
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = {languages = languages}}))
     end)

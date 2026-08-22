@@ -1,7 +1,7 @@
 add_rules("mode.debug", "mode.release")
 
 if not is_plat("iphoneos") then
-    add_requires("openssl")
+    add_requires("openssl3")
 end
 
 option("encrypt")
@@ -9,14 +9,14 @@ option("encrypt")
 option_end()
 
 option("threadsafe")
-    set_default("2")
+    set_default("1")
     set_values("0", "1", "2")
 option_end()
 
 option("temp_store")
     set_default("2")
     set_values("0", "1", "2", "3")
-option_end()            
+option_end()
 
 target("sqlcipher")
     set_kind("$(kind)")
@@ -28,7 +28,7 @@ target("sqlcipher")
         add_frameworks("Security")
         add_defines("SQLCIPHER_CRYPTO_CC")
     else
-        add_packages("openssl")
+        add_packages("openssl3")
         add_defines("SQLCIPHER_CRYPTO_OPENSSL")
     end
 
@@ -45,11 +45,18 @@ target("sqlcipher")
         add_defines("SQLITE_ENABLE_MATH_FUNCTIONS")
         add_syslinks("pthread", "dl", "m")
     end
+    if is_plat("linux") and is_arch("x86_64") and is_kind("static") then
+        -- SQLCipher 4.17.0 uses a thread-local xoshiro state. The default
+        -- local-dynamic TLS model can produce R_X86_64_DTPOFF32 link errors.
+        add_cflags("-ftls-model=initial-exec")
+    end
     if is_plat("android") then
         add_defines("SQLITE_ENABLE_MATH_FUNCTIONS", "SQLITE_HAVE_ZLIB")
         add_syslinks("dl", "m", "z")
     end
 
+    add_defines("SQLITE_EXTRA_INIT=sqlcipher_extra_init")
+    add_defines("SQLITE_EXTRA_SHUTDOWN=sqlcipher_extra_shutdown")
     add_defines("SQLITE_THREADSAFE=$(threadsafe)")
     add_defines("SQLITE_TEMP_STORE=$(temp_store)")
     add_defines("NDEBUG", "SQLITE_ENABLE_EXPLAIN_COMMENTS", "SQLITE_ENABLE_DBPAGE_VTAB", "SQLITE_ENABLE_STMTVTAB", "SQLITE_ENABLE_DBSTAT_VTAB", "SQLITE_ENABLE_MATH_FUNCTIONS")

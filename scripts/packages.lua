@@ -47,7 +47,7 @@ function main(opt)
             instance._BASE = _load_package(basename, basedir, basefile)
         end
         if instance then
-            for _, plat in ipairs({"windows", "linux", "macosx", "iphoneos", "android", "mingw", "msys", "bsd", "wasm", "cross"}) do
+            for _, plat in ipairs({"windows", "linux", "macosx", "iphoneos", "android", "mingw", "msys", "bsd", "wasm", "cross", "harmony"}) do
                 local archs = platform.archs(plat)
                 if archs then
                     local package_archs = {}

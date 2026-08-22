@@ -6,6 +6,16 @@ package("aws-c-io")
     add_urls("https://github.com/awslabs/aws-c-io/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-io.git")
 
+    add_versions("v0.27.6", "2a6890715ccecaa0df6e9d074b186a7156b35360ded9db973064e2e00d45fcc3")
+    add_versions("v0.27.5", "aa132d5a728f18ab8e0a6ea96d3d2f7e66bc8d3fe029d9ed1b05c06aa0c5b900")
+    add_versions("v0.27.4", "0f2ce32de3685ca5ba3a8395d461c783253c1718cf70d31378eb6be890db1e3e")
+    add_versions("v0.27.2", "42caef5ef624ca8f5046d4e9f21c8dcaf1c4d7d0b2d46d965357b13079f2d2d3")
+    add_versions("v0.27.0", "e89a1f784e7c97e4197031ffdcf30f67d66d7c14f8a391edf5764f17dae982ee")
+    add_versions("v0.26.3", "521fd0848fca661130bbb7278a414d7a38bdcb9bc8ffa89f6660d84e5838a303")
+    add_versions("v0.26.1", "5481178b99f074314b23b39b35786715fb0c1bf9773023ff83efe0d62d6e0ce2")
+    add_versions("v0.26.0", "27591a4d67b7401dc0b87f8fec91b1c93764decb32229086113c80d4d6d6d3c0")
+    add_versions("v0.23.3", "cdcb31b694fc28ba96237ee33a742679daf2dcabfd41464f8a68fbd913907085")
+    add_versions("v0.23.2", "3a335b812411c30bcc64072f148ddf6cd632d8261799cd04e54051b44506feb9")
     add_versions("v0.22.0", "07b0ac7271e482e1f5f1e84fcf33ec23fb8a2c12e7a7f331455a5f1d38b9fbfd")
     add_versions("v0.21.2", "75ada840ed7ef1b8e6908a9d2d017375f9093b9db04c51caf68f8edcfd20cc4c")
     add_versions("v0.21.1", "1d4c6ac5d65acdad8c07f7b0bdd417fd52ab99d29d6d79788618eba317679cf1")
@@ -30,6 +40,8 @@ package("aws-c-io")
     add_versions("v0.14.5", "2700bcde062f7de1c1cbfd236b9fdfc9b24b4aa6dc0fb09bb156e16e07ebd0b6")
     add_versions("v0.13.32", "2a6b18c544d014ca4f55cb96002dbbc1e52a2120541c809fa974cb0838ea72cc")
 
+    add_configs("s2n", {description = "Use s2n-tls as TLS backend.", default = is_plat("macosx") or is_plat("linux"), type = "boolean"})
+
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
@@ -44,7 +56,13 @@ package("aws-c-io")
 
     add_deps("cmake", "aws-c-common", "aws-c-cal")
 
-    on_install("!wasm and (!mingw or mingw|!i386)", function (package)
+    on_load(function (package)
+        if package:config("s2n") then
+            package:add("deps", "s2n-tls")
+        end
+    end)
+
+    on_install("windows", "linux", "bsd", "cross", "android", "mingw|!i386", "macosx|arm64", function (package)
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "USE_WINDOWS_DLL_SEMANTICS", "AWS_IO_USE_IMPORT_EXPORT")
         end
@@ -59,8 +77,14 @@ package("aws-c-io")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_SANITIZERS=" .. (package:config("asan") and "ON" or "OFF"))
+        table.insert(configs, "-DUSE_S2N=" .. (package:config("s2n") and "ON" or "OFF"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DAWS_STATIC_MSVC_RUNTIME_LIBRARY=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DAWS_STATIC_MSVC_RUNTIME_LIBRARY=" .. (package:runtimes():startswith("MT") and "ON" or "OFF"))
+        end
+        if package:is_plat("macosx") then
+            if not package:config("s2n") then
+                table.insert(configs, "-DAWS_USE_SECITEM=ON")
+            end
         end
         import("package.tools.cmake").install(package, configs)
 

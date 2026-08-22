@@ -6,6 +6,9 @@ package("ls-qpack")
     add_urls("https://github.com/litespeedtech/ls-qpack/archive/refs/tags/$(version).tar.gz",
              "https://github.com/litespeedtech/ls-qpack.git")
 
+    add_versions("v2.6.5", "58241ce3d2971cc16f9bc6284c0a06e22e1793a50da7d38db9edc63b9af51191")
+    add_versions("v2.6.4", "1bea5d42312b7004162421a10876799cf7587e1407e359f6301ac0e37b787a15")
+    add_versions("v2.6.3", "822f60e118a82f79c8a550164a3dd8dd87409c8bae5bc226f4bdcba10f191418")
     add_versions("v2.6.2", "db1a83102bb7d2d946a910cb11a9d69c1c5b9fd9a40249c22c411fb9c429fe16")
     add_versions("v2.6.1", "b6c91e8974876c69788fbb7d84c5d49a9a3c932c168fe353261923c742d3d635")
     add_versions("v2.6.0", "567a7a86f801eef5df28ce0cc89826d9008a57135027bdf63ba4a1d0639d0c58")
@@ -15,6 +18,10 @@ package("ls-qpack")
 
     add_patches(">=2.5.5 <=2.6.0", "patches/2.5.5/cmake.patch", "23fd785c3db2e1b43ead464b0ee8d12e9f290fbfdf818c3238cba316df295f08")
     add_patches("2.5.3", "patches/2.5.3/fix-cmake-install.patch", "7d819b620b5e2bd34ef58a91bf20d882883c7525def9f9f80313b64cba5e5239")
+
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     add_deps("cmake")
     add_deps("xxhash")

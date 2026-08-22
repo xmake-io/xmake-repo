@@ -1,5 +1,5 @@
 diff --git a/aui.audio/CMakeLists.txt b/aui.audio/CMakeLists.txt
-index 21e44153..f6732e73 100644
+index 21e441538..96d151626 100644
 --- a/aui.audio/CMakeLists.txt
 +++ b/aui.audio/CMakeLists.txt
 @@ -5,26 +5,44 @@ add_subdirectory(3rdparty/ogg)
@@ -37,23 +37,24 @@ index 21e44153..f6732e73 100644
  elseif (AUI_PLATFORM_LINUX)
 -    aui_link(aui.audio PUBLIC pulse)
 +    if (AUIB_DISABLE)
-+        auib_use_system_libs_begin()
-+        find_package(PkgConfig)
-+        pkg_check_modules(PULSEAUDIO REQUIRED IMPORTED_TARGET libpulse)
-+        aui_link(aui.audio PUBLIC PkgConfig::PULSEAUDIO)
-+        auib_use_system_libs_end()
++        include(FindPkgConfig)
++        pkg_check_modules(PulseAudio REQUIRED IMPORTED_TARGET libpulse)
++        pkg_check_modules(PulseAudioSimple REQUIRED IMPORTED_TARGET libpulse-simple)
++        aui_link(aui.audio PRIVATE PkgConfig::PulseAudio PkgConfig::PulseAudioSimple)
 +    else ()
 +        aui_link(aui.audio PUBLIC pulse)
 +    endif ()
  elseif (AUI_PLATFORM_WIN)
-     aui_link(aui.audio PUBLIC Winmm dsound.lib dxguid.lib)
+-    aui_link(aui.audio PUBLIC Winmm dsound.lib dxguid.lib)
++    aui_link(aui.audio PUBLIC Winmm dsound dxguid)
  endif()
  
 -auib_import(Opus https://github.com/xiph/opus.git VERSION v1.4)
 -aui_link(aui.audio PRIVATE Opus::opus)
 +if (AUIB_DISABLE)
-+    find_package(Opus CONFIG REQUIRED)
-+    aui_link(aui.audio PRIVATE Opus::opus)
++    include(FindPkgConfig)
++    pkg_check_modules(Opus REQUIRED IMPORTED_TARGET opus)
++    aui_link(aui.audio PRIVATE PkgConfig::Opus)
 +else ()
 +    auib_import(Opus https://github.com/xiph/opus.git VERSION v1.4)
 +    aui_link(aui.audio PRIVATE Opus::opus)
@@ -82,3 +83,4 @@ index 21e44153..f6732e73 100644
 -aui_link(aui.audio PRIVATE soxr)
 +    aui_link(aui.audio PRIVATE soxr)
 +endif ()
+ 

@@ -6,6 +6,9 @@ package("taglib")
     add_urls("https://github.com/taglib/taglib/archive/refs/tags/$(version).tar.gz",
              "https://github.com/taglib/taglib.git", {submodules = false})
 
+    add_versions("v2.3.1", "72c3176432b065978dee670b674aaeae7d9a9f37c721ee578181e9231832bca1")
+    add_versions("v2.3", "1b4b9edd723c92da3e6845bd2a3f5cde181643ff788ffe52ff53a5fd711cc8ce")
+    add_versions("v2.2.1", "8d920bfe302c943bab204ad5183fa0ea13cedee7f72f7256b665888de964d081")
     add_versions("v2.1.1", "bd57924496a272322d6f9252502da4e620b6ab9777992e8934779ebd64babd6e")
     add_versions("v2.1", "95b788b39eaebab41f7e6d1c1d05ceee01a5d1225e4b6d11ed8976e96ba90b0c")
 
@@ -16,6 +19,10 @@ package("taglib")
 
     add_links("tag_c", "tag")
 
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     on_install(function (package)
         if not package:config("shared") then
             package:add("defines", "TAGLIB_STATIC")
@@ -25,6 +32,11 @@ package("taglib")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
+        local pc = package:installdir("lib/pkgconfig/taglib.pc")
+        if package:is_plat("windows") then
+            io.replace(pc, "-ltag -lz", "-ltag", {plain = true})
+            io.replace(pc, "Requires:\r?\n", "Requires: zlib\r\n")
+        end
     end)
 
     on_test(function (package)

@@ -24,7 +24,7 @@ package("uriparser")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DURIPARSER_MSVC_RUNTIME=/" .. package:config("vs_runtime"))
+            table.insert(configs, "-DURIPARSER_MSVC_RUNTIME=/" .. package:runtimes())
         end
         import("package.tools.cmake").install(package, configs)
     end)

@@ -1,0 +1,76 @@
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index cc800b3..8fe899e 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -1,7 +1,12 @@
+ set(CMAKE_C_STANDARD 99)
+ 
++if(BUILD_STATIC_LIBS)
++  set(ZLIB_USE_STATIC_LIBS ON)
++endif()
++
++find_package(ZLIB REQUIRED)
+ configure_file(config.h.in config.h)
+-include_directories(${CMAKE_CURRENT_BINARY_DIR})
++include_directories(${CMAKE_CURRENT_BINARY_DIR} ${ZLIB_INCLUDE_DIRS})
+ 
+ if(NOT MSVC)
+   if(NOT WIN32)
+@@ -9,15 +14,8 @@ if(NOT MSVC)
+   else()
+     set(MATH "")
+   endif()
+-  include(FindZLIB)
+ else()
+   set(MATH "")
+-  find_program(NUGET nuget)
+-  if(NUGET)
+-    execute_process(COMMAND ${NUGET} install zlib)
+-  endif()
+-  include_directories(
+-    ${PROJECT_SOURCE_DIR}/windows/third-party/zlib-1.2.11/include/)
+ endif()
+ 
+ if(NOT MSVC)
+@@ -26,23 +24,10 @@ if(NOT MSVC)
+   else()
+     set(MATH "")
+   endif()
+-  include(FindZLIB)
+-  include_directories(${ZLIB_INCLUDE_DIRS})
+   set(PKG_CONFIG_PRIVATELIBS "-lm ${PKG_CONFIG_PRIVATELIBS}")
+   set(PKG_CONFIG_PRIVATELIBS "-lz ${PKG_CONFIG_PRIVATELIBS}")
+ else()
+   set(MATH "")
+-  find_program(NUGET nuget)
+-  if(NOT NUGET)
+-    message(
+-      FATAL
+-      "Cannot find nuget command line tool.\nInstall it with e.g. choco install nuget.commandline"
+-    )
+-  else()
+-    execute_process(COMMAND ${NUGET} install zlib)
+-  endif()
+-  include_directories(
+-    ${PROJECT_SOURCE_DIR}/windows/third-party/zlib-1.2.11/include/)
+ endif()
+ 
+ set(libsrc
+@@ -78,7 +63,7 @@ target_include_directories(mysofa-static
+   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/hrtf>"
+   $<INSTALL_INTERFACE:include/>
+ )
+-target_link_libraries(mysofa-static LINK_PRIVATE ${MATH} ${ZLIB_LIBRARIES})
++target_link_libraries(mysofa-static LINK_PRIVATE ${MATH} ZLIB::ZLIB)
+ set_target_properties(
+   mysofa-static
+   PROPERTIES OUTPUT_NAME mysofa CLEAN_DIRECT_OUTPUT 1 POSITION_INDEPENDENT_CODE
+@@ -110,7 +95,7 @@ if(BUILD_SHARED_LIBS)
+     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/hrtf>"
+     $<INSTALL_INTERFACE:include/>
+   )
+-  target_link_libraries(mysofa-shared PRIVATE ${MATH} ${ZLIB_LIBRARIES})
++  target_link_libraries(mysofa-shared PRIVATE ${MATH} ZLIB::ZLIB)
+   set_target_properties(mysofa-shared
+                         PROPERTIES OUTPUT_NAME mysofa CLEAN_DIRECT_OUTPUT 1)
+   # Rename the Windows import library (stub) of the DLL to prevent a name clash

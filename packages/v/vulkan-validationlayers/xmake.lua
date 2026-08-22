@@ -19,6 +19,7 @@ package("vulkan-validationlayers")
             end
         end})
 
+        add_versions("1.4.335+0", "73a44912edc44247d22509ff2222ef8823d42bd58b72273ca5eae8a1c6d3c7c5")
         add_versions("1.4.309+0", "6483ee30edcba3bb05e0ab3569dee632fd4532c190fef780e9ff038391c2edec")
         add_versions("1.3.290+0", "eb26b4bf1f031e57d1624c53d489279076b893b0383fddccc79de7ee2caaa128")
         add_versions("1.3.275+0", "6e22fb13601c1e780c44a17497a3c999cc5207e52a09819e7c32ecd8439eff7a")
@@ -35,6 +36,7 @@ package("vulkan-validationlayers")
             return version:startswith("v") and version or prefix .. version:gsub("%+", ".")
         end})
 
+        add_versions("1.4.335+0", "464f754abdebef13c342e18861eab87be0ecc36cb1c257f6b2ddfa10afb8401a")
         add_versions("1.4.309+0", "56eb7b70c0ebf3e6b7def7723617a71bd01ca1497ab8dec542e1e4eadf6e07d7")
         add_versions("1.3.290+0", "59be2c0a5bdbfdbdebdcda48bd65ffa3b219f681c73a90fc683cd4708c1b79de")
         add_versions("1.3.275+0", "acfd84039109220129624b0ecb69980bbc3a858978c62b556dbe16efd0f26755")

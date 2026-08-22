@@ -11,7 +11,11 @@ package("glu")
         end
         if opt.system then
             if package:is_plat("linux") and package.find_package then
-                return package:find_package("glu", opt) or package:find_package("libglu", opt)
+                return package:find_package("GLU", opt) or package:find_package("pkgconfig::glu", opt)
             end
         end
     end)
+
+    if is_plat("linux") then
+        add_extsources("apt::libglu1-mesa-dev")
+    end

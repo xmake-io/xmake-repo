@@ -3,14 +3,16 @@ rule("archive.shaders")
 	set_extensions(".nzsla")
 	add_deps("@nzsl/find_nzsl")
 
-    if add_orders then
-	    add_deps("@nzsl/compile.shaders")
-        add_orders("@nzsl/compile.shaders", "@nzsl/archive.shaders")
-    else
-	    add_deps("@nzsl/compile.shaders", { order = true })
-    end
+	if add_orders then
+		add_deps("@nzsl/compile.shaders")
+		add_orders("@nzsl/compile.shaders", "@nzsl/archive.shaders")
+	else
+		add_deps("@nzsl/compile.shaders", { order = true })
+	end
 
 	before_buildcmd_file(function (target, batchcmds, sourcefile, opt)
+		import("core.base.semver")
+
 		local nzsla = target:data("nzsla")
 		local runenvs = target:data("nzsl_runenv")
 		assert(nzsla, "nzsla not found! please install nzsl package with nzsla enabled")
@@ -19,6 +21,9 @@ rule("archive.shaders")
 
 		batchcmds:show_progress(opt.progress, "${color.build.object}archiving.shaders %s", sourcefile)
 		local argv = { "--archive" }
+		if semver.compare(nzsla.version, "1.1.0") >= 0 then
+			table.insert(argv, "--skip-unchanged")
+		end
 
 		if fileconfig.compress then
 			if type(fileconfig.compress) == "string" then

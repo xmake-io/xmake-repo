@@ -23,6 +23,9 @@ function install(package)
         end
     end
 
+    -- Fix build on newer toolchains (e.g., on Arch Linux) that treat this warning as an error.
+    table.insert(cflags, "-Wno-error=discarded-qualifiers")
+
     local configs = {}
     table.insert(configs, "EXTRA_CFLAGS=" .. table.concat(cflags, " "))
     table.insert(configs, "LDFLAGS=" .. table.concat(ldflags, " "))

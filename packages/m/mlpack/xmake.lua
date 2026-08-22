@@ -7,6 +7,8 @@ package("mlpack")
     add_urls("https://github.com/mlpack/mlpack/archive/refs/tags/$(version).tar.gz",
              "https://github.com/mlpack/mlpack.git")
 
+    add_versions("4.8.0", "0ab06e5c506c7ed5f072faa4c04477c65624e4a1ff62eee8c0d996ef850ec51c")
+    add_versions("4.7.0", "a3f0fb530e51d51f8d7eceb7998b4699906d628000b158ada80541465595324e")
     add_versions("4.3.0", "08cd54f711fde66fc3b6c9db89dc26776f9abf1a6256c77cfa3556e2a56f1a3d")
 
     if is_plat("linux") then
@@ -16,6 +18,15 @@ package("mlpack")
     add_configs("openmp", {description = "Enable OpenMP", default = true, type = "boolean"})
     
     add_deps("armadillo", "cereal", "ensmallen", "stb")
+
+    if on_check then
+        on_check("windows", function (package)
+            if package:version() and package:version():ge("4.6.0") then
+                -- mlpack#3879 turns the OpenMP version check to a compiler error
+                raise("package(mlpack): requires OpenMP 3.1+, MSVC only supports 3.0")
+            end
+        end)
+    end
 
     on_load(function(package)
         if package:config("openmp") then

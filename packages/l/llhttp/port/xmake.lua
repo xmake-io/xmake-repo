@@ -32,3 +32,7 @@ target("llhttp")
             add_shflags("/export:" .. func)
         end
     end
+
+    if is_plat("cross") then
+        add_cflags("-flax-vector-conversions")
+    end

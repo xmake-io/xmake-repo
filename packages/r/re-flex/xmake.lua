@@ -6,6 +6,8 @@ package("re-flex")
     add_urls("https://github.com/Genivia/RE-flex/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Genivia/RE-flex.git")
 
+    add_versions("v6.2.0", "52bb648592e4f3669cd5cc4f1575b57d90ed2a23bf71874b29e6f6f6d171ec2d")
+    add_versions("v6.1.0", "6a6ca333e45760900734ed40ae9fe4162843d2eca2d3a47923875b1ca89e00a8")
     add_versions("v6.0.0", "488a778577429408a3390b6aeac796eccaaa1297bb7573feccf3b608b9ae9d95")
     add_versions("v5.3.0", "f886b2a6354bd5c5e27dce64f5c701a0a8fcb62eafc58d41f8aed9c0582be764")
     add_versions("v5.2.2", "be7f4adb3141dcb9079f5431f36f35ed553d972eb76565e3bb36da635d9aa126")
@@ -18,7 +20,7 @@ package("re-flex")
         add_syslinks("ws2_32")
     end
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         io.writefile("xmake.lua",[[
             add_rules("mode.debug", "mode.release")
             set_languages("cxx11")
@@ -56,7 +58,7 @@ package("re-flex")
         assert(package:check_cxxsnippets({test = [[
             #include <reflex/matcher.h>
             void test() {
-                reflex::Matcher matcher("\w+","114 514 1919 810");
+                reflex::Matcher matcher("\\w+","114 514 1919 810");
             }
         ]]}, {configs = {languages = "cxx11"}}))
     end)

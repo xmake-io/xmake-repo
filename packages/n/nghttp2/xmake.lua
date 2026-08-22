@@ -4,6 +4,10 @@ package("nghttp2")
     set_license("MIT")
 
     add_urls("https://github.com/nghttp2/nghttp2/releases/download/v$(version)/nghttp2-$(version).tar.gz")
+    add_versions("1.70.0", "aa317e2cf9dca6afa0aed68f8fad6ff303ec6982e25a78c75c0b65e2b9b3ded5")
+    add_versions("1.69.0", "c866b7477cbb7512ab6863a685027adbb1bb8da8fc3bab7429ed43d3281d5aa9")
+    add_versions("1.68.1", "ceb434c1f9dfe2a9d305b6b797786fb9227484dfa88508d14ca1c50263db55d3")
+    add_versions("1.68.0", "2c16ffc588ad3f9e2613c3fad72db48ecb5ce15bc362fcc85b342e48daf51013")
     add_versions("1.67.1", "da8d640f55036b1f5c9cd950083248ec956256959dc74584e12c43550d6ec0ef")
     add_versions("1.67.0", "f61f8b38c0582466da9daa1adcba608e1529e483de6b5b2fbe8a5001d41db80c")
     add_versions("1.66.0", "e178687730c207f3a659730096df192b52d3752786c068b8e5ee7aeb8edae05a")
@@ -45,7 +49,7 @@ package("nghttp2")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DENABLE_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DENABLE_STATIC_CRT=" .. (package:runtimes():startswith("MT") and "ON" or "OFF"))
             if package:config("shared") then
                 table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
             end

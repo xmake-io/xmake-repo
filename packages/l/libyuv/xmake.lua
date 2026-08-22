@@ -15,6 +15,8 @@ package("libyuv")
     add_patches("1891", "patches/1891/cmake.patch", "87086566b2180f65ff3d5ef9db7c59a6e51e2592aeeb787e45305beb4cf9d30d")
 
     add_configs("jpeg", {description = "Build with JPEG.", default = false, type = "boolean"})
+    add_configs("jpeg_library", {description = "Which JPEG library to build with.",
+                default = "libjpeg", type = "string", values = {"libjpeg", "libjpeg-turbo"}})
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
 
     add_deps("cmake")
@@ -32,7 +34,7 @@ package("libyuv")
 
     on_load(function (package)
         if package:config("jpeg") then
-            package:add("deps", "libjpeg")
+            package:add("deps", package:config("jpeg_library"))
         end
 
         if package:config("shared") then

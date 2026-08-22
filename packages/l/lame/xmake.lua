@@ -5,19 +5,15 @@ package("lame")
 
     add_urls("https://downloads.sourceforge.net/project/lame/lame/$(version)/lame-$(version).tar.gz")
     add_versions("3.100", "ddfe36cab873794038ae2c1210557ad34857a4b6bdc515785d1da9e175b1da1e")
-    add_configs("shared", {description = "Build static libraries", default = false, type = "boolean", readonly = true})
+
+    -- @see https://github.com/xmake-io/xmake-repo/pull/8377#issuecomment-3405442429
+    if is_plat("linux") and is_arch("arm.*", "mips.*") then
+        add_configs("debug", {description = "Enable debug symbols.", default = false, type = "boolean", readonly = true})
+    end
 
     add_deps("nasm")
-
     on_install("linux", "macosx", "bsd", function (package)
         local configs = {"--enable-nasm"}
-        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
-        if package:debug() then
-            table.insert(configs, "--enable-debug")
-        end
-        if package:is_plat("linux") and package:config("pic") ~= false then
-            table.insert(configs, "--with-pic")
-        end
         -- fix undefined symbol error _lame_init_old
         -- https://sourceforge.net/p/lame/mailman/message/36081038/
         io.replace("include/libmp3lame.sym", "lame_init_old\n", "", {plain = true})

@@ -1,0 +1,19 @@
+diff --git a/httplib.h b/httplib.h
+index d400c7b..fa8ae30 100644
+--- a/httplib.h
++++ b/httplib.h
+@@ -5319,9 +5319,14 @@ inline bool mmap::open(const char *path) {
+   auto wpath = u8string_to_wstring(path);
+   if (wpath.empty()) { return false; }
+ 
++  #if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) && (_WIN32_WINNT >= _WIN32_WINNT_WIN8)
+   hFile_ =
+       ::CreateFile2(wpath.c_str(), GENERIC_READ,
+                     FILE_SHARE_READ | FILE_SHARE_WRITE, OPEN_EXISTING, NULL);
++  #else
++  hFile_ = ::CreateFileW(wpath.c_str(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
++                          OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
++  #endif
+ 
+   if (hFile_ == INVALID_HANDLE_VALUE) { return false; }
+ 

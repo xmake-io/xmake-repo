@@ -44,9 +44,15 @@ package("ffmpeg")
     add_configs("libx264",          {description = "Enable libx264 encoder.", default = false, type = "boolean"})
     add_configs("libx265",          {description = "Enable libx265 encoder.", default = false, type = "boolean"})
     add_configs("libopenh264",      {description = "Enable openh264 encoder.", default = false, type = "boolean"})
+    add_configs("libaom",           {description = "Enable libaom encoder.", default = false, type = "boolean"})
+    add_configs("libsvtav1",        {description = "Enable libsvtav1 encoder.", default = false, type = "boolean"})
+    add_configs("libdav1d",         {description = "Enable libdav1d decoder.", default = false, type = "boolean"})
     add_configs("iconv",            {description = "Enable libiconv library.", default = false, type = "boolean"})
     add_configs("vaapi",            {description = "Enable vaapi library.", default = false, type = "boolean"})
     add_configs("vdpau",            {description = "Enable vdpau library.", default = false, type = "boolean"})
+    add_configs("nvenc",            {description = "Enable nvidia nvenc library.", default = false, type = "boolean"})
+    add_configs("nvdec",            {description = "Enable nvidia nvdec library.", default = false, type = "boolean"})
+
     add_configs("hardcoded-tables", {description = "Enable hardcoded tables.", default = true, type = "boolean"})
     if is_plat("linux") then
         add_configs("libdrm", {description = "Enable libdrm hardware acceleration", default = true, type = "boolean"})
@@ -105,12 +111,23 @@ package("ffmpeg")
             libopenh264 = "openh264",
             iconv       = "libiconv",
             libdrm      = "libdrm",
+            libaom      = "aom",
+            libsvtav1   = "svt-av1",
+            libdav1d    = "dav1d",
+            nvenc       = "nv-codec-headers",
+            nvdec       = "nv-codec-headers",
+            ffplay      = "libsdl2",
         }
         for name, dep in pairs(configdeps) do
             if package:config(name) then
                 package:add("deps", dep)
             end
         end
+        if package:config("libsvtav1") then
+            -- TODO: patch build script support static svt-av1
+            package:add("deps", "svt-av1", {configs = {shared = true}})
+        end
+
         -- https://www.ffmpeg.org/platform.html#toc-Advanced-linking-configuration
         if package:config("pic") ~= false and package:is_plat("linux", "android") then
             package:add("shflags", "-Wl,-Bsymbolic")
@@ -126,6 +143,7 @@ package("ffmpeg")
             local configs = {
                 msystem = "MINGW64",
                 base_devel = true,
+                uchardet = true,
             }
             -- @see https://stackoverflow.com/questions/65438878/ffmpeg-build-on-windows-using-msvc-make-fails
             configs.make = true
@@ -140,7 +158,7 @@ package("ffmpeg")
         end
     end)
 
-    on_install("windows", "mingw@windows,linux,cygwin,msys", "linux", "macosx", "android", "iphoneos", function (package)
+    on_install("windows", "mingw@windows,linux,cygwin,msys", "cross", "linux", "macosx", "android", "iphoneos", function (package)
         local configs = {"--enable-version3",
                          "--disable-doc"}
         configs.host = "" -- prevents xmake to add a --host=xx parameter (unsupported by ffmpeg configure script)
@@ -202,9 +220,12 @@ package("ffmpeg")
             else
                 raise("unknown mingw arch " .. package:arch())
             end
-        elseif package:is_plat("linux") then
+        elseif package:is_plat("linux", "cross") then
             table.insert(configs, "--target-os=linux")
             table.insert(configs, "--enable-pthreads")
+            if package:has_tool("cxx", "clang") then
+                table.insert(configs, "--cc=clang")
+            end
         elseif package:is_plat("macosx", "iphoneos") then
             table.insert(configs, "--target-os=darwin")
             if package:is_plat("macosx") then
@@ -243,63 +264,35 @@ package("ffmpeg")
         end
 
         if package:is_plat("windows") then
-            if path.cygwin then -- xmake 2.8.9
-                import("package.tools.autoconf")
-                local envs = autoconf.buildenvs(package, {packagedeps = "libiconv"})
-                if not envs.PATH then -- Fix in xmake 2.9.8
-                    local msvc = package:toolchain("msvc") or toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
-                    envs.PATH = os.getenv("PATH") -- we need to reserve PATH on msys2
-                    envs = os.joinenvs(envs, msvc:runenvs())
-                end
-                if package:config("shared") and package:is_cross() then
-                    -- The makedef script always assumes that the AR environment variable is gnu ar
-                    -- @see https://github.com/microsoft/vcpkg/issues/42365#issuecomment-2567009409
-                    envs.AR = nil
-                end
-                -- add gas-preprocessor to PATH
-                if package:is_arch("arm", "arm64") then
-                    envs.PATH = path.join(os.programdir(), "scripts") .. path.envsep() .. envs.PATH
-                end
-                autoconf.install(package, configs, {envs = envs})
-            else
-                import("core.base.option")
-                import("core.tool.toolchain")
+            import("package.tools.autoconf")
+            local envs = autoconf.buildenvs(package, {packagedeps = "libiconv"})
+            if not envs.PATH then -- Fix in xmake 2.9.8
                 local msvc = package:toolchain("msvc") or toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
-                assert(msvc:check(), "vs not found!")
-                local buildenvs = import("package.tools.autoconf").buildenvs(package)
-                -- keep msys2 envs in front to prevent conflict with possibly installed sh.exe
-                local envs = os.joinenvs(os.getenvs(), msvc:runenvs())
-                -- fix PKG_CONFIG_PATH for checking deps, e.g. x264, x265 ..
-                -- @see https://github.com/xmake-io/xmake-repo/issues/3442
-                local pkg_config_path = buildenvs.PKG_CONFIG_PATH
-                if pkg_config_path then
-                    local paths = {}
-                    for _, p in ipairs(path.splitenv(pkg_config_path)) do
-                        p = p:gsub("\\", "/")
-                        -- c:\, C:\ -> /c/
-                        p = p:gsub("^(%w):", function (drive) return "/" .. drive:lower() end)
-                        table.insert(paths, p)
-                    end
-                    envs.PKG_CONFIG_PATH = table.concat(paths, ":")
-                end
-                envs.SHELL = "sh"
-
-                -- add gas-preprocessor to PATH
-                if package:is_arch("arm", "arm64") then
-                    envs.PATH = path.join(os.programdir(), "scripts") .. path.envsep() .. envs.PATH
-                end
-
-                table.insert(configs, "--prefix=" .. package:installdir():gsub("\\", "/"))
-                os.vrunv("./configure", configs, {shell = true, envs = envs})
-
-                local njob = option.get("jobs") or tostring(os.default_njob())
-                local argv = {"-j" .. njob}
-                if option.get("verbose") then
-                    table.insert(argv, "V=1")
-                end
-                os.vrunv("make", argv, {envs = envs})
-                os.vrunv("make", {"install"}, {envs = envs})
+                envs.PATH = os.getenv("PATH") -- we need to reserve PATH on msys2
+                envs = os.joinenvs(envs, msvc:runenvs())
             end
+            if package:config("shared") and package:is_cross() then
+                -- The makedef script always assumes that the AR environment variable is gnu ar
+                -- @see https://github.com/microsoft/vcpkg/issues/42365#issuecomment-2567009409
+                envs.AR = nil
+            end
+            -- add gas-preprocessor to PATH
+            if package:is_arch("arm", "arm64") then
+                envs.PATH = path.join(os.programdir(), "scripts") .. path.envsep() .. envs.PATH
+            end
+
+            -- fix build failure with gbk encoding
+            io.replace("configure", "cp_if_changed $TMPH config.h", [[
+                config_encodings=$(uchardet $TMPH)
+                { printf '\xEF\xBB\xBF'; iconv -f "$config_encodings" -t UTF-8 -c $TMPH; } > config.h;
+                ]], {plain = true})
+
+            -- fix invalid `-ologo`
+            -- https://github.com/xmake-io/xmake-repo/issues/9073#issuecomment-3742290905
+            io.replace("compat/windows/mswindres", "-nologo", "", {plain = true})
+
+            -- do install
+            autoconf.install(package, configs, {envs = envs})
             if package:config("shared") then
                 -- move .lib from bin/ to lib/
                 os.vmv(package:installdir("bin", "*.lib"), package:installdir("lib"))
@@ -339,12 +332,6 @@ package("ffmpeg")
             else
                 raise("unknown arch(%s) for android!", package:arch())
             end
-            local _translate_path
-            if is_host("windows") then
-                _translate_path = function (p) return p and p:gsub("\\", "/") or p end
-            else
-                _translate_path = function (p) return p end
-            end
             local sysroot  = path.join(path.directory(bin), "sysroot")
             local cflags   = table.join(table.wrap(package:config("cxflags")), table.wrap(package:config("cflags")), table.wrap(get_config("cxflags")), get_config("cflags"))
             local cxxflags = table.join(table.wrap(package:config("cxflags")), table.wrap(package:config("cxxflags")), table.wrap(get_config("cxflags")), get_config("cxxflags"))
@@ -357,23 +344,27 @@ package("ffmpeg")
                     table.insert(cflags, "-mfpu=neon")
                     table.insert(cflags, "-mfloat-abi=hard")
                 end
-            else
+            elseif package:is_arch("arm*") then
                 table.insert(cflags, "-mfpu=neon")
                 table.insert(cflags, "-mfloat-abi=soft")
             end
             table.insert(configs, "--disable-avdevice")
             table.insert(configs, "--arch=" .. arch)
             table.insert(configs, "--cpu=" .. cpu)
-            table.insert(configs, "--cc=" .. _translate_path(path.join(bin, triple .. ndk_sdkver .. "-clang")))
-            table.insert(configs, "--cxx=" .. _translate_path(path.join(bin, triple .. ndk_sdkver .. "-clang++")))
-            table.insert(configs, "--ar=" .. _translate_path(path.join(bin, "llvm-ar")))
-            table.insert(configs, "--ranlib=" .. _translate_path(path.join(bin, "llvm-ranlib")))
-            table.insert(configs, "--strip=" .. _translate_path(path.join(bin, "llvm-strip")))
-            table.insert(configs, "--extra-cflags=" .. table.concat(cflags, ' '))
-            table.insert(configs, "--extra-cxxflags=" .. table.concat(cxxflags, ' '))
-            table.insert(configs, "--sysroot=" .. _translate_path(sysroot))
-            table.insert(configs, "--cross-prefix=" .. _translate_path(cross_prefix))
-            table.insert(configs, "--prefix=" .. _translate_path(package:installdir()))
+            table.insert(configs, "--cc=" .. path.unix(path.join(bin, triple .. ndk_sdkver .. "-clang")))
+            table.insert(configs, "--cxx=" .. path.unix(path.join(bin, triple .. ndk_sdkver .. "-clang++")))
+            table.insert(configs, "--ar=" .. path.unix(path.join(bin, "llvm-ar")))
+            table.insert(configs, "--ranlib=" .. path.unix(path.join(bin, "llvm-ranlib")))
+            table.insert(configs, "--strip=" .. path.unix(path.join(bin, "llvm-strip")))
+            if #cflags > 0 then
+                table.insert(configs, "--extra-cflags=" .. table.concat(cflags, ' '))
+            end
+            if #cxxflags > 0 then
+                table.insert(configs, "--extra-cxxflags=" .. table.concat(cxxflags, ' '))
+            end
+            table.insert(configs, "--sysroot=" .. path.unix(sysroot))
+            table.insert(configs, "--cross-prefix=" .. path.unix(cross_prefix))
+            table.insert(configs, "--prefix=" .. path.unix(package:installdir()))
             os.vrunv("./configure", configs, {shell = true})
             local njob = option.get("jobs") or tostring(os.default_njob())
             local argv = {"-j" .. njob}
@@ -382,6 +373,14 @@ package("ffmpeg")
             end
             os.vrunv("make", argv)
             os.vrun("make install")
+        elseif package:is_plat("cross") then
+            table.insert(configs, "--cc=" .. package:build_getenv("cc"))
+            table.insert(configs, "--ld=" .. package:build_getenv("ld"))
+            table.insert(configs, "--ar=" .. package:build_getenv("ar"))
+            table.insert(configs, "--as=" .. package:build_getenv("as"))
+            table.insert(configs, "--cxx=" .. package:build_getenv("cxx"))
+            table.insert(configs, "--strip=" .. package:build_getenv("strip"))
+            import("package.tools.autoconf").install(package, configs, opt)
         else
             local opt
             if package:is_plat("macosx") and package:is_arch("arm.*") and package:config("shared") then

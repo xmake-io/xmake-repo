@@ -7,6 +7,7 @@ package("reactiveplusplus")
     add_urls("https://github.com/victimsnino/ReactivePlusPlus/archive/refs/tags/$(version).tar.gz",
              "https://github.com/victimsnino/ReactivePlusPlus.git")
 
+    add_versions("v2.2.3", "d66507538e75f61569acbb4d5e26e18adf839791120688693d2fe8da955236ea")
     add_versions("v2.2.2", "54b2bf457996bd3d22e3b33fb98a8d0a3867dfa2d5e23991718dcd94ba6e4157")
     add_versions("v2.1.1", "0b962478d7c973a1f74062ce7f8d24c2fdcd2733031b1f014e65d252d59ebe6a")
     add_versions("v2.1.0", "d84a194ef96b92201ea574f81780837c95e8956bbad09b3dc2dc5cef7c2eef98")

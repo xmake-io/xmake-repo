@@ -6,8 +6,10 @@ package("minio-cpp")
     add_urls("https://github.com/minio/minio-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/minio/minio-cpp.git")
 
+    add_versions("v0.4.0", "31cca03d32a3a27955d21764e3719097895f243f3b3add932f3c207758624eda")
     add_versions("v0.3.0", "da0f2f54bf169ad9e5e9368cc9143df4db056fc5c05bb55d8c1d9065e7211f7c")
 
+    add_patches("0.4.0", "patches/0.4.0/cmake.patch", "09892d28a2c1a3a5cc5783128264fae83a4dec3faa0d8110ae93be24019ff4fb")
     add_patches("0.3.0", "patches/0.3.0/cmake-pkgconfig-find-deps.patch", "53a0a5a300c896ad92dbaf3b96fa25556a2f555e84ce07deb7b7b1562ddac9e5")
     add_patches("0.3.0", "patches/0.3.0/macos-unistd.patch", "cd50e5d3cb5ceda7d606dc15f90ab4764b34a61a96a3be83f02688329843ef1f")
 
@@ -21,6 +23,17 @@ package("minio-cpp")
     add_deps("nlohmann_json", {configs = {cmake = true}})
     add_deps("inih", {configs = {ini_parser = true}})
     add_deps("curlpp", "pugixml", "zlib")
+
+    if on_check then
+        on_check("mingw", function (package)
+            assert(package:version() and package:version():lt("0.4.0"), "package(minio-cpp >=0.4.0): unsupport mingw")
+        end)
+        on_check("windows", function (package)
+            if package:version() and package:version():ge("0.4.0") and package:config("shared") then
+                raise("package(minio-cpp >=0.4.0): unsupport windows shared")
+            end
+        end)
+    end
 
     on_load(function (package)
         -- xrepo package: curlpp -> libcurl -> openssl

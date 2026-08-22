@@ -69,5 +69,8 @@ function main(package)
     if not package:config("wav") then
         table.insert(defines, "MA_NO_WAV")
     end
+    if package:config("worklets") and package:is_plat("wasm") then
+        table.insert(defines, "MA_ENABLE_AUDIO_WORKLETS")
+    end
     return table.unique(defines)
 end

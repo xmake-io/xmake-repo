@@ -161,7 +161,7 @@ package("dotnet")
 
         os.cp(path.join(out_path, "*.h"), package:installdir("include"))
         package:add("links", "nethost")
-
+        package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)

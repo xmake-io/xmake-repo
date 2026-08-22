@@ -28,3 +28,7 @@ gmon.out
 other
 tags
 doc
+.claude
+dist/
+.idea/
+/updated

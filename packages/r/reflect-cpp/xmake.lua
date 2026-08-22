@@ -6,6 +6,9 @@ package("reflect-cpp")
     add_urls("https://github.com/getml/reflect-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/getml/reflect-cpp.git", {submodules = false})
 
+    add_versions("v0.25.0", "de74d3793fd3dde9105ebe0f40bffb28df7009d59e0714389e4d29fcb46a1a3f")
+    add_versions("v0.24.0", "2185d45cca58f60bcdaca37a995c6f8e90c0105f312610333fed75f2efa6a996")
+    add_versions("v0.22.0", "5756d74e7df640b4633a3ea5a3c0d7c4e096bdd3f67828f8b02f58b156ba39ec")
     add_versions("v0.20.0", "b774f11fd602683e3c7febabfe6e888b866cec28497c5e9c6ba82aeeb4465bbc")
     add_versions("v0.19.0", "aad9e010a0e716ecf643a95cec2047c74ce4311accfe42b4cf888672267ab8cd")
     add_versions("v0.18.0", "c8df46550d787105ce695ea8f99425dc47475f5377c5253d412dd63f622dc7c7")
@@ -125,6 +128,7 @@ package("reflect-cpp")
             }
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+            table.insert(configs, "-DREFLECTCPP_JSON=" .. (package:config("yyjson") and "ON" or "OFF"))
             table.insert(configs, "-DREFLECTCPP_BSON=" .. (package:config("bson") and "ON" or "OFF"))
             table.insert(configs, "-DREFLECTCPP_CBOR=" .. (package:config("cbor") and "ON" or "OFF"))
             table.insert(configs, "-DREFLECTCPP_CAPNPROTO=" .. (package:config("capnproto") and "ON" or "OFF"))
@@ -143,22 +147,41 @@ package("reflect-cpp")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <rfl/json.hpp>
-            #include <rfl.hpp>
-            #include <rfl/DefaultIfMissing.hpp>
             struct Person {
                 std::string first_name;
                 std::string last_name;
                 int age;
             };
             const auto homer = Person{.first_name = "Homer",
-                                      .last_name = "Simpson",
-                                      .age = 45};
+                                    .last_name = "Simpson",
+                                    .age = 45};
             void test() {
-                const std::string json_string = rfl::json::write(homer);
-                auto homer2 = rfl::json::read<Person, rfl::DefaultIfMissing>(json_string).value();
+                const auto first_name = rfl::get<"first_name">(rfl::to_named_tuple(homer));
+                rfl::to_named_tuple(homer).apply([](const auto& f) {
+                    auto field_name = f.name();
+                    const auto& value = f.value();
+                });
             }
-        ]]}, {configs = {languages = "c++20"}}))
+        ]]}, {configs = {languages = "c++20"}, includes = "rfl.hpp"}))
+        if package:config("yyjson") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <rfl/json.hpp>
+                #include <rfl.hpp>
+                #include <rfl/DefaultIfMissing.hpp>
+                struct Person {
+                    std::string first_name;
+                    std::string last_name;
+                    int age;
+                };
+                const auto homer = Person{.first_name = "Homer",
+                                        .last_name = "Simpson",
+                                        .age = 45};
+                void test() {
+                    const std::string json_string = rfl::json::write(homer);
+                    auto homer2 = rfl::json::read<Person, rfl::DefaultIfMissing>(json_string).value();
+                }
+            ]]}, {configs = {languages = "c++20"}}))
+        end
         if package:config("msgpack") then
             assert(package:check_cxxsnippets({test = [[
                 #include <rfl/msgpack.hpp>

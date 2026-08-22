@@ -6,6 +6,10 @@ package("aws-c-sdkutils")
     add_urls("https://github.com/awslabs/aws-c-sdkutils/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-sdkutils.git")
 
+    add_versions("v0.2.9", "14fe900f80c3b9f5e53a783d9ac0865ed9ba1ae63b67744b9f82a8b3194a4388")
+    add_versions("v0.2.7", "802b8c4169da2b4cf5c48f9598fb778faccd3e052e443a482089193411c2b7bb")
+    add_versions("v0.2.6", "673e78e9d029f31213f74eea6fb90c3750063cdec73729906e9017b0f8c95f78")
+    add_versions("v0.2.5", "13a03ea87aa67c7db414bf245fbcc623555c783a34d8ba1d7d701fd42717c366")
     add_versions("v0.2.4", "493cbed4fa57e0d4622fcff044e11305eb4fc12445f32c8861025597939175fc")
     add_versions("v0.2.3", "5a0489d508341b84eea556e351717bc33524d3dfd6207ee3aba6068994ea6018")
     add_versions("v0.2.2", "75defbfd4d896b8bdc0790bd25d854218acae61b9409d1956d33832924b82045")
@@ -39,7 +43,7 @@ package("aws-c-sdkutils")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_SANITIZERS=" .. (package:config("asan") and "ON" or "OFF"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DAWS_STATIC_MSVC_RUNTIME_LIBRARY=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DAWS_STATIC_MSVC_RUNTIME_LIBRARY=" .. (package:runtimes():startswith("MT") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
     end)

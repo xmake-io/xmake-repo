@@ -1,5 +1,4 @@
 package("libxft")
-
     set_homepage("https://www.x.org/")
     set_description("X.Org: X FreeType library")
     set_license("MIT")
@@ -14,8 +13,12 @@ package("libxft")
     end
 
     if is_plat("macosx", "linux") then
-        add_deps("pkg-config", "fontconfig", "libxrender")
+        add_deps("pkg-config", "fontconfig")
     end
+
+    on_load(function (package)
+        package:add("deps", "libxrender", { configs = { shared = package:config("shared") } })
+    end)
 
     on_install("macosx", "linux", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),

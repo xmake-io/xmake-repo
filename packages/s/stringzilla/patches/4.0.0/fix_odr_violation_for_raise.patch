@@ -1,0 +1,24 @@
+From 6e826d74054387b2a19a0d1645bb549f4219c149 Mon Sep 17 00:00:00 2001
+From: Jason <61460799+polyxemus@users.noreply.github.com>
+Date: Mon, 22 Sep 2025 06:36:34 -0500
+Subject: [PATCH] Fix: ODR violation for `raise` in C++ (#238)
+
+Co-authored-by: Jason Holmes <jrholmes@apple.com>
+Co-authored-by: Jason Holmes <61460799+polyxemus@users.noreply.github.com>
+---
+ include/stringzilla/stringzilla.hpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/stringzilla/stringzilla.hpp b/include/stringzilla/stringzilla.hpp
+index 7b211b66..657ff530 100644
+--- a/include/stringzilla/stringzilla.hpp
++++ b/include/stringzilla/stringzilla.hpp
+@@ -1020,7 +1020,7 @@ std::size_t range_length(iterator_type first, iterator_type last) {
+ #pragma region Helper Types
+ 
+ #if !SZ_AVOID_STL
+-void raise(status_t status) noexcept(false) {
++inline void raise(status_t status) noexcept(false) {
+     switch (status) {
+     case status_t::bad_alloc_k: throw std::bad_alloc();
+     case status_t::invalid_utf8_k: throw std::invalid_argument("Invalid UTF-8 string");

@@ -36,6 +36,17 @@ package("objfw")
     add_versions("1.3.1",   "a3bdf28c2e166f97680601c29f204670a8c4c8e43d393321a7d1f64fe1d2f513")
     add_versions("1.3.2",   "8148df0d55d1a3218fe9965144b5c3ee2a7f4d8e43e430a6107e294043872cab")
     add_versions("1.4.1",   "e223b1cae37453f02ea98f085c3c1f4b78dcf7c16b43d35b05d9ad4480e175b2")
+    add_versions("1.4.2",   "8e6d0cd39271130a0b6c2789fa08f2598c77d9b88acbd0e2c15c8eb1144baa08")
+    add_versions("1.4.3",   "0e987c82bd482a957360a1cd7e8d14716442f9bfba68f58fef9b81750db301d9")
+    add_versions("1.4.4",   "29be5ea5d6a9c34b9873a40091367eb0b75072d627e2508380c02c38cb60ca38")
+    add_versions("1.5",     "438f18ea760b081bdfcb2b3829c62b8645d241dde08d65a8c004ee4f6b56d9f4")
+    add_versions("1.5.1",   "fde83565ad1c6aaea2713770ede8f47f1b1e464c9251dde4801e1c614930cdf6")
+    add_versions("1.5.2",   "23c41c2ce6f2491d056c8e63cc4de6de8fcb1807825710eb1be92464b97173f8")
+    add_versions("1.5.3",   "30baa45a702efc99601d1cd4c2864f77128903a3aedd27aa05093acd56224147")
+    add_versions("1.5.4",   "7306dcf95bab8070efd1ff66791585b40c1826c109e280fb0db9a5d1cfb1384c")
+    add_versions("1.5.5",   "d36c95f545b83879038630416da82a923b7a7d8ef155d348cda0ff56d021a2d3")
+    add_versions("1.5.6",   "6b133e77e904bb012d7735dc2af51b589e903717d458532be9acc8f08a6cd45b")
+    add_versions("1.5.7",   "e637c32731dc07396b812c4019f34d1417a3f7aa39d450b7f27c9bcdc23b3e12")
 
     if is_host("linux", "macosx") then
         add_deps("autoconf", "automake", "libtool")
@@ -47,17 +58,14 @@ package("objfw")
         add_frameworks("CoreFoundation")
     end
 
-    add_configs("tls", { description = "Enable TLS support.", default = (is_plat("macosx") and "securetransport" or "openssl"), values = { true, false, "openssl", "gnutls", "securetransport", "mbedtls" } })
+    add_configs("tls", { description = "Enable TLS support.", default = "openssl", values = { true, false, "openssl", "gnutls", "securetransport", "mbedtls" } })
     add_configs("rpath", { description = "Enable rpath.", default = true, type = "boolean" })
     add_configs("runtime", { description = "Use the included runtime, not recommended for macOS!", default = not is_plat("macosx"), type = "boolean" })
     add_configs("seluid24", { description = "Use 24 bit instead of 16 bit for selector UIDs.", default = false, type = "boolean" })
     add_configs("unicode_tables", { description = "Enable Unicode tables.", default = true, type = "boolean" })
-
     add_configs("codepage_437", { description = "Enable codepage 437 support.", default = true, type = "boolean" })
-    
-
     add_configs("codepage_850", { description = "Enable codepage 850 support.", default = true, type = "boolean" })
-    add_configs("codepage-858", { description = "Enable codepage 858 support.", default = true, type = "boolean" })
+    add_configs("codepage_858", { description = "Enable codepage 858 support.", default = true, type = "boolean" })
     add_configs("iso_8859_2", { description = "Enable ISO-8859-2 support.", default = true, type = "boolean" })
     add_configs("iso_8859_3", { description = "Enable ISO-8859-3 support.", default = true, type = "boolean" })
     add_configs("iso_8859_15", { description = "Enable ISO-8859-15 support.", default = true, type = "boolean" })
@@ -66,27 +74,25 @@ package("objfw")
     add_configs("mac_roman", { description = "Enable Mac Roman encoding support.", default = true, type = "boolean" })
     add_configs("windows_1251", { description = "Enable windows 1251 support.", default = true, type = "boolean" })
     add_configs("windows_1252", { description = "Enable windows 1252 support.", default = true, type = "boolean" })
-
     add_configs("threads", { description = "Enable threads.", default = true, type = "boolean" })
     add_configs("compiler_tls", { description = "Enable compiler thread local storage (TLS).", default = true, type = "boolean" })
     add_configs("files", { description = "Enable files.", default = true, type = "boolean" })
     add_configs("sockets", { description = "Enable sockets.", default = true, type = "boolean" })
-
     add_configs("arc", { description = "Enable Automatic Reference Counting (ARC) support.", default = true, type = "boolean" })
 
     on_load(function (package)
+        -- SecureTransport support removed for 1.4.4: https://git.nil.im/ObjFW/ObjFW/commit/4281f054365af9b97f23145be56b82e3542db354
+        if package:is_plat("macosx") and package:version() and package:version():gt("1.4.4") and package:config("tls") == "securetransport" then
+            package:config_set("tls", "openssl")
+        end
         local tls = package:config("tls")
         if type(tls) == "boolean" then
             if tls then
-                if package:is_plat("macosx") then
-                    package:add("frameworks", "Security")
-                else
-                    package:add("deps", "openssl")
-                end
+                package:add("deps", "openssl3")
             end
         elseif tls then
             if tls == "openssl" then
-                package:add("deps", "openssl")
+                package:add("deps", "openssl3")
             elseif tls == "securetransport" then
                 package:add("frameworks", "Security")
             elseif tls == "gnutls" then
@@ -97,6 +103,7 @@ package("objfw")
                 raise("Unknown TLS library: %s", tls)
             end
         end
+        package:addenv("PATH", "bin")
     end)
 
     on_check(function (package)
@@ -119,18 +126,18 @@ package("objfw")
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") and name ~= "arc" then
-                name = name:gsub("_", "-")
+                local config_name = name:gsub("_", "-")
                 if enabled then
-                    table.insert(configs, "--enable-" .. name)
+                    table.insert(configs, "--enable-" .. config_name)
                 else
-                    table.insert(configs, "--disable-" .. name)
+                    table.insert(configs, "--disable-" .. config_name)
                 end
             end
         end
 
         -- SecureTransport must be handled by system so we don't worry about providing CFLAGS and LDFLAGS,
         -- but for OpenSSL and GnuTLS we need to provide the paths
-        local ssl = package:dep("openssl") or package:dep("gnutls")
+        local ssl = package:dep("openssl3") or package:dep("gnutls") or package:dep("openssl")
         local is_gnu = ssl and ssl:name() == "gnutls"
         if ssl then
             import("lib.detect.find_library")
@@ -144,10 +151,8 @@ package("objfw")
             local ssl_incdir = find_path(is_gnu and "gnutls/gnutls.h" or "openssl/ssl.h", { ssl:installdir("include"), "/usr/include/", "/usr/local/include" })
 
             if libssl then
-                table.insert(configs, "CPPFLAGS=-I"..ssl_incdir)
-                table.insert(configs, "LDFLAGS=-L"..libssl.linkdir)
-            else
-                print("No SSL library found, using system default")
+                table.insert(configs, "CPPFLAGS=-I" .. ssl_incdir)
+                table.insert(configs, "LDFLAGS=-L" .. libssl.linkdir)
             end
         end
 

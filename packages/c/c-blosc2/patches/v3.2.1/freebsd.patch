@@ -1,0 +1,16 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index ca1bc35a..4d14e2bd 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -660,11 +660,6 @@ if(CMAKE_C_COMPILER_ID MATCHES GNU|Clang|Intel|IntelLLVM)
+     endif()
+ endif()
+ 
+-if(CMAKE_C_COMPILER_ID MATCHES Intel|IntelLLVM|Clang OR HAIKU)
+-    # We need to tell Intel and Clang compilers about what level of POSIX they support
+-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_XOPEN_SOURCE=600")
+-endif()
+-
+ if(MSVC)
+     if(NOT CMAKE_C_FLAGS)
+         set(CMAKE_C_FLAGS "/Ox" CACHE STRING "C flags." FORCE)

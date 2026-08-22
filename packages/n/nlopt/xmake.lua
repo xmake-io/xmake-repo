@@ -6,6 +6,7 @@ package("nlopt")
     add_urls("https://github.com/stevengj/nlopt/archive/refs/tags/$(version).tar.gz",
              "https://github.com/stevengj/nlopt.git")
 
+    add_versions("v2.10.1", "30d13ce16da119db3e987784f7864e35a562ec62c186352fae55cd003e6c58ff")
     add_versions("v2.10.0", "506f83a9e778ad4f204446e99509cb2bdf5539de8beccc260a014bd560237be1")
     add_versions("v2.9.1", "1e6c33f8cbdc4138d525f3326c231f14ed50d99345561e85285638c49b64ee93")
     add_versions("v2.8.0", "e02a4956a69d323775d79fdaec7ba7a23ed912c7d45e439bc933d991ea3193fd")

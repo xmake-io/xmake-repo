@@ -19,7 +19,7 @@ package("zstd")
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
     add_configs("contrib", {description = "Build contrib", default = false, type = "boolean"})
 
-    if is_plat("linux", "bsd") then
+    if is_plat("linux", "cross", "bsd") then
         add_syslinks("pthread")
     end
 
@@ -28,6 +28,9 @@ package("zstd")
         -- https://github.com/facebook/zstd/issues/3271
         if package:config("cmake") then
             package:add("deps", "cmake")
+        end
+        if package:is_binary() then
+            package:config_set("tools", true)
         end
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "ZSTD_DLL_IMPORT=1")
@@ -62,6 +65,11 @@ package("zstd")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("ZSTD_compress", {includes = {"zstd.h"}}))
-        assert(package:has_cfuncs("ZSTD_decompress", {includes = {"zstd.h"}}))
+        if package:is_library() then
+            assert(package:has_cfuncs("ZSTD_compress", {includes = {"zstd.h"}}))
+            assert(package:has_cfuncs("ZSTD_decompress", {includes = {"zstd.h"}}))
+        end
+        if not package:is_cross() and package:config("tools") then
+            os.vrun("zstd --version")
+        end
     end)

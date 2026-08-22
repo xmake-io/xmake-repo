@@ -1,5 +1,4 @@
 package("libxpm")
-
     set_homepage("https://gitlab.freedesktop.org/xorg/lib/libxpm")
     set_description("X.Org: X Pixmap (XPM) image file format library")
 
@@ -11,7 +10,12 @@ package("libxpm")
         add_extsources("apt::libxpm-dev", "pacman::libxpm")
     end
 
-    add_deps("libx11", "xorgproto", "gettext")
+    add_deps("xorgproto", "gettext")
+
+    on_load(function (package)
+        package:add("deps", "libx11", { configs = { shared = package:config("shared") } })
+    end)
+
     on_install("macosx", "linux", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
                          "--localstatedir=" .. package:installdir("var"),

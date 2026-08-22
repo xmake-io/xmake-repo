@@ -6,6 +6,12 @@ package("aws-c-auth")
     add_urls("https://github.com/awslabs/aws-c-auth/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-auth.git")
 
+    add_versions("v0.10.4", "6fb567f496a450d4b6d3f5749d735977a0156957e8ccbca9af7a5ee15d1ffda7")
+    add_versions("v0.10.3", "20fc5e75529fadd81fd38b25f9d83798b53ab235ebbac92cdfbb716cfcc7593d")
+    add_versions("v0.10.2", "832d2ae61ccd408ef001dd14eb909cc9551a5724211a817688bbb898a60457a7")
+    add_versions("v0.10.1", "85d737f0f735256f1931e85e4cadbe228d88698f7b59a9b390b49ef5d0778a43")
+    add_versions("v0.9.5", "39000bff55fe8c82265b9044a966ab37da5c192a775e1b68b6fcba7e7f9882fb")
+    add_versions("v0.9.4", "704b2f965c31d9d0fd8d9ab207bc8c838e3683c56bd8407e472bbc8fa9f9a209")
     add_versions("v0.9.1", "adae1e725d9725682366080b8bf8e49481650c436b846ceeb5efe955d5e03273")
     add_versions("v0.9.0", "aa6e98864fefb95c249c100da4ae7aed36ba13a8a91415791ec6fad20bec0427")
     add_versions("v0.8.7", "b961cbed0b82248d3ea7a47f5a49bf174d5a0a977bbdd7ef3e1b2d2eb5468af5")
@@ -24,7 +30,7 @@ package("aws-c-auth")
     add_deps("cmake")
     add_deps("aws-c-io", "aws-c-sdkutils", "aws-c-http")
 
-    on_install("!wasm and (!mingw or mingw|!i386)", function (package)
+    on_install("windows", "linux", "bsd", "cross", "android", "mingw|!i386", "macosx|arm64", function (package)
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "USE_WINDOWS_DLL_SEMANTICS", "AWS_AUTH_USE_IMPORT_EXPORT")
         end
@@ -41,7 +47,7 @@ package("aws-c-auth")
         table.insert(configs, "-DENABLE_SANITIZERS=" .. (package:config("asan") and "ON" or "OFF"))
         table.insert(configs, "-DASSERT_LOCK_HELD=" .. (package:config("assert_lock_help") and "ON" or "OFF"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DAWS_STATIC_MSVC_RUNTIME_LIBRARY=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DAWS_STATIC_MSVC_RUNTIME_LIBRARY=" .. (package:runtimes():startswith("MT") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
     end)

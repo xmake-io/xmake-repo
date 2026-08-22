@@ -10,9 +10,9 @@ package("xcb-proto")
     add_versions("1.16.0", "d9c7f010b1105fc3858bf07b5169b2dd8e7493c6652b1fe45f3321d874f291d7")
     add_versions("1.17.0", "392d3c9690f8c8202a68fdb89c16fd55159ab8d65000a6da213f4a1576e97a16")
 
-    if is_plat("macosx", "linux", "bsd", "cross") then
-        add_deps("pkg-config", "python 3.x", {kind = "binary"})
-    end
+    on_load("macosx", "linux", "bsd", "cross", function (package)
+        package:add("deps", "pkg-config", "python 3.x", {kind = "binary"})
+    end)
 
     on_install("macosx", "linux", "bsd", "cross", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),

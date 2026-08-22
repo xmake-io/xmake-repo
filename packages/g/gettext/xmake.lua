@@ -1,11 +1,12 @@
 package("gettext")
-
     set_homepage("https://www.gnu.org/software/gettext/")
     set_description("GNU internationalization (i18n) and localization (l10n) library.")
 
-    set_urls("https://ftpmirror.gnu.org/gettext/gettext-$(version).tar.xz",
+    set_urls("https://mirrors.dotsrc.org/gnu/gettext/gettext-$(version).tar.xz",
+             "https://ftpmirror.gnu.org/gettext/gettext-$(version).tar.xz",
              "https://ftp.gnu.org/gnu/gettext/gettext-$(version).tar.xz",
              {version = function (version) return version:gsub('%-', '.') end})
+
     add_versions("0.19.8-1", "105556dbc5c3fbbc2aa0edb46d22d055748b6f5c7cd7a8d99f8e7eb84e938be4")
     add_versions("0.21", "d20fcbb537e02dcf1383197ba05bd0734ef7bf5db06bdb241eb69b7d16b73192")
     add_versions("0.21.1", "50dbc8f39797950aa2c98e939947c527e5ac9ebd2c1b99dd7b06ba33a6767ae6")
@@ -13,11 +14,25 @@ package("gettext")
     add_versions("0.23.1", "c1f97a72a7385b7e71dd07b5fea6cdaf12c9b88b564976b23bd8c11857af2970")
     add_versions("0.24.1", "6164ec7aa61653ac9cdfb41d5c2344563b21f707da1562712e48715f1d2052a6")
     add_versions("0.25", "05240b29f5b0f422e5a4ef8e9b5f76d8fa059cc057693d2723cdb76f36a88ab0")
+    add_versions("1.0", "71132a3fb71e68245b8f2ac4e9e97137d3e5c02f415636eb508ae607bc01add7")
 
     if is_plat("macosx") then
         add_frameworks("CoreFoundation")
     end
+    if is_plat("windows") then
+        add_deps("libintl")
+    end
     add_deps("libiconv")
+
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
+            local ndkver = ndk and ndk:config("ndkver")
+            if package:version() and package:version():ge("1.0") and ndkver and tonumber(ndkver) < 27 then
+                raise("package(gettext >= 1.0) does not support NDK versions earlier than r27")
+            end
+        end)
+    end
     
     on_load(function(package)
         if is_subhost("windows") then
@@ -27,7 +42,7 @@ package("gettext")
         end
     end)
 
-    on_install("macosx", "linux", "android", function (package)
+    on_install("macosx", "linux", "android", "windows|x64", function (package)
         local configs = {"--disable-dependency-tracking",
                          "--disable-silent-rules",
                          "--with-included-glib",
@@ -43,7 +58,7 @@ package("gettext")
                          "--without-xz"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
-        if package:debug() then
+        if package:is_debug() then
             table.insert(configs, "--enable-debug")
         end
         if package:config("pic") ~= false then
@@ -107,12 +122,16 @@ package("gettext")
                     io.replace(conffile, "REPLACE_STDIO_WRITE_FUNCS=1", "REPLACE_STDIO_WRITE_FUNCS=0")
                     io.replace(conffile, "REPLACE_WRITE=1", "REPLACE_WRITE=0")
                 end
+                -- explicitly set --build triple so autoconf doesn't use config.guess which may return
+                -- an ARM triple when CC is set to an android cross-compiler (NDK r22 clang with --gcc-toolchain),
+                -- causing autoconf to think it's not cross-compiling and try to execute ARM binaries on Windows
+                local build_arch = (os.arch() == "x86_64") and "x86_64" or "i686"
+                table.insert(configs, "--build=" .. build_arch .. "-pc-msys")
                 local envs = os.joinenvs(autoconf.buildenvs(package, {cflags = cflags, ldflags = ldflags}), os.getenvs())
                 envs.SHELL = "sh"
                 autoconf.configure(package, configs, {envs = envs})
 
-                local njob = option.get("jobs") or tostring(os.default_njob())
-                local argv = {"-j" .. njob}
+                local argv = {}
                 if option.get("verbose") then
                     table.insert(argv, "V=1")
                 end

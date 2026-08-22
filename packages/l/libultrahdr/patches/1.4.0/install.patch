@@ -1,0 +1,41 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -146,9 +146,4 @@
+ # side effects
+-if(CMAKE_CROSSCOMPILING AND UHDR_ENABLE_INSTALL)
+-  set(UHDR_ENABLE_INSTALL FALSE) # disable install and uninstall targets during cross compilation.
+-  message(STATUS "Install and uninstall targets - Disabled")
+-endif()
+-
+ if(UHDR_BUILD_FUZZERS AND NOT UHDR_BUILD_DEPS)
+   set(UHDR_BUILD_DEPS TRUE) # For fuzz testing its best to build all dependencies from source.
+                             # This is to instrument dependency libs as well.
+@@ -797,8 +792,7 @@ if(UHDR_BUILD_JAVA)
+ endif()
+ 
+ if(UHDR_ENABLE_INSTALL)
+-  if(NOT(MSVC OR XCODE))
+-    include(GNUInstallDirs)
++  include(GNUInstallDirs)
+ 
+     # pkg-config: libuhdr.pc
+     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/libuhdr.pc.in"
+@@ -834,5 +828,4 @@ if(UHDR_ENABLE_INSTALL)
+       include(CPack)
+     endif()
+ 
+-  endif()
+ endif()
+
+diff --git a/lib/include/ultrahdr/ultrahdrcommon.h b/lib/include/ultrahdr/ultrahdrcommon.h
+--- a/lib/include/ultrahdr/ultrahdrcommon.h
++++ b/lib/include/ultrahdr/ultrahdrcommon.h
+@@ -31,6 +31,7 @@
+ #include <vector>
+ 
+ #include "ultrahdr_api.h"
++#include <cstdint>
+ 
+ // ===============================================================================================
+ // Function Macros

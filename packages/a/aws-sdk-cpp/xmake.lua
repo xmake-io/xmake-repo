@@ -1,46 +1,64 @@
 package("aws-sdk-cpp")
     set_homepage("https://github.com/aws/aws-sdk-cpp")
     set_description("AWS SDK for C++")
+    set_license("Apache-2.0")
 
-    add_urls("https://github.com/aws/aws-sdk-cpp.git")
-    add_versions("1.9.362", "e9372218a2c8fab756ecaa6e4fefcdb33c3670c1")
+    add_urls("https://github.com/aws/aws-sdk-cpp/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/aws/aws-sdk-cpp.git")
+    add_versions("1.11.850", "c76d012925933a5e0006e2d9915c7451f180f1651b5e4cd0cac144d9e3f27ae3")
+    add_versions("1.11.835", "65edd81d1617a9cd53184cd338b7de9e94b067b1127afe5941ddf048fa1befbf")
+    add_versions("1.11.829", "6cd42090442adce6c620b0c52dd7a264d2bdc738d309a53f155fbe29f3cbed26")
+    add_versions("1.11.828", "a34b2ad9d304052aa46c4f1535f89cc6db502eb57bc0f8c329affc9e99360183")
+    add_versions("1.11.817", "18f65613ff591e1ed67d8b6ff086726ceeb7a3696d982f60edfdf67a24168fd8")
+    add_versions("1.11.813", "3253922af460435592d9d1fe7e89d9fbde891235fe0abbe9d2319bf1776e62cc")
+    add_versions("1.11.808", "f82a6289e11506b15c61b74c43da4c8f609395e7fa302fa09ad922ac6cd0b116")
+    add_versions("1.11.802", "bee8a44185dfcc83f1252d0a0005d5f76c798562450a41773153bc20ed64f7ec")
 
     add_configs("build_only",  {description = 'By default, all SDKS are built, if only AWS S3 is required, then set build_only="s3", with multiple SDKS separated by commas.'})
     add_configs("http_client", {description = 'If disabled, no platform-default http client will be included in the library.', default = true, type = "boolean"})
-    add_configs("encryption",  {description = 'If disabled, no platform-default encryption will be included in the library.', default = false, type = "boolean"})
+    add_configs("encryption",  {description = 'If disabled, no platform-default encryption will be included in the library.', default = true, type = "boolean", readonly = true}) -- since 1.9 this must be true
 
     add_deps("zlib")
     add_deps("cmake")
+    add_deps("aws-checksums")
+    add_deps("aws-crt-cpp")
+    add_deps("aws-c-http")
+    add_deps("aws-c-mqtt")
+    add_deps("aws-c-cal")
+    add_deps("aws-c-auth")
+    add_deps("aws-c-common")
+    add_deps("aws-c-io")
+    add_deps("aws-c-event-stream")
+    add_deps("aws-c-s3")
+    add_deps("aws-c-compression")
+    add_deps("aws-c-sdkutils")
 
     on_load(function (package)
         if package:config("http_client") then
-            package:add("deps", "libcurl")
+            package:add("deps", "libcurl", {configs = {openssl3 = true, zlib = true}})
             if package:is_plat("macosx") then
                 package:add("frameworks", "Foundation", "CoreFoundation", "Security", "SystemConfiguration")
             end
         end
         if package:config("encryption") then
-            package:add("deps", "openssl")
+            package:add("deps", "openssl3")
         end
     end)
 
-    on_install("linux", "macosx", function (package)
-        io.replace("cmake/Findcrypto.cmake",
-            "if (BUILD_SHARED_LIBS)\n            set(crypto_LIBRARY ${crypto_SHARED_LIBRARY})",
-            [[
-                if (BUILD_SHARED_LIBS)
-                    if (crypto_SHARED_LIBRARY)
-                        set(crypto_LIBRARY ${crypto_SHARED_LIBRARY})
-                    else()
-                        set(crypto_LIBRARY ${crypto_STATIC_LIBRARY})
-                    endif()
-            ]], {plain = true})
-        local configs = {"-DENABLE_TESTING=OFF", "-DAUTORUN_UNIT_TESTS=OFF"}
+    on_install("linux", "cross", "macosx|arm64", function (package)
+        local configs = {"-DBUILD_DEPS=OFF", "-DENABLE_TESTING=OFF", "-DAUTORUN_UNIT_TESTS=OFF", "-DAWS_SDK_WARNINGS_ARE_ERRORS=OFF"}
         table.insert(configs, "-DMINIMIZE_SIZE=ON")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DNO_HTTP_CLIENT=" .. (package:config("http_client") and "OFF" or "ON"))
         table.insert(configs, "-DNO_ENCRYPTION=" .. (package:config("encryption") and "OFF" or "ON"))
+        table.insert(configs, "-DUSE_OPENSSL=" .. (package:config("encryption") and "ON" or "OFF"))
+        if package:config("encryption") then
+            local openssl = package:dep("openssl3")
+            if openssl and not openssl:is_system() then
+                table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
+            end
+        end
         if package:config("build_only") then
             table.insert(configs, "-DBUILD_ONLY=" .. package:config("build_only"))
         end

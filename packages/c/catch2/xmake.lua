@@ -5,6 +5,13 @@ package("catch2")
 
     add_urls("https://github.com/catchorg/Catch2/archive/refs/tags/$(version).zip",
              "https://github.com/catchorg/Catch2.git")
+    add_versions("v3.15.2", "a74af66888c17b14efa80544e56b2deef450ad210ddd239451c2222f109c5e51")
+    add_versions("v3.15.1", "4be2f2625776fe50b419acad9d28a8f6d3e030fc8c6b9df200bb0fb1ac998d52")
+    add_versions("v3.15.0", "27c53b2b03f17eb38c7565a8f80cfddaed2b0488d10206893f68776fac45694c")
+    add_versions("v3.14.0", "33c9dfd4de6979fe127d5c43eb883818994f723938ce5aec0945410c8d6ebea2")
+    add_versions("v3.13.0", "b10a1f4930f576a0dd8fa37e86a14309dbb766944d7776c0a38472e5760f0d70")
+    add_versions("v3.12.0", "e1e1592dbc971d9196b379aef1882f7d427ceaf0ecf6cae40b575d580dd83648")
+    add_versions("v3.11.0", "faa38e0b3899151d5c1b1d81f15ba7b6d25c6c27d060094212392e8f6bc1dce3")
     add_versions("v3.10.0", "e128e267ac17a7af61f57f65c31923a7b494cfe443aa7493e61033677cb7a0d3")
     add_versions("v3.9.0", "44d0c52a218d21da40800dc2d4e77f79ee6f8165ce9274fce52fa00608083912")
     add_versions("v3.8.1", "11e422a9d5a0a1732b3845ebb374c2d17e9d04337f3e717b21210be4ec2ec45b")
@@ -90,7 +97,7 @@ package("catch2")
                 elseif package:has_tool("cxx", "clang", "clangxx") then
                     main_component:add("ldflags", "-Wl,/subsystem:console")
                 end
-                os.mkdir(path.join(package:buildir(), "src/pdb"))
+                os.mkdir(path.join(package:builddir(), "src/pdb"))
             end
 
             local configs = {"-DCATCH_INSTALL_DOCS=OFF", "-DCATCH_BUILD_TESTING=OFF", "-DCATCH_BUILD_EXAMPLES=OFF"}
@@ -106,7 +113,7 @@ package("catch2")
 
         if package:is_plat("windows") and package:is_debug() then
             local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.cp(path.join(package:buildir(), "src/*.pdb"), dir)
+            os.cp(path.join(package:builddir(), "src/*.pdb"), dir)
         end
     end)
 

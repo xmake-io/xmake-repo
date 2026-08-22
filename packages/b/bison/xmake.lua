@@ -7,13 +7,15 @@ package("bison")
     if on_source then
         on_source(function (package)
             if not package:is_plat("windows", "mingw", "msys") then
-                package:add("urls", "http://ftpmirror.gnu.org/gnu/bison/bison-$(version).tar.gz",
-                 "http://ftp.gnu.org/gnu/bison/bison-$(version).tar.gz")
+                package:add("urls", "https://ftp.gnu.org/gnu/bison/bison-$(version).tar.gz",
+                                    "https://mirrors.ustc.edu.cn/gnu/bison/bison-$(version).tar.gz",
+                                    "https://mirror.csclub.uwaterloo.ca/gnu/bison/bison-$(version).tar.gz")
             end
         end)
     elseif not is_plat("windows", "mingw", "msys") then
-        add_urls("http://ftpmirror.gnu.org/gnu/bison/bison-$(version).tar.gz",
-                 "http://ftp.gnu.org/gnu/bison/bison-$(version).tar.gz")
+        add_urls("https://ftp.gnu.org/gnu/bison/bison-$(version).tar.gz",
+                 "https://mirrors.ustc.edu.cn/gnu/bison/bison-$(version).tar.gz",
+                 "https://mirror.csclub.uwaterloo.ca/gnu/bison/bison-$(version).tar.gz")
     end
 
     add_versions("3.7.4", "fbabc7359ccd8b4b36d47bfe37ebbce44805c052526d5558b95eda125d1677e2")

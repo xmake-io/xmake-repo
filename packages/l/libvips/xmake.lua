@@ -6,6 +6,13 @@ package("libvips")
     add_urls("https://github.com/libvips/libvips/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libvips/libvips.git")
 
+    add_versions("v8.18.5", "95e51e4dc890eac8c9fd1d2ded62930bd59825b017558efa52858790779c90a6")
+    add_versions("v8.18.3", "21aa79be2a83f1f46582c58e0fc7fc2b355e6fbb661091fb963a3b20f494dbaf")
+    add_versions("v8.18.2", "c6e9f3c384436c6ffc75848d1ad76347368b9639897f6d9f909178dc986d5200")
+    add_versions("v8.18.1", "083b59ec588aa2c362591b6b1fb151467c6c34997b7c918ed0fd90760ac7b7c3")
+    add_versions("v8.18.0", "33bf7fad3d775389a2bfbae4b391196ffedcfa1f3fed258ec506d9c0241b0612")
+    add_versions("v8.17.3", "c1180d13f33742685c513ac42c0556dd1ce9e2b79cdb248a807576e2d8b63b32")
+    add_versions("v8.17.2", "66e2c8f0a716a08cf99e46a27535ef4938f1cae110dd9207cf8e992616b36ba7")
     add_versions("v8.17.1", "79f54d367a485507c1421408ae13768e4734f473edc71af511472645f46dbd08")
     add_versions("v8.16.1", "df960c3df02da8ae16ee19e79c9428e955d178242a8f06064e07e0c417238e6e")
     add_versions("v8.16.0", "d28d7bf7e3f8fa17390c255ace4a05a1c56459e1f6015319f4847ea0733593b3")
@@ -15,6 +22,8 @@ package("libvips")
     add_versions("v8.15.2", "8c3ece7be367636fd676573a8ff22170c07e95e81fd94f2d1eb9966800522e1f")
     add_versions("v8.15.1", "5701445a076465a3402a135d13c0660d909beb8efc4f00fbbe82392e243497f2")
 
+    add_patches("8.18.0", "patches/8.18.0/fix-macro.patch", "9a3273e0280d5f3efb81a371d3990c4b6f29f88e0db42694d0f31b75feb5e050")
+    add_patches("8.18.0", "patches/8.18.0/windows-build.patch", "32aa8555c0300170af2f50ab29a2862aaff71fe646ef1b37371bdcc14da97602")
     add_patches("8.15.3", "patches/8.15.3/msvc-ssize_t.patch", "1995af657dfd2f4e4f8edec685f67bd473537ff33c42d8329a0df0e0477408b9")
 
     add_configs("c++", { description = "Build C++ API", default = true, type = "boolean" })
@@ -100,7 +109,7 @@ package("libvips")
         end
     end)
 
-    on_install("windows", "macosx", "linux", "cross", function (package)
+    on_install("windows", "macosx", "linux", "cross", "mingw", function (package)
         io.replace("meson.build", "subdir('tools')", "", {plain = true})
         io.replace("meson.build", "subdir('test')", "", {plain = true})
         io.replace("meson.build", "subdir('fuzz')", "", {plain = true})
@@ -136,15 +145,15 @@ package("libvips")
                     enabled_string = (enabled and "true" or "false")
                 end
 
+                local confname = name
                 if configs_map[name] then
-                    name = configs_map[name]
+                    confname = configs_map[name]
                 end
-                table.insert(configs, "-D" .. name .. "=" .. enabled_string)
+                table.insert(configs, "-D" .. confname .. "=" .. enabled_string)
             end
         end
 
         import("package.tools.meson").install(package, configs, {
-            packagedeps = {"libintl", "libiconv"},
             prefix = path.unix(package:installdir()) -- after xmake v2.9.1
         })
     end)

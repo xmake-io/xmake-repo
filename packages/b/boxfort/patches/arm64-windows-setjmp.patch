@@ -1,0 +1,121 @@
+diff --git a/src/asm/setjmp-aarch64.asm b/src/asm/setjmp-aarch64.asm
+new file mode 100644
+index 0000000..7d37d65
+--- /dev/null
++++ b/src/asm/setjmp-aarch64.asm
+@@ -0,0 +1,115 @@
++;
++; The MIT License (MIT)
++;
++; Copyright © 2026 Franklin "Snaipe" Mathieu <http://snai.pe/>
++;
++; Permission is hereby granted, free of charge, to any person obtaining a copy
++; of this software and associated documentation files (the "Software"), to deal
++; in the Software without restriction, including without limitation the rights
++; to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++; copies of the Software, and to permit persons to whom the Software is
++; furnished to do so, subject to the following conditions:
++;
++; The above copyright notice and this permission notice shall be included in
++; all copies or substantial portions of the Software.
++;
++; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++; IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++; AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
++; THE SOFTWARE.
++;
++
++    AREA    |.text|, CODE, READONLY, ALIGN=3
++
++    EXPORT  bxfi_setjmp
++    EXPORT  bxfi_longjmp
++
++; int bxfi_setjmp(jmp_buf env)
++; x0: env
++bxfi_setjmp
++    mov     x1, sp
++    
++    ; MSVC / Windows SDK _JUMP_BUFFER layout:
++    ; Offset 0x00 (#0)   : Frame (x29)
++    ; Offset 0x08 (#8)   : Reserved (sp)
++    ; Offset 0x10 (#16)  : x19-x28
++    ; Offset 0x60 (#96)  : x29 (fp)
++    ; Offset 0x68 (#104) : x30 (lr)
++    ; Offset 0x70 (#112) : sp
++    ; Offset 0x78 (#120) : fpcr
++    ; Offset 0x7C (#124) : fpsr
++    ; Offset 0x80 (#128) : d8-d15
++
++    ; Store integer registers (x19-x28)
++    stp     x19, x20, [x0, #16]
++    stp     x21, x22, [x0, #32]
++    stp     x23, x24, [x0, #48]
++    stp     x25, x26, [x0, #64]
++    stp     x27, x28, [x0, #80]
++
++    ; Store FP and LR
++    stp     x29, x30, [x0, #96]
++
++    ; Store SP
++    str     x1,       [x0, #112]
++
++    ; Store FPCR and FPSR
++    mrs     x2, fpcr
++    str     w2, [x0, #120]
++    mrs     x2, fpsr
++    str     w2, [x0, #124]
++
++    ; Store floating point registers (d8-d15)
++    stp     d8, d9,   [x0, #128]
++    stp     d10, d11, [x0, #144]
++    stp     d12, d13, [x0, #160]
++    stp     d14, d15, [x0, #176]
++
++    ; Return 0
++    mov     x0, #0
++    ret
++
++; void bxfi_longjmp(jmp_buf env, int val)
++; x0: env
++; x1: val
++bxfi_longjmp
++    ; Save val to x2 so we can use x1 as scratch and preserve x0
++    mov     x2, x1
++
++    ; Restore integer registers (x19-x28)
++    ldp     x19, x20, [x0, #16]
++    ldp     x21, x22, [x0, #32]
++    ldp     x23, x24, [x0, #48]
++    ldp     x25, x26, [x0, #64]
++    ldp     x27, x28, [x0, #80]
++
++    ; Restore FP and LR
++    ldp     x29, x30, [x0, #96]
++
++    ; Restore SP using x1 as scratch
++    ldr     x1,       [x0, #112]
++    mov     sp, x1
++
++    ; Restore FPCR and FPSR using x1 as scratch
++    ldr     w1, [x0, #120]
++    msr     fpcr, x1
++    ldr     w1, [x0, #124]
++    msr     fpsr, x1
++
++    ; Restore floating point registers (d8-d15)
++    ldp     d8, d9,   [x0, #128]
++    ldp     d10, d11, [x0, #144]
++    ldp     d12, d13, [x0, #160]
++    ldp     d14, d15, [x0, #176]
++
++    ; Calculate return value: if (val == 0) val = 1;
++    cmp     x2, #0
++    csinc   x0, x2, xzr, ne
++
++    ; Jump to the saved return address (x30 is restored LR)
++    ret
++
++    END

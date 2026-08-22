@@ -6,12 +6,18 @@ package("zlib")
     add_urls("https://github.com/madler/zlib/archive/refs/tags/$(version).tar.gz",
              "https://github.com/madler/zlib.git")
 
+    add_versions("v1.3.2", "b99a0b86c0ba9360ec7e78c4f1e43b1cbdf1e6936c8fa0f6835c0cd694a495a1")
     add_versions("v1.2.10", "42cd7b2bdaf1c4570e0877e61f2fdc0bce8019492431d054d3d86925e5058dc5")
     add_versions("v1.2.11", "629380c90a77b964d896ed37163f5c3a34f6e6d897311f1df2a7016355c45eff")
     add_versions("v1.2.12", "d8688496ea40fb61787500e863cc63c9afcbc524468cedeb478068924eb54932")
     add_versions("v1.2.13", "1525952a0a567581792613a9723333d7f8cc20b87a81f920fb8bc7e3f2251428")
     add_versions("v1.3", "b5b06d60ce49c8ba700e0ba517fa07de80b5d4628a037f4be8ad16955be7a7c0")
     add_versions("v1.3.1", "17e88863f3600672ab49182f217281b6fc4d3c762bde361935e436a95214d05c")
+
+    add_patches("v1.2.10", "patches/v1.2.10/fix-macosx-fdopen.patch", "382a129e1e604c0da6121e993cd2e7e70069fb287dcdf85a9aa9ff5bd7cb7872")
+    add_patches("v1.2.11", "patches/v1.2.10/fix-macosx-fdopen.patch", "382a129e1e604c0da6121e993cd2e7e70069fb287dcdf85a9aa9ff5bd7cb7872")
+    add_patches("v1.2.12", "patches/v1.2.12/fix-macosx-fdopen.patch", "9ccc43fbd2946fabb688ed687506710ed42bf6039d1034060183f8c5cb65a7ff")
+    add_patches("v1.2.13", "patches/v1.2.13/fix-macosx-fdopen.patch", "4ed4e669e853b9490ec39df35739ba4bbf08dcb245c8f5e26659e736c3007685")
 
     add_configs("zutil", {description = "Export zutil.h api", default = false, type = "boolean"})
 

@@ -7,6 +7,7 @@ package("audiofile")
     add_urls("https://github.com/adamstark/AudioFile/archive/refs/tags/$(version).tar.gz",
              "https://github.com/adamstark/AudioFile.git")
 
+    add_versions("1.1.4", "e3749f90a9356b5206ef8928fa0a9c039e7db49e46bb7f32c3963d6c44c5bea8")
     add_versions("1.1.3", "abc22bbe798cb552048485ce19278f35f587340bf0d5c68ac0028505eaf70dfe")
     add_versions("1.1.2", "d090282207421e27be57c3df1199a9893e0321ea7c971585361a3fc862bb8c16")
     add_versions("1.1.1", "664f9d5fbbf1ff6c603ae054a35224f12e9856a1d8680be567909015ccaac328")

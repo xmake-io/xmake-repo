@@ -8,6 +8,8 @@ package("lua")
     end})
     add_urls("https://github.com/lua/lua.git")
 
+    add_versions("v5.5.0", "57ccc32bbbd005cab75bcc52444052535af691789dba2b9016d5c50640d68b3d")
+    add_versions("v5.4.8", "4f18ddae154e793e46eeab727c59ef1c0c0c2b744e7b94219710d76f530629ae")
     add_versions("v5.4.7", "9fbf5e28ef86c69858f6d3d34eccc32e911c1a28b4120ff3e84aaa70cfbf1e30")
     add_versions("v5.4.6", "7d5ea1b9cb6aa0b59ca3dde1c6adcb57ef83a1ba8e5432c0ecd06bf439b3ad88")
     add_versions("v5.4.4", "164c7849653b80ae67bec4b7473b884bf5cc8d2dca05653475ec2ed27b9ebf61")

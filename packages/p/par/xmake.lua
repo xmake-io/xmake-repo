@@ -2,6 +2,7 @@ package("par")
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/prideout/par")
     set_description("single-file C libraries from Philip Allan Rideout")
+    set_license("MIT")
 
     add_urls("https://github.com/prideout/par.git")
 

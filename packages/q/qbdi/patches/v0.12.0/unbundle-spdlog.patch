@@ -1,0 +1,123 @@
+From 9576a67e0805cab2b58297f8bcf2a3dcbe62baa5 Mon Sep 17 00:00:00 2001
+From: Redbeanw44602 <redbeana44945@gmail.com>
+Date: Thu, 1 Jan 2026 22:33:29 +0800
+Subject: [PATCH] unbundle spdlog.
+
+---
+ CMakeLists.txt                 |  4 +--
+ cmake/QBDIDependencies.cmake   | 59 +---------------------------------
+ tools/validator/CMakeLists.txt |  2 +-
+ 3 files changed, 4 insertions(+), 61 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 76a3517..7324bc4 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -276,7 +276,7 @@ endif()
+ add_library(QBDI_src INTERFACE)
+ add_library(QBDI_shared_src INTERFACE)
+ 
+-target_link_libraries(QBDI_src INTERFACE qbdi-llvm spdlog)
++target_link_libraries(QBDI_src INTERFACE qbdi-llvm spdlog::spdlog)
+ 
+ include("${CMAKE_CURRENT_SOURCE_DIR}/src/CMakeLists.txt")
+ 
+@@ -303,7 +303,7 @@ if(QBDI_STATIC_LIBRARY)
+   target_include_directories(
+     QBDI_obj PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/include-static")
+ 
+-  set(qbdi_static_libs qbdi-llvm QBDI_obj spdlog)
++  set(qbdi_static_libs qbdi-llvm QBDI_obj)
+ 
+   merge_static_libs(QBDI_static QBDI \${qbdi_static_libs})
+ 
+diff --git a/cmake/QBDIDependencies.cmake b/cmake/QBDIDependencies.cmake
+index 4d55403..6308a57 100644
+--- a/cmake/QBDIDependencies.cmake
++++ b/cmake/QBDIDependencies.cmake
+@@ -51,32 +51,7 @@ endfunction()
+ 
+ # Spdlog
+ # ======
+-set(SPDLOG_VERSION 1.15.0)
+-
+-prepare_package(
+-  spdlog
+-  URL
+-  "https://github.com/gabime/spdlog/archive/v${SPDLOG_VERSION}.zip"
+-  URL_HASH
+-  "SHA256=076f3b4d452b95433083bcc66d07f79addba2d3fcb2b9177abeb7367d47aefbb"
+-  EXCLUDE_FROM_ALL)
+-
+-list(APPEND qbdi_deps spdlog)
+-
+-set(SPDLOG_NO_EXCEPTIONS
+-    ON
+-    CACHE BOOL "Enable SPDLOG_NO_EXCEPTIONS")
+-set(SPDLOG_NO_TLS
+-    ON
+-    CACHE BOOL "Enable SPDLOG_NO_TLS")
+-set(SPDLOG_NO_THREAD_ID
+-    ON
+-    CACHE BOOL "Enable SPDLOG_NO_THREAD_ID")
+-if(QBDI_LOG_DEBUG)
+-  set(SPDLOG_ACTIVE_LEVEL
+-      SPDLOG_LEVEL_DEBUG
+-      CACHE BOOL "Enable SPDLOG_LEVEL_DEBUG level")
+-endif()
++find_package(spdlog REQUIRED)
+ 
+ # Catch2
+ # ======
+@@ -130,35 +105,3 @@ FetchContent_MakeAvailable(${qbdi_deps})
+ # ==========
+ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/llvm")
+ include(QBDI_llvm)
+-
+-# Spdlog Configure
+-# ================
+-set_property(TARGET spdlog PROPERTY POSITION_INDEPENDENT_CODE ON)
+-target_compile_definitions(
+-  spdlog INTERFACE SPDLOG_NO_TLS=1 SPDLOG_NO_THREAD_ID=1 SPDLOG_NO_EXCEPTIONS=1)
+-
+-if(QBDI_LOG_DEBUG)
+-  target_compile_definitions(spdlog
+-                             INTERFACE SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG)
+-else()
+-  target_compile_definitions(spdlog
+-                             INTERFACE SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_INFO)
+-endif()
+-
+-# remove Threads::Threads for android
+-if(ANDROID)
+-  get_target_property(SPDLOG_LIB spdlog INTERFACE_LINK_LIBRARIES)
+-  list(REMOVE_ITEM SPDLOG_LIB Threads::Threads)
+-  set_property(TARGET spdlog PROPERTY INTERFACE_LINK_LIBRARIES "${SPDLOG_LIB}")
+-endif()
+-
+-if(QBDI_PLATFORM_WINDOWS)
+-  target_compile_definitions(spdlog PUBLIC _DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR)
+-
+-else()
+-  set(SPDLOG_QBDI_CXX_FLAGS
+-      -ffunction-sections -fdata-sections -fvisibility-inlines-hidden
+-      -fvisibility=hidden -fPIC -fno-rtti)
+-  target_compile_options(
+-    spdlog PRIVATE $<$<COMPILE_LANGUAGE:CXX>:${SPDLOG_QBDI_CXX_FLAGS}>)
+-endif()
+diff --git a/tools/validator/CMakeLists.txt b/tools/validator/CMakeLists.txt
+index ca75b54..787e793 100644
+--- a/tools/validator/CMakeLists.txt
++++ b/tools/validator/CMakeLists.txt
+@@ -34,7 +34,7 @@ target_include_directories(
+           $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>
+           $<INSTALL_INTERFACE:include>)
+-target_link_libraries(validator PRIVATE QBDIPreload QBDI_static spdlog)
++target_link_libraries(validator PRIVATE QBDIPreload QBDI_static spdlog::spdlog)
+ 
+ set_target_properties(validator PROPERTIES CXX_STANDARD 14 CXX_STANDARD_REQUIRED
+                                                            ON)
+-- 
+2.52.0
+

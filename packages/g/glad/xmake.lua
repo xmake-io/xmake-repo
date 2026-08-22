@@ -39,7 +39,6 @@ package("glad")
         if package:is_plat("windows") then
             table.insert(configs, "-DUSE_MSVC_RUNTIME_LIBRARY_DLL=" .. (package:config("vs_runtime"):startswith("MT") and "OFF" or "ON"))
         end
-
         table.insert(configs, "-DGLAD_NO_LOADER=" .. (package:config("loader") and "OFF" or "ON"))
         table.insert(configs, "-DGLAD_REPRODUCIBLE=" .. (package:config("reproducible") and "ON" or "OFF"))
         table.insert(configs, "-DGLAD_PROFILE=" .. package:config("profile"))

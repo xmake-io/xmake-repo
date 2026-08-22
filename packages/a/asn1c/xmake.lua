@@ -5,6 +5,7 @@ package("asn1c")
 
     add_urls("https://github.com/vlm/asn1c/archive/refs/tags/$(version).tar.gz",
              "https://github.com/vlm/asn1c.git")
+    add_versions("v0.9.29", "cdcfa0638d9657da3b114ceef3d6c9919e9e1e4da0de49456f8d9e398826d5ab")
     add_versions("v0.9.28", "56298523d53f6bb54d88a399fc8b711672e5d9059919b8198f658ba94b280125")
 
     add_deps("autoconf", "automake", "libtool")

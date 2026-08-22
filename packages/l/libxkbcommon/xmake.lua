@@ -8,6 +8,7 @@ package("libxkbcommon")
 
     add_versions("1.0.3", "5d10a57ab65daad7d975926166770eca1d2c899131ab96c23845df1c42da5c31")
     add_versions("1.8.1", "c65c668810db305c4454ba26a10b6d84a96b5469719fe3c729e1c6542b8d0d87")
+    add_versions("1.13.1", "aeb951964c2f7ecc08174cb5517962d157595e9e3f38fc4a130b91dc2f9fec18")
 
     if is_plat("linux") then
         add_extsources("apt::libxkbcommon-dev")
@@ -19,14 +20,15 @@ package("libxkbcommon")
 
     on_load(function (package)
         if package:config("x11") then
-            package:add("deps", "libxcb", "xcb-proto", "libxml2", "libxau", "libxdmcp")
+            package:add("deps", "libxcb", "xcb-proto", "libxml2", "libxau", "libxdmcp", { configs = { shared = package:config("shared") }})
             if package:is_plat("linux") then
                 package:add("extsources", "pacman::libxkbcommon-x11", "apt::libxkbcommon-x11-dev")
             end
         end
 
         if package:config("wayland") then
-            package:add("deps", "wayland", "wayland-protocols")
+            package:add("deps", "wayland", { configs = { shared = package:config("shared") }})
+            package:add("deps", "wayland-protocols")
             if package:is_plat("linux") then
                 package:add("extsources", "pacman::libxkbcommon")
             end

@@ -1,0 +1,12 @@
+diff --git a/src/http/CMakeLists.txt b/src/http/CMakeLists.txt
+index 0c7bccc8..50a43763 100644
+--- a/src/http/CMakeLists.txt
++++ b/src/http/CMakeLists.txt
+@@ -99,6 +99,7 @@ IF(CONNECTOR_HTTP)
+   TARGET_LINK_LIBRARIES(wthttp
+     PUBLIC
+       wt
++      crypt32
+     PRIVATE
+       ${MY_ZLIB_LIBS}
+       ${MY_SSL_LIBS}

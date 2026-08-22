@@ -3,9 +3,9 @@ package("gstreamer")
     set_description("GStreamer is a development framework for creating applications like media players, video editors, streaming media broadcasters and so on")
     set_license("LGPL-2.0-or-later")
 
-    add_urls("https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-$(version).tar.xz", {alias = "home"})
-
-    add_versions("home:1.24.2", "9cafdd23bd180f1681c56cd3a6879a8497ccf24da6f422a6b6f356fa074a8481")
+    add_urls("https://github.com/GStreamer/gstreamer/archive/refs/tags/$(version).tar.gz")
+    add_versions("1.29.2", "bdc85ae119a6f0ece463c0bc202881d56a036df29378f8b417e2088dea2800b5")
+    add_versions("1.24.2", "2006cb5ba1484e5a15b53d893a85e3d832bc17d26b457c399cb74203701e141c")
 
     add_configs("tools", {description = "Build tools.", default = false, type = "boolean"})
     add_configs("libunwind", {description = "Use libunwind to generate backtraces", default = false, type = "boolean"})
@@ -22,7 +22,7 @@ package("gstreamer")
     if is_plat("windows") then
         add_deps("pkgconf", "winflexbison")
     else
-        add_deps("flex", "bison")
+        add_deps("flex", "bison", {kind = "binary", host = true, private = true})
     end
     add_deps("glib")
 
@@ -55,6 +55,7 @@ package("gstreamer")
         if package:is_plat("windows", "macosx") then
             table.insert(packagedeps, "libintl")
         end
+        os.cd("subprojects/gstreamer")
         import("package.tools.meson").install(package, configs, {packagedeps = packagedeps})
     end)
 

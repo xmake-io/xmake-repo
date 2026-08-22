@@ -7,6 +7,18 @@ package("cpp-httplib")
     set_urls("https://github.com/yhirose/cpp-httplib/archive/refs/tags/$(version).tar.gz",
              "https://github.com/yhirose/cpp-httplib.git")
 
+    add_versions("v0.53.1", "185af9587e270de9a3bfee234c6740f02e82265da33c7a41f97e02ee42f979d2")
+    add_versions("v0.50.1", "3c23acaf0e37bf63cf1b747813b358063e2e40590a7f6418955031fe5eb173c0")
+    add_versions("v0.48.0", "d9ed142d319c6e19a961f477257e67f846909ce15288502188df2281941be84e")
+    add_versions("v0.47.0", "f6676dd6539c1d05978aa8ecfae86d71e73c46f48c7766a04b991aa545c2f065")
+    add_versions("v0.45.0", "03121ca28d210ac8014021c2f2deda4a181f215b1638c493c40a4c7e6056495f")
+    add_versions("v0.43.4", "ea125c932f6b9d0321ce1991434fc5a92fbce2ea1ee98fc1745a84872bb93d6c")
+    add_versions("v0.43.3", "8ccb5f498a9dc44769a49466986171b5cfaf89f3a54fd2eacfdc3fda5dfc7a6a")
+    add_versions("v0.41.0", "6d38a6b74ea33ac3133b8352f2b55b557c1d42f36e1ed0c01f852e3218329d39")
+    add_versions("v0.37.2", "909766cd7697153c9e588b0f96defe1868b7bb11d94b8d4f0c83bb4875bc9066")
+    add_versions("v0.37.1", "294776b99d51860881210624b187b64bae7c451c615ea0c6befb8d9d24a139a0")
+    add_versions("v0.34.0", "cb8e41c4b270f4fc520df71097089b71896c652927d61a94a11cd59689a0515b")
+    add_versions("v0.28.0", "ccb32f9832c906d571f61794f453223dbb724ba738265551e3cd28ca325b529d")
     add_versions("v0.26.0", "a66f908f50ccb119769adce44fe1eac75f81b6ffab7c4ac0211bb663ffeb2688")
     add_versions("v0.23.1", "410a1347ed6bcbcc4a19af8ed8ad3873fe9fa97731d52db845c4c78f3f9c31e6")
     add_versions("v0.22.0", "fcfea48c8f2c386e7085ef8545c8a4875efa30fa6d5cf9dd31f03c6ad038da9d")
@@ -36,6 +48,8 @@ package("cpp-httplib")
     add_versions("v0.9.2", "bfef2587a2aa31c85fb361df71c720be97076f8083e4f3881da8572f6a58054f")
     add_versions("v0.8.5", "b353f3e7c124a08940d9425aeb7206183fa29857a8f720c162f8fd820cc18f0e")
 
+    add_patches(">=0.43.2", "patches/v0.43.2/fix-mingw.diff", "953945c4377edf171193564ed499126b8acc675061a2a89d204c7c8f4d9d4f3c")
+    add_patches(">=0.28.0 <0.43.2", "patches/v0.23.1/fix-mingw.diff", "d2d8a4c16de3a00d9872526a187257c7ad344eba2a9f109d10b58eadce1c4059")
     add_patches("v0.26.0", "patches/v0.26.0/fix-mingw.diff", "f7b704e86abd8fd04217056e3ffb01427185e0bae72999246a3b8d13ba23c56a")
     add_patches("v0.23.1", "patches/v0.23.1/fix-mingw.diff", "d2d8a4c16de3a00d9872526a187257c7ad344eba2a9f109d10b58eadce1c4059")
 
@@ -59,7 +73,7 @@ package("cpp-httplib")
                     assert(vs and tonumber(vs) > 2013, "package(httplib >= 0.11.0): VS 2013 or lower is neither supported nor tested.")
                 end
             end
-            if pkg_ver and pkg_ver:ge("0.15.0") and package:is_plat("msys") then
+            if pkg_ver and pkg_ver:ge("0.15.0") and package:is_plat("msys", "mingw") then
                 wprint("package(httplib): MSYS2 (including MinGW) is not officially supported or tested by httplib.")
             end
             if package:is_plat("android") then
@@ -109,9 +123,13 @@ package("cpp-httplib")
     end)
 
     on_test(function (package)
+        local languages = "c++11"
+        if package:is_plat("windows") and package:has_tool("cxx", "clang", "clangxx") then
+            languages = "c++14"
+        end
         assert(package:check_cxxsnippets({test = [[
             void test() {
                 httplib::Client cli("http://cpp-httplib-server.yhirose.repl.co");
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "httplib.h"}))
+        ]]}, {configs = {languages = languages}, includes = "httplib.h"}))
     end)

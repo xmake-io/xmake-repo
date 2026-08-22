@@ -9,8 +9,6 @@ package("pthreads4w")
 
     add_versions("3.0.0", "31f20963840c26d78fb20224577b7e677018b3eb3000c3570db88528043adc20")
 
-    add_includedirs("include/pthread")
-
     if is_host("linux", "macosx") and is_plat("mingw") then
         add_deps("autoconf", "automake")
     end
@@ -25,7 +23,10 @@ package("pthreads4w")
         end
         import("package.tools.nmake").build(package, {"-f", "Makefile", target})
         os.cp("*.lib", package:installdir("lib"))
-        os.cp("*.h", package:installdir("include/pthread"))
+        os.cp("_ptw32.h", package:installdir("include"))
+        os.cp("pthread.h", package:installdir("include"))
+        os.cp("sched.h", package:installdir("include"))
+        os.cp("semaphore.h", package:installdir("include"))
         if package:config("shared") then
             os.cp("*.dll", package:installdir("bin"))
             package:addenv("PATH", "bin")
@@ -55,6 +56,18 @@ package("pthreads4w")
             target = target .. "-debug"
         end
         os.vrunv("make", {"V=1", target})
+
+        os.cp("_ptw32.h", package:installdir("include"))
+        os.cp("pthread.h", package:installdir("include"))
+        os.cp("sched.h", package:installdir("include"))
+        os.cp("semaphore.h", package:installdir("include"))
+        if package:config("shared") then
+            os.cp("*.dll", package:installdir("bin"))
+            os.cp("*.dll.a", package:installdir("lib"))
+            package:addenv("PATH", "bin")
+        else
+            os.cp("*.a", package:installdir("lib"))
+        end
     end)
 
     on_test(function (package)

@@ -7,7 +7,7 @@ function main(package, opt)
 
     local paths = {}
     if is_host("linux") then
-        for _, ver in ipairs({"8", "11", "17", "21"}) do
+        for _, ver in ipairs({"8", "11", "17", "21", "25"}) do
             local dir = format("/usr/lib/jvm/java-%s-openjdk-amd64", ver)
             if os.isdir(dir) then
                 table.insert(paths, dir)

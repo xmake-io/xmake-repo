@@ -22,7 +22,7 @@ package("hdf5")
     add_versions("github:1.14.4-3", "019ac451d9e1cf89c0482ba2a06f07a46166caf23f60fea5ef3c37724a318e03")
     add_versions("github:1.14.6", "e4defbac30f50d64e1556374aa49e574417c9e72c6b1de7a4ff88c4b1bea6e9b")
 
-    add_patches(">1.10", "patch/cmake.patch", "f1a3f6be6d1bf53a49d47b726107261f8dacf028428f9d1552fc307c03670015")
+    add_patches(">1.14.4 <2.0", "patch/cmake.patch", "f1a3f6be6d1bf53a49d47b726107261f8dacf028428f9d1552fc307c03670015")
 
     add_configs("zlib", {description = "Enable Zlib Filters", default = false, type = "boolean"})
     add_configs("szip", {description = "Enable Szip Filters", default = false, type = "boolean"})
@@ -42,6 +42,9 @@ package("hdf5")
         if package:config("szip") then
             package:add("deps", "szip")
         end
+        if package:is_plat("windows") and package:config("shared") then
+            package:add("defines", "H5_BUILT_AS_DYNAMIC_LIB")
+        end
 
         local libs = {"hdf5_hl_cpp", "hdf5_cpp", "hdf5_hl", "hdf5_tools", "hdf5"}
         local prefix = (package:is_plat("windows") and not package:config("shared")) and "lib" or ""
@@ -49,13 +52,14 @@ package("hdf5")
             package:add("links", prefix .. lib)
         end
 
-        package:addenv("HDF5_ROOT", "cmake")
-        package:addenv("PATH", "bin")
+        package:mark_as_pathenv("HDF5_ROOT")
     end)
 
     on_install("windows", "macosx", "linux", "bsd", function (package)
         -- remove postfix
-        io.replace("config/cmake/HDFMacros.cmake", "if(NOT CMAKE_DEBUG_POSTFIX)", "if(0)", {plain = true})
+        if os.isfile("config/cmake/HDFMacros.cmake") then
+            io.replace("config/cmake/HDFMacros.cmake", "if(NOT CMAKE_DEBUG_POSTFIX)", "if(0)", {plain = true})
+        end
         if os.isfile("CMakeInstallation.cmake") then
             io.replace("CMakeInstallation.cmake", "include (InstallRequiredSystemLibraries)", "", {plain = true})
         end
@@ -77,6 +81,8 @@ package("hdf5")
         table.insert(configs, "-DHDF5_ENABLE_Z_LIB_SUPPORT=" .. (package:config("zlib") and "ON" or "OFF"))
         table.insert(configs, "-DHDF5_ENABLE_SZIP_SUPPORT=" .. (package:config("szip") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
+        package:addenv("HDF5_ROOT", "cmake")
+        package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)

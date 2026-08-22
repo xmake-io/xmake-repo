@@ -1,0 +1,22 @@
+diff --git a/tools/build/src/tools/msvc.jam b/tools/build/src/tools/msvc.jam
+index 54a6ced..bac3932 100644
+--- a/tools/build/src/tools/msvc.jam
++++ b/tools/build/src/tools/msvc.jam
+@@ -1137,7 +1137,7 @@ local rule generate-setup-cmd ( version : command : parent : options * : cpu : g
+         }
+         else
+         {
+-            if [ MATCH "(14.3)" : $(version) ]
++            if [ MATCH "(14.[345])" : $(version) ]
+             {
+                 if $(.debug-configuration)
+                 {
+@@ -1316,7 +1316,7 @@ local rule configure-really ( version ? : options * )
+             # version from the path.
+             # FIXME: We currently detect both Microsoft Visual Studio 9.0 and
+             # 9.0express as 9.0 here.
+-            if [ MATCH "(MSVC\\\\14.3)" : $(command) ]
++            if [ MATCH "(MSVC\\\\14.[345])" : $(command) ]
+             {
+                 version = 14.3 ;
+             }

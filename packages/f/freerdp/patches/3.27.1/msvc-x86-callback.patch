@@ -1,0 +1,13 @@
+diff --git a/libfreerdp/core/update.c b/libfreerdp/core/update.c
+index f962d2d..97ed010 100644
+--- a/libfreerdp/core/update.c
++++ b/libfreerdp/core/update.c
+@@ -54,7 +54,7 @@
+ static INIT_ONCE stats_names_once = INIT_ONCE_STATIC_INIT;
+ static char stats_names[RDP_STATS_COUNT][bufferlen];
+ 
+-static BOOL stats_names_generate(WINPR_ATTR_UNUSED PINIT_ONCE InitOnce,
++static BOOL CALLBACK stats_names_generate(WINPR_ATTR_UNUSED PINIT_ONCE InitOnce,
+                                  WINPR_ATTR_UNUSED PVOID Parameter,
+                                  WINPR_ATTR_UNUSED PVOID* Context)
+ {

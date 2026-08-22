@@ -34,7 +34,10 @@ local sorted_libs = {
   "chrono",
   "system",
   "charconv",
-  "atomic"
+  "atomic",
+  "spirit",
+  "uuid",
+  "config"
 }
 
 local libs_dep = {
@@ -158,7 +161,14 @@ local libs_dep = {
     "mpi",
     "random",
     "serialization"
-  }
+  },
+  spirit = {
+    "thread",
+  },
+  uuid = {
+    "config"
+  },
+  config = { }
 }
 
 local header_only_buildable = {
@@ -167,6 +177,9 @@ local header_only_buildable = {
   "exception",
   "regex",
   "math",
+  "container",
+  "config",
+  "uuid",
 }
 
 function get_libs()

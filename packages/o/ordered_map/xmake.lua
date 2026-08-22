@@ -8,6 +8,7 @@ package("ordered_map")
     set_urls("https://github.com/Tessil/ordered-map/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Tessil/ordered-map.git")
 
+    add_versions("v1.2.0", "3053e2d62db8a158c5941b75dacf397e1c695cd99dda4db78a32af76f4523423")
     add_versions("v1.1.0", "d6070502351646d68f2bbe6078c0da361bc1db733ee8a392e33cfb8b31183e28")
     add_versions("v1.0.0", "49cd436b8bdacb01d5f4afd7aab0c0d6fa57433dfc29d65f08a5f1ed1e2af26b")
 

@@ -7,6 +7,7 @@ package("thread-pool")
     add_urls("https://github.com/bshoshany/thread-pool/archive/refs/tags/$(version).tar.gz",
              "https://github.com/bshoshany/thread-pool.git")
 
+    add_versions("v5.1.0", "54378fb9cbeaee72996d3f8761469c43bb7dd2d4b07faec6d29a68277bd91a51")
     add_versions("v5.0.0", "617a8fbc2c360577f498998f336777c73d581810831d4ce9c920f11ec680b07b")
     add_versions("v4.1.0", "be7abecbc420bb87919eeef729b13ff7c29d5ce547bdae284923296c695415bd")
     add_versions("v3.3.0", "b76c0103c7ed07c137bd5b1988b9c09da280bbbad37588a096d2954c8d996e0f")

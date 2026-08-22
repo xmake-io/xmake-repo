@@ -7,6 +7,8 @@ package("glm")
              {version = function(version) return version:gsub("%+", ".") end})
     add_urls("https://github.com/g-truc/glm.git")
 
+    add_versions("1.0.3", "6775e47231a446fd086d660ecc18bcd076531cfedd912fbd66e576b118607001")
+    add_versions("1.0.2", "19edf2e860297efab1c74950e6076bf4dad9de483826bc95e2e0f2c758a43f65")
     add_versions("1.0.1", "9f3174561fd26904b23f0db5e560971cbf9b3cbda0b280f04d5c379d03bf234c")
     add_versions("1.0.0", "e51f6c89ff33b7cfb19daafb215f293d106cd900f8d681b9b1295312ccadbd23")
     add_versions("0.9.9+8", "7d508ab72cb5d43227a3711420f06ff99b0a0cb63ee2f93631b162bfe1fe9592")

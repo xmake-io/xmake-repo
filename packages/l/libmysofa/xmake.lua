@@ -6,9 +6,13 @@ package("libmysofa")
     add_urls("https://github.com/hoene/libmysofa/archive/refs/tags/$(version).tar.gz",
              "https://github.com/hoene/libmysofa.git")
 
+    add_versions("v1.3.5", "f29508c335c83d8703f943ffc9ca783ac39aca84e851357f13a55af0f8143137")
+    add_versions("v1.3.4", "64c661f75ef39edf68bfc3a28403d2b5a0bd251d0b9f5d021ed6f7917867fb37")
     add_versions("v1.3.2", "6c5224562895977e87698a64cb7031361803d136057bba35ed4979b69ab4ba76")
 
     add_patches("v1.3.2", "patches/v1.3.2/fix-build.patch", "a28aed4c5e766081ff90a7aed74c58b77927432a80385f6aad9f3278cde6bb59")
+    add_patches("v1.3.4", "patches/v1.3.4/cmake.patch", "eee72b9144eed872bc77239bc7a66fefaddced189679fe7d3e499f2aff8f16ee")
+    add_patches("v1.3.5", "patches/v1.3.5/cmake.patch", "18fde6792ad3ede4a68d90d1fd5873ae90605fd00af2e21a1b0c9dcb548cc727")
 
     add_deps("cmake", "zlib")
 

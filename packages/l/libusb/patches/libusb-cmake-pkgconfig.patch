@@ -1,0 +1,45 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index b9129b1..f5022b2 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -286,6 +286,40 @@ endif()
+ if(LIBUSB_INSTALL_TARGETS)
+     install(FILES "${LIBUSB_ROOT}/libusb.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/libusb-1.0")
+ 
++    # xmake: libusb-cmake does not install a pkgconfig file; generate the
++    # real libusb-1.0.pc from libusb's upstream template so consumers that
++    # query pkg-config / find_package("pkgconfig::libusb-1.0") resolve it.
++    set(prefix "${CMAKE_INSTALL_PREFIX}")
++    set(exec_prefix "\${prefix}")
++    set(libdir "\${exec_prefix}/${CMAKE_INSTALL_LIBDIR}")
++    set(includedir "\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}")
++    set(VERSION "${LIBUSB_VERSION}")
++    # Libs.private mirrors the per-OS target_link_libraries above, in the
++    # same link order, so static consumers get the right transitive deps.
++    if(WIN32)
++        if(CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
++            set(LIBS "-lwindowsapp")
++        else()
++            set(LIBS "-lkernel32 -luser32")
++        endif()
++    elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
++        if(LIBUSB_ENABLE_UDEV)
++            set(LIBS "-ludev")
++        endif()
++        set(LIBS "${LIBS} -lpthread")
++    elseif(ANDROID)
++        set(LIBS "-landroid -llog")
++    elseif(APPLE)
++        set(LIBS "-framework Foundation -framework IOKit -framework Security")
++    elseif(CMAKE_SYSTEM_NAME STREQUAL "SunOS")
++        set(LIBS "-ldevinfo -lnvpair")
++    elseif(EMSCRIPTEN)
++        set(LIBS "-pthread")
++    endif()
++    string(STRIP "${LIBS}" LIBS)
++    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/libusb-1.0.pc.in" "libusb-1.0.pc" @ONLY)
++    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/libusb-1.0.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
++
+     install(TARGETS usb-1.0
+         EXPORT usb-1.0-targets
+     )

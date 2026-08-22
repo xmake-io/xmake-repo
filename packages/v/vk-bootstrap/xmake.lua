@@ -6,6 +6,10 @@ package("vk-bootstrap")
     add_urls("https://github.com/charles-lunarg/vk-bootstrap/archive/refs/tags/$(version).tar.gz",
              "https://github.com/charles-lunarg/vk-bootstrap.git")
 
+    add_versions("v1.4.354", "b1997896c269861be029fe394fb783280fab0480acb1b90c0995e4e28f68b34a")
+    add_versions("v1.4.352", "6d368401a7a01fccc4f66160a7c6a193f5c6344029b5bfd38fcb89251c1209ee")
+    add_versions("v1.4.349", "0db474bcd9417bbcc40f66bb3b65d3179d48373ff979b604172ca5b670eb5b04")
+    add_versions("v1.4.342", "c879c6a300d4504fbf8d91b3ce942e378350d17473dd5c7470b0c4413b7aa723")
     add_versions("v1.4.325", "d9d69fb8f9716830ee71bd4a6bd096a6b46b966b5c81eb0a47f3b67cfb3572e1")
     add_versions("v1.4.315", "f28595b057e10033cc6b64319e76be4eeda5b7c9ee83cc1808218e69b040f353")
     add_versions("v1.4.312", "9bc21aea86859329e9939d4d44f40ef4ce9e2208a3fdd9cb67e2d2f0f2393814")
@@ -52,6 +56,7 @@ package("vk-bootstrap")
                 add_files("src/VkBootstrap.cpp")
                 add_headerfiles("src/VkBootstrap.h")
                 add_headerfiles("src/VkBootstrapDispatch.h")
+                add_headerfiles("src/VkBootstrapFeatureChain.h")
                 add_packages("vulkan-headers")
                 if is_plat("linux") then
                     add_syslinks("dl")

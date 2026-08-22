@@ -38,21 +38,33 @@ package("libcurl")
 
     -- we init all configurations in on_load, because package("curl") need it.
     on_load(function (package)
-        if package:is_plat("linux", "bsd", "android", "cross") then
-            -- if no TLS backend has been enabled nor disabled, enable openssl by default
+        local version = package:version()
+        local needs_openssl_on_apple = package:is_plat("macosx", "iphoneos") and version and version:ge("8.15.0")
+        if package:is_plat("linux", "bsd", "android", "cross") or needs_openssl_on_apple then
+            -- if no TLS backend has been enabled nor disabled, prefer openssl3 on modern systems
             if package:config("openssl") == nil and package:config("openssl3") == nil and package:config("mbedtls") == nil then
-                package:config_set("openssl", true)
+                -- Prefer OpenSSL 3 on Linux and curl 8.18+.
+                -- This also avoids conflicts with packages such as libgit2 that use OpenSSL 3.
+                if package:is_plat("linux") or (version and version:ge("8.18.0")) then
+                    package:config_set("openssl3", true)
+                else
+                    package:config_set("openssl", true)
+                end
             end
         end
 
         assert(not (package:config("openssl") and package:config("openssl3")), "OpenSSL and OpenSSL-3 cannot be enabled at the same time.")
+
+        if package:config("libssh2") then
+            package:config_set("zlib", true)
+        end
 
         if package:is_plat("macosx", "iphoneos") then
             package:add("frameworks", "Security", "CoreFoundation", "SystemConfiguration")
         elseif package:is_plat("linux", "bsd") then
             package:add("syslinks", "pthread")
         elseif package:is_plat("windows", "mingw") then
-            package:add("syslinks", "advapi32", "crypt32", "wldap32", "winmm", "ws2_32", "user32")
+            package:add("syslinks", "advapi32", "crypt32", "wldap32", "winmm", "ws2_32", "user32", "iphlpapi", "bcrypt", "secur32")
         end
 
         if package:is_plat("mingw") and is_subhost("msys") then
@@ -94,7 +106,7 @@ package("libcurl")
         end
     end)
 
-    on_install("windows", "mingw", "linux", "bsd", "macosx", "iphoneos", "cross", "android", function (package)
+    on_install("windows", "mingw", "linux", "bsd", "macosx", "iphoneos", "cross", "android", "wasm", function (package)
         local version = package:version()
 
         local configs = {"-DBUILD_TESTING=OFF", "-DENABLE_MANUAL=OFF", "-DENABLE_CURL_MANUAL=OFF"}
@@ -125,18 +137,20 @@ package("libcurl")
         if package:is_plat("windows", "mingw") then
             table.insert(configs, (version:ge("7.80") and "-DCURL_USE_SCHANNEL=ON" or "-DCMAKE_USE_SCHANNEL=ON"))
         end
-        if package:is_plat("macosx", "iphoneos") then
+        -- Secure Transport was removed in curl 8.15.0.
+        if package:is_plat("macosx", "iphoneos") and version:lt("8.15.0") then
             table.insert(configs, (version:ge("7.65") and "-DCURL_USE_SECTRANSP=ON" or "-DCMAKE_USE_DARWINSSL=ON"))
         end
         if package:is_plat("windows") then
-            table.insert(configs, "-DCURL_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DCURL_STATIC_CRT=" .. (package:has_runtime("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DIMPORT_LIB_SUFFIX=")
         end
         if package:is_plat("mingw") and version:le("7.85.0") then
             io.replace("src/CMakeLists.txt", 'COMMAND ${CMAKE_COMMAND} -E echo "/* built-in manual is disabled, blank function */" > tool_hugehelp.c', "", {plain = true})
         end
         if package:is_plat("linux", "bsd", "cross") then
-            io.replace("CMakeLists.txt", "list(APPEND CURL_LIBS OpenSSL::SSL OpenSSL::Crypto)", "list(APPEND CURL_LIBS OpenSSL::SSL OpenSSL::Crypto dl)", {plain = true})
-            io.replace("CMakeLists.txt", "list(APPEND CURL_LIBS ${OPENSSL_LIBRARIES})", "list(APPEND CURL_LIBS ${OPENSSL_LIBRARIES} dl)", {plain = true})
+            io.replace("CMakeLists.txt", "list(APPEND CURL_LIBS OpenSSL::SSL OpenSSL::Crypto)", "list(APPEND CURL_LIBS OpenSSL::SSL OpenSSL::Crypto pthread dl)", {plain = true})
+            io.replace("CMakeLists.txt", "list(APPEND CURL_LIBS ${OPENSSL_LIBRARIES})", "list(APPEND CURL_LIBS ${OPENSSL_LIBRARIES} pthread dl)", {plain = true})
         end
         local function handledependency(conf, depname, includeconfig, libconfig)
             if package:config(conf) then
@@ -177,7 +191,41 @@ package("libcurl")
         handledependency("mbedtls", "mbedtls", "MBEDTLS_INCLUDE_DIRS", {MBEDTLS_LIBRARY = "mbedtls", MBEDX509_LIBRARY = "mbedx509", MBEDCRYPTO_LIBRARY = "mbedcrypto"})
         handledependency("zlib", "zlib", "ZLIB_INCLUDE_DIR", "ZLIB_LIBRARY")
         handledependency("zstd", "zstd", "Zstd_INCLUDE_DIR", "Zstd_LIBRARY")
-        import("package.tools.cmake").install(package, configs, {buildir = "build"})
+
+        local libssh2 = package:dep("libssh2")
+        if libssh2 then
+            local libssh2_deps = {"ZLIB::ZLIB"}
+            local backend = libssh2:config("backend")
+            if backend == "openssl" or backend == "openssl3" then
+                table.join2(libssh2_deps, {"OpenSSL::SSL", "OpenSSL::Crypto"})
+            elseif backend == "mbedtls" then
+                table.join2(libssh2_deps, {"${MBEDTLS_LIBRARIES}"})
+            end
+
+            if package:is_plat("windows", "mingw") then
+                table.join2(libssh2_deps, {"ws2_32", "user32", "crypt32", "advapi32"})
+            end
+            io.replace("CMakeLists.txt",
+                "list(APPEND CURL_LIBS ${LIBSSH2_LIBRARIES})",
+                format("list(APPEND CURL_LIBS ${LIBSSH2_LIBRARIES} %s)", table.concat(libssh2_deps, " ")), {plain = true})
+        end
+
+        local openssl = package:dep("openssl") or package:dep("openssl3")
+        if openssl and not openssl:is_system() then
+            table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
+        end
+        import("package.tools.cmake").install(package, configs, {builddir = "build"})
+
+        if package:is_plat("windows") then
+            local libname = "libcurl"
+            if package:debug() then
+                libname = libname .. "-d"
+            end
+            local pc_file = path.join(package:installdir(), "lib", "pkgconfig", "libcurl.pc")
+            if os.isfile(pc_file) then
+                io.replace(pc_file, " -lcurl", " -l" .. libname, {plain = true})
+            end
+        end
     end)
 
     on_test(function (package)

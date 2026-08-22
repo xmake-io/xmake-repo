@@ -1,0 +1,173 @@
+diff --git a/CMake/FindEXPAT.cmake b/CMake/FindEXPAT.cmake
+index 00b160a4..7cdc1fe0 100644
+--- a/CMake/FindEXPAT.cmake
++++ b/CMake/FindEXPAT.cmake
+@@ -37,7 +37,7 @@ pkg_check_modules(PC_EXPAT QUIET expat)
+ find_path(EXPAT_INCLUDE_DIR NAMES expat.h HINTS ${PC_EXPAT_INCLUDE_DIRS})
+ 
+ # Look for the library.
+-find_library(EXPAT_LIBRARY NAMES expat libexpat HINTS ${PC_EXPAT_LIBRARY_DIRS})
++find_library(EXPAT_LIBRARY NAMES expat libexpat libexpatMD libexpatMT libexpatMDd libexpatMTd HINTS ${PC_EXPAT_LIBRARY_DIRS})
+ 
+ if (EXPAT_INCLUDE_DIR AND EXISTS "${EXPAT_INCLUDE_DIR}/expat.h")
+     file(STRINGS "${EXPAT_INCLUDE_DIR}/expat.h" expat_version_str
+diff --git a/CMake/FindLibXml2.cmake b/CMake/FindLibXml2.cmake
+index b1942d85..2c26a04d 100644
+--- a/CMake/FindLibXml2.cmake
++++ b/CMake/FindLibXml2.cmake
+@@ -64,7 +64,7 @@ if(DEFINED LIBXML2_LIBRARIES AND NOT DEFINED LIBXML2_LIBRARY)
+   set(LIBXML2_LIBRARY ${LIBXML2_LIBRARIES})
+ endif()
+ 
+-find_library(LIBXML2_LIBRARY NAMES xml2 libxml2
++find_library(LIBXML2_LIBRARY NAMES xml2 libxml2 libxml2s
+    HINTS
+    ${PC_LIBXML_LIBDIR}
+    ${PC_LIBXML_LIBRARY_DIRS}
+diff --git a/CMake/FindPEGTL.cmake b/CMake/FindPEGTL.cmake
+index fbc3e15a..88d995b9 100644
+--- a/CMake/FindPEGTL.cmake
++++ b/CMake/FindPEGTL.cmake
+@@ -21,13 +21,12 @@
+ #  PEGTL::PEGTL
+ 
+ find_path(PEGTL_INCLUDE_DIR
+-  NAMES pegtl/version.hpp
+-  PATH_SUFFIXES tao
++  NAMES tao/pegtl/version.hpp
+   DOC "Path to PEGTL headers")
+ mark_as_advanced(PEGTL_INCLUDE_DIR)
+ 
+ if (PEGTL_INCLUDE_DIR)
+-  file(STRINGS "${PEGTL_INCLUDE_DIR}/pegtl/version.hpp" _pegtl_version_header
++  file(STRINGS "${PEGTL_INCLUDE_DIR}/tao/pegtl/version.hpp" _pegtl_version_header
+     REGEX "TAO_PEGTL_VERSION")
+   string(REGEX MATCH "define[ \t]+TAO_PEGTL_VERSION[ \t]+\"([0-9.]+)\"" _pegtl_version_match "${_pegtl_version_header}")
+   set(PEGTL_VERSION "${CMAKE_MATCH_1}")
+diff --git a/CMake/FindTHEORA.cmake b/CMake/FindTHEORA.cmake
+index 7a3eeced..f3bc2184 100644
+--- a/CMake/FindTHEORA.cmake
++++ b/CMake/FindTHEORA.cmake
+@@ -10,7 +10,7 @@ set(THEORA_required_libs THEORA_LIBRARY)
+ 
+ find_library(THEORA_LIBRARY
+   NAMES
+-    theora
++    theora theoraenc theoradec
+   HINTS
+     "${computed_theora_root}/lib"
+     "${computed_theora_root}/lib64"
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 89522070..8fe3e0af 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -26,6 +26,8 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
+   endif ()
+ endif ()
+ 
++# find hdf5 here to avoid issues of missing it later after vtk_module_third_party()
++find_package(hdf5 CONFIG REQUIRED)
+ # must be before the following iOS / Android
+ find_package(Git QUIET)
+ include(VTKDetermineVersion)
+diff --git a/ThirdParty/exodusII/CMakeLists.txt b/ThirdParty/exodusII/CMakeLists.txt
+index 8d1a03ca..7ec6257b 100644
+--- a/ThirdParty/exodusII/CMakeLists.txt
++++ b/ThirdParty/exodusII/CMakeLists.txt
+@@ -1,15 +1,20 @@
+-vtk_module_third_party_internal(
+-  LICENSE_FILES
+-    "vtkexodusII/COPYRIGHT"
+-  SPDX_LICENSE_IDENTIFIER
+-    "BSD-3-Clause"
+-  SPDX_COPYRIGHT_TEXT
+-    "Copyright (c) 2005-2017 National Technology & Engineering Solutions of Sandia, LLC (NTESS)"
+-  SPDX_DOWNLOAD_LOCATION
+-    "git+https://gitlab.kitware.com/third-party/seacas.git@exodus/for/vtk-20250313-v2025-02-27#packages/seacas/libraries/exodus"
+-  VERSION
+-    "9.0.4"
+-  STANDARD_INCLUDE_DIRS)
++vtk_module_third_party(
++  INTERNAL
++    LICENSE_FILES
++      "vtkexodusII/COPYRIGHT"
++    SPDX_LICENSE_IDENTIFIER
++      "BSD-3-Clause"
++    SPDX_COPYRIGHT_TEXT
++      "Copyright (c) 2005-2017 National Technology & Engineering Solutions of Sandia, LLC (NTESS)"
++    SPDX_DOWNLOAD_LOCATION
++      "git+https://gitlab.kitware.com/third-party/seacas.git@exodus/for/vtk-20250313-v2025-02-27#packages/seacas/libraries/exodus"
++    VERSION
++      "9.0.4"
++    STANDARD_INCLUDE_DIRS
++  EXTERNAL
++    PACKAGE SEACASExodus
++    TARGETS SEACASExodus::exodus
++    STANDARD_INCLUDE_DIRS)
+ 
+ #configure_file(
+ #  "${CMAKE_CURRENT_SOURCE_DIR}/vtk_exodusII.h.in"
+diff --git a/ThirdParty/exodusII/vtk_exodusII.h b/ThirdParty/exodusII/vtk_exodusII.h
+index e485cc49..b16509c1 100644
+--- a/ThirdParty/exodusII/vtk_exodusII.h
++++ b/ThirdParty/exodusII/vtk_exodusII.h
+@@ -4,6 +4,6 @@
+ #define vtk_exodusII_h
+ 
+ /* Use the exodusII library configured for VTK.  */
+-#include <vtkexodusII/include/exodusII.h>
++#include <exodusII.h>
+ 
+ #endif
+diff --git a/ThirdParty/expat/CMakeLists.txt b/ThirdParty/expat/CMakeLists.txt
+index 81d65a77..2a8c4aed 100644
+--- a/ThirdParty/expat/CMakeLists.txt
++++ b/ThirdParty/expat/CMakeLists.txt
+@@ -14,7 +14,6 @@ vtk_module_third_party(
+     STANDARD_INCLUDE_DIRS
+   EXTERNAL
+     PACKAGE EXPAT
+-    VERSION 2.5.0
+     TARGETS EXPAT::EXPAT
+     STANDARD_INCLUDE_DIRS)
+ 
+diff --git a/ThirdParty/fast_float/CMakeLists.txt b/ThirdParty/fast_float/CMakeLists.txt
+index 6ee6388e..1536828e 100644
+--- a/ThirdParty/fast_float/CMakeLists.txt
++++ b/ThirdParty/fast_float/CMakeLists.txt
+@@ -13,7 +13,6 @@ vtk_module_third_party(
+     STANDARD_INCLUDE_DIRS
+     HEADER_ONLY
+   EXTERNAL
+-    VERSION "7.0.0"
+     PACKAGE FastFloat
+     TARGETS FastFloat::fast_float
+     STANDARD_INCLUDE_DIRS
+diff --git a/ThirdParty/libharu/CMakeLists.txt b/ThirdParty/libharu/CMakeLists.txt
+index c3513d99..8ee46a6c 100644
+--- a/ThirdParty/libharu/CMakeLists.txt
++++ b/ThirdParty/libharu/CMakeLists.txt
+@@ -21,10 +21,19 @@ vtk_module_third_party(
+ include(vtkDetectLibraryType)
+ vtk_detect_library_shared(vtklibharu LibHaru::LibHaru)
+ 
+-set(HPDF_DLL 0)
+-if (WIN32 AND vtklibharu_is_shared)
+-  set(HPDF_DLL 1)
+-endif ()
++if(WIN32)
++  if(CMAKE_SIZEOF_VOID_P EQUAL 8)
++    set(HPDF_DLL 0)
++    if (vtklibharu_is_shared)
++      set(HPDF_DLL 1)
++    endif ()
++  else()
++    set(HPDF_DLL_CDECL 0)
++    if (vtklibharu_is_shared)
++      set(HPDF_DLL_CDECL 1)
++    endif ()
++  endif()
++endif()
+ 
+ configure_file(
+   "${CMAKE_CURRENT_SOURCE_DIR}/vtk_libharu.h.in"

@@ -1,4 +1,9 @@
 function _fix_overlong_make_recipe(package)
+    -- Skip when OpenSSL version <= 1.1.0 as they don't have the `Configurations` directory
+    -- see: https://github.com/xmake-io/xmake-repo/issues/8282
+    if package:version():le("1.1.0") then
+        return
+    end
     -- In the MSYS environment, the make recipe can be too long to execute.
     -- This patch is adapted from OpenSSL 3.
     -- For more details, see: https://github.com/openssl/openssl/issues/12116
@@ -163,8 +168,30 @@ function _replace_NUL_with_null(package)
     io.replace("Configurations/10-main.conf", "NUL", "null", {plain = true})
 end
 
+function _add_ohos_targets(package)
+    if package:is_plat("harmony") then
+        io.gsub("Configurations/10-main.conf",
+            [=[("linux%-aarch64"%s-=>%s-{.-},)]=],
+            [=[%1
+
+    "ohos-aarch64" => {
+        inherit_from     => [ "linux-aarch64" ],
+        shared_extension => ".so"
+    },
+    "ohos-arm" => {
+        inherit_from     => [ "linux-armv4" ],
+        shared_extension => ".so"
+    },
+    "ohos-x86_64" => {
+        inherit_from     => [ "linux-x86_64" ],
+        shared_extension => ".so"
+    },]=])
+    end
+end
+
 function main(package)
     _remove_unused_pod_usage(package)
     _replace_NUL_with_null(package)
     _fix_overlong_make_recipe(package)
+    _add_ohos_targets(package)
 end

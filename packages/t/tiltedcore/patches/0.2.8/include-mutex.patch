@@ -1,0 +1,12 @@
+diff --git a/Code/core/src/Filesystem.cpp b/Code/core/src/Filesystem.cpp
+index 81033fb..921c3b6 100644
+--- a/Code/core/src/Filesystem.cpp
++++ b/Code/core/src/Filesystem.cpp
+@@ -3,6 +3,7 @@
+ 
+ 
+ #include <fstream>
++#include <mutex>
+ 
+ #if TP_PLATFORM_WINDOWS
+ #include <windows.h>

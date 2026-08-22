@@ -6,6 +6,13 @@ package("libheif")
     add_urls("https://github.com/strukturag/libheif/releases/download/v$(version)/libheif-$(version).tar.gz",
             "https://github.com/strukturag/libheif.git")
 
+    add_versions("1.23.1", "0de0327f60fcd47de90d5654c6fe152232738d60d84fe084ec3e0f35e03b166a")
+    add_versions("1.23.0", "4c9182b18897617182eed12ab5eb9f9d855b3aa3a736d6bdb31abc034ec7d393")
+    add_versions("1.22.2", "eea48e4841f83fbe51d029337ffd2d14512d0203015dad40b90213d872958af3")
+    add_versions("1.22.0", "8bd20cfa3201997b8f63266cddfabea2e1481467d7f992e6a2595e0bec691fc2")
+    add_versions("1.21.2", "75f530b7154bc93e7ecf846edfc0416bf5f490612de8c45983c36385aa742b42")
+    add_versions("1.21.1", "9799b4b1c19006f052bcf399c761cc147e279762683cefaf16871dbb9b4ea2a1")
+    add_versions("1.21.0", "dc7cef4cf6a1c643eaebffd7b54190681f5b62d913eb6bc9769ad8dacd06b08b")
     add_versions("1.20.2", "68ac9084243004e0ef3633f184eeae85d615fe7e4444373a0a21cebccae9d12a")
     add_versions("1.18.2", "c4002a622bec9f519f29d84bfdc6024e33fd67953a5fb4dc2c2f11f67d5e45bf")
     add_versions("1.18.0", "3f25f516d84401d7c22a24ef313ae478781b95f235c250b06152701c401055c3")
@@ -25,8 +32,8 @@ package("libheif")
         end
     end)
 
-    on_load("windows", function (package)
-        if not package:config("shared") then
+    on_load("windows", "macosx", "linux", "cross", function (package)
+        if package:is_plat("windows") and not package:config("shared") then
             package:add("defines", "LIBHEIF_STATIC_BUILD")
         end
         for _, conf in ipairs(configdeps) do
@@ -36,7 +43,7 @@ package("libheif")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", "cross", function (package)
         local configs =
         {
             "-DBUILD_TESTING=OFF",

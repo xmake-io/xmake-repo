@@ -5,6 +5,7 @@ package("verdict")
     add_urls("https://github.com/sandialabs/verdict/archive/refs/tags/$(version).tar.gz",
              "https://github.com/sandialabs/verdict.git")
 
+    add_versions("1.4.5", "8c3ba194894a1b10b0700643363d02514cfdf88109a0c2710c0a32e857b2bde0")
     add_versions("1.4.4", "d12d1cd41c6568997df348a72cc2973a662fae1b3634a068ea2201b5f7383186")
     add_versions("1.4.2", "225c8c5318f4b02e7215cefa61b5dc3f99e05147ad3fefe6ee5a3ee5b828964b")
 

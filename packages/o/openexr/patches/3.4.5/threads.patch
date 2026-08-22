@@ -1,0 +1,22 @@
+diff --git a/src/lib/OpenEXRCore/internal_thread.h b/src/lib/OpenEXRCore/internal_thread.h
+index 6c3c103..56c9152 100644
+--- a/src/lib/OpenEXRCore/internal_thread.h
++++ b/src/lib/OpenEXRCore/internal_thread.h
+@@ -28,6 +28,9 @@ call_once (once_flag* flag, void (*func) (void))
+     InitOnceExecuteOnce (flag, once_init_fn, (PVOID) func, NULL);
+ }
+ #    else
++#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L && defined(__has_include) && __has_include(<threads.h>)
++#include <threads.h>
++#else
+ #        include <pthread.h>
+ #        define ONCE_FLAG_INIT PTHREAD_ONCE_INIT
+ typedef pthread_once_t once_flag;
+@@ -36,6 +39,7 @@ call_once (once_flag* flag, void (*func) (void))
+ {
+     (void) pthread_once (flag, func);
+ }
++#endif
+ #    endif
+ #else
+ #    define ONCE_FLAG_INIT 0

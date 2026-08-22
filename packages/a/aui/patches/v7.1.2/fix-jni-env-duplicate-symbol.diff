@@ -1,0 +1,11 @@
+--- a/aui.core/src/AUI/JNI/Globals.h
++++ b/aui.core/src/AUI/JNI/Globals.h
+@@ -35,7 +35,7 @@ namespace aui::jni {
+      * @return JNI Env pointer for the current thread.
+      * @ingroup jni
+      */
+-    JNIEnv* env() {
++    inline JNIEnv* env() {
+         thread_local JNIEnv* env = [] {
+             JNIEnv* env;
+             javaVM()->AttachCurrentThread(&env, nullptr);

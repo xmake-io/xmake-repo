@@ -6,6 +6,8 @@ package("aws-checksums")
     add_urls("https://github.com/awslabs/aws-checksums/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-checksums.git")
 
+    add_versions("v0.2.10", "cb6509f75e42ee25c372a6d379e8582ce5179e5335183842e808f7d8abb0c314")
+    add_versions("v0.2.8", "e624754cc57e0da28e643e89fc76bcc86cb0c359ead0745bae643f910b2bcfa7")
     add_versions("v0.2.7", "178e8398d98111f29150f7813a70c20ad97ab30be0de02525440355fe84ccb1d")
     add_versions("v0.2.3", "c688f311db8a1b70bb6d22f6e8f2817b39e1419546e339cf753d61340969eeb4")
     add_versions("v0.2.2", "96acfea882c06acd5571c845e4968892d6ffc0fae81b31a0b1565100049743b2")
@@ -56,7 +58,7 @@ package("aws-checksums")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_SANITIZERS=" .. (package:config("asan") and "ON" or "OFF"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DAWS_STATIC_MSVC_RUNTIME_LIBRARY=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DAWS_STATIC_MSVC_RUNTIME_LIBRARY=" .. (package:runtimes():startswith("MT") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
     end)

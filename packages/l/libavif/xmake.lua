@@ -6,6 +6,8 @@ package("libavif")
     add_urls("https://github.com/AOMediaCodec/libavif/archive/refs/tags/$(version).tar.gz",
              "https://github.com/AOMediaCodec/libavif.git")
 
+    add_versions("v1.4.2", "2b645287340ba5a631d268b551dc2d72bd73ac33335962dd36dcdb6d8366921d")
+    add_versions("v1.4.1", "d4aea31a4becb3273ba7968221be2e48148ba05eb8a68d14e671963e17785648")
     add_versions("v1.3.0", "0a545e953cc049bf5bcf4ee467306a2f113a75110edf59e61248873101cd26c1")
     add_versions("v1.2.1", "9c859c7c12ccb0f407511bfe303e6a7247f5f6738f54852662c6df8048daddf4")
     add_versions("v1.1.1", "914662e16245e062ed73f90112fbb4548241300843a7772d8d441bb6859de45b")
@@ -32,11 +34,6 @@ package("libavif")
         on_check("android", function (package)
             local ndk = package:toolchain("ndk"):config("ndkver")
             assert(ndk and tonumber(ndk) > 22, "package(libavif): library deps libyuv need ndk version > 22")
-        end)
-        on_check("linux", function (package)
-            if package:is_arch("arm64") then
-                raise("package(libavif): library deps libyuv unsupport compile flags -march=armv9-a+sme")
-            end
         end)
     end
 

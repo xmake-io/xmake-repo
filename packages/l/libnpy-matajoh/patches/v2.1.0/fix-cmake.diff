@@ -1,0 +1,46 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index b7fd3aa..0c1918d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -68,7 +68,7 @@ endif()
+ 
+ target_include_directories(npy
+   PUBLIC
+-    $<INSTALL_INTERFACE:build/native/include>
++    $<INSTALL_INTERFACE:include>
+     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+   PRIVATE
+     ${CMAKE_CURRENT_SOURCE_DIR}/src
+@@ -91,9 +91,9 @@ set(LIBNPY_INSTALL_TARGETS npy)
+ 
+ install(TARGETS ${LIBNPY_INSTALL_TARGETS}
+   EXPORT ${PROJECT_NAME}_Targets
+-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
++  ARCHIVE DESTINATION lib
++  LIBRARY DESTINATION lib
++  RUNTIME DESTINATION bin
+ )
+ 
+ # Create a ConfigVersion.cmake file
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 66f8af4..6423546 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -4,12 +4,13 @@ set( SOURCES
+    npz.cpp
+    tensor.cpp
+    zip.cpp
+-   miniz/miniz.cpp
+ )
+ 
+ add_definitions( -DLIBNPY_VERSION=${LIBNPY_VERSION} )
+ 
+-add_library( npy STATIC ${SOURCES} )
++add_library( npy ${SOURCES} )
++find_package( miniz REQUIRED )
++target_link_libraries( npy PRIVATE miniz::miniz )
+ add_library( npy::npy ALIAS npy )
+ 
+ if (LIBNPY_SANITIZE)

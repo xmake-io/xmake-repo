@@ -3,6 +3,7 @@ package("autoconf")
     set_kind("binary")
     set_homepage("https://www.gnu.org/software/autoconf/autoconf.html")
     set_description("An extensible package of M4 macros that produce shell scripts to automatically configure software source code packages.")
+    set_license("GPL-3.0-or-later")
 
     add_urls("http://ftpmirror.gnu.org/gnu/autoconf/autoconf-$(version).tar.gz",
              "http://ftp.gnu.org/gnu/autoconf/autoconf-$(version).tar.gz",

@@ -8,9 +8,14 @@ package("glib")
     end, excludes = {"*/COPYING"}})
     add_urls("https://gitlab.gnome.org/GNOME/glib/-/archive/$(version)/glib-$(version).tar.gz", {alias = "gitlab"})
     add_urls("https://gitlab.gnome.org/GNOME/glib.git")
+
     add_versions("home:2.71.0", "926816526f6e4bba9af726970ff87be7dac0b70d5805050c6207b7bb17ea4fca")
     add_versions("home:2.78.1", "915bc3d0f8507d650ead3832e2f8fb670fce59aac4d7754a7dab6f1e6fed78b2")
     add_versions("home:2.85.0", "97cfb0466ae41fca4fa2a57a15440bee15b54ae76a12fb3cbff11df947240e48")
+    add_versions("home:2.88.1", "51ab804c56f6eab3e5045c774d1290ac5e4c923d4f9a3d8e33123bee45c1840e")
+    add_versions("home:2.89.1", "74447129c31afe141810f995626e8b99ab677413dae76ee3cf5a9cc6e75a486e")
+    add_versions("home:2.89.2", "894fd527e305041f7723071297d79a78af4719dbd0d8fb77f6b1a85c9f5475b9")
+
     add_patches("2.71.0", path.join(os.scriptdir(), "patches", "2.71.0", "macosx.patch"), "a0c928643e40f3a3dfdce52950486c7f5e6f6e9cfbd76b20c7c5b43de51d6399")
 
     if is_plat("mingw") and is_subhost("msys") then
@@ -30,29 +35,34 @@ package("glib")
     elseif is_plat("macosx") then
         add_syslinks("resolv")
         add_frameworks("AppKit", "Foundation", "CoreServices", "CoreFoundation")
-    elseif is_plat("linux") then
+    elseif is_plat("linux", "cross") then
         add_syslinks("pthread", "dl", "resolv")
+    elseif is_plat("bsd") then
+        add_syslinks("pthread")
     end
 
-    add_deps("meson", "ninja", "libffi", "zlib")
-    if is_plat("linux") then
-        add_deps("libiconv")
+    add_deps("meson", "ninja")
+    if is_subhost("windows") then
+        add_deps("pkgconf")
+    else
+        add_deps("pkg-config")
+    end
+
+    add_deps("libffi", "zlib")
+    if is_plat("linux", "cross") then
+        add_deps("libiconv", "libelf")
     elseif is_plat("macosx") then
-        add_deps("libiconv", {system = true})
-        add_deps("libintl")
+        add_deps("libiconv", "libintl")
     elseif is_plat("windows", "mingw") then
         add_deps("libintl")
-        if is_subhost("windows") then
-            add_deps("pkgconf")
-        else
-            add_deps("pkg-config")
-        end
+    elseif is_plat("bsd") then
+        add_deps("libintl")
     end
 
     add_includedirs("include/glib-2.0", "lib/glib-2.0/include")
     add_links("gio-2.0", "gobject-2.0", "gthread-2.0", "gmodule-2.0", "glib-2.0")
 
-    on_fetch("macosx", "linux", function (package, opt)
+    on_fetch("macosx", "linux", "bsd", function (package, opt)
         if opt.system and package.find_package then
             local result
             for _, name in ipairs({"gio-2.0", "gobject-2.0", "gthread-2.0", "gmodule-2.0", "glib-2.0"}) do
@@ -81,27 +91,10 @@ package("glib")
         else
             package:add("deps", "pcre")
         end
+        package:addenv("PATH", "bin")
     end)
 
-    on_install("windows", "macosx", "linux", "cross", "mingw", function (package)
-        local configs = {"-Dbsymbolic_functions=false",
-                         "-Ddtrace=false",
-                         "-Dman=false",
-                         "-Dgtk_doc=false",
-                         "-Dtests=false",
-                         "-Dinstalled_tests=false",
-                         "-Dsystemtap=false",
-                         "-Dselinux=disabled",
-                         "-Dlibmount=disabled",
-                         "-Dsysprof=disabled"}
-        if package:is_plat("macosx") and package:version():le("2.61.0") then
-            table.insert(configs, "-Diconv=native")
-        elseif package:is_plat("windows") and package:version():le("2.74.0") then
-            table.insert(configs, "-Diconv=external")
-        end
-        table.insert(configs, "-Dglib_debug=" .. (package:debug() and "enabled" or "disabled"))
-        table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-        table.insert(configs, "-Dgio_module_dir=" .. path.join(package:installdir(), "lib/gio/modules"))
+    on_install("windows", "macosx", "linux", "bsd", "cross", "mingw", function (package)
         io.gsub("meson.build", "subdir%('tests'%)", "")
         io.gsub("meson.build", "subdir%('fuzzing'%)", "")
         io.gsub("gio/meson.build", "subdir%('tests'%)", "")
@@ -109,8 +102,54 @@ package("glib")
         if package:is_plat("windows") then
             io.gsub("meson.build", "dependency%('libffi',", "dependency('libffi', modules: ['libffi::ffi'],")
         end
+
+        local configs = {
+            "-Dbsymbolic_functions=false",
+            "-Ddtrace=false",
+            "-Dman=false",
+            "-Dgtk_doc=false",
+            "-Dtests=false",
+            "-Dinstalled_tests=false",
+            "-Dsystemtap=false",
+            "-Dselinux=disabled",
+            "-Dlibmount=disabled",
+            "-Dsysprof=disabled",
+            "-Dintrospection=disabled",
+        }
+        if package:is_plat("macosx") and package:version():le("2.61.0") then
+            table.insert(configs, "-Diconv=native")
+        elseif package:is_plat("windows") and package:version():le("2.74.0") then
+            table.insert(configs, "-Diconv=external")
+        end
+        if package:is_plat("bsd") then
+            table.insert(configs, "-Dxattr=false")
+            table.insert(configs, "-Db_lundef=false")
+        end
+        table.insert(configs, "-Dglib_debug=" .. (package:is_debug() and "enabled" or "disabled"))
+        table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
+        table.insert(configs, "-Dgio_module_dir=" .. path.join(package:installdir(), "lib/gio/modules"))
         import("package.tools.meson").install(package, configs, {packagedeps = {"libintl", "libiconv", "libffi", "zlib"}})
-        package:addenv("PATH", "bin")
+
+        local function add_to_pc(pcpath, field, value)
+            if not os.isfile(pcpath) then return end
+            local content = io.readfile(pcpath)
+            if content:find(field .. ":", 1, true) then
+                content = content:gsub("(" .. field .. ": [^\n]*)", "%1 " .. value)
+            else
+                content = content:gsub("(Cflags:)", field .. ": " .. value .. "\n%1")
+            end
+            io.writefile(pcpath, content)
+        end
+        local pc_dir = package:installdir("lib/pkgconfig")
+        local pcs = {"glib-2.0.pc", "gio-2.0.pc", "gobject-2.0.pc", "gthread-2.0.pc",
+                     "gmodule-no-export-2.0.pc", "girepository-2.0.pc"}
+        for _, depname in ipairs({"libintl", "libiconv"}) do
+            if package:dep(depname) and not package:dep(depname):is_system() then
+                for _, pc in ipairs(pcs) do
+                    add_to_pc(path.join(pc_dir, pc), "Requires", depname)
+                end
+            end
+        end
     end)
 
     on_test(function (package)
