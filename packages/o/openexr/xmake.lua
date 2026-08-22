@@ -71,6 +71,11 @@ package("openexr")
                 assert(minor and minor >= 30, "package(openexr) dep(libdeflate) requires vs_toolset >= 14.3")
             end
         end)
+        on_check("mingw", function (package)
+            if package:is_arch("i386") then
+                raise("package(openexr) dep(openjph): unsupport mingw|i386")
+            end
+        end)
     end
 
     on_load(function (package)
@@ -113,6 +118,9 @@ package("openexr")
             "-DOPENEXR_FORCE_INTERNAL_IMATH=OFF",
             "-DOPENEXR_IS_SUBPROJECT=ON",
         }
+        if package:is_plat("wasm") and package:version():ge("3.0") then
+            table.insert(configs, "-DOPENEXR_ENABLE_THREADING=OFF")
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DOPENEXR_BUILD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
         table.insert(configs, "-DOPENEXR_BUILD_UTILS=" .. (package:config("tools") and "ON" or "OFF"))
