@@ -1,0 +1,16 @@
+package("xmake-harness")
+    set_kind("addon")
+    set_homepage("https://github.com/xmake-addons/xmake-harness")
+    set_description("A generic AI agent harness framework and the `xmake ai` terminal assistant, with the first-class xmake build enhancement.")
+    set_license("Apache-2.0")
+
+    add_urls("https://github.com/xmake-addons/xmake-harness/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/xmake-addons/xmake-harness.git")
+    add_versions("v1.0.0", "44a0b3369ed6d2fc4458b0741ebc264c3bfe62de6749200c3498944811212daa")
+
+    on_test(function (package)
+        assert(package:has_addon({plugins = "ai", modules = "harness"}))
+
+        -- @note we only show the menu here, the agent needs an api key and the network
+        os.vrun("xmake ai --help")
+    end)
