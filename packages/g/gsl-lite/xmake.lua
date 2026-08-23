@@ -7,6 +7,7 @@ package("gsl-lite")
     add_urls("https://github.com/gsl-lite/gsl-lite/archive/refs/tags/$(version).tar.gz",
              "https://github.com/gsl-lite/gsl-lite.git")
 
+    add_versions("v1.1.1", "6746753379b00a8148c3b0714a3a9c2bc84735f0cfa82077f2f3b36f8d330a24")
     add_versions("v1.1.0", "bc786258eda511980942b973f5f394c854705bb0462ee46f82a8c39b5e19ea03")
     add_versions("v1.0.1", "063a0b4248a2afd8154b2b5fe9d64472868a166d3963682e823f81516194af79")
     add_versions("v0.43.0", "e48c3138648156d2b85905b1d280d661fad61524c5c0ca10d3857036ca3dd519")
