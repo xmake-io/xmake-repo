@@ -6,6 +6,7 @@ package("gmssl")
     add_urls("https://github.com/guanzhi/GmSSL/archive/refs/tags/$(version).tar.gz",
              "https://github.com/guanzhi/GmSSL.git")
 
+    add_versions("v3.2.0", "b0bb50f935c1b35c614ff0a7f235b00520b86a3e9a659a681d77be6dadcb5d6b")
     add_versions("v3.1.1", "23ed2ce74e408fc4c80289d2b499c7c5eec8373fefaf3827a53cb4c134dd5263")
     add_versions("v3.1.0", "a3cdf5df87b07df33cb9e30c35de658fd0c06d5909d4428f4abd181d02567cde")
 
