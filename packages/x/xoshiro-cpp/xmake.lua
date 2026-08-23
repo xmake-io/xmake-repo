@@ -8,7 +8,7 @@ package("xoshiro-cpp")
     add_versions("2021.08.04", "19bcbb2ce0ed158233187f524fd0964c105a65b3")
 
     on_install("windows", function(package)
-        os.cp("XoshiroCpp.hpp", package:installdir())
+        os.cp("XoshiroCpp.hpp", package:installdir("include"))
     end)
 
     on_test("windows", function(package)
