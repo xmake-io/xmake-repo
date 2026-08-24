@@ -65,6 +65,20 @@ package("systemc")
             "-DENABLE_ASAN=OFF",
             "-DENABLE_UBSAN=OFF",
         }
+
+        if package:is_plat("windows") then
+            local src_file = package:builddir() .. "/source/systemc/src/sysc/datatypes/int/sc_int64_io.cpp"
+            local content = io.readfile(src_file)
+            -- replace osfx and opfx
+            content = content:gsub("(%w+)%.osfx%(", function(stream)
+                return stream .. ".flush()"
+            end)
+            content = content:gsub("(%w+)%.opfx%(", function(stream)
+                return stream .. ".good()"
+            end)
+            io.writefile(src_file, content)
+        end
+
         import("package.tools.cmake").install(package, configs)
     end)
 
