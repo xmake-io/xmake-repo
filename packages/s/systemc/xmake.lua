@@ -33,6 +33,9 @@ package("systemc")
             "-DENABLE_ASSERTIONS=" .. (package:config("assertions") and "ON" or "OFF"),
             "-DBUILD_SOURCE_DOCUMENTATION=" .. (package:config("docs") and "ON" or "OFF"),
             "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"),
+            "-DCMAKE_CXX_STANDARD=17",
+            "-DCMAKE_CXX_STANDARD_REQUIRED=ON",
+            "-DCMAKE_CXX_EXTENSIONS=OFF",
         }
         table.insert(configs, "-DCMAKE_INSTALL_PREFIX=" .. package:installdir())
 
