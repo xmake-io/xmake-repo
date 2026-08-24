@@ -36,12 +36,17 @@ package("systemc")
 
     on_install(function(package)
         -- 设置临时目录环境变量，防止构建工具写入根目录
-        local tmpdir = package:buildir() .. "/tmp"
+        local tmpdir = package:builddir() .. "/tmp"
         os.mkdir(tmpdir)
         os.setenv("TMPDIR", tmpdir)
-        os.setenv("TEMP", tmpdir)   -- 兼容某些工具
+        os.setenv("TEMP", tmpdir)   
 
-        -- 生成器选择：macOS/Linux 使用 Unix Makefiles，Windows 使用 Ninja
+        if package:is_plat("windows") then
+            local cxxflags = os.getenv("CXXFLAGS") or ""
+            os.setenv("CXXFLAGS", cxxflags .. " -DSC_USE_OLD_OSTREAM")
+        end
+
+
         local generator = "Unix Makefiles"
         if package:is_plat("windows") or package:is_plat("mingw") then
             generator = "Ninja"
@@ -60,7 +65,6 @@ package("systemc")
             "-DCMAKE_CXX_EXTENSIONS=OFF",
             "-DENABLE_ASAN=OFF",
             "-DENABLE_UBSAN=OFF",
-            "-DSC_USE_OLD_OSTREAM=ON",   -- 修复 MSVC 兼容性，macOS 无影响
         }
         import("package.tools.cmake").install(package, configs)
     end)
