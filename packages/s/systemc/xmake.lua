@@ -3,10 +3,14 @@ package("systemc")
     set_description("SystemC: A modeling language for system-level design")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/accellera-official/systemc/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/accellera-official/systemc.git")
+    add_urls("https://github.com/accellera-official/systemc.git")
 
-    add_versions("3.0.1", "5b191bb6500712243eb152e155c1c6039066cf38")
+    add_versions("3.0.2", "5b191bb6500712243eb152e155c1c6039066cf38")
+    add_versions("3.0.1","e598d4afbef12e7e7002719ce3c7a77c4a227a47")
+    add_versions("3.0.0","cfbb862974d239a4105789b7644b24c0557763fc")
+    add_versions("2.3.4","e8b9e51917abab02b2223cb2f497a1a55450cc64")
+    add_versions("2.3.3","739f1f6ef6d50eaed4102b95cd48a91c5be6a2cf")
+    add_versions("2.3.2","032c018cbee2fca005001088fbfba3f2bd0ab1af")
 
     add_deps("cmake")
 
@@ -42,7 +46,7 @@ package("systemc")
         local builddir = package:builddir()
         os.mkdir(builddir)
 
-        -- 源码目录：xmake 会将源码 clone 到 builddir/source/ 下
+        -- 源码目录（仅使用 git 时，路径固定为 builddir/source/systemc）
         local sourcedir = builddir .. "/source/systemc"
 
         -- Windows 源码修补：在配置之前替换 osfx/opfx
@@ -62,9 +66,8 @@ package("systemc")
             generator = "Ninja"
         end
 
-        -- CMake 参数
+        -- CMake 参数（注意：不再在 configs 中插入 -G，改用 cmake_opts 传递）
         local configs = {
-            "-G", generator,
             "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"),
             "-DENABLE_PTHREADS=" .. (package:config("pthreads") and "ON" or "OFF"),
             "-DENABLE_ASSERTIONS=" .. (package:config("assertions") and "ON" or "OFF"),
@@ -76,20 +79,28 @@ package("systemc")
             "-DCMAKE_CXX_EXTENSIONS=OFF",
         }
 
-        -- macOS 禁用 sanitizer
+        -- macOS 禁用 sanitizer（更可靠的方式）
         if package:is_plat("macosx") then
             table.insert(configs, "-DCMAKE_CXX_FLAGS=-fno-sanitize=address -fno-sanitize=undefined")
             table.insert(configs, "-DCMAKE_C_FLAGS=-fno-sanitize=address -fno-sanitize=undefined")
         end
 
+        -- 统一传递 generator 给所有步骤
+        local cmake_opts = {
+            configs = configs,
+            buildir = builddir,
+            sourcedir = sourcedir,
+            generator = generator,
+        }
+
         -- 1. CMake 配置
-        cmake.configure(package, {configs = configs, buildir = builddir, sourcedir = sourcedir})
+        cmake.configure(package, cmake_opts)
 
-        -- 2. 构建
-        cmake.build(package, {buildir = builddir})
+        -- 2. 构建（传递 generator 保持一致）
+        cmake.build(package, {buildir = builddir, generator = generator})
 
-        -- 3. 安装
-        cmake.install(package, {buildir = builddir})
+        -- 3. 安装（传递 generator 保持一致）
+        cmake.install(package, {buildir = builddir, generator = generator})
     end)
 
     on_test(function(package)
