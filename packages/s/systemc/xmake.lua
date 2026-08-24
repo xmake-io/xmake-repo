@@ -61,10 +61,7 @@ package("systemc")
         end
 
         -- 生成器选择
-        local generator = "Unix Makefiles"
-        if package:is_plat("windows") or package:is_plat("mingw") then
-            generator = "Ninja"
-        end
+        local generator = "Ninja"
 
         -- CMake 参数（注意：不再在 configs 中插入 -G，改用 cmake_opts 传递）
         local configs = {
