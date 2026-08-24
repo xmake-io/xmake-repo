@@ -50,21 +50,19 @@ package("systemc")
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_test(function (package)
+    on_test(function(package)
         local snippet = [[
             #include <systemc.h>
-            int main() {
+            int sc_main(int argc, char* argv[]) {
                 sc_core::sc_clock clk("clk", 1, sc_core::SC_NS);
                 return 0;
             }
         ]]
         local opts = {
             configs = { languages = "c++17" },
-            -- 显式指定要链接的库（库名通常为 systemc）
             links = "systemc",
         }
-        -- 使用 check_cxxsnippets 可以同时检查编译和链接
         assert(package:check_cxxsnippets({test = snippet}, opts),
-               "SystemC test program failed to compile/link")
+            "SystemC test program failed to compile/link")
     end)
 
