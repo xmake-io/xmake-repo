@@ -51,6 +51,20 @@ package("systemc")
         end
 
 
+        local sourcedir = package:source_dir()
+
+        -- Windows 源码修补：在配置之前替换 osfx/opfx
+        if package:is_plat("windows") then
+            local src_file = sourcedir .. "/src/sysc/datatypes/int/sc_int64_io.cpp"
+            if os.exists(src_file) then
+                local content = io.readfile(src_file)
+                content = content:gsub("([%w_]+)%.osfx%(", "%1.flush()")
+                content = content:gsub("([%w_]+)%.opfx%(", "%1.good()")
+                io.writefile(src_file, content)
+            end
+        end
+
+
         local configs = {
             "-G", generator,
             "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"),
@@ -73,18 +87,6 @@ package("systemc")
         end
 
         cmake.configure(package, {configs = configs, buildir = builddir})
-
-        -- patch windows osfx & opfx
-        if package:is_plat("windows") then
-            local src_file = builddir .. "/source/systemc/src/sysc/datatypes/int/sc_int64_io.cpp"
-            if os.exists(src_file) then
-                local content = io.readfile(src_file)
-                -- 替换 osfx 为 flush()，opfx 为 good()
-                content = content:gsub("([%w_]+)%.osfx%(", "%1.flush()")
-                content = content:gsub("([%w_]+)%.opfx%(", "%1.good()")
-                io.writefile(src_file, content)
-            end
-        end
 
         cmake.build(package, {buildir = builddir})
 
