@@ -8,10 +8,6 @@ package("systemc")
     add_versions("3.0.2", "5b191bb6500712243eb152e155c1c6039066cf38")
     add_versions("3.0.1","e598d4afbef12e7e7002719ce3c7a77c4a227a47")
     add_versions("3.0.0","cfbb862974d239a4105789b7644b24c0557763fc")
-    add_versions("2.3.4","e8b9e51917abab02b2223cb2f497a1a55450cc64")
-    add_versions("2.3.3","739f1f6ef6d50eaed4102b95cd48a91c5be6a2cf")
-    add_versions("2.3.2","032c018cbee2fca005001088fbfba3f2bd0ab1af")
-
     add_deps("cmake")
 
     add_configs("pthreads",  {description = "Use POSIX threads",    type = "boolean", default = false})
