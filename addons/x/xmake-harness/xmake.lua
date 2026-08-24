@@ -7,6 +7,7 @@ package("xmake-harness")
     add_urls("https://github.com/xmake-addons/xmake-harness/archive/refs/tags/$(version).tar.gz",
              "https://github.com/xmake-addons/xmake-harness.git")
     add_versions("v1.0.0", "44a0b3369ed6d2fc4458b0741ebc264c3bfe62de6749200c3498944811212daa")
+    add_versions("v1.0.1", "aefa5d431efc73ae946480cb7e61fa22a342dd1055c05120a4dac40f044550c9")
 
     on_test(function (package)
         assert(package:has_addon({plugins = "ai", modules = "harness"}))
