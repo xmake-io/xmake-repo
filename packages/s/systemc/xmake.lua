@@ -14,7 +14,7 @@ package("systemc")
     add_configs("assertions",{description = "Enable assertions",    type = "boolean", default = true})
 
 
-    on_install("linux", "windows", "mingw", "bsd",function(package)
+    on_install("linux", "windows", "mingw@windows", "mingw@linux", "bsd",function(package)
         import("package.tools.cmake")
 
         if package:is_plat("windows") then
