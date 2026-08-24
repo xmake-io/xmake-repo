@@ -37,19 +37,9 @@ package("systemc")
     on_install(function(package)
         import("package.tools.cmake")
 
-        -- 设置临时目录
-        local tmpdir = os.tmpdir()
-        os.setenv("TMPDIR", tmpdir)
-        os.setenv("TEMP", tmpdir)
-
-        -- 构建目录
+        local sourcedir = package:sourcedir()
         local builddir = package:builddir()
-        os.mkdir(builddir)
 
-        -- 源码目录（仅使用 git 时，路径固定为 builddir/source/systemc）
-        local sourcedir = builddir .. "/source/systemc"
-
-        -- Windows 源码修补：在配置之前替换 osfx/opfx
         if package:is_plat("windows") then
             local src_file = sourcedir .. "/src/sysc/datatypes/int/sc_int64_io.cpp"
             if os.exists(src_file) then
@@ -60,11 +50,8 @@ package("systemc")
             end
         end
 
-        -- 生成器选择
-        local generator = "Ninja"
-
-        -- CMake 参数（注意：不再在 configs 中插入 -G，改用 cmake_opts 传递）
         local configs = {
+            "-G Ninja",
             "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"),
             "-DENABLE_PTHREADS=" .. (package:config("pthreads") and "ON" or "OFF"),
             "-DENABLE_ASSERTIONS=" .. (package:config("assertions") and "ON" or "OFF"),
@@ -76,28 +63,13 @@ package("systemc")
             "-DCMAKE_CXX_EXTENSIONS=OFF",
         }
 
-        -- macOS 禁用 sanitizer（更可靠的方式）
         if package:is_plat("macosx") then
             table.insert(configs, "-DCMAKE_CXX_FLAGS=-fno-sanitize=address -fno-sanitize=undefined")
             table.insert(configs, "-DCMAKE_C_FLAGS=-fno-sanitize=address -fno-sanitize=undefined")
         end
 
-        -- 统一传递 generator 给所有步骤
-        local cmake_opts = {
-            configs = configs,
-            buildir = builddir,
-            sourcedir = sourcedir,
-            generator = generator,
-        }
-
-        -- 1. CMake 配置
-        cmake.configure(package, cmake_opts)
-
-        -- 2. 构建（传递 generator 保持一致）
-        cmake.build(package, {buildir = builddir, generator = generator})
-
-        -- 3. 安装（传递 generator 保持一致）
-        cmake.install(package, {buildir = builddir, generator = generator})
+        --  chdir to builddir and install
+        import("package.tools.cmake").build(package, configs, {buildir = builddir})
     end)
 
     on_test(function(package)
