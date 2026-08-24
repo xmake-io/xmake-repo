@@ -35,21 +35,22 @@ package("systemc")
     end)
 
     on_install(function(package)
-        -- 设置临时目录环境变量，防止构建工具写入根目录
-        local tmpdir = package:builddir() .. "/tmp"
-        os.mkdir(tmpdir)
+        local tmpdir = os.tmpdir()
         os.setenv("TMPDIR", tmpdir)
-        os.setenv("TEMP", tmpdir)   
-
+        os.setenv("TEMP", tmpdir)
+        
         if package:is_plat("windows") then
             local cxxflags = os.getenv("CXXFLAGS") or ""
             os.setenv("CXXFLAGS", cxxflags .. " -DSC_USE_OLD_OSTREAM")
         end
 
 
-        local generator = "Unix Makefiles"
         if package:is_plat("windows") or package:is_plat("mingw") then
-            generator = "Ninja"
+            table.insert(configs, "-G")
+            table.insert(configs, "Ninja")
+        else
+            table.insert(configs, "-G")
+            table.insert(configs, "Unix Makefiles")
         end
 
         local configs = {
