@@ -36,7 +36,7 @@ package("systemc")
             "-DCMAKE_CXX_EXTENSIONS=OFF",
         }
 
-        if package:is_plat("windows") then
+        if package:is_plat("windows") or package:is_plat("mingw") then
             table.insert(configs,"-DBUILD_SHARED_LIBS=OFF")
         else
             table.insert(configs,"-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
