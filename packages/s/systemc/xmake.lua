@@ -66,20 +66,29 @@ package("systemc")
             "-DENABLE_UBSAN=OFF",
         }
 
-        if package:is_plat("windows") then
-            local src_file = package:builddir() .. "/source/systemc/src/sysc/datatypes/int/sc_int64_io.cpp"
-            local content = io.readfile(src_file)
-            -- replace osfx and opfx
-            content = content:gsub("(%w+)%.osfx%(", function(stream)
-                return stream .. ".flush()"
-            end)
-            content = content:gsub("(%w+)%.opfx%(", function(stream)
-                return stream .. ".good()"
-            end)
-            io.writefile(src_file, content)
+        --disable all the sanitizer for macosx
+        if package:is_plat("macosx") then
+            table.insert(configs, "-DCMAKE_CXX_FLAGS=-fno-sanitize=address -fno-sanitize=undefined")
+            table.insert(configs, "-DCMAKE_C_FLAGS=-fno-sanitize=address -fno-sanitize=undefined")
         end
 
-        import("package.tools.cmake").install(package, configs)
+        cmake.configure(package, {configs = configs, buildir = builddir})
+
+        -- patch windows osfx & opfx
+        if package:is_plat("windows") then
+            local src_file = builddir .. "/source/systemc/src/sysc/datatypes/int/sc_int64_io.cpp"
+            if os.exists(src_file) then
+                local content = io.readfile(src_file)
+                -- 替换 osfx 为 flush()，opfx 为 good()
+                content = content:gsub("([%w_]+)%.osfx%(", "%1.flush()")
+                content = content:gsub("([%w_]+)%.opfx%(", "%1.good()")
+                io.writefile(src_file, content)
+            end
+        end
+
+        cmake.build(package, {buildir = builddir})
+
+        cmake.install(package, {buildir = builddir})
     end)
 
     on_test(function(package)
