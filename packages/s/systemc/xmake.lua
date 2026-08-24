@@ -38,7 +38,6 @@ package("systemc")
         import("package.tools.cmake")
 
         local sourcedir = package:sourcedir()
-        local builddir = package:builddir()
 
         if package:is_plat("windows") then
             local src_file = sourcedir .. "/src/sysc/datatypes/int/sc_int64_io.cpp"
@@ -68,8 +67,7 @@ package("systemc")
             table.insert(configs, "-DCMAKE_C_FLAGS=-fno-sanitize=address -fno-sanitize=undefined")
         end
 
-        --  chdir to builddir and install
-        import("package.tools.cmake").build(package, configs, {buildir = builddir})
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function(package)
