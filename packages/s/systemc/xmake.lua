@@ -46,6 +46,7 @@ package("systemc")
             "-DCMAKE_CXX_EXTENSIONS=OFF",
             "-DENABLE_ASAN=OFF",
             "-DENABLE_UBSAN=OFF",
+            "-DSC_USE_OLD_OSTREAM=ON",
         }
         table.insert(configs, "-DCMAKE_INSTALL_PREFIX=" .. package:installdir())
 
