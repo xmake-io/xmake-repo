@@ -18,9 +18,17 @@ package("systemc")
     add_configs("pthreads", {description = "Use POSIX threads", default = false, type = "boolean"})
     add_configs("assertions", {description = "Enable assertions", default = true, type = "boolean"})
     add_configs("docs", {description = "Build source documentation", default = false, type = "boolean"})
+    on_check(function(package)
+
+        local supported_plats = {"linux", "macosx", "windows", "mingw", "cygwin", "bsd"}
+        if not table.contains(supported_plats, package:plat()) then
+            raise("systemc does not support platform %s, supported: %s",
+                package:plat(), table.concat(supported_plats, ", "))
+        end
+    end)
     on_load(function (package)
         if package:config("shared") == nil then
-            -- Windows 默认静态库，其他平台默认动态库
+            -- if windows use static
             local default_shared = not package:is_plat("windows")
             package:set_config("shared", default_shared)
         end
