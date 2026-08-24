@@ -25,8 +25,8 @@ package("systemc")
             local src_file = "src/sysc/datatypes/int/sc_int64_io.cpp"
             
             if os.exists(src_file) then
-                io.replace(src_file, "([%w_]+)%.osfx%(", "%1.flush()")
-                io.replace(src_file, "([%w_]+)%.opfx%(", "%1.good()")
+                io.replace(src_file, "([%w_]+)%.osfx%(%)", "%1.flush()", {plain = false})
+                io.replace(src_file, "([%w_]+)%.opfx%(%)", "%1.good()", {plain = false})
             end
         end
 
