@@ -34,22 +34,34 @@ package("systemc")
         end
     end)
 
-    on_install(function (package)
+    on_install(function(package)
+        -- 设置临时目录环境变量，防止构建工具写入根目录
+        local tmpdir = package:buildir() .. "/tmp"
+        os.mkdir(tmpdir)
+        os.setenv("TMPDIR", tmpdir)
+        os.setenv("TEMP", tmpdir)   -- 兼容某些工具
+
+        -- 生成器选择：macOS/Linux 使用 Unix Makefiles，Windows 使用 Ninja
+        local generator = "Unix Makefiles"
+        if package:is_plat("windows") or package:is_plat("mingw") then
+            generator = "Ninja"
+        end
+
         local configs = {
+            "-G", generator,
             "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"),
             "-DENABLE_PTHREADS=" .. (package:config("pthreads") and "ON" or "OFF"),
             "-DENABLE_ASSERTIONS=" .. (package:config("assertions") and "ON" or "OFF"),
             "-DBUILD_SOURCE_DOCUMENTATION=" .. (package:config("docs") and "ON" or "OFF"),
             "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"),
+            "-DCMAKE_INSTALL_PREFIX=" .. package:installdir(),
             "-DCMAKE_CXX_STANDARD=17",
             "-DCMAKE_CXX_STANDARD_REQUIRED=ON",
             "-DCMAKE_CXX_EXTENSIONS=OFF",
             "-DENABLE_ASAN=OFF",
             "-DENABLE_UBSAN=OFF",
-            "-DSC_USE_OLD_OSTREAM=ON",
+            "-DSC_USE_OLD_OSTREAM=ON",   -- 修复 MSVC 兼容性，macOS 无影响
         }
-        table.insert(configs, "-DCMAKE_INSTALL_PREFIX=" .. package:installdir())
-
         import("package.tools.cmake").install(package, configs)
     end)
 
