@@ -38,20 +38,18 @@ package("systemc")
         local tmpdir = os.tmpdir()
         os.setenv("TMPDIR", tmpdir)
         os.setenv("TEMP", tmpdir)
-        
+
         if package:is_plat("windows") then
             local cxxflags = os.getenv("CXXFLAGS") or ""
             os.setenv("CXXFLAGS", cxxflags .. " -DSC_USE_OLD_OSTREAM")
         end
 
 
+        local generator = "Unix Makefiles"
         if package:is_plat("windows") or package:is_plat("mingw") then
-            table.insert(configs, "-G")
-            table.insert(configs, "Ninja")
-        else
-            table.insert(configs, "-G")
-            table.insert(configs, "Unix Makefiles")
+            generator = "Ninja"
         end
+
 
         local configs = {
             "-G", generator,
