@@ -24,10 +24,21 @@ package("zxing-cpp")
     add_deps("cmake")
 
     if on_check then
-        on_check("android", function (package)
-            if package:version() and package:version():ge("3.0.2") then
+        on_check(function (package)
+            local version = package:version()
+            if package:is_plat("android") and version and version:ge("3.0.2") then
                 local ndk = package:toolchain("ndk"):config("ndkver")
                 assert(ndk and tonumber(ndk) > 22, "package(zxing-cpp >=3.0.2) require ndk version > 22")
+            end
+            if version and version:ge("3.1.0") then
+                if not package:check_cxxsnippets({test = [[
+                    #include <memory>
+                    void test(int* ptr) {
+                        std::construct_at(ptr, 0);
+                    }
+                ]]}, {configs = {languages = "c++20"}}) then
+                    raise("package(zxing-cpp >=3.1.0) unsupported current platform: std::construct_at is unavailable")
+                end
             end
         end)
     end
@@ -86,9 +97,15 @@ package("zxing-cpp")
             table.insert(configs, "-DZINT_STATIC=" .. (zint:config("shared") and "OFF" or "ON"))
         end
 
-        local opt = {cxflags = {}}
+        local opt = {cxflags = {}, cxxflags = {}}
         if package:has_tool("cxx", "cl") then
             table.insert(opt.cxflags, "/utf-8")
+        end
+        if package:version() and package:version():ge("3.0.2") and
+            package:is_plat("mingw") and package:has_tool("cxx", "gcc", "gxx") then
+            -- https://gcc.gnu.org/bugzilla/show_bug.cgi?id=125359
+            -- Avoid unresolved C4 constructor symbols emitted by GCC with upstream's per-file -Os flags.
+            table.insert(opt.cxxflags, "-fno-declone-ctor-dtor")
         end
         if package:version() and package:version():le("2.3.0") and not package:is_debug() then
             -- https://github.com/zxing-cpp/zxing-cpp/issues/900
@@ -125,6 +142,15 @@ package("zxing-cpp")
                 auto image = ZXing::ImageView(data, width, height, ZXing::ImageFormat::Lum);
             }
         ]]}, {configs = {languages = languages}}))
+        if package:version() and package:version():ge("3.0.2") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <ZXing/Barcode.h>
+                void test() {
+                    ZXing::Barcode barcode;
+                    (void)barcode.isValid();
+                }
+            ]]}, {configs = {languages = languages}}))
+        end
 
         if package:config("c_api") then
             if package:version() and package:version():ge("2.3.0") then
