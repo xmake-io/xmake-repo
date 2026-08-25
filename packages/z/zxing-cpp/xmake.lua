@@ -39,6 +39,18 @@ package("zxing-cpp")
                 ]]}, {configs = {languages = "c++20"}}) then
                     raise("package(zxing-cpp >=3.1.0) unsupported current platform: std::construct_at is unavailable")
                 end
+                if not package:check_cxxsnippets({test = [[
+                    #include <vector>
+                    struct Aggregate {
+                        double first, second;
+                    };
+                    void test() {
+                        std::vector<Aggregate> values;
+                        values.emplace_back(0.0, 0.0);
+                    }
+                ]]}, {configs = {languages = "c++20"}}) then
+                    raise("package(zxing-cpp >=3.1.0) unsupported current platform: C++20 parenthesized aggregate initialization is unavailable")
+                end
             end
         end)
     end
