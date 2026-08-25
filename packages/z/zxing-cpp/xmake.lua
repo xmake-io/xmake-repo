@@ -6,6 +6,7 @@ package("zxing-cpp")
     add_urls("https://github.com/zxing-cpp/zxing-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/zxing-cpp/zxing-cpp.git", {submodules = false})
 
+    add_versions("v3.1.1", "7286b1e6ade66fe82b7c8208b4595deeb55d6486b410834fdc65702f46650542")
     add_versions("v3.0.2", "b063dacf384c7bb93ab2c3eea247cc06b4525330f0efa631907aa3029f7e2144")
     add_versions("v2.3.0", "64e4139103fdbc57752698ee15b5f0b0f7af9a0331ecbdc492047e0772c417ba")
     add_versions("v2.2.1", "02078ae15f19f9d423a441f205b1d1bee32349ddda7467e2c84e8f08876f8635")
@@ -23,10 +24,33 @@ package("zxing-cpp")
     add_deps("cmake")
 
     if on_check then
-        on_check("android", function (package)
-            if package:version() and package:version():ge("3.0.2") then
+        on_check(function (package)
+            local version = package:version()
+            if package:is_plat("android") and version and version:ge("3.0.2") then
                 local ndk = package:toolchain("ndk"):config("ndkver")
                 assert(ndk and tonumber(ndk) > 22, "package(zxing-cpp >=3.0.2) require ndk version > 22")
+            end
+            if version and version:ge("3.1.0") then
+                if not package:check_cxxsnippets({test = [[
+                    #include <memory>
+                    void test(int* ptr) {
+                        std::construct_at(ptr, 0);
+                    }
+                ]]}, {configs = {languages = "c++20"}}) then
+                    raise("package(zxing-cpp >=3.1.0) unsupported current platform: std::construct_at is unavailable")
+                end
+                if not package:check_cxxsnippets({test = [[
+                    #include <vector>
+                    struct Aggregate {
+                        double first, second;
+                    };
+                    void test() {
+                        std::vector<Aggregate> values;
+                        values.emplace_back(0.0, 0.0);
+                    }
+                ]]}, {configs = {languages = "c++20"}}) then
+                    raise("package(zxing-cpp >=3.1.0) unsupported current platform: C++20 parenthesized aggregate initialization is unavailable")
+                end
             end
         end)
     end
@@ -85,9 +109,15 @@ package("zxing-cpp")
             table.insert(configs, "-DZINT_STATIC=" .. (zint:config("shared") and "OFF" or "ON"))
         end
 
-        local opt = {cxflags = {}}
+        local opt = {cxflags = {}, cxxflags = {}}
         if package:has_tool("cxx", "cl") then
             table.insert(opt.cxflags, "/utf-8")
+        end
+        if package:version() and package:version():ge("3.0.2") and
+            package:is_plat("mingw") and package:has_tool("cxx", "gcc", "gxx") then
+            -- https://gcc.gnu.org/bugzilla/show_bug.cgi?id=125359
+            -- Avoid unresolved C4 constructor symbols emitted by GCC with upstream's per-file -Os flags.
+            table.insert(opt.cxxflags, "-fno-declone-ctor-dtor")
         end
         if package:version() and package:version():le("2.3.0") and not package:is_debug() then
             -- https://github.com/zxing-cpp/zxing-cpp/issues/900
@@ -115,6 +145,7 @@ package("zxing-cpp")
     end)
 
     on_test(function (package)
+        local languages = package:version() and package:version():ge("3.1.0") and "c++20" or "c++17"
         assert(package:check_cxxsnippets({test = [[
             #include <ZXing/ReadBarcode.h>
             void test() {
@@ -122,7 +153,16 @@ package("zxing-cpp")
                 unsigned char* data;
                 auto image = ZXing::ImageView(data, width, height, ZXing::ImageFormat::Lum);
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = {languages = languages}}))
+        if package:version() and package:version():ge("3.0.2") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <ZXing/Barcode.h>
+                void test() {
+                    ZXing::Barcode barcode;
+                    (void)barcode.isValid();
+                }
+            ]]}, {configs = {languages = languages}}))
+        end
 
         if package:config("c_api") then
             if package:version() and package:version():ge("2.3.0") then
