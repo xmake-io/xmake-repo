@@ -39,7 +39,7 @@ package("sqlgen")
     end)
 
     on_check(function (package)
-        if package:config("postgres") and is_plat("windows") then
+        if package:config("postgres") and package:is_plat("windows") then
             assert(not package:is_arch("arm64"), "package(sqlgen) deps(libpq): does not support arm64")
         end
         if package:config("duckdb") then
