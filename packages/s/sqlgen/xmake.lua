@@ -39,13 +39,25 @@ package("sqlgen")
     end)
 
     on_check(function (package)
-        if package:config("postgres") then
+        if package:config("postgres") and package:is_plat("windows") then
             assert(not package:is_arch("arm64"), "package(sqlgen) deps(libpq): does not support arm64")
         end
         if package:config("duckdb") then
             assert(package:version():ge("0.5.0"), "package(sqlgen) deps(duckdb): only version >= 0.5.0 supports DuckDB")
             assert(package:is_plat("linux", "macosx"), "package(sqlgen) deps(duckdb): only supports macOS and Linux")
         end
+
+        assert(package:check_cxxsnippets({test = [[
+            #include <ranges>
+            #include <source_location>
+            #include <iostream>
+            void test() {
+                constexpr std::string_view message = "Hello, C++20!";
+                for (char c : std::views::filter(message, [](char c) { return std::islower(c); }))
+                    std::cout << std::source_location::current().line() << ": " << c << '\n';
+            }
+        ]]}, {configs = {languages = "c++20"}}), "package(sqlgen) Require at least C++20.")
+
     end)
 
     on_install("windows", "macosx", "linux", "bsd", function (package)
