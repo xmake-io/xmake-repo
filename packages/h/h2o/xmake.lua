@@ -44,6 +44,8 @@ package("h2o")
         if package:config("zstd") then
             package:add("deps", "zstd")
         end
+
+        package:add("defines", "H2O_USE_LIBUV=" .. (package:config("uv") and "1" or "0"))
     end)
 
     on_install("linux", function (package)
