@@ -6,6 +6,7 @@ package("yojimbo")
     add_urls("https://github.com/mas-bandwidth/yojimbo/archive/refs/tags/$(version).tar.gz",
              "https://github.com/mas-bandwidth/yojimbo.git")
 
+    add_versions("v1.11.0", "eab9946fbd4aa288dbd4e72252a3066f9ba41adee749bfa081504debd41e17be")
     add_versions("v1.2.5", "0bbac01643f47f4167c884b88a10ed64b327eb4c6cae920551d7bcd447f1e292")
 
     if is_plat("windows") then
