@@ -3,13 +3,12 @@ package("workflow")
     set_description("C++ Parallel Computing and Asynchronous Networking Framework")
     set_license("Apache-2.0")
 
+    add_urls("https://github.com/sogou/workflow/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/sogou/workflow.git")
+
     if is_plat("windows") then
-        -- Windows 使用独立 windows 分支（iocp 实现），该分支无 tag，固定 commit 下载
-        add_urls("https://github.com/sogou/workflow/archive/b92ead03ec62609a3cc1293041a9caa58a6b4800.tar.gz")
-        add_versions("v1.0.1", "e560e0ac115a807aa92956355771b1446f2031c8c30d0b4b48a9f77ad285807d")
+        add_versions("v1.0.1", "b92ead03ec62609a3cc1293041a9caa58a6b4800")
     else
-        add_urls("https://github.com/sogou/workflow/archive/refs/tags/$(version).tar.gz",
-                 "https://github.com/sogou/workflow.git")
         add_versions("v1.0.1", "8da09b26e9f138ed98f11e6be7352ae9cc9a1f297135945ccde8a3d997b65508")
         add_versions("v1.0.0", "e163bcdde05e5bf0708d44995a7b8579a947acb8fef9a26e3b6da9b6df63e822")
         add_versions("v0.11.11", "5b526cdd6c2c38c89b1966afca481b54b1342ac1f53b150f2ca0353659ac7efa")
@@ -36,10 +35,7 @@ package("workflow")
     end
 
     on_install("windows", function (package)
-        -- 关闭静态运行时替换，让 workflow 与 xmake 包统一使用动态运行时(/MD)
-        import("package.tools.cmake").install(package, {
-            configs = {WORKFLOW_BUILD_STATIC_RUNTIME = false}
-        })
+        import("package.tools.cmake").install(package, {WORKFLOW_BUILD_STATIC_RUNTIME = "OFF"})
     end)
 
     on_install("linux", "macosx", "android", function (package)
