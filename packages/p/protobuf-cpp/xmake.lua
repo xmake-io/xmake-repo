@@ -13,6 +13,7 @@ package("protobuf-cpp")
     end})
 
     -- TODO: Use x.y.z version? https://protobuf.dev/support/version-support
+    add_versions("36.0", "b2ae760a4610c72fb80b14fb0ac202ade1ac5cf2aa1787a4fde08fbeb5f58a80")
     add_versions("35.1", "bf89df2fa0088de9c9890fbfba0076263a36c2f84847a7b54e7e32effd6201c7")
     add_versions("33.2", "d0c6246dc7817d26e809cae88f69b019a92827096811c85e65d3d01102974710")
     add_versions("33.1", "801c7d44b2ec2ffaaf94555eda48a2239ef21e6602808ca8d22a9005fc2c03ef")
@@ -46,7 +47,7 @@ package("protobuf-cpp")
     -- https://github.com/msys2/MINGW-packages/blob/e77de8e92025175ffa0a217c3444249aa6f8f4a9/mingw-w64-protobuf/0004-fix-build-with-gcc-15.patch#L7
     add_patches(">=31.0<32.0", "patches/31.0/gcc15.patch", "6475e824fabf7835f77e0410830c80b23e4c7a71fa5d7f4867ee7235942b167f")
     -- https://github.com/protocolbuffers/protobuf/issues/27942
-    add_patches("35.1", "patches/35.1/freebsd.patch", "b8487322891c6c6483e2799d81fbd0e2e26e85cf2bf20a4b1a2ed2039e7d6cac")
+    add_patches(">=35.1", "patches/35.1/freebsd.patch", "b8487322891c6c6483e2799d81fbd0e2e26e85cf2bf20a4b1a2ed2039e7d6cac")
 
     add_configs("rtti", {description = "Enable runtime type information", default = true, type = "boolean"})
     add_configs("zlib", {description = "Enable zlib", default = false, type = "boolean"})
@@ -208,7 +209,7 @@ package("protobuf-cpp")
         table.insert(configs, "-Dprotobuf_BUILD_LIBUPB=" .. (package:config("upb") and "ON" or "OFF"))
 
         local opt = {}
-        opt.buildir = "build"
+        opt.builddir = "build"
         if version:ge("22.0") then
             opt.packagedeps = "abseil"
             table.insert(configs, "-Dprotobuf_ABSL_PROVIDER=package")
