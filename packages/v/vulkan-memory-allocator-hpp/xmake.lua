@@ -12,6 +12,8 @@ package("vulkan-memory-allocator-hpp")
     add_versions("v3.1.0", 'f5cbce9b8efdb0de721f22b172c76184979e93ee45a008bfe515533d5d2e2d36')
     add_versions("v3.2.0", '7f24c857642ed9c030a843738892188301f6409e4405938f3f83ba12f0e3b553')
     add_versions("v3.2.1", '517fb3fd0d36038124b9644907784840c7e33c52f259b324156687b82fc6a878')
+    add_versions("v3.3.0+3", '2bc3b370a0fe0e23259357b3890b7df4c1c43e2cd3ec8fa0073ade5857220020')
+    add_versions("v3.4.0+2", 'f7548cbca6e3f11ca06060d3964722cf52e524d535a5d85bc43a9ab6f74f0a5b')
 
     add_configs("modules", {description = "Build with C++20 modules support.", default = false, type = "boolean"})
     add_configs("use_vulkanheaders", {description = "Use vulkan-headers package instead of vulkan-hpp.", default = false, type = "boolean"})
