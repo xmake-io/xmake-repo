@@ -6,6 +6,7 @@ package("metall")
     add_urls("https://github.com/LLNL/metall/archive/refs/tags/$(version).tar.gz",
              "https://github.com/LLNL/metall.git")
 
+    add_versions("v0.35", "d9d3cacde252c79779a0b7125681044481e8abf508982b6719d10f0cac46cb19")
     add_versions("v0.34", "977d08798fbaad405c3793f402b89507c49d9f6e12669719504bbd8dcc145c13")
     add_versions("v0.33", "4e3d33d94f90634b2a08802065092fb684ae20e77a1297ed741db0b60e4a1a9e")
     add_versions("v0.32", "2d373689c56fb41c5e995d786a76845f396099cc5f8bcba0c45a0179a621e235")
