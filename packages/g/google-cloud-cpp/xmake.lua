@@ -28,6 +28,10 @@ package("google-cloud-cpp")
     add_deps("cmake")
 
     on_check("mingw", function (package)
+        local version = package:version()
+        if version and version:ge("3.0.0") then
+            raise("package(google-cloud-cpp >=3.0.0) unsupported mingw because package(grpc) is unsupported")
+        end
         -- https://github.com/googleapis/google-cloud-cpp/issues/14436
         if is_subhost("msys") then
             raise("Unsupported msys2 mingw64, see https://github.com/rui314/mold/issues/613#issuecomment-1214294138")
@@ -37,6 +41,11 @@ package("google-cloud-cpp")
     on_load(function (package)
         local version = package:version()
         local is_v3 = version and version:ge("3.0.0")
+
+        -- Let on_check report unsupported platforms before loading their dependencies.
+        if package:is_plat("mingw") and (is_v3 or is_subhost("msys")) then
+            return
+        end
 
         package:add("deps", is_v3 and "abseil >=20250814.1" or "abseil")
         if not package:is_plat("windows", "mingw", "msys") then
