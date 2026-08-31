@@ -6,6 +6,7 @@ package("mujoco")
     set_urls("https://github.com/google-deepmind/mujoco/archive/refs/tags/$(version).tar.gz",
              "https://github.com/google-deepmind/mujoco.git")
 
+    add_versions("3.12.0", "9faa979982c3e924e8aaff3b16983bba3a1ab19c81f4f73178ae9c2ea25e467d")
     add_versions("3.4.0", "adff5e9397aac20189ee1525aabf1fbecc63c43697e8ad66a61220222983810f")
 
     add_configs("simulate", {description = "Build simulate library for MuJoCo", default = false, type = "boolean"})
