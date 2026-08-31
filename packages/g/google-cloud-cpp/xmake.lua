@@ -38,12 +38,27 @@ package("google-cloud-cpp")
         end
     end)
 
+    on_check("iphoneos", "cross", function (package)
+        local version = package:version()
+        if version and version:ge("3.0.0") then
+            raise("package(google-cloud-cpp >=3.0.0) unsupported %s because package(opentelemetry-cpp) is unsupported", package:plat())
+        end
+    end)
+
+    on_check("wasm", function (package)
+        local version = package:version()
+        if version and version:ge("3.0.0") then
+            raise("package(google-cloud-cpp >=3.0.0) unsupported wasm because package(grpc) is unsupported")
+        end
+    end)
+
     on_load(function (package)
         local version = package:version()
         local is_v3 = version and version:ge("3.0.0")
 
         -- Let on_check report unsupported platforms before loading their dependencies.
-        if package:is_plat("mingw") and (is_v3 or is_subhost("msys")) then
+        local unsupported_v3 = is_v3 and package:is_plat("mingw", "iphoneos", "cross", "wasm")
+        if unsupported_v3 or (package:is_plat("mingw") and is_subhost("msys")) then
             return
         end
 
