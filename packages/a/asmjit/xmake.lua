@@ -8,6 +8,7 @@ package("asmjit")
     add_versions("2024.03.09", "268bce7952883dec5015ae539906e9e9d7fb65a0")
     add_versions("2022.01.18", "9a92d2f97260749f6f29dc93e53c743448f0137a")
     add_versions("2021.06.27", "d02235b83434943b52a6d7c57118205c5082de08")
+    add_versions("2014.12.01", "48da90ded775fa2ba0fd3f15522890ad631ad6de")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread", "rt", "m")
@@ -21,12 +22,30 @@ package("asmjit")
         end
 
         local configs = {}
+        if package:version() and package:version():eq("2014.12.01") then
+            -- This API supports remote code generation for both x86 and x64.
+            io.replace("src/asmjit/config.h", "#define _ASMJIT_CONFIG_H",
+                       "#define _ASMJIT_CONFIG_H\n#define ASMJIT_BUILD_X86\n#define ASMJIT_BUILD_X64", {plain = true})
+            table.insert(configs, "-DCMAKE_POLICY_VERSION_MINIMUM=3.5")
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DASMJIT_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
+        if package:version() and package:version():eq("2014.12.01") then
+            assert(package:check_cxxsnippets({test = [[
+                void test() {
+                    asmjit::JitRuntime runtime;
+                    asmjit::X86Assembler x86(&runtime, asmjit::kArchX86);
+                    asmjit::X86Assembler x64(&runtime, asmjit::kArchX64);
+                    x86.ret();
+                    x64.ret();
+                }
+            ]]}, {configs = {languages = "c++11"}, includes = "asmjit/asmjit.h"}))
+            return
+        end
         assert(package:check_cxxsnippets({test = [[
             typedef int (*Func)(void);
             void test() {
