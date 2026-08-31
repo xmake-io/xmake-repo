@@ -85,6 +85,14 @@ package("mujoco")
         io.replace("cmake/MujocoOptions.cmake", "-Werror", "", {plain = true})
         io.replace("simulate/cmake/SimulateOptions.cmake", "-Werror", "", {plain = true})
 
+        if package:is_plat("windows") and not package:is_arch64() and
+            (package:gitref() or package:version():ge("3.10.0")) then
+            -- size_t is 32-bit, but upstream unconditionally uses the 64-bit MSVC intrinsic
+            io.replace("src/engine/engine_crossplatform.h",
+                "_InterlockedExchangeAdd64((__int64 volatile*)(ptr), (__int64)(val))",
+                "_InterlockedExchangeAdd((long volatile*)(ptr), (long)(val))", {plain = true})
+        end
+
         io.replace("src/user/user_mesh.cc", [[#include "qhull_ra.h"]], "#include <libqhull_r/qhull_ra.h>", {plain = true})
         io.replace("src/user/user_mesh.cc",
             "#include <TriangleMeshDistance/include/tmd/TriangleMeshDistance.h>",
@@ -172,4 +180,5 @@ package("mujoco")
 
     on_test(function (package)
         assert(package:has_cfuncs("mjv_defaultCamera", {includes = "mujoco/mujoco.h"}))
+        assert(package:has_cfuncs("mj_stackAllocByte", {includes = "mujoco/mujoco.h"}))
     end)
