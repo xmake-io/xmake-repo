@@ -20,7 +20,8 @@ package("mujoco")
     else
         add_deps("pkg-config")
     end
-    add_deps("libccd", "lodepng", "qhull", "tinyobjloader", "tinyxml2", "trianglemeshdistance", "marchingcubecpp")
+    add_deps("libccd", {configs = {double_precision = true}})
+    add_deps("lodepng", "qhull", "tinyobjloader", "tinyxml2", "trianglemeshdistance", "marchingcubecpp")
 
     if on_check then
         on_check("android", function (package)
@@ -31,6 +32,9 @@ package("mujoco")
     end
 
     on_load(function (package)
+        if package:gitref() or package:version():ge("3.9.0") then
+            package:add("deps", "miniz", {configs = {cmake = true}})
+        end
         if package:config("usd") then
             package:add("deps", "usd")
             package:add("defines", "mjUSEUSD")
@@ -53,7 +57,16 @@ package("mujoco")
         -- support static build
         io.replace("CMakeLists.txt", "add_library(mujoco SHARED", "add_library(mujoco ", {plain = true})
         -- remove fetch content
-        io.replace("CMakeLists.txt", "include(MujocoDependencies)", "", {plain = true})
+        local dependencies = ""
+        if package:gitref() or package:version():ge("3.9.0") then
+            dependencies = [[
+                find_package(miniz CONFIG REQUIRED)
+                find_package(tinyobjloader CONFIG REQUIRED)
+                add_library(miniz ALIAS miniz::miniz)
+                add_library(tinyobjloader ALIAS tinyobjloader::tinyobjloader)
+            ]]
+        end
+        io.replace("CMakeLists.txt", "include(MujocoDependencies)", dependencies, {plain = true})
         -- remove hardcode ccd and dynamic library export macro
         io.replace("CMakeLists.txt", "CCD_STATIC_DEFINE MUJOCO_DLL_EXPORTS", "", {plain = true})
         -- remove unused install target
