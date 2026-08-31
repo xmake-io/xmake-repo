@@ -7,6 +7,7 @@ package("stm32-devel")
     add_urls("https://github.com/xmake-addons/stm32-devel/archive/refs/tags/$(version).tar.gz",
              "https://github.com/xmake-addons/stm32-devel.git")
     add_versions("v1.0.0", "a380faf5f9640fc63f899e034d77019a68308b99b229e711900a06c5c3f0e3c0")
+    add_versions("v1.0.1", "b84b1dd151a708b37ef9dd4303bbb2eac1372bbac360a099d7bf143fb63d99c1")
 
     add_deps("serial-tools", {kind = "addon"})
 
