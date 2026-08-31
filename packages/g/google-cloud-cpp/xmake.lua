@@ -122,7 +122,7 @@ package("google-cloud-cpp")
                 end
 
                 if package:is_cross() then
-                    package:add("deps", "grpc~binary", {private = true, kind = "binary"})
+                    package:add("deps", "grpc~binary", {host = true, private = true, kind = "binary"})
                 end
                 -- Keep the v3 ref in sync with the release's cmake/GoogleapisConfig.cmake.
                 local googleapis_ref = is_v3 and "b8486a2f44f15dc578a9dc1e17b144253079d5c1" or "c3556b45dc35a145e04b5692bc72e01a4f58a6b2"
