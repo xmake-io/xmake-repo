@@ -6,6 +6,11 @@ package("nanobind")
     set_urls("https://github.com/wjakob/nanobind/archive/refs/tags/$(version).tar.gz",
              "https://github.com/wjakob/nanobind.git", {submodules = false})
 
+    add_versions("v3.0.1", "34ded7cf2292f08a92c45490a095e76334a57751bbae03a8c83241803bf19623")
+    add_versions("v3.0.0", "1e6d9c2b2e746301b5cca1eec9a83338f3412cdec4ffae169fb7a2b2b2a9c734")
+    add_versions("v2.15.0", "36c8760b3acb25643cd89d549782d8c67bd82ce54c6238608787c22a34fd490f")
+    add_versions("v2.14.0", "937b08801b9b61c98192d9ec5ddb712256961fbe8ccc1122d6ee3d574600287c")
+    add_versions("v2.13.0", "cb25a582ccade4b6067bc73c78b84ad9dbd0bbe0e537320711d18015ccafc4ef")
     add_versions("v2.12.0", "01f1f0cd0398743c18f33d07ae36ad410bd7f4a1e90683b508504de897d6e629")
     add_versions("v2.11.0", "62ba05e5f720c76c510d6ab2a77f8ccc17a76c5cea951bea47355a7dfa460449")
     add_versions("v2.10.2", "5bb7f866f6c9c64405308b69de7e7681d8f779323e345bd71a00199c1eaec073")
@@ -15,8 +20,18 @@ package("nanobind")
     add_versions("v2.6.1", "519c6dd56581ad6db9aab814105c2666a0491096487cb384dd20216f80d1a291")
     add_versions("v2.2.0", "bfbfc7e5759f1669e4ddb48752b1ddc5647d1430e94614d6f8626df1d508e65a")
 
-    add_deps("cmake")
-    add_deps("robin-map", "python >=3.8")
+    add_deps("cmake", "robin-map")
+
+    on_load(function (package)
+        local version = package:version()
+        if not version or version:major() >= 3 then
+            package:add("deps", "python >=3.10")
+        elseif version:ge("2.10.0") then
+            package:add("deps", "python >=3.9")
+        else
+            package:add("deps", "python >=3.8")
+        end
+    end)
 
     on_install("windows|x64", "linux", "macosx", "bsd", function (package)
         local builddir = path.join(os.curdir(), "build")
