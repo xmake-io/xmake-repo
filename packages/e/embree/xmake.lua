@@ -6,6 +6,7 @@ package("embree")
 
     add_urls("https://github.com/RenderKit/embree/archive/refs/tags/$(version).tar.gz",
              "https://github.com/RenderKit/embree.git")
+    add_versions("v4.4.1", "dcf338cc61b636c871ccf370e673bfd380c5ecb71ce49ad50f28e1d4ec9995dc")
     add_versions("v4.4.0", "acb517b0ea0f4b442235d5331b69f96192c28da6aca5d5dde0cbe40799638d5c")
     add_versions("v3.12.1", "0c9e760b06e178197dd29c9a54f08ff7b184b0487b5ba8b8be058e219e23336e")
     add_versions("v3.13.0", "4d86a69508a7e2eb8710d571096ad024b5174834b84454a8020d3a910af46f4f")
