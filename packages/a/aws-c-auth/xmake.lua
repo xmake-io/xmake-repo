@@ -6,6 +6,7 @@ package("aws-c-auth")
     add_urls("https://github.com/awslabs/aws-c-auth/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-auth.git")
 
+    add_versions("v1.0.0", "12a29eb62c61cef4b38c90d4f0dd2657dc585a15c138d60941d6f20c1ad3b12d")
     add_versions("v0.10.4", "6fb567f496a450d4b6d3f5749d735977a0156957e8ccbca9af7a5ee15d1ffda7")
     add_versions("v0.10.3", "20fc5e75529fadd81fd38b25f9d83798b53ab235ebbac92cdfbb716cfcc7593d")
     add_versions("v0.10.2", "832d2ae61ccd408ef001dd14eb909cc9551a5724211a817688bbb898a60457a7")
@@ -23,7 +24,6 @@ package("aws-c-auth")
     add_versions("v0.7.22", "f249a12a6ac319e929c005fb7efd5534c83d3af3a3a53722626ff60a494054bb")
     add_versions("v0.7.18", "c705199655066f1f874bc3758683f32e288024196a22f28360d336231e45406f")
     add_versions("v0.7.17", "8fe380255a71a2d5c9acd4979c135f9842135ce6385010ea562bc0b532bf5b84")
-    add_versions("v0.7.3", "22e334508b76f1beddefbf877f200c8a5ace4e3956c6be6545b7572762afe8c5")
 
     add_configs("assert_lock_help", {description = "Enable ASSERT_SYNCED_DATA_LOCK_HELD for checking thread issue", default = false, type = "boolean"})
 
