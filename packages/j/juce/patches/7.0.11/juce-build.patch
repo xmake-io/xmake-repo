@@ -1,0 +1,39 @@
+diff --git a/modules/juce_gui_basics/detail/juce_ScopedContentSharerImpl.h b/modules/juce_gui_basics/detail/juce_ScopedContentSharerImpl.h
+index c4cc158e5..700a6544c 100644
+--- a/modules/juce_gui_basics/detail/juce_ScopedContentSharerImpl.h
++++ b/modules/juce_gui_basics/detail/juce_ScopedContentSharerImpl.h
+@@ -27,7 +27,7 @@ namespace juce::detail
+ {
+ 
+ class ConcreteScopedContentSharerImpl : public ScopedMessageBoxImpl,
+-                                        private AsyncUpdater
++                                        public AsyncUpdater
+ {
+ public:
+     static ScopedMessageBox show (std::unique_ptr<ScopedContentSharerInterface>&& native,
+diff --git a/modules/juce_gui_basics/detail/juce_ScopedContentSharerInterface.h b/modules/juce_gui_basics/detail/juce_ScopedContentSharerInterface.h
+index 4085c025e..fbbb8fb06 100644
+--- a/modules/juce_gui_basics/detail/juce_ScopedContentSharerInterface.h
++++ b/modules/juce_gui_basics/detail/juce_ScopedContentSharerInterface.h
+@@ -64,7 +64,7 @@ struct ScopedContentSharerInterface
+ };
+ 
+ class TemporaryFilesDecorator : public ScopedContentSharerInterface,
+-                                private AsyncUpdater
++                                public AsyncUpdater
+ {
+ public:
+     explicit TemporaryFilesDecorator (Component* parentIn)
+diff --git a/modules/juce_gui_basics/detail/juce_ScopedMessageBoxImpl.h b/modules/juce_gui_basics/detail/juce_ScopedMessageBoxImpl.h
+index 8396ca829..784e0d1e1 100644
+--- a/modules/juce_gui_basics/detail/juce_ScopedMessageBoxImpl.h
++++ b/modules/juce_gui_basics/detail/juce_ScopedMessageBoxImpl.h
+@@ -36,7 +36,7 @@ public:
+ 
+ //==============================================================================
+ class ConcreteScopedMessageBoxImpl : public ScopedMessageBoxImpl,
+-                                     private AsyncUpdater
++                                     public AsyncUpdater
+ {
+ public:
+     static ScopedMessageBox show (std::unique_ptr<ScopedMessageBoxInterface>&& native,
