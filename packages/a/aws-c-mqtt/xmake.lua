@@ -6,6 +6,7 @@ package("aws-c-mqtt")
     add_urls("https://github.com/awslabs/aws-c-mqtt/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-mqtt.git")
 
+    add_versions("v1.0.0", "28d9d9edd5f643b5a8db4e4f116c09d0781fd3715341ad3b039da3233a3d7b12")
     add_versions("v0.16.1", "48fd84e6ff51fdce5cdc4250593d7b0f10db91f8592737c0fe69e0177ee48144")
     add_versions("v0.16.0", "9bc044a9c2f0d80c384ae6a6907c8817e0b40f673f75c4615c83b20f83140374")
     add_versions("v0.15.2", "66f3f5edff4ad1f765a86d3342b6017d0f29f950c1c24f8c1edacdc895202edc")
@@ -18,7 +19,6 @@ package("aws-c-mqtt")
     add_versions("v0.10.6", "7579fafc74a8751c15c0196eda6ec93d00a17e7f79fb994f34a8f62ceb66cc62")
     add_versions("v0.10.4", "6a41456f9eee15d71e4e2ee162b354865809f26620f1e6e5acb237f190f77f3f")
     add_versions("v0.10.3", "bb938d794b0757d669b5877526363dc6f6f0e43869ca19fc196ffd0f7a35f5b9")
-    add_versions("v0.9.5", "987289535d3c988fe949f49d81268736c96fe27b27c98c899f0a148577f6627b")
 
     add_configs("asan", {description = "Enable Address Sanitize.", default = false, type = "boolean"})
     add_configs("assert_lock_help", {description = "Enable ASSERT_SYNCED_DATA_LOCK_HELD for checking thread issue", default = false, type = "boolean"})

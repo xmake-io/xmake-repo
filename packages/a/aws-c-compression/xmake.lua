@@ -6,6 +6,7 @@ package("aws-c-compression")
     add_urls("https://github.com/awslabs/aws-c-compression/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-compression.git")
 
+    add_versions("v1.0.0", "d8e934da2086bfec41f97a0cff749d926f66ccb90f2052f1d70841916c1bf4d7")
     add_versions("v0.3.3", "33a91db709a547f417b1b23fdb76a64727ee8fb7ed88dd1a43be117f402db356")
     add_versions("v0.3.2", "f93f5a5d8b3fee3a6d97b14ba279efacd4d4016ef9cc7dc4be7d43519ecfbe93")
     add_versions("v0.3.1", "d89fca17a37de762dc34f332d2da402343078da8dbd2224c46a11a88adddf754")
