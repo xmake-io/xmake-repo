@@ -24,10 +24,25 @@ package("mujoco")
     add_deps("lodepng", "qhull", "tinyobjloader", "tinyxml2", "trianglemeshdistance", "marchingcubecpp")
 
     if on_check then
-        on_check("android", function (package)
-            local ndk = package:toolchain("ndk")
-            local ndk_sdkver = ndk:config("ndk_sdkver")
-            assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(mujoco) require ndk api level > 21")
+        on_check(function (package)
+            local version = package:version()
+            if package:is_plat("android") then
+                local ndk = package:toolchain("ndk")
+                local ndk_sdkver = ndk:config("ndk_sdkver")
+                assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(mujoco) require ndk api level > 21")
+            end
+            if package:gitref() or (version and version:ge("3.5.0")) then
+                if not package:check_cxxsnippets({test = [[
+                    #include <string_view>
+                    void test() {
+                        const char xml[] = "x";
+                        auto consume = [](std::string_view) {};
+                        consume({xml, xml + 1});
+                    }
+                ]]}, {configs = {languages = "c++20"}}) then
+                    raise("package(mujoco >=3.5.0) unsupported current platform: C++20 std::string_view iterator constructor is unavailable")
+                end
+            end
         end)
     end
 
