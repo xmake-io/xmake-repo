@@ -33,6 +33,9 @@ package("teascript")
                     return 0;
                 }
             ]]}, {configs = {languages = "c++20"}}), "package(teascript) Require std::stop_token support.")
+            if package:is_plat("mingw") and package:is_arch("i386", "x86") then
+                raise("package(teascript) unsupported on mingw/i386")
+            end
         end)
     end
 
