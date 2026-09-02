@@ -16,6 +16,13 @@ package("asmjit")
 
     add_deps("cmake")
 
+    on_check(function (package)
+        if package:version() and package:version():eq("2014.12.01") then
+            assert(not package:is_arch("arm.*"), "package(asmjit == 2014.12.01): does not support arm.")
+            assert(not package:is_plat("wasm"), "package(asmjit == 2014.12.01): does not support wasm.")
+        end
+    end)
+
     on_install("!iphoneos", function (package)
         if not package:config("shared") then
             package:add("defines", "ASMJIT_STATIC")
