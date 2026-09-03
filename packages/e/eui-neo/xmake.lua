@@ -6,7 +6,7 @@ package("eui-neo")
     add_urls("https://github.com/sudoevolve/EUI-NEO/archive/refs/tags/$(version).tar.gz")
     add_urls("https://github.com/sudoevolve/EUI-NEO.git", {alias = "git", submodules = false})
 
-    add_versions("v0.5.8", "2c511fd76a488fac6e39c2f2fd7f40ece40df0dd66a4e76c8d4358c255facc28")
+    add_versions("v0.5.8", "274dad0018d42e20223391654f612625d4b1fa4f649d5c9c7ac498773b904c95")
     add_versions("v0.5.7", "2d3ec0a36e34b98d13dbdaf67afa4fe178cb4b52841eb17529517cb48be43551")
     add_versions("v0.5.6", "0df8d79897a480566b0989060f206431d12c4a83eb7aef50b8e5d21f1676abf8")
     add_versions("v0.5.5", "cf0da91d7544fe406b704922137fd4d55ed080b3e647501e0ca5303abb00eb98")
