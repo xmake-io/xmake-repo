@@ -7,7 +7,6 @@ package("imgui")
     add_urls("https://github.com/ocornut/imgui.git", {alias = "git"})
 
     -- don't forget to add the docking versions as well
-    add_versions("v1.92.9b", "21d8a0a565e85dce943e375db00812c2f3f0ab21f3f0f7964e364a63422d7f99")
     add_versions("v1.92.9", "af97ed649182c39314320514a672b82008ab462b9293fe23d37b30bfa5d05519")
     add_versions("v1.92.8", "fecb33d33930e12ff53a34064e9d3a06c8f7c3e04408f14cd36c80e3faac863b")
     add_versions("v1.92.7", "b21b14ce1ef6dd4d85fa54f68f8449a9be94f3b453aba7fe4ea2a9764e43a5ef")
@@ -62,7 +61,6 @@ package("imgui")
     add_versions("v1.76",   "e482dda81330d38c87bd81597cacaa89f05e20ed2c4c4a93a64322e97565f6dc")
     add_versions("v1.75",   "1023227fae4cf9c8032f56afcaea8902e9bfaad6d9094d6e48fb8f3903c7b866")
 
-    add_versions("v1.92.9b-docking", "90ded916bd57db2e0e171b6b098940a47c6f5042725dcdc67fb19940ca8bfdcc")
     add_versions("v1.92.9-docking", "61f2ec7ef19702e47689b77cc602e3aeeda423941bfbc5d8ecb6a02d05a9dd73")
     add_versions("v1.92.8-docking", "ca0653454ed371b7a87e9b0bc29a5d15c9be7f7c0fbe778042fc48c71df1d3d8")
     add_versions("v1.92.7-docking", "123926eb22d4990dea06bec0739d92f7790c8ee505b3d903fe2de7e5940f2c27")
