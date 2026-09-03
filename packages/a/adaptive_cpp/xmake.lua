@@ -8,21 +8,10 @@ package("adaptive_cpp")
     add_urls("https://github.com/AdaptiveCpp/AdaptiveCpp/archive/refs/tags/v$(version).tar.gz")
     add_versions("25.10.0", "334b16ebff373bd2841f83332c2ae9a45ec192f2cf964d5fdfe94e1140776059")
 
-    -- Replace upstream FetchContent of OpenCL-Headers/OpenCL-CLHPP with the
-    -- xrepo packages (opencl-headers / opencl-clhpp), so no network fetch
-    -- happens during cmake configure.
+
     add_patches("25.10.0", "patches/25.10.0/use-xrepo-opencl-headers.patch", "c7a646f4bd8d8b740f8f06dc9f09a296850183e71c2d11195dd1f80209ce36bc")
 
-    ---------------------------------------------------------------------------
-    -- AdaptiveCpp is a clang plugin: the plugin ABI requires the exact same
-    -- clang that the `acpp` driver invokes on user code, so the whole host
-    -- toolchain used at compile time is this LLVM. clang + lld + libomp are
-    -- needed (SSCP compiler and the accelerated CPU backend); the LLVM
-    -- runtimes are not (user code keeps the host libstdc++).
-    -- LLVM 21.1.0: LLVM 18.x does not build with host GCC >= 15 and xrepo has
-    -- no 19.x/20.x; AdaptiveCpp's own support matrix is LLVM 15-21, only its
-    -- configure-time guard still flags 21 as untested (see on_install).
-    ---------------------------------------------------------------------------
+
     add_deps("llvm 21.1.0", {host = true, kind = "library", private = true, configs = {clang = true, lld = true, openmp = true, ["compiler-rt"] = false, libcxx = false, libcxxabi = false, libunwind = false}})
     -- the `acpp` compiler driver is a python script
     add_deps("python 3.x", {kind = "binary"})
@@ -36,13 +25,10 @@ package("adaptive_cpp")
             package:add("deps", "opencl", "opencl-headers", "opencl-clhpp")
         end
 
-        -- expose SYCL headers & runtime libraries to targets that add this
-        -- package (paths are resolved relative to the package installdir)
         package:add("includedirs", path.join("include", "AdaptiveCpp"))
         package:add("linkdirs", "lib")
         package:add("links", "acpp-rt", "acpp-common")
         package:add("syslinks", "dl", "pthread")
-        -- make `acpp` available on PATH for os.runv / rules in consumer projects
         package:addenv("PATH", "bin")
     end)
 
@@ -54,19 +40,13 @@ package("adaptive_cpp")
         assert(os.isfile(path.join(llvm_prefix, "bin", "clang++")), "llvm dependency does not contain clang++!")
 
         local configs = {
-            -- full profile: SSCP generic JIT compiler + stdpar + accelerated CPU
             "-DACPP_COMPILER_FEATURE_PROFILE=full",
-            -- AdaptiveCpp 25.10.0 predates the LLVM 21 support of newer releases
-            -- (its configure guard rejects LLVM > 20 as "not yet tested"), but
-            -- it builds and works against LLVM 21.x with this official switch.
             "-DACPP_EXPERIMENTAL_LLVM=ON",
             "-DWITH_LEVEL_ZERO_BACKEND=OFF",
             "-DWITH_CUDA_BACKEND=" .. (package:config("cuda") and "ON" or "OFF"),
             "-DWITH_ROCM_BACKEND=" .. (package:config("rocm") and "ON" or "OFF"),
             "-DWITH_OPENCL_BACKEND=" .. (package:config("opencl") and "ON" or "OFF"),
-            -- install the acpp config files into <prefix>/etc/AdaptiveCpp
             "-DACPP_CONFIG_FILE_GLOBAL_INSTALLATION=OFF",
-            -- build the clang plugin against the xrepo LLVM
             "-DLLVM_DIR=" .. path.join(llvm_prefix, "lib", "cmake", "llvm")
         }
 
@@ -82,14 +62,9 @@ package("adaptive_cpp")
 
         cmake.install(package, configs)
 
-        -- Rewire the default host CPU compiler to the bundled xrepo clang, so
-        -- the installed package does not reference the build machine's system
-        -- compiler (e.g. /usr/bin/g++). `acpp` also supports overriding it at
-        -- runtime via ACPP_DEFAULT_CPU_CXX / --default-cpu-cxx.
+     
         local clangxx = path.join(llvm_prefix, "bin", "clang++")
-        -- clang adds -fopenmp to user links but no runpath, so the driver link
-        -- lines get rpath flags for the LLVM lib dirs (LLVM >= 21 installs
-        -- libomp into a target-triple subdirectory of lib).
+    
         local llvm_libdirs = {path.join(llvm_prefix, "lib")}
         for _, libomp in ipairs(os.files(path.join(llvm_prefix, "lib", "*", "libomp.so"))) do
             table.insert(llvm_libdirs, 1, path.directory(libomp))
@@ -111,4 +86,45 @@ package("adaptive_cpp")
         local acpp = path.join(package:installdir("bin"), "acpp")
         assert(os.isfile(acpp), "acpp driver not installed!")
         os.vrunv("python3", {acpp, "--version"})
+        assert(package:check_cxxsnippets({test = [[
+            void test() {
+                sycl::queue q;
+                std::printf("Device : %s\n", q.get_device().get_info<sycl::info::device::name>().c_str());
+                std::printf("Vendor : %s\n", q.get_device().get_info<sycl::info::device::vendor>().c_str());
+
+                constexpr std::size_t N = 1 << 16;
+
+
+                {
+                    std::vector<float> a(N, 1.0f), b(N, 2.0f), c(N, 0.0f);
+                    {
+                        sycl::buffer<float> ba(a.data(), N), bb(b.data(), N), bc(c.data(), N);
+                        q.submit([&](sycl::handler &h) {
+                            auto xa = ba.get_access<sycl::access::mode::read>(h);
+                            auto xb = bb.get_access<sycl::access::mode::read>(h);
+                            auto xc = bc.get_access<sycl::access::mode::write>(h);
+                            h.parallel_for(sycl::range<1>(N), [=](sycl::id<1> i) { xc[i] = xa[i] + xb[i]; });
+                        });
+                    }
+                    for (std::size_t i = 0; i < N; ++i)
+                        if (c[i] != 3.0f) { std::printf("buffer kernel FAIL at %zu\n", i); return 1; }
+                    std::printf("buffer/accessor vector add: OK (%zu elems)\n", N);
+                }
+
+                {
+                    float *x = sycl::malloc_shared<float>(N, q);
+                    float *y = sycl::malloc_shared<float>(N, q);
+                    for (std::size_t i = 0; i < N; ++i) x[i] = 2.0f;
+                    q.parallel_for(sycl::range<1>(N), [=](sycl::id<1> i) { y[i] = 3.0f * x[i]; }).wait();
+                    for (std::size_t i = 0; i < N; ++i)
+                        if (y[i] != 6.0f) { std::printf("USM kernel FAIL at %zu\n", i); sycl::free(x, q); sycl::free(y, q); return 1; }
+                    sycl::free(x, q);
+                    sycl::free(y, q);
+                    std::printf("USM saxpy: OK (%zu elems)\n", N);
+                }
+
+                std::printf("ALL TESTS PASSED\n");
+                return 0;
+            }
+        ]]}, {configs = {languages = "c++14"}, includes = "sycl/sycl.hpp"}))
     end)
