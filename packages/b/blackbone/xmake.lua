@@ -12,7 +12,10 @@ package("blackbone")
     add_links("BlackBone")
     add_syslinks("advapi32", "user32", "psapi", "shlwapi", "ole32", "oleaut32", "version")
 
-    add_deps("rewolf-wow64ext 2022.09.26", "asmjit 2014.12.01", "beaengine", {configs = {shared = false}})
+    add_deps("asmjit 2014.12.01", "beaengine", {configs = {shared = false}})
+    if is_arch("x86") then
+        add_deps("rewolf-wow64ext 2022.09.26")
+    end
     add_deps("diasdk", {system = true})
 
     on_check(function (package)
