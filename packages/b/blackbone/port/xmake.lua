@@ -15,11 +15,9 @@ target("BlackBone")
     remove_files("src/BlackBone/DllMain.cpp")
     add_headerfiles("src/(BlackBone/**.h)", "src/(BlackBone/**.hpp)")
     add_headerfiles("src/(BlackBoneDrv/BlackBoneDef.h)")
-
     if is_arch("x64") then
         add_files("src/BlackBone/Syscalls/Syscall64.asm")
-        remove_files("src/BlackBone/Subsystem/Wow64Subsystem.cpp")
     else
         add_files("src/BlackBone/Syscalls/Syscall32.asm")
-        add_asflags("/safeseh")
     end
+    add_asflags("/safeseh")
