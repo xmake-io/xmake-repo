@@ -1,9 +1,6 @@
 add_rules("mode.debug", "mode.release")
-add_requires("asmjit 2014.12.01", "beaengine", {configs = {shared = false}})
+add_requires("rewolf-wow64ext 2022.09.26", "asmjit 2014.12.01", "beaengine", {configs = {shared = false}})
 add_requires("diasdk", {system = true})
-if is_arch("x86") then
-    add_requires("rewolf-wow64ext 2022.09.26", {configs = {shared = false}})
-end
 
 target("BlackBone")
     set_kind("static")
