@@ -88,7 +88,6 @@ package("rewolf-wow64ext")
                 end
         ]])
         import("package.tools.xmake").install(package)
-        os.cp("lgpl-3.0.txt", package:installdir("licenses"))
     end)
 
     on_test(function (package)
