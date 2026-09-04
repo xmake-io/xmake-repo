@@ -5,10 +5,7 @@ add_requires("diasdk", {system = true})
 target("BlackBone")
     set_kind("static")
     set_languages("c++17")
-    add_packages("asmjit", "beaengine", "diasdk")
-    if is_arch("x86") then
-        add_packages("rewolf-wow64ext")
-    end
+    add_packages("rewolf-wow64ext", "asmjit", "beaengine", "diasdk")
     add_defines("BLACKBONE_STATIC", "UNICODE", "_UNICODE", "WIN32_LEAN_AND_MEAN",
                 "_CRT_SECURE_NO_WARNINGS", "_SCL_SECURE_NO_WARNINGS")
     -- Some upstream comments use a legacy encoding.
