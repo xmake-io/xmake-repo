@@ -18,10 +18,6 @@ package("blackbone")
     end
     add_deps("diasdk", {system = true})
 
-    on_check(function (package)
-        assert(not package:is_arch("arm.*"), "package(blackbone): does not support arm.")
-    end)
-
     on_install("windows|x86", "windows|x64", function (package)
         -- VersionApi.h implements Blackbone's own version helpers, not a dependency.
         os.cp("src/3rd_party/VersionApi.h", "src/BlackBone/Include/VersionApi.h")
