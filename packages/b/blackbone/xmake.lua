@@ -14,7 +14,7 @@ package("blackbone")
 
     add_deps("asmjit 2014.12.01", "beaengine", {configs = {shared = false}})
     if is_arch("x86") then
-        add_deps("rewolf-wow64ext 2022.09.26")
+        add_deps("rewolf-wow64ext 2022.09.26", {configs = {shared = false}})
     end
     add_deps("diasdk", {system = true})
 
