@@ -12,11 +12,12 @@ package("blackbone")
     add_links("BlackBone")
     add_syslinks("advapi32", "user32", "psapi", "shlwapi", "ole32", "oleaut32", "version")
 
-    add_deps("asmjit 2014.12.01", "beaengine", {configs = {shared = false}})
+    add_deps("rewolf-wow64ext 2022.09.26", "asmjit 2014.12.01", "beaengine", {configs = {shared = false}})
     add_deps("diasdk", {system = true})
-    if is_arch("x86") then
-        add_deps("rewolf-wow64ext 2022.09.26", {configs = {shared = false}})
-    end
+
+    on_check(function (package)
+        assert(not package:is_arch("arm.*"), "package(blackbone): does not support arm.")
+    end)
 
     on_install("windows|x86", "windows|x64", function (package)
         -- VersionApi.h implements Blackbone's own version helpers, not a dependency.
@@ -39,9 +40,6 @@ package("blackbone")
         os.rm("DIA")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)
-
-        -- LDasm is part of the Blackbone sources and retains its own license.
-        os.cp("src/BlackBone/Asm/LDasm.c", package:installdir("licenses"))
     end)
 
     on_test(function (package)
