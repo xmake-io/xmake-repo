@@ -8,7 +8,10 @@ add_requires("diasdk", {system = true})
 target("BlackBone")
     set_kind("static")
     set_languages("c++17")
-    add_packages("rewolf-wow64ext", "asmjit", "beaengine", "diasdk")
+    add_packages("asmjit", "beaengine", "diasdk")
+    if is_arch("x86") then
+        add_packages("rewolf-wow64ext")
+    end
     add_defines("BLACKBONE_STATIC", "UNICODE", "_UNICODE", "WIN32_LEAN_AND_MEAN",
                 "_CRT_SECURE_NO_WARNINGS", "_SCL_SECURE_NO_WARNINGS")
     -- Some upstream comments use a legacy encoding.
@@ -20,7 +23,8 @@ target("BlackBone")
     add_headerfiles("src/(BlackBoneDrv/BlackBoneDef.h)")
     if is_arch("x64") then
         add_files("src/BlackBone/Syscalls/Syscall64.asm")
+        remove_files("src/BlackBone/Subsystem/Wow64Subsystem.cpp")
     else
         add_files("src/BlackBone/Syscalls/Syscall32.asm")
+        add_asflags("/safeseh")
     end
-    add_asflags("/safeseh")
