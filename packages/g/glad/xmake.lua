@@ -66,6 +66,15 @@ package("glad")
 
     on_install("windows", "linux", "macosx", "mingw", function (package)
         if package:version():gt("1.0") then
+            local pytool = package:find_tool("python") or package:find_tool("python3")
+            local venv_dir = path.join(os.curdir(), ".venv")
+            os.vrunv(pytool.program, {"-m", "venv", venv_dir})
+            local venv_python = package:is_plat("windows", "mingw") and path.join(venv_dir, "Scripts", "python.exe") or path.join(venv_dir, "bin", "python")
+            if not os.isfile(venv_python) and package:is_plat("windows", "mingw") then
+                venv_python = path.join(venv_dir, "python.exe")
+            end
+            os.vrunv(venv_python, {"-m", "pip", "install", "-r", "requirements.txt"})
+
             io.writefile("CMakeLists.txt", [[
 cmake_minimum_required(VERSION 3.12)
 project(glad LANGUAGES C)
@@ -85,6 +94,9 @@ install(TARGETS glad)
 install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/gladsources/glad/include/" TYPE INCLUDE)
 ]])
             local configs = {}
+            local py_path = venv_python:gsub("\\", "/")
+            table.insert(configs, "-DPython_EXECUTABLE=" .. py_path)
+            table.insert(configs, "-DPython3_EXECUTABLE=" .. py_path)
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
             if package:is_plat("windows") then
