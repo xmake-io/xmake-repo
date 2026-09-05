@@ -49,6 +49,11 @@ package("amrex")
                 assert(vs_sdkver and semver.match(vs_sdkver):gt("10.0.19041"), "package(amrex) require vs_sdkver > 10.0.19041.0")
             end
         end)
+        on_check("mingw", function (package)
+            if package:is_arch("i386") then
+                assert(package:version() and package:version():le("26.08"), "package(amrex >=26.09) unsupport mingw|i386")
+            end
+        end)
     end
 
     on_load(function (package)
