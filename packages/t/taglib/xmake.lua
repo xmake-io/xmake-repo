@@ -1,5 +1,5 @@
 package("taglib")
-    set_homepage("http://taglib.org/")
+    set_homepage("https://taglib.org/")
     set_description("TagLib Audio Meta-Data Library")
     set_license("LGPL-2.1")
 

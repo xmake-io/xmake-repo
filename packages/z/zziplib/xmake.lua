@@ -1,5 +1,5 @@
 package("zziplib")
-    set_homepage("http://zziplib.sourceforge.net/")
+    set_homepage("https://zziplib.sourceforge.net/")
     set_description("The zziplib library is intentionally lightweight, it offers the ability to easily extract data from files archived in a single zip file.")
     set_license("GPL-2.0")
 

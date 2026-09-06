@@ -1,6 +1,6 @@
 package("pqp")
 
-    set_homepage("http://gamma.cs.unc.edu/SSV/")
+    set_homepage("https://gamma.cs.unc.edu/SSV/")
     set_description("A Proximity Query Package")
 
     set_urls("http://gamma.cs.unc.edu/software/downloads/SSV/pqp-$(version).tar.gz",

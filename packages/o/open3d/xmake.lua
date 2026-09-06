@@ -1,6 +1,6 @@
 package("open3d")
 
-    set_homepage("http://www.open3d.org/")
+    set_homepage("https://www.open3d.org/")
     set_description("Open3D: A Modern Library for 3D Data Processing")
     set_license("MIT")
 

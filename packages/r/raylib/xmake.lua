@@ -1,5 +1,5 @@
 package("raylib")
-    set_homepage("http://www.raylib.com")
+    set_homepage("https://www.raylib.com/")
     set_description("A simple and easy-to-use library to enjoy videogames programming.")
     set_license("zlib")
 

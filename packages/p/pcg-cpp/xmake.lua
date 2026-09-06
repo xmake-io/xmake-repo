@@ -1,6 +1,6 @@
 package("pcg-cpp")
     set_kind("library", {headeronly = true})
-    set_homepage("http://www.pcg-random.org")
+    set_homepage("https://www.pcg-random.org/")
     set_description("PCG — C++ Implementation")
     set_license("Apache-2.0")
 

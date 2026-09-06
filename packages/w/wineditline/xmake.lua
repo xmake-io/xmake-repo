@@ -1,5 +1,5 @@
 package("wineditline")
-    set_homepage("http://mingweditline.sourceforge.net")
+    set_homepage("https://sourceforge.net/projects/mingweditline/")
     set_description("An EditLine API implementation for the native Windows Console")
     set_license("BSD-3-Clause")
 

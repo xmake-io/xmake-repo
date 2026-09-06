@@ -1,6 +1,6 @@
 package("lua")
 
-    set_homepage("http://lua.org")
+    set_homepage("https://lua.org/")
     set_description("A powerful, efficient, lightweight, embeddable scripting language.")
 
     add_urls("https://www.lua.org/ftp/lua-$(version).tar.gz", {version = function (version)

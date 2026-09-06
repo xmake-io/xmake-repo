@@ -1,5 +1,5 @@
 package("libuv")
-    set_homepage("http://libuv.org/")
+    set_homepage("https://libuv.org/")
     set_description("A multi-platform support library with a focus on asynchronous I/O.")
     set_license("MIT")
 

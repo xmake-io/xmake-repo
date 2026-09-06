@@ -1,5 +1,5 @@
 package("soci")
-    set_homepage("http://soci.sourceforge.net/")
+    set_homepage("https://soci.sourceforge.net/")
     set_description("Official repository of the SOCI - The C++ Database Access Library")
     set_license("BSL-1.0")
 

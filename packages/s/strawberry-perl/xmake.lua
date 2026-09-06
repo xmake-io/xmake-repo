@@ -1,7 +1,7 @@
 package("strawberry-perl")
 
     set_kind("binary")
-    set_homepage("http://strawberryperl.com/")
+    set_homepage("https://strawberryperl.com/")
     set_description("Strawberry Perl is a perl environment for MS Windows containing all you need to run and develop perl applications.")
 
     if os.arch() == "x64" or os.arch() == "x86_64" then

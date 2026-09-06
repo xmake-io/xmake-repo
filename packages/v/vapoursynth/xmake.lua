@@ -1,5 +1,5 @@
 package("vapoursynth")
-    set_homepage("http://www.vapoursynth.com/")
+    set_homepage("https://www.vapoursynth.com/")
     set_description("A video processing framework with simplicity in mind")
     set_license("LGPL-2.1")
 

@@ -1,6 +1,6 @@
 package("libgd")
 
-    set_homepage("http://libgd.org/")
+    set_homepage("https://libgd.org/")
     set_description("GD is an open source code library for the dynamic creation of images by programmers.")
 
     add_urls("https://github.com/libgd/libgd/archive/refs/tags/gd-$(version).tar.gz")
