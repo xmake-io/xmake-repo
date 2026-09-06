@@ -1,13 +1,15 @@
 package("vapoursynth")
-    set_homepage("http://www.vapoursynth.com/")
+    set_homepage("https://www.vapoursynth.com/")
     set_description("A video processing framework with simplicity in mind")
     set_license("LGPL-2.1")
 
     add_urls("https://github.com/vapoursynth/vapoursynth/archive/refs/tags/R$(version).tar.gz")
     add_urls("https://github.com/vapoursynth/vapoursynth.git", {alias = "git"})
 
+    add_versions("79", "1bb8ffe31348eaf46d8f541b138f0136d10edaef0c130c1e5a13aa4a4b057280")
     add_versions("73", "1bb8ffe31348eaf46d8f541b138f0136d10edaef0c130c1e5a13aa4a4b057280")
 
+    add_versions("git:79", "R79")
     add_versions("git:73", "R73")
 
     add_configs("vsscript", {description = "Build VSScript. Requires Python 3", default = false, type = "boolean"})
