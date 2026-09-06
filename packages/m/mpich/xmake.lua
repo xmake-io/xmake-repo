@@ -2,7 +2,8 @@ package("mpich")
     set_homepage("https://www.mpich.org/")
     set_description("MPICH is a high performance and widely portable implementation of the Message Passing Interface (MPI) standard.")
 
-    add_urls("https://www.mpich.org/static/downloads/$(version)/mpich-$(version).tar.gz")
+    add_urls("https://github.com/pmodels/mpich/releases/download/v$(version)/mpich-$(version).tar.gz",
+             "https://www.mpich.org/static/downloads/$(version)/mpich-$(version).tar.gz")
     add_versions("3.4.2", "5c19bea8b84e8d74cca5f047e82b147ff3fba096144270e3911ad623d6c587bf")
 
     add_configs("device", {description = "Specify the communication device for MPICH.", default = "ofi", type = "string", values = {"ofi", "ucx"}})

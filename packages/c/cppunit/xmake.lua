@@ -15,7 +15,7 @@ package("cppunit")
         add_extsources("brew::cppunit")
     end
 
-    on_install("!android", function (package)
+    on_install("!android and !wasm", function (package)
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "CPPUNIT_DLL")
         end
