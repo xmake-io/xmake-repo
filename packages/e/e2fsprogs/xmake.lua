@@ -5,6 +5,7 @@ package("e2fsprogs")
     add_urls("https://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git/snapshot/e2fsprogs-$(version).tar.gz")
 
     add_versions("1.46.4", "c011bf3bf4ae5efe9fa2b0e9b0da0c14ef4b79c6143c1ae6d9f027931ec7abe1")
+    add_patches("1.46.4", "patches/1.46.4/darwin-shlib.patch", "2d30ef106399f5eabf891f3635f48d0d594d32b52a340470595e0ced9d16960e")
 
     if is_plat("linux") then
         add_extsources("apt::e2fsprogs", "pacman::e2fsprogs")
