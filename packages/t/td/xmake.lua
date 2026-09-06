@@ -6,6 +6,7 @@ package("td")
     -- td doesn't seem to like tags, so we go directly to commit id.
     -- @see https://github.com/tdlib/td/commits/HEAD/example/web/tdweb/package.json
     add_urls("https://github.com/tdlib/td.git")
+    add_versions("1.8.67", "bc9c263e2bfee06aaab41e82db51a103376030bc")
     add_versions("1.8.51", "bb474a201baa798784d696d2d9d762a9d2807f96")
 
     if is_plat("wasm") then
@@ -48,7 +49,7 @@ package("td")
         end
 
         local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DTD_INSTALL_STATIC_LIBRARIES=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DTD_INSTALL_SHARED_LIBRARIES=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DTD_ENABLE_LTO=" .. (package:config("lto") and "ON" or "OFF"))
