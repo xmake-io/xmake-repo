@@ -3,7 +3,7 @@ package("cppunit")
     set_description("CppUnit is the C++ port of the famous JUnit framework for unit testing")
     set_license("LGPL-2.1-or-later")
 
-    add_urls("http://dev-www.libreoffice.org/src/cppunit-$(version).tar.gz")
+    add_urls("https://dev-www.libreoffice.org/src/cppunit-$(version).tar.gz")
 
     add_versions("1.15.1", "89c5c6665337f56fd2db36bc3805a5619709d51fb136e51937072f63fcc717a7")
 
@@ -15,7 +15,7 @@ package("cppunit")
         add_extsources("brew::cppunit")
     end
 
-    on_install("!android", function (package)
+    on_install("!android and !wasm", function (package)
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "CPPUNIT_DLL")
         end
