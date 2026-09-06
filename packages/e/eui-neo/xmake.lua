@@ -14,7 +14,7 @@ package("eui-neo")
 
     add_configs("window_backend", {description = "Window backend", default = "glfw", values = {"glfw", "sdl2"}})
     add_configs("render_backend", {description = "Render backend", default = "opengl", values = {"auto", "opengl", "vulkan"}})
-    add_configs("app_runner", {description = "Build the EUI application runner (defines main)", default = false, type = "boolean"})
+    add_configs("app_runner", {description = "Build the EUI application runner (defines main)", default = true, type = "boolean"})
     add_configs("markdown", {description = "Enable MD4C Markdown parsing support", default = true, type = "boolean"})
     add_configs("tray", {description = "Enable the system tray backend", default = true, type = "boolean"})
     add_configs("vulkan_low_latency", {description = "Prefer low-latency Vulkan presentation", default = false, type = "boolean"})

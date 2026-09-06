@@ -5,7 +5,7 @@ set_languages("c99", "cxx17")
 
 option("window_backend", {default = "glfw", values = {"glfw", "sdl2"}, description = "Window backend: glfw or sdl2"})
 option("render_backend", {default = "opengl", values = {"auto", "opengl", "vulkan"}, description = "Render backend: auto, opengl, or vulkan"})
-option("app_runner", {default = false, description = "Build the EUI application runner (defines main)."})
+option("app_runner", {default = true, description = "Build the EUI application runner (defines main)."})
 option("shared", {default = false, description = "Build eui_neo as a shared library instead of a static library."})
 option("modules", {default = true, description = "Build optional EUI-NEO modules when their directories are present."})
 option("markdown", {default = true, description = "Enable MD4C Markdown parsing support."})
@@ -178,7 +178,7 @@ target("eui_neo")
     add_installfiles("core/(**.h)", {prefixdir = "include/core"})
     add_installfiles("3rd/stb_image.h", "3rd/nanosvg.h", "3rd/nanosvgrast.h", {prefixdir = "include/3rd"})
     add_installfiles("3rd/tray/tray.h", {prefixdir = "include/3rd/tray"})
-        if is_plat("windows") then
+    if is_plat("windows") then
         add_cxflags("/utf-8", {tools = {"cl", "clang_cl"}})
         if not is_mode("debug") then
             add_cxflags("/O1", "/GS-", "/sdl-", "/wd4819", {tools = {"cl", "clang_cl"}})
@@ -199,12 +199,14 @@ if get_config("app_runner") then
     end
 
     target("eui_app")
-        set_kind("static")
+        set_kind(build_shared and "shared" or "static")
         set_group("framework")
         add_files(app_main_source)
         add_includedirs("include", ".", {public = true})
         add_deps("eui_neo", {public = true})
-        add_defines("EUI_APP_RUNNER_LIBRARY=1")
+        if is_kind("shared") then
+            add_defines("EUI_APP_RUNNER_LIBRARY=1")
+        end
     target_end()
 end
 
