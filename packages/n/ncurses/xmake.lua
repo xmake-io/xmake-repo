@@ -3,8 +3,7 @@ package("ncurses")
     set_description("A free software emulation of curses.")
     set_license("MIT")
 
-    add_urls("https://ftpmirror.gnu.org/ncurses/ncurses-$(version).tar.gz",
-             "https://ftp.gnu.org/pub/gnu/ncurses/ncurses-$(version).tar.gz",
+    add_urls("https://ftp.gnu.org/pub/gnu/ncurses/ncurses-$(version).tar.gz",
              "https://invisible-mirror.net/archives/ncurses/ncurses-$(version).tar.gz")
 
     add_versions("6.1", "aa057eeeb4a14d470101eff4597d5833dcef5965331be3528c08d99cebaa0d17")

@@ -4,7 +4,7 @@ package("giflib")
     set_license("MIT")
 
     add_urls("https://github.com/xmake-mirror/giflib/releases/download/$(version)/giflib-$(version).tar.gz",
-             "https://downloads.sourceforge.net/project/giflib/giflib-$(version).tar.gz")
+             "https://downloads.sourceforge.net/project/giflib/giflib-5.x/giflib-$(version).tar.gz")
 
     add_versions("5.2.2", "be7ffbd057cadebe2aa144542fd90c6838c6a083b5e8a9048b8ee3b66b29d5fb")
     add_versions("5.2.1", "31da5562f44c5f15d63340a09a4fd62b48c45620cd302f77a6d9acf0077879bd")
