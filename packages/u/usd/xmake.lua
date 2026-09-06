@@ -1,5 +1,5 @@
 package("usd")
-    set_homepage("http://www.openusd.org")
+    set_homepage("https://openusd.org/")
     set_description("Universal Scene Description")
     set_license("Apache-2.0")
 

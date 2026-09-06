@@ -1,6 +1,6 @@
 package("libpfm")
 
-    set_homepage("http://perfmon2.sourceforge.net/")
+    set_homepage("https://perfmon2.sourceforge.net/")
     set_description("improving performance monitoring on Linux")
     set_license("MIT")
 

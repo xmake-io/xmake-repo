@@ -1,6 +1,6 @@
 package("e2fsprogs")
 
-    set_homepage("http://e2fsprogs.sourceforge.net")
+    set_homepage("https://e2fsprogs.sourceforge.net/")
     set_description("Filesystem utilities for the ext2/3/4 filesystems")
 
     add_urls("https://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git/snapshot/e2fsprogs-$(version).tar.gz")

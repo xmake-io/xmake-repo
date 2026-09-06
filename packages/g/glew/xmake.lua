@@ -1,6 +1,6 @@
 package("glew")
 
-    set_homepage("http://glew.sourceforge.net/")
+    set_homepage("https://glew.sourceforge.net/")
     set_description("A cross-platform open-source C/C++ extension loading library.")
 
     set_urls("https://github.com/nigels-com/glew/releases/download/glew-$(version)/glew-$(version).zip")

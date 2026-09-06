@@ -1,5 +1,5 @@
 package("libudis86")
-    set_homepage("http://udis86.sourceforge.net")
+    set_homepage("https://sourceforge.net/projects/udis86/")
     set_description("Disassembler Library for x86 and x86-64")
     set_license("BSD-2-Clause")
 

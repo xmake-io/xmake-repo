@@ -1,6 +1,6 @@
 package("viennacl")
 
-    set_homepage("http://viennacl.sourceforge.net/")
+    set_homepage("https://viennacl.sourceforge.net/")
     set_description("ViennaCL is a free open-source linear algebra library for computations on many-core architectures (GPUs, MIC) and multi-core CPUs.")
     set_license("MIT")
 

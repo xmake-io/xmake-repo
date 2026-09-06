@@ -1,5 +1,5 @@
 package("qjson")
-    set_homepage("http://qjson.sourceforge.net")
+    set_homepage("https://qjson.sourceforge.net/")
     set_description("QJson is a qt-based library that maps JSON data to QVariant objects.")
     set_license("LGPL-2.1")
 
