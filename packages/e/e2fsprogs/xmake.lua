@@ -1,6 +1,5 @@
 package("e2fsprogs")
-
-    set_homepage("http://e2fsprogs.sourceforge.net")
+    set_homepage("https://e2fsprogs.sourceforge.net/")
     set_description("Filesystem utilities for the ext2/3/4 filesystems")
 
     add_urls("https://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git/snapshot/e2fsprogs-$(version).tar.gz")
@@ -32,10 +31,11 @@ package("e2fsprogs")
         end
         -- Enforce MKDIR_P to work around a configure bug
         -- see https://github.com/Homebrew/homebrew-core/pull/35339
-        autoconf.build(package, configs)
+        local opt = {cflags = {"-std=gnu99"}}
+        autoconf.build(package, configs, opt)
         -- make V=1 will fail for e2fsprogs, for reasons unknown
         -- So call make manually to ensure V=1 is not specified
-        autoconf.make(package, {"install"})
+        autoconf.make(package, {"install"}, opt)
     end)
 
     on_test(function (package)
