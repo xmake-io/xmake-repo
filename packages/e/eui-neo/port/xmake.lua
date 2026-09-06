@@ -39,7 +39,9 @@ if window_backend == "glfw" then
 elseif window_backend == "sdl2" then
     add_requires("libsdl2", {configs = {shared = false}})
 end
-if render_backend == "vulkan" then
+if render_backend == "opengl" then
+    add_requires("glad v0.1.36")
+elseif render_backend == "vulkan" then
     add_requires("vulkansdk", {system = true})
 end
 if not is_plat("windows", "mingw") then
@@ -48,21 +50,8 @@ end
 if is_plat("linux") and enable_tray then
     add_requires("glib")
 end
-
-if render_backend == "opengl" then
-    target("eui_glad")
-        set_kind("static")
-        add_files("3rd/glad/src/glad.c", {sourcekind = "cc"})
-        add_includedirs("3rd/glad/include", {public = true})
-    target_end()
-end
-
 if enable_markdown then
-    target("eui_md4c")
-        set_kind("static")
-        add_files("3rd/md4c/src/md4c.c", {sourcekind = "cc"})
-        add_includedirs("3rd/md4c/src", {public = true})
-    target_end()
+    add_requires("md4c")
 end
 
 target("eui_neo")
@@ -154,12 +143,12 @@ target("eui_neo")
 
     if enable_markdown then
         add_defines("EUI_HAS_MD4C=1", {public = true})
-        add_deps("eui_md4c")
+        add_packages("md4c", {public = true})
     end
 
     add_packages("freetype", "libpng", "zlib", "yyjson", {public = true})
     if render_backend == "opengl" then
-        add_deps("eui_glad")
+        add_packages("glad", {public = true})
         if is_plat("windows", "mingw") then
             add_syslinks("opengl32", {public = true})
         elseif is_plat("linux") then
@@ -189,14 +178,7 @@ target("eui_neo")
     add_installfiles("core/(**.h)", {prefixdir = "include/core"})
     add_installfiles("3rd/stb_image.h", "3rd/nanosvg.h", "3rd/nanosvgrast.h", {prefixdir = "include/3rd"})
     add_installfiles("3rd/tray/tray.h", {prefixdir = "include/3rd/tray"})
-    if render_backend == "opengl" then
-        add_installfiles("3rd/glad/include/(**.h)", {prefixdir = "include"})
-    end
-    if enable_markdown then
-        add_installfiles("3rd/md4c/src/md4c.h", {prefixdir = "include"})
-    end
-
-    if is_plat("windows") then
+        if is_plat("windows") then
         add_cxflags("/utf-8", {tools = {"cl", "clang_cl"}})
         if not is_mode("debug") then
             add_cxflags("/O1", "/GS-", "/sdl-", "/wd4819", {tools = {"cl", "clang_cl"}})

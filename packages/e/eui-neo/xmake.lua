@@ -6,7 +6,7 @@ package("eui-neo")
     add_urls("https://github.com/sudoevolve/EUI-NEO/archive/refs/tags/$(version).tar.gz",
              "https://github.com/sudoevolve/EUI-NEO.git")
 
-    add_versions("v0.5.9", "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
+    add_versions("v0.5.9", "370d1da706d94bbbb144fa1634e1d9796a8a1ffd58b696fbb801296aef15703d")
     add_versions("v0.5.8", "ca886cfb62bc05a849d2176bd6b30bbf2d0e14e1f866305ce622af6177548c8c")
     add_versions("v0.5.7", "2d3ec0a36e34b98d13dbdaf67afa4fe178cb4b52841eb17529517cb48be43551")
     add_versions("v0.5.6", "0df8d79897a480566b0989060f206431d12c4a83eb7aef50b8e5d21f1676abf8")
@@ -36,6 +36,7 @@ package("eui-neo")
             package:add("deps", "libsdl2")
         end
         if package:config("render_backend") == "opengl" then
+            package:add("deps", "glad v0.1.36")
             if package:is_plat("windows", "mingw") then
                 package:add("syslinks", "opengl32")
             elseif package:is_plat("linux") then
@@ -50,6 +51,9 @@ package("eui-neo")
             package:add("deps", "libcurl")
             package:add("syslinks", "pthread")
         end
+        if package:config("markdown") then
+            package:add("deps", "md4c")
+        end
         if package:is_plat("linux") and package:config("tray") then
             package:add("deps", "glib")
         end
@@ -58,12 +62,6 @@ package("eui-neo")
             package:add("defines", "EUI_APP_RUNNER=1")
         end
         package:add("links", "eui_neo")
-        if package:config("render_backend") == "opengl" then
-            package:add("links", "eui_glad")
-        end
-        if package:config("markdown") then
-            package:add("links", "eui_md4c")
-        end
     end)
 
     on_install("windows", "mingw", "linux", "macosx", function(package)
