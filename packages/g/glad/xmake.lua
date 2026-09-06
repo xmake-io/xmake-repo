@@ -69,8 +69,8 @@ package("glad")
             local pytool = package:find_tool("python") or package:find_tool("python3")
             local venv_dir = path.join(os.curdir(), ".venv")
             os.vrunv(pytool.program, {"-m", "venv", venv_dir})
-            local venv_python = package:is_plat("windows", "mingw") and path.join(venv_dir, "Scripts", "python.exe") or path.join(venv_dir, "bin", "python")
-            if not os.isfile(venv_python) and package:is_plat("windows", "mingw") then
+            local venv_python = is_host("windows") and path.join(venv_dir, "Scripts", "python.exe") or path.join(venv_dir, "bin", "python")
+            if not os.isfile(venv_python) and is_host("windows") then
                 venv_python = path.join(venv_dir, "python.exe")
             end
             os.vrunv(venv_python, {"-m", "pip", "install", "-r", "requirements.txt"})
