@@ -300,9 +300,6 @@ package("gmp")
                     add_rules("c++")
                     add_files("**.obj|gen-*.obj|cxx/*.obj", "**.o|gen-*.o|cxx/*.o")
                     add_headerfiles("gmp.h")
-                    if is_kind("shared") then
-                        add_rules("utils.symbols.export_all")
-                    end
                 target("gmpxx")
                     set_default(has_config("cpp_api"))
                     set_kind("$(kind)")
@@ -310,9 +307,6 @@ package("gmp")
                     add_files("cxx/*.obj", "cxx/*.o")
                     add_headerfiles("gmpxx.h")
                     add_deps("gmp")
-                    if is_kind("shared") then
-                        add_rules("utils.symbols.export_all")
-                    end
             ]])
             import("package.tools.xmake").install(package, {cpp_api = package:config("cpp_api")})
         else
