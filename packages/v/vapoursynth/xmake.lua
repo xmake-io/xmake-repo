@@ -25,6 +25,7 @@ package("vapoursynth")
     end
 
     add_deps("meson", "ninja")
+    add_deps("python 3.x", {kind = "binary"})
     if is_subhost("windows") then
         add_deps("pkgconf")
     else
@@ -55,6 +56,19 @@ package("vapoursynth")
     end)
 
     on_install(function (package)
+        if (package:version() and package:version():ge("75")) or package:config("python") then
+            local pytool = package:find_tool("python") or package:find_tool("python3")
+            local venv_dir = path.join(os.curdir(), ".venv")
+            os.vrunv(pytool.program, {"-m", "venv", venv_dir})
+            local venv_bin = is_host("windows") and path.join(venv_dir, "Scripts") or path.join(venv_dir, "bin")
+            local venv_python = is_host("windows") and path.join(venv_bin, "python.exe") or path.join(venv_bin, "python")
+            if not os.isfile(venv_python) and is_host("windows") then
+                venv_python = path.join(venv_dir, "python.exe")
+                venv_bin = venv_dir
+            end
+            os.vrunv(venv_python, {"-m", "pip", "install", "cython"})
+            os.addenv("PATH", venv_bin)
+        end
         if package:has_tool("cxx", "cl") then
             io.replace("meson.build", "-Wno-ignored-attributes", "", {plain = true})
             io.replace("meson.build", "add_project_arguments(['-fno-math-errno', '-fno-trapping-math'], language: lang)", "", {plain = true})
