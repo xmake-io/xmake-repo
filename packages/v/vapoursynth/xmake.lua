@@ -43,17 +43,14 @@ package("vapoursynth")
             package:add("configs", "vspipe", {description = "Build vspipe. Requires VSScript", default = false, type = "boolean"})
             package:add("configs", "python", {description = "Build the Python module. Requires Python and Cython", default = false, type = "boolean"})
         end
-
-        if package:is_plat("windows") and package:is_subhost("windows") then
-            local has_cat = try { function()
-                os.vrun("cat --version")
-                os.vrun("grep --version")
-                return true
-            end }
-            if not has_cat and os.arch() == "x64" then
-                local msystem = "MINGW" .. (package:is_arch64() and "64" or "32")
-                package:add("deps", "msys2", {configs = {msystem = msystem, base_devel = true}})
-            end
+        local has_cat = try { function()
+            os.vrun("cat --version")
+            os.vrun("grep --version")
+            return true
+        end }
+        if not has_cat and os.arch() == "x64" then
+            local msystem = "MINGW" .. (package:is_arch64() and "64" or "32")
+            package:add("deps", "msys2", {configs = {msystem = msystem, base_devel = true}})
         end
     end)
 
