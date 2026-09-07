@@ -25,7 +25,7 @@ index 3653994..c05a2c0 100644
  # Put asl.h here for now.
  
 diff --git a/configure b/configure
-index 2794260..70c9aed 100755
+index 2794260..dd65791 100755
 --- a/configure
 +++ b/configure
 @@ -936,7 +936,7 @@ do
@@ -116,7 +116,19 @@ index 2794260..70c9aed 100755
  	    limb_64=longlong
  	    CALLING_CONVENTIONS_OBJS_64=""
  
-@@ -11023,7 +11015,7 @@ else
+@@ -7242,8 +7234,9 @@ else
+ fi
+  ;;
+           sizeof*)       echo "configure: testlist $tst" >&5
+-gmp_sizeof_type=`echo "$tst" | sed 's/sizeof-\([a-z\*]*\).*/\1/'`
+-gmp_sizeof_want=`echo "$tst" | sed 's/sizeof-[a-z\*]*-\([0-9]*\).*/\1/'`
++gmp_sizeof_type=${tst#sizeof-}
++gmp_sizeof_type=${gmp_sizeof_type%-*}
++gmp_sizeof_want=${tst##*-}
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking compiler $cc $cflags has sizeof($gmp_sizeof_type)==$gmp_sizeof_want" >&5
+ $as_echo_n "checking compiler $cc $cflags has sizeof($gmp_sizeof_type)==$gmp_sizeof_want... " >&6; }
+ cat >conftest.c <<EOF
+@@ -11023,7 +11016,7 @@ else
  	.text
  	movq	%mm0, %mm1
  EOF
@@ -125,7 +137,7 @@ index 2794260..70c9aed 100755
  if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
    (eval $gmp_assemble) 2>&5
    ac_status=$?
-@@ -11127,7 +11119,7 @@ else
+@@ -11127,7 +11120,7 @@ else
  	.text
  	paddq	%mm0, %mm1
  EOF
@@ -134,7 +146,7 @@ index 2794260..70c9aed 100755
  if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
    (eval $gmp_assemble) 2>&5
    ac_status=$?
-@@ -12183,9 +12175,7 @@ Use \"--disable-static --enable-shared\" to build just a DLL." "$LINENO" 5
+@@ -12183,9 +12176,7 @@ Use \"--disable-static --enable-shared\" to build just a DLL." "$LINENO" 5
      # __isascii, but for some reason not the plain isascii.
      #
      if test "$enable_shared" = yes; then
@@ -145,7 +157,7 @@ index 2794260..70c9aed 100755
        LIBGMP_DLL=1
      fi
      ;;
-@@ -13520,7 +13512,7 @@ main ()
+@@ -13520,7 +13513,7 @@ main ()
  _ACEOF
  if ac_fn_c_try_compile "$LINENO"; then :
    echo conftest.$ac_objext > conftest.lst
@@ -154,7 +166,7 @@ index 2794260..70c9aed 100755
        { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$lt_ar_try\""; } >&5
    (eval $lt_ar_try) 2>&5
    ac_status=$?
-@@ -13758,7 +13750,7 @@ test -z "$RANLIB" && RANLIB=:
+@@ -13758,7 +13751,7 @@ test -z "$RANLIB" && RANLIB=:
  
  
  # Determine commands to create old-style static archives.
@@ -163,7 +175,7 @@ index 2794260..70c9aed 100755
  old_postinstall_cmds='chmod 644 $oldlib'
  old_postuninstall_cmds=
  
-@@ -16768,7 +16760,7 @@ _LT_EOF
+@@ -16768,7 +16761,7 @@ _LT_EOF
              archive_expsym_cmds=''
          ;;
        m68k)
@@ -172,7 +184,7 @@ index 2794260..70c9aed 100755
              hardcode_libdir_flag_spec='-L$libdir'
              hardcode_minus_L=yes
          ;;
-@@ -17031,7 +17023,7 @@ _LT_EOF
+@@ -17031,7 +17024,7 @@ _LT_EOF
      aix3*)
        allow_undefined_flag=unsupported
        always_export_symbols=yes
@@ -181,7 +193,7 @@ index 2794260..70c9aed 100755
        # Note: this linker hardcodes the directories in LIBPATH if there
        # are no directories specified by -L.
        hardcode_minus_L=yes
-@@ -17294,10 +17286,10 @@ fi
+@@ -17294,10 +17287,10 @@ fi
  	  compiler_flags_filtered='`func_echo_all "$compiler_flags " | $SED -e "s%-brtl\\([, ]\\)%-berok\\1%g"`'
  	  if test svr4 != "$with_aix_soname"; then
  	    # This is similar to how AIX traditionally builds its shared libraries.
@@ -194,7 +206,7 @@ index 2794260..70c9aed 100755
  	  else
  	    # used by -dlpreopen to get the symbols
  	    archive_expsym_cmds="$archive_expsym_cmds"'~$MV  $output_objdir/$realname.d/$soname $output_objdir'
-@@ -17315,7 +17307,7 @@ fi
+@@ -17315,7 +17308,7 @@ fi
              archive_expsym_cmds=''
          ;;
        m68k)
@@ -203,7 +215,7 @@ index 2794260..70c9aed 100755
              hardcode_libdir_flag_spec='-L$libdir'
              hardcode_minus_L=yes
          ;;
-@@ -20397,10 +20389,10 @@ fi
+@@ -20397,10 +20390,10 @@ fi
  	    if test svr4 != "$with_aix_soname"; then
  	      # This is similar to how AIX traditionally builds its shared
  	      # libraries. Need -bnortl late, we may have -brtl in LDFLAGS.
@@ -216,7 +228,7 @@ index 2794260..70c9aed 100755
  	    else
  	      # used by -dlpreopen to get the symbols
  	      archive_expsym_cmds_CXX="$archive_expsym_cmds_CXX"'~$MV  $output_objdir/$realname.d/$soname $output_objdir'
-@@ -20823,7 +20815,7 @@ fi
+@@ -20823,7 +20816,7 @@ fi
  	      old_archive_cmds_CXX='tpldir=Template.dir~
                  rm -rf $tpldir~
                  $CC --prelink_objects --instantiation_dir $tpldir $oldobjs$old_deplibs~
@@ -225,7 +237,7 @@ index 2794260..70c9aed 100755
                  $RANLIB $oldlib'
  	      archive_cmds_CXX='tpldir=Template.dir~
                  rm -rf $tpldir~
-@@ -25706,7 +25698,7 @@ else
+@@ -25706,7 +25699,7 @@ else
    cat >conftest.s <<EOF
  	$i
  EOF
@@ -234,7 +246,7 @@ index 2794260..70c9aed 100755
  if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
    (eval $gmp_assemble) 2>&5
    ac_status=$?
-@@ -25762,7 +25754,7 @@ for i in "" ":"; do
+@@ -25762,7 +25755,7 @@ for i in "" ":"; do
  	$gmp_cv_asm_text
  somelabel$i
  EOF
@@ -243,7 +255,7 @@ index 2794260..70c9aed 100755
  if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
    (eval $gmp_assemble) 2>&5
    ac_status=$?
-@@ -25963,7 +25955,7 @@ for gmp_tmp_prefix in @ \# %; do
+@@ -25963,7 +25956,7 @@ for gmp_tmp_prefix in @ \# %; do
    cat >conftest.s <<EOF
  	.type	sym,${gmp_tmp_prefix}function
  EOF
@@ -252,7 +264,7 @@ index 2794260..70c9aed 100755
  if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
    (eval $gmp_assemble) 2>&5
    ac_status=$?
-@@ -26000,7 +25992,7 @@ else
+@@ -26000,7 +25993,7 @@ else
  cat >conftest.s <<EOF
  	.size	sym,1
  EOF
@@ -261,7 +273,7 @@ index 2794260..70c9aed 100755
  if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
    (eval $gmp_assemble) 2>&5
    ac_status=$?
-@@ -26041,7 +26033,7 @@ for gmp_tmp_pre in L .L $L $ L$; do
+@@ -26041,7 +26034,7 @@ for gmp_tmp_pre in L .L $L $ L$; do
  dummy${gmp_cv_asm_label_suffix}
  ${gmp_tmp_pre}gurkmacka${gmp_cv_asm_label_suffix}
  EOF
@@ -270,7 +282,7 @@ index 2794260..70c9aed 100755
  if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
    (eval $gmp_assemble) 2>&5
    ac_status=$?
-@@ -26114,7 +26106,7 @@ else
+@@ -26114,7 +26107,7 @@ else
  	$i	0
  
  EOF
@@ -279,7 +291,7 @@ index 2794260..70c9aed 100755
  if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
    (eval $gmp_assemble) 2>&5
    ac_status=$?
-@@ -26170,7 +26162,7 @@ else
+@@ -26170,7 +26163,7 @@ else
  foo$gmp_cv_asm_label_suffix
  	$gmp_cv_asm_byte	0
  EOF
@@ -288,7 +300,7 @@ index 2794260..70c9aed 100755
  if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
    (eval $gmp_assemble) 2>&5
    ac_status=$?
-@@ -26223,7 +26215,7 @@ else
+@@ -26223,7 +26216,7 @@ else
  foo$gmp_cv_asm_label_suffix
  	$gmp_cv_asm_byte	2
  EOF
@@ -297,7 +309,7 @@ index 2794260..70c9aed 100755
  if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
    (eval $gmp_assemble) 2>&5
    ac_status=$?
-@@ -26380,7 +26372,7 @@ cat >conftest.s <<EOF
+@@ -26380,7 +26373,7 @@ cat >conftest.s <<EOF
  	add	r29 = r30, r31 ;; }
  
  EOF
@@ -306,7 +318,7 @@ index 2794260..70c9aed 100755
  if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
    (eval $gmp_assemble) 2>&5
    ac_status=$?
-@@ -26419,7 +26411,7 @@ else
+@@ -26419,7 +26412,7 @@ else
  	$gmp_cv_asm_text
  	$i
  EOF
@@ -315,7 +327,7 @@ index 2794260..70c9aed 100755
  if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
    (eval $gmp_assemble) 2>&5
    ac_status=$?
-@@ -26480,7 +26472,7 @@ cat >conftest.s <<EOF
+@@ -26480,7 +26473,7 @@ cat >conftest.s <<EOF
  	$gmp_cv_asm_text
  	$movel	$dreg, $areg@-
  EOF
@@ -324,7 +336,7 @@ index 2794260..70c9aed 100755
  if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
    (eval $gmp_assemble) 2>&5
    ac_status=$?
-@@ -26496,7 +26488,7 @@ else
+@@ -26496,7 +26489,7 @@ else
  	$gmp_cv_asm_text
  	$movel	$dreg, -($areg)
  EOF
@@ -333,7 +345,7 @@ index 2794260..70c9aed 100755
  if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
    (eval $gmp_assemble) 2>&5
    ac_status=$?
-@@ -26535,7 +26527,7 @@ else
+@@ -26535,7 +26528,7 @@ else
  foo$gmp_cv_asm_label_suffix
  	$i	foo
  EOF
@@ -342,7 +354,7 @@ index 2794260..70c9aed 100755
  if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
    (eval $gmp_assemble) 2>&5
    ac_status=$?
-@@ -26614,7 +26606,7 @@ else
+@@ -26614,7 +26607,7 @@ else
  	$gmp_cv_asm_text
  	mtctr	6
  EOF
@@ -351,7 +363,7 @@ index 2794260..70c9aed 100755
  if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
    (eval $gmp_assemble) 2>&5
    ac_status=$?
-@@ -26630,7 +26622,7 @@ else
+@@ -26630,7 +26623,7 @@ else
  	$gmp_cv_asm_text
  	mtctr	r6
  EOF
@@ -360,7 +372,7 @@ index 2794260..70c9aed 100755
  if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
    (eval $gmp_assemble) 2>&5
    ac_status=$?
-@@ -26751,7 +26743,7 @@ else
+@@ -26751,7 +26744,7 @@ else
  	.register	%g2,#scratch
  
  EOF
@@ -369,7 +381,7 @@ index 2794260..70c9aed 100755
  if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
    (eval $gmp_assemble) 2>&5
    ac_status=$?
-@@ -26790,7 +26782,7 @@ else
+@@ -26790,7 +26783,7 @@ else
  	or	%g1, %gdop_lox10(symbol), %g1
  
  EOF
@@ -378,7 +390,7 @@ index 2794260..70c9aed 100755
  if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
    (eval $gmp_assemble) 2>&5
    ac_status=$?
-@@ -26831,7 +26823,7 @@ __sparc_get_pc_thunk.l7:
+@@ -26831,7 +26824,7 @@ __sparc_get_pc_thunk.l7:
  	 add	%o7, %l7, %l7
  
  EOF
@@ -387,7 +399,7 @@ index 2794260..70c9aed 100755
  if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
    (eval $gmp_assemble) 2>&5
    ac_status=$?
-@@ -26869,7 +26861,7 @@ else
+@@ -26869,7 +26862,7 @@ else
  	.byte   0
  	.align  4, 0x90
  EOF
@@ -396,7 +408,7 @@ index 2794260..70c9aed 100755
  if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
    (eval $gmp_assemble) 2>&5
    ac_status=$?
-@@ -26908,7 +26900,7 @@ else
+@@ -26908,7 +26901,7 @@ else
  	.text
  	mulx	%r8, %r9, %r10
  EOF
@@ -405,7 +417,7 @@ index 2794260..70c9aed 100755
  if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
    (eval $gmp_assemble) 2>&5
    ac_status=$?
-@@ -26977,7 +26969,7 @@ else
+@@ -26977,7 +26970,7 @@ else
  ${tmp_gsym_prefix}foo$gmp_cv_asm_label_suffix
  
  EOF
@@ -414,7 +426,7 @@ index 2794260..70c9aed 100755
  if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
    (eval $gmp_assemble) 2>&5
    ac_status=$?
-@@ -27031,7 +27023,7 @@ for tmp_underscore in "" "_"; do
+@@ -27031,7 +27024,7 @@ for tmp_underscore in "" "_"; do
  ${tmp_gsym_prefix}main$gmp_cv_asm_label_suffix
  	addl	$ ${tmp_underscore}_GLOBAL_OFFSET_TABLE_, %ebx
  EOF
@@ -423,7 +435,7 @@ index 2794260..70c9aed 100755
    if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_compile\""; } >&5
    (eval $gmp_compile) 2>&5
    ac_status=$?
-@@ -27070,7 +27062,7 @@ else
+@@ -27070,7 +27063,7 @@ else
  	$gmp_cv_asm_text
  	shldl	%cl, %eax, %ebx
  EOF
@@ -432,7 +444,7 @@ index 2794260..70c9aed 100755
  if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
    (eval $gmp_assemble) 2>&5
    ac_status=$?
-@@ -27223,7 +27215,7 @@ echo "include_mpn(\`x86_64/x86_64-defs.m4')" >> $gmp_tmpconfigm4i
+@@ -27223,7 +27216,7 @@ echo "include_mpn(\`x86_64/x86_64-defs.m4')" >> $gmp_tmpconfigm4i
  
  echo "include_mpn(\`x86_64/darwin.m4')" >> $gmp_tmpconfigm4i
   ;;

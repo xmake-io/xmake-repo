@@ -10,7 +10,7 @@ package("gmp")
 
     add_patches("6.3.0", "patches/6.3.0/c23.patch", "24eb6ad75fb2552db247d3c5c522d30f221cca23a0fdc925b2684af44d51b7b3")
     if is_plat("windows") then
-        add_patches("6.3.0", "patches/6.3.0/windows.patch", "4a50c5174607535fe65e020b0b5e9eb1d1ee1e3b11953c90de932dcff6bdc964")
+        add_patches("6.3.0", "patches/6.3.0/windows.patch", "90d963b85af19f3421977eed7c002684255016e88e6350021d6e8acf50ac5748")
     end
 
     add_configs("cpp_api", {description = "Enable C++ support", default = false, type = "boolean"})
