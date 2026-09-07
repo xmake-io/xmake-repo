@@ -27,17 +27,21 @@ function get(package, build_host_tool)
         "-DBUNDLE_RUNTIME_LIBRARIES=OFF",
         "-DDOWNLOAD_BOOST=OFF",
 
-        "-DWITH_BOOST=system",
+        "-DWITH_BOOST=" .. (package:dep("boost") and package:dep("boost"):installdir("include") or "system"),
         "-DWITH_LIBEVENT=system",
         "-DWITH_ZLIB=system",
         "-DWITH_ZSTD=system",
-        "-DWITH_SSL=system",
+        "-DWITH_SSL=" .. ((package:dep("openssl3") or package:dep("openssl")) and (package:dep("openssl3") or package:dep("openssl")):installdir() or "system"),
         "-DWITH_LZ4=system",
         "-DWITH_RAPIDJSON=system",
     }
 
     if package:is_cross() then
         table.insert(configs, "-DCMAKE_CROSSCOMPILING=ON")
+    end
+    if package:dep("libevent") then
+        table.insert(configs, "-DLIBEVENT_INCLUDE_PATH=" .. package:dep("libevent"):installdir("include"))
+        table.insert(configs, "-DLIBEVENT_LIB_PATHS=" .. package:dep("libevent"):installdir("lib"))
     end
 
     if package:is_plat("linux") then
