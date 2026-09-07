@@ -1,5 +1,5 @@
 package("avisynthplus")
-    set_homepage("http://avs-plus.net")
+    set_homepage("https://avs-plus.net/")
     set_description("AviSynth with improvements")
     set_license("GPL-2.0")
 
