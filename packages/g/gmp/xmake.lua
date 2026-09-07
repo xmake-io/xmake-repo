@@ -10,7 +10,7 @@ package("gmp")
 
     add_patches("6.3.0", "patches/6.3.0/c23.patch", "24eb6ad75fb2552db247d3c5c522d30f221cca23a0fdc925b2684af44d51b7b3")
     if is_plat("windows") then
-        add_patches("6.3.0", "patches/6.3.0/windows.patch", "19907f8d272ef2400fdf45a825199b95b6a565d83809842cb8851bc3149aeecf")
+        add_patches("6.3.0", "patches/6.3.0/windows.patch", "4a50c5174607535fe65e020b0b5e9eb1d1ee1e3b11953c90de932dcff6bdc964")
     end
 
     add_configs("cpp_api", {description = "Enable C++ support", default = false, type = "boolean"})
@@ -145,23 +145,13 @@ package("gmp")
             assert(msvc:check(), "msvs not found!")
             -- buildenvs maybe missing deps bin dir
             opt.envs = os.joinenvs(os.joinenvs(msvc:runenvs()), autoconf.buildenvs(package))
-            local compile = "sh " .. path.unix(path.join(os.curdir(), "compile"))
             if package:has_tool("cxx", "cl") then
-                local cc = package:build_getenv("cc")
-                if cc then
-                    local bindir = path.directory(cc)
-                    if bindir and bindir ~= "" then
-                        opt.envs.PATH = path.joinenv({path.unix(bindir), opt.envs.PATH})
-                    end
-                end
-                opt.envs.CC  = compile .. " cl -nologo"
-                opt.envs.CXX = compile .. " cl -nologo"
+                opt.envs.CC  = "cl -nologo"
+                opt.envs.CXX = "cl -nologo"
                 opt.envs.AR  = "lib -nologo"
                 opt.envs.LD  = "link -nologo"
                 opt.envs.NM  = "dumpbin -nologo -symbols"
                 opt.envs.AR_FLAGS = "-out:" -- override `cq` flag
-                opt.envs.CFLAGS = (opt.envs.CFLAGS or "") .. " -FS"
-                opt.envs.CXXFLAGS = (opt.envs.CXXFLAGS or "") .. " -EHsc -FS"
             elseif package:has_tool("cxx", "clang") then
                 local clang_fname = path.filename(opt.envs.CC)
                 local suffix = clang_fname:split("-")

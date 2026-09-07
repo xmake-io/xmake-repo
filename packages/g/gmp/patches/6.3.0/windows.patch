@@ -134,7 +134,7 @@ index 2794260..70c9aed 100755
  if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
    (eval $gmp_assemble) 2>&5
    ac_status=$?
-@@ -12183,9 +12175,9 @@ Use \"--disable-static --enable-shared\" to build just a DLL." "$LINENO" 5
+@@ -12183,9 +12175,7 @@ Use \"--disable-static --enable-shared\" to build just a DLL." "$LINENO" 5
      # __isascii, but for some reason not the plain isascii.
      #
      if test "$enable_shared" = yes; then
@@ -142,8 +142,6 @@ index 2794260..70c9aed 100755
 -      LIBGMP_LDFLAGS="$LIBGMP_LDFLAGS -Wl,--output-def,.libs/libgmp-3.dll.def"
 -      LIBGMPXX_LDFLAGS="$LIBGMP_LDFLAGS -Wl,--output-def,.libs/libgmpxx-3.dll.def"
 +      GMP_LDFLAGS="$GMP_LDFLAGS -no-undefined"
-+      
-+      
        LIBGMP_DLL=1
      fi
      ;;
