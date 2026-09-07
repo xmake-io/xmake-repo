@@ -74,9 +74,8 @@ package("vapoursynth")
             os.addenv("PATH", venv_bin)
         elseif package:version() and package:version():ge("75") then
             io.replace("meson.build", "project('VapourSynth', 'c', 'cpp', 'cython',", "project('VapourSynth', 'c', 'cpp',", {plain = true})
-            io.replace("meson.build", "py.extension_module(", "if false\npy.extension_module(", {plain = true})
-            io.replace("meson.build", "py.install_sources(", "endif\nif false\npy.install_sources(", {plain = true})
-            io.replace("meson.build", "libvsscript = library('vsscript',", "endif\nlibvsscript = library('vsscript',", {plain = true})
+            io.replace("meson.build", "py.extension_module('vapoursynth',", "if false\npy.extension_module('vapoursynth',", {plain = true})
+            io.replace("meson.build", "filters_sources = files(", "endif\nfilters_sources = files(", {plain = true})
         else
             io.replace("meson.build", "['c', 'cpp', 'cython']", "['c', 'cpp']", {plain = true})
             io.replace("meson.build", ", 'cython'", "", {plain = true})
