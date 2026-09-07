@@ -13,7 +13,7 @@ package("vapoursynth")
     add_versions("git:73", "R73")
 
     add_patches(">=75", "patches/79/meson.patch", "1b5b6035e6047e94175393f50930e6f2b6e3f30215e9cde9d9e502205baaf3ae")
-    add_patches(">=79", "patches/79/fix-arm.patch", "8a76a5220c7296784bec9175f1708bc53fb03e81005a69d818948da419042fed")
+    add_patches(">=79", "patches/79/fix-arm.patch", "322990a2480bf082c36ebafcd468d5a8882ded53cd5fc65b08dbc1df3d34629a")
 
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
