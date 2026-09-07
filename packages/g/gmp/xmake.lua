@@ -103,6 +103,45 @@ package("gmp")
         end
         if is_host("windows") then
             io.replace("configure", "LIBTOOL='$(SHELL) $(top_builddir)/libtool'", "LIBTOOL='\"$(SHELL)\" $(top_builddir)/libtool'", {plain = true})
+            io.replace("configure", "  *=?*) ac_optarg=`expr \"X$ac_option\" : '[^=]*=\\(.*\\)'` ;;", "  *=?*) ac_optarg=${ac_option#*=} ;;", {plain = true})
+            io.replace("configure", "    ac_envvar=`expr \"x$ac_option\" : 'x\\([^=]*\\)='`", "    ac_envvar=${ac_option%%=*}", {plain = true})
+            io.replace("configure", [[
+    ac_useropt=`expr "x$ac_option" : 'x-*disable-\(.*\)'`
+    # Reject names that are not valid shell variable names.
+    expr "x$ac_useropt" : ".*[^-+._$as_cr_alnum]" >/dev/null &&
+      as_fn_error $? "invalid feature name: $ac_useropt"
+    ac_useropt_orig=$ac_useropt]], [[
+    ac_useropt=${ac_option#*disable-}
+    ac_useropt=${ac_useropt%%=*}
+    ac_useropt_orig=$ac_useropt]], {plain = true})
+            io.replace("configure", [[
+    ac_useropt=`expr "x$ac_option" : 'x-*enable-\([^=]*\)'`
+    # Reject names that are not valid shell variable names.
+    expr "x$ac_useropt" : ".*[^-+._$as_cr_alnum]" >/dev/null &&
+      as_fn_error $? "invalid feature name: $ac_useropt"
+    ac_useropt_orig=$ac_useropt]], [[
+    ac_useropt=${ac_option#*enable-}
+    ac_useropt=${ac_useropt%%=*}
+    ac_useropt_orig=$ac_useropt]], {plain = true})
+            io.replace("configure", [[
+    ac_useropt=`expr "x$ac_option" : 'x-*with-\([^=]*\)'`
+    # Reject names that are not valid shell variable names.
+    expr "x$ac_useropt" : ".*[^-+._$as_cr_alnum]" >/dev/null &&
+      as_fn_error $? "invalid package name: $ac_useropt"
+    ac_useropt_orig=$ac_useropt]], [[
+    ac_useropt=${ac_option#*with-}
+    ac_useropt=${ac_useropt%%=*}
+    ac_useropt_orig=$ac_useropt]], {plain = true})
+            io.replace("configure", [[
+    ac_useropt=`expr "x$ac_option" : 'x-*without-\(.*\)'`
+    # Reject names that are not valid shell variable names.
+    expr "x$ac_useropt" : ".*[^-+._$as_cr_alnum]" >/dev/null &&
+      as_fn_error $? "invalid package name: $ac_useropt"
+    ac_useropt_orig=$ac_useropt]], [[
+    ac_useropt=${ac_option#*without-}
+    ac_useropt=${ac_useropt%%=*}
+    ac_useropt_orig=$ac_useropt]], {plain = true})
+            io.replace("configure", "      ac_val=`expr \"X$ac_val\" : 'X\\(.*[^/]\\)' \\| \"X$ac_val\" : 'X\\(.*\\)'`", "      ac_val=${ac_val%/}", {plain = true})
         end
         if package:is_plat("macosx") and package:is_cross() then
             io.replace("configure", 'archive_cmds="\\$CC ', 'archive_cmds="\\$CC \\$LDFLAGS ', {plain = true})
@@ -261,6 +300,9 @@ package("gmp")
                     add_rules("c++")
                     add_files("**.obj|gen-*.obj|cxx/*.obj", "**.o|gen-*.o|cxx/*.o")
                     add_headerfiles("gmp.h")
+                    if is_kind("shared") then
+                        add_rules("utils.symbols.export_all")
+                    end
                 target("gmpxx")
                     set_default(has_config("cpp_api"))
                     set_kind("$(kind)")
@@ -268,6 +310,9 @@ package("gmp")
                     add_files("cxx/*.obj", "cxx/*.o")
                     add_headerfiles("gmpxx.h")
                     add_deps("gmp")
+                    if is_kind("shared") then
+                        add_rules("utils.symbols.export_all")
+                    end
             ]])
             import("package.tools.xmake").install(package, {cpp_api = package:config("cpp_api")})
         else
