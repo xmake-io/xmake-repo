@@ -168,6 +168,14 @@ package("gmp")
                 opt.envs.LD  = "link -nologo"
                 opt.envs.NM  = "dumpbin -nologo -symbols"
                 opt.envs.AR_FLAGS = "-out:" -- override `cq` flag
+                local runtime = package:runtimes()
+                local rt_flag = runtime and ("-" .. runtime) or "-MD"
+                opt.envs.CFLAGS = (opt.envs.CFLAGS or "") .. " " .. rt_flag .. " -FS"
+                opt.envs.CXXFLAGS = (opt.envs.CXXFLAGS or "") .. " " .. rt_flag .. " -FS"
+                opt.envs.LDFLAGS = ""
+                table.insert(configs, "gmp_cv_check_libm_for_build=no")
+                table.insert(configs, "ac_cv_func_memset=yes")
+                table.insert(configs, "gmp_cv_asm_w32=.word")
             elseif package:has_tool("cxx", "clang") then
                 local clang_fname = path.filename(opt.envs.CC)
                 local suffix = clang_fname:split("-")
