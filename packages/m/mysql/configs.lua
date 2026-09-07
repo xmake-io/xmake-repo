@@ -27,7 +27,7 @@ function get(package, build_host_tool)
         "-DBUNDLE_RUNTIME_LIBRARIES=OFF",
         "-DDOWNLOAD_BOOST=OFF",
 
-        "-DWITH_BOOST=" .. (package:dep("boost") and package:dep("boost"):installdir() or "system"),
+        "-DWITH_BOOST=" .. (package:dep("boost") and package:dep("boost"):installdir("include") or "system"),
         "-DWITH_LIBEVENT=system",
         "-DWITH_ZLIB=system",
         "-DWITH_ZSTD=system",
