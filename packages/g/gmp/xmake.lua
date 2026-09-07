@@ -1,7 +1,7 @@
 package("gmp")
     set_homepage("https://gmplib.org/")
     set_description("GMP is a free library for arbitrary precision arithmetic, operating on signed integers, rational numbers, and floating-point numbers.")
-    set_license("LGPL-3.0")
+    set_license("LGPL-3.0", "GPL-2.0")
 
     add_urls("https://ftp.gnu.org/gnu/gmp/gmp-$(version).tar.xz")
     add_urls("https://gmplib.org/download/gmp/gmp-$(version).tar.xz")
@@ -94,7 +94,10 @@ package("gmp")
         -- ref https://github.com/microsoft/vcpkg/blob/4ed84798137bcf664989fa432d41d278d7ad3b25/ports/gmp/subdirs.patch
         io.replace("Makefile.am",
             "SUBDIRS = tests mpn mpz mpq mpf printf scanf rand cxx demos tune doc",
-            "SUBDIRS = mpn mpz mpq mpf printf scanf rand cxx tune", {plain = true})
+            "SUBDIRS = mpn mpz mpq mpf printf scanf rand cxx", {plain = true})
+        io.replace("Makefile.in",
+            "SUBDIRS = tests mpn mpz mpq mpf printf scanf rand cxx demos tune doc",
+            "SUBDIRS = mpn mpz mpq mpf printf scanf rand cxx", {plain = true})
         os.tryrm(".gdbinit")
         if not is_host("windows") and os.isfile("configure") then
             os.vrunv("chmod", {"+x", "configure"})
@@ -165,8 +168,6 @@ package("gmp")
             assert(msvc:check(), "msvs not found!")
             -- buildenvs maybe missing deps bin dir
             opt.envs = os.joinenvs(os.joinenvs(msvc:runenvs()), autoconf.buildenvs(package))
-            opt.envs.MSYS = "noglob"
-            opt.envs.CYGWIN = "noglob"
             opt.envs.gmp_cv_asm_w32 = ".word" -- fix detect
             opt.envs.gmp_cv_asm_text = ".text"
             opt.envs.gmp_cv_asm_data = ".data"
@@ -253,7 +254,6 @@ package("gmp")
 
             -- I don't know why, it only happen on ci
             os.trymv("dummy.obj", "cxx/")
-
             io.writefile("xmake.lua", [[
                 option("cpp_api", {default = false})
                 add_rules("mode.debug", "mode.release")
@@ -262,6 +262,9 @@ package("gmp")
                     add_rules("c++")
                     add_files("**.obj|gen-*.obj|cxx/*.obj", "**.o|gen-*.o|cxx/*.o")
                     add_headerfiles("gmp.h")
+                    if is_kind("shared") then
+                        add_rules("utils.symbols.export_all")
+                    end
                 target("gmpxx")
                     set_default(has_config("cpp_api"))
                     set_kind("$(kind)")
@@ -269,6 +272,9 @@ package("gmp")
                     add_files("cxx/*.obj", "cxx/*.o")
                     add_headerfiles("gmpxx.h")
                     add_deps("gmp")
+                    if is_kind("shared") then
+                        add_rules("utils.symbols.export_all")
+                    end
             ]])
             import("package.tools.xmake").install(package, {cpp_api = package:config("cpp_api")})
         else
