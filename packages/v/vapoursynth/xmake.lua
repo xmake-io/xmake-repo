@@ -25,7 +25,6 @@ package("vapoursynth")
     end
 
     add_deps("meson", "ninja")
-    add_deps("python 3.x", {kind = "binary"})
     if is_subhost("windows") then
         add_deps("pkgconf")
     else
@@ -43,6 +42,11 @@ package("vapoursynth")
             package:add("configs", "vsscript", {description = "Build VSScript. Requires Python 3", default = false, type = "boolean"})
             package:add("configs", "vspipe", {description = "Build vspipe. Requires VSScript", default = false, type = "boolean"})
             package:add("configs", "python", {description = "Build the Python module. Requires Python and Cython", default = false, type = "boolean"})
+            if package:config("vsscript") or package:config("python") then
+                package:add("deps", "python 3.x", {kind = "binary"})
+            end
+        else
+            package:add("deps", "python 3.x", {kind = "binary"})
         end
         local has_cat = try { function()
             os.vrun("cat --version")
