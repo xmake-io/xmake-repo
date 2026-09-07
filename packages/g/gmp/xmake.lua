@@ -149,7 +149,7 @@ package("gmp")
             if msvc_link and msvc_link.program then
                 local bindir = path.directory(msvc_link.program)
                 if bindir and bindir ~= "" then
-                    opt.envs.PATH = path.joinenv({path.unix(bindir), bindir, opt.envs.PATH})
+                    opt.envs.PATH = path.joinenv({path.cygwin(bindir), bindir, opt.envs.PATH})
                 end
             end
             if package:has_tool("cxx", "cl") then
@@ -220,22 +220,6 @@ package("gmp")
             table.insert(configs, "--host=" .. target)
         end
         table.insert(configs, "--enable-assembly=" .. (enable_assembly and "yes" or "no"))
-        local gnu_link
-        if package:is_plat("windows") then
-            -- rename MSYS2 / Git for Windows coreutils link.exe to prevent shadowing MSVC link.exe
-            local paths = table.join(path.splitenv(opt.envs and opt.envs.PATH or ""), path.splitenv(os.getenv("PATH") or ""))
-            for _, p in ipairs(paths) do
-                local link_path = path.join(p, "link.exe")
-                if os.isfile(link_path) and (p:lower():find("git") or p:lower():find("msys")) then
-                    gnu_link = link_path
-                    break
-                end
-            end
-            if gnu_link then
-                os.trymv(gnu_link, gnu_link .. ".bak")
-            end
-        end
-
         try
         {
             function ()
@@ -266,12 +250,21 @@ package("gmp")
                     autoconf.install(package, configs, opt)
                 end
             end,
-            finally
+            catch
             {
-                function ()
-                    if gnu_link then
-                        os.trymv(gnu_link .. ".bak", gnu_link)
+                function (errors)
+                    if os.isfile("config.log") then
+                        print("=================== CONFIG.LOG ===================")
+                        local log = io.readfile("config.log")
+                        if log then
+                            local lines = log:split("\n")
+                            for i = math.max(1, #lines - 100), #lines do
+                                print(lines[i])
+                            end
+                        end
+                        print("==================================================")
                     end
+                    raise(errors)
                 end
             }
         }
