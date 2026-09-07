@@ -14,6 +14,7 @@ package("vapoursynth")
 
     add_patches(">=75", "patches/79/meson.patch", "1b5b6035e6047e94175393f50930e6f2b6e3f30215e9cde9d9e502205baaf3ae")
     add_patches(">=79", "patches/79/fix-arm.patch", "322990a2480bf082c36ebafcd468d5a8882ded53cd5fc65b08dbc1df3d34629a")
+    add_patches(">=79", "patches/79/fix-freebsd.patch", "6ac2375d41db918da3f29e2838fd7fe5c9ac237d97182c162100319a8b8b1c1d")
 
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
@@ -135,6 +136,8 @@ package("vapoursynth")
         elseif package:is_plat("linux", "bsd") then
             opt.cxflags = "-pthread"
             opt.shflags = "-pthread"
+        if package:is_plat("android") and package:check_sizeof("void*") == "4" then
+            opt.cxflags = "-U_FILE_OFFSET_BITS"
         end
         import("package.tools.meson").install(package, configs, opt)
 
