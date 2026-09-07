@@ -145,6 +145,13 @@ package("gmp")
             assert(msvc:check(), "msvs not found!")
             -- buildenvs maybe missing deps bin dir
             opt.envs = os.joinenvs(os.joinenvs(msvc:runenvs()), autoconf.buildenvs(package))
+            local msvc_link = find_tool("link", {envs = msvc:runenvs()})
+            if msvc_link and msvc_link.program then
+                local bindir = path.directory(msvc_link.program)
+                if bindir and bindir ~= "" then
+                    opt.envs.PATH = path.joinenv({path.unix(bindir), bindir, opt.envs.PATH})
+                end
+            end
             if package:has_tool("cxx", "cl") then
                 opt.envs.CC  = "cl -nologo"
                 opt.envs.CXX = "cl -nologo"
@@ -213,32 +220,61 @@ package("gmp")
             table.insert(configs, "--host=" .. target)
         end
         table.insert(configs, "--enable-assembly=" .. (enable_assembly and "yes" or "no"))
-        -- Can't generate correct gmp.lib with lib.exe
+        local gnu_link
         if package:is_plat("windows") then
-            autoconf.build(package, configs, opt)
-
-            -- I don't know why, it only happen on ci
-            os.trymv("dummy.obj", "cxx/")
-            io.writefile("xmake.lua", [[
-                option("cpp_api", {default = false})
-                add_rules("mode.debug", "mode.release")
-                target("gmp")
-                    set_kind("$(kind)")
-                    add_rules("c++")
-                    add_files("**.obj|gen-*.obj|cxx/*.obj", "**.o|gen-*.o|cxx/*.o")
-                    add_headerfiles("gmp.h")
-                target("gmpxx")
-                    set_default(has_config("cpp_api"))
-                    set_kind("$(kind)")
-                    add_rules("c++")
-                    add_files("cxx/*.obj", "cxx/*.o")
-                    add_headerfiles("gmpxx.h")
-                    add_deps("gmp")
-            ]])
-            import("package.tools.xmake").install(package, {cpp_api = package:config("cpp_api")})
-        else
-            autoconf.install(package, configs, opt)
+            -- rename MSYS2 / Git for Windows coreutils link.exe to prevent shadowing MSVC link.exe
+            local paths = table.join(path.splitenv(opt.envs and opt.envs.PATH or ""), path.splitenv(os.getenv("PATH") or ""))
+            for _, p in ipairs(paths) do
+                local link_path = path.join(p, "link.exe")
+                if os.isfile(link_path) and (p:lower():find("git") or p:lower():find("msys")) then
+                    gnu_link = link_path
+                    break
+                end
+            end
+            if gnu_link then
+                os.trymv(gnu_link, gnu_link .. ".bak")
+            end
         end
+
+        try
+        {
+            function ()
+                -- Can't generate correct gmp.lib with lib.exe
+                if package:is_plat("windows") then
+                    autoconf.build(package, configs, opt)
+
+                    -- I don't know why, it only happen on ci
+                    os.trymv("dummy.obj", "cxx/")
+                    io.writefile("xmake.lua", [[
+                        option("cpp_api", {default = false})
+                        add_rules("mode.debug", "mode.release")
+                        target("gmp")
+                            set_kind("$(kind)")
+                            add_rules("c++")
+                            add_files("**.obj|gen-*.obj|cxx/*.obj", "**.o|gen-*.o|cxx/*.o")
+                            add_headerfiles("gmp.h")
+                        target("gmpxx")
+                            set_default(has_config("cpp_api"))
+                            set_kind("$(kind)")
+                            add_rules("c++")
+                            add_files("cxx/*.obj", "cxx/*.o")
+                            add_headerfiles("gmpxx.h")
+                            add_deps("gmp")
+                    ]])
+                    import("package.tools.xmake").install(package, {cpp_api = package:config("cpp_api")})
+                else
+                    autoconf.install(package, configs, opt)
+                end
+            end,
+            finally
+            {
+                function ()
+                    if gnu_link then
+                        os.trymv(gnu_link .. ".bak", gnu_link)
+                    end
+                end
+            }
+        }
     end)
 
     on_test(function (package)
