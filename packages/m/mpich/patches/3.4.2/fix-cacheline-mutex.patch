@@ -1,0 +1,11 @@
+--- a/src/mpid/ch4/netmod/ofi/ofi_types.h
++++ b/src/mpid/ch4/netmod/ofi/ofi_types.h
+@@ -233,7 +233,7 @@ typedef struct {
+ typedef union {
+     MPID_Thread_mutex_t m;
+     char cacheline[MPIDI_OFI_CACHELINE_SIZE];
+-} MPIDI_OFI_cacheline_mutex_t MPL_ATTR_ALIGNED(MPIDI_OFI_CACHELINE_SIZE);
++} MPIDI_OFI_cacheline_mutex_t;
+ 
+ typedef struct MPIDI_OFI_cq_list_t {
+     struct fi_cq_tagged_entry cq_entry;
