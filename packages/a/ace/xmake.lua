@@ -1,5 +1,5 @@
 package("ace")
-    set_homepage("https://www.dre.vanderbilt.edu/~schmidt/ACE.html")
+    set_homepage("https://github.com/DOCGroup/ACE_TAO")
     set_description("ACE (ADAPTIVE Communication Environment) is a C++ framework for implementing distributed and networked applications.")
     set_license("DOC")
 
