@@ -1,0 +1,9 @@
+diff --git a/src/core/float16_helper.h b/src/core/float16_helper.h
+index 7b424f7..637ed81 100644
+--- a/src/core/float16_helper.h
++++ b/src/core/float16_helper.h
+@@ -33,3 +33,3 @@
+ // there we fall back to explicit bit manipulation instead.
+-#if (defined(__clang__) || defined(__GNUC__)) && (defined(__F16C__) || (!defined(__x86_64__) && !defined(__i386__)))
++#if (defined(__clang__) || defined(__GNUC__)) && defined(__FLT16_MANT_DIG__) && (defined(__F16C__) || !defined(_MSC_VER))
+ #  define VS_HAVE_NATIVE_FLOAT16 1
