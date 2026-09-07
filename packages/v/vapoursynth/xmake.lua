@@ -60,7 +60,7 @@ package("vapoursynth")
     end)
 
     on_install(function (package)
-        if (package:version() and package:version():ge("75")) or package:config("python") then
+        if package:config("python") then
             local pytool = package:find_tool("python") or package:find_tool("python3")
             local venv_dir = path.join(os.curdir(), ".venv")
             os.vrunv(pytool.program, {"-m", "venv", venv_dir})
@@ -72,19 +72,24 @@ package("vapoursynth")
             end
             os.vrunv(venv_python, {"-m", "pip", "install", "cython"})
             os.addenv("PATH", venv_bin)
+        elseif package:version() and package:version():ge("75") then
+            io.replace("meson.build", "project('VapourSynth', 'c', 'cpp', 'cython',", "project('VapourSynth', 'c', 'cpp',", {plain = true})
+            io.replace("meson.build", "py.extension_module(", "if false\npy.extension_module(", {plain = true})
+            io.replace("meson.build", "py.install_sources(", "endif\nif false\npy.install_sources(", {plain = true})
+            io.replace("meson.build", "libvsscript = library('vsscript',", "endif\nlibvsscript = library('vsscript',", {plain = true})
+        else
+            io.replace("meson.build", "['c', 'cpp', 'cython']", "['c', 'cpp']", {plain = true})
+            io.replace("meson.build", ", 'cython'", "", {plain = true})
         end
         if package:has_tool("cxx", "cl") then
+            io.replace("meson.build", "'-Wno-ignored-attributes',", "", {plain = true})
             io.replace("meson.build", "-Wno-ignored-attributes", "", {plain = true})
             io.replace("meson.build", "add_project_arguments(['-fno-math-errno', '-fno-trapping-math'], language: lang)", "", {plain = true})
-        end
-        if package:version() and package:version():le("74") and not package:config("python") then
-            io.replace("meson.build", ", 'cython'", "", {plain = true})
         end
         if not package:config("shared") and package:is_plat("windows", "mingw") then
             io.replace("include/VapourSynth.h", "__declspec(dllexport)", "", {plain = true})
             io.replace("include/VapourSynth4.h", "__declspec(dllexport)", "", {plain = true})
         end
-
         local configs = {}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         table.insert(configs, "-Db_lto=" .. (package:config("lto") and "true" or "false"))
