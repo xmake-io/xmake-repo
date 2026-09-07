@@ -267,8 +267,24 @@ package("gmp")
                         local log = io.readfile("config.log")
                         if log then
                             local lines = log:split("\n")
-                            for i = math.max(1, #lines - 100), #lines do
-                                print(lines[i])
+                            local target_idx
+                            for i, line in ipairs(lines) do
+                                if line:find("checking whether the C compiler works", 1, true) or
+                                   line:find("cannot find a working compiler", 1, true) or
+                                   line:find("C compiler cannot create executables", 1, true) then
+                                    target_idx = i
+                                end
+                            end
+                            if target_idx then
+                                local start_idx = math.max(1, target_idx - 15)
+                                local end_idx = math.min(#lines, target_idx + 60)
+                                for i = start_idx, end_idx do
+                                    print(lines[i])
+                                end
+                            else
+                                for i = math.max(1, #lines - 100), #lines do
+                                    print(lines[i])
+                                end
                             end
                         end
                         print("==================================================")
