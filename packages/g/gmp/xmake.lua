@@ -81,7 +81,7 @@ package("gmp")
                 package:add("defines", "_LONG_LONG_LIMB") -- mp_limb_t type
             end
 
-            if package:config("assembly") and package:is_arch("x86") and not package:has_tool("cxx", "clang") then
+            if package:config("assembly") and package:is_arch("x86", "i386") and not package:has_tool("cxx", "clang") then
                 package:add("deps", "yasm")
             end
         end
@@ -119,10 +119,11 @@ package("gmp")
             end
             -- Let asm code use windows abi
             io.replace("configure", "*-*-mingw* | *-*-msys | *-*-cygwin)", "*-*-msvc)", {plain = true})
-            local obj_file_suffix = package:has_tool("cxx", "cl") and ".obj" or ".o"
-            io.replace("configure", "$CCAS $CFLAGS $CPPFLAGS", "$CCAS $CCASFLAGS -o conftest" .. obj_file_suffix, {plain = true})
-            -- Remove error flags for asm build
-            io.replace("mpn/Makefile.in", "$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) $(ASMFLAGS)", "$(AM_CFLAGS) ${CCASFLAGS}", {plain = true})
+            -- Use ASMFLAGS instead of CFLAGS for assembler (from vcpkg asmflags.patch)
+            io.replace("configure", 'gmp_assemble="$CCAS $CFLAGS $CPPFLAGS', 'gmp_assemble="$CCAS $CPPFLAGS $ASMFLAGS', {plain = true})
+            io.replace("configure", 'gmp_compile="$CCAS $CFLAGS $CPPFLAGS', 'gmp_compile="$CCAS $CPPFLAGS $ASMFLAGS', {plain = true})
+            -- Remove error flags for asm build (from vcpkg asmflags.patch)
+            io.replace("mpn/Makefile.in", "$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) $(ASMFLAGS)", "$(CPPFLAGS) $(ASMFLAGS)", {plain = true})
             if package:has_tool("ld", "link") then
                 -- `lib /out: xxx` -> `lib /out:xxx`
                 io.replace("configure", "$AR $AR_FLAGS ", "$AR $AR_FLAGS", {plain = true})
@@ -171,8 +172,10 @@ package("gmp")
                 opt.envs.NM = "dumpbin -nologo -symbols"
                 opt.envs.AR_FLAGS = "-out:" -- override `cq` flag
                 table.insert(configs, "gmp_cv_asm_w32=.word") -- fix detect
-                table.insert(configs, "ac_cv_c_restrict=restrict")
+                table.insert(configs, "gmp_cv_asm_text=.text")
+                table.insert(configs, "gmp_cv_asm_data=.data")
                 table.insert(configs, "gmp_cv_asm_label_suffix=:")
+                table.insert(configs, "ac_cv_c_restrict=restrict")
                 table.insert(configs, "ac_cv_func_memset=yes")
                 table.insert(configs, "gmp_cv_check_libm_for_build=no")
                 opt.envs.CXXFLAGS = (opt.envs.CXXFLAGS or "") .. " -EHsc"
@@ -205,16 +208,23 @@ package("gmp")
 
             local clang_archs = {
                 ["x86"] = "i686",
+                ["i386"] = "i686",
                 ["x64"] = "x86_64",
                 ["arm64"] = "aarch64",
             }
-            local target = clang_archs[package:arch()] .. "-windows-msvc"
+            local target = (clang_archs[package:arch()] or package:arch()) .. "-windows-msvc"
             if enable_assembly then
                 local clang = package:has_tool("cxx", "clang") and opt.envs.CC or find_tool("clang")
                 if clang then
                     local clang_prog = type(clang) == "table" and clang.program or clang
-                    opt.envs.CCAS = path.unix(clang_prog)
-                    opt.envs.CCASFLAGS = table.concat({"--target=" .. target, "-c"}, " ")
+                    local ccas_dir = path.directory(clang_prog)
+                    if ccas_dir and ccas_dir ~= "" then
+                        opt.envs.PATH = path.joinenv({path.unix(ccas_dir), opt.envs.PATH})
+                    end
+                    opt.envs.CCAS = path.filename(clang_prog)
+                    opt.envs.ASMFLAGS = "--target=" .. target .. " -c"
+                    table.insert(configs, "CCAS=" .. opt.envs.CCAS)
+                    table.insert(configs, "ASMFLAGS=" .. opt.envs.ASMFLAGS)
                     if package:is_arch("arm64") and not package:has_tool("cxx", "clang") then
                         local llvm_nm = find_tool("llvm-nm")
                         if llvm_nm then
@@ -222,8 +232,14 @@ package("gmp")
                         end
                     end
                 elseif package:is_arch("x86", "i386") then
+                    if package:dep("yasm") then
+                        local yasm_bin = path.unix(package:dep("yasm"):installdir("bin"))
+                        opt.envs.PATH = path.joinenv({yasm_bin, opt.envs.PATH})
+                    end
                     opt.envs.CCAS = "yasm"
-                    opt.envs.CCASFLAGS = "-a x86 -m x86 -p gas -r raw -f win32 -g null -X gnu"
+                    opt.envs.ASMFLAGS = "-a x86 -m x86 -p gas -r raw -f win32 -g null -X gnu"
+                    table.insert(configs, "CCAS=yasm")
+                    table.insert(configs, "ASMFLAGS=" .. opt.envs.ASMFLAGS)
                 else
                     wprint("package(gmp): assembly disabled on windows %s (clang is required; yasm does not support arm64 and crashes on x64). Please install clang to enable assembly.", package:arch())
                     enable_assembly = false
