@@ -86,6 +86,9 @@ package("vapoursynth")
             io.replace("meson.build", "-Wno-ignored-attributes", "", {plain = true})
             io.replace("meson.build", "add_project_arguments(['-fno-math-errno', '-fno-trapping-math'], language: lang)", "", {plain = true})
         end
+        if package:is_plat("android") and package:check_sizeof("void*") == "4" then
+            io.replace("meson.build", "add_project_arguments('-D_FILE_OFFSET_BITS=64', language: ['c', 'cpp'])", "", {plain = true})
+        end
         if package:is_plat("iphoneos") then
             local ldflags = table.wrap(package:build_getenv("ldflags"))
             local new_ldflags = {}
