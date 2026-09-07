@@ -152,6 +152,15 @@ package("gmp")
                     opt.envs.PATH = path.joinenv({path.cygwin(bindir), bindir, opt.envs.PATH})
                 end
             end
+            local m4 = find_tool("m4", {paths = {"C:/msys64/usr/bin", "C:/tools/msys64/usr/bin", "C:/msys/usr/bin", "C:/cygwin64/bin", "C:/cygwin/bin"}})
+            if m4 and m4.program then
+                local m4_dir = path.directory(m4.program)
+                opt.envs.PATH = path.joinenv({opt.envs.PATH, path.cygwin(m4_dir), m4_dir})
+                opt.envs.M4 = path.cygwin(m4.program)
+            else
+                opt.envs.M4 = "m4"
+            end
+            table.insert(configs, "M4=" .. opt.envs.M4)
             if package:has_tool("cxx", "cl") then
                 opt.envs.CC  = "cl -nologo"
                 opt.envs.CXX = "cl -nologo"
