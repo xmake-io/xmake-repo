@@ -95,6 +95,7 @@ package("gmp")
         io.replace("Makefile.am",
             "SUBDIRS = tests mpn mpz mpq mpf printf scanf rand cxx demos tune doc",
             "SUBDIRS = mpn mpz mpq mpf printf scanf rand cxx tune", {plain = true})
+        os.tryrm(".gdbinit")
         if not is_host("windows") and os.isfile("configure") then
             os.vrunv("chmod", {"+x", "configure"})
         end
@@ -164,6 +165,8 @@ package("gmp")
             assert(msvc:check(), "msvs not found!")
             -- buildenvs maybe missing deps bin dir
             opt.envs = os.joinenvs(os.joinenvs(msvc:runenvs()), autoconf.buildenvs(package))
+            opt.envs.MSYS = "noglob"
+            opt.envs.CYGWIN = "noglob"
             opt.envs.gmp_cv_asm_w32 = ".word" -- fix detect
             opt.envs.gmp_cv_asm_text = ".text"
             opt.envs.gmp_cv_asm_data = ".data"
