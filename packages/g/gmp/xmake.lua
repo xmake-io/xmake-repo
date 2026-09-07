@@ -9,6 +9,9 @@ package("gmp")
     add_versions("6.3.0", "a3c2b80201b89e68616f4ad30bc66aee4927c3ce50e33929ca819d5c43538898")
 
     add_patches("6.3.0", "patches/6.3.0/c23.patch", "24eb6ad75fb2552db247d3c5c522d30f221cca23a0fdc925b2684af44d51b7b3")
+    if is_plat("windows") then
+        add_patches("6.3.0", "patches/6.3.0/windows.patch", "19907f8d272ef2400fdf45a825199b95b6a565d83809842cb8851bc3149aeecf")
+    end
 
     add_configs("cpp_api", {description = "Enable C++ support", default = false, type = "boolean"})
     add_configs("assembly", {description = "Enable the use of assembly loops", default = true, type = "boolean"})
@@ -91,84 +94,20 @@ package("gmp")
         import("package.tools.autoconf")
         import("lib.detect.find_tool")
 
-        io.replace("Makefile.am",
-            "SUBDIRS = tests mpn mpz mpq mpf printf scanf rand cxx demos tune doc",
-            "SUBDIRS = mpn mpz mpq mpf printf scanf rand cxx", {plain = true})
-        io.replace("Makefile.in",
-            "SUBDIRS = tests mpn mpz mpq mpf printf scanf rand cxx demos tune doc",
-            "SUBDIRS = mpn mpz mpq mpf printf scanf rand cxx", {plain = true})
         os.tryrm(".gdbinit")
         if not is_host("windows") and os.isfile("configure") then
             os.vrunv("chmod", {"+x", "configure"})
         end
         if is_host("windows") then
             io.replace("configure", "LIBTOOL='$(SHELL) $(top_builddir)/libtool'", "LIBTOOL='\"$(SHELL)\" $(top_builddir)/libtool'", {plain = true})
-            io.replace("configure", "  *=?*) ac_optarg=`expr \"X$ac_option\" : '[^=]*=\\(.*\\)'` ;;", "  *=?*) ac_optarg=${ac_option#*=} ;;", {plain = true})
-            io.replace("configure", "    ac_envvar=`expr \"x$ac_option\" : 'x\\([^=]*\\)='`", "    ac_envvar=${ac_option%%=*}", {plain = true})
-            io.replace("configure", [[
-    ac_useropt=`expr "x$ac_option" : 'x-*disable-\(.*\)'`
-    # Reject names that are not valid shell variable names.
-    expr "x$ac_useropt" : ".*[^-+._$as_cr_alnum]" >/dev/null &&
-      as_fn_error $? "invalid feature name: $ac_useropt"
-    ac_useropt_orig=$ac_useropt]], [[
-    ac_useropt=${ac_option#*disable-}
-    ac_useropt=${ac_useropt%%=*}
-    ac_useropt_orig=$ac_useropt]], {plain = true})
-            io.replace("configure", [[
-    ac_useropt=`expr "x$ac_option" : 'x-*enable-\([^=]*\)'`
-    # Reject names that are not valid shell variable names.
-    expr "x$ac_useropt" : ".*[^-+._$as_cr_alnum]" >/dev/null &&
-      as_fn_error $? "invalid feature name: $ac_useropt"
-    ac_useropt_orig=$ac_useropt]], [[
-    ac_useropt=${ac_option#*enable-}
-    ac_useropt=${ac_useropt%%=*}
-    ac_useropt_orig=$ac_useropt]], {plain = true})
-            io.replace("configure", [[
-    ac_useropt=`expr "x$ac_option" : 'x-*with-\([^=]*\)'`
-    # Reject names that are not valid shell variable names.
-    expr "x$ac_useropt" : ".*[^-+._$as_cr_alnum]" >/dev/null &&
-      as_fn_error $? "invalid package name: $ac_useropt"
-    ac_useropt_orig=$ac_useropt]], [[
-    ac_useropt=${ac_option#*with-}
-    ac_useropt=${ac_useropt%%=*}
-    ac_useropt_orig=$ac_useropt]], {plain = true})
-            io.replace("configure", [[
-    ac_useropt=`expr "x$ac_option" : 'x-*without-\(.*\)'`
-    # Reject names that are not valid shell variable names.
-    expr "x$ac_useropt" : ".*[^-+._$as_cr_alnum]" >/dev/null &&
-      as_fn_error $? "invalid package name: $ac_useropt"
-    ac_useropt_orig=$ac_useropt]], [[
-    ac_useropt=${ac_option#*without-}
-    ac_useropt=${ac_useropt%%=*}
-    ac_useropt_orig=$ac_useropt]], {plain = true})
-            io.replace("configure", "      ac_val=`expr \"X$ac_val\" : 'X\\(.*[^/]\\)' \\| \"X$ac_val\" : 'X\\(.*\\)'`", "      ac_val=${ac_val%/}", {plain = true})
         end
         if package:is_plat("macosx") and package:is_cross() then
             io.replace("configure", 'archive_cmds="\\$CC ', 'archive_cmds="\\$CC \\$LDFLAGS ', {plain = true})
         end
         if package:is_plat("windows") then
-            -- Fix MSVC nextprime.c memset conflict with <string.h>
-            io.replace("nextprime.c", "#include <string.h>", "#ifndef _MSC_VER\n#include <string.h>\n#endif", {plain = true})
-            -- MSVC symbol & inline fix (from vcpkg msvc_symbol.patch)
-            io.replace("gmp-h.in", "#define __GMP_EXTERN_INLINE  __inline", "#define __GMP_EXTERN_INLINE  static __inline", {plain = true})
-            -- Remove GNU ld specific flags from configure for MSVC
-            io.replace("configure", 'GMP_LDFLAGS="$GMP_LDFLAGS -no-undefined -Wl,--export-all-symbols"', 'GMP_LDFLAGS="$GMP_LDFLAGS -no-undefined"', {plain = true})
-            io.replace("configure", 'LIBGMP_LDFLAGS="$LIBGMP_LDFLAGS -Wl,--output-def,.libs/libgmp-3.dll.def"', '', {plain = true})
-            io.replace("configure", 'LIBGMPXX_LDFLAGS="$LIBGMP_LDFLAGS -Wl,--output-def,.libs/libgmpxx-3.dll.def"', '', {plain = true})
             if package:config("shared") then
                 -- export symbol macro
                 io.replace("gmp-h.in", "#define __GMP_LIBGMP_DLL  @LIBGMP_DLL@", "#define __GMP_LIBGMP_DLL  1", {plain = true})
-            end
-            -- Let asm code use windows abi
-            io.replace("configure", "*-*-mingw* | *-*-msys | *-*-cygwin)", "*-*-msvc)", {plain = true})
-            -- Use ASMFLAGS instead of CFLAGS for assembler (from vcpkg asmflags.patch)
-            io.replace("configure", 'gmp_assemble="$CCAS $CFLAGS $CPPFLAGS', 'gmp_assemble="$CCAS $CPPFLAGS $ASMFLAGS', {plain = true})
-            io.replace("configure", 'gmp_compile="$CCAS $CFLAGS $CPPFLAGS', 'gmp_compile="$CCAS $CPPFLAGS $ASMFLAGS', {plain = true})
-            -- Remove error flags for asm build (from vcpkg asmflags.patch)
-            io.replace("mpn/Makefile.in", "$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) $(ASMFLAGS)", "$(CPPFLAGS) $(ASMFLAGS)", {plain = true})
-            if package:has_tool("ld", "link") then
-                -- `lib /out: xxx` -> `lib /out:xxx`
-                io.replace("configure", "$AR $AR_FLAGS ", "$AR $AR_FLAGS", {plain = true})
             end
         end
 
@@ -206,23 +145,23 @@ package("gmp")
             assert(msvc:check(), "msvs not found!")
             -- buildenvs maybe missing deps bin dir
             opt.envs = os.joinenvs(os.joinenvs(msvc:runenvs()), autoconf.buildenvs(package))
-            opt.envs.gmp_cv_asm_w32 = ".word" -- fix detect
-            opt.envs.gmp_cv_asm_text = ".text"
-            opt.envs.gmp_cv_asm_data = ".data"
-            opt.envs.gmp_cv_asm_label_suffix = ":"
-            opt.envs.ac_cv_c_restrict = "restrict"
-            opt.envs.ac_cv_func_memset = "yes"
-            opt.envs.gmp_cv_check_libm_for_build = "no"
+            local compile = "sh " .. path.unix(path.join(os.curdir(), "compile"))
             if package:has_tool("cxx", "cl") then
-                opt.envs.CC  = "cl -nologo"
-                opt.envs.CXX = "cl -nologo"
+                local cc = package:build_getenv("cc")
+                if cc then
+                    local bindir = path.directory(cc)
+                    if bindir and bindir ~= "" then
+                        opt.envs.PATH = path.joinenv({path.unix(bindir), opt.envs.PATH})
+                    end
+                end
+                opt.envs.CC  = compile .. " cl -nologo"
+                opt.envs.CXX = compile .. " cl -nologo"
                 opt.envs.AR  = "lib -nologo"
                 opt.envs.LD  = "link -nologo"
-                opt.envs.NM = "dumpbin -nologo -symbols"
+                opt.envs.NM  = "dumpbin -nologo -symbols"
                 opt.envs.AR_FLAGS = "-out:" -- override `cq` flag
-                opt.envs.CXXFLAGS = (opt.envs.CXXFLAGS or "") .. " -EHsc"
                 opt.envs.CFLAGS = (opt.envs.CFLAGS or "") .. " -FS"
-                opt.envs.CXXFLAGS = opt.envs.CXXFLAGS .. " -FS"
+                opt.envs.CXXFLAGS = (opt.envs.CXXFLAGS or "") .. " -EHsc -FS"
             elseif package:has_tool("cxx", "clang") then
                 local clang_fname = path.filename(opt.envs.CC)
                 local suffix = clang_fname:split("-")
@@ -239,8 +178,6 @@ package("gmp")
                     opt.envs.CXXFLAGS = opt.envs.CXXFLAGS .. " " .. opt.envs.LDFLAGS
                 end
             end
-            -- Maybe missing ucrt flags
-            opt.envs.CFLAGS = opt.envs.CFLAGS .. " " .. opt.envs.CXXFLAGS
             -- Fix mp_limb_t
             -- msvc sizeof long == 4 unmatch gcc sizeof long == 8
             if package:is_arch("x64", "arm64") then

@@ -1,0 +1,486 @@
+diff --git a/Makefile.am b/Makefile.am
+index 03356e0..fa24409 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -113,7 +113,7 @@ LIBGMPXX_LT_REVISION = 0
+ LIBGMPXX_LT_AGE      = 7
+ 
+ 
+-SUBDIRS = tests mpn mpz mpq mpf printf scanf rand cxx demos tune doc
++SUBDIRS = mpn mpz mpq mpf printf scanf rand cxx
+ 
+ EXTRA_DIST = configfsf.guess configfsf.sub .gdbinit INSTALL.autoconf \
+ 	     COPYING.LESSERv3 COPYINGv2 COPYINGv3
+diff --git a/Makefile.in b/Makefile.in
+index 3653994..c05a2c0 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -573,7 +573,7 @@ LIBGMP_LT_AGE = 5
+ LIBGMPXX_LT_CURRENT = 11
+ LIBGMPXX_LT_REVISION = 0
+ LIBGMPXX_LT_AGE = 7
+-SUBDIRS = tests mpn mpz mpq mpf printf scanf rand cxx demos tune doc
++SUBDIRS = mpn mpz mpq mpf printf scanf rand cxx
+ 
+ # Put asl.h here for now.
+ 
+diff --git a/configure b/configure
+index 2794260..70c9aed 100755
+--- a/configure
++++ b/configure
+@@ -936,7 +936,7 @@ do
+   fi
+ 
+   case $ac_option in
+-  *=?*) ac_optarg=`expr "X$ac_option" : '[^=]*=\(.*\)'` ;;
++  *=?*) ac_optarg=${ac_option#*=} ;;
+   *=)   ac_optarg= ;;
+   *)    ac_optarg=yes ;;
+   esac
+@@ -980,10 +980,8 @@ do
+     datarootdir=$ac_optarg ;;
+ 
+   -disable-* | --disable-*)
+-    ac_useropt=`expr "x$ac_option" : 'x-*disable-\(.*\)'`
+-    # Reject names that are not valid shell variable names.
+-    expr "x$ac_useropt" : ".*[^-+._$as_cr_alnum]" >/dev/null &&
+-      as_fn_error $? "invalid feature name: $ac_useropt"
++    ac_useropt=${ac_option#*disable-}
++    ac_useropt=${ac_useropt%%=*}
+     ac_useropt_orig=$ac_useropt
+     ac_useropt=`$as_echo "$ac_useropt" | sed 's/[-+.]/_/g'`
+     case $ac_user_opts in
+@@ -1006,10 +1004,8 @@ do
+     dvidir=$ac_optarg ;;
+ 
+   -enable-* | --enable-*)
+-    ac_useropt=`expr "x$ac_option" : 'x-*enable-\([^=]*\)'`
+-    # Reject names that are not valid shell variable names.
+-    expr "x$ac_useropt" : ".*[^-+._$as_cr_alnum]" >/dev/null &&
+-      as_fn_error $? "invalid feature name: $ac_useropt"
++    ac_useropt=${ac_option#*enable-}
++    ac_useropt=${ac_useropt%%=*}
+     ac_useropt_orig=$ac_useropt
+     ac_useropt=`$as_echo "$ac_useropt" | sed 's/[-+.]/_/g'`
+     case $ac_user_opts in
+@@ -1210,10 +1206,8 @@ do
+     ac_init_version=: ;;
+ 
+   -with-* | --with-*)
+-    ac_useropt=`expr "x$ac_option" : 'x-*with-\([^=]*\)'`
+-    # Reject names that are not valid shell variable names.
+-    expr "x$ac_useropt" : ".*[^-+._$as_cr_alnum]" >/dev/null &&
+-      as_fn_error $? "invalid package name: $ac_useropt"
++    ac_useropt=${ac_option#*with-}
++    ac_useropt=${ac_useropt%%=*}
+     ac_useropt_orig=$ac_useropt
+     ac_useropt=`$as_echo "$ac_useropt" | sed 's/[-+.]/_/g'`
+     case $ac_user_opts in
+@@ -1226,10 +1220,8 @@ do
+     eval with_$ac_useropt=\$ac_optarg ;;
+ 
+   -without-* | --without-*)
+-    ac_useropt=`expr "x$ac_option" : 'x-*without-\(.*\)'`
+-    # Reject names that are not valid shell variable names.
+-    expr "x$ac_useropt" : ".*[^-+._$as_cr_alnum]" >/dev/null &&
+-      as_fn_error $? "invalid package name: $ac_useropt"
++    ac_useropt=${ac_option#*without-}
++    ac_useropt=${ac_useropt%%=*}
+     ac_useropt_orig=$ac_useropt
+     ac_useropt=`$as_echo "$ac_useropt" | sed 's/[-+.]/_/g'`
+     case $ac_user_opts in
+@@ -1264,7 +1256,7 @@ Try \`$0 --help' for more information"
+     ;;
+ 
+   *=*)
+-    ac_envvar=`expr "x$ac_option" : 'x\([^=]*\)='`
++    ac_envvar=${ac_option%%=*}
+     # Reject names that are not valid shell variable names.
+     case $ac_envvar in #(
+       '' | [0-9]* | *[!_$as_cr_alnum]* )
+@@ -1307,7 +1299,7 @@ do
+   # Remove trailing slashes.
+   case $ac_val in
+     */ )
+-      ac_val=`expr "X$ac_val" : 'X\(.*[^/]\)' \| "X$ac_val" : 'X\(.*\)'`
++      ac_val=${ac_val%/}
+       eval $ac_var=\$ac_val;;
+   esac
+   # Be sure to have absolute directory names.
+@@ -5728,7 +5720,7 @@ echo "define(<GMP_AVX_NOT_REALLY_AVAILABLE>,1)" >> $gmp_tmpconfigm4
+ 	    # Sun cc.
+ 	    cc_64_cflags="-xO3 -m64"
+ 	    ;;
+-	  *-*-mingw* | *-*-msys | *-*-cygwin)
++	  *-*-msvc)
+ 	    limb_64=longlong
+ 	    CALLING_CONVENTIONS_OBJS_64=""
+ 
+@@ -11023,7 +11015,7 @@ else
+ 	.text
+ 	movq	%mm0, %mm1
+ EOF
+-gmp_assemble="$CCAS $CFLAGS $CPPFLAGS conftest.s >conftest.out 2>&1"
++gmp_assemble="$CCAS $CPPFLAGS $ASMFLAGS conftest.s >conftest.out 2>&1"
+ if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
+   (eval $gmp_assemble) 2>&5
+   ac_status=$?
+@@ -11127,7 +11119,7 @@ else
+ 	.text
+ 	paddq	%mm0, %mm1
+ EOF
+-gmp_assemble="$CCAS $CFLAGS $CPPFLAGS conftest.s >conftest.out 2>&1"
++gmp_assemble="$CCAS $CPPFLAGS $ASMFLAGS conftest.s >conftest.out 2>&1"
+ if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
+   (eval $gmp_assemble) 2>&5
+   ac_status=$?
+@@ -12183,9 +12175,9 @@ Use \"--disable-static --enable-shared\" to build just a DLL." "$LINENO" 5
+     # __isascii, but for some reason not the plain isascii.
+     #
+     if test "$enable_shared" = yes; then
+-      GMP_LDFLAGS="$GMP_LDFLAGS -no-undefined -Wl,--export-all-symbols"
+-      LIBGMP_LDFLAGS="$LIBGMP_LDFLAGS -Wl,--output-def,.libs/libgmp-3.dll.def"
+-      LIBGMPXX_LDFLAGS="$LIBGMP_LDFLAGS -Wl,--output-def,.libs/libgmpxx-3.dll.def"
++      GMP_LDFLAGS="$GMP_LDFLAGS -no-undefined"
++      
++      
+       LIBGMP_DLL=1
+     fi
+     ;;
+@@ -13520,7 +13512,7 @@ main ()
+ _ACEOF
+ if ac_fn_c_try_compile "$LINENO"; then :
+   echo conftest.$ac_objext > conftest.lst
+-      lt_ar_try='$AR $AR_FLAGS libconftest.a @conftest.lst >&5'
++      lt_ar_try='$AR $AR_FLAGSlibconftest.a @conftest.lst >&5'
+       { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$lt_ar_try\""; } >&5
+   (eval $lt_ar_try) 2>&5
+   ac_status=$?
+@@ -13758,7 +13750,7 @@ test -z "$RANLIB" && RANLIB=:
+ 
+ 
+ # Determine commands to create old-style static archives.
+-old_archive_cmds='$AR $AR_FLAGS $oldlib$oldobjs'
++old_archive_cmds='$AR $AR_FLAGS$oldlib$oldobjs'
+ old_postinstall_cmds='chmod 644 $oldlib'
+ old_postuninstall_cmds=
+ 
+@@ -16768,7 +16760,7 @@ _LT_EOF
+             archive_expsym_cmds=''
+         ;;
+       m68k)
+-            archive_cmds='$RM $output_objdir/a2ixlibrary.data~$ECHO "#define NAME $libname" > $output_objdir/a2ixlibrary.data~$ECHO "#define LIBRARY_ID 1" >> $output_objdir/a2ixlibrary.data~$ECHO "#define VERSION $major" >> $output_objdir/a2ixlibrary.data~$ECHO "#define REVISION $revision" >> $output_objdir/a2ixlibrary.data~$AR $AR_FLAGS $lib $libobjs~$RANLIB $lib~(cd $output_objdir && a2ixlibrary -32)'
++            archive_cmds='$RM $output_objdir/a2ixlibrary.data~$ECHO "#define NAME $libname" > $output_objdir/a2ixlibrary.data~$ECHO "#define LIBRARY_ID 1" >> $output_objdir/a2ixlibrary.data~$ECHO "#define VERSION $major" >> $output_objdir/a2ixlibrary.data~$ECHO "#define REVISION $revision" >> $output_objdir/a2ixlibrary.data~$AR $AR_FLAGS$lib $libobjs~$RANLIB $lib~(cd $output_objdir && a2ixlibrary -32)'
+             hardcode_libdir_flag_spec='-L$libdir'
+             hardcode_minus_L=yes
+         ;;
+@@ -17031,7 +17023,7 @@ _LT_EOF
+     aix3*)
+       allow_undefined_flag=unsupported
+       always_export_symbols=yes
+-      archive_expsym_cmds='$LD -o $output_objdir/$soname $libobjs $deplibs $linker_flags -bE:$export_symbols -T512 -H512 -bM:SRE~$AR $AR_FLAGS $lib $output_objdir/$soname'
++      archive_expsym_cmds='$LD -o $output_objdir/$soname $libobjs $deplibs $linker_flags -bE:$export_symbols -T512 -H512 -bM:SRE~$AR $AR_FLAGS$lib $output_objdir/$soname'
+       # Note: this linker hardcodes the directories in LIBPATH if there
+       # are no directories specified by -L.
+       hardcode_minus_L=yes
+@@ -17294,10 +17286,10 @@ fi
+ 	  compiler_flags_filtered='`func_echo_all "$compiler_flags " | $SED -e "s%-brtl\\([, ]\\)%-berok\\1%g"`'
+ 	  if test svr4 != "$with_aix_soname"; then
+ 	    # This is similar to how AIX traditionally builds its shared libraries.
+-	    archive_expsym_cmds="$archive_expsym_cmds"'~$CC '$shared_flag_aix' -o $output_objdir/$realname.d/$soname $libobjs $deplibs $wl-bnoentry '$compiler_flags_filtered'$wl-bE:$export_symbols$allow_undefined_flag~$AR $AR_FLAGS $output_objdir/$libname$release.a $output_objdir/$realname.d/$soname'
++	    archive_expsym_cmds="$archive_expsym_cmds"'~$CC '$shared_flag_aix' -o $output_objdir/$realname.d/$soname $libobjs $deplibs $wl-bnoentry '$compiler_flags_filtered'$wl-bE:$export_symbols$allow_undefined_flag~$AR $AR_FLAGS$output_objdir/$libname$release.a $output_objdir/$realname.d/$soname'
+ 	  fi
+ 	  if test aix != "$with_aix_soname"; then
+-	    archive_expsym_cmds="$archive_expsym_cmds"'~$CC '$shared_flag_svr4' -o $output_objdir/$realname.d/$shared_archive_member_spec.o $libobjs $deplibs $wl-bnoentry '$compiler_flags_filtered'$wl-bE:$export_symbols$allow_undefined_flag~$STRIP -e $output_objdir/$realname.d/$shared_archive_member_spec.o~( func_echo_all "#! $soname($shared_archive_member_spec.o)"; if test shr_64 = "$shared_archive_member_spec"; then func_echo_all "# 64"; else func_echo_all "# 32"; fi; cat $export_symbols ) > $output_objdir/$realname.d/$shared_archive_member_spec.imp~$AR $AR_FLAGS $output_objdir/$soname $output_objdir/$realname.d/$shared_archive_member_spec.o $output_objdir/$realname.d/$shared_archive_member_spec.imp'
++	    archive_expsym_cmds="$archive_expsym_cmds"'~$CC '$shared_flag_svr4' -o $output_objdir/$realname.d/$shared_archive_member_spec.o $libobjs $deplibs $wl-bnoentry '$compiler_flags_filtered'$wl-bE:$export_symbols$allow_undefined_flag~$STRIP -e $output_objdir/$realname.d/$shared_archive_member_spec.o~( func_echo_all "#! $soname($shared_archive_member_spec.o)"; if test shr_64 = "$shared_archive_member_spec"; then func_echo_all "# 64"; else func_echo_all "# 32"; fi; cat $export_symbols ) > $output_objdir/$realname.d/$shared_archive_member_spec.imp~$AR $AR_FLAGS$output_objdir/$soname $output_objdir/$realname.d/$shared_archive_member_spec.o $output_objdir/$realname.d/$shared_archive_member_spec.imp'
+ 	  else
+ 	    # used by -dlpreopen to get the symbols
+ 	    archive_expsym_cmds="$archive_expsym_cmds"'~$MV  $output_objdir/$realname.d/$soname $output_objdir'
+@@ -17315,7 +17307,7 @@ fi
+             archive_expsym_cmds=''
+         ;;
+       m68k)
+-            archive_cmds='$RM $output_objdir/a2ixlibrary.data~$ECHO "#define NAME $libname" > $output_objdir/a2ixlibrary.data~$ECHO "#define LIBRARY_ID 1" >> $output_objdir/a2ixlibrary.data~$ECHO "#define VERSION $major" >> $output_objdir/a2ixlibrary.data~$ECHO "#define REVISION $revision" >> $output_objdir/a2ixlibrary.data~$AR $AR_FLAGS $lib $libobjs~$RANLIB $lib~(cd $output_objdir && a2ixlibrary -32)'
++            archive_cmds='$RM $output_objdir/a2ixlibrary.data~$ECHO "#define NAME $libname" > $output_objdir/a2ixlibrary.data~$ECHO "#define LIBRARY_ID 1" >> $output_objdir/a2ixlibrary.data~$ECHO "#define VERSION $major" >> $output_objdir/a2ixlibrary.data~$ECHO "#define REVISION $revision" >> $output_objdir/a2ixlibrary.data~$AR $AR_FLAGS$lib $libobjs~$RANLIB $lib~(cd $output_objdir && a2ixlibrary -32)'
+             hardcode_libdir_flag_spec='-L$libdir'
+             hardcode_minus_L=yes
+         ;;
+@@ -20397,10 +20389,10 @@ fi
+ 	    if test svr4 != "$with_aix_soname"; then
+ 	      # This is similar to how AIX traditionally builds its shared
+ 	      # libraries. Need -bnortl late, we may have -brtl in LDFLAGS.
+-	      archive_expsym_cmds_CXX="$archive_expsym_cmds_CXX"'~$CC '$shared_flag_aix' -o $output_objdir/$realname.d/$soname $libobjs $deplibs $wl-bnoentry '$compiler_flags_filtered'$wl-bE:$export_symbols$allow_undefined_flag~$AR $AR_FLAGS $output_objdir/$libname$release.a $output_objdir/$realname.d/$soname'
++	      archive_expsym_cmds_CXX="$archive_expsym_cmds_CXX"'~$CC '$shared_flag_aix' -o $output_objdir/$realname.d/$soname $libobjs $deplibs $wl-bnoentry '$compiler_flags_filtered'$wl-bE:$export_symbols$allow_undefined_flag~$AR $AR_FLAGS$output_objdir/$libname$release.a $output_objdir/$realname.d/$soname'
+ 	    fi
+ 	    if test aix != "$with_aix_soname"; then
+-	      archive_expsym_cmds_CXX="$archive_expsym_cmds_CXX"'~$CC '$shared_flag_svr4' -o $output_objdir/$realname.d/$shared_archive_member_spec.o $libobjs $deplibs $wl-bnoentry '$compiler_flags_filtered'$wl-bE:$export_symbols$allow_undefined_flag~$STRIP -e $output_objdir/$realname.d/$shared_archive_member_spec.o~( func_echo_all "#! $soname($shared_archive_member_spec.o)"; if test shr_64 = "$shared_archive_member_spec"; then func_echo_all "# 64"; else func_echo_all "# 32"; fi; cat $export_symbols ) > $output_objdir/$realname.d/$shared_archive_member_spec.imp~$AR $AR_FLAGS $output_objdir/$soname $output_objdir/$realname.d/$shared_archive_member_spec.o $output_objdir/$realname.d/$shared_archive_member_spec.imp'
++	      archive_expsym_cmds_CXX="$archive_expsym_cmds_CXX"'~$CC '$shared_flag_svr4' -o $output_objdir/$realname.d/$shared_archive_member_spec.o $libobjs $deplibs $wl-bnoentry '$compiler_flags_filtered'$wl-bE:$export_symbols$allow_undefined_flag~$STRIP -e $output_objdir/$realname.d/$shared_archive_member_spec.o~( func_echo_all "#! $soname($shared_archive_member_spec.o)"; if test shr_64 = "$shared_archive_member_spec"; then func_echo_all "# 64"; else func_echo_all "# 32"; fi; cat $export_symbols ) > $output_objdir/$realname.d/$shared_archive_member_spec.imp~$AR $AR_FLAGS$output_objdir/$soname $output_objdir/$realname.d/$shared_archive_member_spec.o $output_objdir/$realname.d/$shared_archive_member_spec.imp'
+ 	    else
+ 	      # used by -dlpreopen to get the symbols
+ 	      archive_expsym_cmds_CXX="$archive_expsym_cmds_CXX"'~$MV  $output_objdir/$realname.d/$soname $output_objdir'
+@@ -20823,7 +20815,7 @@ fi
+ 	      old_archive_cmds_CXX='tpldir=Template.dir~
+                 rm -rf $tpldir~
+                 $CC --prelink_objects --instantiation_dir $tpldir $oldobjs$old_deplibs~
+-                $AR $AR_FLAGS $oldlib$oldobjs$old_deplibs `find $tpldir -name \*.o | sort | $NL2SP`~
++                $AR $AR_FLAGS$oldlib$oldobjs$old_deplibs `find $tpldir -name \*.o | sort | $NL2SP`~
+                 $RANLIB $oldlib'
+ 	      archive_cmds_CXX='tpldir=Template.dir~
+                 rm -rf $tpldir~
+@@ -25706,7 +25698,7 @@ else
+   cat >conftest.s <<EOF
+ 	$i
+ EOF
+-gmp_assemble="$CCAS $CFLAGS $CPPFLAGS conftest.s >conftest.out 2>&1"
++gmp_assemble="$CCAS $CPPFLAGS $ASMFLAGS conftest.s >conftest.out 2>&1"
+ if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
+   (eval $gmp_assemble) 2>&5
+   ac_status=$?
+@@ -25762,7 +25754,7 @@ for i in "" ":"; do
+ 	$gmp_cv_asm_text
+ somelabel$i
+ EOF
+-gmp_assemble="$CCAS $CFLAGS $CPPFLAGS conftest.s >conftest.out 2>&1"
++gmp_assemble="$CCAS $CPPFLAGS $ASMFLAGS conftest.s >conftest.out 2>&1"
+ if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
+   (eval $gmp_assemble) 2>&5
+   ac_status=$?
+@@ -25963,7 +25955,7 @@ for gmp_tmp_prefix in @ \# %; do
+   cat >conftest.s <<EOF
+ 	.type	sym,${gmp_tmp_prefix}function
+ EOF
+-gmp_assemble="$CCAS $CFLAGS $CPPFLAGS conftest.s >conftest.out 2>&1"
++gmp_assemble="$CCAS $CPPFLAGS $ASMFLAGS conftest.s >conftest.out 2>&1"
+ if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
+   (eval $gmp_assemble) 2>&5
+   ac_status=$?
+@@ -26000,7 +25992,7 @@ else
+ cat >conftest.s <<EOF
+ 	.size	sym,1
+ EOF
+-gmp_assemble="$CCAS $CFLAGS $CPPFLAGS conftest.s >conftest.out 2>&1"
++gmp_assemble="$CCAS $CPPFLAGS $ASMFLAGS conftest.s >conftest.out 2>&1"
+ if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
+   (eval $gmp_assemble) 2>&5
+   ac_status=$?
+@@ -26041,7 +26033,7 @@ for gmp_tmp_pre in L .L $L $ L$; do
+ dummy${gmp_cv_asm_label_suffix}
+ ${gmp_tmp_pre}gurkmacka${gmp_cv_asm_label_suffix}
+ EOF
+-gmp_assemble="$CCAS $CFLAGS $CPPFLAGS conftest.s >conftest.out 2>&1"
++gmp_assemble="$CCAS $CPPFLAGS $ASMFLAGS conftest.s >conftest.out 2>&1"
+ if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
+   (eval $gmp_assemble) 2>&5
+   ac_status=$?
+@@ -26114,7 +26106,7 @@ else
+ 	$i	0
+ 
+ EOF
+-gmp_assemble="$CCAS $CFLAGS $CPPFLAGS conftest.s >conftest.out 2>&1"
++gmp_assemble="$CCAS $CPPFLAGS $ASMFLAGS conftest.s >conftest.out 2>&1"
+ if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
+   (eval $gmp_assemble) 2>&5
+   ac_status=$?
+@@ -26170,7 +26162,7 @@ else
+ foo$gmp_cv_asm_label_suffix
+ 	$gmp_cv_asm_byte	0
+ EOF
+-gmp_assemble="$CCAS $CFLAGS $CPPFLAGS conftest.s >conftest.out 2>&1"
++gmp_assemble="$CCAS $CPPFLAGS $ASMFLAGS conftest.s >conftest.out 2>&1"
+ if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
+   (eval $gmp_assemble) 2>&5
+   ac_status=$?
+@@ -26223,7 +26215,7 @@ else
+ foo$gmp_cv_asm_label_suffix
+ 	$gmp_cv_asm_byte	2
+ EOF
+-gmp_assemble="$CCAS $CFLAGS $CPPFLAGS conftest.s >conftest.out 2>&1"
++gmp_assemble="$CCAS $CPPFLAGS $ASMFLAGS conftest.s >conftest.out 2>&1"
+ if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
+   (eval $gmp_assemble) 2>&5
+   ac_status=$?
+@@ -26380,7 +26372,7 @@ cat >conftest.s <<EOF
+ 	add	r29 = r30, r31 ;; }
+ 
+ EOF
+-gmp_assemble="$CCAS $CFLAGS $CPPFLAGS conftest.s >conftest.out 2>&1"
++gmp_assemble="$CCAS $CPPFLAGS $ASMFLAGS conftest.s >conftest.out 2>&1"
+ if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
+   (eval $gmp_assemble) 2>&5
+   ac_status=$?
+@@ -26419,7 +26411,7 @@ else
+ 	$gmp_cv_asm_text
+ 	$i
+ EOF
+-gmp_assemble="$CCAS $CFLAGS $CPPFLAGS conftest.s >conftest.out 2>&1"
++gmp_assemble="$CCAS $CPPFLAGS $ASMFLAGS conftest.s >conftest.out 2>&1"
+ if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
+   (eval $gmp_assemble) 2>&5
+   ac_status=$?
+@@ -26480,7 +26472,7 @@ cat >conftest.s <<EOF
+ 	$gmp_cv_asm_text
+ 	$movel	$dreg, $areg@-
+ EOF
+-gmp_assemble="$CCAS $CFLAGS $CPPFLAGS conftest.s >conftest.out 2>&1"
++gmp_assemble="$CCAS $CPPFLAGS $ASMFLAGS conftest.s >conftest.out 2>&1"
+ if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
+   (eval $gmp_assemble) 2>&5
+   ac_status=$?
+@@ -26496,7 +26488,7 @@ else
+ 	$gmp_cv_asm_text
+ 	$movel	$dreg, -($areg)
+ EOF
+-gmp_assemble="$CCAS $CFLAGS $CPPFLAGS conftest.s >conftest.out 2>&1"
++gmp_assemble="$CCAS $CPPFLAGS $ASMFLAGS conftest.s >conftest.out 2>&1"
+ if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
+   (eval $gmp_assemble) 2>&5
+   ac_status=$?
+@@ -26535,7 +26527,7 @@ else
+ foo$gmp_cv_asm_label_suffix
+ 	$i	foo
+ EOF
+-gmp_assemble="$CCAS $CFLAGS $CPPFLAGS conftest.s >conftest.out 2>&1"
++gmp_assemble="$CCAS $CPPFLAGS $ASMFLAGS conftest.s >conftest.out 2>&1"
+ if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
+   (eval $gmp_assemble) 2>&5
+   ac_status=$?
+@@ -26614,7 +26606,7 @@ else
+ 	$gmp_cv_asm_text
+ 	mtctr	6
+ EOF
+-gmp_assemble="$CCAS $CFLAGS $CPPFLAGS conftest.s >conftest.out 2>&1"
++gmp_assemble="$CCAS $CPPFLAGS $ASMFLAGS conftest.s >conftest.out 2>&1"
+ if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
+   (eval $gmp_assemble) 2>&5
+   ac_status=$?
+@@ -26630,7 +26622,7 @@ else
+ 	$gmp_cv_asm_text
+ 	mtctr	r6
+ EOF
+-gmp_assemble="$CCAS $CFLAGS $CPPFLAGS conftest.s >conftest.out 2>&1"
++gmp_assemble="$CCAS $CPPFLAGS $ASMFLAGS conftest.s >conftest.out 2>&1"
+ if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
+   (eval $gmp_assemble) 2>&5
+   ac_status=$?
+@@ -26751,7 +26743,7 @@ else
+ 	.register	%g2,#scratch
+ 
+ EOF
+-gmp_assemble="$CCAS $CFLAGS $CPPFLAGS conftest.s >conftest.out 2>&1"
++gmp_assemble="$CCAS $CPPFLAGS $ASMFLAGS conftest.s >conftest.out 2>&1"
+ if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
+   (eval $gmp_assemble) 2>&5
+   ac_status=$?
+@@ -26790,7 +26782,7 @@ else
+ 	or	%g1, %gdop_lox10(symbol), %g1
+ 
+ EOF
+-gmp_assemble="$CCAS $CFLAGS $CPPFLAGS conftest.s >conftest.out 2>&1"
++gmp_assemble="$CCAS $CPPFLAGS $ASMFLAGS conftest.s >conftest.out 2>&1"
+ if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
+   (eval $gmp_assemble) 2>&5
+   ac_status=$?
+@@ -26831,7 +26823,7 @@ __sparc_get_pc_thunk.l7:
+ 	 add	%o7, %l7, %l7
+ 
+ EOF
+-gmp_assemble="$CCAS $CFLAGS $CPPFLAGS conftest.s >conftest.out 2>&1"
++gmp_assemble="$CCAS $CPPFLAGS $ASMFLAGS conftest.s >conftest.out 2>&1"
+ if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
+   (eval $gmp_assemble) 2>&5
+   ac_status=$?
+@@ -26869,7 +26861,7 @@ else
+ 	.byte   0
+ 	.align  4, 0x90
+ EOF
+-gmp_assemble="$CCAS $CFLAGS $CPPFLAGS conftest.s >conftest.out 2>&1"
++gmp_assemble="$CCAS $CPPFLAGS $ASMFLAGS conftest.s >conftest.out 2>&1"
+ if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
+   (eval $gmp_assemble) 2>&5
+   ac_status=$?
+@@ -26908,7 +26900,7 @@ else
+ 	.text
+ 	mulx	%r8, %r9, %r10
+ EOF
+-gmp_assemble="$CCAS $CFLAGS $CPPFLAGS conftest.s >conftest.out 2>&1"
++gmp_assemble="$CCAS $CPPFLAGS $ASMFLAGS conftest.s >conftest.out 2>&1"
+ if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
+   (eval $gmp_assemble) 2>&5
+   ac_status=$?
+@@ -26977,7 +26969,7 @@ else
+ ${tmp_gsym_prefix}foo$gmp_cv_asm_label_suffix
+ 
+ EOF
+-gmp_assemble="$CCAS $CFLAGS $CPPFLAGS conftest.s >conftest.out 2>&1"
++gmp_assemble="$CCAS $CPPFLAGS $ASMFLAGS conftest.s >conftest.out 2>&1"
+ if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
+   (eval $gmp_assemble) 2>&5
+   ac_status=$?
+@@ -27031,7 +27023,7 @@ for tmp_underscore in "" "_"; do
+ ${tmp_gsym_prefix}main$gmp_cv_asm_label_suffix
+ 	addl	$ ${tmp_underscore}_GLOBAL_OFFSET_TABLE_, %ebx
+ EOF
+-  gmp_compile="$CCAS $CFLAGS $CPPFLAGS $lt_prog_compiler_pic conftest.s >&5 && $CC $CFLAGS $CPPFLAGS $lt_prog_compiler_pic conftest.$OBJEXT >&5"
++  gmp_compile="$CCAS $CPPFLAGS $ASMFLAGS $lt_prog_compiler_pic conftest.s >&5 && $CC $CFLAGS $CPPFLAGS $lt_prog_compiler_pic conftest.$OBJEXT >&5"
+   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_compile\""; } >&5
+   (eval $gmp_compile) 2>&5
+   ac_status=$?
+@@ -27070,7 +27062,7 @@ else
+ 	$gmp_cv_asm_text
+ 	shldl	%cl, %eax, %ebx
+ EOF
+-gmp_assemble="$CCAS $CFLAGS $CPPFLAGS conftest.s >conftest.out 2>&1"
++gmp_assemble="$CCAS $CPPFLAGS $ASMFLAGS conftest.s >conftest.out 2>&1"
+ if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_assemble\""; } >&5
+   (eval $gmp_assemble) 2>&5
+   ac_status=$?
+@@ -27223,7 +27215,7 @@ echo "include_mpn(\`x86_64/x86_64-defs.m4')" >> $gmp_tmpconfigm4i
+ 
+ echo "include_mpn(\`x86_64/darwin.m4')" >> $gmp_tmpconfigm4i
+  ;;
+-	    *-*-mingw* | *-*-msys | *-*-cygwin)
++	    *-*-msvc)
+ 
+ echo "include_mpn(\`x86_64/dos64.m4')" >> $gmp_tmpconfigm4i
+  ;;
+diff --git a/gmp-h.in b/gmp-h.in
+index 8598e97..648c933 100644
+--- a/gmp-h.in
++++ b/gmp-h.in
+@@ -402,7 +402,7 @@ typedef const __gmp_randstate_struct *gmp_randstate_srcptr;
+ 
+ /* Microsoft's C compiler accepts __inline */
+ #ifdef _MSC_VER
+-#define __GMP_EXTERN_INLINE  __inline
++#define __GMP_EXTERN_INLINE  static __inline
+ #endif
+ 
+ /* Recent enough Sun C compilers want "inline" */
+diff --git a/mpn/Makefile.in b/mpn/Makefile.in
+index b5df4e5..44e7268 100644
+--- a/mpn/Makefile.in
++++ b/mpn/Makefile.in
+@@ -402,7 +402,7 @@ EXTRA_DIST = asm-defs.m4 cpp-ccas m4-ccas $(TARG_DIST)
+ # COMPILE minus CC.
+ #
+ COMPILE_FLAGS = $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) $(ASMFLAGS)
++	$(CPPFLAGS) $(ASMFLAGS)
+ 
+ 
+ # Flags used for preprocessing (in ansi2knr rules).
+diff --git a/nextprime.c b/nextprime.c
+index e8e60dd..19e8c91 100644
+--- a/nextprime.c
++++ b/nextprime.c
+@@ -53,7 +53,9 @@ see https://www.gnu.org/licenses/.  */
+ */
+ 
+ #include "gmp-impl.h"
+-#include <string.h>		/* for memset */
++#ifndef _MSC_VER
++#include <string.h>
++#endif		/* for memset */
+ 
+ 
+ unsigned long int
