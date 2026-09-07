@@ -86,8 +86,12 @@ package("vapoursynth")
             io.replace("meson.build", "add_project_arguments(['-fno-math-errno', '-fno-trapping-math'], language: lang)", "", {plain = true})
         end
         if not package:config("shared") and package:is_plat("windows", "mingw") then
-            io.replace("include/VapourSynth.h", "__declspec(dllexport)", "", {plain = true})
-            io.replace("include/VapourSynth4.h", "__declspec(dllexport)", "", {plain = true})
+            if os.isfile("include/VapourSynth.h") then
+                io.replace("include/VapourSynth.h", "__declspec(dllexport)", "", {plain = true})
+            end
+            if os.isfile("include/VapourSynth4.h") then
+                io.replace("include/VapourSynth4.h", "__declspec(dllexport)", "", {plain = true})
+            end
         end
         local configs = {}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
@@ -112,8 +116,14 @@ package("vapoursynth")
         import("package.tools.meson").install(package, configs, opt)
 
         if not package:config("shared") and package:is_plat("windows", "mingw") then
-            io.replace(path.join(package:installdir("include"), "vapoursynth/VapourSynth.h"), "__declspec(dllimport)", "", {plain = true})
-            io.replace(path.join(package:installdir("include"), "vapoursynth/VapourSynth4.h"), "__declspec(dllimport)", "", {plain = true})
+            local header_v3 = path.join(package:installdir("include"), "vapoursynth/VapourSynth.h")
+            local header_v4 = path.join(package:installdir("include"), "vapoursynth/VapourSynth4.h")
+            if os.isfile(header_v3) then
+                io.replace(header_v3, "__declspec(dllimport)", "", {plain = true})
+            end
+            if os.isfile(header_v4) then
+                io.replace(header_v4, "__declspec(dllimport)", "", {plain = true})
+            end
         end
     end)
 
