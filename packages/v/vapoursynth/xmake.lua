@@ -86,6 +86,25 @@ package("vapoursynth")
             io.replace("meson.build", "-Wno-ignored-attributes", "", {plain = true})
             io.replace("meson.build", "add_project_arguments(['-fno-math-errno', '-fno-trapping-math'], language: lang)", "", {plain = true})
         end
+        if package:is_plat("iphoneos") then
+            local ldflags = table.wrap(package:build_getenv("ldflags"))
+            local new_ldflags = {}
+            for _, flag in ipairs(ldflags) do
+                if flag ~= "-ObjC" then
+                    table.insert(new_ldflags, flag)
+                end
+            end
+            package:build_setenv("ldflags", new_ldflags)
+
+            local shflags = table.wrap(package:build_getenv("shflags"))
+            local new_shflags = {}
+            for _, flag in ipairs(shflags) do
+                if flag ~= "-ObjC" then
+                    table.insert(new_shflags, flag)
+                end
+            end
+            package:build_setenv("shflags", new_shflags)
+        end
         if not package:config("shared") and package:is_plat("windows", "mingw") then
             if os.isfile("include/VapourSynth.h") then
                 io.replace("include/VapourSynth.h", "__declspec(dllexport)", "", {plain = true})
