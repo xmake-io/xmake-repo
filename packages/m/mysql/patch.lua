@@ -24,11 +24,9 @@ function cmake(package)
             local libevent_version = libevent and libevent:version() or "2.1.12"
             -- skip try_run
             io.replace("cmake/libevent.cmake",
-                "TRY_RUN(TEST_RUN_RESULT COMPILE_TEST_RESULT",
-                "SET(COMPILE_TEST_RESULT 1)\n  # TRY_RUN(TEST_RUN_RESULT COMPILE_TEST_RESULT", {plain = true})
-            io.replace("cmake/libevent.cmake",
-                [[SET(LIBEVENT_VERSION_STRING "${RUN_OUTPUT}")]],
-                format([[SET(LIBEVENT_VERSION_STRING "%s")]], libevent_version), {plain = true})
+                "FUNCTION(FIND_LIBEVENT_VERSION LIBEVENT_INCLUDE_DIRS)",
+                format("FUNCTION(FIND_LIBEVENT_VERSION LIBEVENT_INCLUDE_DIRS)\n  SET(LIBEVENT_VERSION \"%s\" CACHE INTERNAL \"\" FORCE)\n  RETURN()", libevent_version),
+                {plain = true})
         end
     elseif version:eq("9.0.1") then
         io.replace("cmake/ssl.cmake", "FIND_CUSTOM_OPENSSL()", "FIND_SYSTEM_OPENSSL()", {plain = true})
@@ -40,10 +38,11 @@ function cmake(package)
             [[NOT type MATCHES "STATIC_LIBRARY"]],
             [[NOT type MATCHES "STATIC_LIBRARY" AND CMAKE_BUILD_TYPE STREQUAL "DEBUG"]], {plain = true})
 
-        if package:is_cross() then
-            -- skip try_run
-            io.replace("cmake/rapidjson.cmake", "IF (NOT HAVE_RAPIDJSON_WITH_STD_REGEX)", "if(FALSE)", {plain = true})
-        end
+    end
+
+    if package:is_cross() then
+        -- skip try_run
+        io.replace("cmake/rapidjson.cmake", "IF (NOT HAVE_RAPIDJSON_WITH_STD_REGEX)", "if(FALSE)", {plain = true})
     end
 
     if not package:config("cluster") then
