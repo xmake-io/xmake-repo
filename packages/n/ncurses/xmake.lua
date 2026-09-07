@@ -13,6 +13,8 @@ package("ncurses")
     add_versions("6.5", "136d91bc269a9a5785e5f9e980bc76ab57428f604ce3e5a5a90cebc767971cc6")
     add_versions("6.6", "355b4cbbed880b0381a04c46617b7656e362585d52e9cf84a67e2009b749ff11")
 
+    add_patches("6.6", "patches/6.6/fix-mingw-wchar.patch", "421b60514c15fc9c8396d8d59df9aabfc6cd315f49e242a3e17b14f4026f7b2f")
+
     add_configs("widec", {description = "Compile with wide-char/UTF-8 code.", default = true, type = "boolean"})
 
     if is_plat("linux") then
@@ -55,6 +57,8 @@ package("ncurses")
             "--without-ada",
             "--enable-pc-files",
             "--with-pkg-config-libdir=" .. path.unix(package:installdir("lib", "pkgconfig")):gsub("^(%a):", "/%1"),
+            "--with-default-terminfo-dir=" .. path.unix(package:installdir("share", "terminfo")):gsub("^(%a):", "/%1"),
+            "--disable-home-terminfo",
         }
 
         table.insert(configs, "--with-debug=" .. (package:is_debug() and "yes" or "no"))
@@ -80,10 +84,27 @@ package("ncurses")
         if package:is_plat("mingw", "cygwin", "msys") then
             table.insert(configs, "--enable-term-driver")
             table.insert(cflags, "-D__USE_MINGW_ACCESS") -- Pass X_OK to access() on Windows which isn't supported with ucrt
+            if is_subhost("linux") then
+                local host_triples = {
+                    arm64   = "aarch64-linux-gnu",
+                    x86_64  = "x86_64-linux-gnu",
+                    i386    = "i686-linux-gnu",
+                    arm     = "arm-linux-gnueabihf",
+                    armv7   = "arm-linux-gnueabihf",
+                    riscv64 = "riscv64-linux-gnu",
+                    loong64 = "loongarch64-linux-gnu",
+                }
+                local build = host_triples[os.subarch()] or (os.subarch() .. "-linux-gnu")
+                table.insert(configs, "--build=" .. build)
+            end
         end
         import("package.tools.autoconf").install(package, configs, {cflags = cflags, arflags = {"-curvU"}})
         for _, file in ipairs(os.files(path.join(package:installdir("include"), "**.h"))) do
             io.replace(file, "#include <ncursesw/(.-)>", '#include "%1"', {plain = false})
+        end
+        if package:is_plat("mingw") then
+            -- https://github.com/msys2/MINGW-packages/issues/27676#issuecomment-3902356595
+            os.rm(package:installdir("include/ncursesw/nc_win32.h"))
         end
     end)
 

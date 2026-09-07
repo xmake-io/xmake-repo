@@ -6,6 +6,7 @@ package("eui-neo")
     add_urls("https://github.com/sudoevolve/EUI-NEO/archive/refs/tags/$(version).tar.gz",
              "https://github.com/sudoevolve/EUI-NEO.git")
 
+    add_versions("v0.5.9", "370d1da706d94bbbb144fa1634e1d9796a8a1ffd58b696fbb801296aef15703d")
     add_versions("v0.5.8", "ca886cfb62bc05a849d2176bd6b30bbf2d0e14e1f866305ce622af6177548c8c")
     add_versions("v0.5.7", "2d3ec0a36e34b98d13dbdaf67afa4fe178cb4b52841eb17529517cb48be43551")
     add_versions("v0.5.6", "0df8d79897a480566b0989060f206431d12c4a83eb7aef50b8e5d21f1676abf8")
@@ -13,31 +14,54 @@ package("eui-neo")
 
     add_configs("window_backend", {description = "Window backend", default = "glfw", values = {"glfw", "sdl2"}})
     add_configs("render_backend", {description = "Render backend", default = "opengl", values = {"auto", "opengl", "vulkan"}})
+    add_configs("app_runner", {description = "Build the EUI application runner (defines main)", default = true, type = "boolean"})
     add_configs("markdown", {description = "Enable MD4C Markdown parsing support", default = true, type = "boolean"})
+    add_configs("tray", {description = "Enable the system tray backend", default = true, type = "boolean"})
     add_configs("vulkan_low_latency", {description = "Prefer low-latency Vulkan presentation", default = false, type = "boolean"})
 
-    add_deps("freetype", "libpng", "zlib")
+    add_deps("freetype", "libpng", "zlib", "yyjson")
 
     if is_plat("windows", "mingw") then
-        add_syslinks("imm32", "urlmon", "comdlg32")
+        add_syslinks("winmm", "urlmon", "shell32", "user32", "imm32", "pdh", "comdlg32", "gdi32")
     end
 
     on_load(function(package)
+        if package:is_plat("macosx") then
+            package:add("frameworks", "Cocoa", "IOKit", "CoreFoundation")
+            package:add("syslinks", "objc")
+        end
         if package:config("window_backend") == "glfw" then
             package:add("deps", "glfw")
-        end
-        if package:config("window_backend") == "sdl2" then
-            package:add("deps", "sdl2")
+        elseif package:config("window_backend") == "sdl2" then
+            package:add("deps", "libsdl2")
         end
         if package:config("render_backend") == "opengl" then
-            package:add("deps", "glad")
-        end
-        if package:config("render_backend") == "vulkan" then
-            package:add("deps", "vulkan")
+            package:add("deps", "glad v0.1.36")
+            if package:is_plat("windows", "mingw") then
+                package:add("syslinks", "opengl32")
+            elseif package:is_plat("linux") then
+                package:add("syslinks", "GL")
+            elseif package:is_plat("macosx") then
+                package:add("frameworks", "OpenGL")
+            end
+        elseif package:config("render_backend") == "vulkan" then
+            package:add("deps", "vulkansdk", {system = true})
         end
         if not package:is_plat("windows", "mingw") then
             package:add("deps", "libcurl")
+            package:add("syslinks", "pthread")
         end
+        if package:config("markdown") then
+            package:add("deps", "md4c")
+        end
+        if package:is_plat("linux") and package:config("tray") then
+            package:add("deps", "glib")
+        end
+        if package:config("app_runner") then
+            package:add("links", "eui_app")
+            package:add("defines", "EUI_APP_RUNNER=1")
+        end
+        package:add("links", "eui_neo")
     end)
 
     on_install("windows", "mingw", "linux", "macosx", function(package)
@@ -45,7 +69,9 @@ package("eui-neo")
         local configs = {}
         configs.window_backend = package:config("window_backend")
         configs.render_backend = package:config("render_backend")
-        configs.markdown = package:config("markdown")
+        configs.app_runner     = package:config("app_runner")
+        configs.markdown       = package:config("markdown")
+        configs.tray           = package:config("tray")
         configs.vulkan_low_latency = package:config("vulkan_low_latency")
         import("package.tools.xmake").install(package, configs)
     end)
