@@ -16,7 +16,7 @@ end
 
 function cmake(package)
     local version = package:version()
-    if version:eq("8.0.39") then
+    if version:le("8.0.40") then
         io.replace("cmake/ssl.cmake", "IF(NOT OPENSSL_APPLINK_C)", "IF(FALSE)", {plain = true})
         io.replace("cmake/boost.cmake", "IF(NOT BOOST_MINOR_VERSION EQUAL 77)", "IF(FALSE)", {plain = true})
         if package:is_cross() then
