@@ -20,11 +20,12 @@ function cmake(package)
         io.replace("cmake/ssl.cmake", "IF(NOT OPENSSL_APPLINK_C)", "IF(FALSE)", {plain = true})
         io.replace("cmake/boost.cmake", "IF(NOT BOOST_MINOR_VERSION EQUAL 77)", "IF(FALSE)", {plain = true})
         if package:is_cross() then
-            local libevent_version = package:dep("libevent"):version()
-            if not libevent_version then
-                version = "2.1.12"
-            end
+            local libevent = package:dep("libevent")
+            local libevent_version = libevent and libevent:version() or "2.1.12"
             -- skip try_run
+            io.replace("cmake/libevent.cmake",
+                "TRY_RUN(TEST_RUN_RESULT COMPILE_TEST_RESULT",
+                "SET(COMPILE_TEST_RESULT 1)\n  # TRY_RUN(TEST_RUN_RESULT COMPILE_TEST_RESULT", {plain = true})
             io.replace("cmake/libevent.cmake",
                 [[SET(LIBEVENT_VERSION_STRING "${RUN_OUTPUT}")]],
                 format([[SET(LIBEVENT_VERSION_STRING "%s")]], libevent_version), {plain = true})
