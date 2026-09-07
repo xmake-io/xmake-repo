@@ -1,5 +1,5 @@
 package("mysql")
-    set_homepage("http://www.mysql.com")
+    set_homepage("https://www.mysql.com/")
     set_description("A real-time, open source transactional database.")
     set_license("GPL-2.0")
 
