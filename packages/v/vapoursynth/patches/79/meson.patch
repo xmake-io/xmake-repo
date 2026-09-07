@@ -1,0 +1,65 @@
+diff --git a/meson.build b/meson.build
+index 636ce89..c9dccb9 100644
+--- a/meson.build
++++ b/meson.build
+@@ -227,7 +227,6 @@ libvapoursynth = library('libvapoursynth',
+     gnu_symbol_visibility: 'hidden',
+     include_directories: incdir,
+     install: true,
+-    install_dir: install_dir,
+     name_prefix: '',
+     soversion: soversion,
+ )
+@@ -266,7 +265,6 @@ libvsscript = library('vsscript',
+     gnu_symbol_visibility: 'hidden',
+     include_directories: incdir,
+     install: true,
+-    install_dir: install_dir,
+ )
+ 
+ vsscript_dep = declare_dependency(
+@@ -294,8 +292,6 @@ executable('vspipe',
+     dependencies: vsscript_dep,
+     gnu_symbol_visibility: 'hidden',
+     install: true,
+-    install_dir: install_dir,
+-    install_rpath: '$ORIGIN',
+     link_args: link_args,
+ )
+ 
+@@ -436,7 +432,7 @@ if enable_x86_asm
+             link_with: vlibs,
+             name_prefix: '',
+             install: true,
+-            install_dir: install_dir,
++            install_dir: get_option('libdir') / 'vapoursynth',
+         )
+     endforeach
+ else
+@@ -492,7 +488,7 @@ else
+         link_with: arm_vlibs,
+         name_prefix: '',
+         install: true,
+-        install_dir: install_dir,
++        install_dir: get_option('libdir') / 'vapoursynth',
+     )
+ endif
+ 
+@@ -500,7 +496,8 @@ install_subdir(
+     'include',
+     exclude_directories: 'cython',
+     exclude_files: ['VapourSynth.h', 'VSHelper.h'],
+-    install_dir: install_dir,
++    install_dir: get_option('includedir') / 'vapoursynth',
++    strip_directory: true,
+ )
+ 
+ pc_data = configuration_data()
+@@ -509,6 +506,6 @@ configure_file(
+     configuration: pc_data,
+     input: 'vapoursynth.pc.in',
+     install: true,
+-    install_dir: install_dir / 'pkgconfig',
++    install_dir: get_option('libdir') / 'pkgconfig',
+     output: 'vapoursynth.pc',
+ )

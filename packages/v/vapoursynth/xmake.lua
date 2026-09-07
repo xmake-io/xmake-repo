@@ -6,15 +6,14 @@ package("vapoursynth")
     add_urls("https://github.com/vapoursynth/vapoursynth/archive/refs/tags/R$(version).tar.gz")
     add_urls("https://github.com/vapoursynth/vapoursynth.git", {alias = "git"})
 
-    add_versions("79", "1bb8ffe31348eaf46d8f541b138f0136d10edaef0c130c1e5a13aa4a4b057280")
+    add_versions("79", "cb7ea3c75431176f8ce1f466e1c1fff7ffdacdd2d397be8fabc2d467194ab5a6")
     add_versions("73", "1bb8ffe31348eaf46d8f541b138f0136d10edaef0c130c1e5a13aa4a4b057280")
 
     add_versions("git:79", "R79")
     add_versions("git:73", "R73")
 
-    add_configs("vsscript", {description = "Build VSScript. Requires Python 3", default = false, type = "boolean"})
-    add_configs("vspipe", {description = "Build vspipe. Requires VSScript", default = false, type = "boolean"})
-    add_configs("python", {description = "Build the Python module. Requires Python and Cython", default = false, type = "boolean"})
+    add_patches(">=75", "patches/79/meson.patch", "1b5b6035e6047e94175393f50930e6f2b6e3f30215e9cde9d9e502205baaf3ae")
+
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
@@ -38,15 +37,23 @@ package("vapoursynth")
         assert(ndk and tonumber(ndk) > 22, "package(vapoursynth) require ndk version > 22")
     end)
 
-    on_load("@windows", function (package)
-        local has_cat = try { function()
-            os.vrun("cat --version")
-            os.vrun("grep --version")
-            return true
-        end }
-        if not has_cat and os.arch() == "x64" then
-            local msystem = "MINGW" .. (package:is_arch64() and "64" or "32")
-            package:add("deps", "msys2", {configs = {msystem = msystem, base_devel = true}})
+    on_load(function (package)
+        if package:version() and package:version():le("74") then
+            package:add("configs", "vsscript", {description = "Build VSScript. Requires Python 3", default = false, type = "boolean"})
+            package:add("configs", "vspipe", {description = "Build vspipe. Requires VSScript", default = false, type = "boolean"})
+            package:add("configs", "python", {description = "Build the Python module. Requires Python and Cython", default = false, type = "boolean"})
+        end
+
+        if package:is_plat("windows") and package:is_subhost("windows") then
+            local has_cat = try { function()
+                os.vrun("cat --version")
+                os.vrun("grep --version")
+                return true
+            end }
+            if not has_cat and os.arch() == "x64" then
+                local msystem = "MINGW" .. (package:is_arch64() and "64" or "32")
+                package:add("deps", "msys2", {configs = {msystem = msystem, base_devel = true}})
+            end
         end
     end)
 
@@ -55,7 +62,7 @@ package("vapoursynth")
             io.replace("meson.build", "-Wno-ignored-attributes", "", {plain = true})
             io.replace("meson.build", "add_project_arguments(['-fno-math-errno', '-fno-trapping-math'], language: lang)", "", {plain = true})
         end
-        if not package:config("python") then
+        if package:version() and package:version():le("74") and not package:config("python") then
             io.replace("meson.build", ", 'cython'", "", {plain = true})
         end
         if not package:config("shared") and package:is_plat("windows", "mingw") then
@@ -66,9 +73,11 @@ package("vapoursynth")
         local configs = {}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         table.insert(configs, "-Db_lto=" .. (package:config("lto") and "true" or "false"))
-        table.insert(configs, "-Denable_vsscript=" .. (package:config("vsscript") and "true" or "false"))
-        table.insert(configs, "-Denable_vspipe=" .. (package:config("vspipe") and "true" or "false"))
-        table.insert(configs, "-Denable_python_module=" .. (package:config("python") and "true" or "false"))
+        if package:version() and package:version():le("74") then
+            table.insert(configs, "-Denable_vsscript=" .. (package:config("vsscript") and "true" or "false"))
+            table.insert(configs, "-Denable_vspipe=" .. (package:config("vspipe") and "true" or "false"))
+            table.insert(configs, "-Denable_python_module=" .. (package:config("python") and "true" or "false"))
+        end
 
         local opt = {}
         if package:is_plat("windows") then
