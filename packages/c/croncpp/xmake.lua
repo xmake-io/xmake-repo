@@ -7,6 +7,7 @@ package("croncpp")
     add_urls("https://github.com/mariusbancila/croncpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/mariusbancila/croncpp.git")
 
+    add_versions("v2026.08.12", "14441a5f46607e5fce97558cf12505087a1e052d5f5b9a4474ee118fe3303ba2")
     add_versions("v2023.03.30", "0731b7f900a670c009585eb5e9639722aeff6531dbbd5bfc9ce895459733837e")
 
     on_install(function (package)
