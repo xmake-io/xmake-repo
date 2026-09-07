@@ -1,5 +1,5 @@
 package("cello")
-    set_homepage("http://libcello.org/")
+    set_homepage("https://libcello.org/")
     set_description("Higher level programming in C")
 
     add_urls("https://github.com/orangeduck/Cello/archive/refs/tags/$(version).tar.gz",

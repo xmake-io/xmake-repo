@@ -1,5 +1,5 @@
 package("libraw")
-    set_homepage("http://www.libraw.org")
+    set_homepage("https://www.libraw.org/")
     set_description("LibRaw is a library for reading RAW files from digital cameras.")
     set_license("LGPL-2.1")
 

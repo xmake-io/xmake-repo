@@ -1,5 +1,5 @@
 package("mujs")
-    set_homepage("http://mujs.com/")
+    set_homepage("https://mujs.com/")
     set_description("An embeddable Javascript interpreter in C.")
     set_license("ISC")
 

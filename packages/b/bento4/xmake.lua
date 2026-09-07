@@ -1,5 +1,5 @@
 package("bento4")
-    set_homepage("http://www.bento4.com")
+    set_homepage("https://www.bento4.com/")
     set_description("Full-featured MP4 format, MPEG DASH, HLS, CMAF SDK and tools")
 
     add_urls("https://github.com/axiomatic-systems/Bento4.git")
