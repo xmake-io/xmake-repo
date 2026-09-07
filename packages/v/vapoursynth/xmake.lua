@@ -136,7 +136,7 @@ package("vapoursynth")
         elseif package:is_plat("linux", "bsd") then
             opt.cxflags = "-pthread"
             opt.shflags = "-pthread"
-        if package:is_plat("android") and package:check_sizeof("void*") == "4" then
+        elseif package:is_plat("android") and package:check_sizeof("void*") == "4" then
             opt.cxflags = "-U_FILE_OFFSET_BITS"
         end
         import("package.tools.meson").install(package, configs, opt)
