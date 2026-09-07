@@ -25,7 +25,7 @@ package("mysql")
     add_includedirs("include", "include/mysql")
 
     add_deps("cmake")
-    add_deps("zlib", "zstd", "lz4", "openssl", "rapidjson")
+    add_deps("zlib", "zstd", "lz4", "openssl3", "rapidjson")
     if is_plat("linux") then
         add_deps("patchelf")
         add_deps("libedit", {configs = {terminal_db = "ncurses"}})

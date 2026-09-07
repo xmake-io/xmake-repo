@@ -31,7 +31,7 @@ function get(package, build_host_tool)
         "-DWITH_LIBEVENT=system",
         "-DWITH_ZLIB=system",
         "-DWITH_ZSTD=system",
-        "-DWITH_SSL=" .. (package:dep("openssl") and package:dep("openssl"):installdir() or "system"),
+        "-DWITH_SSL=" .. ((package:dep("openssl3") or package:dep("openssl")) and (package:dep("openssl3") or package:dep("openssl")):installdir() or "system"),
         "-DWITH_LZ4=system",
         "-DWITH_RAPIDJSON=system",
     }
