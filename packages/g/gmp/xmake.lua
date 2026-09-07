@@ -154,8 +154,6 @@ package("gmp")
             end
             local m4 = find_tool("m4", {paths = {"C:/msys64/usr/bin", "C:/tools/msys64/usr/bin", "C:/msys/usr/bin", "C:/cygwin64/bin", "C:/cygwin/bin"}})
             if m4 and m4.program then
-                local m4_dir = path.directory(m4.program)
-                opt.envs.PATH = path.joinenv({opt.envs.PATH, path.cygwin(m4_dir), m4_dir})
                 opt.envs.M4 = path.cygwin(m4.program)
             else
                 opt.envs.M4 = "m4"
@@ -234,6 +232,9 @@ package("gmp")
                     enable_assembly = false
                 end
             end
+            local host_arch = os.arch()
+            local build_triple = (clang_archs[host_arch] or host_arch) .. "-windows-msvc"
+            table.insert(configs, "--build=" .. build_triple)
             table.insert(configs, "--host=" .. target)
         end
         table.insert(configs, "--enable-assembly=" .. (enable_assembly and "yes" or "no"))
@@ -277,15 +278,23 @@ package("gmp")
                             local lines = log:split("\n")
                             local target_idx
                             for i, line in ipairs(lines) do
-                                if line:find("checking whether the C compiler works", 1, true) or
-                                   line:find("cannot find a working compiler", 1, true) or
-                                   line:find("C compiler cannot create executables", 1, true) then
+                                if line:find("checking whether the C compiler works", 1, true) then
                                     target_idx = i
+                                    break
+                                end
+                            end
+                            if not target_idx then
+                                for i, line in ipairs(lines) do
+                                    if line:find("cannot find a working compiler", 1, true) or
+                                       line:find("C compiler cannot create executables", 1, true) then
+                                        target_idx = i
+                                        break
+                                    end
                                 end
                             end
                             if target_idx then
-                                local start_idx = math.max(1, target_idx - 15)
-                                local end_idx = math.min(#lines, target_idx + 60)
+                                local start_idx = math.max(1, target_idx - 5)
+                                local end_idx = math.min(#lines, target_idx + 80)
                                 for i = start_idx, end_idx do
                                     print(lines[i])
                                 end
