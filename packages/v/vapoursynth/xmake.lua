@@ -97,6 +97,8 @@ package("vapoursynth")
             table.insert(configs, "-Denable_vsscript=" .. (package:config("vsscript") and "true" or "false"))
             table.insert(configs, "-Denable_vspipe=" .. (package:config("vspipe") and "true" or "false"))
             table.insert(configs, "-Denable_python_module=" .. (package:config("python") and "true" or "false"))
+        elseif package:version() and package:version():ge("79") and package:has_tool("cxx", "cl") then
+            table.insert(configs, "-Denable_arm_asm=false")
         end
 
         local opt = {}
