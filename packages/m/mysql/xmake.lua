@@ -85,6 +85,10 @@ package("mysql")
         if package:is_plat("windows") then
             table.insert(configs, "-DLINK_STATIC_RUNTIME_LIBRARIES=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
         end
+        if package:is_cross() then
+            table.insert(configs, "-DCMAKE_CROSSCOMPILING=1")
+            table.insert(configs, "-DHAVE_RAPIDJSON_WITH_STD_REGEX=1")
+        end
         import("package.tools.cmake").install(package, configs)
 
         if package:is_plat("windows") then
