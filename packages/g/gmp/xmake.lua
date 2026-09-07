@@ -11,11 +11,7 @@ package("gmp")
     add_patches("6.3.0", "patches/6.3.0/c23.patch", "24eb6ad75fb2552db247d3c5c522d30f221cca23a0fdc925b2684af44d51b7b3")
 
     add_configs("cpp_api", {description = "Enable C++ support", default = false, type = "boolean"})
-    if is_plat("windows") then
-        add_configs("assembly", {description = "Enable the use of assembly loops", default = false, type = "boolean"})
-    else
-        add_configs("assembly", {description = "Enable the use of assembly loops", default = true, type = "boolean"})
-    end
+    add_configs("assembly", {description = "Enable the use of assembly loops", default = true, type = "boolean"})
     add_configs("fat", {description = "Build fat libraries on systems that support it", default = false, type = "boolean"})
 
     if is_plat("mingw") and is_subhost("msys") then
@@ -133,11 +129,11 @@ package("gmp")
             end
         end
 
+        local enable_assembly = package:config("assembly")
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         table.insert(configs, "--enable-cxx=" .. (package:config("cpp_api") and "yes" or "no"))
-        table.insert(configs, "--enable-assembly=" .. (package:config("assembly") and "yes" or "no"))
         table.insert(configs, "--enable-fat=" .. (package:config("fat") and "yes" or "no"))
         if package:is_debug() then
             table.insert(configs, "--enable-debug")
@@ -213,7 +209,7 @@ package("gmp")
                 ["arm64"] = "aarch64",
             }
             local target = clang_archs[package:arch()] .. "-windows-msvc"
-            if package:config("assembly") then
+            if enable_assembly then
                 local clang = package:has_tool("cxx", "clang") and opt.envs.CC or find_tool("clang")
                 if clang then
                     local clang_prog = type(clang) == "table" and clang.program or clang
@@ -225,15 +221,17 @@ package("gmp")
                             opt.envs.NM = path.unix(llvm_nm.program)
                         end
                     end
-                elseif package:is_arch("x86") then
+                elseif package:is_arch("x86", "i386") then
                     opt.envs.CCAS = "yasm"
                     opt.envs.CCASFLAGS = "-a x86 -m x86 -p gas -r raw -f win32 -g null -X gnu"
                 else
-                    table.insert(configs, "--enable-assembly=no")
+                    wprint("package(gmp): assembly disabled on windows %s (clang is required; yasm does not support arm64 and crashes on x64). Please install clang to enable assembly.", package:arch())
+                    enable_assembly = false
                 end
             end
             table.insert(configs, "--host=" .. target)
         end
+        table.insert(configs, "--enable-assembly=" .. (enable_assembly and "yes" or "no"))
         -- Can't generate correct gmp.lib with lib.exe
         if package:is_plat("windows") then
             autoconf.build(package, configs, opt)
