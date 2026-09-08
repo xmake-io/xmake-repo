@@ -1,5 +1,5 @@
 package("alembic")
-    set_homepage("https://alembic.io/")
+    set_homepage("https://www.alembic.io/")
     set_description("Open framework for storing and sharing scene data that includes a C++ library, a file format, and client plugins and applications.")
     set_license("BSD-3-Clause")
 
