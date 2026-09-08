@@ -1,0 +1,14 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 97b61cc..a2cd813 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -51,6 +51,9 @@ if(BUILD_SHARED_LIBS)
+ endif()
+ 
+ find_library(MATH_LIBRARY m)
++if(NOT(MATH_LIBRARY))
++    find_library(MATH_LIBRARY m PATHS ${CMAKE_C_IMPLICIT_LINK_DIRECTORIES})
++endif()
+ 
+ include(GNUInstallDirs)
+ 
