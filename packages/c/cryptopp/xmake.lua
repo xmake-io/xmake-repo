@@ -16,6 +16,8 @@ package("cryptopp")
     add_resources("8.5.0", "cryptopp_cmake", "https://github.com/noloader/cryptopp-cmake/archive/CRYPTOPP_8_5_0.tar.gz", "10685209405e676993873fcf638ade5f8f99d7949afa6b2045289ce9cc6d90ac")
     add_resources("8.4.0", "cryptopp_cmake", "https://github.com/noloader/cryptopp-cmake/archive/CRYPTOPP_8_4_0.tar.gz", "b850070141f6724fce640e4e2cfde433ec5b2d99d4386d29ba9255167bc4b4f0")
 
+    add_patches("8.9.0", "patches/8.9.0/msvc.patch", "f2a9f0817e4a8234ea07f8779fd95a70273c025d306788bb155301633a1bc9ba")
+
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::crypto++")
     elseif is_plat("linux") then
