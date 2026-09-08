@@ -1,6 +1,6 @@
 package("rapidxml")
     set_kind("library", {headeronly = true})
-    set_homepage("https://sourceforge.net/projects/rapidxml")
+    set_homepage("https://sourceforge.net/projects/rapidxml/")
     set_description("An attempt to create the fastest XML parser possible")
     set_license("MIT")
 
