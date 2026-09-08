@@ -12,7 +12,9 @@ package("faad2")
     add_versions("2.11.2", "3fcbd305e4abd34768c62050e18ca0986f7d9c5eca343fb98275418013065c0e")
     add_versions("2.10.0", "0c6d9636c96f95c7d736f097d418829ced8ec6dbd899cc6cc82b728480a84bfb")
 
-    if is_plat("linux", "bsd") then
+    add_patches(">=2.11.2", "patches/fix-m-lib.diff", "a484fb1647410d89cd5903531555250324a2adec282ea6b976b10f8b0d413a26")
+
+    if is_plat("linux", "bsd", "cross", "android") then
         add_syslinks("m")
     end
 
@@ -36,7 +38,9 @@ package("faad2")
                 table.insert(configs, "-DFAAD_BUILD_CLI=OFF")
             end
             import("package.tools.cmake").install(package, configs)
-            package:addenv("PATH", "bin")
+            if not package:is_cross() then
+                package:addenv("PATH", "bin")
+            end
         elseif package:is_plat("windows") then
             local vs = import("core.tool.toolchain").load("msvc"):config("vs")
             if tonumber(vs) < 2019 then
@@ -78,7 +82,9 @@ package("faad2")
                 os.vrun("autoreconf --force --install")
             end
             import("package.tools.autoconf").install(package, configs)
-            package:addenv("PATH", "bin")
+            if not package:is_cross() then
+                package:addenv("PATH", "bin")
+            end
         end
     end)
 
