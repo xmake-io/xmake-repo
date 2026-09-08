@@ -1,6 +1,5 @@
 package("faad2")
-
-    set_homepage("https://sourceforge.net/projects/faac")
+    set_homepage("https://sourceforge.net/projects/faac/")
     set_description("FAAD2 is a HE, LC, MAIN and LTP profile, MPEG2 and MPEG-4 AAC decoder.")
     set_license("GPL-2.0")
 
