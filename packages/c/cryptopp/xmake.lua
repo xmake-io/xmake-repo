@@ -1,5 +1,5 @@
 package("cryptopp")
-    set_homepage("https://cryptopp.com/")
+    set_homepage("https://github.com/weidai11/cryptopp")
     set_description("free C++ class library of cryptographic schemes")
 
     add_urls("https://github.com/weidai11/cryptopp.git")
@@ -15,6 +15,8 @@ package("cryptopp")
     add_resources("8.6.0", "cryptopp_cmake", "https://github.com/noloader/cryptopp-cmake/archive/CRYPTOPP_8_6_0.tar.gz", "970b20d55dbf9d6335485e72c9f8967d878bf64bbd3de6aa28436beb6799c493")
     add_resources("8.5.0", "cryptopp_cmake", "https://github.com/noloader/cryptopp-cmake/archive/CRYPTOPP_8_5_0.tar.gz", "10685209405e676993873fcf638ade5f8f99d7949afa6b2045289ce9cc6d90ac")
     add_resources("8.4.0", "cryptopp_cmake", "https://github.com/noloader/cryptopp-cmake/archive/CRYPTOPP_8_4_0.tar.gz", "b850070141f6724fce640e4e2cfde433ec5b2d99d4386d29ba9255167bc4b4f0")
+
+    add_patches("8.9.0", "patches/8.9.0/msvc.patch", "f2a9f0817e4a8234ea07f8779fd95a70273c025d306788bb155301633a1bc9ba")
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::crypto++")
