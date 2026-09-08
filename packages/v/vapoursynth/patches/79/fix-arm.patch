@@ -1,0 +1,26 @@
+diff --git a/src/core/averageframesfilter.cpp b/src/core/averageframesfilter.cpp
+index bd3831b..682df59 100644
+--- a/src/core/averageframesfilter.cpp
++++ b/src/core/averageframesfilter.cpp
+@@ -46,7 +46,7 @@ namespace {
+ // Round to nearest, ties to even (matches SSE cvtps_epi32).
+ static inline int32_t round_nearest_i32(float x)
+ {
+-#if defined(__aarch64__)
++#if defined(__aarch64__) && !defined(__APPLE__)
+     // lrintf returns long, so the vectorizer widens through f64 (frintx + fcvtl +
+     // fcvtzs.2d + repack per half). roundevenf keeps 32-bit lanes (frintn + fcvtzs)
+     // and gives the same ties-to-even result independent of the rounding mode.
+diff --git a/src/core/float16_helper.h b/src/core/float16_helper.h
+index 7b424f7..b3b8095 100644
+--- a/src/core/float16_helper.h
++++ b/src/core/float16_helper.h
+@@ -31,7 +31,7 @@
+ // Without hardware support the compiler emits __truncsfhf2 / __extendhfsf2
+ // soft-float builtins, which are not linked under clang-cl + lld-link -- so
+ // there we fall back to explicit bit manipulation instead.
+-#if (defined(__clang__) || defined(__GNUC__)) && (defined(__F16C__) || (!defined(__x86_64__) && !defined(__i386__)))
++#if (defined(__clang__) || defined(__GNUC__)) && defined(__FLT16_MANT_DIG__) && (defined(__F16C__) || !defined(_MSC_VER))
+ #  define VS_HAVE_NATIVE_FLOAT16 1
+ #else
+ #  define VS_HAVE_NATIVE_FLOAT16 0
