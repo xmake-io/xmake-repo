@@ -1,5 +1,5 @@
 package("cryptopp")
-    set_homepage("https://cryptopp.com/")
+    set_homepage("https://github.com/weidai11/cryptopp")
     set_description("free C++ class library of cryptographic schemes")
 
     add_urls("https://github.com/weidai11/cryptopp.git")
