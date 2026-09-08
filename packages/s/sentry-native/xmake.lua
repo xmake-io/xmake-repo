@@ -1,5 +1,5 @@
 package("sentry-native")
-    set_homepage("https://sentry.io/")
+    set_homepage("https://docs.sentry.io/")
     set_description("Sentry SDK for C, C++ and native applications.")
     set_license("MIT")
 
