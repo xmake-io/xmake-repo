@@ -6,6 +6,7 @@ package("libjuice")
     add_urls("https://github.com/paullouisageneau/libjuice/archive/refs/tags/$(version).tar.gz",
              "https://github.com/paullouisageneau/libjuice.git")
 
+    add_versions("v1.7.3", "86e075ca4732882746b6d5733ff1b6090f942e5750df58630b191b5f00f30010")
     add_versions("v1.7.2", "75159867c4a5a689a6559e11aa0d30c9eba12ce73a4ae3d898b521467e1f635d")
     add_versions("v1.7.1", "c127629ff42b9fffc06c65e94abb25fce03856160ce05d9fdfdad4ed80ea59bf")
     add_versions("v1.7.0", "a510c7df90d82731d1d5e32e32205d3370ec2e62d6230ffe7b19b0f3c1acabf2")
