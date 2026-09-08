@@ -3,7 +3,6 @@ package("gmp")
     set_description("GMP is a free library for arbitrary precision arithmetic, operating on signed integers, rational numbers, and floating-point numbers.")
     set_license("LGPL-3.0")
 
-    add_urls("https://ftpmirror.gnu.org/gmp/gmp-$(version).tar.xz")
     add_urls("https://ftp.gnu.org/gnu/gmp/gmp-$(version).tar.xz")
     add_urls("https://gmplib.org/download/gmp/gmp-$(version).tar.xz")
 

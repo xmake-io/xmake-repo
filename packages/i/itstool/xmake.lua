@@ -5,7 +5,7 @@ package("itstool")
     set_license("GPL-3.0")
 
     add_urls("https://github.com/itstool/itstool.git")
-    add_urls("http://files.itstool.org/itstool/itstool-$(version).tar.bz2")
+    add_urls("https://files.itstool.org/itstool/itstool-$(version).tar.bz2")
 
     add_versions("2.0.7", "6b9a7cd29a12bb95598f5750e8763cee78836a1a207f85b74d8b3275b27e87ca")
 
