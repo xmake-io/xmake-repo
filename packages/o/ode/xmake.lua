@@ -1,5 +1,5 @@
 package("ode")
-    set_homepage("http://ode.org/")
+    set_homepage("https://ode.org/")
     set_description("ODE is an open source, high performance library for simulating rigid body dynamics.")
     set_license("BSD-3-Clause")
 
