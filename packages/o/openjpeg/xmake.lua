@@ -1,5 +1,5 @@
 package("openjpeg")
-    set_homepage("http://www.openjpeg.org/")
+    set_homepage("https://www.openjpeg.org/")
     set_description("OpenJPEG is an open-source JPEG 2000 codec written in C language.")
     set_license("BSD-2-Clause")
 
