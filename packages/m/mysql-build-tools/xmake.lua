@@ -1,6 +1,6 @@
 package("mysql-build-tools")
     set_kind("binary")
-    set_homepage("http://www.mysql.com")
+    set_homepage("https://www.mysql.com/")
     set_description("This package help for mysql corss compilation")
     set_license("GPL-2.0")
 
