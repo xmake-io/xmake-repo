@@ -1,5 +1,5 @@
 package("angelscript")
-    set_homepage("http://angelcode.com/angelscript/")
+    set_homepage("https://angelcode.com/angelscript/")
     set_description("Extremely flexible cross-platform scripting library designed to allow applications to extend their functionality through external scripts")
     set_license("zlib")
 
