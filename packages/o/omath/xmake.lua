@@ -1,5 +1,5 @@
 package("omath")
-    set_homepage("http://libomath.org")
+    set_homepage("https://libomath.org/")
     set_description("Cross-platform modern general purpose math library written in C++23")
     set_license("zlib")
 
