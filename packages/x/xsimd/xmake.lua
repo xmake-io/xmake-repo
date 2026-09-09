@@ -7,6 +7,7 @@ package("xsimd")
     add_urls("https://github.com/xtensor-stack/xsimd/archive/refs/tags/$(version).tar.gz",
              "https://github.com/xtensor-stack/xsimd.git")
 
+    add_versions("14.3.0", "b3d50e7a73fbf4642ceef30131c93414901d69eee41c2a5302db650b03e2c792")
     add_versions("14.2.0", "21e841ab684b05331e81e7f782431753a029ef7b7d9d6d3ddab837e7782a40ee")
     add_versions("13.2.0", "edd8cd3d548c185adc70321c53c36df41abe64c1fe2c67bc6d93c3ecda82447a")
     add_versions("13.1.0", "88c9dc6da677feadb40fe09f467659ba0a98e9987f7491d51919ee13d897efa4")
