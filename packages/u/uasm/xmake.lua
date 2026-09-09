@@ -1,6 +1,6 @@
 package("uasm")
     set_kind("binary")
-    set_homepage("http://www.terraspace.co.uk/uasm.html")
+    set_homepage("https://www.terraspace.co.uk/uasm.html")
     set_description("UASM - Macro Assembler")
 
     add_urls("https://github.com/Terraspace/UASM/archive/refs/tags/$(version).tar.gz",
