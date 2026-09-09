@@ -7,6 +7,7 @@ package("mini")
     add_urls("https://github.com/metayeti/mINI/archive/refs/tags/$(version).tar.gz",
              "https://github.com/metayeti/mINI.git")
 
+    add_versions("0.9.20", "966c023f04d31f88944fba9c7e6b1c99ad802f3608d2ce8efc645de0fbcaa8c0")
     add_versions("0.9.18", "53b06f2dfbc79f6c5317636dbd61d29f27bb2c98629743bb6bf83b919d1bc657")
     add_versions("0.9.17", "2b5a5772a01691269d13c259590c5e5cff0334d1131778bc93408d6757a63be0")
     add_versions("0.9.16", "ce20e12b1e3bcd79d6eaa47bf8d4bb319e843dfa3585e069e73d581bdf0a81ec")
