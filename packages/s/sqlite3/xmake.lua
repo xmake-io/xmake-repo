@@ -112,19 +112,22 @@ package("sqlite3")
                 if is_kind("shared") and is_plat("windows") then
                     add_defines("SQLITE_API=__declspec(dllexport)")
                 end
-                if is_plat("macosx", "linux", "bsd") then
+                if is_plat("cross", "macosx", "linux", "bsd") then
                     add_syslinks("pthread", "dl")
                 end
         ]]
-        if package:is_plat(os.host()) and (package:is_arch(os.arch()) or package:is_plat("windows")) then
-            xmake_lua = xmake_lua .. [[
-                target("sqlite3_shell")
-                    set_kind("binary")
-                    set_basename("sqlite3")
-                    add_files("shell.c")
-                    add_deps("sqlite3")
-            ]]
-        end
+        xmake_lua = xmake_lua .. [[
+            target("sqlite3_shell")
+                set_kind("binary")
+                set_basename("sqlite3")
+                add_files("shell.c")
+                add_deps("sqlite3")
+
+                -- system() api is unavailable in the apple embedded sdks.
+                if is_plat("iphoneos", "watchos", "appletvos", "applexros") then
+                    add_defines("SQLITE_NOHAVE_SYSTEM")
+                end
+        ]]
         io.writefile("xmake.lua", xmake_lua)
 
         local configs = {}
