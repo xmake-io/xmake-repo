@@ -92,7 +92,7 @@ target("lrdf")
         end
     end)
 
-    add_files("src/lrdf.c", "src/lrdf_multi.c", "src/md5.c")
+    add_files("src/lrdf.c", "src/lrdf_multi.c")
     add_includedirs(".", "src")
     add_headerfiles("lrdf.h", "lrdf_types.h")
 
