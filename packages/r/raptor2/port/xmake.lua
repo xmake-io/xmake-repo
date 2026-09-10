@@ -140,7 +140,7 @@ target("raptor2")
         io.writefile("src/raptor_config.h", template)
 
         -- Windows: add <io.h> and fix access() macro for MSVC
-        if is_plat("windows") then
+        if is_plat("windows", "mingw") then
             local cfg = io.readfile("src/raptor_config.h")
             cfg = cfg:gsub("#ifdef WIN32\n", "#ifdef WIN32\n#include <io.h>\n")
             cfg = cfg:gsub("# +define access%(p,m%)%s+_access%(p,m%)",
@@ -155,7 +155,7 @@ target("raptor2")
         io.writefile("src/raptor_libxml.c", libxml)
 
         -- Windows: add missing <windows.h> include
-        if is_plat("windows") then
+        if is_plat("windows", "mingw") then
             local win32 = io.readfile("src/raptor_win32.c")
             win32 = win32:gsub("#ifdef WIN32\n", "#ifdef WIN32\n#include <windows.h>\n")
             io.writefile("src/raptor_win32.c", win32)
