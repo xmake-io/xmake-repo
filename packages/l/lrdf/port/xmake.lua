@@ -4,6 +4,10 @@ add_requires("raptor2")
 target("lrdf")
     set_kind("$(kind)")
 
+    if not is_plat("windows") then
+        add_defines("HAVE_OPENSSL")
+    end
+
     if is_plat("windows") then
         add_cflags("/D_CRT_SECURE_NO_WARNINGS")
         if is_kind("shared") then
@@ -92,7 +96,7 @@ target("lrdf")
         end
     end)
 
-    add_files("src/lrdf.c", "src/lrdf_multi.c")
+    add_files("src/lrdf.c", "src/lrdf_multi.c", "src/md5.c")
     add_includedirs(".", "src")
     add_headerfiles("lrdf.h", "lrdf_types.h")
 
