@@ -72,7 +72,6 @@ if not is_plat("windows") then
     defines.HAVE_STAT = true
     defines.HAVE_STRCASECMP = true
     defines.HAVE_STRINGS_H = true
-    defines.HAVE_STRTOK_R = true
     defines.HAVE_VASPRINTF = true
     defines.HAVE_VSNPRINTF = true
     defines.HAVE_ISASCII = true
