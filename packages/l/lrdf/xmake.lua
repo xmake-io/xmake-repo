@@ -10,7 +10,7 @@ package("lrdf")
 
     add_deps("raptor2")
 
-    on_install(function(package)
+    on_install("!iphoneos", function(package)
         local configs = {}
         configs.kind = package:config("shared") and "shared" or "static"
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
