@@ -6,7 +6,10 @@ package("lief")
     set_urls("https://github.com/lief-project/LIEF/archive/refs/tags/$(version).tar.gz",
              "https://github.com/lief-project/LIEF.git")
 
+    add_versions("1.0.0", "2cf412695ff739d82e129db441e5c2025f3bb4873a3d3a1d3dd4cf300b682abd")
     add_versions("0.17.6", "5fbbd19c85912d417eabbaef2b98e70144496356964685b82e0792d708b9be87")
+    add_versions("0.17.5", "9c15587967d92767573c829a8b5cfe0cd9732db0c07ae78d47dd5baa44f9ab6e")
+    add_versions("0.17.4", "cc1c8c563faaddf497d1a2d8f2712257f15e680e6a5ef4ea1e29ba8e19fb6248")
     add_versions("0.17.3", "00158beac9432b350fb528d571457a0bea8de154633a31735524a74fa69ea196")
     add_versions("0.17.2", "bece1be25aa657b94d1c97ddf88c47e0b94faa1d971c42532c4eb59fbb507fc2")
     add_versions("0.17.1", "9dea0f09c7b98e8d0c9a47f8629fbd1646ddc9bf1cae7c2f4ce42fe8934dc315")
@@ -24,6 +27,12 @@ package("lief")
     add_versions("0.14.0", "400804e38cb5ce8d15fb52a4db6345f02da7b2e5cb773665712283001482b808")
     add_versions("0.14.1", "92916dcb3178353d863aef4f409186889983c56e025b774741d5316a72ec3a7d")
 
+    add_patches("1.0.0", "patches/1.0.0/psa-header.patch", "c175dd9f3813c72188c24e59b1a8c9f3e61ae6c8125ae09a4035934b18fe41d5")
+    add_patches("1.0.0", "patches/1.0.0/freebsd-major-minor.patch", "38593e555c5e31ab2b60aa9b51b087720336b3b1349b71c52515abeb154212f5")
+    add_patches("1.0.0", "patches/1.0.0/emscripten-link-options.patch", "6f9928e45b27c91e9d2ca0cc0a995e47ea092fb0a36d4fc7adbcbddb9958a675")
+    add_patches("1.0.0", "patches/1.0.0/runtime-cxx-std.patch", "1a7caab84da1cb76f4e28d4b7d221cdd43802fcdf54c2d9d2154c398e1376052")
+    add_patches("0.17.5", "patches/0.17.5/emscripten-link-options.patch", "75a7043f301213449aa85dbe4d446388d1fd577b59b4e4c3c9172ef00d18dc16")
+    add_patches("0.17.4", "patches/0.17.4/emscripten-link-options.patch", "75a7043f301213449aa85dbe4d446388d1fd577b59b4e4c3c9172ef00d18dc16")
     add_patches("0.15.1", "patches/0.15.1/algorithm.patch", "3e110539c3db037b2b24cd32f97ad8cc6241b1f69d4a65dab9fd6c84e482bbd9")
     add_patches("0.16.0", "https://github.com/lief-project/LIEF/commit/41166332a2435fdb7d2bdc5c73f9ff9b442c5459.patch", "e42e5dd7e4c7a24bf712c1a7c9efa19c9daf835fc85dd35c8ab4b81d1807d833")
     add_patches("0.16.5", "patches/0.16.5/cstdint.patch", "67956ae49cc529e2b9f98b20544a721bc539ac500da5358c8357751bfcf9b5bc")
@@ -46,8 +55,19 @@ package("lief")
 
     add_deps("cmake")
     add_deps("spdlog", {configs = {header_only = false, noexcept = true}})
-    add_deps("nlohmann_json", {configs = {cmake = true}})
-    add_deps("tl_expected", "utfcpp", "mbedtls <3.6.0", "tcb-span", "frozen")
+    add_deps("nlohmann_json", {configs = {cmake = true}, private = true})
+    add_deps("tl_expected", "utfcpp", "tcb-span", "frozen", {private = true})
+
+    -- mbedtls: LIEF 1.0.0 pins mbedtls to exactly 4.0.0 (src/mbedtls_wraps.h has a
+    -- static_assert that MBEDTLS_VERSION_NUMBER == 0x04000000); older LIEF releases
+    -- use the 3.6.x LTS line (mbedcrypto target), which also supports arm.
+    on_load(function (package)
+        if package:version() and package:version():ge("1.0.0") then
+            package:add("deps", "mbedtls >=4.0.0 <4.1.0")
+        else
+            package:add("deps", "mbedtls >=3.6.0 <3.7.0")
+        end
+    end)
 
     if on_check then
         on_check(function (package)
@@ -56,11 +76,8 @@ package("lief")
                 if vs_toolset then
                     local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
                     local minor = vs_toolset_ver:minor()
-                    assert(minor and minor >= 30, "package(lief) require vs_toolset >= 14.3")
+                    assert(minor and minor >= 30, "package(lief) requires vs_toolset >= 14.3")
                 end
-            end
-            if package:is_arch("arm.*") then
-                raise("package(lief) dep(mbedtls <3.6.0) unsupported arm arch")
             end
         end)
     end
@@ -74,7 +91,10 @@ package("lief")
             os.rm("third-party")
         end
 
-        io.replace("CMakeLists.txt", "target_link_libraries(LIB_LIEF PRIVATE utf8cpp)", "target_link_libraries(LIB_LIEF PRIVATE utf8cpp::utf8cpp)", {plain = true})
+        -- LIEF 1.0.0 already links utf8cpp via utf8cpp::utf8cpp natively.
+        if package:version():lt("1.0.0") then
+            io.replace("CMakeLists.txt", "target_link_libraries(LIB_LIEF PRIVATE utf8cpp)", "target_link_libraries(LIB_LIEF PRIVATE utf8cpp::utf8cpp)", {plain = true})
+        end
 
         io.replace("CMakeLists.txt", "target_link_libraries(LIB_LIEF PRIVATE lief_spdlog)", "find_package(spdlog CONFIG REQUIRED)\ntarget_link_libraries(LIB_LIEF PRIVATE spdlog::spdlog)", {plain = true})
         io.replace("CMakeLists.txt", "TARGETS LIB_LIEF lief_spdlog", "TARGETS LIB_LIEF", {plain = true})
