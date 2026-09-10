@@ -91,7 +91,7 @@ target("raptor2")
     if not is_kind("shared") then
         add_defines("RAPTOR_STATIC")
     end
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_defines("WIN32")
     end
     set_configdir("src")
