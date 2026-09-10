@@ -49,7 +49,7 @@ package("gamenetworkingsockets")
         end
     end)
 
-    on_install("windows|x86", "windows|x64", "linux", function (package)
+    on_install("windows|x86", "windows|x64", "linux", "macosx", function (package)
         -- We need copy source codes to the working directory with short path on windows
         --
         -- Because the target name and source file path of this project are too long,
@@ -78,7 +78,7 @@ package("gamenetworkingsockets")
             table.insert(configs, "-DBUILD_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
             table.insert(configs, "-DENABLE_ICE=" .. (package:config("ice") and "ON" or "OFF"))
             table.insert(configs, "-DUSE_STEAMWEBRTC=" .. (package:config("webrtc") and "ON" or "OFF"))
-    
+
             local protobuf = package:dep("protobuf-cpp")
             if protobuf then
                 table.insert(configs, "-DProtobuf_USE_STATIC_LIBS=" .. (protobuf:config("shared") and "OFF" or "ON"))
@@ -93,7 +93,7 @@ package("gamenetworkingsockets")
             else
                 table.insert(configs, "-DUSE_CRYPTO=BCrypt")
             end
-    
+
             import("package.tools.cmake").install(package, configs)
 
             local gns = path.join(package:installdir("include"), "GameNetworkingSockets", "steam")
