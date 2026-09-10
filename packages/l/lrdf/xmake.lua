@@ -3,7 +3,8 @@ package("lrdf")
     set_description("A lightweight RDF library with extensions for LADSPA")
     set_license("GPL-2.0")
 
-    add_urls("https://github.com/swh/LRDF/archive/refs/tags/v$(version).tar.gz")
+    add_urls("https://github.com/swh/LRDF/archive/refs/tags/v$(version).tar.gz",
+             "https://github.com/swh/LRDF.git")
 
     add_versions("0.6.1", "d579417c477ac3635844cd1b94f273ee2529a8c3b6b21f9b09d15f462b89b1ef")
 
