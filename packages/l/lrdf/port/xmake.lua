@@ -4,7 +4,7 @@ add_requires("raptor2")
 target("lrdf")
     set_kind("$(kind)")
 
-    if not is_plat("windows", "mingw") then
+    if not is_plat("windows", "mingw", "wasm") then
         add_defines("HAVE_OPENSSL")
     end
 
@@ -13,6 +13,10 @@ target("lrdf")
         if is_kind("shared") then
             add_rules("utils.symbols.export_all")
         end
+    end
+
+    if is_plat("mingw") and is_kind("shared") then
+        add_cxflags("-fvisibility=default")
     end
 
     before_build(function(target)
