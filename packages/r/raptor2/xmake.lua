@@ -22,7 +22,7 @@ package("raptor2")
         end
     end)
 
-    on_install(function(package)
+    on_install("!iphoneos", function(package)
         local configs = {}
         configs.kind = package:config("shared") and "shared" or "static"
         configs.libxslt = package:config("libxslt")
