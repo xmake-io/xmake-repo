@@ -16,7 +16,7 @@ target("lrdf")
     end
 
     if is_plat("mingw") and is_kind("shared") then
-        add_cxflags("-fvisibility=default")
+        add_shflags("-Wl,--export-all-symbols")
     end
 
     before_build(function(target)
