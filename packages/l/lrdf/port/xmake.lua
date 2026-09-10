@@ -4,11 +4,11 @@ add_requires("raptor2")
 target("lrdf")
     set_kind("$(kind)")
 
-    if not is_plat("windows") then
+    if not is_plat("windows", "mingw") then
         add_defines("HAVE_OPENSSL")
     end
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_cflags("/D_CRT_SECURE_NO_WARNINGS")
         if is_kind("shared") then
             add_rules("utils.symbols.export_all")
@@ -21,7 +21,7 @@ target("lrdf")
         local srclrdf = path.join("src", "lrdf.c")
         local srclmulti = path.join("src", "lrdf_multi.c")
 
-        if is_plat("windows") then
+        if is_plat("windows", "mingw") then
             -- lrdf_types.h: add stdint.h for int64_t
             local content = io.readfile(srctypes)
             content = content:gsub("#include <sys/types.h>",
