@@ -4,7 +4,7 @@ package("angelscript")
     set_license("zlib")
 
     add_urls("https://github.com/codecat/angelscript-mirror.git")
-    add_urls("http://angelcode.com/angelscript/sdk/files/angelscript_$(version).zip")
+    add_urls("https://angelcode.com/angelscript/sdk/files/angelscript_$(version).zip")
 
     add_versions("2.38.0", "b33b5dbcda10317ef67d628353d83246984ce6fcac102d4dc2aed121eba52e6f")
     add_versions("2.37.0", "0c52d1688016a0b2484e9ca549471c4e295df060770c57840144c64815f54f10")
