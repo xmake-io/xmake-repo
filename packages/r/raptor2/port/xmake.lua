@@ -135,7 +135,9 @@ target("raptor2")
             elseif v == false then return "0"
             else return tostring(v) end
         end)
-        io.writefile("src/raptor_config.h", template)
+        local cfg = io.readfile("src/raptor_config.h")
+        cfg = cfg .. "\n#define HAVE_STRINGS_H 1\n"
+        io.writefile("src/raptor_config.h", cfg)
 
         -- Windows: add <io.h> and fix access() macro for MSVC
         if is_plat("windows") then
