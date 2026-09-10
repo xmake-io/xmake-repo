@@ -17,6 +17,9 @@ package("raptor2")
         if package:config("libxslt") then
             package:add("deps", "libxslt")
         end
+        if not package:config("shared") then
+            package:add("defines", "RAPTOR_STATIC", {public = true})
+        end
     end)
 
     on_install(function(package)
