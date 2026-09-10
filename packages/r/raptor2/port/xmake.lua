@@ -135,7 +135,9 @@ target("raptor2")
             elseif v == false then return "0"
             else return tostring(v) end
         end)
-        template = template .. "\n#define HAVE_STRINGS_H 1\n"
+        if not is_plat("windows") then
+            template = template .. "\n#define HAVE_STRINGS_H 1\n"
+        end
         io.writefile("src/raptor_config.h", template)
 
         -- Windows: add <io.h> and fix access() macro for MSVC
