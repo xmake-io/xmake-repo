@@ -10,8 +10,7 @@ package("raptor2")
     add_configs("libxslt", {description = "Enable GRDDL parser", default = true, type = "boolean"})
 
     add_deps("libxml2", "libcurl")
-    add_links("raptor2")
-    add_includedirs("include/raptor2", {public = true})
+    add_includedirs("include/raptor2")
 
     on_load(function(package)
         if package:config("libxslt") then
@@ -24,7 +23,6 @@ package("raptor2")
 
     on_install("!iphoneos", function(package)
         local configs = {}
-        configs.kind = package:config("shared") and "shared" or "static"
         configs.libxslt = package:config("libxslt")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
