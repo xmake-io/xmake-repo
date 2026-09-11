@@ -9,8 +9,8 @@ target("lrdf")
     end
 
     if is_plat("windows", "mingw") then
-        add_cflags("/D_CRT_SECURE_NO_WARNINGS")
-        if is_kind("shared") then
+        add_defines("_CRT_SECURE_NO_WARNINGS")
+        if is_plat("windows") and is_kind("shared") then
             add_rules("utils.symbols.export_all")
         end
     end
@@ -20,8 +20,8 @@ target("lrdf")
     end
 
     before_build(function(target)
-        local srctypes = path.join("lrdf_types.h")
-        local srcmain = path.join("lrdf.h")
+        local srctypes = "lrdf_types.h"
+        local srcmain = "lrdf.h"
         local srclrdf = path.join("src", "lrdf.c")
         local srclmulti = path.join("src", "lrdf_multi.c")
 
