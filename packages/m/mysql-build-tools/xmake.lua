@@ -12,7 +12,7 @@ package("mysql-build-tools")
     add_configs("debug", {description = "Enable debug symbols.", default = false, readonly = true})
 
     add_deps("cmake")
-    add_deps("zlib", "zstd", "lz4", "openssl", "rapidjson", {host = true, private = true})
+    add_deps("zlib", "zstd", "lz4", "openssl3", "rapidjson", {host = true, private = true})
     if is_plat("linux") then
         add_deps("patchelf")
         add_deps("libedit", {host = true, private = true, configs = {terminal_db = "ncurses"}})
