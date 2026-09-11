@@ -12,7 +12,6 @@ package("lrdf")
 
     on_install("!iphoneos", function(package)
         local configs = {}
-        configs.kind = package:config("shared") and "shared" or "static"
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
     end)
