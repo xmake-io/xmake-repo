@@ -1,6 +1,6 @@
 package("libyaml")
 
-    set_homepage("http://pyyaml.org/wiki/LibYAML")
+    set_homepage("https://pyyaml.org/wiki/LibYAML")
     set_description("Canonical source repository for LibYAML.")
     set_license("MIT")
 
