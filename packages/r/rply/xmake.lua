@@ -1,6 +1,6 @@
 package("rply")
 
-    set_homepage("http://w3.impa.br/~diego/software/rply/")
+    set_homepage("https://w3.impa.br/~diego/software/rply/")
     set_description("RPly is a library that lets applications read and write PLY files.")
     set_license("MIT")
 

@@ -1,6 +1,6 @@
 package("itstool")
     set_kind("binary")
-    set_homepage("http://itstool.org/")
+    set_homepage("https://itstool.org/")
     set_description("ITS Tool allows you to translate your XML documents with PO files")
     set_license("GPL-3.0")
 
