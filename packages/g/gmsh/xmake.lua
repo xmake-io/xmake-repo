@@ -1,6 +1,6 @@
 package("gmsh")
 
-    set_homepage("http://gmsh.info/")
+    set_homepage("https://gmsh.info/")
     set_description("Gmsh is an open source 3D finite element mesh generator with a built-in CAD engine and post-processor.")
     set_license("GPL-2.0")
 
