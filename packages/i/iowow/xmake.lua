@@ -1,5 +1,5 @@
 package("iowow")
-    set_homepage("https://iowow.softmotions.com")
+    set_homepage("https://github.com/Softmotions/iowow")
     set_description("A C utility library and persistent key/value storage engine")
     set_license("MIT")
 
