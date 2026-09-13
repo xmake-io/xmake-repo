@@ -29,8 +29,8 @@ package("keynub_licdongle")
         os.cp("bindings/flat/licd_flat.h", package:installdir("include"))
         os.cp("bindings/labview/licd_labview.h", package:installdir("include"))
         if package:is_plat("windows") then
-            os.cp(path.join(natives, "*.dll"), package:installdir("bin"))
-            os.cp(path.join(natives, "*.lib"), package:installdir("lib"))
+            os.cp(path.join(natives, "*.dll|KeyNub.dll"), package:installdir("bin"))
+            os.cp(path.join(natives, "*.lib|KeyNub.lib|keynub_licdongle_static.lib"), package:installdir("lib"))
         elseif package:is_plat("linux") then
             os.cp(path.join(natives, "*.so"), package:installdir("lib"))
         else
