@@ -111,5 +111,5 @@ package("gamenetworkingsockets")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxfuncs("GameNetworkingSockets_Kill()", {includes = "steam/steamnetworkingsockets.h"}))
+        assert(package:has_cxxfuncs("GameNetworkingSockets_Kill()", {includes = "steam/steamnetworkingsockets.h", configs = {languages = "c++17"}}))
     end)
