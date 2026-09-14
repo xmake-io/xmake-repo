@@ -8,7 +8,7 @@ package("gmsh")
     add_versions("4.11.1", "c5fe1b7cbd403888a814929f2fd0f5d69e27600222a18c786db5b76e8005b365")
     add_versions("4.13.1", "77972145f431726026d50596a6a44fb3c1c95c21255218d66955806b86edbe8d")
 
-    add_patches("4.13.1", "patches/4.13.1/fix-gcc-omp.patch", "42a747c1c7dcdb1eade1bd3df885dd328e6b91c67c1ffaec3ecd6759ffe7b33b")
+    add_patches("4.13.1", "patches/4.13.1/fix-gcc-omp.patch", "f8d63f4e1069995767a927e06ed4cbba99c04795484741f34e6d2abe7abb097c")
 
     add_configs("openmp", {description = "Enable OpenMP support.", default = not is_plat("windows"), type = "boolean"})
 
