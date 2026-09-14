@@ -32,9 +32,6 @@ package("gamenetworkingsockets")
             package:add("deps", "protobuf-cpp")
             package:add("deps", "abseil")
 
-            local std = package:dep("abseil"):config("cxx_standard")
-            package:data_set("cxx_standard", std)
-
             if package:config("ice") then
                 package:add("defines", "STEAMNETWORKINGSOCKETS_ENABLE_ICE")
             end
@@ -102,6 +99,11 @@ package("gamenetworkingsockets")
             end
 
             import("package.tools.cmake").install(package, configs)
+
+            if package:dep("abseil") then
+                local std = package:dep("abseil"):config("cxx_standard")
+                package:data_set("cxx_standard", std)
+            end
 
             local gns = path.join(package:installdir("include"), "GameNetworkingSockets", "steam")
             os.cp(gns, path.join(package:installdir("include"), "steam"))
