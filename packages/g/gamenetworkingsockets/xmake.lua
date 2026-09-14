@@ -24,7 +24,7 @@ package("gamenetworkingsockets")
     add_configs("webrtc", {description = "Enable P2P with Google's WebRTC.", default = false, type = "boolean"})
     add_configs("ice", {description = "Enable P2P with ICE.", default = true, type = "boolean"})
 
-    on_load("windows", "linux", function(package)
+    on_load("windows", "linux", "macosx", function(package)
         if package:version():gt("1.4.1") then
             package:add("deps", "protobuf-cpp")
             package:add("deps", "abseil")
@@ -41,7 +41,7 @@ package("gamenetworkingsockets")
         end
 
         if not package:is_plat("windows") then
-            package:add("deps", "openssl")
+            package:add("deps", "openssl3")
         end
 
         if not package:config("shared") then
@@ -85,7 +85,7 @@ package("gamenetworkingsockets")
             end
 
             if not package:is_plat("windows") then
-                local openssl = package:dep("openssl")
+                local openssl = package:dep("openssl3")
                 if openssl then
                     table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
                     table.insert(configs, "-DOPENSSL_USE_STATIC_LIBS=" .. (openssl:config("shared") and "OFF" or "ON"))
