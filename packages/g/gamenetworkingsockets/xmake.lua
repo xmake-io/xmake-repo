@@ -32,6 +32,9 @@ package("gamenetworkingsockets")
             package:add("deps", "protobuf-cpp")
             package:add("deps", "abseil")
 
+            local std = package:dep("abseil"):config("cxx_standard")
+            package:data_set("cxx_standard", std)
+
             if package:config("ice") then
                 package:add("defines", "STEAMNETWORKINGSOCKETS_ENABLE_ICE")
             end
@@ -111,5 +114,7 @@ package("gamenetworkingsockets")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxfuncs("GameNetworkingSockets_Kill()", {includes = "steam/steamnetworkingsockets.h", configs = {languages = "c++17"}}))
+        local std = package:data("cxx_standard")
+        local languages = "c++" .. (std and std or "17")
+        assert(package:has_cxxfuncs("GameNetworkingSockets_Kill()", {includes = "steam/steamnetworkingsockets.h", configs = {languages = languages}}))
     end)
