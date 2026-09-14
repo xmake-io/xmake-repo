@@ -1,6 +1,6 @@
 package("libisl")
 
-    set_homepage("http://isl.gforge.inria.fr/")
+    set_homepage("https://libisl.sourceforge.io/")
     set_description("Integer Set Library")
 
     set_urls("https://github.com/xmake-mirror/isl/archive/refs/tags/isl-$(version).tar.gz",
