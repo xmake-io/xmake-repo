@@ -9,6 +9,7 @@ package("gmsh")
     add_versions("4.13.1", "77972145f431726026d50596a6a44fb3c1c95c21255218d66955806b86edbe8d")
 
     add_patches("4.13.1", "patches/4.13.1/fix-gcc-omp.patch", "f8d63f4e1069995767a927e06ed4cbba99c04795484741f34e6d2abe7abb097c")
+    add_patches("4.13.1", "patches/4.13.1/fix-win-arm64.patch", "19867aa318d3587ca82201f1f04aaab1b087d1291c2d03775252ae7cccab066d")
 
     add_configs("openmp", {description = "Enable OpenMP support.", default = not is_plat("windows"), type = "boolean"})
 
