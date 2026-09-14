@@ -6,6 +6,7 @@ package("libarchive")
     add_urls("https://libarchive.org/downloads/libarchive-$(version).tar.gz")
     add_urls("https://github.com/libarchive/libarchive/releases/download/v$(version)/libarchive-$(version).tar.gz")
 
+    add_versions("3.8.9", "f5a6539059cf5e597dbeda37bfa4874b1e8dea063c8d93bf85a2b44af90a5bd4")
     add_versions("3.8.8", "038918ea315cdd446cc63acfe880d6011832bbe1711c887de5de5441b306c190")
     add_versions("3.8.7", "4b787cca6697a95c7725e45293c973c208cbdc71ae2279f30ef09f52472b9166")
     add_versions("3.8.6", "213269b05aac957c98f6e944774bb438d0bd168a2ec60b9e4f8d92035925821c")
