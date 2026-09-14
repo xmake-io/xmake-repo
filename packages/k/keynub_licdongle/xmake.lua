@@ -16,12 +16,12 @@ package("keynub_licdongle")
     on_install("windows", "linux", "macosx", function (package)
         local os_name = package:is_plat("windows") and "win" or (package:is_plat("linux") and "linux" or "osx")
         local arch_name
-        if package:is_arch("x64") then
+        if package:is_arch("x86_64", "x64") then
             arch_name = "x64"
-        elseif package:is_arch("x86", "i386") then
-            arch_name = "x86"
-        else
+        elseif package:is_arch("arm64", "aarch64") then
             arch_name = "arm64"
+        elseif package:is_plat("windows") and package:is_arch("x86", "i386") then
+            arch_name = "x86"
         end
         local natives = path.join("natives", os_name .. "-" .. arch_name)
         os.cp("include/licdongle.h", package:installdir("include"))
