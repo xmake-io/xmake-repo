@@ -16,6 +16,9 @@ package("gamenetworkingsockets")
     if is_plat("windows") then
         add_syslinks("ws2_32", "bcrypt")
         add_defines("_WINDOWS", "WIN32")
+    elseif is_plat("macosx") then
+        add_defines("POSIX", "OSX")
+        add_syslinks("pthread")
     else
         add_defines("POSIX", "LINUX")
         add_syslinks("pthread")
@@ -81,6 +84,7 @@ package("gamenetworkingsockets")
 
             local protobuf = package:dep("protobuf-cpp")
             if protobuf then
+                table.insert(configs, "-DProtobuf_ROOT=" .. protobuf:installdir())
                 table.insert(configs, "-DProtobuf_USE_STATIC_LIBS=" .. (protobuf:config("shared") and "OFF" or "ON"))
             end
 
