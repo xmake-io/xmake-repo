@@ -58,6 +58,7 @@ package("libsdl3")
 
     if is_plat("wasm") then
         add_cxflags("-sUSE_SDL=0")
+        add_configs("threads", {description = "Enables pthread support", default = false, type = "boolean"})
     end
 
     on_load(function (package)
@@ -66,6 +67,10 @@ package("libsdl3")
             if package:config("wayland") == nil and not package:is_cross() then
                 package:config_set("wayland", true)
             end
+        end
+        if package:is_plat("wasm") and package:config("threads") then
+            package:add("cxflags", "-pthread", "-matomics", "-mbulk-memory")
+            package:add("ldflags", "-pthread")
         end
         if package:is_plat("windows") then
             package:add("deps", "ninja")
@@ -120,6 +125,9 @@ package("libsdl3")
             table.insert(configs, "-DSDL_X11_XTEST=OFF")
             table.insert(configs, "-DSDL_WAYLAND=" .. (package:config("wayland") and "ON" or "OFF"))
             table.insert(configs, "-DSDL_WAYLAND_SHARED=" .. (package:config("wayland_shared") and "ON" or "OFF"))
+        end
+        if package:is_plat("wasm") and package:config("threads") then
+            table.insert(configs, "-DSDL_PTHREADS=ON")
         end
 
         local cflags
