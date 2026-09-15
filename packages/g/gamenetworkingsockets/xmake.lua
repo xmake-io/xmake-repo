@@ -16,6 +16,9 @@ package("gamenetworkingsockets")
     if is_plat("windows") then
         add_syslinks("ws2_32", "bcrypt")
         add_defines("_WINDOWS", "WIN32")
+    elseif is_plat("macosx") then
+        add_defines("POSIX", "OSX")
+        add_syslinks("pthread")
     else
         add_defines("POSIX", "LINUX")
         add_syslinks("pthread")
@@ -24,7 +27,7 @@ package("gamenetworkingsockets")
     add_configs("webrtc", {description = "Enable P2P with Google's WebRTC.", default = false, type = "boolean"})
     add_configs("ice", {description = "Enable P2P with ICE.", default = true, type = "boolean"})
 
-    on_load("windows", "linux", function(package)
+    on_load("windows", "linux", "macosx", function(package)
         if package:version():gt("1.4.1") then
             package:add("deps", "protobuf-cpp")
             package:add("deps", "abseil")
@@ -41,7 +44,7 @@ package("gamenetworkingsockets")
         end
 
         if not package:is_plat("windows") then
-            package:add("deps", "openssl")
+            package:add("deps", "openssl3")
         end
 
         if not package:config("shared") then
@@ -49,7 +52,7 @@ package("gamenetworkingsockets")
         end
     end)
 
-    on_install("windows|x86", "windows|x64", "linux", function (package)
+    on_install("windows|x86", "windows|x64", "linux", "macosx", function (package)
         -- We need copy source codes to the working directory with short path on windows
         --
         -- Because the target name and source file path of this project are too long,
@@ -78,14 +81,15 @@ package("gamenetworkingsockets")
             table.insert(configs, "-DBUILD_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
             table.insert(configs, "-DENABLE_ICE=" .. (package:config("ice") and "ON" or "OFF"))
             table.insert(configs, "-DUSE_STEAMWEBRTC=" .. (package:config("webrtc") and "ON" or "OFF"))
-    
+
             local protobuf = package:dep("protobuf-cpp")
             if protobuf then
+                table.insert(configs, "-DProtobuf_ROOT=" .. protobuf:installdir())
                 table.insert(configs, "-DProtobuf_USE_STATIC_LIBS=" .. (protobuf:config("shared") and "OFF" or "ON"))
             end
 
             if not package:is_plat("windows") then
-                local openssl = package:dep("openssl")
+                local openssl = package:dep("openssl3")
                 if openssl then
                     table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
                     table.insert(configs, "-DOPENSSL_USE_STATIC_LIBS=" .. (openssl:config("shared") and "OFF" or "ON"))
@@ -93,8 +97,13 @@ package("gamenetworkingsockets")
             else
                 table.insert(configs, "-DUSE_CRYPTO=BCrypt")
             end
-    
+
             import("package.tools.cmake").install(package, configs)
+
+            if package:dep("abseil") then
+                local std = package:dep("abseil"):config("cxx_standard")
+                package:data_set("cxx_standard", std)
+            end
 
             local gns = path.join(package:installdir("include"), "GameNetworkingSockets", "steam")
             os.cp(gns, path.join(package:installdir("include"), "steam"))
@@ -107,5 +116,7 @@ package("gamenetworkingsockets")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxfuncs("GameNetworkingSockets_Kill()", {includes = "steam/steamnetworkingsockets.h"}))
+        local std = package:data("cxx_standard")
+        local languages = "c++" .. (std and std or "17")
+        assert(package:has_cxxfuncs("GameNetworkingSockets_Kill()", {includes = "steam/steamnetworkingsockets.h", configs = {languages = languages}}))
     end)
