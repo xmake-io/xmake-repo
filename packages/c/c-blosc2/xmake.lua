@@ -6,6 +6,7 @@ package("c-blosc2")
     add_urls("https://github.com/Blosc/c-blosc2/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Blosc/c-blosc2.git")
 
+    add_versions("v3.3.4", "db6ba3ee4f863a3c15794fbba99a4e5704d6a01017799628546152c8f4b06818")
     add_versions("v3.3.3", "3ab395116eae3ce0b7488e994224f85cbc858a7a71663af1f938cc5997a7dddd")
     add_versions("v3.2.3", "32977709c21f3fec50befa7a031fa624b963427b69d3ffb69c91aadc9279c887")
     add_versions("v3.2.1", "945cc68d47ba2817279b5d64c0f9b5edce6849a52ac1a46ba8c3ecaedce35769")
@@ -30,7 +31,7 @@ package("c-blosc2")
 
     if is_plat("bsd") then
         -- _XOPEN_SOURCE hides BSD extensions such as flock() on FreeBSD.
-        add_patches(">=3.2.1", "patches/v3.2.1/freebsd.patch", "608aa28d0a0dd5e7e67badc51b4eda85996efe0da8b933117bdf788e1ad7f0bf")
+        add_patches(">=3.2.1 <3.3.0", "patches/v3.2.1/freebsd.patch", "608aa28d0a0dd5e7e67badc51b4eda85996efe0da8b933117bdf788e1ad7f0bf")
     end
 
     if is_plat("wasm") then
