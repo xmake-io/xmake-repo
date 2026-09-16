@@ -1,0 +1,45 @@
+diff --git a/contrib/hxt/core/include/hxt_sort.h b/contrib/hxt/core/include/hxt_sort.h
+index e6525d0554f53b49a3a7185dc0560bc9a2b52e9c..95980356306f37098e840018ebf5dd1024542853 100644
+--- a/contrib/hxt/core/include/hxt_sort.h
++++ b/contrib/hxt/core/include/hxt_sort.h
+@@ -9,12 +9,12 @@
+ #ifndef HXT_SORT_H
+ #define HXT_SORT_H
+ 
++#include "hxt_omp.h"
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
+ 
+ #include "hxt_tools.h"
+-#include "hxt_omp.h"
+ 
+ // sorting function already defined
+ typedef struct{
+diff --git a/contrib/hxt/tetBR/src/hxt_boundary_recovery.cxx b/contrib/hxt/tetBR/src/hxt_boundary_recovery.cxx
+index a616c3f8f80157ce39ed2a208c99e005df401bb7..95b0d937999ba01efd98a0a747978b9f4b4f799c 100644
+--- a/contrib/hxt/tetBR/src/hxt_boundary_recovery.cxx
++++ b/contrib/hxt/tetBR/src/hxt_boundary_recovery.cxx
+@@ -1,7 +1,7 @@
++#include "hxt_omp.h"
+ extern "C" {
+ #include "hxt_mesh.h"
+ #include "hxt_tools.h"
+-#include "hxt_omp.h"
+ #include "predicates.h"
+ }
+ 
+diff --git a/src/mesh/meshGRegionHxt.cpp b/src/mesh/meshGRegionHxt.cpp
+index 75ea026bddb8d8825aee81a005c3351621292980..98c8a5464a2399f4101c00c7dcf2de9122433720 100644
+--- a/src/mesh/meshGRegionHxt.cpp
++++ b/src/mesh/meshGRegionHxt.cpp
+@@ -24,8 +24,8 @@
+ 
+ #if defined(HAVE_HXT)
+ 
+-extern "C" {
+ #include "hxt_omp.h"
++extern "C" {
+ #include "hxt_tetMesh.h"
+ #include "hxt_tetDelaunay.h"
+ }

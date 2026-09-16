@@ -1,5 +1,5 @@
 package("soxr")
-    set_homepage("https://sourceforge.net/projects/soxr")
+    set_homepage("https://sourceforge.net/projects/soxr/")
     set_description("The SoX Resampler library libsoxr performs fast, high-quality one-dimensional sample rate conversion.")
     set_license("LGPL-2.1")
 

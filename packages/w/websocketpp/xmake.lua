@@ -1,6 +1,6 @@
 package("websocketpp")
     set_kind("library", {headeronly = true})
-    set_homepage("http://www.zaphoyd.com/websocketpp")
+    set_homepage("https://www.zaphoyd.com/projects/websocketpp/")
     set_description("C++ websocket client/server library")
 
     add_urls("https://github.com/zaphoyd/websocketpp/archive/refs/tags/$(version).tar.gz",

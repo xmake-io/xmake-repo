@@ -2,7 +2,7 @@ package("pqp")
     set_homepage("https://gamma.cs.unc.edu/SSV/")
     set_description("A Proximity Query Package")
 
-    set_urls("http://gamma.cs.unc.edu/software/downloads/SSV/pqp-$(version).tar.gz",
+    set_urls("https://gamma.cs.unc.edu/software/downloads/SSV/pqp-$(version).tar.gz",
              "https://github.com/GammaUNC/PQP.git")
 
     add_versions("1.3", "00bdcb380206393349ed7ee9a773f894bf796059c66cec0d97c0a93649eb012f")

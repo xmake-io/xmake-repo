@@ -1,6 +1,6 @@
 package("krb5")
 
-    set_homepage("http://web.mit.edu/kerberos/")
+    set_homepage("https://web.mit.edu/kerberos/")
     set_description("Kerberos: The Network Authentication Protocol")
     set_license("MIT")
 

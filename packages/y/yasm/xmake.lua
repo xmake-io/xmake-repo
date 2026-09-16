@@ -1,6 +1,6 @@
 package("yasm")
     set_kind("binary")
-    set_homepage("https://yasm.tortall.net/")
+    set_homepage("https://github.com/yasm/yasm")
     set_description("Modular BSD reimplementation of NASM.")
 
     add_urls("https://www.tortall.net/projects/yasm/releases/yasm-$(version).tar.gz",

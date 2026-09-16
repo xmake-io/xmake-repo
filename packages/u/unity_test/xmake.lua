@@ -1,5 +1,5 @@
 package("unity_test")
-    set_homepage("http://www.throwtheswitch.org/unity")
+    set_homepage("https://www.throwtheswitch.org/unity")
     set_description("Simple Unit Testing for C")
     set_license("MIT")
 
