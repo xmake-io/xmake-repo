@@ -5,6 +5,7 @@ package("hypre")
 
     add_urls("https://github.com/hypre-space/hypre/archive/refs/tags/$(version).tar.gz",
              "https://github.com/hypre-space/hypre.git")
+    add_versions("v3.2.0", "5273205a310fb6aa3ae506ce216760fb67b30e02024874f3cdb8b811e4801de7")
     add_versions("v3.1.0", "a6879ae9375d95c26afd97141d61e7a8092807333bf40cd180b385aed7351b2d")
     add_versions("v2.33.0", "0f9103c34bce7a5dcbdb79a502720fc8aab4db9fd0146e0791cde7ec878f27da")
     add_versions("v2.32.0", "2277b6f01de4a7d0b01cfe12615255d9640eaa02268565a7ce1a769beab25fa1")
@@ -23,6 +24,12 @@ package("hypre")
     end
 
     add_deps("cmake")
+
+    if on_check then
+        on_check("windows", function (package)
+            assert(package:is_arch("x86") and package:version() and package:version():lt("3.2.0"), "package(hypre >=3.2.0): unsupport windwos|x86 due to MSVC's bug")
+        end)
+    end
 
     on_load("windows", "macosx", "linux", function (package)
         package:add("deps", package:config("blas"))
