@@ -25,6 +25,12 @@ package("hypre")
 
     add_deps("cmake")
 
+    if on_check then
+        on_check("windows", function (package)
+            assert(package:is_arch("x86") and package:version() and package:version():lt("3.2.0"), "package(hypre >=3.2.0): unsupport windwos|x86 due to MSVC's bug")
+        end)
+    end
+
     on_load("windows", "macosx", "linux", function (package)
         package:add("deps", package:config("blas"))
     end)
