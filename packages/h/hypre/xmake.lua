@@ -27,7 +27,9 @@ package("hypre")
 
     if on_check then
         on_check("windows", function (package)
-            assert(package:is_arch("x86") and package:version() and package:version():lt("3.2.0"), "package(hypre >=3.2.0): unsupport windwos|x86 due to MSVC's bug")
+            if package:is_arch("x86") then
+                assert(package:version() and package:version():lt("3.2.0"), "package(hypre >=3.2.0): unsupport windwos|x86 due to MSVC's bug")
+            end
         end)
     end
 
