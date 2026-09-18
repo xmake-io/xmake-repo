@@ -5,6 +5,7 @@ package("pipewire")
 
     add_urls("https://github.com/PipeWire/pipewire/archive/refs/tags/$(version).tar.gz",
              "https://github.com/PipeWire/pipewire.git")
+    add_versions("1.6.9", "dbc3624cf71215c26a22fc98f6f71f7b8599f5f6b415eab4a5c90ca96c170c7c")
     add_versions("1.6.8", "8181172a1d95131f6af8bbc0b98f90b2a33349b042b84c3ce57dd5d11348cc58")
 
     add_extsources("pacman::pipewire", "apt::libpipewire-0.3-dev")
