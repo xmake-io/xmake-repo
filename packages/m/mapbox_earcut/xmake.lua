@@ -7,6 +7,7 @@ package("mapbox_earcut")
     add_urls("https://github.com/mapbox/earcut.hpp/archive/refs/tags/v$(version).zip",
              "https://github.com/mapbox/earcut.hpp.git")
 
+    add_versions("3.2.3", "19c63a1cff1339b8da3d840240f283c75724e801417245554645473d3b58fd09")
     add_versions("2.2.4", "998ae183e3c27f6f5cfed589164c3fb495ab9f805fc8d54e7151a42dab6c89bc")
     add_versions("2.2.3", "010d2fe35938744960dcc0b25076eb541b07bb314a92afbcab14f7f887ceb98d")
 
