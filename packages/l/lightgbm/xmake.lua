@@ -5,6 +5,7 @@ package("lightgbm")
 
     add_urls("https://github.com/microsoft/LightGBM/releases/download/v$(version)/lightgbm-$(version).tar.gz")
 
+    add_versions("4.7.0", "f8e20f682c9aabd000bcf4a7ed8aa6f473c1adfecccae34ec24e823d156f4af0")
     add_versions("4.6.0", "cb1c59720eb569389c0ba74d14f52351b573af489f230032a1c9f314f8bab7fe")
     add_versions("4.5.0", "e1cd7baf0318d4e308a26575a63a4635f08df866ad3622a9d8e3d71d9637a1ba")
     add_versions("4.4.0", "9e8a7640911481134e60987d5d1e1cd157f430c3b4b38de8d36fc55c302bc299")
