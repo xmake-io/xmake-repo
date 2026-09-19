@@ -14,8 +14,7 @@
 --       })
 --
 -- Takes a table because a rule shipped in a package cannot add functions to
--- the description scope. Below this point it is the same code as the
--- includes() form.
+-- the description scope. The includes() form takes the same table.
 
 rule("reflect")
     add_deps("plugin.compile_commands.autoupdate")
@@ -36,33 +35,9 @@ rule("reflect")
         import("core.sandbox.module")
         module.add_directories(path.join(root, "modules"))
 
-        local conf = target:extraconf("rules", "@xrefl/reflect") or {}
-
-        -- Written into the same target values the includes() form uses.
-        for name, options in pairs(conf.annotations or {}) do
-            target:add("values", "xrefl.annotations",
-                       string.serialize({name = name, options = options},
-                                        {strip = true, indent = false, orderkeys = true}))
-        end
-        for _, pattern in ipairs(table.wrap(conf.headers)) do
-            target:add("values", "xrefl.headers", pattern)
-        end
-        for _, macro in ipairs(table.wrap(conf.ignore_macros)) do
-            target:add("values", "xrefl.ignore_macros", macro)
-        end
-        for _, name in ipairs(table.wrap(conf.inherit)) do
-            target:add("values", "xrefl.inherit", name)
-        end
-        if conf.publish then
-            target:add("values", "xrefl.publish", "true")
-        end
-        for _, script in ipairs(table.wrap(conf.emitters)) do
-            -- `@xrefl/name.lua` is a reference emitter shipped with the package.
-            local shipped = script:match("^@xrefl/(.+)$")
-            target:add("values", "xrefl.emitters",
-                       shipped and path.join(target:data("xrefl.emitterdir"), shipped)
-                               or path.absolute(script, target:scriptdir()))
-        end
+        import("xrefl.configure")
+        configure.apply(target, target:extraconf("rules", "@xrefl/reflect"),
+                        target:data("xrefl.emitterdir"))
 
         import("xrefl.plan")
         plan.attach(target)
