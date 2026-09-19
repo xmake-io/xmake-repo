@@ -7,6 +7,7 @@ package("xtensor-io")
 
     add_urls("https://github.com/xtensor-stack/xtensor-io/archive/refs/tags/$(version).tar.gz",
              "https://github.com/xtensor-stack/xtensor-io.git")
+    add_versions("0.15.0", "8de6bbf58f79dce1ce56da6d79ac01d0f4110aa45d69ca39f40c1f557b55d488")
     add_versions("0.13.0", "470bedee082adb0ef25ef7b54f9cfd3684e27b8489c42cf7980e0d90c14d04da")
 
     add_deps("cmake")
