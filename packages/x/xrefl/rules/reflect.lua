@@ -22,14 +22,6 @@ rule("reflect")
     -- A package rule may not use on_load. on_config still runs early enough
     -- for the generated sources to reach the build.
     on_config(function (target)
-        local package = assert(target:pkg("xrefl"),
-            "the @xrefl/reflect rule needs add_packages(\"xrefl\") on the target")
-        local root = path.join(package:installdir(), "share", "xrefl")
-        target:data_set("xrefl.emitterdir", path.join(root, "emitters"))
-
-        -- The runtime headers the reference emitters generate against.
-        target:add("includedirs", path.join(package:installdir(), "include"), {public = true})
-
         -- Registered rather than passed as rootdir, so the modules can import
         -- one another.
         import("core.sandbox.module")
@@ -40,6 +32,15 @@ rule("reflect")
                         target:data("xrefl.emitterdir"))
 
         import("xrefl.plan")
+
+        local package = assert(target:pkg("xrefl"),
+            "the @xrefl/reflect rule needs add_packages(\"xrefl\") on the target")
+        local root = path.join(package:installdir(), "share", "xrefl")
+        target:data_set("xrefl.emitterdir", path.join(root, "emitters"))
+
+        -- The runtime headers the reference emitters generate against.
+        target:add("includedirs", path.join(package:installdir(), "include"), {public = true})
+
         plan.attach(target)
     end)
 
