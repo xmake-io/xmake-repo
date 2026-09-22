@@ -56,9 +56,11 @@ package("ghostscript")
     end)
 
     on_test(function (package)
-        local program = "gsc"
+        local program
         if package:is_plat("windows") then
             program = package:is_arch("x64") and "gswin64c" or "gswin32c"
+        else
+            program = "gsc"
         end
         os.vrunv(program, {"--version"})
         assert(package:has_cxxfuncs("gsapi_new_instance", {includes = "iapi.h"}))
