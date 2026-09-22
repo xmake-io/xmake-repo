@@ -55,5 +55,6 @@ package("shaderwriter")
                 "CompilerGlsl/compileGlsl.hpp",
                 "CompilerSpirV/compileSpirV.hpp",
                 "ShaderWriter/Intrinsics/Intrinsics.hpp",
-                "ShaderWriter/Source.hpp"}}))
+                "ShaderWriter/Source.hpp",
+                "algorithm"}}))
     end)
