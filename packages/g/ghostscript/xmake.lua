@@ -46,7 +46,7 @@ package("ghostscript")
         -- with C23 in which bool is a keyword, and trying to use <stdbool.h> fails
         -- because 'int' and 'bool' are used interchangeably in the code.
         -- see also https://bugs.ghostscript.com/show_bug.cgi?id=708608
-        local configs = {"CXXFLAGS=-std=gnu17"}
+        local configs = {"CFLAGS=-std=gnu17 -Wno-incompatible-pointer-types -Wno-int-conversion"}
         import("package.tools.autoconf").configure(package, configs)
         os.vrun("make so")
         os.vrun("make soinstall")
