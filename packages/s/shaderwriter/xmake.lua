@@ -19,16 +19,19 @@ package("shaderwriter")
     add_versions("2.8.1","52dc29e13be29dd84c538584712526fa079e1e6b")
     add_versions("2.9","c7bd2d7dcbb8d6d6219f14b31072805d3b4b8df0")
     
+
+    add_patches("2.7.0", "patches/algo.patch", "818e84f58eac6bf539bca33d57118987162b2e63a0a13fb1904fc87820076f5a")
+    add_patches("2.6.0", "patches/algo.patch", "818e84f58eac6bf539bca33d57118987162b2e63a0a13fb1904fc87820076f5a")
+
+    add_patches("2.8.1", "patches/fix-msse2.patch", "03685e1efead4c17ec232beab93cff217651f1a73d597d5c24e9fca1bd0df562")
+    add_patches("2.9", "patches/fix-msse2.patch", "03685e1efead4c17ec232beab93cff217651f1a73d597d5c24e9fca1bd0df562")
+    
     add_deps("cmake")
 
     add_links("sdwShaderWriter", "sdwCompilerHlsl", "sdwCompilerGlsl", "sdwCompilerSpirV", "sdwShaderAST")
 
-    on_load(function (package)
-        if package:is_plat("linux") then
-            package:add("cxflags", "-include", "algorithm")
-        end
-    end)
-    on_install("windows", "macosx", "linux","!arm|!arm64","", function (package)
+    
+    on_install("windows", "macosx", "linux", function (package)
         local configs =
         {
             "-DSDW_BUILD_TESTS=OFF",
