@@ -45,8 +45,11 @@ package("ghostscript")
 
     on_install("macosx", "linux", function (package)
         local configs = { "--without-x" }
-        local packagedeps = (package:is_plat("macosx") and "fontconfig" or "")
-        import("package.tools.autoconf").configure(package, configs, {packagedeps = packagedeps})
+        if package:is_plat("macosx") then
+            import("package.tools.autoconf").configure(package, configs, {packagedeps = "fontconfig"})
+        else
+            import("package.tools.autoconf").configure(package, configs)
+        end
         os.vrun("make so")
         os.vrun("make soinstall")
         os.cp("soobj/*.h", package:installdir("include"))
