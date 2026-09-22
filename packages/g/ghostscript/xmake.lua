@@ -43,7 +43,7 @@ package("ghostscript")
     end)
 
     on_install("macosx", "linux", function (package)
-        if package:is_plat("macosx") and not assert(package:has_cfuncs("cos", {includes = "fp.h"})) then
+        if package:is_plat("macosx") and not package:has_cincludes("fp.h") then
             for _, file in ipairs(os.files("**")) do
                 io.gsub(file, "#include <fp.h>", "#include <math.h>")
             end
