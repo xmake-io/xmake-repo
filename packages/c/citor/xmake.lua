@@ -16,10 +16,10 @@ package("citor")
         #include <cstdint>
         #include <cstddef>
 
-        citor::ThreadPool pool(4);
-
-        citor::coro::Task<std::int64_t> work() {
+        void test() {
+            citor::ThreadPool pool(4);
             std::size_t n = 100;
+
             auto map = [](std::size_t lo, std::size_t hi) -> std::int64_t {
                 return static_cast<std::int64_t>(hi - lo);
             };
@@ -27,17 +27,17 @@ package("citor")
                 return a + b;
             };
 
-            co_await citor::coro::parallelFor(pool, 0, n,
-                [&](std::size_t lo, std::size_t hi) { /* ... */ });
-            std::int64_t sum = co_await citor::coro::parallelReduce(pool, 0, n,
-                std::int64_t{0}, map, combine);
-            co_return sum;
-        }
+            // 使用 co_await 的异步逻辑封装在另一个函数中
+            auto work = [&]() -> citor::coro::Task<std::int64_t> {
+                co_await citor::coro::parallelFor(pool, 0, n,
+                    [&](std::size_t lo, std::size_t hi) { /* ... */ });
+                std::int64_t sum = co_await citor::coro::parallelReduce(pool, 0, n,
+                    std::int64_t{0}, map, combine);
+                co_return sum;
+            };
 
-        int main() {
             std::int64_t result = citor::coro::syncWait(work());
             (void)result;
-            return 0;
         }
     ]]}, {configs = {languages = "c++23"}, includes = "citor/coro.h"}))
     end)
