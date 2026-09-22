@@ -1,5 +1,4 @@
 package("ghostscript")
-
     set_homepage("https://www.ghostscript.com/")
     set_description("Ghostscript is an interpreter for the PostScript® language and PDF files.")
     set_license("AGPL-3.0")
@@ -42,7 +41,13 @@ package("ghostscript")
     end)
 
     on_install("macosx", "linux", function (package)
-        import("package.tools.autoconf").configure(package)
+        -- fall back to GNU dialect of ISO C17 - from Fedora commit:
+        -- The code defines a custom 'bool' type (as an 'int'), which is incompatible
+        -- with C23 in which bool is a keyword, and trying to use <stdbool.h> fails
+        -- because 'int' and 'bool' are used interchangeably in the code.
+        -- see also https://bugs.ghostscript.com/show_bug.cgi?id=708608
+        local configs = {"CFLAGS=-std=gnu17"}
+        import("package.tools.autoconf").configure(package, configs)
         os.vrun("make so")
         os.vrun("make soinstall")
         os.cp("soobj/*.h", package:installdir("include"))
