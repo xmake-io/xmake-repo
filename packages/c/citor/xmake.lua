@@ -8,7 +8,7 @@ package("citor")
     add_versions("v0.6.0","ffc33c285f22d2a0d7dc5feb4662c08fe06b537f")
     add_versions("v0.5.0","77bd994439b2500d7691e75ab1132a27f9eb4d8b")
     on_install(function (package)
-        os.cp("include/citor", package:installdir("include", "citor"))
+        os.cp("include/citor", package:installdir("include"))
     end)
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
