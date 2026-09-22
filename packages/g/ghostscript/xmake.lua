@@ -43,6 +43,11 @@ package("ghostscript")
     end)
 
     on_install("macosx", "linux", function (package)
+        if package:is_plat("macosx") then
+            for _, file in ipairs(os.files("**")) do
+                io.gsub(file, "#include <fp.h>", "#include <math.h>")
+            end
+        end
         -- fall back to GNU dialect of ISO C17 - from Fedora commit:
         -- The code defines a custom 'bool' type (as an 'int'), which is incompatible
         -- with C23 in which bool is a keyword, and trying to use <stdbool.h> fails
