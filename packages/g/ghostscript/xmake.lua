@@ -9,10 +9,7 @@ package("ghostscript")
     add_versions("9.55.0", "31e2064be67e15b478a8da007d96d6cd4d2bee253e5be220703a225f7f79a70b")
     add_versions("10.0.0", "a57764d70caf85e2fc0b0f59b83b92e25775631714dcdb97cc6e0cea414bb5a3")
     add_versions("10.02.0", "e54062f166708d84ca82de9f8304a04344466080f936118b88082bd55ed6dc97")
-
-    if is_plat("linux", "macosx") then
-        add_patches("10.02.0", "patches/10.02.0/fix-build-with-gcc-15-on-host.patch", "b11005210f17c6365e075e5a39dab0ca9b073df2312b7a56bc7450704eefbca3")
-    end
+    add_versions("10.08.0", "53fa73af6b0950b6221188bc20363d7d6b05418e0940083d648c548dbf0cef37")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
@@ -45,16 +42,7 @@ package("ghostscript")
     end)
 
     on_install("macosx", "linux", function (package)
-        for _, file in ipairs(os.files("**")) do
-            io.replace(file, "<fp.h>", "<math.h>", {plain = true})
-        end
-        -- fall back to GNU dialect of ISO C17 - from Fedora commit:
-        -- The code defines a custom 'bool' type (as an 'int'), which is incompatible
-        -- with C23 in which bool is a keyword, and trying to use <stdbool.h> fails
-        -- because 'int' and 'bool' are used interchangeably in the code.
-        -- see also https://bugs.ghostscript.com/show_bug.cgi?id=708608
-        local configs = {"CFLAGS=-std=gnu17"}
-        import("package.tools.autoconf").configure(package, configs)
+        import("package.tools.autoconf").configure(package)
         os.vrun("make so")
         os.vrun("make soinstall")
         os.cp("soobj/*.h", package:installdir("include"))
