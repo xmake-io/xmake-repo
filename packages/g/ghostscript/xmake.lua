@@ -45,7 +45,7 @@ package("ghostscript")
     on_install("macosx", "linux", function (package)
         if package:is_plat("macosx") and not package:has_cincludes("fp.h") then
             for _, file in ipairs(os.files("**")) do
-                io.gsub(file, "#include <fp.h>", "#include <math.h>")
+                io.replace(file, "include <fp.h>", "include <math.h>", {plain = true})
             end
         end
         -- fall back to GNU dialect of ISO C17 - from Fedora commit:
