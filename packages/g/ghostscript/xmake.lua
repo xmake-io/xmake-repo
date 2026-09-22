@@ -10,7 +10,9 @@ package("ghostscript")
     add_versions("10.0.0", "a57764d70caf85e2fc0b0f59b83b92e25775631714dcdb97cc6e0cea414bb5a3")
     add_versions("10.02.0", "e54062f166708d84ca82de9f8304a04344466080f936118b88082bd55ed6dc97")
 
-    add_patches("10.02.0", "patches/10.02.0/fix-build-with-gcc-15-on-host.patch", "b11005210f17c6365e075e5a39dab0ca9b073df2312b7a56bc7450704eefbca3")
+    if is_plat("linux", "macosx") then
+        add_patches("10.02.0", "patches/10.02.0/fix-build-with-gcc-15-on-host.patch", "b11005210f17c6365e075e5a39dab0ca9b073df2312b7a56bc7450704eefbca3")
+    end
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
@@ -43,10 +45,8 @@ package("ghostscript")
     end)
 
     on_install("macosx", "linux", function (package)
-        if package:is_plat("macosx") and not package:has_cincludes("fp.h") then
-            for _, file in ipairs(os.files("**")) do
-                io.replace(file, "include <fp.h>", "include <math.h>", {plain = true})
-            end
+        for _, file in ipairs(os.files("**")) do
+            io.replace(file, "<fp.h>", "<math.h>", {plain = true})
         end
         -- fall back to GNU dialect of ISO C17 - from Fedora commit:
         -- The code defines a custom 'bool' type (as an 'int'), which is incompatible
