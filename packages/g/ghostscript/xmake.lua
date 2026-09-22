@@ -15,6 +15,8 @@ package("ghostscript")
 
     if is_plat("windows") then
         add_defines("__WIN32__", "_Windows")
+    elseif is_plat("macosx") then
+        add_deps("fontconfig")
     end
 
     on_install("windows|x64", "windows|x86", function (package)
@@ -53,11 +55,9 @@ package("ghostscript")
     end)
 
     on_test(function (package)
-        local program
+        local program = "gsc"
         if package:is_plat("windows") then
             program = package:is_arch("x64") and "gswin64c" or "gswin32c"
-        else
-            program = "gsc"
         end
         os.vrunv(program, {"--version"})
         assert(package:has_cxxfuncs("gsapi_new_instance", {includes = "iapi.h"}))
