@@ -28,7 +28,7 @@ package("shaderwriter")
             package:add("cxflags", "-include", "algorithm")
         end
     end)
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux","!arm|!arm64","", function (package)
         local configs =
         {
             "-DSDW_BUILD_TESTS=OFF",
