@@ -13,3 +13,16 @@ index 768a93114..cb3ff36a6 100644
 
      /* Figure out if we are orthogonal */
      if (mat.xy == 0 && mat.yx == 0)
+diff --git a/base/fapi_ft.c b/base/fapi_ft.c
+index ccd6297579..fc185bfd79 100644
+--- a/base/fapi_ft.c
++++ b/base/fapi_ft.c
+@@ -1280,7 +1280,7 @@ gs_fapi_ft_get_scaled_font(gs_fapi_server * a_server, gs_fapi_font * a_font,
+
+                 if (a_font->retrieve_tt_font != NULL) {
+                     unsigned int ms;
+-                    code = a_font->retrieve_tt_font(a_font, &own_font_data, &ms);
++                    code = a_font->retrieve_tt_font(a_font, (void **)&own_font_data, &ms);
+                     if (code == 0) {
+                         data_owned = false;
+                         open_args.memory_base = own_font_data;
