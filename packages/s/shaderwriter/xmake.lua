@@ -16,13 +16,18 @@ package("shaderwriter")
     add_versions("2.6", "ab06f63bb941ac60437120e3221c024555a2bcaa")
     add_versions("2.6.1", "047ca8f5a2d2ad2fa569bd53a8325939a9d17f6c")
     add_versions("2.7", "c8af31d7589c729c450c8d08f56677bd2d355cfb")
-    add_versions("v2.8.1","52dc29e13be29dd84c538584712526fa079e1e6b")
-    add_versions("v2.9.0","c7bd2d7dcbb8d6d6219f14b31072805d3b4b8df0")
+    add_versions("2.8.1","52dc29e13be29dd84c538584712526fa079e1e6b")
+    add_versions("2.9","c7bd2d7dcbb8d6d6219f14b31072805d3b4b8df0")
     
     add_deps("cmake")
 
     add_links("sdwShaderWriter", "sdwCompilerHlsl", "sdwCompilerGlsl", "sdwCompilerSpirV", "sdwShaderAST")
 
+    on_load(function (package)
+        if package:is_plat("linux") then
+            package:add("cxflags", "-include", "algorithm")
+        end
+    end)
     on_install("windows", "macosx", "linux", function (package)
         local configs =
         {
