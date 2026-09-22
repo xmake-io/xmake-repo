@@ -9,7 +9,7 @@ package("ghostscript")
     add_versions("9.55.0", "31e2064be67e15b478a8da007d96d6cd4d2bee253e5be220703a225f7f79a70b")
     add_versions("10.0.0", "a57764d70caf85e2fc0b0f59b83b92e25775631714dcdb97cc6e0cea414bb5a3")
     add_versions("10.02.0", "e54062f166708d84ca82de9f8304a04344466080f936118b88082bd55ed6dc97")
-    add_versions("10.08.0", "53fa73af6b0950b6221188bc20363d7d6b05418e0940083d648c548dbf0cef37")
+    add_versions("10.08.0", "caf199e3f233f1290b27d0972d636f66c303355f2353309b7bfddf1edda06b3d")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
