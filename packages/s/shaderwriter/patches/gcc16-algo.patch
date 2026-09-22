@@ -1,0 +1,49 @@
+diff --git a/include/ShaderWriter/CompositeTypes/StructHelper.hpp b/include/ShaderWriter/CompositeTypes/StructHelper.hpp
+index 0e750f9..6552c72 100644
+--- a/include/ShaderWriter/CompositeTypes/StructHelper.hpp
++++ b/include/ShaderWriter/CompositeTypes/StructHelper.hpp
+@@ -10,6 +10,8 @@ See LICENSE file in root folder
+ 
+ #include "ShaderWriter/BaseTypes/Void.hpp"
+ 
++#include <algorithm>
++
+ namespace sdw
+ {
+ 	template< size_t N >
+diff --git a/source/CompilerHlsl/HlslHelpers.hpp b/source/CompilerHlsl/HlslHelpers.hpp
+index 4e280c4..6c0513a 100644
+--- a/source/CompilerHlsl/HlslHelpers.hpp
++++ b/source/CompilerHlsl/HlslHelpers.hpp
+@@ -14,6 +14,7 @@ See LICENSE file in root folder
+ #include <ShaderAST/Stmt/StmtInputGeometryLayout.hpp>
+ #include <ShaderAST/Stmt/StmtOutputGeometryLayout.hpp>
+ 
++#include <algorithm>
+ #include <set>
+ #include <unordered_set>
+ 
+diff --git a/source/GlslCommon/GenerateGlslStatements.cpp b/source/GlslCommon/GenerateGlslStatements.cpp
+index addcf0b..5748fdc 100644
+--- a/source/GlslCommon/GenerateGlslStatements.cpp
++++ b/source/GlslCommon/GenerateGlslStatements.cpp
+@@ -15,6 +15,7 @@ See LICENSE file in root folder
+ #include <ShaderAST/Type/TypeCombinedImage.hpp>
+ #include <ShaderAST/Visitors/SimplifyStatements.hpp>
+ 
++#include <algorithm>
+ #include <cmath>
+ #include <cstring>
+ #pragma warning( push )
+diff --git a/source/ShaderAST/Visitors/ResolveConstants.cpp b/source/ShaderAST/Visitors/ResolveConstants.cpp
+index 8252288..22b31ff 100644
+--- a/source/ShaderAST/Visitors/ResolveConstants.cpp
++++ b/source/ShaderAST/Visitors/ResolveConstants.cpp
+@@ -12,6 +12,7 @@ See LICENSE file in root folder
+ #include "ShaderAST/Visitors/GetExprName.hpp"
+ #include "ShaderAST/Visitors/SimplifyStatements.hpp"
+ 
++#include <algorithm>
+ #include <cmath>
+ #include <math.h>
+ 
