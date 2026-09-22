@@ -1,40 +1,15 @@
-diff --git a/base/stdpre.h b/base/stdpre.h
-index dda30b6..2f9c84e 100644
---- a/base/stdpre.h
-+++ b/base/stdpre.h
-@@ -1,4 +1,4 @@
--/* Copyright (C) 2001-2023 Artifex Software, Inc.
-+/* Copyright (C) 2001-2025 Artifex Software, Inc.
-    All Rights Reserved.
+diff --git a/base/gxipixel.c b/base/gxipixel.c
+index 768a93114..cb3ff36a6 100644
+--- a/base/gxipixel.c
++++ b/base/gxipixel.c
+@@ -319,9 +319,7 @@ gx_image_enum_begin(gx_device * dev, const gs_gstate * pgs,
+      */
 
-    This software is provided AS-IS with no warranty, either express or
-@@ -341,7 +341,9 @@ typedef signed char schar;
-  * and the MetroWerks C++ compiler insists that bool be equivalent to
-  * unsigned char.
-  */
--#ifndef __cplusplus
-+
-+/* C23 has bool as a builtin type. */
-+#if !defined(__cplusplus) && (!defined(__STDC_VERSION__) || __STDC_VERSION__ < 202311L)
- #ifdef __BEOS__
- typedef unsigned char bool;
- #else
-diff --git a/base/gp.h b/base/gp.h
-index ad5bb61..cf2c9cf 100644
---- a/base/gp.h
-+++ b/base/gp.h
-@@ -1,4 +1,4 @@
--/* Copyright (C) 2001-2023 Artifex Software, Inc.
-+/* Copyright (C) 2001-2025 Artifex Software, Inc.
-    All Rights Reserved.
+     /* Ask the device if we are in a pattern accumulator */
+-    in_pattern_accumulator = (dev_proc(dev, dev_spec_op)(dev, gxdso_in_pattern_accumulator, NULL, 0));
+-    if (in_pattern_accumulator < 0)
+-        in_pattern_accumulator = 0;
++    in_pattern_accumulator = ((dev_proc(dev, dev_spec_op)(dev, gxdso_in_pattern_accumulator, NULL, 0)) > 0);
 
-    This software is provided AS-IS with no warranty, either express or
-@@ -646,7 +646,7 @@ int gp_fseek_impl(FILE *strm, gs_offset_t offset, int origin);
- /* Create a second open gp_file on the basis of a given one */
- FILE *gp_fdup_impl(FILE *f, const char *mode);
-
--int gp_fseekable_impl(FILE *f);
-+bool gp_fseekable_impl(FILE *f);
-
- /* Force given file into binary mode (no eol translations, etc) */
- /* if 2nd param true, text mode if 2nd param false */
+     /* Figure out if we are orthogonal */
+     if (mat.xy == 0 && mat.yx == 0)

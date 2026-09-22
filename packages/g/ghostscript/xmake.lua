@@ -10,7 +10,7 @@ package("ghostscript")
     add_versions("10.0.0", "a57764d70caf85e2fc0b0f59b83b92e25775631714dcdb97cc6e0cea414bb5a3")
     add_versions("10.02.0", "e54062f166708d84ca82de9f8304a04344466080f936118b88082bd55ed6dc97")
 
-    add_patches("10.02.0", "patches/10.02.0/fix-build-with-gcc-15-on-host.patch", "9efad2b4d6d498b37961c84988ba80b41481a957ede6cd73fae4e92229f7d317")
+    add_patches("10.02.0", "patches/10.02.0/fix-build-with-gcc-15-on-host.patch", "2accaf5517ecd17db3cc53a9e46890e5510182ed6c342edf1746aacf9aefcaf3")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
