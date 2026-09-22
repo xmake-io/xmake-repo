@@ -10,6 +10,8 @@ package("ghostscript")
     add_versions("10.0.0", "a57764d70caf85e2fc0b0f59b83b92e25775631714dcdb97cc6e0cea414bb5a3")
     add_versions("10.02.0", "e54062f166708d84ca82de9f8304a04344466080f936118b88082bd55ed6dc97")
 
+    add_patches("10.02.0", "patches/10.02.0/fix-build-with-gcc-15-on-host.patch", "9efad2b4d6d498b37961c84988ba80b41481a957ede6cd73fae4e92229f7d317")
+
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
     if is_plat("windows") then
@@ -46,7 +48,7 @@ package("ghostscript")
         -- with C23 in which bool is a keyword, and trying to use <stdbool.h> fails
         -- because 'int' and 'bool' are used interchangeably in the code.
         -- see also https://bugs.ghostscript.com/show_bug.cgi?id=708608
-        local configs = {"CFLAGS=-std=gnu17 -Wno-incompatible-pointer-types -Wno-int-conversion"}
+        local configs = {"CFLAGS=-std=gnu17"}
         import("package.tools.autoconf").configure(package, configs)
         os.vrun("make so")
         os.vrun("make soinstall")
