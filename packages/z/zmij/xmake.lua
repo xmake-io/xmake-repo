@@ -18,14 +18,26 @@ package("zmij")
     on_install(function (package)
         local sources = {"zmij.cc"}
         local headers = {"zmij.h"}
-        -- The C API (zmij.c + zmij-c.h) is only buildable from v1.1 on;
-        -- the v1.0 zmij.c does not compile on its own.
+        -- The C API (zmij.c + zmij-c.h) is only available together from v1.1 on.
         if os.isfile("zmij.c") and os.isfile("zmij-c.h") then
             table.insert(sources, "zmij.c")
             table.insert(headers, "zmij-c.h")
         end
         if os.isfile("zmij-to-chars.h") then
             table.insert(headers, "zmij-to-chars.h")
+        end
+        local defines = {}
+        if not package:config("simd") then
+            table.insert(defines, "ZMIJ_USE_SIMD=0")
+        end
+        -- Zmij uses NEON on ARM platform, which 32 bits ARM does not have.
+        local arch = package:arch()
+        if arch and arch:find("^arm") and not arch:find("64", 1, true) then
+            table.insert(defines, "ZMIJ_USE_NEON=0")
+        end
+        local define_str = ""
+        if #defines > 0 then
+            define_str = string.format('add_defines("%s")', table.concat(defines, '", "'))
         end
         io.writefile("xmake.lua", string.format([[
             add_rules("mode.debug", "mode.release")
@@ -38,8 +50,7 @@ package("zmij")
                 if is_plat("windows", "mingw") and is_kind("shared") then
                     add_rules("utils.symbols.export_all", {export_classes = true})
                 end
-        ]], table.concat(sources, '", "'), table.concat(headers, '", "'),
-            package:config("simd") and "" or 'add_defines("ZMIJ_USE_SIMD=0")'))
+        ]], table.concat(sources, '", "'), table.concat(headers, '", "'), define_str))
         import("package.tools.xmake").install(package)
     end)
 
