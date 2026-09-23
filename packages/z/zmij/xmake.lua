@@ -10,6 +10,9 @@ package("zmij")
     add_versions("v1.1", "9d905fcc303e295aebd5ac06702e375264d22a5ed1219a9e52e5da06d2d34066")
     add_versions("v1.0", "cc0806afd47cf1ec2de99554030ce6b4cd69f76a8bc7e32adbe43434f22a7ee3")
 
+    -- v1.0 passes a uint8x16_t to the signed vcgtzq_s8 NEON intrinsic; fixed in v1.1.
+    add_patches("v1.0", path.join(os.scriptdir(), "patches", "v1.0", "fix-aarch64-neon.patch"), "aff0a30b4fd7edd511252ec3f8f3e070f334a74a3bd83370d0b3707863d77b9c")
+
     add_configs("simd", {description = "Use SIMD instructions.", default = true, type = "boolean"})
 
     on_install(function (package)
