@@ -62,4 +62,3 @@ package("zmij")
             }
         ]]}, {configs = {languages = "c++14"}, includes = "zmij.h"}))
     end)
-package_end()
