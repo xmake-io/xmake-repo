@@ -13,32 +13,12 @@ package("citor")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <citor/coro.h>
-            #include <cstdint>
-            #include <cstddef>
-
             citor::coro::Task<std::int64_t> work(citor::ThreadPool &pool) {
-                std::size_t n = 100;
-
-                auto map = [](std::size_t lo, std::size_t hi) -> std::int64_t {
-                    return static_cast<std::int64_t>(hi - lo);
-                };
-                auto combine = [](std::int64_t a, std::int64_t b) -> std::int64_t {
-                    return a + b;
-                };
-
-                co_await citor::coro::parallelFor(pool, 0, n,
-                    [&](std::size_t lo, std::size_t hi) { /* ... */ });
-
-                std::int64_t sum = co_await citor::coro::parallelReduce(pool, 0, n,
-                    std::int64_t{0}, map, combine);
-
-                co_return sum;
+                co_return co_await citor::coro::parallelReduce(pool, 0, 100, std::int64_t{0});
             }
-
             void test() {
                 citor::ThreadPool pool(4);
-                std::int64_t result = citor::coro::syncWait(work(pool));
-                (void)result;
+                (void)citor::coro::syncWait(work(pool));
             }
         ]]}, {configs = {languages = "c++23"}, includes = "citor/coro.h"}))
     end)
