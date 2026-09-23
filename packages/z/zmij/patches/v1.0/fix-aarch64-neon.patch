@@ -11,4 +11,3 @@ index bd23466..59e6697 100644
 +      vreinterpretq_u16_u8(vcgtzq_s8(vreinterpretq_s8_u8(digits)));
    uint64_t zeroes =
        vget_lane_u64(vreinterpret_u64_u8(vshrn_n_u16(is_not_zero, 4)), 0);
- 
