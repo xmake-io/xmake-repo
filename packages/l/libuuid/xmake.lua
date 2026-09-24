@@ -1,5 +1,5 @@
 package("libuuid")
-    set_homepage("https://sourceforge.net/projects/libuuid")
+    set_homepage("https://sourceforge.net/projects/libuuid/")
     set_description("Portable uuid C library")
     set_license("BSD-3-Clause")
 
