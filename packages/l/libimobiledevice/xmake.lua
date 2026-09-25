@@ -5,6 +5,7 @@ package("libimobiledevice")
 
     add_urls("https://github.com/libimobiledevice/libimobiledevice/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libimobiledevice/libimobiledevice.git")
+    add_versions("1.4.0", "99e042acc1513815c36816723de52e0d0892e081f36ec29672531ce99ed59ccd")
     add_versions("1.3.0", "acbfb73eabee162e64c0d9de207d71c0a5f47c40cd5ad32a5097f734328ce10a")
 
     add_deps("libplist", "libusbmuxd", "openssl", "libimobiledevice-glue")
