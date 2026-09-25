@@ -3,10 +3,10 @@ package("vectorscan")
     set_description("High-performance regular expression matching library")
     set_license("Apache-2.0")
 
-    set_urls("https://github.com/VectorCamp/vectorscan/archive/refs/tags/v$(version).zip",
+    set_urls("https://github.com/VectorCamp/vectorscan/archive/refs/tags/v$(version)+vectorscan.zip",
              "https://github.com/VectorCamp/vectorscan.git")
 
-    add_versions("5.4.2","bc3b191ab56055e8560c7cdc161c289c4d76e3d2")
+    add_versions("5.4.4","35a25fffd7d584aa8e3447e4ea5affba28389744")
     
 
 
@@ -14,7 +14,7 @@ package("vectorscan")
     add_configs("unittests", { description = "Build unit tests", default = false, type = "boolean" })
 
     add_deps("cmake")
-	add_deps("boost")
+	add_deps("boost","ragel","sqlite3","libpcap")
     if is_plat("linux", "bsd") then
         add_syslinks("m", "pthread")
     elseif is_plat("windows") then
