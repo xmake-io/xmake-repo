@@ -14,7 +14,7 @@ package("vectorscan")
     add_configs("unittests", { description = "Build unit tests", default = false, type = "boolean" })
 
     add_deps("cmake")
-
+	add_deps("boost")
     if is_plat("linux", "bsd") then
         add_syslinks("m", "pthread")
     elseif is_plat("windows") then
