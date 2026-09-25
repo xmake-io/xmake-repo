@@ -44,7 +44,7 @@ package("shaderwriter")
 
         io.replace("source/ShaderAST/Visitors/TransformSSA.cpp",
         "#include", "#include <algorithm>\n#include", {plain = true})
-
+        io.replace("CMakeLists.txt", "-m64", "", {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
 
