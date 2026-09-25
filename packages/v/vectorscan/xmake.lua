@@ -46,7 +46,7 @@ package("vectorscan")
 		table.insert(configs, "-DBUILD_TOOLS=OFF")
 		table.insert(configs, "-DBUILD_UNIT_TESTS=OFF")
 
-        if !package:is_arch("x86") and !package:is_arch("x86_64") then
+        if not package:is_arch("x86") and not package:is_arch("x86_64") then
             table.insert(configs, "-DFAT_RUNTIME=OFF")
             table.insert(configs, "-DBUILD_AVX2=OFF")
             table.insert(configs, "-DBUILD_AVX512=OFF")
@@ -58,7 +58,7 @@ package("vectorscan")
                 table.insert(configs, "-DBUILD_AVX512VBMI=ON")
             end
         end
-        if !package:is_arch("aarch64") then
+        if not package:is_arch("aarch64") then
             table.insert(configs, "-DBUILD_SVE=OFF")
             table.insert(configs, "-DBUILD_SVE2=OFF")
             table.insert(configs, "-DBUILD_SVE2_BITPERM=OFF")
