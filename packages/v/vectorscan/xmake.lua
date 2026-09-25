@@ -28,7 +28,7 @@ package("vectorscan")
         add_syslinks("m", "pthread")
     end
 
-    on_install("!windows and !wasm and !mingw and !bsd and !iphoneos and !arm",function(package)
+    on_install("!windows and !wasm and !mingw and !bsd and !iphoneos and !arm*",function(package)
         local arch = package:arch()
         local configs = {
             "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
@@ -68,16 +68,6 @@ package("vectorscan")
                 table.insert(configs, "-DBUILD_SVE2=ON")
                 table.insert(configs, "-DBUILD_SVE2_BITPERM=ON")
             end
-        end
-        if package:is_arch("armeabi-v7a") then
-            table.insert(configs, "-DBUILD_SIMD=OFF")
-            table.insert(configs, "-DBUILD_AVX2=OFF")
-            table.insert(configs, "-DBUILD_AVX512=OFF")
-            table.insert(configs, "-DBUILD_AVX512VBMI=OFF")
-            table.insert(configs, "-DBUILD_SVE=OFF")
-            table.insert(configs, "-DBUILD_SVE2=OFF")
-            table.insert(configs, "-DBUILD_SVE2_BITPERM=OFF")
-            table.insert(configs, "-DFAT_RUNTIME=OFF")
         end
         import("package.tools.cmake").install(package, configs)
     end)
