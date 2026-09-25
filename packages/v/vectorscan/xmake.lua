@@ -28,7 +28,7 @@ package("vectorscan")
         add_syslinks("m", "pthread")
     end
 
-    on_install("!windows","!wasm","!mingw","!bsd","!iphoneos@macosx", "!iphoneos","*|!arm",function(package)
+    on_install("!windows|!wasm|!mingw|!bsd|!iphoneos|!arm",function(package)
         local arch = package:arch()
         local configs = {
             "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
