@@ -41,6 +41,10 @@ package("shaderwriter")
             "-DPROJECTS_ALLOW_DEBUG_INSTALL_HEADERS=ON",
             "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release")
         }
+
+        io.replace("source/ShaderAST/Visitors/TransformSSA.cpp",
+        "#include", "#include <algorithm>\n#include", {plain = true})
+
         import("package.tools.cmake").install(package, configs)
     end)
 
