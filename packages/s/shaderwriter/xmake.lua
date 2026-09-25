@@ -28,14 +28,16 @@ package("shaderwriter")
 
     add_links("sdwShaderWriter", "sdwCompilerHlsl", "sdwCompilerGlsl", "sdwCompilerSpirV", "sdwShaderAST")
 
-    local function safe_replace(filepath, old, new, opt)
-        local content = io.readfile(filepath)
-        if not content then return end
-        if not content:find(old, 1, true) then return end
-        io.replace(filepath, old, new, opt)
-    end
+    
 
     on_install("windows", "macosx", "linux", function (package)
+        local function safe_replace(filepath, old, new, opt)
+            local content = io.readfile(filepath)
+            if not content then return end
+            if not content:find(old, 1, true) then return end
+            io.replace(filepath, old, new, opt)
+        end
+        
         local configs =
         {
             "-DSDW_BUILD_TESTS=OFF",
