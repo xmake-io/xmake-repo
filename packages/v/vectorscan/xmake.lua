@@ -31,6 +31,9 @@ package("vectorscan")
             "-DBUILD_DOC=OFF",
         }
 
+		table.insert(configs, "-DBUILD_TOOLS=OFF")
+		table.insert(configs, "-DBUILD_UNIT_TESTS=OFF")
+
         if arch == "arm64" or arch == "aarch64" then
             table.insert(configs, "-DFAT_RUNTIME=OFF")
         end
