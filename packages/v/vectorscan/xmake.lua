@@ -6,11 +6,9 @@ package("vectorscan")
     set_urls("https://github.com/VectorCamp/vectorscan/archive/refs/tags/$(version).tar.gz",
              "https://github.com/VectorCamp/vectorscan.git")
 
-    add_versions("1.5.0", "https://github.com/VectorCamp/vectorscan/archive/refs/tags/v1.5.0.tar.gz")
-    add_versions("1.4.2", "https://github.com/VectorCamp/vectorscan/archive/refs/tags/v1.4.2.tar.gz")
-    add_versions("1.4.1", "https://github.com/VectorCamp/vectorscan/archive/refs/tags/v1.4.1.tar.gz")
-    add_versions("1.3.2", "https://github.com/VectorCamp/vectorscan/archive/refs/tags/v1.3.2.tar.gz")
-    add_versions("1.3.1", "https://github.com/VectorCamp/vectorscan/archive/refs/tags/v1.3.1.tar.gz")
+    add_versions("v5.4.2","bc3b191ab56055e8560c7cdc161c289c4d76e3d2")
+    
+
 
     add_configs("simd", { description = "Enable SIMD optimizations", default = true, type = "boolean" })
     add_configs("unittests", { description = "Build unit tests", default = false, type = "boolean" })
