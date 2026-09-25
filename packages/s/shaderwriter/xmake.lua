@@ -28,6 +28,13 @@ package("shaderwriter")
 
     add_links("sdwShaderWriter", "sdwCompilerHlsl", "sdwCompilerGlsl", "sdwCompilerSpirV", "sdwShaderAST")
 
+    local function safe_replace(filepath, old, new, opt)
+        local content = io.readfile(filepath)
+        if not content then return end
+        if not content:find(old, 1, true) then return end
+        io.replace(filepath, old, new, opt)
+    end
+
     on_install("windows", "macosx", "linux", function (package)
         local configs =
         {
@@ -42,9 +49,12 @@ package("shaderwriter")
             "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release")
         }
 
-        io.replace("source/ShaderAST/Visitors/TransformSSA.cpp",
+        safe_replace("source/ShaderAST/Visitors/TransformSSA.cpp",
         "#include", "#include <algorithm>\n#include", {plain = true})
-        io.replace("CMakeLists.txt", "-m64", "", {plain = true})
+
+        safe_replace("source/ShaderAST/Visitors/ResolveConstants.cpp",
+        "#include", "#include <algorithm>\n#include", {plain = true})
+        safe_replace("CMakeLists.txt", "-m64", "", {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
 
