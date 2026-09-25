@@ -38,6 +38,13 @@ package("shaderwriter")
             io.replace(filepath, old, new, opt)
         end
         
+        local function ensure_algorithm_include(filepath)
+            local content = io.readfile(filepath)
+            if not content then return end
+            if content:find("#include <algorithm>", 1, true) then return end
+            io.writefile(filepath, "#include <algorithm>\n" .. content)
+        end
+
         local configs =
         {
             "-DSDW_BUILD_TESTS=OFF",
@@ -51,11 +58,9 @@ package("shaderwriter")
             "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release")
         }
 
-        safe_replace("source/ShaderAST/Visitors/TransformSSA.cpp",
-        "#include", "#include <algorithm>\n#include", {plain = true})
+        ensure_algorithm_include("source/ShaderAST/Visitors/TransformSSA.cpp")
 
-        safe_replace("source/ShaderAST/Visitors/ResolveConstants.cpp",
-        "#include", "#include <algorithm>\n#include", {plain = true})
+        ensure_algorithm_include("source/ShaderAST/Visitors/ResolveConstants.cpp")
         safe_replace("CMakeLists.txt", "-m64", "", {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
