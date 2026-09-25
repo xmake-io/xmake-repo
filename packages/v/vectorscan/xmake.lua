@@ -5,16 +5,16 @@ package("vectorscan")
 
     set_urls("https://github.com/VectorCamp/vectorscan/archive/refs/tags/v$(version)+vectorscan.zip",
              "https://github.com/VectorCamp/vectorscan.git")
-
+             
     add_versions("5.4.4","35a25fffd7d584aa8e3447e4ea5affba28389744")
     
-
-
     add_configs("simd", { description = "Enable SIMD optimizations", default = true, type = "boolean" })
     add_configs("unittests", { description = "Build unit tests", default = false, type = "boolean" })
-
+	add_configs("fat_runtime", { description = "Fat runtime for x86", default = false, type = "boolean" })
     add_deps("cmake")
-	add_deps("boost","ragel","sqlite3","libpcap")
+	add_deps("boost","sqlite3","libpcap")
+	add_deps("ragel",, {host = true})
+	
     if is_plat("linux", "bsd") then
         add_syslinks("m", "pthread")
     elseif is_plat("windows") then
@@ -37,7 +37,7 @@ package("vectorscan")
             "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"),
             "-DCMAKE_POSITION_INDEPENDENT_CODE=ON",
         }
-
+		table.insert(configs,"-DFAT_RUNTIME=" .. package:config("fat_rumtime") and "ON" or "OFF")
         table.insert(configs, "-DHS_BUILDING_LIBRARY=ON")
         table.insert(configs, "-DHS_BUILD_TESTS=" .. (package:config("unittests") and "ON" or "OFF"))
         table.insert(configs, "-DHS_UNRESTRICTED_VECTORS=" .. (package:config("simd") and "OFF" or "ON"))
