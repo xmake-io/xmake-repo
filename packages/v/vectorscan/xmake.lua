@@ -87,5 +87,5 @@ package("vectorscan")
                 assert(err == HS_SUCCESS);
                 hs_free_database(database);
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = {languages = "c++20"},links = {"pcrecpp", "pcreposix", "pcre"}}))
     end)
