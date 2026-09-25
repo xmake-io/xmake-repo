@@ -69,7 +69,7 @@ package("vectorscan")
 
     on_test(function(package)
         assert(package:check_cxxsnippets({test = [[
-            #include <hs.h>
+            #include <hs/hs.h>
             #include <assert.h>
             void test() {
                 hs_database_t *database = nullptr;
