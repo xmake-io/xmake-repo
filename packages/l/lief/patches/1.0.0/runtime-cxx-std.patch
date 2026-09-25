@@ -1,0 +1,20 @@
+diff --git a/src/runtime/CMakeLists.txt b/src/runtime/CMakeLists.txt
+index e3c41b9..0197478 100644
+--- a/src/runtime/CMakeLists.txt
++++ b/src/runtime/CMakeLists.txt
+@@ -19,7 +19,14 @@ set_target_properties(LIB_LIEF_RUNTIME PROPERTIES
+   CXX_VISIBILITY_PRESET     hidden
+   C_VISIBILITY_PRESET       hidden)
+ 
+-target_compile_features(LIB_LIEF_RUNTIME PRIVATE cxx_std_23)
++# The stubs compiled when the runtime is disabled only need C++17, while
++# cxx_std_23 requires a compiler recent enough to be known to CMake
++# (NDK r22 ships clang 11).
++if(LIEF_RUNTIME)
++  target_compile_features(LIB_LIEF_RUNTIME PRIVATE cxx_std_23)
++else()
++  target_compile_features(LIB_LIEF_RUNTIME PRIVATE cxx_std_17)
++endif()
+ 
+ target_sources(LIB_LIEF PRIVATE $<TARGET_OBJECTS:LIB_LIEF_RUNTIME>)
+ 
