@@ -7,11 +7,10 @@ package("vectorscan")
     add_versions("5.4.4", "35a25fffd7d584aa8e3447e4ea5affba28389744")
 
     add_configs("simd", { description = "Enable SIMD optimizations", default = true, type = "boolean" })
-    add_configs("unittests", { description = "Build unit tests", default = false, type = "boolean" })
     add_configs("fat_runtime", { description = "Fat runtime for x86", default = false, type = "boolean" })
 
-    add_deps("cmake")
-    add_deps("boost")
+    add_deps("cmake 3.31.6")
+    add_deps("boost","pcre","libpcap","sqlite3")
     add_deps("ragel", {host = true})
 
     if is_plat("linux", "bsd") then
@@ -25,7 +24,7 @@ package("vectorscan")
             "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"),
             "-DCMAKE_POSITION_INDEPENDENT_CODE=ON",
             "-DFAT_RUNTIME=" .. (package:config("fat_runtime") and "ON" or "OFF"),
-            "-DBUILD_TESTS=" .. (package:config("unittests") and "ON" or "OFF"),
+            "-DBUILD_TESTS=OFF"),
             "-DBUILD_BENCHMARKS=OFF",
             "-DBUILD_EXAMPLES=OFF",
             "-DBUILD_DOC=OFF",
