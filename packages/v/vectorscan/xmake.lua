@@ -11,7 +11,8 @@ package("vectorscan")
 	add_configs("assert", { description = "Fat runtime for x86", default = true, type = "boolean" })
 	
     add_deps("cmake")
-    add_deps("boost","pcre","libpcap","sqlite3")
+    add_deps("boost",{configs = {graph = true}})
+    add_deps("pcre","libpcap","sqlite3")
     add_deps("ragel", {host = true})
 
     if is_plat("linux", "bsd") then
