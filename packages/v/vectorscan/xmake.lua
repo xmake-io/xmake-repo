@@ -21,9 +21,9 @@ package("vectorscan")
         thread=true,
         
     }})
-    add_deps("pcre","libpcap","sqlite3")
+    add_deps("libpcap","sqlite3")
     add_deps("ragel", {host = true})
-
+    add_deps("pcre", { configs = { cpp = true } })
     if is_plat("linux") then
         add_syslinks("m", "pthread")
     end
@@ -68,6 +68,16 @@ package("vectorscan")
                 table.insert(configs, "-DBUILD_SVE2=ON")
                 table.insert(configs, "-DBUILD_SVE2_BITPERM=ON")
             end
+        end
+        if package:is_arch("armeabi-v7a") then
+            table.insert(configs, "-DBUILD_SIMD=OFF")
+            table.insert(configs, "-DBUILD_AVX2=OFF")
+            table.insert(configs, "-DBUILD_AVX512=OFF")
+            table.insert(configs, "-DBUILD_AVX512VBMI=OFF")
+            table.insert(configs, "-DBUILD_SVE=OFF")
+            table.insert(configs, "-DBUILD_SVE2=OFF")
+            table.insert(configs, "-DBUILD_SVE2_BITPERM=OFF")
+            table.insert(configs, "-DFAT_RUNTIME=OFF")
         end
         import("package.tools.cmake").install(package, configs)
     end)
