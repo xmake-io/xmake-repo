@@ -23,7 +23,7 @@ package("vectorscan")
     }})
     add_deps("libpcap","sqlite3")
     add_deps("ragel", {host = true})
-    add_deps("pcre", { configs = { cpp = true } })
+    add_deps("pcre")
     if is_plat("linux") then
         add_syslinks("m", "pthread")
     end
@@ -83,5 +83,5 @@ package("vectorscan")
                 assert(err == HS_SUCCESS);
                 hs_free_database(database);
             }
-        ]]}, {configs = {languages = "c++20"},links = {"pcrecpp", "pcreposix", "pcre"}}))
+        ]]}, {configs = {languages = "c++20"}, links = {"pcre"}}))
     end)
