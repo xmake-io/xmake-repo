@@ -8,8 +8,9 @@ package("vectorscan")
 
     add_configs("simd", { description = "Enable SIMD optimizations", default = true, type = "boolean" })
     add_configs("fat_runtime", { description = "Fat runtime for x86", default = false, type = "boolean" })
-
-    add_deps("cmake 3.31.6")
+	add_configs("assert", { description = "Fat runtime for x86", default = true, type = "boolean" })
+	
+    add_deps("cmake")
     add_deps("boost","pcre","libpcap","sqlite3")
     add_deps("ragel", {host = true})
 
@@ -24,7 +25,8 @@ package("vectorscan")
             "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"),
             "-DCMAKE_POSITION_INDEPENDENT_CODE=ON",
             "-DFAT_RUNTIME=" .. (package:config("fat_runtime") and "ON" or "OFF"),
-            "-DBUILD_TESTS=OFF"),
+            "-DDISABLE_ASSERTS=" .. (package:config("assert") and "ON" or "OFF"),
+            "-DBUILD_TESTS=OFF",
             "-DBUILD_BENCHMARKS=OFF",
             "-DBUILD_EXAMPLES=OFF",
             "-DBUILD_DOC=OFF",
@@ -33,16 +35,17 @@ package("vectorscan")
 		table.insert(configs, "-DBUILD_TOOLS=OFF")
 		table.insert(configs, "-DBUILD_UNIT_TESTS=OFF")
 
-        if arch == "arm64" or arch == "aarch64" then
+        if arch ~= "x86" and arch ~= "x86_64" then
             table.insert(configs, "-DFAT_RUNTIME=OFF")
+            table.insert(configs, "-DBUILD_AVX2=OFF")
+            table.insert(configs, "-DBUILD_AVX512=OFF")
+            table.insert(configs, "-DBUILD_AVX512VBMI=OFF")
         end
 
-        if not package:config("simd") then
-            if arch == "x86" or arch == "x86_64" then
-                table.insert(configs, "-DBUILD_AVX2=OFF")
-                table.insert(configs, "-DBUILD_AVX512=OFF")
-                table.insert(configs, "-DBUILD_AVX512VBMI=OFF")
-            end
+        if package:config("simd") then
+            table.insert(configs, "-DBUILD_AVX2=ON")
+            table.insert(configs, "-DBUILD_AVX512=ON")
+            table.insert(configs, "-DBUILD_AVX512VBMI=ON")
         end
 
         import("package.tools.cmake").install(package, configs)
