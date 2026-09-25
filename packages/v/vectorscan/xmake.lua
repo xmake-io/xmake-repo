@@ -12,13 +12,13 @@ package("vectorscan")
 	
     add_deps("cmake")
     add_deps("boost",{configs = {
-        graph = true,
-        math=true,
-        regex=true,
-        system=true,
-        chrono=true,
-        date_time=true,
-        thread=true,
+        graph = true ,
+        math = true ,
+        regex = true ,
+        system = true ,
+        chrono = true ,
+        date_time = true ,
+        thread = true ,
         
     }})
     add_deps("libpcap","sqlite3")
