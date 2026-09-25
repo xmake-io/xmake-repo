@@ -4,7 +4,7 @@ package("vectorscan")
     set_license("Apache-2.0")
 
     set_urls("https://github.com/VectorCamp/vectorscan/archive/refs/tags/vectorscan/$(version).tar.gz")
-    add_versions("5.4.13", "fb0a93b872f160ba01d77b0bb524f24349df0db501b06e29d93ba72c89566b65")
+    add_versions("5.4.13", "11bfcd2dde32d8a08d1a2eebb09294b12a3fa2be140078f8091b751fa1fabd89")
 
     add_configs("simd", { description = "Enable SIMD optimizations", default = true, type = "boolean" })
     add_configs("fat_runtime", { description = "Fat runtime for x86", default = false, type = "boolean" })
