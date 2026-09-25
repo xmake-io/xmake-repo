@@ -3,8 +3,8 @@ package("vectorscan")
     set_description("High-performance regular expression matching library")
     set_license("Apache-2.0")
 
-    set_urls("https://github.com/VectorCamp/vectorscan.git")
-    add_versions("5.4.4", "35a25fffd7d584aa8e3447e4ea5affba28389744")
+    set_urls("https://github.com/VectorCamp/vectorscan/archive/refs/tags/vectorscan/$(version).zip","https://github.com/VectorCamp/vectorscan.git")
+    add_versions("5.4.13", "fb0a93b872f160ba01d77b0bb524f24349df0db501b06e29d93ba72c89566b65")
 
     add_configs("simd", { description = "Enable SIMD optimizations", default = true, type = "boolean" })
     add_configs("fat_runtime", { description = "Fat runtime for x86", default = false, type = "boolean" })
@@ -41,13 +41,27 @@ package("vectorscan")
             table.insert(configs, "-DBUILD_AVX2=OFF")
             table.insert(configs, "-DBUILD_AVX512=OFF")
             table.insert(configs, "-DBUILD_AVX512VBMI=OFF")
+        else
+            if package:config("simd") then
+                table.insert(configs, "-DBUILD_AVX2=ON")
+                table.insert(configs, "-DBUILD_AVX512=ON")
+                table.insert(configs, "-DBUILD_AVX512VBMI=ON")
+            end
         end
 
-        if package:config("simd") then
-            table.insert(configs, "-DBUILD_AVX2=ON")
-            table.insert(configs, "-DBUILD_AVX512=ON")
-            table.insert(configs, "-DBUILD_AVX512VBMI=ON")
+        if arch ~= "aarch64" then
+            table.insert(configs, "-DBUILD_SVE=OFF")
+            table.insert(configs, "-DBUILD_SVE2=OFF")
+            table.insert(configs, "-DBUILD_SVE2_BITPERM=OFF")
+        else
+            if package:config("simd") then
+                table.insert(configs, "-DBUILD_SVE=ON")
+                table.insert(configs, "-DBUILD_SVE2=ON")
+                table.insert(configs, "-DBUILD_SVE2_BITPERM=ON")
+            end
         end
+
+        
 
         import("package.tools.cmake").install(package, configs)
     end)
