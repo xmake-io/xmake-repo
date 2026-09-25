@@ -3,10 +3,10 @@ package("vectorscan")
     set_description("High-performance regular expression matching library")
     set_license("Apache-2.0")
 
-    set_urls("https://github.com/VectorCamp/vectorscan/archive/refs/tags/$(version).tar.gz",
+    set_urls("https://github.com/VectorCamp/vectorscan/archive/refs/tags/v$(version).zip",
              "https://github.com/VectorCamp/vectorscan.git")
 
-    add_versions("v5.4.2","bc3b191ab56055e8560c7cdc161c289c4d76e3d2")
+    add_versions("5.4.2","bc3b191ab56055e8560c7cdc161c289c4d76e3d2")
     
 
 
