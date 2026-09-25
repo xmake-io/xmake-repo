@@ -30,6 +30,7 @@ package("vectorscan")
             "-DBUILD_BENCHMARKS=OFF",
             "-DBUILD_EXAMPLES=OFF",
             "-DBUILD_DOC=OFF",
+            "-DDUMP_SUPPORT=OFF",
         }
 
 		table.insert(configs, "-DBUILD_TOOLS=OFF")
