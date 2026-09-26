@@ -28,7 +28,7 @@ package("vectorscan")
         add_syslinks("m", "pthread")
     end
 
-    on_install("!windows and !wasm and !mingw and !bsd and !iphoneos and !arm*",function(package)
+    on_install("!windows and !wasm and !mingw and !bsd and !iphoneos and !arm* and !armeabi-v7a",function(package)
         local arch = package:arch()
         local configs = {
             "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
@@ -83,5 +83,5 @@ package("vectorscan")
                 assert(err == HS_SUCCESS);
                 hs_free_database(database);
             }
-        ]]}, {configs = {languages = "c++20"}, links = {"pcre"}}))
+        ]]}, {configs = {languages = "c++20"}}))
     end)
