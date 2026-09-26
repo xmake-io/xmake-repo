@@ -23,12 +23,12 @@ package("vectorscan")
     }})
     add_deps("libpcap","sqlite3")
     add_deps("ragel", {host = true})
-    add_deps("pcre")
+    add_deps("pcre",{configs = {cpp=false}})
     if is_plat("linux") then
         add_syslinks("m", "pthread")
     end
 
-    on_install("!windows and !wasm and !mingw and !bsd and !iphoneos and !arm* and !armeabi-v7a",function(package)
+    on_install("!windows and !wasm and !mingw and !bsd and !iphoneos and !armeabi and !armeabi-v7a",function(package)
         local arch = package:arch()
         local configs = {
             "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
