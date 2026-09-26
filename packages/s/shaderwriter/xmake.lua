@@ -26,10 +26,6 @@ package("shaderwriter")
 
     add_deps("cmake")
 
-    add_links("sdwShaderWriter", "sdwCompilerHlsl", "sdwCompilerGlsl", "sdwCompilerSpirV", "sdwShaderAST")
-
-    
-
     on_install("windows", "macosx", "linux", function (package)
         local function safe_replace(filepath, old, new, opt)
             local content = io.readfile(filepath)
