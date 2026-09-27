@@ -12,24 +12,21 @@ package("vectorscan")
 	
     add_deps("cmake")
     add_deps("boost",{configs = {
-        graph = true ,
-        math = true ,
-        regex = true ,
-        system = true ,
-        chrono = true ,
-        date_time = true ,
-        thread = true ,
-        
+        graph = true,
+        math = true,
+        regex = true,
+        system = true,
+        chrono = true,
+        date_time = true,
+        thread = true,
     }})
     add_deps("libpcap","sqlite3")
-    add_deps("ragel", {host = true})
-    add_deps("pcre",{configs = {cpp=false}})
+    add_deps("ragel",{host = true})
     if is_plat("linux") then
-        add_syslinks("m", "pthread")
+        add_syslinks("m","pthread")
     end
 
-    on_install("linux|x86_64,linux|i386,linux|aarch64,macosx|x86_64,macosx|arm64,android|arm64-v8a",function(package)
-        local arch = package:arch()
+    on_install("linux|x86_64,linux|i386,linux|aarch64,macosx|x86_64,macosx|arm64,android|arm64-v8a", function(package)
         local configs = {
             "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
             "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"),
