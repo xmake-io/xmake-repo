@@ -8,6 +8,10 @@ package("innosetup")
 
     add_versions("7.1.0", "aad15c662593c6f5656457a5c001f4591babd72820cacf63f9706d4af5d93b75")
 
+    on_fetch(function (package, opt)
+        return false
+    end)
+
     on_install("windows", function (package)
         import("lib.detect.find_file")
         local tools_dir = path.directory(find_file("ISCC.exe", "tools"))
