@@ -15,9 +15,7 @@ package("innosetup")
     end)
 
     on_install("windows", function (package)
-        import("lib.detect.find_path")
-        local tools_dir = find_path("ISCC.exe", "tools/**")
-        os.cp(path.join(tools_dir, "/*"), package:installdir("bin"))
+        os.cp("tools/*", package:installdir("bin"))
     end)
 
     on_test(function (package)
