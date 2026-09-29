@@ -6,6 +6,7 @@ package("simpleini")
 
     set_urls("https://github.com/brofield/simpleini/archive/refs/tags/$(version).tar.gz",
              "https://github.com/brofield/simpleini.git")
+    add_versions("v4.27", "bcf27c6ccab787cb41ee2af430d271b4b483319529978e4e2b1770f14db5627b")
     add_versions("v4.26", "cfb27ba82570d73ce89d956f15c558d4a79c7ce2ad667a104be2d2f0f12be0cb")
     add_versions("v4.25", "10001ee1486ae55259a5408786262bc0f72d699bc9637d536ebc62765d3ecd3b")
     add_versions("v4.22", "b3a4b8f9e03aabd491aa55fd57457115857b9b9c7ecf4abf7ff035ca9d026eb8")
