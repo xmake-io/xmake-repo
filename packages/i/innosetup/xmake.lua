@@ -2,6 +2,7 @@ package("innosetup")
     set_kind("binary")
     set_homepage("https://jrsoftware.org/isinfo.php")
     set_description("Inno Setup is an open-source installation builder for Windows applications by Jordan Russell and Martijn Laan.")
+    set_license("Inno Setup License")
 
     set_urls("https://www.nuget.org/api/v2/package/Tools.InnoSetup/$(version)/#Tools.InnoSetup-$(version).zip")
 

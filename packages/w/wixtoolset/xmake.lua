@@ -17,7 +17,7 @@ package("wixtoolset")
         import("lib.detect.find_file")
         import("lib.detect.find_directory")
         local wix_folder = path.directory(find_file("wix.exe", "tools/**"))
-        os.cp(path.join(wix_folder, "/*"), package:installdir("bin"))
+        os.cp(path.join(wix_folder, "/**"), package:installdir("bin"))
 
         local version = package:version():rawstr()
         local ui_folder = path.join(package:installdir("bin"), ".wix", "extensions", "WixToolset.UI.wixext", version)
