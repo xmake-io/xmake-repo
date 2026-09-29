@@ -14,9 +14,8 @@ package("wixtoolset")
     end)
 
     on_install("windows", function (package)
-        import("lib.detect.find_file")
-        import("lib.detect.find_directory")
-        local wix_folder = path.directory(find_file("wix.exe", "tools/**"))
+        import("lib.detect.find_path")
+        local wix_folder = find_path("wix.exe", "tools/**")
         os.cp(path.join(wix_folder, "/*"), package:installdir("bin"))
 
         local version = package:version():rawstr()

@@ -11,12 +11,12 @@ package("innosetup")
     on_fetch(function (package, opt)
         -- xmake's generic `find_tool("innosetup")` fallback hangs on CI, and the
         -- real executable is `ISCC`, so find it here and return false to skip that fallback
-        return import("lib.detect.find_tool")("ISCC", {check = "--version"}) or false
+        return package:find_tool("ISCC", {check = "--version"}) or false
     end)
 
     on_install("windows", function (package)
-        import("lib.detect.find_file")
-        local tools_dir = path.directory(find_file("ISCC.exe", "tools"))
+        import("lib.detect.find_path")
+        local tools_dir = find_path("ISCC.exe", "tools/**")
         os.cp(path.join(tools_dir, "/*"), package:installdir("bin"))
     end)
 
