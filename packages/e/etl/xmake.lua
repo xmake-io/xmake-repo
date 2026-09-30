@@ -53,10 +53,14 @@ package("etl")
     end)
 
     on_test(function (package)
+        local configs = {languages = "c++11"}
+        if package:version() and package:version():lt("20.49.0") then
+            configs.defines = "ETL_USE_TYPE_TRAITS_BUILTINS=1"
+        end
         assert(package:check_cxxsnippets({test = [[
             #include <etl/array.h>
             void test() {
                 etl::array<int, 10> data = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
             }
-        ]]}, {configs = {languages = "c++11", defines = "ETL_USE_TYPE_TRAITS_BUILTINS=1"}}))
+        ]]}, {configs = configs}))
     end)
