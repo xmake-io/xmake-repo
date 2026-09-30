@@ -13,7 +13,7 @@ package("wixtoolset")
         package:mark_as_pathenv("WIX_EXTENSIONS")
     end)
 
-    on_install("windows", function (package)
+    on_install("@windows", function (package)
         import("lib.detect.find_path")
         local wix_folder = find_path("wix.exe", "tools/**")
         os.cp(path.join(wix_folder, "/*"), package:installdir("bin"))
