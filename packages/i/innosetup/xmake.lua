@@ -9,8 +9,6 @@ package("innosetup")
     add_versions("7.1.0", "aad15c662593c6f5656457a5c001f4591babd72820cacf63f9706d4af5d93b75")
 
     on_fetch(function (package, opt)
-        -- xmake's generic `find_tool("innosetup")` fallback hangs on CI, and the
-        -- real executable is `ISCC`, so find it here and return false to skip that fallback
         return package:find_tool("ISCC", {check = "--version"}) or false
     end)
 
