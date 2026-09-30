@@ -14,7 +14,7 @@ package("innosetup")
         return package:find_tool("ISCC", {check = "--version"}) or false
     end)
 
-    on_install("windows", function (package)
+    on_install("@windows", function (package)
         os.cp("tools/*", package:installdir("bin"))
     end)
 
