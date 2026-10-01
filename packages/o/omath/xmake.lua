@@ -6,6 +6,7 @@ package("omath")
     add_urls("https://git.libomath.org/orange/omath/archive/$(version).tar.gz")
 
     add_versions("v5.6.0", "48cdf091451e7b999c0c49c7e979fdf61238bcadccd84a8be13135b8548f18c3")
+    add_patches("v5.6.0", "patches/fix-m-lib.diff", "509f016c3389084a2341b454f97bfacce0b6ade9cf87a0fba59614db48e33ef3")
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
