@@ -1,10 +1,14 @@
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -116,4 +116,8 @@ if (OMATH_ENABLE_LUA)
+@@ -116,4 +116,12 @@ if (OMATH_ENABLE_LUA)
  
-+    find_library(LUA_MATH_LIBRARY m)
-+    if(NOT(LUA_MATH_LIBRARY))
-+        find_library(LUA_MATH_LIBRARY m PATHS ${CMAKE_C_IMPLICIT_LINK_DIRECTORIES} ${CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES})
++    if (EMSCRIPTEN)
++        set(LUA_MATH_LIBRARY "" CACHE FILEPATH "No math library needed on Emscripten" FORCE)
++    else()
++        find_library(LUA_MATH_LIBRARY m)
++        if(NOT(LUA_MATH_LIBRARY))
++            find_library(LUA_MATH_LIBRARY m PATHS ${CMAKE_C_IMPLICIT_LINK_DIRECTORIES} ${CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES})
++        endif()
 +    endif()
      find_package(Lua REQUIRED)
      target_include_directories(${PROJECT_NAME} PRIVATE ${LUA_INCLUDE_DIR})
