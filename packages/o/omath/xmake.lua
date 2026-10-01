@@ -21,7 +21,7 @@ package("omath")
     if is_plat("windows", "linux", "mingw") and is_arch("x86_64", "x64", "x86", "i386", "i686") then
         add_configs("hook", {description = "omath will HooksManager that can hook DirectX/OpenGL automatically", default = true, type = "boolean"})
     end
-    add_configs("cppm", {description = "Build omath C++ module interface", default = true, type = "boolean"})
+    add_configs("cppm", {description = "Build omath C++ module interface", default = false, type = "boolean"})
 
     add_deps("cmake")
 
