@@ -3,8 +3,7 @@ package("omath")
     set_description("Cross-platform modern general purpose math library written in C++23")
     set_license("zlib")
 
-    add_urls("https://github.com/orange-cpp/omath/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/orange-cpp/omath.git", {submodules = false})
+    add_urls("https://git.libomath.org/orange/omath/archive/$(version).tar.gz")
 
     add_versions("v5.6.0", "9ddd9ae712b0d2edd46bb161043825a850211a85dcc5a8c284718a6e02f59f66")
     add_versions("v5.3.0", "d64d623ce3c894ebe3af90829eb55045c93d8d0e6848b21f6412a33368779670")
@@ -38,6 +37,12 @@ package("omath")
         add_configs("avx2",  {description = "Enable AVX2", default = true, type = "boolean"})
     end
     add_configs("imgui", {description = "Define method to convert omath types to imgui types", default = true, type = "boolean"})
+    add_configs("legacy", {description = "Enable legacy classes that MUST be used ONLY for backward compatibility", default = true, type = "boolean"})
+    add_configs("supp", {description = "Supress some safety checks in release build to improve general performance", default = true, type = "boolean"})
+    add_configs("inline", {description = "Force compiler to make some functions to be force inlined", default = true, type = "boolean"})
+    add_configs("lua", {description = "Omath bindings for lua", default = true, type = "boolean"})
+    add_configs("hook", {description = "omath will HooksManager that can hook DirectX/OpenGL automatically", default = true, type = "boolean"})
+    add_configs("cppm", {description = "Build omath C++ module interface", default = true, type = "boolean"})
 
     add_deps("cmake")
 
@@ -57,18 +62,50 @@ package("omath")
     on_load(function (package)
         if package:config("imgui") then
             package:add("deps", "imgui")
+            package:add("defines", "OMATH_IMGUI_INTEGRATION")
+        end
+        if package:is_arch("x86_64", "x64", "x86", "i386", "i686") and package:config("avx2") then
+            package:add("defines", "OMATH_USE_AVX2")
+        end
+        if package:config("legacy") then
+            package:add("defines", "OMATH_ENABLE_LEGACY")
+        end
+        if package:config("supp") then
+            package:add("defines", "OMATH_SUPRESS_SAFETY_CHECKS")
+        end
+        if package:config("inline") then
+            package:add("defines", "OMATH_ENABLE_FORCE_INLINE")
+        end
+        if package:config("lua") then
+            package:add("deps", "lua", "sol2")
+            package:add("defines", "OMATH_ENABLE_LUA")
+        end
+        if package:config("hook") then
+            package:add("deps", "safetyhook")
+            package:add("defines", "OMATH_ENABLE_HOOKING")
         end
     end)
 
     on_install(function (package)
         local configs = {
+            "-DOMATH_STATIC_MSVC_RUNTIME_LIBRARY=OFF",
+            "-DOMATH_ENABLE_LEGACY=ON",
+            "-DOMATH_USE_UNITY_BUILD=OFF",
             "-DOMATH_BUILD_TESTS=OFF",
-            "-DOMATH_BUILD_BENCHMARK=OFF",
             "-DOMATH_THREAT_WARNING_AS_ERROR=OFF",
+            "-DOMATH_BUILD_BENCHMARK=OFF",
             "-DOMATH_BUILD_EXAMPLES=OFF",
+            "-DOMATH_BUILD_VIA_VCPKG=OFF",
+            "-DOMATH_ENABLE_COVERAGE=OFF"
         }
         table.insert(configs, "-DOMATH_USE_AVX2=" .. (package:config("avx2") and "ON" or "OFF"))
         table.insert(configs, "-DOMATH_IMGUI_INTEGRATION=" .. (package:config("imgui") and "ON" or "OFF"))
+        table.insert(configs, "-DOMATH_ENABLE_LEGACY=" .. (package:config("legacy") and "ON" or "OFF"))
+        table.insert(configs, "-DOMATH_SUPRESS_SAFETY_CHECKS=" .. (package:config("supp") and "ON" or "OFF"))
+        table.insert(configs, "-DOMATH_ENABLE_FORCE_INLINE=" .. (package:config("inline") and "ON" or "OFF"))
+        table.insert(configs, "-DOMATH_ENABLE_LUA=" .. (package:config("lua") and "ON" or "OFF"))
+        table.insert(configs, "-DOMATH_ENABLE_HOOKING=" .. (package:config("hook") and "ON" or "OFF"))
+        table.insert(configs, "-DOMATH_ENABLE_MODULES=" .. (package:config("cppm") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DOMATH_BUILD_AS_SHARED_LIBRARY=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
