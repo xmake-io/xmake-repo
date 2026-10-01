@@ -45,7 +45,7 @@ package("brpc")
         io.replace("CMakeLists.txt", 'set(CMAKE_C_FLAGS "${CMAKE_CPP_FLAGS}', 'set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${CMAKE_CPP_FLAGS}', {plain = true})
         if package:version() and package:version():ge("1.18.0") then
             -- Avoid __int128 redefinition errors in GCC 16's libstdc++ headers.
-            io.replace("CMakeLists.txt", " -D__STRICT_ANSI__", "", {plain = true})
+            io.replace("CMakeLists.txt", "    __STRICT_ANSI__\n", "", {plain = true})
         end
         import("package.tools.cmake").install(package, configs, {packagedeps = "zlib"})
         if not package:config("shared") then
