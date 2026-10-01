@@ -16,6 +16,7 @@ package("xmake-harness")
     add_versions("v1.0.7", "73691fb0657b903437fd174d559ee461287be6f3a4871c8e4f1d7f4d662d06e8")
     add_versions("v1.0.8", "260f6cb86cde107a1d75063216163c07b5b281b65cd39168293ecb68efd31caf")
     add_versions("v1.0.9", "5c838560162743a178f3081df30092c4e532a2523656c8e3e9a81ac606b0e6ee")
+    add_versions("v1.1.0", "d16eabc13aaa9e547f4987efb77efef9c1b42ee22b5bb5f06edcbe90adfad1c0")
 
     on_test(function (package)
         assert(package:has_addon({plugins = "ai", modules = "harness"}))
