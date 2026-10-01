@@ -66,7 +66,6 @@ package("omath")
     on_install(function (package)
         local configs = {
             "-DOMATH_STATIC_MSVC_RUNTIME_LIBRARY=OFF",
-            "-DOMATH_ENABLE_LEGACY=ON",
             "-DOMATH_USE_UNITY_BUILD=OFF",
             "-DOMATH_BUILD_TESTS=OFF",
             "-DOMATH_THREAT_WARNING_AS_ERROR=OFF",
@@ -83,6 +82,32 @@ package("omath")
         table.insert(configs, "-DOMATH_ENABLE_LUA=" .. (package:config("lua") and "ON" or "OFF"))
         table.insert(configs, "-DOMATH_ENABLE_HOOKING=" .. (package:config("hook") and "ON" or "OFF"))
         table.insert(configs, "-DOMATH_ENABLE_MODULES=" .. (package:config("cppm") and "ON" or "OFF"))
+        if package:config("lua") then
+            local lua = package:dep("lua")
+            if lua then
+                local fetchinfo = lua:fetch()
+                if fetchinfo then
+                    local includedirs = fetchinfo.includedirs or fetchinfo.sysincludedirs
+                    if includedirs and #includedirs > 0 then
+                        table.insert(configs, "-DLUA_INCLUDE_DIR=" .. includedirs[1])
+                    end
+                    local libfiles = fetchinfo.libfiles
+                    if libfiles and #libfiles > 0 then
+                        table.insert(configs, "-DLUA_LIBRARY=" .. libfiles[1])
+                    end
+                end
+            end
+            local sol2 = package:dep("sol2")
+            if sol2 then
+                local fetchinfo = sol2:fetch()
+                if fetchinfo then
+                    local includedirs = fetchinfo.includedirs or fetchinfo.sysincludedirs
+                    if includedirs and #includedirs > 0 then
+                        table.insert(configs, "-DSOL2_INCLUDE_DIRS=" .. includedirs[1])
+                    end
+                end
+            end
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DOMATH_BUILD_AS_SHARED_LIBRARY=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
