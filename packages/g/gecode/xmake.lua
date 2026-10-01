@@ -33,7 +33,7 @@ package("gecode")
         package:add("linkgroups", "gecodedriver", "gecodeminimodel", "gecodeflatzinc", "gecodefloat", "gecodeset", "gecodeint", "gecodesearch", "gecodekernel", "gecodesupport")
     end)
 
-    on_install("linux", "windows|!arm*", "cross", "android", function (package)
+    on_install("linux", "cross", "android", function (package)
         local configs = {}
         table.insert(configs, "-DGECODE_INSTALL=ON")
         table.insert(configs, "-DGECODE_ENABLE_EXAMPLES=OFF")
