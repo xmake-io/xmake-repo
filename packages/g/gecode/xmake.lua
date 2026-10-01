@@ -31,12 +31,19 @@ package("gecode")
             package:add("deps", "mpfr")
         end
         package:add("linkorders", "gecodekernel", "gecodesupport")
-        package:add("linkorders", "gecodedriver", "gecodekernel")
-        package:add("linkorders", "gecodedriver", "gecodesupport")
-        package:add("linkorders", "gecodeint", "gecodesupport")
-        package:add("linkorders", "gecodeset", "gecodesupport")
-        package:add("linkorders", "gecodeflatzinc", "gecodeset")
-        package:add("linkorders", "gecodeflatzinc", "gecodesupport")
+        package:add("linkorders", "gecodesearch", "gecodekernel")
+        package:add("linkorders", "gecodeint", "gecodesearch")
+        package:add("linkorders", "gecodeset", "gecodeint")
+        package:add("linkorders", "gecodefloat", "gecodeint")
+        package:add("linkorders", "gecodefloat", "gecodesearch")
+        package:add("linkorders", "gecodeflatzinc", "gecodefloat")
+        package:add("linkorders", "gecodeflatzinc",  "gecodeset")
+        package:add("linkorders", "gecodeminimodel", "gecodefloat")
+        package:add("linkorders", "gecodeminimodel",  "gecodeset")
+        package:add("linkorders", "gecodedriver", "gecodeminimodel")
+        package:add("linkorders", "gecodedriver", "gecodesearch")
+        package:add("linkorders", "gecodedriver", "gecodeint")
+        package:add("linkorders", "gecodedriver", "gecodefloat")
     end)
 
     on_install("linux", "windows|!arm*", "cross", "android", function (package)
@@ -63,12 +70,43 @@ package("gecode")
         assert(package:check_cxxsnippets({test = [[
             #include <gecode/driver.hh>
 
+            #include <gecode/int.hh>
+            #include <gecode/minimodel.hh>
+
             using namespace Gecode;
 
-            void test(int argc, char* argv[]){
-              SizeOptions opt("Test");
-              opt.size(0);
-              opt.parse(argc, argv);
+            class Alpha : public Script {
+            protected:
+              static const int n = 26;
+              IntVarArray le;
+            public:
+              Alpha(const Options& opt)
+                : Script(opt), le(*this,n,1,n) {
+                IntVar a(le[ 0]);
+
+                rel(*this, a == 45, opt.ipl());
+
+                distinct(*this, le, opt.ipl());
+
+                branch(*this, le, INT_VAR_NONE(), INT_VAL_MIN());
+              }
+              /// Constructor for cloning \a s
+              Alpha(Alpha& s) : Script(s) {
+                le.update(*this, s.le);
+              }
+              /// Copy during cloning
+              virtual Space* copy(void) {
+                return new Alpha(*this);
+              }
+            };
+
+            int main(int argc, char* argv[]) {
+              Options opt("Alpha");
+              opt.solutions(0);
+              opt.iterations(10);
+              opt.parse(argc,argv);
+              Script::run<Alpha,DFS,Options>(opt);
+              return 0;
             }
         ]]}, {configs = {languages = "c++17"}}))
     end)
