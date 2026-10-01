@@ -43,6 +43,10 @@ package("brpc")
         local configs = {"-DWITH_DEBUG_SYMBOLS=OFF", "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON", "-DWITH_SNAPPY=ON"}
         io.replace("CMakeLists.txt", 'set(CMAKE_CXX_FLAGS "${CMAKE_CPP_FLAGS}', 'set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CPP_FLAGS}', {plain = true})
         io.replace("CMakeLists.txt", 'set(CMAKE_C_FLAGS "${CMAKE_CPP_FLAGS}', 'set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${CMAKE_CPP_FLAGS}', {plain = true})
+        if package:version() and package:version():ge("1.18.0") then
+            -- Avoid __int128 redefinition errors in GCC 16's libstdc++ headers.
+            io.replace("CMakeLists.txt", " -D__STRICT_ANSI__", "", {plain = true})
+        end
         import("package.tools.cmake").install(package, configs, {packagedeps = "zlib"})
         if not package:config("shared") then
             os.rm(package:installdir("lib/*.dylib"))
