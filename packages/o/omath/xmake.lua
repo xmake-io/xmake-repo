@@ -59,7 +59,7 @@ package("omath")
             package:add("deps", "lua", "sol2")
             package:add("defines", "OMATH_ENABLE_LUA")
         end
-        if is_plat("windows", "linux", "mingw") and package:config("hook") then
+        if package:is_plat("windows", "linux", "mingw") and package:config("hook") then
             package:add("deps", "safetyhook")
             package:add("defines", "OMATH_ENABLE_HOOKING")
         end
