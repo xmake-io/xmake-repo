@@ -25,12 +25,12 @@ package("safetyhook")
                 assert(vs_toolset and semver.new(vs_toolset):minor() >= 30, "package(safetyhook): need vs_toolset >= v143")
             end
         end
-        if not package:is_arch("i386", "x86", "x64", "x86_64") then 
+        if not package:is_arch("i386", "x86", "x64", "x86_64") then
             raise("package(safetyhook) only support x86 arch")
         end
     end)
 
-    on_install("windows", "linux", "mingw", "msys", function (package)
+    on_install("!wasm and !iphoneos", function (package)
         local configs = {"-DSAFETYHOOK_FETCH_ZYDIS=OFF", "-DSAFETYHOOK_BUILD_TEST=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
