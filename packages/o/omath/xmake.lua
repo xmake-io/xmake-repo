@@ -18,7 +18,9 @@ package("omath")
     add_configs("supp", {description = "Supress some safety checks in release build to improve general performance", default = true, type = "boolean"})
     add_configs("inline", {description = "Force compiler to make some functions to be force inlined", default = true, type = "boolean"})
     add_configs("lua", {description = "Omath bindings for lua", default = true, type = "boolean"})
-    add_configs("hook", {description = "omath will HooksManager that can hook DirectX/OpenGL automatically", default = true, type = "boolean"})
+    if is_plat("windows", "linux", "mingw") then
+        add_configs("hook", {description = "omath will HooksManager that can hook DirectX/OpenGL automatically", default = true, type = "boolean"})
+    end
     add_configs("cppm", {description = "Build omath C++ module interface", default = true, type = "boolean"})
 
     add_deps("cmake")
@@ -57,7 +59,7 @@ package("omath")
             package:add("deps", "lua", "sol2")
             package:add("defines", "OMATH_ENABLE_LUA")
         end
-        if package:config("hook") then
+        if is_plat("windows", "linux", "mingw") and package:config("hook") then
             package:add("deps", "safetyhook")
             package:add("defines", "OMATH_ENABLE_HOOKING")
         end
