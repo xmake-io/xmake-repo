@@ -6,6 +6,7 @@ package("vexcl")
 
     add_urls("https://github.com/ddemidov/vexcl/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ddemidov/vexcl.git")
+    add_versions("1.4.3", "c9f2a429dc4454e69332cc8b7fbaa5adcd831bce1267fcc1f19e1c110d82deb8")
     add_versions("1.4.2", "3a2be30e303c4f44a269ca85de48f1a628127012f18abee0aa82c0c2cbb0e0c8")
 
     add_deps("cmake")
