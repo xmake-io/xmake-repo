@@ -34,7 +34,11 @@ package("xxhash")
                 table.insert(configs, "-DDISPATCH=ON")
             end
 
-            os.cd("cmake_unofficial")
+            if os.isdir("build/cmake") then
+                os.cd("build/cmake")
+            else
+                os.cd("cmake_unofficial")
+            end
             import("package.tools.cmake").install(package, configs)
         else
             io.writefile("xmake.lua", [[
