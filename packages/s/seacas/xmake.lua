@@ -7,6 +7,7 @@ package("seacas")
     add_urls("https://github.com/sandialabs/seacas/archive/refs/tags/$(version).tar.gz", {version = function (version) 
         return "v" .. version:gsub("%.", "-")
     end})
+    add_versions("2026-08-11", "9010d5fe17e14f556ae2a065573ab297bd861738742ead92895025d27fec31bb")
     add_versions("2025.08.28", "29125a84859c78b6bb0b5909ce7443aa2774235f0fc75dedf467a223603e0ffd")
     add_versions("2025.10.14", "f9351a8f1a555a015020f249b1e5c26a282fbb6e274f9b71eb38720d61267dda")
 
