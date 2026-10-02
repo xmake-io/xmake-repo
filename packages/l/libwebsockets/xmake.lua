@@ -8,6 +8,7 @@ package("libwebsockets")
         add_urls("https://github.com/warmcat/libwebsockets/archive/refs/tags/$(version).tar.gz")
     end
 
+    add_versions("v5.0.0", "f853c6582101cfcee3a5a9e28ae92ab19d9735c5f31f0bb2e9794b5106123962")
     add_versions("v4.5.8", "b6ade658f4af3a823d0dc806ae5ef0623f0f4f5e2aeb895a0f77c4783840c30e")
     add_versions("v4.5.2", "04244efb7a6438c8c6bfc79b21214db5950f72c9cf57e980af57ca321aae87b2")
     add_versions("v4.4.1", "472e6cfa77b6f80ff2cc176bc59f6cb2856df7e30e8f31afcbd1fc94ffd2f828")
