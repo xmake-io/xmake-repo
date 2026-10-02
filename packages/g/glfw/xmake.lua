@@ -6,6 +6,7 @@ package("glfw")
     add_urls("https://github.com/glfw/glfw/archive/refs/tags/$(version).tar.gz",
              "https://github.com/glfw/glfw.git")
 
+    add_versions("3.5.1", "5234f4f29473e9a06bc7847d8371858dd135d38466eeeaa652fdc9f8f9ff0c20")
     add_versions("3.3.2", "98768e12e615fbe9f3386f5bbfeb91b5a3b45a8c4c77159cef06b1f6ff749537")
     add_versions("3.3.4", "cc8ac1d024a0de5fd6f68c4133af77e1918261396319c24fd697775a6bc93b63")
     add_versions("3.3.5", "32fdb8705784adfe3082f97e0d41e7c515963e977b5a14c467a887cf0da827b5")
