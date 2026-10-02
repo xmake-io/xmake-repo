@@ -55,45 +55,20 @@ package("gecode")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <gecode/driver.hh>
-
-            #include <gecode/int.hh>
-            #include <gecode/minimodel.hh>
-
             using namespace Gecode;
 
-            class Alpha : public Script {
+            class Test : public Script {
             protected:
-              static const int n = 26;
               IntVarArray le;
             public:
-              Alpha(const Options& opt)
-                : Script(opt), le(*this,n,1,n) {
-                IntVar a(le[ 0]);
-
-                rel(*this, a == 45, opt.ipl());
-
-                distinct(*this, le, opt.ipl());
-
-                branch(*this, le, INT_VAR_NONE(), INT_VAL_MIN());
-              }
-              /// Constructor for cloning \a s
-              Alpha(Alpha& s) : Script(s) {
-                le.update(*this, s.le);
-              }
-              /// Copy during cloning
+              Test(const Options& opt): Script(opt), le(*this,0,1,0) {}
               virtual Space* copy(void) {
-                return new Alpha(*this);
+                return nullptr;
               }
             };
 
-            int main(int argc, char* argv[]) {
-              Options opt("Alpha");
-              opt.solutions(0);
-              opt.iterations(10);
-              opt.parse(argc,argv);
-              Script::run<Alpha,DFS,Options>(opt);
-              return 0;
+            void test() {
+              Script::run<Test,DFS,Options>("Test");
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = {languages = "c++17"}, includes = "gecode/driver.hh"}))
     end)
