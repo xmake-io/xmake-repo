@@ -33,6 +33,15 @@ package("nzsl")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
+    if on_check then
+        on_check("mingw", function (package)
+            if package:is_arch("i386", "x86") then
+                -- nzsl relies on fmt that's currently not supported on MinGW 32bits
+                raise("package(nzsl) unsupported on mingw/i386")
+            end
+        end)
+    end
+
     on_load(function (package)
         package:addenv("PATH", "bin")
         if not package:config("shared") then
@@ -47,12 +56,7 @@ package("nzsl")
         if package:config("nzslc") then
             package:add("deps", "cxxopts >=3.1.1", "nlohmann_json", {private = true})
         end
-        -- fmt >= 12.2 is no supported on mingw/i386
-        if package:is_plat("mingw") and package:is_arch("i386", "x86") then
-            package:add("deps", "fmt <12.2", {private = package:config("shared")})
-        else
-            package:add("deps", "fmt", {private = package:config("shared")})
-        end
+        package:add("deps", "fmt", {private = package:config("shared")})
     end)
 
     on_install(function (package)
