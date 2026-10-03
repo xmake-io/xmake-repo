@@ -49,9 +49,9 @@ package("nzsl")
         end
         -- fmt >= 12.2 is no supported on mingw/i386
         if package:is_plat("mingw") and package:is_arch("i386", "x86") then
-            package:add("deps", "fmt <12.2", {private = not package:config("shared")})
+            package:add("deps", "fmt <12.2", {private = package:config("shared")})
         else
-            package:add("deps", "fmt", {private = not package:config("shared")})
+            package:add("deps", "fmt", {private = package:config("shared")})
         end
     end)
 
