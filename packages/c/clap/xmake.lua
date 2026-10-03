@@ -1,4 +1,5 @@
 package("clap")
+    set_kind("library", {headeronly = true})
     set_homepage("https://cleveraudio.org/")
     set_description("cross plat Audio Plugin API")
     
@@ -10,7 +11,6 @@ package("clap")
 
     on_install(function (package)
         local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
     end)
     
