@@ -42,7 +42,7 @@ package("libopusenc")
                 add_rules("utils.install.cmake_importfiles")
                 add_rules("utils.install.pkgconfig_importfiles")
                 if is_plat("windows", "mingw") and is_kind("shared") then
-                    add_defines("DLL_EXPORT")
+                    add_rules("utils.symbols.export_all")
                 end
         ]], package:version():shortstr()))
         import("package.tools.xmake").install(package)
