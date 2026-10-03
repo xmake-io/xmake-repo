@@ -15,7 +15,7 @@ package("mir")
     
     add_deps("curl","libcurl")
         
-    on_install(function (package)
+    on_install("linux", "macosx", "android|arm64-v8a", "bsd",function (package)
         local configs = {
             "-DBUILD_TESTING=OFF",
             "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
