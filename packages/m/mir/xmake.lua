@@ -13,7 +13,7 @@ package("mir")
         add_syslinks("m", "pthread")
     end
     
-    add_deps("curl","libcurl")
+    add_deps("curl" , "libcurl")
         
     on_install("linux", "macosx", "android|arm64-v8a",function (package)
         local configs = {
@@ -50,11 +50,7 @@ package("mir")
         local includedir = package:installdir("include")
         os.mkdir(includedir)
         for _, header in ipairs({
-            "mir.h",
-            "mir-dlist.h",
-            "mir-gen.h",
-            "mir-htab.h",
-            "mir-varr.h",
+            "mir*.h",
             "c2mir/c2mir.h"
         }) do
             os.cp(header, includedir)
@@ -64,4 +60,3 @@ package("mir")
     on_test(function (package)
         assert(package:has_cfuncs("MIR_init", {includes = "mir.h"}))
     end)
-package_end()
