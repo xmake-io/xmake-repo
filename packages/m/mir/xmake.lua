@@ -15,7 +15,11 @@ package("mir")
     
     add_deps("curl","libcurl","libedit")
     
-    on_install(function (package)
+    if is_plat("mingw") then
+        add_deps("libsystre")
+    end
+    
+    on_install("!android|!iphoneos|!windows",function (package)
         local configs = {
             "-DBUILD_TESTING=OFF",
             "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
