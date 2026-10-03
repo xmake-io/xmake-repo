@@ -13,13 +13,13 @@ package("mir")
         add_syslinks("m", "pthread")
     end
     
-    add_deps("curl","libcurl","libedit")
+    add_deps("curl","libcurl")
     
     if is_plat("mingw") then
         add_deps("libsystre")
     end
     
-    on_install("linux","macosx","android|arm64-v8a",function (package)
+    on_install(function (package)
         local configs = {
             "-DBUILD_TESTING=OFF",
             "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
