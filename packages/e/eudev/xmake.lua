@@ -6,6 +6,7 @@ package("eudev")
     add_urls("https://github.com/eudev-project/eudev/archive/refs/tags/$(version).tar.gz",
              "https://github.com/eudev-project/eudev.git")
 
+    add_versions("v3.2.15", "d5e430930f36a0e8d2ef475b775e46bd37ee3a8fc23e35c5125ead1f711bfc07")
     add_versions("v3.2.14", "c340e6c51dfc5531ac0c0fa84a34b72162acf525f9023eb9cf4931b782c8f177")
     add_versions("v3.2.9", "7d281276b480da3935d1acb239748c2c9db01a8043aad7e918ce57a223d8cd24")
 
