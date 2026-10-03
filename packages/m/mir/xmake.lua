@@ -3,7 +3,7 @@ package("mir")
     set_description("A lightweight JIT compiler framework based on a medium-level internal representation")
     set_license("MIT")
 
-    set_urls("https://github.com/vnmakarov/mir/archive/refs/tags/$(version).zip","https://github.com/vnmakarov/mir.git")
+    set_urls("https://github.com/vnmakarov/mir/archive/refs/tags/$(version).zip")
     add_versions("v1.0.0", "08d27e8bd46ddded8567cb17dc384f817044ca0058285ecda22f8ce99ebd80ba")
 
     add_links("mir")
