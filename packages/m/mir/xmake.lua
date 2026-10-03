@@ -27,6 +27,16 @@ package("mir")
             table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
         end
 
+        io.replace(
+        "CMakeLists.txt",
+        "add_executable %(mir%-run[^%)]+%)","# %0",{plain = false})
+        
+        io.replace(
+        "CMakeLists.txt",
+        "target_link_libraries%(mir%-run[^%)]+%)",
+        "# %0",
+        {plain = false})
+
         local target = package:config("shared") and "mir_shared" or "mir_static"
         import("package.tools.cmake").build(package, configs, {target = target})
 
