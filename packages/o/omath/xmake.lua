@@ -5,7 +5,10 @@ package("omath")
 
     add_urls("https://git.libomath.org/orange/omath/archive/$(version).tar.gz")
 
+    add_versions("v5.7.0", "f5ddca871dee3aab70c9ac324a671dc366d901ed57dd0df3cada5df2aaca2b42")
     add_versions("v5.6.0", "48cdf091451e7b999c0c49c7e979fdf61238bcadccd84a8be13135b8548f18c3")
+
+    add_patches("v5.7.0", "patches/fix-m-lib.diff", "3686e4f02ccb21ca4dd4347fa128f6ab88ccf2a62cbce33fde76923dfbdc9156")
     add_patches("v5.6.0", "patches/fix-m-lib.diff", "3686e4f02ccb21ca4dd4347fa128f6ab88ccf2a62cbce33fde76923dfbdc9156")
 
     if is_plat("windows") then
