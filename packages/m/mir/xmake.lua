@@ -13,7 +13,7 @@ package("mir")
         add_syslinks("m", "pthread")
     end
     
-    add_deps("curl")
+    add_deps("curl","libcurl")
     
     on_install(function (package)
         local configs = {
