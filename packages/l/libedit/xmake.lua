@@ -3,9 +3,10 @@ package("libedit")
     set_description("Autotool- and libtoolized port of the NetBSD Editline library (libedit).")
     set_license("BSD-3-Clause")
 
-    add_urls("https://thrysoee.dk/editline/libedit-20240808-$(version).tar.gz")
+    add_urls("https://thrysoee.dk/editline/libedit-$(version).tar.gz")
 
-    add_versions("3.1", "5f0573349d77c4a48967191cdd6634dd7aa5f6398c6a57fe037cc02696d6099f")
+    add_versions("20260512-3.1", "432d5e7ea8b0116dd39f2eca7bc11d0eed77faa6b77ea526ace89907c23ea4a0")
+    add_versions("20240808-3.1", "5f0573349d77c4a48967191cdd6634dd7aa5f6398c6a57fe037cc02696d6099f")
 
     add_configs("terminal_db", {description = "Select terminal library", default = "ncurses", type = "string", values = {"termcap", "ncurses", "tinfo"}})
 
