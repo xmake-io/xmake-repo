@@ -14,11 +14,7 @@ package("mir")
     end
     
     add_deps("curl","libcurl")
-    
-    if is_plat("mingw") then
-        add_deps("libsystre")
-    end
-    
+        
     on_install(function (package)
         local configs = {
             "-DBUILD_TESTING=OFF",
