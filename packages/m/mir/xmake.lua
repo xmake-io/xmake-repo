@@ -51,8 +51,6 @@ package("mir")
         os.mkdir(includedir)
         for _, header in ipairs({
             "mir.h",
-            "mir-alloc.h",
-            "mir-code-alloc.h",
             "mir-dlist.h",
             "mir-gen.h",
             "mir-htab.h",
