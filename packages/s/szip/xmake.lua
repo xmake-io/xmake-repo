@@ -1,6 +1,6 @@
 package("szip")
 
-    set_homepage("https://support.hdfgroup.org/doc_resource/SZIP/")
+    set_homepage("https://docs.hdfgroup.org/archive/support/doc_resource/SZIP/index.html")
     set_description("Szip is an implementation of the extended-Rice lossless compression algorithm.")
 
     add_urls("https://support.hdfgroup.org/ftp/lib-external/szip/$(version)/src/szip-$(version).tar.gz")

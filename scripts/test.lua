@@ -2,6 +2,7 @@
 import("test_addons")
 import("test_templates")
 import("test_packages")
+import("check_versions")
 
 -- get the arguments of the addon tests
 --
@@ -35,6 +36,10 @@ function main(...)
     local run_packages = false
     local run_templates = false
     local run_addons = false
+
+    -- the new versions must be valid semantic versions, we check them first
+    -- @see https://github.com/xmake-io/xmake/issues/7748
+    check_versions()
 
     -- only test the addons? e.g. xmake l scripts/test.lua --addon esp32-devel
     if table.contains(argv, "--addon") then

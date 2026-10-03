@@ -1,5 +1,5 @@
 package("libpqxx")
-    set_homepage("http://pqxx.org/libpqxx/")
+    set_homepage("https://pqxx.org/libpqxx/")
     set_description("The official C++ client API for PostgreSQL.")
     set_license("BSD-3-Clause")
 

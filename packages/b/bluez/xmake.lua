@@ -1,5 +1,5 @@
 package("bluez")
-    set_homepage("http://www.bluez.org")
+    set_homepage("https://bluez.github.io/")
     set_description("Library for the Bluetooth protocol stack for Linux")
     set_license("GPL-2.0-or-later")
 

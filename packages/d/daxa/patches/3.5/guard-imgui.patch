@@ -1,0 +1,46 @@
+diff --git a/src/utils/impl_task_graph_mk2.cpp b/src/utils/impl_task_graph_mk2.cpp
+index 4757928..8235d86 100644
+--- a/src/utils/impl_task_graph_mk2.cpp
++++ b/src/utils/impl_task_graph_mk2.cpp
+@@ -3388,6 +3388,7 @@ namespace daxa
+             }
+         }
+ 
++#if DAXA_BUILT_WITH_UTILS_IMGUI
+         /// =======================
+         /// ==== DEBUG UI HOOK ====
+         /// =======================
+@@ -3397,6 +3398,7 @@ namespace daxa
+         {
+             debug_ui_context = nullptr; // We only care about the debug ui when there are active attachment viewers.
+         }
++#endif
+ 
+         /// ====================================
+         /// ==== RECORD AND SUBMIT COMMANDS ====
+@@ -3619,10 +3621,12 @@ namespace daxa
+                                 .name = task.name.data(),
+                             });
+                         }
++#if DAXA_BUILT_WITH_UTILS_IMGUI
+                         if (debug_ui_context)
+                         {
+                             task_resource_viewer_debug_ui_hook(*debug_ui_context, &impl, task_i, interface, true);
+                         }
++#endif
+                         if (impl.info.pre_task_callback)
+                         {
+                             impl.info.pre_task_callback(interface);
+@@ -3632,10 +3636,12 @@ namespace daxa
+                         {
+                             impl.info.post_task_callback(interface);
+                         }
++#if DAXA_BUILT_WITH_UTILS_IMGUI
+                         if (debug_ui_context)
+                         {
+                             task_resource_viewer_debug_ui_hook(*debug_ui_context, &impl, task_i, interface, false);
+                         }
++#endif
+                         if (impl.info.enable_command_labels)
+                         {
+                             impl_runtime.recorder.end_label();

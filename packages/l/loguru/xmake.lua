@@ -5,6 +5,7 @@ package("loguru")
 
     add_urls("https://github.com/emilk/loguru/archive/refs/tags/$(version).tar.gz",
              "https://github.com/emilk/loguru.git")
+    add_versions("v2.2.0", "519731aa253566048e89523343c39c46efa1c86b2ca1fb9df20343f8744b11ee")
     add_versions("v2.1.0", "1a3be62ebec5609af60b1e094109a93b7412198b896bb88f31dcfe4d95b79ce7")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})

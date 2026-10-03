@@ -6,6 +6,7 @@ package("aws-c-http")
     add_urls("https://github.com/awslabs/aws-c-http/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-http.git")
 
+    add_versions("v1.0.0", "ae992d9f24a88430cdd4b7538fab565e71faedb1f156f38d6a74f2a77269417f")
     add_versions("v0.11.1", "2988843d5c95d92249d40e59480c2a4376533a91d8e38a5106dc4da5a8720ce5")
     add_versions("v0.11.0", "4ccbdd33c798b590288330dec9e93abe2ff6cfb198b7a4db036c9d362f2e6506")
     add_versions("v0.10.15", "37e7f9806b2877671cfa2bde078c50b78a358f35ef5a07f7bd2ca1beab5b5a9f")
@@ -27,7 +28,6 @@ package("aws-c-http")
     add_versions("v0.8.7", "173ed7634c87485c2defbd9a96a246a79ec3f3659b28b235ac38e6e92d67392a")
     add_versions("v0.8.2", "a76ba75e59e1ac169df3ec00c0d1c453db1a4db85ee8acd3282a85ee63d6b31c")
     add_versions("v0.8.1", "83fb47e2d7956469bb328f16dea96663e96f8f20dc60dc4e9676b82804588530")
-    add_versions("v0.7.12", "0f92f295c96e10aa9c1e66ac73c038ee9d9c61e1be7551e721ee0dab9c89fc6f")
 
     add_deps("cmake")
     add_deps("aws-c-compression")

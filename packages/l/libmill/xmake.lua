@@ -1,5 +1,5 @@
 package("libmill")
-    set_homepage("http://libmill.org")
+    set_homepage("https://libmill.org/")
     set_description("Go-style concurrency in C")
 
     set_urls("https://github.com/sustrik/libmill.git")

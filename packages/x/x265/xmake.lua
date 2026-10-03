@@ -1,5 +1,5 @@
 package("x265")
-    set_homepage("http://x265.org")
+    set_homepage("https://www.x265.org/")
     set_description("A free software library and application for encoding video streams into the H.265/MPEG-H HEVC compression format.")
     set_license("GPL-2.0")
 

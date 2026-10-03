@@ -1,0 +1,212 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a489b30..eebfc6d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -183,10 +183,10 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+ 
+     find_package(PkgConfig)
+     if(PkgConfig_FOUND)
+-        pkg_check_modules(WAYLAND_CLIENT wayland-client)
+-        pkg_check_modules(WAYLAND_CURSOR wayland-cursor)
+-        pkg_check_modules(WAYLAND_EGL wayland-egl)
+-        pkg_check_modules(XKBCOMMON xkbcommon)
++        pkg_check_modules(WAYLAND_CLIENT IMPORTED_TARGET wayland-client)
++        pkg_check_modules(WAYLAND_CURSOR IMPORTED_TARGET wayland-cursor)
++        pkg_check_modules(WAYLAND_EGL IMPORTED_TARGET wayland-egl)
++        pkg_check_modules(XKBCOMMON IMPORTED_TARGET xkbcommon)
+ 
+         if(WAYLAND_CLIENT_FOUND AND WAYLAND_CURSOR_FOUND AND WAYLAND_EGL_FOUND AND XKBCOMMON_FOUND)
+             target_compile_definitions(daxa
+@@ -195,17 +195,14 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+             )
+             target_include_directories(daxa
+                     PRIVATE
+-                    ${WAYLAND_CLIENT_INCLUDE_DIRS}
+-                    ${WAYLAND_CURSOR_INCLUDE_DIRS}
+-                    ${WAYLAND_EGL_INCLUDE_DIRS}
+-                    ${XKBCOMMON_INCLUDE_DIRS}
++
+             )
+             target_link_libraries(daxa
+                     PRIVATE
+-                    ${WAYLAND_CLIENT_LIBRARIES}
+-                    ${WAYLAND_CURSOR_LIBRARIES}
+-                    ${WAYLAND_EGL_LIBRARIES}
+-                    ${XKBCOMMON_LIBRARIES}
++                    PkgConfig::WAYLAND_CLIENT
++                    PkgConfig::WAYLAND_CURSOR
++                    PkgConfig::WAYLAND_EGL
++                    PkgConfig::XKBCOMMON
+             )
+             message(STATUS "Found wayland-client, version ${WAYLAND_CLIENT_VERSION}")
+             message(STATUS "Found wayland-cursor, version ${WAYLAND_CURSOR_VERSION}")
+diff --git a/src/utils/impl_resource_viewer.cpp b/src/utils/impl_resource_viewer.cpp
+index 9dcc807..108b20c 100644
+--- a/src/utils/impl_resource_viewer.cpp
++++ b/src/utils/impl_resource_viewer.cpp
+@@ -956,7 +956,7 @@ namespace daxa
+             // Everything must begin with a struct keyword.
+             if(! work_code.starts_with("struct"))
+             {
+-                result.error_message = std::format("Expected 'struct' keyword got \"{}...\"", work_code.substr(0, std::min(work_code.size(), 20ull)));
++                result.error_message = std::format("Expected 'struct' keyword got \"{}...\"", work_code.substr(0, std::min(work_code.size(), size_t{20})));
+                 return result;
+             }
+             // Skip struct keyword.
+@@ -979,7 +979,7 @@ namespace daxa
+             // Expect opening brace.
+             if(! work_code.starts_with("{"))
+             {
+-                result.error_message = std::format("Expected '{{' after struct name '{}', got \"{}...\"", struct_name, work_code.substr(0, std::min(work_code.size(), 20ull)));
++                result.error_message = std::format("Expected '{{' after struct name '{}', got \"{}...\"", struct_name, work_code.substr(0, std::min(work_code.size(), size_t{20})));
+                 return result;
+             }
+             work_code = work_code.substr(1);
+@@ -994,7 +994,7 @@ namespace daxa
+                     work_code = work_code.substr(1);
+                     if(!work_code.starts_with(";"))
+                     {
+-                        result.error_message = std::format("Expected ';' after closing '}}' of struct '{}', got \"{}...\"", struct_name, work_code.substr(0, std::min(work_code.size(), 20ull)));
++                        result.error_message = std::format("Expected ';' after closing '}}' of struct '{}', got \"{}...\"", struct_name, work_code.substr(0, std::min(work_code.size(), size_t{20})));
+                         return result;
+                     }
+                     work_code = work_code.substr(1);
+@@ -1026,7 +1026,7 @@ namespace daxa
+                     pointer_depth = 1;
+                     if(!member_type.ends_with(")"))
+                     {
+-                        result.error_message = std::format("Expected closing ')' for buffer pointer type in struct '{}', got \"{}...\"", struct_name, work_code.substr(0, std::min(work_code.size(), 20ull)));
++                        result.error_message = std::format("Expected closing ')' for buffer pointer type in struct '{}', got \"{}...\"", struct_name, work_code.substr(0, std::min(work_code.size(), size_t{20})));
+                         return result;
+                     }
+                     member_type.remove_prefix(member_type.find('(') + 1);
+@@ -1137,7 +1137,7 @@ namespace daxa
+ 
+                 if(!work_code.starts_with(";"))
+                 {
+-                    result.error_message = std::format("Expected ';' after member declaration of '{}' in struct '{}', got \"{}...\"", member_name, struct_name, work_code.substr(0, std::min(work_code.size(), 20ull)));
++                    result.error_message = std::format("Expected ';' after member declaration of '{}' in struct '{}', got \"{}...\"", member_name, struct_name, work_code.substr(0, std::min(work_code.size(), size_t{20})));
+                     return result;
+                 }
+                 work_code = work_code.substr(1);
+diff --git a/src/utils/impl_resource_viewer.hpp b/src/utils/impl_resource_viewer.hpp
+index 1c5e1b9..1e0b124 100644
+--- a/src/utils/impl_resource_viewer.hpp
++++ b/src/utils/impl_resource_viewer.hpp
+@@ -90,7 +90,7 @@ namespace daxa
+             ImageId clone_image = {};
+             ImageId destroy_display_image = {}; // mini deletion queue
+             ImageId destroy_clone_image = {};   // mini deletion queue
+-            void * imgui_image_id = {};
++            unsigned long long imgui_image_id = {};
+             union { f32 _f32; i32 _i32; u32 _u32; } min_display_value = { ._u32 = {} };
+             union { f32 _f32; i32 _i32; u32 _u32; } max_display_value = { ._u32 = {} };
+             i32 rainbow_ints = false;
+diff --git a/src/utils/impl_task_graph.cpp b/src/utils/impl_task_graph.cpp
+index 27d295a..8db49c5 100644
+--- a/src/utils/impl_task_graph.cpp
++++ b/src/utils/impl_task_graph.cpp
+@@ -1113,7 +1113,7 @@ namespace daxa
+                                                                                          {
+                 auto actual_size = ti.info(TaskBufferAttachmentIndex{0}).value().size;
+                 DAXA_DBG_ASSERT_TRUE_M(cinfo.offset < actual_size, "clear buffer offset must be smaller then actual buffer size");
+-                auto size = std::min(actual_size, cinfo.size) - cinfo.offset;
++                auto size = std::min<u64>(actual_size, cinfo.size) - cinfo.offset;
+                 ti.recorder.clear_buffer(BufferClearInfo{
+                     .buffer = ti.get(TaskBufferAttachmentIndex{0}).id,
+                     .offset = cinfo.offset,
+@@ -1390,7 +1390,7 @@ namespace daxa
+                 }
+                 if (attachment_info.value.buffer.shader_access_type == TaskBufferShaderAccessType::ADDRESS)
+                 {
+-                    current_offset = align_up(current_offset, sizeof(DeviceAddress));
++                    current_offset = align_up<u64>(current_offset, sizeof(DeviceAddress));
+                     additional_size = sizeof(DeviceAddress);
+ 
+                     DeviceAddress address = {};
+@@ -1403,7 +1403,7 @@ namespace daxa
+                 }
+                 else
+                 {
+-                    current_offset = align_up(current_offset, sizeof(BufferId));
++                    current_offset = align_up<u64>(current_offset, sizeof(BufferId));
+                     additional_size = sizeof(BufferId);
+ 
+                     BufferId id = {};
+@@ -1431,7 +1431,7 @@ namespace daxa
+                 }
+                 if (attachment_info.value.tlas.shader_access_type == TaskBufferShaderAccessType::ADDRESS)
+                 {
+-                    current_offset = align_up(current_offset, sizeof(DeviceAddress));
++                    current_offset = align_up<u64>(current_offset, sizeof(DeviceAddress));
+                     additional_size = sizeof(DeviceAddress);
+ 
+                     DeviceAddress address = {};
+@@ -1444,7 +1444,7 @@ namespace daxa
+                 }
+                 else
+                 {
+-                    current_offset = align_up(current_offset, sizeof(TlasId));
++                    current_offset = align_up<u64>(current_offset, sizeof(TlasId));
+                     additional_size = sizeof(TlasId);
+ 
+                     TlasId id = {};
+@@ -1469,13 +1469,13 @@ namespace daxa
+                 }
+                 if (attachment_info.value.image.shader_as_index)
+                 {
+-                    current_offset = align_up(current_offset, sizeof(ImageViewIndex));
++                    current_offset = align_up<u64>(current_offset, sizeof(ImageViewIndex));
+                     additional_size = sizeof(ImageViewIndex) * attachment_info.value.image.shader_array_size;
+                     task.attachment_shader_blob_sections[attach_i].image_view_indices = {reinterpret_cast<ImageViewIndex *>(task.attachment_shader_blob.data() + current_offset), attachment_info.value.image.shader_array_size};
+                 }
+                 else
+                 {
+-                    current_offset = align_up(current_offset, sizeof(ImageViewId));
++                    current_offset = align_up<u64>(current_offset, sizeof(ImageViewId));
+                     additional_size = sizeof(ImageViewId) * attachment_info.value.image.shader_array_size;
+                     task.attachment_shader_blob_sections[attach_i].image_view_ids = {reinterpret_cast<ImageViewId *>(task.attachment_shader_blob.data() + current_offset), attachment_info.value.image.shader_array_size};
+                 }
+@@ -2737,8 +2737,8 @@ namespace daxa
+             return r0_lifetime > r1_lifetime; });
+ 
+         // Calculate transient heap size and allocation offsets.
+-        auto resource_heap_size = 0ull;
+-        auto resource_heap_alignment = 0ull;
++        VkDeviceSize resource_heap_size = 0;
++        VkDeviceSize resource_heap_alignment = 0;
+         auto resource_heap_memory_bits = ~0u;
+         struct NonExternalResourceAllocation
+         {
+diff --git a/src/utils/impl_task_graph_ui.cpp b/src/utils/impl_task_graph_ui.cpp
+index c462b6c..340219e 100644
+--- a/src/utils/impl_task_graph_ui.cpp
++++ b/src/utils/impl_task_graph_ui.cpp
+@@ -414,11 +414,11 @@ namespace daxa
+             }
+             else
+             {
+-                for (u32 i = 0; i < std::min(255ull, resource.name.size()); ++i)
++                for (u32 i = 0; i < std::min<size_t>(255, resource.name.size()); ++i)
+                 {
+                     ui_context.resource_name_search[i] = resource.name[i];
+                 }
+-                ui_context.resource_name_search[std::min(255ull, resource.name.size())] = 0;
++                ui_context.resource_name_search[std::min<size_t>(255, resource.name.size())] = 0;
+             }
+         }
+     }
+@@ -479,11 +479,11 @@ namespace daxa
+             }
+             else
+             {
+-                for (u32 i = 0; i < std::min(255ull, task.name.size()); ++i)
++                for (u32 i = 0; i < std::min<size_t>(255, task.name.size()); ++i)
+                 {
+                     ui_context.task_name_search[i] = task.name[i];
+                 }
+-                ui_context.task_name_search[std::min(255ull, task.name.size())] = 0;
++                ui_context.task_name_search[std::min<size_t>(255, task.name.size())] = 0;
+             }
+         }
+     }

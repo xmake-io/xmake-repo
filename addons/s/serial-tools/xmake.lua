@@ -6,6 +6,7 @@ package("serial-tools")
     add_urls("https://github.com/xmake-addons/serial-tools/archive/refs/tags/$(version).tar.gz",
              "https://github.com/xmake-addons/serial-tools.git")
     add_versions("v1.0.3", "0504b8fdeaaef31583ea6edb525e84efa06850ee5ce592dbb8368c099af8b4e8")
+    add_versions("v1.0.4", "fdd23f49ffc8cce31d9d6aba4047f188fddb72c343cf3454d01adca6c5e441ba")
 
     on_test(function (package)
         assert(package:has_addon({plugins = "monitor", modules = "serial"}))

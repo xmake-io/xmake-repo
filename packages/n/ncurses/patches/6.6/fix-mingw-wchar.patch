@@ -1,0 +1,10 @@
+--- a/ncurses/curses.priv.h
++++ b/ncurses/curses.priv.h
+@@ -2295,6 +2295,7 @@
+ /*
+  * MinGW has wide-character functions, but they do not work correctly.
+  */
++#include <wchar.h>
+ extern int __MINGW_NOTHROW _nc_wctomb(char *, wchar_t);
+ #define wctomb(s,wc) _nc_wctomb(s,wc)
+ #define wcrtomb(s,wc,n) _nc_wctomb(s,wc)

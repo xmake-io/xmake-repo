@@ -16,7 +16,11 @@ package("rewolf-wow64ext")
     add_patches("v1.0.0+9", "patches/v1.0.0+9/fix-mingw.patch", "d6cc4844ff4607ab450bc594792dd07594de1ecd9961e3f551350cb41ea8c23f")
     add_patches("2022.09.26", "patches/2022.09.26/fix-mingw.patch", "7920999af8511066db3a5a2641e074f7d2bc81caf4f3fc31f370fb2843ac9be0")
 
-    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+    on_load(function (package)
+        if not package:config("shared") then
+            package:add("defines", "WOW64EXT_STATIC")
+        end
+    end)
 
     if on_check then
         on_check(function (package)
@@ -28,8 +32,32 @@ package("rewolf-wow64ext")
 
     on_install("windows", "mingw", function (package)
         io.replace("src/wow64ext.cpp", [[#include <Windows.h>]], [[#include <windows.h>]], {plain = true})
-        if package:is_plat("mingw") then
+        -- Avoid colliding with the Windows SDK's non-template _CLIENT_ID.
+        io.replace("src/wow64ext.h", "_CLIENT_ID", "_WOW64EXT_CLIENT_ID", {plain = true})
+        if not package:config("shared") then
+            -- A static library uses the consumer's CRT and has no DllMain.
+            io.replace("src/wow64ext.cpp", "#include <cstddef>",
+                       "#include <cstddef>\n#include <cstdlib>\n#include <winternl.h>", {plain = true})
+            io.gsub("src/wow64ext.cpp", "HANDLE g_heap;.-#pragma warning%(push%)", [[
+                BOOL g_isWow64 = [] {
+                    BOOL result = FALSE;
+                    IsWow64Process(GetCurrentProcess(), &result);
+                    return result;
+                }();
+                #pragma warning(push)]])
+            io.replace("src/wow64ext.cpp", "__declspec(dllexport)", "", {plain = true})
+            io.replace("src/wow64ext.h", "__declspec(SPEC)", "WOW64EXT_API ", {plain = true})
+            io.replace("src/wow64ext.h", "extern \"C\"", [[
+                #ifdef WOW64EXT_STATIC
+                #define WOW64EXT_API
+                #else
+                #define WOW64EXT_API __declspec(SPEC)
+                #endif
+                extern "C"]], {plain = true})
+        end
+        if package:config("shared") then
             local rc_str = io.readfile("src/wow64ext.rc", {encoding = "utf16le"})
+            rc_str = rc_str:gsub("afxres.h", "winres.h")
             io.writefile("src/wow64ext.rc", rc_str, {encoding = "utf8"})
         end
         io.writefile("xmake.lua", [[
@@ -39,9 +67,14 @@ package("rewolf-wow64ext")
                 set_languages("c++11")
 
                 add_defines("WOW64EXT_EXPORTS")
+                if is_kind("static") then
+                    add_defines("WOW64EXT_STATIC")
+                end
 
                 add_files("src/wow64ext.cpp")
-                add_files("src/wow64ext.rc")
+                if is_kind("shared") then
+                    add_files("src/wow64ext.rc")
+                end
 
                 add_headerfiles("src/(*.h)")
 
@@ -62,5 +95,5 @@ package("rewolf-wow64ext")
             void test() {
                 auto handle = GetModuleHandle64(L"user32.dll");
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "wow64ext.h"}))
+        ]]}, {configs = {languages = "c++11"}, includes = {"windows.h", "winternl.h", "wow64ext.h"}}))
     end)

@@ -1,0 +1,17 @@
+diff --git a/contrib/metis/GKlib/ms_stdint.h b/contrib/metis/GKlib/ms_stdint.h
+index 7e200dc6fc6938fd3caf2073850056f0a739b882..9e28c22df8313255e5825720dd949fc660fc995a 100755
+--- a/contrib/metis/GKlib/ms_stdint.h
++++ b/contrib/metis/GKlib/ms_stdint.h
+@@ -32,6 +32,11 @@
+ #ifndef _MSC_VER // [
+ #error "Use this header only with Microsoft Visual C++ compilers!"
+ #endif // _MSC_VER ]
+ 
++#if _MSC_VER >= 1600 // cf. #3340
++  #include <stdint.h>
++  #define _MSC_STDINT_H_
++#endif
++
+ #ifndef _MSC_STDINT_H_ // [
+ #define _MSC_STDINT_H_
+ 

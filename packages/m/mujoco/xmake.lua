@@ -6,6 +6,7 @@ package("mujoco")
     set_urls("https://github.com/google-deepmind/mujoco/archive/refs/tags/$(version).tar.gz",
              "https://github.com/google-deepmind/mujoco.git")
 
+    add_versions("3.12.0", "9faa979982c3e924e8aaff3b16983bba3a1ab19c81f4f73178ae9c2ea25e467d")
     add_versions("3.4.0", "adff5e9397aac20189ee1525aabf1fbecc63c43697e8ad66a61220222983810f")
 
     add_configs("simulate", {description = "Build simulate library for MuJoCo", default = false, type = "boolean"})
@@ -19,17 +20,36 @@ package("mujoco")
     else
         add_deps("pkg-config")
     end
-    add_deps("libccd", "lodepng", "qhull", "tinyobjloader", "tinyxml2", "trianglemeshdistance", "marchingcubecpp")
+    add_deps("libccd", {configs = {double_precision = true}})
+    add_deps("lodepng", "qhull", "tinyobjloader", "tinyxml2", "trianglemeshdistance", "marchingcubecpp")
 
     if on_check then
-        on_check("android", function (package)
-            local ndk = package:toolchain("ndk")
-            local ndk_sdkver = ndk:config("ndk_sdkver")
-            assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(mujoco) require ndk api level > 21")
+        on_check(function (package)
+            local version = package:version()
+            if package:is_plat("android") then
+                local ndk = package:toolchain("ndk")
+                local ndk_sdkver = ndk:config("ndk_sdkver")
+                assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(mujoco) require ndk api level > 21")
+            end
+            if package:gitref() or (version and version:ge("3.5.0")) then
+                if not package:check_cxxsnippets({test = [[
+                    #include <string_view>
+                    void test() {
+                        const char xml[] = "x";
+                        auto consume = [](std::string_view) {};
+                        consume({xml, xml + 1});
+                    }
+                ]]}, {configs = {languages = "c++20"}}) then
+                    raise("package(mujoco >=3.5.0) unsupported current platform: C++20 std::string_view iterator constructor is unavailable")
+                end
+            end
         end)
     end
 
     on_load(function (package)
+        if package:gitref() or package:version():ge("3.9.0") then
+            package:add("deps", "miniz", {configs = {cmake = true}})
+        end
         if package:config("usd") then
             package:add("deps", "usd")
             package:add("defines", "mjUSEUSD")
@@ -52,7 +72,16 @@ package("mujoco")
         -- support static build
         io.replace("CMakeLists.txt", "add_library(mujoco SHARED", "add_library(mujoco ", {plain = true})
         -- remove fetch content
-        io.replace("CMakeLists.txt", "include(MujocoDependencies)", "", {plain = true})
+        local dependencies = ""
+        if package:gitref() or package:version():ge("3.9.0") then
+            dependencies = [[
+                find_package(miniz CONFIG REQUIRED)
+                find_package(tinyobjloader CONFIG REQUIRED)
+                add_library(miniz ALIAS miniz::miniz)
+                add_library(tinyobjloader ALIAS tinyobjloader::tinyobjloader)
+            ]]
+        end
+        io.replace("CMakeLists.txt", "include(MujocoDependencies)", dependencies, {plain = true})
         -- remove hardcode ccd and dynamic library export macro
         io.replace("CMakeLists.txt", "CCD_STATIC_DEFINE MUJOCO_DLL_EXPORTS", "", {plain = true})
         -- remove unused install target
@@ -70,6 +99,14 @@ package("mujoco")
 
         io.replace("cmake/MujocoOptions.cmake", "-Werror", "", {plain = true})
         io.replace("simulate/cmake/SimulateOptions.cmake", "-Werror", "", {plain = true})
+
+        if package:is_plat("windows") and not package:is_arch64() and
+            (package:gitref() or package:version():ge("3.10.0")) then
+            -- size_t is 32-bit, but upstream unconditionally uses the 64-bit MSVC intrinsic
+            io.replace("src/engine/engine_crossplatform.h",
+                "_InterlockedExchangeAdd64((__int64 volatile*)(ptr), (__int64)(val))",
+                "_InterlockedExchangeAdd((long volatile*)(ptr), (long)(val))", {plain = true})
+        end
 
         io.replace("src/user/user_mesh.cc", [[#include "qhull_ra.h"]], "#include <libqhull_r/qhull_ra.h>", {plain = true})
         io.replace("src/user/user_mesh.cc",
@@ -158,4 +195,5 @@ package("mujoco")
 
     on_test(function (package)
         assert(package:has_cfuncs("mjv_defaultCamera", {includes = "mujoco/mujoco.h"}))
+        assert(package:has_cfuncs("mj_stackAllocByte", {includes = "mujoco/mujoco.h"}))
     end)

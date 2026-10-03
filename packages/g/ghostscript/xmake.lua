@@ -1,5 +1,4 @@
 package("ghostscript")
-
     set_homepage("https://www.ghostscript.com/")
     set_description("Ghostscript is an interpreter for the PostScript® language and PDF files.")
     set_license("AGPL-3.0")
@@ -10,11 +9,14 @@ package("ghostscript")
     add_versions("9.55.0", "31e2064be67e15b478a8da007d96d6cd4d2bee253e5be220703a225f7f79a70b")
     add_versions("10.0.0", "a57764d70caf85e2fc0b0f59b83b92e25775631714dcdb97cc6e0cea414bb5a3")
     add_versions("10.02.0", "e54062f166708d84ca82de9f8304a04344466080f936118b88082bd55ed6dc97")
+    add_versions("10.08.0", "caf199e3f233f1290b27d0972d636f66c303355f2353309b7bfddf1edda06b3d")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
     if is_plat("windows") then
         add_defines("__WIN32__", "_Windows")
+    elseif is_plat("macosx") then
+        add_deps("fontconfig")
     end
 
     on_install("windows|x64", "windows|x86", function (package)
@@ -42,7 +44,12 @@ package("ghostscript")
     end)
 
     on_install("macosx", "linux", function (package)
-        import("package.tools.autoconf").configure(package)
+        local configs = { "--without-x" }
+        if package:is_plat("macosx") then
+            import("package.tools.autoconf").configure(package, configs, {packagedeps = "fontconfig"})
+        else
+            import("package.tools.autoconf").configure(package, configs)
+        end
         os.vrun("make so")
         os.vrun("make soinstall")
         os.cp("soobj/*.h", package:installdir("include"))

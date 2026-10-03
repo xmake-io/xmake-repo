@@ -1,5 +1,5 @@
 package("unicorn")
-    set_homepage("http://www.unicorn-engine.org")
+    set_homepage("https://www.unicorn-engine.org/")
     set_description("Unicorn CPU emulator framework (ARM, AArch64, M68K, Mips, Sparc, PowerPC, RiscV, S390x, TriCore, X86)")
     set_license("GPL-2.0")
 

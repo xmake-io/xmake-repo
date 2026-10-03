@@ -6,6 +6,7 @@ package("aws-c-io")
     add_urls("https://github.com/awslabs/aws-c-io/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-io.git")
 
+    add_versions("v1.0.0", "5fecb19c2c0a165687cdd94723943a02ab23a0270deade5661fd935a3cd55e78")
     add_versions("v0.27.6", "2a6890715ccecaa0df6e9d074b186a7156b35360ded9db973064e2e00d45fcc3")
     add_versions("v0.27.5", "aa132d5a728f18ab8e0a6ea96d3d2f7e66bc8d3fe029d9ed1b05c06aa0c5b900")
     add_versions("v0.27.4", "0f2ce32de3685ca5ba3a8395d461c783253c1718cf70d31378eb6be890db1e3e")
@@ -38,7 +39,6 @@ package("aws-c-io")
     add_versions("v0.14.7", "ecf1f660d7d43913aa8a416be6a2027101ce87c3b241344342d608335b4df7d4")
     add_versions("v0.14.6", "bb3af305af748185b1c7b17afa343e54f2d494ccff397402f1b17041b0967865")
     add_versions("v0.14.5", "2700bcde062f7de1c1cbfd236b9fdfc9b24b4aa6dc0fb09bb156e16e07ebd0b6")
-    add_versions("v0.13.32", "2a6b18c544d014ca4f55cb96002dbbc1e52a2120541c809fa974cb0838ea72cc")
 
     add_configs("s2n", {description = "Use s2n-tls as TLS backend.", default = is_plat("macosx") or is_plat("linux"), type = "boolean"})
 

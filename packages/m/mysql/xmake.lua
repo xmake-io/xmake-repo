@@ -1,5 +1,5 @@
 package("mysql")
-    set_homepage("http://www.mysql.com")
+    set_homepage("https://www.mysql.com/")
     set_description("A real-time, open source transactional database.")
     set_license("GPL-2.0")
 
@@ -25,7 +25,7 @@ package("mysql")
     add_includedirs("include", "include/mysql")
 
     add_deps("cmake")
-    add_deps("zlib", "zstd", "lz4", "openssl", "rapidjson")
+    add_deps("zlib", "zstd", "lz4", "openssl3", "rapidjson")
     if is_plat("linux") then
         add_deps("patchelf")
         add_deps("libedit", {configs = {terminal_db = "ncurses"}})
@@ -84,6 +84,10 @@ package("mysql")
         table.insert(configs, "-DWITH_UBSAN=" .. (package:config("ubsan") and "ON" or "OFF"))
         if package:is_plat("windows") then
             table.insert(configs, "-DLINK_STATIC_RUNTIME_LIBRARIES=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
+        end
+        if package:is_cross() then
+            table.insert(configs, "-DCMAKE_CROSSCOMPILING=1")
+            table.insert(configs, "-DHAVE_RAPIDJSON_WITH_STD_REGEX=1")
         end
         import("package.tools.cmake").install(package, configs)
 

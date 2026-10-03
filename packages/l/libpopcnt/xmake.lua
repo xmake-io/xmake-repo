@@ -7,6 +7,7 @@ package("libpopcnt")
     add_urls("https://github.com/kimwalisch/libpopcnt/archive/refs/tags/$(version).tar.gz",
              "https://github.com/kimwalisch/libpopcnt.git")
 
+    add_versions("v4.2", "8da403a3214b75ba95afcc5848e82cb03bacb3a58da8bf417be785281c061198")
     add_versions("v3.1", "b4ea061f4c2e5385dff0dd032ad5a16c60dc0dd050391283afb463c0d62c19bd")
 
     on_install(function (package)

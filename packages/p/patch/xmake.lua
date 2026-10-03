@@ -1,7 +1,7 @@
 package("patch")
 
     set_kind("binary")
-    set_homepage("http://www.gnu.org/software/patch/patch.html")
+    set_homepage("https://savannah.gnu.org/projects/patch/")
     set_description("GNU patch, which applies diff files to original files.")
 
     if is_host("windows") then

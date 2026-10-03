@@ -1,5 +1,5 @@
 package("fast-cdr")
-    set_homepage("https://www.eprosima.com")
+    set_homepage("https://github.com/eProsima/Fast-CDR")
     set_description("eProsima FastCDR library provides two serialization mechanisms. One is the standard CDR serialization mechanism, while the other is a faster implementation of it.")
     set_license("Apache-2.0")
 

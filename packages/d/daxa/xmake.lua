@@ -9,6 +9,11 @@ package("daxa")
     add_versions("3.6", "85913c6169a08dea4f56095709b7571380a543a307de11bcb445ddd544d03442")
     add_versions("3.5", "e5c257a945cbd06a11031cf69fc887d59504777d9d127d8b6f9705ec6bdc08c7")
 
+    add_patches("3.6", "patches/3.6/fix-build.patch", "e3d5faf8c846a9069c3c0465db4c4d9f9dd78b6fc36e7566202e3792d5e113ff")
+    add_patches("3.6", "patches/3.6/guard-imgui.patch", "e95359e2875d9bce389be924a6cfe978b969c073ef737b3fba660e3bf52ab930")
+    add_patches("3.5", "patches/3.5/fix-build.patch", "6a10c64b6703bd825067b46d4fb1d3abac39f8390780075d2c8685c0ce9c9b31")
+    add_patches("3.5", "patches/3.5/guard-imgui.patch", "4bc6d3db347ddf19a6f36d56a1ae85bb5430ec9a2d62edcca4a91de87e236466")
+
     add_configs("imgui", {description = "The ImGUI Daxa utility", default = true, type = "boolean"})
     add_configs("mem", {description = "The Mem Daxa utility", default = true, type = "boolean"})
     add_configs("glslang", {description = "Build with glslang", default = true, type = "boolean"})
@@ -49,81 +54,6 @@ package("daxa")
     end)
 
     on_install("linux", function (package)
-        -- GCC 15 changed uint64_t from unsigned long to unsigned long long on some platforms,
-        -- causing ull/ll literals to mismatch u64/i64 in template deduction.
-        if package:version() and package:version():lt("3.6") then
-            io.replace("src/impl_swapchain.cpp",
-                "std::max(0ll, self->cpu_frame_timeline)",
-                "std::max(i64{0}, self->cpu_frame_timeline)", {plain = true})
-            io.replace("src/utils/impl_task_graph_mk2.cpp",
-                "auto transient_heap_size = 0ull;",
-                "VkDeviceSize transient_heap_size = 0;", {plain = true})
-            io.replace("src/utils/impl_task_graph_mk2.cpp",
-                "auto transient_heap_alignment = 0ull;",
-                "VkDeviceSize transient_heap_alignment = 0;", {plain = true})
-            -- align_up(current_offset, sizeof(X)): current_offset is u64, sizeof is size_t
-            io.replace("src/utils/impl_task_graph_mk2.cpp",
-                "align_up(current_offset,",
-                "align_up<u64>(current_offset,", {plain = true})
-            -- std::min(actual_size, cinfo.size): usize vs u64 deduction conflict
-            io.replace("src/utils/impl_task_graph_mk2.cpp",
-                "std::min(actual_size, cinfo.size)",
-                "std::min<u64>(actual_size, cinfo.size)", {plain = true})
-        else
-            io.replace("src/utils/impl_task_graph.cpp",
-                "auto resource_heap_size = 0ull;",
-                "VkDeviceSize resource_heap_size = 0;", {plain = true})
-            io.replace("src/utils/impl_task_graph.cpp",
-                "auto resource_heap_alignment = 0ull;",
-                "VkDeviceSize resource_heap_alignment = 0;", {plain = true})
-            -- align_up(current_offset, sizeof(X)): current_offset is u64, sizeof is size_t
-            io.replace("src/utils/impl_task_graph.cpp",
-                "align_up(current_offset,",
-                "align_up<u64>(current_offset,", {plain = true})
-            -- std::min(actual_size, cinfo.size): usize vs u64 deduction conflict
-            io.replace("src/utils/impl_task_graph.cpp",
-                "std::min(actual_size, cinfo.size)",
-                "std::min<u64>(actual_size, cinfo.size)", {plain = true})
-        end
-        io.replace("src/utils/impl_task_graph_ui.cpp",
-            "std::min(255ull, resource.name.size())",
-            "std::min<size_t>(255, resource.name.size())", {plain = true})
-        io.replace("src/utils/impl_task_graph_ui.cpp",
-            "std::min(255ull, task.name.size())",
-            "std::min<size_t>(255, task.name.size())", {plain = true})
-        io.replace("src/utils/impl_resource_viewer.cpp",
-            "std::min(work_code.size(), 20ull)",
-            "std::min(work_code.size(), size_t{20})", {plain = true})
-        -- ImTextureID changed from void* to ImU64 (unsigned long long) in imgui 1.91.x
-        io.replace("src/utils/impl_resource_viewer.hpp",
-            "void * imgui_image_id = {};",
-            "unsigned long long imgui_image_id = {};", {plain = true})
-        io.replace("CMakeLists.txt",
-            "pkg_check_modules(WAYLAND_CLIENT wayland-client)",
-            "pkg_check_modules(WAYLAND_CLIENT IMPORTED_TARGET wayland-client)", {plain = true})
-        io.replace("CMakeLists.txt",
-            "pkg_check_modules(WAYLAND_CURSOR wayland-cursor)",
-            "pkg_check_modules(WAYLAND_CURSOR IMPORTED_TARGET wayland-cursor)", {plain = true})
-        io.replace("CMakeLists.txt",
-            "pkg_check_modules(WAYLAND_EGL wayland-egl)",
-            "pkg_check_modules(WAYLAND_EGL IMPORTED_TARGET wayland-egl)", {plain = true})
-        io.replace("CMakeLists.txt",
-            "pkg_check_modules(XKBCOMMON xkbcommon)",
-            "pkg_check_modules(XKBCOMMON IMPORTED_TARGET xkbcommon)", {plain = true})
-        io.replace("CMakeLists.txt", [[
-                    ${WAYLAND_CLIENT_INCLUDE_DIRS}
-                    ${WAYLAND_CURSOR_INCLUDE_DIRS}
-                    ${WAYLAND_EGL_INCLUDE_DIRS}
-                    ${XKBCOMMON_INCLUDE_DIRS}]], "", {plain = true})
-        io.replace("CMakeLists.txt", [[
-                    ${WAYLAND_CLIENT_LIBRARIES}
-                    ${WAYLAND_CURSOR_LIBRARIES}
-                    ${WAYLAND_EGL_LIBRARIES}
-                    ${XKBCOMMON_LIBRARIES}]], [[
-                    PkgConfig::WAYLAND_CLIENT
-                    PkgConfig::WAYLAND_CURSOR
-                    PkgConfig::WAYLAND_EGL
-                    PkgConfig::XKBCOMMON]], {plain = true})
         io.writefile("cmake/deps.cmake", [[
 find_package(Vulkan REQUIRED)
 

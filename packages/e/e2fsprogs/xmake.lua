@@ -1,11 +1,11 @@
 package("e2fsprogs")
-
-    set_homepage("http://e2fsprogs.sourceforge.net")
+    set_homepage("https://e2fsprogs.sourceforge.net/")
     set_description("Filesystem utilities for the ext2/3/4 filesystems")
 
     add_urls("https://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git/snapshot/e2fsprogs-$(version).tar.gz")
 
     add_versions("1.46.4", "c011bf3bf4ae5efe9fa2b0e9b0da0c14ef4b79c6143c1ae6d9f027931ec7abe1")
+    add_patches("1.46.4", "patches/1.46.4/darwin-shlib.patch", "2d30ef106399f5eabf891f3635f48d0d594d32b52a340470595e0ced9d16960e")
 
     if is_plat("linux") then
         add_extsources("apt::e2fsprogs", "pacman::e2fsprogs")
@@ -32,10 +32,11 @@ package("e2fsprogs")
         end
         -- Enforce MKDIR_P to work around a configure bug
         -- see https://github.com/Homebrew/homebrew-core/pull/35339
-        autoconf.build(package, configs)
+        local opt = {cflags = {"-std=gnu99"}}
+        autoconf.build(package, configs, opt)
         -- make V=1 will fail for e2fsprogs, for reasons unknown
         -- So call make manually to ensure V=1 is not specified
-        autoconf.make(package, {"install"})
+        autoconf.make(package, {"install"}, opt)
     end)
 
     on_test(function (package)

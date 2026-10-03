@@ -6,6 +6,7 @@ package("amrex")
     add_urls("https://github.com/AMReX-Codes/amrex/releases/download/$(version)/amrex-$(version).tar.gz",
              "https://github.com/AMReX-Codes/amrex.git")
 
+    add_versions("26.09", "ad541286a62128477154a702f6b1cf918e0156078036c408e9d720451d5fd90c")
     add_versions("26.08", "12e242e47929afd38e9f974393003c3b65f98fa7fb6d5218019aac5b46917b25")
     add_versions("26.05", "70ec8f0e6917388b3d91a7c470648f6ce11a99096810420f1054ed98a041e315")
     add_versions("26.03", "7139b8bb423a4311e8990bee6cb06b86a81de439363f35a3f29c808a93a003ca")
@@ -46,6 +47,11 @@ package("amrex")
             if msvc then
                 local vs_sdkver = msvc:config("vs_sdkver")
                 assert(vs_sdkver and semver.match(vs_sdkver):gt("10.0.19041"), "package(amrex) require vs_sdkver > 10.0.19041.0")
+            end
+        end)
+        on_check("mingw", function (package)
+            if package:is_arch("i386") then
+                assert(package:version() and package:version():le("26.08"), "package(amrex >=26.09) unsupport mingw|i386")
             end
         end)
     end

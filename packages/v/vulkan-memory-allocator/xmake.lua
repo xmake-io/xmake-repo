@@ -13,7 +13,8 @@ package("vulkan-memory-allocator")
     add_versions("v3.2.0", 'e59a80307daa1d048e48f62bfee8c02e4a60180ca0d14b9b28181fc17eb36b07')
     add_versions("v3.2.1", '5e7749504cb802427ffb7bec38a0b6a15db46ae253f00560acb3e624d9fe695c')
     add_versions("v3.3.0", 'c4f6bbe6b5a45c2eb610ca9d231158e313086d5b1a40c9922cb42b597419b14e')
-
+    add_versions("v3.4.0", '822aa850c6ce77346ae96a8a1d351d52e77e85929f35363849a0a4e638e0a2a1')
+    
     add_deps("vulkan-headers")
 
     on_load(function (package)

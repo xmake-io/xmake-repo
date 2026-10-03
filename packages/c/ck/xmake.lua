@@ -1,5 +1,5 @@
 package("ck")
-    set_homepage("http://concurrencykit.org/")
+    set_homepage("https://concurrencykit.org/")
     set_description("Concurrency primitives, safe memory reclamation mechanisms and non-blocking (including lock-free) data structures designed to aid in the research, design and implementation of high performance concurrent systems developed in C99+.")
 
     add_urls("https://github.com/concurrencykit/ck/archive/refs/tags/$(version).tar.gz",

@@ -1,0 +1,27 @@
+diff --git a/src/core/memoryuse.cpp b/src/core/memoryuse.cpp
+index 81e54f0..827e20c 100644
+--- a/src/core/memoryuse.cpp
++++ b/src/core/memoryuse.cpp
+@@ -10,6 +10,9 @@
+ #include <windows.h>
+ #elif defined(VS_TARGET_OS_DARWIN)
+ #include <sys/sysctl.h>
++#elif defined(__FreeBSD__) || defined(__DragonFly__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsd__)
++#include <sys/types.h>
++#include <sys/sysctl.h>
+ #else
+ #include <sys/sysinfo.h>
+ #endif
+@@ -58,6 +61,12 @@ std::size_t get_total_ram()
+     if (sysctlbyname("hw.memsize", &memsize, &len, nullptr, 0))
+         return 0;
+     return memsize;
++#elif defined(__FreeBSD__) || defined(__DragonFly__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsd__)
++    std::size_t memsize = 0;
++    std::size_t len = sizeof(memsize);
++    if (sysctlbyname("hw.physmem", &memsize, &len, nullptr, 0))
++        return 0;
++    return memsize;
+ #else
+     struct sysinfo info{};
+     if (sysinfo(&info))

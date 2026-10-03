@@ -1,11 +1,14 @@
 package("sentry-native")
-    set_homepage("https://sentry.io/welcome/")
+    set_homepage("https://docs.sentry.io/")
     set_description("Sentry SDK for C, C++ and native applications.")
     set_license("MIT")
 
     set_urls("https://github.com/getsentry/sentry-native/releases/download/$(version)/sentry-native.zip",
              "https://github.com/getsentry/sentry-native.git")
 
+    add_versions("0.17.1", "e510b714ac0fb5c24b08011e07c5b13fa01c9bd0f40708356e4af022aa20c5a1")
+    add_versions("0.16.6", "d35145daaafddc50c0c87ec564acf0ba9968e67b23981e7f57c702b2dd6f2ff1")
+    add_versions("0.16.5", "802ec0643df32e53c1268f5b544cb289b8880a8506f83ad58f753dc69bd803de")
     add_versions("0.16.1", "8cd6daa3f896186f2f559129ec6badf7eecf44e5fa1a444c175b75b4b866fea0")
     add_versions("0.15.3", "5feccee8b53167352e234cdee217f050c5f23679b6d661e829f77dfee023327c")
     add_versions("0.15.2", "ead664dc2ec5fa09692ce512611eecf3c29e15eaa892b72492480ca938e3651f")

@@ -1,5 +1,5 @@
 package("x264")
-    set_homepage("https://www.videolan.org/developers/x264.html")
+    set_homepage("https://x264.org/")
     set_description("A free software library and application for encoding video streams into the H.264/MPEG-4 AVC compression format.")
     set_license("GPL-2.0")
 

@@ -1,5 +1,5 @@
 package("zstd")
-    set_homepage("https://www.zstd.net/")
+    set_homepage("https://facebook.github.io/zstd/")
     set_description("Zstandard - Fast real-time compression algorithm")
     set_license("BSD-3-Clause")
 

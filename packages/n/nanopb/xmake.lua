@@ -6,6 +6,7 @@ package("nanopb")
     set_urls("https://github.com/nanopb/nanopb/archive/refs/tags/$(version).tar.gz",
              "https://github.com/nanopb/nanopb.git")
 
+    add_versions("0.4.92", "a99b8b74f44803a4b13a5f0d946463d830b440fe1469b6459b8ce49fb8035f6f")
     add_versions("0.4.9", "524882ce9b6b8abeab3d458b9f15449c3f11d60c099eb388d8732d1bf2944eb3")
 
     add_configs("generator", {description = "Build the protoc plugin for code generation", default = false, type = "boolean"})

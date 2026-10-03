@@ -6,6 +6,7 @@ package("simplewindow")
     add_urls("https://github.com/Mzying2001/sw/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Mzying2001/sw.git")
     
+    add_versions("0.2.0", "3d52846bb757c490c48cc77c93e1cd2b3a7a142402f6470f18a4dc394b6ccde2")
     add_versions("0.1.0", "cbf2f4717c5aa72c977071c9b37564b4626b0793baa12f421a714bfd73a8c951")
     add_versions("0.0.7", "b06d6d7840b40bac1c7c7c145d95c723a155581951b2ac3a6679b81b11a17adf")
 

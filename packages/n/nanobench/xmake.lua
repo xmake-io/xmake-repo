@@ -6,6 +6,7 @@ package("nanobench")
 
     add_urls("https://github.com/martinus/nanobench/archive/refs/tags/$(version).tar.gz",
              "https://github.com/martinus/nanobench.git")
+    add_versions("v4.6.0", "80fe0835e85da6acc57285354d86b17d5d1dc7182432a5eaea3b2098a17d4c26")
     add_versions("v4.3.11", "53a5a913fa695c23546661bf2cd22b299e10a3e994d9ed97daf89b5cada0da70")
 
     on_install(function (package)

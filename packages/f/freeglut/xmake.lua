@@ -1,5 +1,5 @@
 package("freeglut")
-    set_homepage("http://freeglut.sourceforge.net")
+    set_homepage("https://freeglut.sourceforge.net/")
     set_description("Free implementation of the OpenGL Utility Toolkit (GLUT)")
     set_license("MIT")
 

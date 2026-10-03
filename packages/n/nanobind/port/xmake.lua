@@ -27,23 +27,27 @@
 
 add_rules("mode.debug", "mode.release")
 
-add_requires("robin-map", "python >=3.8")
+-- The package recipe selects a version-compatible Python dependency, and
+-- package.tools.xmake forwards that resolved version into this port.
+add_requires("robin-map", "python")
 
 set_languages("c++17")
 
 target("nanobind")
     set_kind("$(kind)")
-    add_files("src/*.cpp|nb_combined.cpp")
+    -- nb_backend.cpp is a standalone split-mode backend module and requires
+    -- NB_BACKEND_NAME; it is not part of the regular nanobind core library.
+    add_files("src/*.cpp|nb_combined.cpp|nb_backend.cpp")
     add_includedirs("include", {public = true})
 
     add_packages("robin-map", "python")
+    add_defines("NB_BUILD")
 
     if is_mode("release") then
         add_defines("NB_COMPACT_ASSERTIONS")
     end
 
     if is_kind("shared") then
-        add_defines("NB_BUILD")
         add_defines("NB_SHARED", {public = true})
 
         if is_plat("macosx") then
@@ -51,6 +55,10 @@ target("nanobind")
         elseif not is_plat("windows") then
             add_shflags("-Wl,-s", {public = true})
         end
+    end
+
+    if not is_plat("windows") then
+        add_cxflags("-fno-strict-aliasing")
     end
 
     add_headerfiles("include/(nanobind/**.h)")

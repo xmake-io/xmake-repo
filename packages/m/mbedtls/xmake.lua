@@ -1,5 +1,5 @@
 package("mbedtls")
-    set_homepage("https://tls.mbed.org")
+    set_homepage("https://www.trustedfirmware.org/projects/mbed-tls/")
     set_description("An open source, portable, easy to use, readable and flexible TLS library, and reference implementation of the PSA Cryptography API")
     set_license("Apache-2.0")
 

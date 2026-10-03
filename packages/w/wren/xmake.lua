@@ -1,5 +1,5 @@
 package("wren")
-    set_homepage("http://wren.io")
+    set_homepage("https://wren.io/")
     set_description("Wren is a small, fast, class-based concurrent scripting language.")
     set_license("MIT")
 

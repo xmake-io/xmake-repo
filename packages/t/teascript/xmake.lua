@@ -7,6 +7,7 @@ package("teascript")
     add_urls("https://github.com/Florian-Thake/TeaScript-Cpp-Library/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Florian-Thake/TeaScript-Cpp-Library.git")
 
+    add_versions("v0.17.0", "d4c4ef58828121546d12ef4836614b07191b0f3350b48efa71cea860ef930fd6")
     add_versions("v0.16.0", "eee98f5ce8b460b487ccd61fded4cebe5322c2c2b85a4a298919ee2b51cd64cd")
     add_versions("v0.14.0", "9a6fd8eb3099dae092620f015b281ffbc22383969bedf08d54b62b6a2b0a0959")
     add_versions("v0.13.0", "7c8cc05a8775ee2c857278b5e353670bf02442b2fa3a411343e82b2b85eedced")
@@ -32,6 +33,9 @@ package("teascript")
                     return 0;
                 }
             ]]}, {configs = {languages = "c++20"}}), "package(teascript) Require std::stop_token support.")
+            if package:is_plat("mingw") and package:is_arch("i386", "x86") then
+                raise("package(teascript) unsupported on mingw/i386")
+            end
         end)
     end
 

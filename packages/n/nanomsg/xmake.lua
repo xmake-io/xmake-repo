@@ -6,6 +6,7 @@ package("nanomsg")
     add_urls("https://github.com/nanomsg/nanomsg/archive/refs/tags/$(version).tar.gz",
              "https://github.com/nanomsg/nanomsg.git")
 
+    add_versions("1.2.5", "fd8f3695484c88f45eac83b7c866e5826e894e102b0d4974be08cb47e18d2ab9")
     add_versions("1.2.2", "3ffeafa9335245a23a99827e8d389bfce5100610f44ebbe4bfaf47e8192d5939")
     add_versions("1.2.1", "2e6c20dbfcd4882e133c819ac77501e9b323cb17ae5b3376702c4446261fbc23")
 

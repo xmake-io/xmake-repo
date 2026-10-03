@@ -6,6 +6,7 @@ package("libheif")
     add_urls("https://github.com/strukturag/libheif/releases/download/v$(version)/libheif-$(version).tar.gz",
             "https://github.com/strukturag/libheif.git")
 
+    add_versions("1.23.4", "d0c02b4b0e978f34a1974b6f3eea7975a537bf7a9195ffeea38e7242ff316fdd")
     add_versions("1.23.1", "0de0327f60fcd47de90d5654c6fe152232738d60d84fe084ec3e0f35e03b166a")
     add_versions("1.23.0", "4c9182b18897617182eed12ab5eb9f9d855b3aa3a736d6bdb31abc034ec7d393")
     add_versions("1.22.2", "eea48e4841f83fbe51d029337ffd2d14512d0203015dad40b90213d872958af3")

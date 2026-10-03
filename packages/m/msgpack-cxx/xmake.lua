@@ -5,6 +5,7 @@ package("msgpack-cxx")
     set_license("BSL-1.0")
 
     add_urls("https://github.com/msgpack/msgpack-c/releases/download/cpp-$(version)/msgpack-cxx-$(version).tar.gz")
+    add_versions("9.0.0", "303d3a7321aee65eb9450db8a6c973954e00af34b88ba0c0aca236bc50bfb8a9")
     add_versions("7.0.0", "7504b7af7e7b9002ce529d4f941e1b7fb1fb435768780ce7da4abaac79bb156f")
     add_versions("6.1.1", "5fd555742e37bbd58d166199e669f01f743c7b3c6177191dd7b31fb0c37fa191")
     add_versions("6.1.0", "23ede7e93c8efee343ad8c6514c28f3708207e5106af3b3e4969b3a9ed7039e7")

@@ -6,6 +6,7 @@ package("aws-c-common")
     add_urls("https://github.com/awslabs/aws-c-common/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-common.git")
 
+    add_versions("v1.0.0", "94de89f65d4917dd7381679ea3297d7304c43338158fa7bec190fa53c218ce90")
     add_versions("v0.14.5", "103273767fea478545b75a0835c7dc60842baee0a191a112c72f904d22693c84")
     add_versions("v0.14.2", "da518accb60eb08e0d56f641f00c3ea856c36a0972394770c978e5ff3bfc3728")
     add_versions("v0.14.1", "85a05209b324ca330085b84fdada4faf6820592c34f252f0ceb61001f76bf04d")
@@ -33,7 +34,6 @@ package("aws-c-common")
     add_versions("v0.9.15", "8f36c7a6a5d2e17365759d15591f800d3e76dcaa34a226389b92647cbd92393a")
     add_versions("v0.9.14", "70b10ebbf40e3b6c1b36d81d5e4b63fe430414a81f76293a65e42dfa5def571e")
     add_versions("v0.9.13", "6d2044fc58e5d7611610976602f3fc2173676726b00eed026526962c599ece1d")
-    add_versions("v0.9.3", "389eaac7f64d7d5a91ca3decad6810429eb5a65bbba54798b9beffcb4d1d1ed6")
 
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
