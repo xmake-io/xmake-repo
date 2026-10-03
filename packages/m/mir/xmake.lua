@@ -37,6 +37,8 @@ package("mir")
         "# %0",
         {plain = false})
 
+        io.writefile("mir-run.c", "int main(void) { return 0; }\n")
+        
         local target = package:config("shared") and "mir_shared" or "mir_static"
         import("package.tools.cmake").build(package, configs, {target = target})
 
