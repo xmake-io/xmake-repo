@@ -37,7 +37,6 @@ package("nzsl")
         package:addenv("PATH", "bin")
         if not package:config("shared") then
             package:add("defines", "NZSL_STATIC")
-            package:add("deps", "fmt")
         end
         if package:config("fs_watcher") then
             package:add("deps", "efsw")
@@ -47,6 +46,12 @@ package("nzsl")
         end
         if package:config("nzslc") then
             package:add("deps", "cxxopts >=3.1.1", "nlohmann_json", {private = true})
+        end
+        -- fmt >= 12.2 is no supported on mingw/i386
+        if package:is_plat("mingw") and package:is_arch("i386", "x86") then
+            package:add("deps", "fmt <12.2", {private = not package:config("shared")})
+        else
+            package:add("deps", "fmt", {private = not package:config("shared")})
         end
     end)
 
