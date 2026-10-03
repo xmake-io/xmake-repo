@@ -44,6 +44,7 @@ package("nzsl")
 
     on_load(function (package)
         package:addenv("PATH", "bin")
+        package:add("deps", "fmt", {private = package:config("shared")})
         if not package:config("shared") then
             package:add("defines", "NZSL_STATIC")
         end
@@ -56,7 +57,6 @@ package("nzsl")
         if package:config("nzslc") then
             package:add("deps", "cxxopts >=3.1.1", "nlohmann_json", {private = true})
         end
-        package:add("deps", "fmt", {private = package:config("shared")})
     end)
 
     on_install(function (package)
