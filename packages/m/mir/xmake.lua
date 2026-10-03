@@ -12,7 +12,9 @@ package("mir")
     elseif is_plat("macosx") then
         add_syslinks("m", "pthread")
     end
-
+    
+    add_deps("curl")
+    
     on_install(function (package)
         local configs = {
             "-DBUILD_TESTING=OFF",
