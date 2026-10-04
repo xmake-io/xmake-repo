@@ -9,7 +9,7 @@ package("timeh")
 
     on_install(function(package)
         io.replace("xmake.lua", [[    set_kind("binary")]], [[    set_kind("binary")
-    if is_plat('mingw') then
+    if is_plat("mingw", "msys") then
         add_syslinks("stdc++exp")
     end]], {plain = true})
         import("package.tools.xmake").install(package)
