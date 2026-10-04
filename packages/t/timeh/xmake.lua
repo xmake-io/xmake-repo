@@ -15,7 +15,14 @@ end]], {plain = true})
     if is_plat("mingw", "msys") or is_host("windows") then
         add_syslinks("stdc++exp")
     end]], {plain = true})
-        import("package.tools.xmake").install(package)
+        local configs = {}
+        if is_host("linux") then
+            local toolchain = get_config("toolchain")
+            if toolchain then
+                configs.toolchain = toolchain
+            end
+        end
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function(package)
