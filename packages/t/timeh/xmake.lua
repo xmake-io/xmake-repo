@@ -12,7 +12,7 @@ package("timeh")
     set_toolchains(".gnu")
 end]], {plain = true})
         io.replace("xmake.lua", [[    set_kind("binary")]], [[    set_kind("binary")
-    if is_plat("mingw", "msys") then
+    if is_plat("mingw", "msys") or is_host("windows") then
         add_syslinks("stdc++exp")
     end]], {plain = true})
         import("package.tools.xmake").install(package)
