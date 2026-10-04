@@ -15,7 +15,7 @@ package("mir")
     
     add_deps("curl" , "libcurl")
         
-    on_install("linux", "macosx", "android|arm64-v8a",function (package)
+    on_install("linux", "macosx", "android|arm64-v8a", function (package)
         local configs = {
             "-DBUILD_TESTING=OFF",
             "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
@@ -48,13 +48,8 @@ package("mir")
         end
 
         local includedir = package:installdir("include")
-        os.mkdir(includedir)
-        for _, header in ipairs({
-            "mir*.h",
-            "c2mir/c2mir.h"
-        }) do
-            os.cp(header, includedir)
-        end
+        os.cp("mir*.h", includedir)
+        os.cp("c2mir/c2mir.h", includedir)
     end)
 
     on_test(function (package)
