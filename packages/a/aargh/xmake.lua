@@ -8,7 +8,6 @@ package("aargh")
              "https://github.com/ilyabrin/aargh.git")
     add_versions("1.9.0", "f7161aab3c73e07b7db354c40af24e299ab5681cedd4fef54cecd72ba9ee9e7f")
 
-    -- include/aargh keeps it apart from the argh package, which also has an argh.h
     add_includedirs("include/aargh")
 
     on_install(function (package)
