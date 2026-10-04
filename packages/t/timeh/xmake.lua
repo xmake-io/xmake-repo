@@ -8,6 +8,10 @@ package("timeh")
     add_versions("0.5.0", "f146f4b17ff83ef72ca7ea6958fda016a660e38732f9f9e452f176a23c233d85")
 
     on_install(function(package)
+        io.replace("xmake.lua", [[    set_kind("binary")]], [[    set_kind("binary")
+    if is_plat('mingw') then
+        add_syslinks("stdc++exp")
+    end]], {plain = true})
         import("package.tools.xmake").install(package)
     end)
 
