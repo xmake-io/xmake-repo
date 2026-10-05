@@ -39,4 +39,7 @@ jobs:
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D --toolchain=clang-23 -k ${{ matrix.kind }}
+          xmake l ./scripts/test.lua -D \
+            --toolchain=clang-23 \
+            -f 'toolchains="clang-23",runtimes="c++_shared"' \
+            -k ${{ matrix.kind }}
