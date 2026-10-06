@@ -11,7 +11,8 @@ package("concurrencpp")
     add_versions("0.1.6", "e7d5c23a73ff1d7199d361d3402ad2a710dfccf7630b622346df94a7532b4221")
     add_versions("0.1.7", "049f3e83ad1828e0b8b518652de1a3160d5849fdff03d521d0a5af0167338e89")
 
-    add_deps("cmake")
+    -- https://github.com/David-Haim/concurrencpp/issues/166
+    add_patches("0.1.7", "patches/0.1.7/add-include-string.patch", "a4b8c219fcc913a3cbeda1522c408f4b347e12f11ec130dd7df65504dcdccc09")
 
     if is_plat("windows") then
         add_syslinks("synchronization", "ws2_32", "mswsock")
@@ -19,14 +20,28 @@ package("concurrencpp")
         add_syslinks("pthread")
     end
 
-    on_load(function (package)
-        package:add("includedirs", "include/concurrencpp-" .. package:version_str())
+    add_deps("cmake")
+
+    on_check(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            #include <semaphore>
+            #include <new>
+            void test() {
+                auto x = std::hardware_destructive_interference_size;
+            }
+        ]]}, {configs = {languages = "c++20"}}), "package(concurrencpp) Require at least C++20.")
     end)
 
-    on_install("macosx", "windows", function (package)
-        assert(package:has_tool("cxx", "clang", "cl"), "compiler not supported!")
+    on_load(function (package)
+        package:add("includedirs", "include/concurrencpp-" .. package:version_str())
+        if package:is_plat("windows") and package:config("shared") then
+            package:add("defines", "CRCPP_IMPORT_API")
+        end
+    end)
+
+    on_install(function (package)
         local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
