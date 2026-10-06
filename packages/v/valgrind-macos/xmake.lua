@@ -7,7 +7,7 @@ package("valgrind-macos")
     add_versions("2026.09.09", "7877928dcc8bfb873325e4f51949f930d77e493e")
     add_patches("2026.09.09", "patches/2026.09.09/disable-tests.patch", "82e122b36d3cbbfff19491d72424b6b1e21147f3eb3d276e11572d82757db141")
 
-    add_deps("autoconf", "automake", "libtool")
+    add_deps("autotools")
 
     on_load(function (package)
         package:addenv("PATH", "bin")
