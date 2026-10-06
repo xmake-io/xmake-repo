@@ -6,7 +6,7 @@ package("lcc-license-generator")
 
     add_urls("https://github.com/open-license-manager/lcc-license-generator.git")
     add_versions("2021.05.27", "816fc5787786541a9074b2a5c3f665d54fac28b0")
-    add_patches("2021.05.27", path.join(os.scriptdir(), "patches", "2021.05.27", "fix.patch"), "067635adf2dfb185cd28084ff8e5c2897d1f5aaa115255540675ad932c465b7e")
+    add_patches("2021.05.27", path.join(os.scriptdir(), "patches", "2021.05.27", "fix.patch"), "2122ab8f1a994540f0770c1116e55aa11efc55583e958b7a152b600d9bb10281")
     add_configs("openssl", {description = "Use openssl", default = false, type = "boolean"})
 
     add_deps("cmake")
