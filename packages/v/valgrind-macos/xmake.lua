@@ -21,6 +21,21 @@ package("valgrind-macos")
             table.insert(configs, "--with-darwin-platform=macosx")
         elseif package:is_plat("iphoneos") then
             table.insert(configs, "--with-darwin-platform=iphoneos")
+            import("core.tool.toolchain")
+            local xcode_sdkver = get_config("xcode_sdkver")
+            if not xcode_sdkver then
+                local xcode = package:toolchain("xcode") or toolchain.load("xcode", {plat = package:plat(), arch = package:arch()})
+                if xcode and xcode.config and xcode:check() then
+                    xcode_sdkver = xcode:config("xcode_sdkver")
+                end
+            end
+            if not xcode_sdkver and is_host("macosx") then
+                local result = try {function () return os.iorun("xcrun --sdk iphoneos --show-sdk-version") end}
+                if result then
+                    xcode_sdkver = result:trim()
+                end
+            end
+            table.insert(configs, "--with-darwin-version=" .. xcode_sdkver)
         end
         if package:check_sizeof("void*") == "8" then
             table.insert(configs, "--enable-only64bit")
