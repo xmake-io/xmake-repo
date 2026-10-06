@@ -13,7 +13,9 @@ package("valgrind-macos")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("!windows", function (package)
+    on_install("!windows and !wasm and !android and !mingw and !cross", function (package)
+        io.replace("VEX/priv/guest_arm64_helpers.c", "msr DIT, 1", ".inst 0xd503415f", {plain = true})
+        io.replace("VEX/priv/guest_arm64_helpers.c", "msr DIT, 0", ".inst 0xd503405f", {plain = true})
         local configs = {}
         if package:is_plat("macosx") then
             table.insert(configs, "--with-darwin-platform=macosx")
