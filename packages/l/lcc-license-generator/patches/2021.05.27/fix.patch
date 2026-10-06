@@ -24,15 +24,26 @@ index 2d72706..b214d75 100644
  
  #elif _WIN32
 diff --git a/src/license_generator/project.cpp b/src/license_generator/project.cpp
-index dee92c3..285e9fe 100644
+index dee92c3..a97d08a 100644
 --- a/src/license_generator/project.cpp
 +++ b/src/license_generator/project.cpp
-@@ -52,7 +52,7 @@ static const string guess_templates_folder(const string &source_folder) {
+@@ -7,6 +7,7 @@
+ 
+ #include <boost/algorithm/string/replace.hpp>
+ #include <boost/filesystem.hpp>
++#include <boost/version.hpp>
+ #include <stdexcept>
+ #include <algorithm>
+ 
+@@ -52,7 +53,11 @@ static const string guess_templates_folder(const string &source_folder) {
  									 "] does not exist. tried also [" + template_fname.string() + "]");
  		}
  	}
--	fs::path normalized = templates_path.normalize();
++#if BOOST_VERSION > 108300
 +	fs::path normalized = templates_path.lexically_normal();
++#else
+ 	fs::path normalized = templates_path.normalize();
++#endif
  	return normalized.string();
  }
  static const fs::path publicKeyFolder(const fs::path &product_folder, const string &product_name) {
