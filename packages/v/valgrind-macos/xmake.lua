@@ -15,8 +15,15 @@ package("valgrind-macos")
 
     on_install("!windows", function (package)
         local configs = {}
-        if package:is_arch("x86_64", "arm64") then
+        if package:is_plat("macosx") then
+            table.insert(configs, "--with-darwin-platform=macosx")
+        elseif package:is_plat("iphoneos") then
+            table.insert(configs, "--with-darwin-platform=iphoneos")
+        end
+        if package:check_sizeof("void*") == "8" then
             table.insert(configs, "--enable-only64bit")
+        elseif package:check_sizeof("void*") == "4" then
+            table.insert(configs, "--enable-only32bit")
         end
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         if package:is_debug() then
