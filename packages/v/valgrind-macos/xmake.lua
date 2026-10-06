@@ -6,6 +6,8 @@ package("valgrind-macos")
     add_urls("https://github.com/LouisBrunner/valgrind-macos.git")
     add_versions("2026.09.09", "7877928dcc8bfb873325e4f51949f930d77e493e")
     add_patches("2026.09.09", "patches/2026.09.09/disable-tests.patch", "82e122b36d3cbbfff19491d72424b6b1e21147f3eb3d276e11572d82757db141")
+    add_patches("2026.09.09", "patches/2026.09.09/arm64-linux.patch", "77693cf0900cb96ce4cfd17bd0a6d6ff5995b09928d5e15919ae45b05b4f5e85")
+    add_patches("2026.09.09", "patches/2026.09.09/darwin-libc.patch", "619049b5a7c511d5968a00df7a3071933520c5a5e9112b5f635338e7095ecd35")
 
     add_deps("autotools")
 
@@ -13,7 +15,7 @@ package("valgrind-macos")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("!windows and !wasm and !android and !mingw and !cross", function (package)
+    on_install("macosx", "iphoneos", "bsd", "linux", function (package)
         io.replace("VEX/priv/guest_arm64_helpers.c", "msr DIT, 1", ".inst 0xd503415f", {plain = true})
         io.replace("VEX/priv/guest_arm64_helpers.c", "msr DIT, 0", ".inst 0xd503405f", {plain = true})
         local configs = {}
