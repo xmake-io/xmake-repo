@@ -1,0 +1,25 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 32c96c5..e87c0e6 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -99,7 +99,7 @@ if(WIN32 AND "x${CMAKE_CXX_COMPILER_ARCHITECTURE_ID}" STREQUAL "x")
+ endif()
+ 
+ SET( Boost_USE_STATIC_LIBS ON )
+-find_package(Boost REQUIRED COMPONENTS date_time filesystem program_options system unit_test_framework)
++find_package(Boost REQUIRED COMPONENTS date_time filesystem program_options system)
+ 
+ #set below in case of dynamic linking in debug.
+ #set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:BOOST_TEST_DYN_LINK>)
+diff --git a/src/base_lib/base64.h b/src/base_lib/base64.h
+index 72fe959..a82fa2e 100644
+--- a/src/base_lib/base64.h
++++ b/src/base_lib/base64.h
+@@ -3,6 +3,7 @@
+ 
+ #include <string>
+ #include <vector>
++#include <cstdint>
+ #ifdef __linux__
+ 
+ #elif _WIN32

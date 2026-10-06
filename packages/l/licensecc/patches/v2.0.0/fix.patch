@@ -1,0 +1,60 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 3da135f..eb7a98c 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -73,7 +73,7 @@ if(UNIX) #this is true for all the linux systems but not for cross compiling "li
+ 	
+ 	find_program( MEMORYCHECK_COMMAND valgrind )
+ 	set( MEMORYCHECK_COMMAND_OPTIONS "--trace-children=yes --leak-check=full" )
+-	set(main_lib_dest "lib/${PROJECT_NAME}")
++	set(main_lib_dest "lib")
+ 	#https://cmake.org/cmake/help/latest/command/find_package.html
+ 	set(pkg_config_dest "lib/cmake/${PROJECT_NAME}")
+ else(UNIX)
+@@ -100,7 +100,7 @@ else(UNIX)
+ 	        SET(CMAKE_EXE_LINKER_FLAGS "-static -static-libstdc++")
+ 	    endif(MINGW)
+ 	endif(MSVC)
+-	set(main_lib_dest "${PROJECT_NAME}")  
++	set(main_lib_dest "lib")
+ 	#https://cmake.org/cmake/help/latest/command/find_package.html
+ 	set(pkg_config_dest "cmake/${PROJECT_NAME}")
+ endif(UNIX)
+diff --git a/src/library/CMakeLists.txt b/src/library/CMakeLists.txt
+index 72bc63d..30ee5eb 100644
+--- a/src/library/CMakeLists.txt
++++ b/src/library/CMakeLists.txt
+@@ -43,7 +43,7 @@ target_include_directories(licensecc_static
+ 
+ add_library(licensecc::licensecc_static ALIAS licensecc_static)
+ install(TARGETS licensecc_static EXPORT licensecc
+-	ARCHIVE DESTINATION ${main_lib_dest}/${LCC_PROJECT_NAME})
++	ARCHIVE DESTINATION lib)
+ 	
+-install(EXPORT licensecc NAMESPACE licensecc:: DESTINATION  ${main_lib_dest}/${LCC_PROJECT_NAME}/cmake)
++install(EXPORT licensecc NAMESPACE licensecc:: DESTINATION  lib/cmake)
+ export(EXPORT licensecc NAMESPACE licensecc:: FILE ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.cmake)
+diff --git a/src/library/base/base64.h b/src/library/base/base64.h
+index e52cf8a..0a3f81e 100644
+--- a/src/library/base/base64.h
++++ b/src/library/base/base64.h
+@@ -3,6 +3,7 @@
+ 
+ #include <string>
+ #include <vector>
++#include <cstdint>
+ 
+ #if _WIN32
+ #include <wtypes.h>
+diff --git a/src/library/os/cpu_info.hpp b/src/library/os/cpu_info.hpp
+index 6eaa2b1..92cb6ea 100644
+--- a/src/library/os/cpu_info.hpp
++++ b/src/library/os/cpu_info.hpp
+@@ -8,6 +8,7 @@
+ #ifndef SRC_LIBRARY_OS_CPU_INFO_H_
+ #define SRC_LIBRARY_OS_CPU_INFO_H_
+ #include <string>
++#include <cstdint>
+ namespace license {
+ namespace os {
+ 
