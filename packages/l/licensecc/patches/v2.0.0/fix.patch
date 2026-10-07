@@ -360,6 +360,70 @@ index cfb4efc..927f02c 100644
 +
  }  // namespace os
  } /* namespace license */
+diff --git a/src/library/os/linux/network.cpp b/src/library/os/linux/network.cpp
+index 08ee164..474758f 100644
+--- a/src/library/os/linux/network.cpp
++++ b/src/library/os/linux/network.cpp
+@@ -21,8 +21,14 @@
+ #include <net/if.h>
+ #include <netdb.h>
+ #include <ifaddrs.h>
++#include <netinet/in.h>
++#if defined(__linux__)
+ #include <linux/if_link.h>
+ #include <netpacket/packet.h>
++#elif defined(__FreeBSD__) || defined(__DragonFly__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__APPLE__)
++#include <net/if_dl.h>
++#include <net/if_types.h>
++#endif
+ #include <stdio.h>
+ #include <unordered_map>
+ #include <string.h>
+@@ -76,8 +82,14 @@ FUNCTION_RETURN getAdapterInfos(vector<OsAdapterInfo> &adapterInfos) {
+ 		/* Display interface name and family (including symbolic
+ 		 form of the latter for the common families) */
+ 		LOG_DEBUG("%-8s %s (%d)\n", ifa->ifa_name,
+-				  (family == AF_PACKET) ? "AF_PACKET"
+-										: (family == AF_INET) ? "AF_INET" : (family == AF_INET6) ? "AF_INET6" : "???",
++#if defined(AF_PACKET) && defined(AF_LINK)
++				  (family == AF_PACKET) ? "AF_PACKET" : (family == AF_LINK) ? "AF_LINK" :
++#elif defined(AF_PACKET)
++				  (family == AF_PACKET) ? "AF_PACKET" :
++#elif defined(AF_LINK)
++				  (family == AF_LINK) ? "AF_LINK" :
++#endif
++										(family == AF_INET) ? "AF_INET" : (family == AF_INET6) ? "AF_INET6" : "???",
+ 				  family);
+ 		/* For an AF_INET* interface address, display the address
+ 		 * || family == AF_INET6*/
+@@ -89,6 +101,7 @@ FUNCTION_RETURN getAdapterInfos(vector<OsAdapterInfo> &adapterInfos) {
+ 			currentAdapter->ipv4_address[2] = (iaddr & 0x00ff0000) >> 16;
+ 			currentAdapter->ipv4_address[3] = (iaddr & 0xff000000) >> 24;
+ 
++#ifdef AF_PACKET
+ 		} else if (family == AF_PACKET && ifa->ifa_data != NULL) {
+ 			struct sockaddr_ll *s1 = (struct sockaddr_ll *)ifa->ifa_addr;
+ 			int i;
+@@ -97,6 +110,19 @@ FUNCTION_RETURN getAdapterInfos(vector<OsAdapterInfo> &adapterInfos) {
+ 				LOG_DEBUG("%02x:", s1->sll_addr[i]);
+ 			}
+ 			LOG_DEBUG("\t %s\n", ifa->ifa_name);
++#endif
++#ifdef AF_LINK
++		} else if (family == AF_LINK && ifa->ifa_addr != NULL) {
++			struct sockaddr_dl *sdl = (struct sockaddr_dl *)ifa->ifa_addr;
++			if (sdl->sdl_type == IFT_ETHER && sdl->sdl_alen == 6) {
++				const unsigned char *mac = (const unsigned char *)LLADDR(sdl);
++				for (int i = 0; i < 6; i++) {
++					currentAdapter->mac_address[i] = mac[i];
++					LOG_DEBUG("%02x:", mac[i]);
++				}
++				LOG_DEBUG("\t %s\n", ifa->ifa_name);
++			}
++#endif
+ 		}
+ 	}
+ 	freeifaddrs(ifaddr);
 diff --git a/src/library/os/linux/os_linux.cpp b/src/library/os/linux/os_linux.cpp
 index bbf4341..62bf2be 100644
 --- a/src/library/os/linux/os_linux.cpp
