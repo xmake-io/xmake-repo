@@ -1,5 +1,5 @@
 package("valgrind-macos")
-    set_kind("library", {headeronly = true})
+    set_kind("binary")
     set_homepage("https://github.com/LouisBrunner/valgrind-macos")
     set_description("A valgrind mirror with latest macOS support")
     set_license("GPL-3.0")
@@ -15,7 +15,7 @@ package("valgrind-macos")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("macosx", "bsd", "linux", function (package)
+    on_install("@macosx", "@bsd", "@linux", function (package)
         io.replace("VEX/priv/guest_arm64_helpers.c", "msr DIT, 1", ".inst 0xd503415f", {plain = true})
         io.replace("VEX/priv/guest_arm64_helpers.c", "msr DIT, 0", ".inst 0xd503405f", {plain = true})
         local configs = {}
@@ -38,9 +38,4 @@ package("valgrind-macos")
         if not package:is_cross() and not (package:is_plat("linux") and package:is_arch("arm64")) then
             os.vrun("valgrind --version")
         end
-        assert(package:check_csnippets({test = [[
-            void test() {
-                VALGRIND_DO_LEAK_CHECK;
-            }
-        ]]}, {includes = "valgrind/memcheck.h"}))
     end)
