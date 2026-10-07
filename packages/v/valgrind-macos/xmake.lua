@@ -1,4 +1,5 @@
 package("valgrind-macos")
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/LouisBrunner/valgrind-macos")
     set_description("A valgrind mirror with latest macOS support")
     set_license("GPL-3.0")
