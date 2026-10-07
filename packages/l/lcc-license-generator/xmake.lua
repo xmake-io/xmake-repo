@@ -23,13 +23,24 @@ package("lcc-license-generator")
         end
     end)
 
-    on_install("@windows", "@linux", "@macosx", "@bsd", function (package)
+    on_install("@windows", "@linux", "@macosx", "@bsd", "@mingw", function (package)
         local configs = {"-DBUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBoost_USE_STATIC_LIBS=" .. (package:dep("boost"):config("shared") and "OFF" or "ON"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DSTATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DSTATIC_RUNTIME=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
+        end
+        if package:is_plat("windows", "mingw") and not package:config("openssl") then
+            table.insert(configs, "-DUSE_OPENSSL=OFF")
+            table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_OpenSSL=ON")
+        else
+            table.insert(configs, "-DUSE_OPENSSL=ON")
+            table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_OpenSSL=OFF")
+            local openssl = package:dep("openssl3") or package:dep("openssl")
+            if openssl then
+                table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
+            end
         end
         import("package.tools.cmake").install(package, configs)
     end)

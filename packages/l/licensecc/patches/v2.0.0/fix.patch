@@ -20,6 +20,24 @@ index 3ce4e3d..838769f 100644
  	#https://cmake.org/cmake/help/latest/command/find_package.html
  	set(pkg_config_dest "cmake/${PROJECT_NAME}")
  endif(UNIX)
+diff --git a/cmake/Findlccgen.cmake b/cmake/Findlccgen.cmake
+index 3bf3cbc..cf952f4 100644
+--- a/cmake/Findlccgen.cmake
++++ b/cmake/Findlccgen.cmake
+@@ -49,10 +49,11 @@ if(LCC_LOCATION)
+ 	find_package(lccgen HINTS ${LCC_LOCATION} CONFIG) #try to find it without looping on this module
+ 	if(NOT lccgen_FOUND)
+ 		find_program(LCC_EXECUTABLE
+-		NAMES ${lcc_names} HINTS ${LCC_LOCATION} DOC "lccgen command line client")
+-		FIND_PACKAGE_HANDLE_STANDARD_ARGS(lccgen FOUND_VAR LCC_FOUND
++		NAMES ${lcc_names} HINTS ${LCC_LOCATION} PATH_SUFFIXES bin DOC "lccgen command line client")
++		FIND_PACKAGE_HANDLE_STANDARD_ARGS(lccgen FOUND_VAR lccgen_FOUND
+         	                               REQUIRED_VARS LCC_EXECUTABLE 
+             	                           FAIL_MESSAGE "Error finding lcc executable. variable LCC_LOCATION non set correctly.")
++		set(LCC_FOUND ${lccgen_FOUND})
+     	add_executable(license_generator::lccgen IMPORTED GLOBAL)                                            
+ 		set_property(TARGET license_generator::lccgen PROPERTY IMPORTED_LOCATION ${LCC_EXECUTABLE})
+ 	ENDIF(NOT lccgen_FOUND)
 diff --git a/src/library/CMakeLists.txt b/src/library/CMakeLists.txt
 index f174976..685d78b 100644
 --- a/src/library/CMakeLists.txt
@@ -46,6 +64,40 @@ index 466a263..fced3d9 100644
  
  #if _WIN32
  #include <wtypes.h>
+diff --git a/src/library/base/string_utils.h b/src/library/base/string_utils.h
+index a8157a7..190e5d1 100644
+--- a/src/library/base/string_utils.h
++++ b/src/library/base/string_utils.h
+@@ -10,6 +10,7 @@
+ 
+ #include <string>
+ #include <vector>
++#include <ctime>
+ 
+ namespace license {
+ 
+diff --git a/src/library/ini/SimpleIni.h b/src/library/ini/SimpleIni.h
+index 7142085..5bdb3a8 100644
+--- a/src/library/ini/SimpleIni.h
++++ b/src/library/ini/SimpleIni.h
+@@ -326,7 +326,7 @@ public:
+ #endif
+ 
+         /** Strict less ordering by name of key only */
+-        struct KeyOrder : std::binary_function<Entry, Entry, bool> {
++        struct KeyOrder {
+             bool operator()(const Entry & lhs, const Entry & rhs) const {
+                 const static SI_STRLESS isLess = SI_STRLESS();
+                 return isLess(lhs.pItem, rhs.pItem);
+@@ -334,7 +334,7 @@ public:
+         };
+ 
+         /** Strict less ordering by order, and then name of key */
+-        struct LoadOrder : std::binary_function<Entry, Entry, bool> {
++        struct LoadOrder {
+             bool operator()(const Entry & lhs, const Entry & rhs) const {
+                 if (lhs.nOrder != rhs.nOrder) {
+                     return lhs.nOrder < rhs.nOrder;
 diff --git a/src/library/os/cpu_info.hpp b/src/library/os/cpu_info.hpp
 index c837493..27e1c80 100644
 --- a/src/library/os/cpu_info.hpp
@@ -322,15 +374,3 @@ index bbf4341..62bf2be 100644
  
  //#ifdef USE_DISK_MODEL
  ///#define PARSE_ID_FUNC parse_disk_id
-diff --git a/src/library/base/string_utils.h b/src/library/base/string_utils.h
-index a8157a7..190e5d1 100644
---- a/src/library/base/string_utils.h
-+++ b/src/library/base/string_utils.h
-@@ -10,6 +10,7 @@
- 
- #include <string>
- #include <vector>
-+#include <ctime>
- 
- namespace license {
- 
