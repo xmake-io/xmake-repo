@@ -8,6 +8,7 @@ package("valgrind-macos")
     add_patches("2026.09.09", "patches/2026.09.09/disable-tests.patch", "82e122b36d3cbbfff19491d72424b6b1e21147f3eb3d276e11572d82757db141")
     add_patches("2026.09.09", "patches/2026.09.09/arm64-linux.patch", "77693cf0900cb96ce4cfd17bd0a6d6ff5995b09928d5e15919ae45b05b4f5e85")
     add_patches("2026.09.09", "patches/2026.09.09/darwin-libc.patch", "619049b5a7c511d5968a00df7a3071933520c5a5e9112b5f635338e7095ecd35")
+    add_patches("2026.09.09", "patches/2026.09.09/cross-compile.patch", "a90460e613399f185983695c52bc9e30db497f7f4a23c71c2e22811aaf6847eb")
 
     add_deps("autotools")
 
