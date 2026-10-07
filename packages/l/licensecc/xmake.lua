@@ -17,6 +17,7 @@ package("licensecc")
         add_syslinks("bcrypt", "crypt32", "ws2_32", "iphlpapi")
     elseif is_plat("linux") then
         add_syslinks("pthread")
+        add_deps("valgrind")
     end
     add_deps("cmake")
     add_deps("lcc-license-generator")
