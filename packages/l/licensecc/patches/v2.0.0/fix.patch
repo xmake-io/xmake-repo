@@ -322,3 +322,15 @@ index bbf4341..62bf2be 100644
  
  //#ifdef USE_DISK_MODEL
  ///#define PARSE_ID_FUNC parse_disk_id
+diff --git a/src/library/base/string_utils.h b/src/library/base/string_utils.h
+index a8157a7..190e5d1 100644
+--- a/src/library/base/string_utils.h
++++ b/src/library/base/string_utils.h
+@@ -10,6 +10,7 @@
+ 
+ #include <string>
+ #include <vector>
++#include <ctime>
+ 
+ namespace license {
+ 
