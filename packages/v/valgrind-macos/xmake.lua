@@ -50,9 +50,6 @@ package("valgrind-macos")
             table.insert(configs, "--enable-debug")
         end
         import("package.tools.autoconf").install(package, configs)
-        os.trycp("**.a", package:installdir("lib"))
-        os.trycp("**.so", package:installdir("lib"))
-        os.trycp("**.dylib", package:installdir("lib"))
     end)
 
     on_test(function (package)
