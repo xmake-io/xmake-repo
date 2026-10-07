@@ -27,7 +27,7 @@ package("licensecc")
         end
     end)
 
-    on_install("!macosx and !iphoneos", function (package)
+    on_install("!macosx and !iphoneos and !wasm", function (package)
         local lccgen = package:dep("lcc-license-generator")
         local configs = {"-DBUILD_TESTING=OFF", "-DLCC_LOCATION=" .. lccgen:installdir()}
         local lccgen_exe = path.join(lccgen:installdir("bin"), "lccgen" .. (package:is_plat("windows", "mingw") and ".exe" or ""))
