@@ -14,7 +14,7 @@ package("licensecc")
     add_links("licensecc_static")
 
     if is_plat("windows", "mingw") then
-        add_syslinks("bcrypt", "crypt32", "ws2_32", "iphlpapi")
+        add_syslinks("bcrypt", "crypt32", "ws2_32", "iphlpapi", "advapi32")
     elseif is_plat("linux") then
         add_syslinks("pthread")
     end
