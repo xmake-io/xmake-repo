@@ -19,7 +19,7 @@ package("lcc-license-generator")
 
     on_load(function (package)
         if not package:is_plat("windows", "mingw") or package:config("openssl") then
-            package:add("deps", "openssl")
+            package:add("deps", "openssl3")
         end
     end)
 
