@@ -21,6 +21,19 @@ package("licensecc")
     add_deps("cmake")
     add_deps("lcc-license-generator")
 
+    if on_check then
+        on_check("mingw", function (package)
+            if is_subhost("macosx") then
+                raise("package(licensecc): does not support mingw@macosx")
+            end
+        end)
+        on_check("android", function (package)
+            if not package:has_cxxfuncs("freeifaddrs", {includes = "ifaddrs.h"}) then
+                raise("package(licensecc): does not support android build without freeifaddrs function.")
+            end
+        end)
+    end
+
     on_load(function (package)
         if not package:is_plat("windows", "mingw") or package:config("openssl") then
             package:add("deps", "openssl3")
