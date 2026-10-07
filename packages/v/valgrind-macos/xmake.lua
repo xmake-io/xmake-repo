@@ -20,6 +20,11 @@ package("valgrind-macos")
     on_install("macosx", "iphoneos", "bsd", "linux", function (package)
         io.replace("VEX/priv/guest_arm64_helpers.c", "msr DIT, 1", ".inst 0xd503415f", {plain = true})
         io.replace("VEX/priv/guest_arm64_helpers.c", "msr DIT, 0", ".inst 0xd503405f", {plain = true})
+        io.replace("VEX/priv/guest_arm64_helpers.c", '"xpacd %[res]\\n"', '".arch_extension pauth\\nxpacd %[res]\\n"', {plain = true})
+        io.replace("VEX/priv/guest_arm64_helpers.c", '"xpaci %[res]\\n"', '".arch_extension pauth\\nxpaci %[res]\\n"', {plain = true})
+        io.replace("coregrind/m_aspacemgr/aspacemgr-linux.c", '"xpacd %[a]\\n"', '".arch_extension pauth\\nxpacd %[a]\\n"', {plain = true})
+        io.replace("coregrind/m_gdbserver/target.c", '"xpacd %[ptr]\\n"', '".arch_extension pauth\\nxpacd %[ptr]\\n"', {plain = true})
+        io.replace("memcheck/mc_leakcheck.c", '"xpacd %[a]\\n"', '".arch_extension pauth\\nxpacd %[a]\\n"', {plain = true})
         local configs = {}
         if package:is_plat("macosx") then
             table.insert(configs, "--with-darwin-platform=macosx")
@@ -54,7 +59,7 @@ package("valgrind-macos")
     end)
 
     on_test(function (package)
-        if not package:is_cross() then
+        if not package:is_cross() and not (package:is_plat("linux") and package:is_arch("arm64")) then
             os.vrun("valgrind --version")
         end
         assert(package:check_csnippets({test = [[
