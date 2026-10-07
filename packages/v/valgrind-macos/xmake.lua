@@ -35,7 +35,7 @@ package("valgrind-macos")
     end)
 
     on_test(function (package)
-        if not package:is_cross() and not (package:is_plat("linux") and package:is_arch("arm64")) then
+        if not (package:is_plat("linux") and package:is_arch("arm64")) then
             os.vrun("valgrind --version")
         end
     end)
