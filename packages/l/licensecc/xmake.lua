@@ -7,7 +7,7 @@ package("licensecc")
              "https://github.com/open-license-manager/licensecc.git")
 
     add_versions("v2.0.0", "7fc7843f9e6d700135ed1ee63d0f252b820c67da0b0d637d04cd4ea383339145")
-    add_patches("v2.0.0", path.join(os.scriptdir(), "patches", "v2.0.0", "fix.patch"), "b26a0f25169247890e7ad68c419ec3c4aae6cbc817db29f4899f97dd3549650d")
+    add_patches("v2.0.0", path.join(os.scriptdir(), "patches", "v2.0.0", "fix.patch"), "6ab7277d600bcec0442c23a5a9c37bf588837a2eb83272743fc384c742bb5c95")
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     add_configs("openssl", {description = "Use openssl", default = false, type = "boolean"})
     add_includedirs("include", "include/licensecc/DEFAULT")
@@ -17,7 +17,6 @@ package("licensecc")
         add_syslinks("bcrypt", "crypt32", "ws2_32", "iphlpapi")
     elseif is_plat("linux") then
         add_syslinks("pthread")
-        add_deps("valgrind")
     end
     add_deps("cmake")
     add_deps("lcc-license-generator")

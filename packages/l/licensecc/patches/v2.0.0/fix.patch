@@ -308,3 +308,17 @@ index cfb4efc..927f02c 100644
 +
  }  // namespace os
  } /* namespace license */
+diff --git a/src/library/os/linux/os_linux.cpp b/src/library/os/linux/os_linux.cpp
+index bbf4341..62bf2be 100644
+--- a/src/library/os/linux/os_linux.cpp
++++ b/src/library/os/linux/os_linux.cpp
+@@ -17,9 +17,6 @@
+ #include <mntent.h>
+ #include <dirent.h>
+ #include <sys/utsname.h>
+-#ifndef NDEBUG
+-#include <valgrind/memcheck.h>
+-#endif
+ 
+ //#ifdef USE_DISK_MODEL
+ ///#define PARSE_ID_FUNC parse_disk_id
