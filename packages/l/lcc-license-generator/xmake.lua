@@ -9,6 +9,10 @@ package("lcc-license-generator")
     add_patches("2021.05.27", path.join(os.scriptdir(), "patches", "2021.05.27", "fix.patch"), "94d922834ed4f34ab13e0d7b800e4684e638a5956d3991d1aa58bd502b00c3ca")
     add_configs("openssl", {description = "Use openssl", default = false, type = "boolean"})
 
+    if is_plat("windows", "mingw") then
+        add_syslinks("advapi32")
+    end
+
     add_deps("cmake")
     add_deps("boost", {configs = {
         date_time = true,
