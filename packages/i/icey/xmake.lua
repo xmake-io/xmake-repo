@@ -7,11 +7,20 @@ package("icey")
     add_versions("2.5.1", "2df5f802db160212de78a1bdfba01c9275b5d5d0ca8f58b00298779d50a5e02a")
     add_patches("2.5.1", "patches/address-cstdint.patch", "e90326e565b83bf20d8fe5f23fb3380521fcc7515c7969934dc46e0109fa5cf2")
     add_patches("2.5.1", "patches/avfoundation-ios.patch", "a4ca2032eb16c384082aa0b43fd30a7f0e5aee9045869bd0a2c8c64353dad200")
+    add_patches("2.5.1", "patches/minizip-targets.patch", "61924725ceec347b3ef14f181e341d1aec6b34b362dba4249fe8686fb05e21b8")
 
-    add_deps("cmake", "libuv", "llhttp", "minizip", "openssl3", "zlib")
+    add_deps("cmake", "libuv", "llhttp", "minizip", "zlib")
     if is_host("windows") then
         add_deps("pkgconf")
     end
+
+    on_load(function (package)
+        if package:is_plat("wasm") then
+            package:add("deps", "openssl3")
+        else
+            package:add("deps", "openssl3", {configs = {shared = package:config("shared")}})
+        end
+    end)
 
     on_install("!wasm", function (package)
         local configs = {
@@ -27,6 +36,7 @@ package("icey")
             "-DWITH_OPENCV=OFF",
             "-DWITH_LIBDATACHANNEL=OFF",
             "-DENABLE_NATIVE_ARCH=OFF",
+            "-DENABLE_LTO=OFF",
             "-DCMAKE_DISABLE_FIND_PACKAGE_Doxygen=TRUE",
             "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF")
         }
