@@ -90,11 +90,7 @@ package("openssl4")
 
         table.insert(configs, "/FS")
         if not package:is_debug() then
-            io.replace("Configurations/10-main.conf", "/debug", "", {plain = true})
-            io.replace("Configurations/10-main.conf", "/Zi", "", {plain = true})
-            io.replace("Configurations/50-masm.conf", "/Zi", "", {plain = true})
-            io.replace("Configurations/50-win-clang-cl.conf", "/Zi", "", {plain = true})
-            io.replace("util/copy.pl", "if (-d $dest)", "if (! -e $_) { next; }\n\tif (-d $dest)", {plain = true})
+            import("configure.patchPDB")(package)
         end
 
         os.vrunv("perl", configs)
