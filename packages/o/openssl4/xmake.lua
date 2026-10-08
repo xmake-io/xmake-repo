@@ -90,7 +90,7 @@ package("openssl4")
 
         table.insert(configs, "/FS")
         if not package:is_debug() then
-            import("configure.patchPDB")(package)
+            import("configure.patchpdb")(package)
         end
 
         os.vrunv("perl", configs)
