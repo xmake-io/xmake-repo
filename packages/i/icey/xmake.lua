@@ -6,6 +6,7 @@ package("icey")
     add_urls("https://github.com/nilstate/icey/archive/refs/tags/$(version).tar.gz")
     add_versions("2.5.1", "2df5f802db160212de78a1bdfba01c9275b5d5d0ca8f58b00298779d50a5e02a")
     add_patches("2.5.1", "patches/address-cstdint.patch", "e90326e565b83bf20d8fe5f23fb3380521fcc7515c7969934dc46e0109fa5cf2")
+    add_patches("2.5.1", "patches/avfoundation-ios.patch", "a4ca2032eb16c384082aa0b43fd30a7f0e5aee9045869bd0a2c8c64353dad200")
 
     add_deps("cmake", "libuv", "llhttp", "minizip", "openssl3", "zlib")
     if is_host("windows") then
