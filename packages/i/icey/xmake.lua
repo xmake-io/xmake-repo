@@ -6,16 +6,12 @@ package("icey")
     add_urls("https://github.com/nilstate/icey/archive/refs/tags/$(version).tar.gz")
     add_versions("2.5.1", "2df5f802db160212de78a1bdfba01c9275b5d5d0ca8f58b00298779d50a5e02a")
 
-    add_deps("cmake", "libuv", "llhttp", "minizip", "zlib")
+    add_deps("cmake", "libuv", "llhttp", "minizip", "openssl3", "zlib")
     if is_host("windows") then
         add_deps("pkgconf")
     end
 
-    on_load(function (package)
-        package:add("deps", "openssl3", {configs = {shared = package:config("shared")}})
-    end)
-
-    on_install(function (package)
+    on_install("!wasm", function (package)
         local configs = {
             "-DUSE_SYSTEM_DEPS=ON",
             "-DBUILD_TESTS=OFF",
