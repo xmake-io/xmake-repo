@@ -31,8 +31,6 @@ package("xclang")
         add_versions("23.1.2+9", hashes[triple])
     end
 
-    set_policy("package.precompiled", false)
-
     on_install("@windows|x64", "@windows|arm64", "@linux|x86_64", "@linux|arm64", "@macosx|x86_64", "@macosx|arm64", function (package)
         os.cp("*", package:installdir(), {symlink = true})
         package:addenv("PATH", "bin")
@@ -41,6 +39,8 @@ package("xclang")
     on_test(function (package)
         local suffix = is_host("windows") and ".exe" or ""
         for _, tool in ipairs({"xclang", "clang++", "llvm-ar"}) do
-            os.vrunv(package:installdir("bin", tool .. suffix), {"--version"})
+            local program = package:installdir("bin", tool .. suffix)
+            print(program .. " --version")
+            os.execv(program, {"--version"})
         end
     end)
