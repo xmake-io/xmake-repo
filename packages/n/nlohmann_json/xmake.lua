@@ -14,6 +14,8 @@ package("nlohmann_json")
     add_versions("v3.10.0", "eb8b07806efa5f95b349766ccc7a8ec2348f3b2ee9975ad879259a371aea8084")
     add_versions("v3.9.1", "4cf0df69731494668bdd6460ed8cb269b68de9c19ad8c27abc24cd72605b2d5b")
 
+    add_patches("v3.12.0", path.join(os.scriptdir(), "patches", "v3.12.0", "fix-ndk.patch"), "e1e6958da01c142fd72dcb13ead1624a19e22f88b7b602fd440db6ac984561cf")
+
     add_configs("cmake", {description = "Use cmake buildsystem", default = false, type = "boolean"})
 
     if is_plat("mingw") and is_subhost("msys") then
