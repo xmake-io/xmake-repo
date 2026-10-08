@@ -11,6 +11,7 @@ package("icey")
     add_patches("2.5.1", "patches/zip-directory-attribute.patch", "4b83cbd7f505210ead71e8dcb71e456cb34c339b3fdb24ff666a27c70d0f7356")
 
     add_deps("cmake", "libuv", "llhttp", "minizip", "zlib")
+    add_deps("nlohmann_json", {configs = {cmake = true}})
     if is_host("windows") then
         add_deps("pkgconf")
     end
