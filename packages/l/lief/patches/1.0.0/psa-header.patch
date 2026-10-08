@@ -1,0 +1,11 @@
+diff --git a/src/visitors/hash.cpp b/src/visitors/hash.cpp
+--- a/src/visitors/hash.cpp
++++ b/src/visitors/hash.cpp
+@@ -17,7 +17,6 @@
+ #include <functional>
+ #include <numeric>
+ 
+ #include "mbedtls_wraps.h"
+-#include "psa/crypto_builtin_primitives.h"
+ 
+ #include "LIEF/hash.hpp"

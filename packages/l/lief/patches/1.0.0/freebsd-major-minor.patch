@@ -1,0 +1,34 @@
+diff --git a/include/LIEF/runtime/osx/Host.hpp b/include/LIEF/runtime/osx/Host.hpp
+index bc366a5..10a3a6a 100644
+--- a/include/LIEF/runtime/osx/Host.hpp
++++ b/include/LIEF/runtime/osx/Host.hpp
+@@ -19,6 +19,12 @@
+ #include <cstdint>
+ #include <string>
+ #include <ostream>
++// On FreeBSD, sys/types.h defines major()/minor() macros that clash with
++// the member names and the initializer list of version_t below.
++#if defined(__FreeBSD__)
++  #undef major
++  #undef minor
++#endif
+ 
+ namespace LIEF {
+ namespace runtime {
+diff --git a/include/LIEF/runtime/windows/Host.hpp b/include/LIEF/runtime/windows/Host.hpp
+index ba5c869..29380a7 100644
+--- a/include/LIEF/runtime/windows/Host.hpp
++++ b/include/LIEF/runtime/windows/Host.hpp
+@@ -19,6 +19,12 @@
+ #include <cstdint>
+ #include <string>
+ #include <ostream>
++// On FreeBSD, sys/types.h defines major()/minor() macros that clash with
++// the member names and the initializer list of version_t below.
++#if defined(__FreeBSD__)
++  #undef major
++  #undef minor
++#endif
+ 
+ namespace LIEF {
+ namespace runtime {
