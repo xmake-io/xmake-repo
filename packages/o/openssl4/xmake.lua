@@ -126,9 +126,6 @@ package("openssl4")
         os.vrunv("perl", configs, {envs = buildenvs})
         import("package.tools.make").build(package, {}, {envs = buildenvs})
         import("package.tools.make").make(package, {"install", "-j1"}, {envs = buildenvs})
-        if package:config("shared") then
-            os.tryrm(package:installdir("lib", "*.a"))
-        end
     end)
 
     on_install("macosx", "bsd", "linux", "cross", "android", "iphoneos", "wasm", "harmony", function (package)
