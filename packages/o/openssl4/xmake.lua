@@ -153,13 +153,6 @@ package("openssl4")
             target_arch = package:is_arch("arm64", "aarch64") and "arm64-cc" or "x86_64-cc"
         elseif package:is_plat("bsd") then
             target_plat = "BSD"
-        elseif package:is_plat("android") then
-            target_plat = "android"
-            if target_arch == "aarch64" then
-                target_arch = "arm64"
-            elseif target_arch == "armv4" then
-                target_arch = "arm"
-            end
         elseif package:is_plat("harmony") then
             target_plat = "ohos"
             if package:is_arch("arm64", "arm64-v8a") then
@@ -190,12 +183,7 @@ package("openssl4")
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
         -- CFLAGS from the toolchain replace OpenSSL's defaults, including optimization and debug symbols.
         buildenvs.CFLAGS = (package:is_debug() and "-O0 -g" or "-O3") .. " " .. (buildenvs.CFLAGS or "")
-        if package:is_plat("android") then
-            local ndk = package:toolchain("ndk")
-            buildenvs.ANDROID_NDK_ROOT = ndk:config("ndk"):gsub("\\", "/")
-            buildenvs.PATH = path.joinenv(table.join(ndk:config("bindir"), path.splitenv(os.getenv("PATH"))))
-            table.insert(configs, "-D__ANDROID_API__=" .. ndk:config("ndk_sdkver"))
-        elseif package:is_plat("macosx", "iphoneos") and package:config("shared") then
+        if package:is_plat("macosx", "iphoneos") and package:config("shared") then
             buildenvs.LDFLAGS = (buildenvs.LDFLAGS or "") .. " -Wl,-headerpad_max_install_names"
         end
         if (package:is_plat("android") and is_host("windows")) or
