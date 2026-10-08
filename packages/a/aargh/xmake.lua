@@ -6,6 +6,7 @@ package("aargh")
 
     add_urls("https://github.com/ilyabrin/aargh/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/ilyabrin/aargh.git")
+    add_versions("1.12.0", "4dacf104603880488be5a231fe5aa0b6d90da6d6c3893990d388a77c9cb3c4f5")
     add_versions("1.9.0", "f7161aab3c73e07b7db354c40af24e299ab5681cedd4fef54cecd72ba9ee9e7f")
 
     add_includedirs("include/aargh")
