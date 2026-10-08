@@ -5,10 +5,10 @@ package("icey")
 
     add_urls("https://github.com/nilstate/icey/archive/refs/tags/$(version).tar.gz")
     add_versions("2.5.1", "2df5f802db160212de78a1bdfba01c9275b5d5d0ca8f58b00298779d50a5e02a")
-    add_patches("2.5.1", "patches/address-cstdint.patch", "a3cbfdeaf427990c6205fdd77abe9074484a1f294d8e4178580e2c7346ee1fcb")
-    add_patches("2.5.1", "patches/avfoundation-ios.patch", "124b887958ce6fb28dbc2212ca86e62ad59f948d9cb92dbb5b15c32ca9fdb60a")
+    add_patches("2.5.1", "patches/address-cstdint.patch", "054113c97dcee660e8a249013a5e2b422184e439d812f924e3be5b4723585fce")
+    add_patches("2.5.1", "patches/avfoundation-ios.patch", "2e8ab393cc462c866e82ad9466278880002e9e9075e6f99ce0e4e5e6bb5d572d")
     add_patches("2.5.1", "patches/minizip-targets.patch", "61924725ceec347b3ef14f181e341d1aec6b34b362dba4249fe8686fb05e21b8")
-    add_patches("2.5.1", "patches/zip-directory-attribute.patch", "7920e6891623da7a4defa3a862072d316ec27d6e3d15080e572e21e95f367716")
+    add_patches("2.5.1", "patches/zip-directory-attribute.patch", "4b83cbd7f505210ead71e8dcb71e456cb34c339b3fdb24ff666a27c70d0f7356")
 
     add_deps("cmake", "libuv", "llhttp", "minizip", "zlib")
     if is_host("windows") then

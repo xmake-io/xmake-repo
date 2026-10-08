@@ -2,33 +2,52 @@ diff --git a/src/av/src/apple/avfoundation.mm b/src/av/src/apple/avfoundation.mm
 index acc2bc13..24f8100b 100644
 --- a/src/av/src/apple/avfoundation.mm
 +++ b/src/av/src/apple/avfoundation.mm
-@@ -11,0 +12 @@
+@@ -11,2 +11,3 @@
+ #import <CoreMedia/CoreMedia.h>
 +#import <TargetConditionals.h>
-@@ -53,0 +55 @@ bool GetAVFoundationVideoDevices(Device::Type type, std::vector<Device>* devices
+ 
+@@ -53,2 +54,3 @@ bool GetAVFoundationVideoDevices(Device::Type type, std::vector<Device>* devices
+ 
 +#if !TARGET_OS_IPHONE
-@@ -67,0 +70 @@ bool GetAVFoundationVideoDevices(Device::Type type, std::vector<Device>* devices
+     // AVCaptureDeviceTypeExternal (macOS 14+) replaces
+@@ -67,2 +69,3 @@ bool GetAVFoundationVideoDevices(Device::Type type, std::vector<Device>* devices
+     }
 +#endif
-@@ -82,0 +86,3 @@ bool GetAVFoundationVideoDevices(Device::Type type, std::vector<Device>* devices
+ 
+@@ -82,2 +85,5 @@ bool GetAVFoundationVideoDevices(Device::Type type, std::vector<Device>* devices
+     if (type == Device::VideoInput) {
 +#if TARGET_OS_IPHONE
 +        deviceTypes = @[AVCaptureDeviceTypeBuiltInWideAngleCamera];
 +#else
-@@ -86,0 +93 @@ bool GetAVFoundationVideoDevices(Device::Type type, std::vector<Device>* devices
+         deviceTypes = @[
+@@ -86,4 +92,8 @@ bool GetAVFoundationVideoDevices(Device::Type type, std::vector<Device>* devices
+         ];
 +#endif
-@@ -88,0 +96,3 @@ bool GetAVFoundationVideoDevices(Device::Type type, std::vector<Device>* devices
+         mediaType = AVMediaTypeVideo;
+     } else if (type == Device::AudioInput) {
 +#if TARGET_OS_IPHONE
 +        deviceTypes = @[microphoneType];
 +#else
-@@ -92,0 +103 @@ bool GetAVFoundationVideoDevices(Device::Type type, std::vector<Device>* devices
+         deviceTypes = @[
+@@ -92,2 +102,3 @@ bool GetAVFoundationVideoDevices(Device::Type type, std::vector<Device>* devices
+         ];
 +#endif
-@@ -107,0 +119,5 @@ bool GetAVFoundationVideoDevices(Device::Type type, std::vector<Device>* devices
+         mediaType = AVMediaTypeAudio;
+@@ -107,2 +118,7 @@ bool GetAVFoundationVideoDevices(Device::Type type, std::vector<Device>* devices
+     for (AVCaptureDevice* capture_device in capture_devices) {
 +#if TARGET_OS_IPHONE
 +        const BOOL inUse = NO;
 +#else
 +        const BOOL inUse = [capture_device isInUseByAnotherApplication];
 +#endif
-@@ -117 +133 @@ bool GetAVFoundationVideoDevices(Device::Type type, std::vector<Device>* devices
+         static NSString* const kFormat = @"localizedName: \"%@\", "
+@@ -116,3 +132,3 @@ bool GetAVFoundationVideoDevices(Device::Type type, std::vector<Device>* devices
+                              [capture_device isConnected],
 -                             [capture_device isInUseByAnotherApplication]];
 +                             inUse];
-@@ -124 +140 @@ bool GetAVFoundationVideoDevices(Device::Type type, std::vector<Device>* devices
+         LDebug('\t', [info UTF8String]);
+@@ -123,3 +139,3 @@ bool GetAVFoundationVideoDevices(Device::Type type, std::vector<Device>* devices
+         device.isConnected = [capture_device isConnected] ? true : false;
 -        device.isInUse = [capture_device isInUseByAnotherApplication] ? true : false;
 +        device.isInUse = inUse ? true : false;
+ 
