@@ -11,7 +11,7 @@ package("icey")
         add_deps("pkgconf")
     end
 
-    on_install("!wasm", function (package)
+    on_install("!wasm and (!macosx or macosx|!i386)", function (package)
         local configs = {
             "-DUSE_SYSTEM_DEPS=ON",
             "-DBUILD_TESTS=OFF",
