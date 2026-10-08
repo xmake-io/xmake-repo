@@ -5,9 +5,10 @@ package("icey")
 
     add_urls("https://github.com/nilstate/icey/archive/refs/tags/$(version).tar.gz")
     add_versions("2.5.1", "2df5f802db160212de78a1bdfba01c9275b5d5d0ca8f58b00298779d50a5e02a")
-    add_patches("2.5.1", "patches/address-cstdint.patch", "e90326e565b83bf20d8fe5f23fb3380521fcc7515c7969934dc46e0109fa5cf2")
-    add_patches("2.5.1", "patches/avfoundation-ios.patch", "a4ca2032eb16c384082aa0b43fd30a7f0e5aee9045869bd0a2c8c64353dad200")
+    add_patches("2.5.1", "patches/address-cstdint.patch", "a3cbfdeaf427990c6205fdd77abe9074484a1f294d8e4178580e2c7346ee1fcb")
+    add_patches("2.5.1", "patches/avfoundation-ios.patch", "124b887958ce6fb28dbc2212ca86e62ad59f948d9cb92dbb5b15c32ca9fdb60a")
     add_patches("2.5.1", "patches/minizip-targets.patch", "61924725ceec347b3ef14f181e341d1aec6b34b362dba4249fe8686fb05e21b8")
+    add_patches("2.5.1", "patches/zip-directory-attribute.patch", "7920e6891623da7a4defa3a862072d316ec27d6e3d15080e572e21e95f367716")
 
     add_deps("cmake", "libuv", "llhttp", "minizip", "zlib")
     if is_host("windows") then
@@ -21,6 +22,13 @@ package("icey")
             package:add("deps", "openssl3", {configs = {shared = package:config("shared")}})
         end
     end)
+
+    if on_check then
+        on_check("android", function (package)
+            local ndk_sdkver = package:toolchain("ndk"):config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(icey) requires Android API level >= 24 for libuv")
+        end)
+    end
 
     on_install("!wasm", function (package)
         local configs = {
