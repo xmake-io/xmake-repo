@@ -6,7 +6,7 @@ package("icey")
     add_urls("https://github.com/nilstate/icey/archive/refs/tags/$(version).tar.gz")
     add_versions("2.5.1", "2df5f802db160212de78a1bdfba01c9275b5d5d0ca8f58b00298779d50a5e02a")
 
-    add_deps("cmake", "openssl", "libuv", "llhttp", "minizip", "zlib")
+    add_deps("cmake", "openssl3", "libuv", "llhttp", "minizip", "zlib")
 
     on_install(function (package)
         local configs = {
