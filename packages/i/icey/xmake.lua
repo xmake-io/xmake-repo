@@ -10,18 +10,10 @@ package("icey")
     add_patches("2.5.1", "patches/minizip-targets.patch", "61924725ceec347b3ef14f181e341d1aec6b34b362dba4249fe8686fb05e21b8")
     add_patches("2.5.1", "patches/zip-directory-attribute.patch", "4b83cbd7f505210ead71e8dcb71e456cb34c339b3fdb24ff666a27c70d0f7356")
 
-    add_deps("cmake", "libuv", "llhttp", "minizip", "zlib")
+    add_deps("cmake", "libuv", "llhttp", "minizip", "zlib", "openssl3")
     if is_host("windows") then
         add_deps("pkgconf")
     end
-
-    on_load(function (package)
-        if package:is_plat("wasm") then
-            package:add("deps", "openssl3")
-        else
-            package:add("deps", "openssl3", {configs = {shared = package:config("shared")}})
-        end
-    end)
 
     if on_check then
         on_check("android", function (package)
