@@ -1,0 +1,599 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 3ce4e3d..838769f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -73,7 +73,7 @@ if(UNIX) #this is true for all the linux systems but not for cross compiling "li
+ 	
+ 	find_program( MEMORYCHECK_COMMAND valgrind )
+ 	set( MEMORYCHECK_COMMAND_OPTIONS "--trace-children=yes --leak-check=full" )
+-	set(main_lib_dest "lib/${PROJECT_NAME}")
++	set(main_lib_dest "lib")
+ 	#https://cmake.org/cmake/help/latest/command/find_package.html
+ 	set(pkg_config_dest "lib/cmake/${PROJECT_NAME}")
+ else(UNIX)
+@@ -100,7 +100,7 @@ else(UNIX)
+ 	        SET(CMAKE_EXE_LINKER_FLAGS "-static -static-libstdc++")
+ 	    endif(MINGW)
+ 	endif(MSVC)
+-	set(main_lib_dest "${PROJECT_NAME}")  
++	set(main_lib_dest "lib")
+ 	#https://cmake.org/cmake/help/latest/command/find_package.html
+ 	set(pkg_config_dest "cmake/${PROJECT_NAME}")
+ endif(UNIX)
+diff --git a/cmake/Findlccgen.cmake b/cmake/Findlccgen.cmake
+index 3bf3cbc..cf952f4 100644
+--- a/cmake/Findlccgen.cmake
++++ b/cmake/Findlccgen.cmake
+@@ -49,10 +49,11 @@ if(LCC_LOCATION)
+ 	find_package(lccgen HINTS ${LCC_LOCATION} CONFIG) #try to find it without looping on this module
+ 	if(NOT lccgen_FOUND)
+ 		find_program(LCC_EXECUTABLE
+-		NAMES ${lcc_names} HINTS ${LCC_LOCATION} DOC "lccgen command line client")
+-		FIND_PACKAGE_HANDLE_STANDARD_ARGS(lccgen FOUND_VAR LCC_FOUND
++		NAMES ${lcc_names} HINTS ${LCC_LOCATION} PATH_SUFFIXES bin DOC "lccgen command line client")
++		FIND_PACKAGE_HANDLE_STANDARD_ARGS(lccgen FOUND_VAR lccgen_FOUND
+         	                               REQUIRED_VARS LCC_EXECUTABLE 
+             	                           FAIL_MESSAGE "Error finding lcc executable. variable LCC_LOCATION non set correctly.")
++		set(LCC_FOUND ${lccgen_FOUND})
+     	add_executable(license_generator::lccgen IMPORTED GLOBAL)                                            
+ 		set_property(TARGET license_generator::lccgen PROPERTY IMPORTED_LOCATION ${LCC_EXECUTABLE})
+ 	ENDIF(NOT lccgen_FOUND)
+diff --git a/src/library/CMakeLists.txt b/src/library/CMakeLists.txt
+index f174976..685d78b 100644
+--- a/src/library/CMakeLists.txt
++++ b/src/library/CMakeLists.txt
+@@ -43,7 +43,7 @@ target_include_directories(licensecc_static
+ 
+ add_library(licensecc::licensecc_static ALIAS licensecc_static)
+ install(TARGETS licensecc_static EXPORT licensecc
+-	ARCHIVE DESTINATION ${main_lib_dest}/${LCC_PROJECT_NAME})
++	ARCHIVE DESTINATION lib)
+ 	
+-install(EXPORT licensecc NAMESPACE licensecc:: DESTINATION  ${main_lib_dest}/${LCC_PROJECT_NAME}/cmake)
++install(EXPORT licensecc NAMESPACE licensecc:: DESTINATION  lib/cmake)
+ export(EXPORT licensecc NAMESPACE licensecc:: FILE ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.cmake)
+diff --git a/src/library/base/base64.h b/src/library/base/base64.h
+index 466a263..fced3d9 100644
+--- a/src/library/base/base64.h
++++ b/src/library/base/base64.h
+@@ -3,6 +3,7 @@
+ 
+ #include <string>
+ #include <vector>
++#include <cstdint>
+ 
+ #if _WIN32
+ #include <wtypes.h>
+diff --git a/src/library/base/string_utils.h b/src/library/base/string_utils.h
+index a8157a7..190e5d1 100644
+--- a/src/library/base/string_utils.h
++++ b/src/library/base/string_utils.h
+@@ -10,6 +10,7 @@
+ 
+ #include <string>
+ #include <vector>
++#include <ctime>
+ 
+ namespace license {
+ 
+diff --git a/src/library/ini/SimpleIni.h b/src/library/ini/SimpleIni.h
+index 7142085..5bdb3a8 100644
+--- a/src/library/ini/SimpleIni.h
++++ b/src/library/ini/SimpleIni.h
+@@ -326,7 +326,7 @@ public:
+ #endif
+ 
+         /** Strict less ordering by name of key only */
+-        struct KeyOrder : std::binary_function<Entry, Entry, bool> {
++        struct KeyOrder {
+             bool operator()(const Entry & lhs, const Entry & rhs) const {
+                 const static SI_STRLESS isLess = SI_STRLESS();
+                 return isLess(lhs.pItem, rhs.pItem);
+@@ -334,7 +334,7 @@ public:
+         };
+ 
+         /** Strict less ordering by order, and then name of key */
+-        struct LoadOrder : std::binary_function<Entry, Entry, bool> {
++        struct LoadOrder {
+             bool operator()(const Entry & lhs, const Entry & rhs) const {
+                 if (lhs.nOrder != rhs.nOrder) {
+                     return lhs.nOrder < rhs.nOrder;
+diff --git a/src/library/os/cpu_info.hpp b/src/library/os/cpu_info.hpp
+index c837493..27e1c80 100644
+--- a/src/library/os/cpu_info.hpp
++++ b/src/library/os/cpu_info.hpp
+@@ -8,6 +8,7 @@
+ #ifndef SRC_LIBRARY_OS_CPU_INFO_H_
+ #define SRC_LIBRARY_OS_CPU_INFO_H_
+ #include <string>
++#include <cstdint>
+ namespace license {
+ namespace os {
+ 
+diff --git a/src/library/os/linux/cpu_info.cpp b/src/library/os/linux/cpu_info.cpp
+index cfb4efc..927f02c 100644
+--- a/src/library/os/linux/cpu_info.cpp
++++ b/src/library/os/linux/cpu_info.cpp
+@@ -5,16 +5,27 @@
+  *      Author: devel
+  */
+ 
+-#include <cpuid.h>
++#include "../cpu_info.hpp"
+ #include <string>
++#include <cstring>
++#include <fstream>
++#include <sstream>
++#include <map>
++
++// Include cpuid.h only for x86/x64 architectures
++#if defined(__x86_64__) || defined(__i386__)
++#include <cpuid.h>
+ #include <unordered_set>
+ #include <memory.h>
+-#include "../cpu_info.hpp"
++#endif
+ 
+ namespace license {
+ namespace os {
+ using namespace std;
+ 
++#if defined(__x86_64__) || defined(__i386__)
++// x86/x64 implementation
++
+ struct CPUVendorID {
+ 	uint32_t ebx;
+ 	uint32_t edx;
+@@ -27,7 +38,10 @@ static string get_cpu_vendor() {
+ 	unsigned int level = 0, eax = 0, ebx = 0, ecx = 0, edx = 0;
+ 	// hypervisor flag false, try to get the vendor name, see if it's a virtual cpu
+ 	__get_cpuid(level, &eax, &ebx, &ecx, &edx);
+-	CPUVendorID vendorID{.ebx = ebx, .edx = edx, .ecx = ecx};
++	CPUVendorID vendorID;
++	vendorID.ebx = ebx;
++	vendorID.edx = edx;
++	vendorID.ecx = ecx;
+ 	return vendorID.toString();
+ }
+ 
+@@ -51,6 +65,7 @@ static string get_cpu_brand() {
+ CpuInfo::CpuInfo() : m_vendor(get_cpu_vendor()), m_brand(get_cpu_brand()) {}
+ 
+ CpuInfo::~CpuInfo() {}
++
+ /**
+  * Detect Virtual machine using hypervisor bit.
+  * @return true if the cpu hypervisor bit is set to 1
+@@ -72,5 +87,195 @@ uint32_t CpuInfo::model() const {
+ 	return (eax & 0x3FFF) | (eax & 0x3FF8000) >> 2 | (ebx & 0xff) << 24;
+ }
+ 
++#elif defined(__aarch64__) || defined(__arm__)
++// ARM implementation
++
++// ARM CPU implementer codes (from ARM Architecture Reference Manual)
++static map<string, string> arm_vendors = {
++    {"0x41", "ARM"},
++    {"0x42", "Broadcom"},
++    {"0x43", "Cavium"},
++    {"0x44", "DEC"},
++    {"0x4e", "NVIDIA"},
++    {"0x50", "APM"},
++    {"0x51", "Qualcomm"},
++    {"0x53", "Samsung"},
++    {"0x54", "HiSilicon"},
++    {"0x56", "Marvell"},
++    {"0x69", "Intel"}
++};
++
++static string get_arm_cpu_vendor() {
++    ifstream cpuinfo("/proc/cpuinfo");
++    string line;
++    string vendor = "ARM";  // Default vendor
++    
++    while (getline(cpuinfo, line)) {
++        if (line.find("CPU implementer") != string::npos) {
++            size_t pos = line.find(":");
++            if (pos != string::npos) {
++                string implementer = line.substr(pos + 1);
++                // Remove leading/trailing whitespace
++                implementer.erase(0, implementer.find_first_not_of(" \t"));
++                implementer.erase(implementer.find_last_not_of(" \t") + 1);
++                
++                auto it = arm_vendors.find(implementer);
++                if (it != arm_vendors.end()) {
++                    vendor = it->second;
++                }
++            }
++            break;
++        }
++    }
++    
++    // Check device tree for more specific info (e.g., NVIDIA Jetson)
++    ifstream dt_compat("/proc/device-tree/compatible");
++    if (dt_compat.is_open()) {
++        string compat_str;
++        getline(dt_compat, compat_str, '\0');  // Read null-terminated string
++        if (compat_str.find("nvidia") != string::npos) {
++            vendor = "NVIDIA";
++        }
++    }
++    
++    return vendor;
++}
++
++static string get_arm_cpu_brand() {
++    string brand = "ARM Processor";
++    
++    // First try to get model name from cpuinfo
++    ifstream cpuinfo("/proc/cpuinfo");
++    string line;
++    
++    while (getline(cpuinfo, line)) {
++        if (line.find("model name") != string::npos) {
++            size_t pos = line.find(":");
++            if (pos != string::npos) {
++                brand = line.substr(pos + 1);
++                // Remove leading/trailing whitespace
++                brand.erase(0, brand.find_first_not_of(" \t"));
++                brand.erase(brand.find_last_not_of(" \t") + 1);
++            }
++            break;
++        }
++    }
++    
++    // Try to get more specific info from device tree
++    ifstream dt_model("/proc/device-tree/model");
++    if (dt_model.is_open()) {
++        string model;
++        getline(dt_model, model);
++        if (!model.empty() && model.find("nvidia") != string::npos) {
++            // For NVIDIA Jetson devices, use the model from device tree
++            brand = "NVIDIA " + model;
++        } else if (!model.empty() && model != brand) {
++            // Use device tree model if it's more specific
++            brand = model;
++        }
++    }
++    
++    return brand;
++}
++
++static uint32_t get_arm_cpu_model() {
++    uint32_t model = 0;
++    ifstream cpuinfo("/proc/cpuinfo");
++    string line;
++    
++    while (getline(cpuinfo, line)) {
++        if (line.find("CPU part") != string::npos) {
++            size_t pos = line.find(":");
++            if (pos != string::npos) {
++                string part_str = line.substr(pos + 1);
++                // Remove leading/trailing whitespace
++                part_str.erase(0, part_str.find_first_not_of(" \t"));
++                part_str.erase(part_str.find_last_not_of(" \t") + 1);
++                
++                // Convert hex string to integer
++                try {
++                    model = stoul(part_str, nullptr, 16);
++                } catch (...) {
++                    model = 0;
++                }
++            }
++            break;
++        }
++    }
++    
++    return model;
++}
++
++static bool is_arm_hypervisor() {
++    // Check for common hypervisor indicators on ARM
++    
++    // 1. Check for hypervisor sysfs directory
++    ifstream hypervisor("/sys/hypervisor/type");
++    if (hypervisor.is_open()) {
++        return true;
++    }
++    
++    // 2. Check device tree for virtualization indicators
++    ifstream dt_compat("/proc/device-tree/compatible");
++    if (dt_compat.is_open()) {
++        string compat_str;
++        getline(dt_compat, compat_str);
++        if (compat_str.find("xen") != string::npos ||
++            compat_str.find("kvm") != string::npos ||
++            compat_str.find("qemu") != string::npos) {
++            return true;
++        }
++    }
++    
++    // 3. Check for QEMU/KVM specific files
++    ifstream qemu_fw("/sys/firmware/qemu_fw_cfg");
++    if (qemu_fw.good()) {
++        return true;
++    }
++    
++    // 4. Check kernel command line for hypervisor hints
++    ifstream cmdline("/proc/cmdline");
++    if (cmdline.is_open()) {
++        string cmd;
++        getline(cmdline, cmd);
++        if (cmd.find("console=hvc") != string::npos ||  // Xen console
++            cmd.find("xen_blkfront") != string::npos ||
++            cmd.find("virtio") != string::npos) {
++            return true;
++        }
++    }
++    
++    return false;
++}
++
++CpuInfo::CpuInfo() : m_vendor(get_arm_cpu_vendor()), m_brand(get_arm_cpu_brand()) {}
++
++CpuInfo::~CpuInfo() {}
++
++uint32_t CpuInfo::model() const {
++    return get_arm_cpu_model();
++}
++
++bool CpuInfo::is_hypervisor_set() const {
++    return is_arm_hypervisor();
++}
++
++#else
++// Generic/Unknown architecture fallback
++
++CpuInfo::CpuInfo() : m_vendor("Unknown"), m_brand("Unknown Processor") {}
++
++CpuInfo::~CpuInfo() {}
++
++uint32_t CpuInfo::model() const {
++    return 0;
++}
++
++bool CpuInfo::is_hypervisor_set() const {
++    return false;
++}
++
++#endif
++
+ }  // namespace os
+ } /* namespace license */
+diff --git a/src/library/os/linux/network.cpp b/src/library/os/linux/network.cpp
+index 08ee164..474758f 100644
+--- a/src/library/os/linux/network.cpp
++++ b/src/library/os/linux/network.cpp
+@@ -21,8 +21,14 @@
+ #include <net/if.h>
+ #include <netdb.h>
+ #include <ifaddrs.h>
++#include <netinet/in.h>
++#if defined(__linux__)
+ #include <linux/if_link.h>
+ #include <netpacket/packet.h>
++#elif defined(__FreeBSD__) || defined(__DragonFly__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__APPLE__)
++#include <net/if_dl.h>
++#include <net/if_types.h>
++#endif
+ #include <stdio.h>
+ #include <unordered_map>
+ #include <string.h>
+@@ -76,8 +82,14 @@ FUNCTION_RETURN getAdapterInfos(vector<OsAdapterInfo> &adapterInfos) {
+ 		/* Display interface name and family (including symbolic
+ 		 form of the latter for the common families) */
+ 		LOG_DEBUG("%-8s %s (%d)\n", ifa->ifa_name,
+-				  (family == AF_PACKET) ? "AF_PACKET"
+-										: (family == AF_INET) ? "AF_INET" : (family == AF_INET6) ? "AF_INET6" : "???",
++#if defined(AF_PACKET) && defined(AF_LINK)
++				  (family == AF_PACKET) ? "AF_PACKET" : (family == AF_LINK) ? "AF_LINK" :
++#elif defined(AF_PACKET)
++				  (family == AF_PACKET) ? "AF_PACKET" :
++#elif defined(AF_LINK)
++				  (family == AF_LINK) ? "AF_LINK" :
++#endif
++										(family == AF_INET) ? "AF_INET" : (family == AF_INET6) ? "AF_INET6" : "???",
+ 				  family);
+ 		/* For an AF_INET* interface address, display the address
+ 		 * || family == AF_INET6*/
+@@ -89,6 +101,7 @@ FUNCTION_RETURN getAdapterInfos(vector<OsAdapterInfo> &adapterInfos) {
+ 			currentAdapter->ipv4_address[2] = (iaddr & 0x00ff0000) >> 16;
+ 			currentAdapter->ipv4_address[3] = (iaddr & 0xff000000) >> 24;
+ 
++#ifdef AF_PACKET
+ 		} else if (family == AF_PACKET && ifa->ifa_data != NULL) {
+ 			struct sockaddr_ll *s1 = (struct sockaddr_ll *)ifa->ifa_addr;
+ 			int i;
+@@ -97,6 +110,19 @@ FUNCTION_RETURN getAdapterInfos(vector<OsAdapterInfo> &adapterInfos) {
+ 				LOG_DEBUG("%02x:", s1->sll_addr[i]);
+ 			}
+ 			LOG_DEBUG("\t %s\n", ifa->ifa_name);
++#endif
++#ifdef AF_LINK
++		} else if (family == AF_LINK && ifa->ifa_addr != NULL) {
++			struct sockaddr_dl *sdl = (struct sockaddr_dl *)ifa->ifa_addr;
++			if (sdl->sdl_type == IFT_ETHER && sdl->sdl_alen == 6) {
++				const unsigned char *mac = (const unsigned char *)LLADDR(sdl);
++				for (int i = 0; i < 6; i++) {
++					currentAdapter->mac_address[i] = mac[i];
++					LOG_DEBUG("%02x:", mac[i]);
++				}
++				LOG_DEBUG("\t %s\n", ifa->ifa_name);
++			}
++#endif
+ 		}
+ 	}
+ 	freeifaddrs(ifaddr);
+diff --git a/src/library/os/linux/os_linux.cpp b/src/library/os/linux/os_linux.cpp
+index bbf4341..62bf2be 100644
+--- a/src/library/os/linux/os_linux.cpp
++++ b/src/library/os/linux/os_linux.cpp
+@@ -17,9 +17,6 @@
+ #include <mntent.h>
+ #include <dirent.h>
+ #include <sys/utsname.h>
+-#ifndef NDEBUG
+-#include <valgrind/memcheck.h>
+-#endif
+ 
+ //#ifdef USE_DISK_MODEL
+ ///#define PARSE_ID_FUNC parse_disk_id
+diff --git a/src/library/os/windows/cpu_info.cpp b/src/library/os/windows/cpu_info.cpp
+index a58cc6c..0bacc18 100644
+--- a/src/library/os/windows/cpu_info.cpp
++++ b/src/library/os/windows/cpu_info.cpp
+@@ -5,16 +5,123 @@
+  *      Author: devel
+  */
+ 
+-
+-#include <intrin.h>
++#include <cstdint>
+ #include <string>
+ #include <unordered_set>
++#include <cstring>
++#ifndef NOMINMAX
++#define NOMINMAX
++#endif
++#include <windows.h>
++
++#if defined(_M_ARM64) || defined(__aarch64__) || defined(__arm64__) || defined(_M_ARM) || defined(__arm__)
++#include <winreg.h>
++#else
++#include <intrin.h>
++#endif
++
+ #include "../cpu_info.hpp"
+ 
+ namespace license {
+ namespace os {
+ using namespace std;
+ 
++#if defined(_M_ARM64) || defined(__aarch64__) || defined(__arm64__) || defined(_M_ARM) || defined(__arm__)
++
++static string get_cpu_vendor() {
++	// On ARM64, get CPU vendor from registry
++	HKEY hKey;
++	LONG lRes =
++		RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0", 0, KEY_READ, &hKey);
++
++	string result = "Unknown";
++	if (lRes == ERROR_SUCCESS) {
++		wchar_t identifier[256] = {0};
++		DWORD dataSize = sizeof(identifier);
++
++		// Try to get the identifier which contains vendor info
++		lRes = RegQueryValueExW(hKey, L"Identifier", NULL, NULL, (LPBYTE)identifier, &dataSize);
++		if (lRes == ERROR_SUCCESS) {
++			int len = wcslen(identifier);
++			result.resize(len);
++			for (int i = 0; i < len; ++i) {
++				result[i] = static_cast<char>(identifier[i]);
++			}
++		} else {
++			// If identifier not available, try VendorIdentifier
++			lRes = RegQueryValueExW(hKey, L"VendorIdentifier", NULL, NULL, (LPBYTE)identifier, &dataSize);
++			if (lRes == ERROR_SUCCESS) {
++				int len = wcslen(identifier);
++				result.resize(len);
++				for (int i = 0; i < len; ++i) {
++					result[i] = static_cast<char>(identifier[i]);
++				}
++			}
++		}
++		RegCloseKey(hKey);
++	}
++	return result;
++}
++
++static string get_cpu_brand() {
++	// On ARM64, get CPU brand from registry
++	HKEY hKey;
++	LONG lRes =
++		RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0", 0, KEY_READ, &hKey);
++
++	string result = "Unknown";
++	if (lRes == ERROR_SUCCESS) {
++		wchar_t processorName[256] = {0};
++		DWORD dataSize = sizeof(processorName);
++
++		// Fetch ProcessorNameString (e.g., "Snapdragon(TM) X Elite...")
++		lRes = RegQueryValueExW(hKey, L"ProcessorNameString", NULL, NULL, (LPBYTE)processorName, &dataSize);
++		if (lRes == ERROR_SUCCESS) {
++			// Convert wide string to regular string
++			int len = wcslen(processorName);
++			result.resize(len);
++			for (int i = 0; i < len; ++i) {
++				result[i] = static_cast<char>(processorName[i]);
++			}
++		} else {
++			result = "ARM Processor";
++		}
++		RegCloseKey(hKey);
++	}
++	return result;
++}
++
++bool CpuInfo::is_hypervisor_set() const { return false; }
++
++uint32_t CpuInfo::model() const {
++	// On ARM64, we can get model information from registry
++	HKEY hKey;
++	LONG lRes =
++		RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0", 0, KEY_READ, &hKey);
++
++	uint32_t result = 0;
++	if (lRes == ERROR_SUCCESS) {
++		DWORD modelNumber = 0;
++		DWORD dataSize = sizeof(modelNumber);
++
++		// Try to get the Architecture value
++		lRes = RegQueryValueExW(hKey, L"~MACHINEHALNAME", NULL, NULL, (LPBYTE)&modelNumber, &dataSize);
++		if (lRes != ERROR_SUCCESS) {
++			// If not available, try Architecture value
++			lRes = RegQueryValueExW(hKey, L"Architecture", NULL, NULL, (LPBYTE)&modelNumber, &dataSize);
++			if (lRes != ERROR_SUCCESS) {
++				modelNumber = 0;  // Default value if not found
++			}
++		}
++		result = static_cast<uint32_t>(modelNumber);
++		RegCloseKey(hKey);
++	}
++	return result;
++}
++
++#elif defined(__x86_64__) || defined(_M_X64) || defined(i386) || defined(__i386__) || defined(__i386) || \
++	defined(_M_IX86)
++
+ static string get_cpu_vendor() {
+ 	// hypervisor flag false, try to get the vendor name, see if it's a virtual cpu
+ 	int cpui[4] = {0};
+@@ -50,9 +157,6 @@ static string get_cpu_brand() {
+ 	return result;
+ }
+ 
+-CpuInfo::CpuInfo() : m_vendor(get_cpu_vendor()), m_brand(get_cpu_brand()) {}
+-
+-CpuInfo::~CpuInfo() {}
+ /**
+  * Detect Virtual machine using hypervisor bit.
+  * @return true if the cpu hypervisor bit is set to 1
+@@ -73,6 +177,18 @@ uint32_t CpuInfo::model() const {
+ 	return (cpui[0] & 0x3FFF) | (cpui[0] & 0x3FF8000) >> 2 | (cpui[1] & 0xff) << 24;
+ }
+ 
++#else
++
++static string get_cpu_vendor() { return "Unknown"; }
++static string get_cpu_brand() { return "Unknown"; }
++bool CpuInfo::is_hypervisor_set() const { return false; }
++uint32_t CpuInfo::model() const { return 0; }
++
++#endif
++
++CpuInfo::CpuInfo() : m_vendor(get_cpu_vendor()), m_brand(get_cpu_brand()) {}
++
++CpuInfo::~CpuInfo() {}
+ 
+ }  // namespace os
+ } /* namespace license */
