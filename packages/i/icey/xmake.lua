@@ -41,6 +41,11 @@ package("icey")
             "-DCMAKE_DISABLE_FIND_PACKAGE_Doxygen=TRUE",
             "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF")
         }
+        local openssl = package:dep("openssl3")
+        if not openssl:is_system() then
+            -- FindOpenSSL needs the actual linkage to add static Windows dependencies such as crypt32.
+            table.insert(configs, "-DOPENSSL_USE_STATIC_LIBS=" .. (openssl:config("shared") and "OFF" or "ON"))
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
