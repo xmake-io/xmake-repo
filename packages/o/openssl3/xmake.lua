@@ -47,6 +47,9 @@ package("openssl3")
     add_patches("3.6.0", path.join(os.scriptdir(), "patches", "3.6.0", "c20d4704e9e99a89d29f5ee848f9498694388905.patch"), "5d2523a6e0cc938c5d5acab849899da4b6a333b51151eaac5bd3b52741536bbc")
     add_patches("3.5.5", path.join(os.scriptdir(), "patches", "3.6.1", "pr29826.patch"), "395cade297b377130df1c8fe17cae94ff2b3d82ea1dc7fbac8acfeb597fa8b8b")
     add_patches("3.6.1", path.join(os.scriptdir(), "patches", "3.6.1", "pr29826.patch"), "395cade297b377130df1c8fe17cae94ff2b3d82ea1dc7fbac8acfeb597fa8b8b")
+    add_patches(">=3.5.1 <=3.5.4", path.join(os.scriptdir(), "patches", "3.5.1", "cpuid-setup-macos.patch"), "e0630a3d5ff3be7ab07b53798fd80bf27e36ba783bce39f877c164f896441988")
+    add_patches(">=3.5.5 <=3.5.7", path.join(os.scriptdir(), "patches", "3.6.5", "cpuid-setup-macos.patch"), "1865f92c3ed7fa5cac91646c7e2552c09788d815179b4990e2a2112248e51cc2")
+    add_patches(">=3.6.2", path.join(os.scriptdir(), "patches", "3.6.5", "cpuid-setup-macos.patch"), "1865f92c3ed7fa5cac91646c7e2552c09788d815179b4990e2a2112248e51cc2")
 
     on_fetch("fetch")
 
@@ -188,7 +191,7 @@ package("openssl3")
         import("package.tools.make").make(package, {"install_sw"})
     end)
 
-    on_install("macosx", "bsd", function (package)
+    on_install("bsd", function (package)
         -- https://wiki.openssl.org/index.php/Compilation_and_Installation#PREFIX_and_OPENSSLDIR
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
         local configs = {"--openssldir=" .. package:installdir(),
@@ -213,7 +216,7 @@ package("openssl3")
         end
     end)
 
-    on_install("linux", "cross", "android", "iphoneos", "wasm", "harmony", function (package)
+    on_install("macosx", "linux", "cross", "android", "iphoneos", "wasm", "harmony", function (package)
         local target_arch = "generic32"
         if package:is_arch("x86_64") then
             target_arch = "x86_64"
@@ -230,7 +233,7 @@ package("openssl3")
         local target_plat = "linux"
         if package:is_plat("macosx") then
             target_plat = "darwin64"
-            target_arch = "x86_64-cc"
+            target_arch = package:is_arch("arm64") and "arm64-cc" or "x86_64-cc"
         elseif package:is_plat("harmony") then
             target_plat = "ohos"
             if package:is_arch("arm64", "arm64-v8a") then
@@ -257,6 +260,7 @@ package("openssl3")
         local target = target_plat .. "-" .. target_arch
         local configs = {target,
                          package:config("shared") and "shared" or "no-shared",
+                         "no-tests",
                          "--libdir=lib",
                          "--openssldir=" .. package:installdir():gsub("\\", "/"),
                          "--prefix=" .. package:installdir():gsub("\\", "/")}
