@@ -47,9 +47,9 @@ package("openssl3")
     add_patches("3.6.0", path.join(os.scriptdir(), "patches", "3.6.0", "c20d4704e9e99a89d29f5ee848f9498694388905.patch"), "5d2523a6e0cc938c5d5acab849899da4b6a333b51151eaac5bd3b52741536bbc")
     add_patches("3.5.5", path.join(os.scriptdir(), "patches", "3.6.1", "pr29826.patch"), "395cade297b377130df1c8fe17cae94ff2b3d82ea1dc7fbac8acfeb597fa8b8b")
     add_patches("3.6.1", path.join(os.scriptdir(), "patches", "3.6.1", "pr29826.patch"), "395cade297b377130df1c8fe17cae94ff2b3d82ea1dc7fbac8acfeb597fa8b8b")
-    add_patches(">=3.5.1 <=3.5.4", path.join(os.scriptdir(), "patches", "3.5.1", "cpuid-setup-macos.patch"), "e0630a3d5ff3be7ab07b53798fd80bf27e36ba783bce39f877c164f896441988")
-    add_patches(">=3.5.5 <=3.5.7", path.join(os.scriptdir(), "patches", "3.6.5", "cpuid-setup-macos.patch"), "1865f92c3ed7fa5cac91646c7e2552c09788d815179b4990e2a2112248e51cc2")
-    add_patches(">=3.6.2", path.join(os.scriptdir(), "patches", "3.6.5", "cpuid-setup-macos.patch"), "1865f92c3ed7fa5cac91646c7e2552c09788d815179b4990e2a2112248e51cc2")
+    -- Keep the Mach-O initializer image-local without losing static CPUID setup extraction.
+    add_patches(">=3.5.1 <=3.5.7", path.join(os.scriptdir(), "patches", "3.5.1", "cpuid-setup-macos.patch"), "4334b33183c46a9fcc46af6548cd7d13a9772044d1d83bae8b91c77904e74c87")
+    add_patches(">=3.6.2 <=3.6.5", path.join(os.scriptdir(), "patches", "3.5.1", "cpuid-setup-macos.patch"), "4334b33183c46a9fcc46af6548cd7d13a9772044d1d83bae8b91c77904e74c87")
 
     on_fetch("fetch")
 
