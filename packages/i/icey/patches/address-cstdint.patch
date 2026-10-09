@@ -1,0 +1,8 @@
+diff --git a/src/net/include/icy/net/address.h b/src/net/include/icy/net/address.h
+index d021abc1..3b084f34 100644
+--- a/src/net/include/icy/net/address.h
++++ b/src/net/include/icy/net/address.h
+@@ -15,2 +15,3 @@
+ #include "icy/net/net.h"
++#include <cstdint>
+ #include <memory>
