@@ -1,0 +1,49 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 9515517..938de0a 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -99,7 +99,7 @@ if(WIN32 AND "x${CMAKE_CXX_COMPILER_ARCHITECTURE_ID}" STREQUAL "x")
+ endif()
+ 
+ SET( Boost_USE_STATIC_LIBS ON )
+-find_package(Boost REQUIRED COMPONENTS date_time filesystem program_options system unit_test_framework)
++find_package(Boost REQUIRED COMPONENTS date_time filesystem program_options system)
+ 
+ #set below in case of dynamic linking in debug.
+ #set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:BOOST_TEST_DYN_LINK>)
+diff --git a/src/base_lib/base64.h b/src/base_lib/base64.h
+index 2d72706..b214d75 100644
+--- a/src/base_lib/base64.h
++++ b/src/base_lib/base64.h
+@@ -3,6 +3,7 @@
+ 
+ #include <string>
+ #include <vector>
++#include <cstdint>
+ #ifdef __linux__
+ 
+ #elif _WIN32
+diff --git a/src/license_generator/project.cpp b/src/license_generator/project.cpp
+index dee92c3..a97d08a 100644
+--- a/src/license_generator/project.cpp
++++ b/src/license_generator/project.cpp
+@@ -7,6 +7,7 @@
+ 
+ #include <boost/algorithm/string/replace.hpp>
+ #include <boost/filesystem.hpp>
++#include <boost/version.hpp>
+ #include <stdexcept>
+ #include <algorithm>
+ 
+@@ -52,7 +53,11 @@ static const string guess_templates_folder(const string &source_folder) {
+ 									 "] does not exist. tried also [" + template_fname.string() + "]");
+ 		}
+ 	}
++#if BOOST_VERSION > 108300
++	fs::path normalized = templates_path.lexically_normal();
++#else
+ 	fs::path normalized = templates_path.normalize();
++#endif
+ 	return normalized.string();
+ }
+ static const fs::path publicKeyFolder(const fs::path &product_folder, const string &product_name) {
