@@ -40,7 +40,6 @@ package("xclang")
         local suffix = is_host("windows") and ".exe" or ""
         for _, tool in ipairs({"xclang", "clang++", "llvm-ar"}) do
             local program = package:installdir("bin", tool .. suffix)
-            print(program .. " --version")
             os.execv(program, {"--version"})
         end
     end)
