@@ -9,7 +9,7 @@ package("innosetup")
     add_versions("7.1.0", "aad15c662593c6f5656457a5c001f4591babd72820cacf63f9706d4af5d93b75")
 
     on_fetch(function (package, opt)
-        return package:find_tool("ISCC", {check = "--version"}) or false
+        return package:find_tool("ISCC", {check = "--version"})
     end)
 
     on_install("@windows", function (package)
