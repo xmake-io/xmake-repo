@@ -13,10 +13,12 @@ package("ndicapi")
         add_syslinks("wsock32", "ws2_32")
     end
 
-    on_install(function (package)    
+    on_install("!bsd and !wasm", function (package)
+        io.replace("CMakeLists.txt", "IF(MSVC)", "IF(WIN32)", {plain = true})
         local configs = {
             "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"),
             "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
+            "-Dndicapi_STATIC=" .. (package:config("shared") and "OFF" or "ON"),
             "-DBUILD_PYTHON=" .. (package:config("python") and "ON" or "OFF"),
             "-Dndicapi_BUILD_APPLICATIONS=OFF",
         }
