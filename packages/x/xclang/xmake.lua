@@ -37,9 +37,7 @@ package("xclang")
     end)
 
     on_test(function (package)
-        local suffix = is_host("windows") and ".exe" or ""
         for _, tool in ipairs({"xclang", "clang++", "llvm-ar"}) do
-            local program = package:installdir("bin", tool .. suffix)
-            os.vrunv(program, {"--version"})
+            os.vrunv(tool, {"--version"})
         end
     end)
