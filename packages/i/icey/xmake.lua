@@ -9,6 +9,7 @@ package("icey")
     add_patches("2.5.1", "patches/avfoundation-ios.patch", "2e8ab393cc462c866e82ad9466278880002e9e9075e6f99ce0e4e5e6bb5d572d")
     add_patches("2.5.1", "patches/minizip-targets.patch", "61924725ceec347b3ef14f181e341d1aec6b34b362dba4249fe8686fb05e21b8")
     add_patches("2.5.1", "patches/zip-directory-attribute.patch", "4b83cbd7f505210ead71e8dcb71e456cb34c339b3fdb24ff666a27c70d0f7356")
+    add_patches("2.5.1", "patches/openssl-armcap-visibility.patch", "e1032f49f6bc367ee1a5bfc639abcb40600f50dd15f12a35358315507c5feabc")
 
     add_deps("cmake", "libuv", "llhttp", "minizip", "zlib", "openssl3")
     add_deps("nlohmann_json", {configs = {cmake = true}})
