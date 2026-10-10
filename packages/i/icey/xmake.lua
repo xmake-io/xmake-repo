@@ -9,8 +9,9 @@ package("icey")
     add_patches("2.5.1", "patches/avfoundation-ios.patch", "2e8ab393cc462c866e82ad9466278880002e9e9075e6f99ce0e4e5e6bb5d572d")
     add_patches("2.5.1", "patches/minizip-targets.patch", "61924725ceec347b3ef14f181e341d1aec6b34b362dba4249fe8686fb05e21b8")
     add_patches("2.5.1", "patches/zip-directory-attribute.patch", "4b83cbd7f505210ead71e8dcb71e456cb34c339b3fdb24ff666a27c70d0f7356")
+    add_patches("2.5.1", "patches/openssl-armcap-visibility.patch", "e1032f49f6bc367ee1a5bfc639abcb40600f50dd15f12a35358315507c5feabc")
 
-    add_deps("cmake", "libuv", "llhttp", "minizip", "zlib")
+    add_deps("cmake", "libuv", "llhttp", "minizip", "zlib", "openssl3")
     add_deps("nlohmann_json", {configs = {cmake = true}})
     if is_host("windows") then
         add_deps("pkgconf")
@@ -22,10 +23,6 @@ package("icey")
             assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(icey) requires Android API level >= 24 for libuv")
         end)
     end
-
-    on_load(function (package)
-        package:add("deps", "openssl3", {configs = {shared = package:config("shared")}})
-    end)
 
     on_install("!wasm", function (package)
         local configs = {
@@ -45,6 +42,11 @@ package("icey")
             "-DCMAKE_DISABLE_FIND_PACKAGE_Doxygen=TRUE",
             "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF")
         }
+        local openssl = package:dep("openssl3")
+        if not openssl:is_system() then
+            -- FindOpenSSL needs the actual linkage to add static Windows dependencies such as crypt32.
+            table.insert(configs, "-DOPENSSL_USE_STATIC_LIBS=" .. (openssl:config("shared") and "OFF" or "ON"))
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
