@@ -16,19 +16,19 @@ package("xclang")
         host = "apple-darwin"
     end
     local hashes = {
-        ["x86_64-w64-mingw32"] = "bc20b77896354af7a2f9aa233565c3a7c1b63eb6512d452c233cf44e40add7fa",
-        ["aarch64-w64-mingw32"] = "f84c9a6d16a45e1569a1191f811bfa14b3923b6eba0be7c84a2738e59cb37554",
-        ["x86_64-unknown-linux-gnu"] = "a2496b3f4f5ff175928457ec73c8dfea9fa1a7bc4e4f5e2616425c9a863627ec",
-        ["aarch64-unknown-linux-gnu"] = "2d573931ddb9319aeabf6c761ab78a33ecf2b03dc8573ff92e5f07b5090e5a61",
-        ["x86_64-apple-darwin"] = "592d599973199c4ad7c219a13f14b8ccea2dc26746fce96c97e5474325fd1139",
-        ["aarch64-apple-darwin"] = "15d77e05163abe8cf202434c04efa9e770902d5290ba243c152dc1ab962cae86"
+        ["x86_64-w64-mingw32"] = "7ba24a2bff6275117e7b3f214850b3726f7cac2c5066d49e2b04f8aaa5685c24",
+        ["aarch64-w64-mingw32"] = "2c2f198108ce60283ce722643d7d125b2e249491a9a3603952b9996f1d4574e2",
+        ["x86_64-unknown-linux-gnu"] = "ea6394410c102a3cbd2d0afc2d59935404c0a51298bc944ebd25490e6cc0d568",
+        ["aarch64-unknown-linux-gnu"] = "84c7e20a242f2a40a8d377a668c836337b808ebc0d1e73e165e288183a329821",
+        ["x86_64-apple-darwin"] = "484028870d18cb904c348e2610cb41e3b765950c0bd4a9c9690ec93e729e92b4",
+        ["aarch64-apple-darwin"] = "b3c2c8022885473ab838e31019c0a7b07cff78d723ca1e28dcbd7e40d0f55caa"
     }
     if arch and host then
         local triple = arch .. "-" .. host
         add_urls("https://github.com/clice-io/xclang/releases/download/$(version)/xclang-$(version)-" .. triple .. ".tar.xz",
                  {version = function (version) return version:gsub("%+", ".") end})
         -- Use a semantic version for upstream's four-component release number.
-        add_versions("23.1.2+9", hashes[triple])
+        add_versions("23.1.2+10", hashes[triple])
     end
 
     on_install("@windows|x64", "@windows|arm64", "@linux|x86_64", "@linux|arm64", "@macosx|x86_64", "@macosx|arm64", function (package)
