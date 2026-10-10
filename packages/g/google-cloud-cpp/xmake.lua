@@ -6,6 +6,7 @@ package("google-cloud-cpp")
     add_urls("https://github.com/googleapis/google-cloud-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/googleapis/google-cloud-cpp.git")
 
+    add_versions("v3.11.0", "7e05e3173c874288bbbce832b9d9edc79ab6182d6b0898694094cb24faf4f010")
     add_versions("v2.46.0", "492734e092e5150d8395797f0d269f3d1e49ba3a959db4a332d15a1f382ff7ee")
     add_versions("v2.45.0", "3d1b5eb696832f9071bf7ef0b3f0c9fd27c1a39d5edcb8a9976c65193319fd01")
     add_versions("v2.43.0", "2aea914128db8a550bd926e1e08c155fae1caff8a451e1b644602952dd6d8b5c")
