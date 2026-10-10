@@ -11,10 +11,6 @@ package("valgrind-macos")
 
     add_deps("autotools")
 
-    on_load(function (package)
-        package:addenv("PATH", "bin")
-    end)
-
     on_install("@macosx", "@bsd", "@linux", function (package)
         io.replace("VEX/priv/guest_arm64_helpers.c", "msr DIT, 1", ".inst 0xd503415f", {plain = true})
         io.replace("VEX/priv/guest_arm64_helpers.c", "msr DIT, 0", ".inst 0xd503405f", {plain = true})
