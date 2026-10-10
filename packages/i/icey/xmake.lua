@@ -46,7 +46,6 @@ package("icey")
         if not openssl:is_system() then
             -- FindOpenSSL needs the actual linkage to add static Windows dependencies such as crypt32.
             table.insert(configs, "-DOPENSSL_USE_STATIC_LIBS=" .. (openssl:config("shared") and "OFF" or "ON"))
-            table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
         end
         import("package.tools.cmake").install(package, configs)
     end)
