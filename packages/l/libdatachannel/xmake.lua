@@ -6,6 +6,7 @@ package("libdatachannel")
     add_urls("https://github.com/paullouisageneau/libdatachannel/archive/refs/tags/$(version).tar.gz",
              "https://github.com/paullouisageneau/libdatachannel.git", {submodules = false})
 
+    add_versions("v0.24.6", "22a66aebebd8dae561d8e5181da96f2fcc203e067c5b2186c07b39af913464c0")
     add_versions("v0.24.5", "454537c3cd526bed935d847bb2dff4046f266eef84d43b2a5f2f2f293c0026f4")
     add_versions("v0.24.4", "d93f4f7773c504a628c7c2bef73bea93cf439c0834df8ef49c6a1d5f457a61fa")
     add_versions("v0.24.3", "bdbe5421bba83dd23a2c88d26e0268482915f3b58ff4e04f48b8e28db299d9cc")
@@ -86,6 +87,8 @@ package("libdatachannel")
         if package:is_plat("windows") then
             io.replace("CMakeLists.txt", "if(MSVC)\n\tinstall", "if(0)\ninstall", {plain = true})
         end
+        -- libc++ 20.1.8 needs include algorithm header file for std::transform
+        io.replace("src/configuration.cpp", "#include <cassert>", "#include <algorithm>\n#include <cassert>", {plain = true})
 
         local configs = {
             "-DNO_EXAMPLES=ON",
