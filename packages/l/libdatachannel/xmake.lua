@@ -87,6 +87,8 @@ package("libdatachannel")
         if package:is_plat("windows") then
             io.replace("CMakeLists.txt", "if(MSVC)\n\tinstall", "if(0)\ninstall", {plain = true})
         end
+        -- libc++ 20.1.8 needs include algorithm header file for std::transform
+        io.replace("src/configuration.cpp", "#include <cassert>", "#include <algorithm>\n#include <cassert>", {plain = true})
 
         local configs = {
             "-DNO_EXAMPLES=ON",
