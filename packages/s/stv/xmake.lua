@@ -5,6 +5,7 @@ package("stv")
     set_license("MIT")
 
     set_urls("https://github.com/AkarinATCP/stv/archive/refs/tags/v$(version).tar.gz")
+    add_versions("3.0.0", "ffeaade9bdf9138909f8f7351df6f4dd25b8b966f801ef240eff1257b1d70cd8")
     add_versions("2.2.0", "5beed1ca3fa388266ad26130175b31811c8e4eb6ee7e1613dc7e761291e77da5")
 
     on_install(function (package)
