@@ -48,7 +48,7 @@ target("yara")
         add_files("libyara/proc/mach.c")
         add_defines("USE_MACH_PROC")
         add_syslinks("pthread")
-    elseif is_plat("linux", "linuxbsd") then
+    elseif is_plat("linux") then
         add_files("libyara/proc/linux.c")
         add_defines("USE_LINUX_PROC", "HAVE_CLOCK_GETTIME")
         add_syslinks("pthread", "dl")

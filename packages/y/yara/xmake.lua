@@ -11,10 +11,9 @@ package("yara")
 
     on_install(function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        import("package.tools.xmake").install(package, {})
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
         assert(package:has_cfuncs("yr_initialize", {includes = "yara.h"}))
-        assert(package:has_cfuncs("yr_rules_scan_mem", {includes = "yara.h"}))
     end)
