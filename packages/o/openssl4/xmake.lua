@@ -36,7 +36,7 @@ package("openssl4")
                 package:add("deps", "strawberry-perl", {system = false, private = true})
                 if package:config("jom") then
                     -- check xmake tool jom
-                    import("package.tools.jom", {try = true})
+                    import("package.tools.jom")
                     if jom then
                         package:add("deps", "jom", {private = true})
                     end
@@ -69,7 +69,7 @@ package("openssl4")
     end)
 
     on_install("windows", function (package)
-        import("package.tools.jom", {try = true})
+        import("package.tools.jom")
         import("package.tools.nmake")
         local configs = table.join("Configure", import("configure.configs")(package))
         local target
