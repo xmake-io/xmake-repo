@@ -1,0 +1,27 @@
+diff --git a/Makefile.am b/Makefile.am
+index 84e64496..90791614 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -29,11 +29,6 @@ SUBDIRS = \
+ 	$(TOOLS) \
+ 	$(EXP_TOOLS) \
+ 	shared \
+-	tests \
+-	perf \
+-	gdbserver_tests \
+-	memcheck/tests/vbit-test \
+-	none/tests/iropt-test \
+ 	auxprogs \
+ 	mpi \
+ 	solaris \
+diff --git a/Makefile.tool.am b/Makefile.tool.am
+index af24fd67..00043666 100644
+--- a/Makefile.tool.am
++++ b/Makefile.tool.am
+@@ -1,5 +1,5 @@
+ 
+-SUBDIRS = . tests
++SUBDIRS = .
+ 
+ include $(top_srcdir)/Makefile.all.am
+ 

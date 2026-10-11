@@ -1,0 +1,15 @@
+diff --git a/coregrind/m_machine.c b/coregrind/m_machine.c
+index a661214f3..f623c7e48 100644
+--- a/coregrind/m_machine.c
++++ b/coregrind/m_machine.c
+@@ -1831,7 +1831,9 @@ Bool VG_(machine_get_hwcaps)( void )
+ #if defined(VGP_arm64_darwin)
+        vai.arm64_iMinLine_lg2_szB = VKI_MMU_I_CLINE;
+ #else
+-#error "Unsupported OS"
++       /* Default fallback (e.g. Linux): 64-byte line size (2^6 = 64) */
++       vai.arm64_dMinLine_lg2_szB = 6;
++       vai.arm64_iMinLine_lg2_szB = 6;
+ #endif
+      } else {
+        ULong ctr_el0;
