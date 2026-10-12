@@ -1,0 +1,32 @@
+diff --git a/crypto/x86_64cpuid.pl b/crypto/x86_64cpuid.pl
+--- a/crypto/x86_64cpuid.pl
++++ b/crypto/x86_64cpuid.pl
+@@ -30,8 +30,28 @@
+ #include crypto/cryptlib.h
+ .extern		OPENSSL_cpuid_setup
+ .hidden		OPENSSL_cpuid_setup
++___
++
++if ($flavour eq "macosx") {
++    # Mach-O initializer offsets require an image-local target. Keep the
++    # setup reference in this archive member so static consumers pull it in.
++    print<<___;
++.text
++.align 16
++.LOPENSSL_cpuid_setup:
++    endbranch
++    jmp OPENSSL_cpuid_setup
++.section .init
++    call .LOPENSSL_cpuid_setup
++___
++} else {
++    print<<___;
+ .section	.init
+ 	call	OPENSSL_cpuid_setup
++___
++}
++
++print<<___;
+ 
+ .hidden	OPENSSL_ia32cap_P
+ .comm	OPENSSL_ia32cap_P,40,4	# <--Should match with internal/cryptlib.h OPENSSL_IA32CAP_P_MAX_INDEXES
