@@ -23,6 +23,10 @@ package("leancrypto")
     on_install("linux", "cross", "mingw", "macosx", function (package)
         io.replace("meson.build", "cc.has_argument('-flto')", "false", {plain = true})
         io.replace("meson.build", "cc.has_argument('-ffat-lto-objects')", "false", {plain = true})
+        if package:is_plat("mingw") and package:is_arch("i386") then
+            -- The x86_64 export list contains symbols unavailable on 32-bit x86.
+            io.replace("meson.build", "vs_module_defs_supported = ", "vs_module_defs_supported = false and ", {plain = true})
+        end
         local configs = {}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         import("package.tools.meson").install(package, configs)
