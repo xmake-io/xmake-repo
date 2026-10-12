@@ -28,7 +28,10 @@ package("slang")
     add_deps("miniz")
 
     on_load(function (package)
-        if not package:config("shared") then
+        if package:config("shared") then
+            -- the slang-glslang and slang-glsl-module modules in lib/ are loaded at runtime, not linked
+            package:add("links", "slang-compiler", "slang")
+        else
             package:add("defines", "SLANG_STATIC")
             package:add("links", "slang-compiler", "compiler-core", "core", "cmark-gfm", "lz4")
             if package:is_plat("windows") then
@@ -40,7 +43,6 @@ package("slang")
     end)
 
     on_install("windows|x64", "macosx", "linux|x86_64", function (package)
-        io.replace("cmake/SlangTarget.cmake", [[set_property(TARGET ${target} PROPERTY SUFFIX ".dylib")]], "", {plain = true})
         local configs = {"-DSLANG_ENABLE_TESTS=OFF", "-DSLANG_ENABLE_EXAMPLES=OFF", "-DSLANG_USE_SYSTEM_MINIZ=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DSLANG_LIB_TYPE=" .. (package:config("shared") and "SHARED" or "STATIC"))
