@@ -27,7 +27,6 @@ jobs:
 
       - name: Installation
         run: |
-          # TODO we will remove it later
           sudo apt-get update
           sudo apt-get install -y libgl1-mesa-dev libglu1-mesa-dev p7zip
 
@@ -36,8 +35,11 @@ jobs:
           # https://apt.llvm.org/
           wget https://apt.llvm.org/llvm.sh
           chmod +x llvm.sh
-          sudo ./llvm.sh 20 all
+          sudo ./llvm.sh 23 all
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D --toolchain=clang-20 -k ${{ matrix.kind }}
+          xmake l ./scripts/test.lua -D \
+            --toolchain=clang-23 \
+            -f 'toolchains="clang-23",runtimes="c++_shared"' \
+            -k ${{ matrix.kind }}

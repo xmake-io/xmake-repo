@@ -1,11 +1,12 @@
 package("scons")
-
     set_kind("binary")
     set_homepage("https://scons.org")
     set_description("A software construction tool")
 
     add_urls("https://github.com/SCons/scons/archive/refs/tags/$(version).zip",
              "https://github.com/SCons/scons.git")
+
+    add_versions("4.11.1", "2ffc73d79decc3e14fb2faf6e8bd22e2addf5a810357951f455a97b774f3799a")
     add_versions("4.9.1", "074d8ceb95b6f0cbf91ec15ba087635cff0e9d06d02d0f838a852496781e8cc6")
     add_versions("4.8.0", "2309f77eede26a494d697a18b6bb803ddb4ba20875091fb82da504a3665241cd")
     add_versions("4.7.0", "c783ac12040d1682b81ffd153b48ac1dd9a0eff5a9fbfbb55d86c5d186e88e4a")
@@ -20,11 +21,14 @@ package("scons")
         local scons_version = package:version()
         local scons_egg = "SCons-" .. scons_version:major() .. "." .. scons_version:minor() .. "." .. scons_version:patch() .. "-py" .. python_version:major() .. "." .. python_version:minor() .. ".egg"
         local pyver = ("python%d.%d"):format(python_version:major(), python_version:minor())
-        local PYTHONPATH = package:installdir("lib")
-        local PYTHONPATH1 = path.join(PYTHONPATH, pyver)
-        PYTHONPATH = path.join(PYTHONPATH, "site-packages", scons_egg)
-        PYTHONPATH1 = path.join(PYTHONPATH1, "site-packages", scons_egg)
-        package:addenv("PYTHONPATH", PYTHONPATH, PYTHONPATH1)
+        package:addenv("PYTHONPATH", path.join("lib", "site-packages"))
+        package:addenv("PYTHONPATH", path.join("lib", pyver, "site-packages"))
+        package:addenv("PYTHONPATH", path.join("lib", "site-packages", scons_egg))
+        package:addenv("PYTHONPATH", path.join("lib", pyver, "site-packages", scons_egg))
+        if is_host("windows", "msys") then
+            package:addenv("PYTHONPATH", path.join("Lib", "site-packages"))
+            package:addenv("PYTHONPATH", path.join("Lib", "site-packages", scons_egg))
+        end
 
         -- setup.py install needs these
         if package:version():ge("4.3.0") then

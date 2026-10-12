@@ -6,6 +6,7 @@ package("haclog")
     add_urls("https://github.com/MuggleWei/haclog/archive/refs/tags/$(version).tar.gz",
              "https://github.com/MuggleWei/haclog.git")
 
+    add_versions("v0.4.5", "f759dc5ea3c5f7214cf3348ca418c14b407109cce32db0a69dd36f9809ccf55d")
     add_versions("v0.4.4", "1ec690094250fec0b287a23db53e1d02c40cb4fd4304ca442d8854330aeac6ff")
     add_versions("v0.4.3", "af9e16d144ceab36fa8ae0dc44757c0f53f4a44e43a633e5cc42a504ac2055dc")
     add_versions("v0.4.0", "00752913e253acc2dbd7408d03a1a02893ca36542a20e8b88e8e2dc3d68fcd3d")

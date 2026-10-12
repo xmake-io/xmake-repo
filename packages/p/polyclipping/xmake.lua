@@ -1,5 +1,5 @@
 package("polyclipping")
-    set_homepage("https://sourceforge.net/projects/polyclipping")
+    set_homepage("https://sourceforge.net/projects/polyclipping/")
     set_description("Polygon and line clipping and offsetting library")
     set_license("BSL-1.0")
 

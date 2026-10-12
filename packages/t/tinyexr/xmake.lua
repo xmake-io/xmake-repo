@@ -6,6 +6,7 @@ package("tinyexr")
     add_urls("https://github.com/syoyo/tinyexr/archive/refs/tags/$(version).tar.gz",
              "https://github.com/syoyo/tinyexr.git")
 
+    add_versions("v3.2.0", "df2bd61124a35d8138f8b0bc22418a1d4fe33622c818e0e022f5522afc0821b0")
     add_versions("v3.0.0", "9e7a3e8881b9c316b350685cb31fdaf8d295e988e317023984ae9915ea15ed47")
     add_versions("v1.0.13", "01edf1e18e32e5503fdd2a35d62bb593109daa392324cec0157b150e5fd68077")
     add_versions("v1.0.12", "e3383703d6eaf175a3f36dfc23ec5c8a22e61ddc3acd05dd442cb33ce7af0d39")

@@ -6,6 +6,7 @@ package("lvgl")
 
     add_urls("https://github.com/lvgl/lvgl/archive/refs/tags/$(version).tar.gz",
              "https://github.com/lvgl/lvgl.git")
+    add_versions("v9.6.0", "b20ee3acc1bba13c62d854f9ebd62e4c51e0b443b1e0225892e86442defa84df")
     add_versions("v9.5.0", "34a955cdf3a2d005507b704e87357af669a114523b6d3f77b5344fdc68717bc6")
     add_versions("v9.4.0", "932c864de98431b38c5758a87f1de12bbee7b76943b8312bcf13d2f29ac14627")
     add_versions("v9.1.0", "6930f1605d305fcd43f31d5f470ecf4a013c4ce0980e78ee4c33b96a589bf433")

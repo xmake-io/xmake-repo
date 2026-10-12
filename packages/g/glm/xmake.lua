@@ -52,6 +52,8 @@ package("glm")
                     add_files("glm/**.cpp")
                     add_files("glm/**.cppm", {public = true})
             ]])
+            io.replace("glm/glm.cppm", '#include "./glm.hpp"', "#include <glm/glm.hpp>", {plain = true})
+            io.replace("glm/glm.cppm", '#include "./ext.hpp"', "#include <glm/ext.hpp>", {plain = true})
             import("package.tools.xmake").install(package)
         end
     end)

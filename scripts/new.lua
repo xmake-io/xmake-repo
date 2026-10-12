@@ -194,7 +194,7 @@ function generate_package(reponame, get_data)
             end,
         },
         ["configure,configure.ac,autogen.sh"] = {
-            deps = {"autoconf", "automake", "libtool"},
+            deps = {"autotools"},
             priority = 3,
             install = function(configs, package)
                 return [[

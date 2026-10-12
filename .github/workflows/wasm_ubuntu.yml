@@ -9,7 +9,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-24.04]
         kind: [static, shared]
 
     runs-on: ${{ matrix.os }}
@@ -34,7 +34,15 @@ jobs:
           actions-cache-folder: emsdk-cache-${{ matrix.kind }}
 
       - name: Set up system dependencies
-        run: sudo apt-get update && sudo apt-get install -y libgl1-mesa-dev libglu1-mesa-dev
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgl1-mesa-dev libglu1-mesa-dev gcc-14 g++-14
+
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 140
+          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-14 140
+          sudo update-alternatives --set gcc /usr/bin/gcc-14
+          sudo update-alternatives --set g++ /usr/bin/g++-14
 
       - name: Tests
         run: |

@@ -4,7 +4,7 @@ package("libspectre")
     set_description("libspectre is a small library for rendering Postscript documents.")
     set_license("GPL-2.0")
 
-    add_urls("http://libspectre.freedesktop.org/releases/libspectre-$(version).tar.gz")
+    add_urls("https://libspectre.freedesktop.org/releases/libspectre-$(version).tar.gz")
     add_versions("0.2.9", "49ae9c52b5af81b405455c19fe24089d701761da2c45d22164a99576ceedfbed")
 
     add_deps("ghostscript")

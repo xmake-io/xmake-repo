@@ -6,6 +6,7 @@ package("libraw")
     add_urls("https://github.com/LibRaw/LibRaw/archive/refs/tags/$(version).tar.gz",
              "https://github.com/LibRaw/LibRaw.git")
 
+    add_versions("0.22.2", "627928088300ecde6ca91ffd202e189203f04ad61ad12f0fe9dc57b9a7a0fb3c")
     add_versions("0.22.1", "e676248284075605aa2697a66eeed7dc258820bd1d4988c724d29edffd726726")
     add_versions("0.22.0", "5a11327a9cef2496d6a4335e8da30a1604460b6c545a30fe7588cf4c00a0fcae")
     add_versions("0.21.5", "4b7f183a68f6e46e579e80ba32ab121687e75bd30a2e5566f34c36a6bcba1679")

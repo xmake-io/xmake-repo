@@ -1,5 +1,5 @@
 package("tinyxml2")
-    set_homepage("http://www.grinninglizard.com/tinyxml2/")
+    set_homepage("https://github.com/leethomason/tinyxml2")
     set_description("simple, small, efficient, C++ XML parser that can be easily integrating into other programs.")
     set_license("zlib")
 

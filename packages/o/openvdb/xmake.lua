@@ -6,6 +6,7 @@ package("openvdb")
     add_urls("https://github.com/AcademySoftwareFoundation/openvdb/archive/refs/tags/$(version).tar.gz",
              "https://github.com/AcademySoftwareFoundation/openvdb.git")
 
+    add_versions("v13.1.0", "21659ef2330a06805519dd8d4369375f181a0dfee205b0180da69b4edd3329ae")
     add_versions("v13.0.0", "4d6a91df5f347017496fe8d22c3dbb7c4b5d7289499d4eb4d53dd2c75bb454e1")
     add_versions("v12.1.1", "ccd0ea1669a53c7c13087a08ac5a1351041c4cdd308f6d6f591074a106fcb565")
     add_versions("v7.1.0", "0c3588c1ca6e647610738654ec2c6aaf41a203fd797f609fbeab1c9f7c3dc116")

@@ -5,6 +5,7 @@ package("openssl3")
 
     add_urls("https://github.com/openssl/openssl/archive/refs/tags/openssl-$(version).zip")
 
+    add_versions("3.6.5", "e9773ec47f3bcfa4c3ab0a333d777bcb880f7ce9b5b488c954222dfd26dd9659")
     add_versions("3.6.3", "e24124cb19d26f2045f53d3ee94871288136242931d001c71646c2403cfedee3")
     add_versions("3.6.2", "599a1053292f6aec83da0f98ecd48c587fdb3184f6d18a25ecc9a9ffbc024bb4")
     add_versions("3.6.1", "b5fb172237ed3b1b47a9f7f15d3a40f9e9563f59f544b7078780ee27279a3c0f")
@@ -46,6 +47,9 @@ package("openssl3")
     add_patches("3.6.0", path.join(os.scriptdir(), "patches", "3.6.0", "c20d4704e9e99a89d29f5ee848f9498694388905.patch"), "5d2523a6e0cc938c5d5acab849899da4b6a333b51151eaac5bd3b52741536bbc")
     add_patches("3.5.5", path.join(os.scriptdir(), "patches", "3.6.1", "pr29826.patch"), "395cade297b377130df1c8fe17cae94ff2b3d82ea1dc7fbac8acfeb597fa8b8b")
     add_patches("3.6.1", path.join(os.scriptdir(), "patches", "3.6.1", "pr29826.patch"), "395cade297b377130df1c8fe17cae94ff2b3d82ea1dc7fbac8acfeb597fa8b8b")
+    -- Keep the Mach-O initializer image-local without losing static CPUID setup extraction.
+    add_patches(">=3.5.1 <=3.5.7", path.join(os.scriptdir(), "patches", "3.5.1", "cpuid-setup-macos.patch"), "4334b33183c46a9fcc46af6548cd7d13a9772044d1d83bae8b91c77904e74c87")
+    add_patches(">=3.6.2 <=3.6.5", path.join(os.scriptdir(), "patches", "3.5.1", "cpuid-setup-macos.patch"), "4334b33183c46a9fcc46af6548cd7d13a9772044d1d83bae8b91c77904e74c87")
 
     on_fetch("fetch")
 
@@ -78,6 +82,10 @@ package("openssl3")
                 end
             elseif package:is_plat("android", "wasm") and is_host("windows") and os.arch() == "x64" then
                 -- when building for android on windows, use msys2 perl instead of strawberry-perl to avoid configure issue
+                package:add("deps", "msys2", {configs = {msystem = "MINGW64", base_devel = true}, private = true})
+            elseif package:is_plat("mingw") and is_host("windows") and not is_subhost("msys") and os.arch() == "x64" then
+                -- when building for mingw outside msys2 shell (e.g. cmd), use msys2 perl/make/sh
+                -- see https://github.com/openssl/openssl/blob/master/NOTES-WINDOWS.md#native-builds-using-mingw
                 package:add("deps", "msys2", {configs = {msystem = "MINGW64", base_devel = true}, private = true})
             end
         end
@@ -158,7 +166,9 @@ package("openssl3")
         table.insert(configs, package:config("shared") and "shared" or "no-shared")
         local installdir = package:installdir()
         -- Use MSYS2 paths instead of Windows paths
-        if is_subhost("msys") then
+        local msys2 = package:dep("msys2")
+        local use_msys_path = is_subhost("msys") or msys2 ~= nil
+        if use_msys_path then
             installdir = installdir:gsub("(%a):[/\\](.+)", "/%1/%2"):gsub("\\", "/")
         end
         table.insert(configs, "--prefix=" .. installdir)
@@ -171,7 +181,7 @@ package("openssl3")
 
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
         buildenvs.RC = package:build_getenv("mrc")
-        if is_subhost("msys") then
+        if use_msys_path then
             local rc = buildenvs.RC
             if rc then
                 rc = rc:gsub("(%a):[/\\](.+)", "/%1/%2"):gsub("\\", "/")
@@ -183,11 +193,22 @@ package("openssl3")
             os.mkdir("fuzz")
         end
         os.vrunv("perl", configs, {envs = buildenvs})
-        import("package.tools.make").build(package)
-        import("package.tools.make").make(package, {"install_sw"})
+        if msys2 then
+            -- package.tools.make uses mingw32-make on windows subhost, but the generated unix makefile needs msys2 make
+            import("core.base.option")
+            import("lib.detect.find_tool")
+            local makeenvs = import("package.tools.make").buildenvs(package)
+            local make = assert(find_tool("make", {envs = makeenvs}), "make not found in msys2!")
+            local njob = option.get("jobs") or tostring(os.default_njob())
+            os.vrunv(make.program, {"-j" .. njob}, {envs = makeenvs})
+            os.vrunv(make.program, {"install_sw"}, {envs = makeenvs})
+        else
+            import("package.tools.make").build(package)
+            import("package.tools.make").make(package, {"install_sw"})
+        end
     end)
 
-    on_install("macosx", "bsd", function (package)
+    on_install("bsd", function (package)
         -- https://wiki.openssl.org/index.php/Compilation_and_Installation#PREFIX_and_OPENSSLDIR
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
         local configs = {"--openssldir=" .. package:installdir(),
@@ -212,7 +233,7 @@ package("openssl3")
         end
     end)
 
-    on_install("linux", "cross", "android", "iphoneos", "wasm", "harmony", function (package)
+    on_install("macosx", "linux", "cross", "android", "iphoneos", "wasm", "harmony", function (package)
         local target_arch = "generic32"
         if package:is_arch("x86_64") then
             target_arch = "x86_64"
@@ -229,7 +250,7 @@ package("openssl3")
         local target_plat = "linux"
         if package:is_plat("macosx") then
             target_plat = "darwin64"
-            target_arch = "x86_64-cc"
+            target_arch = package:is_arch("arm64") and "arm64-cc" or "x86_64-cc"
         elseif package:is_plat("harmony") then
             target_plat = "ohos"
             if package:is_arch("arm64", "arm64-v8a") then
@@ -256,6 +277,7 @@ package("openssl3")
         local target = target_plat .. "-" .. target_arch
         local configs = {target,
                          package:config("shared") and "shared" or "no-shared",
+                         "no-tests",
                          "--libdir=lib",
                          "--openssldir=" .. package:installdir():gsub("\\", "/"),
                          "--prefix=" .. package:installdir():gsub("\\", "/")}

@@ -7,6 +7,7 @@ package("etl")
     add_urls("https://github.com/ETLCPP/etl/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ETLCPP/etl.git")
 
+    add_versions("20.49.0", "b3e7a5544795ec8f4a1b2ab46f6e88fdb78be5a07738f008ce11dd37ed14b6e4")
     add_versions("20.48.1", "0a6c5ec3c89b2de614b435301931566e4118a7bd7b7909615a11132f39a89ee9")
     add_versions("20.48.0", "bca826074b5c29d86533b1d08356e126af7d9d70abb1a46c1a856b0c77958e37")
     add_versions("20.47.1", "ea4cff73a18106c2fbae35b9200f8099d1a08ed70ffcca392c4264c3825eedb3")
@@ -52,10 +53,14 @@ package("etl")
     end)
 
     on_test(function (package)
+        local configs = {languages = "c++11"}
+        if package:version() and package:version():lt("20.49.0") then
+            configs.defines = "ETL_USE_TYPE_TRAITS_BUILTINS=1"
+        end
         assert(package:check_cxxsnippets({test = [[
             #include <etl/array.h>
             void test() {
                 etl::array<int, 10> data = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
             }
-        ]]}, {configs = {languages = "c++11", defines = "ETL_USE_TYPE_TRAITS_BUILTINS=1"}}))
+        ]]}, {configs = configs}))
     end)

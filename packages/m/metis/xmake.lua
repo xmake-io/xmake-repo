@@ -1,5 +1,5 @@
 package("metis")
-    set_homepage("http://glaros.dtc.umn.edu/gkhome/metis/metis/overview")
+    set_homepage("https://github.com/KarypisLab/METIS")
     set_description("Serial Graph Partitioning and Fill-reducing Matrix Ordering")
     set_license("Apache-2.0")
 

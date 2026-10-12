@@ -6,6 +6,7 @@ package("nzsl")
     add_urls("https://github.com/NazaraEngine/ShaderLang/archive/refs/tags/$(version).tar.gz",
              "https://github.com/NazaraEngine/ShaderLang.git")
 
+    add_versions("v1.1.6", "265a22a95a86b56a701e6b128571ad3f1fe53a314812e765871bda2e481080ee")
     add_versions("v1.1.5", "0bb19351a931f1269dc3d610dce45ecc94a3663b46bb635b937bfbfb3c740444")
     add_versions("v1.1.4", "3d1580661742f3fc03ca4888280e5aab37e40a62c4c21ba75c8155752853a61c")
     add_versions("v1.1.3", "dd1c961c70ef5923e45bb6cc80414168d472719e116e9da4285eddba3f5b1561")
@@ -32,11 +33,20 @@ package("nzsl")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
+    if on_check then
+        on_check("mingw", function (package)
+            if package:is_arch("i386", "x86") then
+                -- nzsl relies on fmt that's currently not supported on MinGW 32bits
+                raise("package(nzsl) unsupported on mingw/i386")
+            end
+        end)
+    end
+
     on_load(function (package)
         package:addenv("PATH", "bin")
+        package:add("deps", "fmt", {private = package:config("shared")})
         if not package:config("shared") then
             package:add("defines", "NZSL_STATIC")
-            package:add("deps", "fmt")
         end
         if package:config("fs_watcher") then
             package:add("deps", "efsw")

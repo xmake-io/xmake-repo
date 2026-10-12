@@ -1,0 +1,38 @@
+diff --git a/icey.cmake b/icey.cmake
+--- a/icey.cmake
++++ b/icey.cmake
+@@ -308,6 +308,19 @@
+   if(OPENSSL_FOUND)
+     set(HAVE_OPENSSL ON)
+     message(STATUS "  Found OpenSSL: ${OPENSSL_VERSION}")
++    # Keep private CPU state local when static OpenSSL is embedded in shared modules.
++    if(BUILD_SHARED_LIBS
++        AND CMAKE_SYSTEM_NAME STREQUAL "Linux"
++        AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64|AARCH64|ARM64)$"
++        AND OPENSSL_CRYPTO_LIBRARY MATCHES "\\.a$"
++        AND OPENSSL_VERSION VERSION_GREATER_EQUAL "3.5.1"
++        AND OPENSSL_VERSION VERSION_LESS_EQUAL "3.6.5")
++      set(_openssl_armcap_map "${icey_DIR}/cmake/openssl-armcap.map")
++      target_link_options(OpenSSL::Crypto INTERFACE
++        "$<$<STREQUAL:$<TARGET_PROPERTY:TYPE>,SHARED_LIBRARY>:LINKER:--version-script=${_openssl_armcap_map}>")
++      set_property(TARGET OpenSSL::Crypto APPEND PROPERTY INTERFACE_LINK_DEPENDS
++        "${_openssl_armcap_map}")
++    endif()
+   else()
+     message(STATUS "  OpenSSL not found, disabling SSL-dependent modules")
+   endif()
+diff --git a/cmake/openssl-armcap.map b/cmake/openssl-armcap.map
+new file mode 100644
+--- /dev/null
++++ b/cmake/openssl-armcap.map
+@@ -0,0 +1,10 @@
++/* Keep statically linked OpenSSL CPU state and initialization image-local. */
++{
++  local:
++    OPENSSL_armcap_P;
++    OPENSSL_arm_midr;
++    OPENSSL_armv8_rsa_neonized;
++    OPENSSL_cpuid_setup;
++    /* Keep armcap.o's timer dependency in the same image. */
++    _armv7_tick;
++};

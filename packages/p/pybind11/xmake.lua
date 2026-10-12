@@ -7,6 +7,7 @@ package("pybind11")
     add_urls("https://github.com/pybind/pybind11/archive/refs/tags/$(version).zip",
              "https://github.com/pybind/pybind11.git")
 
+    add_versions("v3.1.0", "affea1ada7b39fe1d835559fcb78800c7927d514bd480ed01b71b88205a5e536")
     add_versions("v3.0.4", "99983aa3b93e940d5d58662692fc7c3fd18e03ec8187157b48fe4432c4af257d")
     add_versions("v3.0.2", "e3754d16ea536bdc968ce1464fa822e198a1217881d31bd9bf3d287fed2bbf4c")
     add_versions("v3.0.1", "20fb420fe163d0657a262a8decb619b7c3101ea91db35f1a7227e67c426d4c7e")
