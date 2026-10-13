@@ -45,6 +45,7 @@ package("freerdp")
     add_configs("json", {description = "Build with any JSON support", default = nil, type = "string", values = {"cjson", "json-c"}})
     add_configs("uriparser", {description = "use uriparser library to handle URIs", default = false, type = "boolean"})
     add_configs("ffmpeg", {description = "Enable FFMPEG for audio/video encoding/decoding", default = false, type = "boolean"})
+    add_configs("opus", {description = "Compile with opus codec support", default = false, type = "boolean"})
     add_configs("cairo", {description = "Use CAIRO image library for screen resizing", default = false, type = "boolean"})
     add_configs("swscale", {description = "Use SWScale image library for screen resizing", default = false, type = "boolean"})
     add_configs("openh264", {description = "Build openh264", default = false, type = "boolean"})
@@ -69,7 +70,7 @@ package("freerdp")
             add_syslinks("uuid")
         end
     elseif is_plat("macosx") then
-        add_frameworks("CoreFoundation", "Carbon")
+        add_frameworks("CoreFoundation", "Carbon", "IOKit")
     end
 
     add_deps("cmake")
@@ -94,6 +95,7 @@ package("freerdp")
             json      = package:config("json"),
             uriparser = "uriparser",
             cairo     = "cairo",
+            opus      = "libopus",
             openh264  = "openh264",
             ffmpeg    = "ffmpeg",
             swscale   = "ffmpeg",
@@ -218,11 +220,15 @@ package("freerdp")
         end
 
         local opt = {}
+        if package:dep("libopus") then
+            opt.packagedeps = {"libopus"}
+        end
         if package:is_plat("mingw") and package:has_tool("cc", "gcc") then
             opt.cxflags = "-Wno-error=incompatible-pointer-types"
         end
         if package:dep("libx11") then
-            opt.packagedeps = {"libx11", "xorgproto", "libxext", "libxcursor"}
+            opt.packagedeps = opt.packagedeps or {}
+            table.join2(opt.packagedeps, "libx11", "xorgproto", "libxext", "libxcursor")
         end
         if package:dep("ffmpeg") and not package:has_tool("ld", "link") then
             -- https://stackoverflow.com/questions/44379426/building-shared-library-with-ffmpeg-results-in-relocation-error
