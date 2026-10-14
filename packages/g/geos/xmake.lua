@@ -15,7 +15,7 @@ package("geos")
     add_versions("3.11.3", "3c517fcccdd3d562122d59c93e0982ef9bc10e775a177ad88882fca1d7d28d08")
     add_versions("3.9.1", "e9e20e83572645ac2af0af523b40a404627ce74b3ec99727754391cdf5b23645")
 
-    add_patches("3.15.0", "patches/3.15.0/add-type-traits.patch", "e02b718a2632f550dffbda074bed55ea189b322b311126a662e017a19687fc61")
+    add_patches("3.15.0", "patches/3.15.0/add-headers.patch", "403e428300a0167ba2c3ec3051b89f56e2ca247ad5aa125d79888b40c84bab11")
 
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
 
