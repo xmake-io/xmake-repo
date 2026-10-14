@@ -6,6 +6,7 @@ package("geos")
     add_urls("https://github.com/libgeos/geos/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libgeos/geos.git")
 
+    add_versions("3.15.0", "134aaf78026f4311737e20ff1465cd31a48c4ca8858fb68e99d13ccd3d52753a")
     add_versions("3.14.1", "512118b3be3ccefbca66b36b0f3e895576d08d6ff330ba1511a31a306abbb477")
     add_versions("3.14.0", "47dbfad4e90073c7593ae5cfd560bc961f049af2b6868882cc1e7a9b9885a22c")
     add_versions("3.13.1", "724788988fa32a59b3853b876b3d865595c11dfcda7883e4e6a78e44334ac8ce")
@@ -13,6 +14,8 @@ package("geos")
     add_versions("3.12.1", "f6e2f3aaa417410d3fa4c78a9c5ef60d46097ef7ad0aee3bbbb77327350e1e01")
     add_versions("3.11.3", "3c517fcccdd3d562122d59c93e0982ef9bc10e775a177ad88882fca1d7d28d08")
     add_versions("3.9.1", "e9e20e83572645ac2af0af523b40a404627ce74b3ec99727754391cdf5b23645")
+
+    add_patches("3.15.0", "patches/3.15.0/add-headers.patch", "403e428300a0167ba2c3ec3051b89f56e2ca247ad5aa125d79888b40c84bab11")
 
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
 
