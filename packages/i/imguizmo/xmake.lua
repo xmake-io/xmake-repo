@@ -12,11 +12,14 @@ package("imguizmo")
     add_versions("1.83", "664cf2d73864a36b2a8b5091d33fc4578c885eca") --v1.83
 
     on_load(function (package)
-        -- Note: semver comparison ignores build metadata after '+' (1.91.3+wip equals 1.91.3+wip.0109),
-        -- so use a version_str() string comparison to distinguish these commits
         if package:gitref() or package:version():ge("1.90") then
-            if package:version_str() >= "1.91.3+wip.0109" then
-                -- Since this commit ImGuizmo adapts to the imgui 1.92.8 ImDrawList argument swap
+            -- xmake's semver follows the SemVer spec and ignores the build metadata after '+',
+            -- so "1.91.3+wip", "1.91.3+wip.0109" and "1.91.3+wip.0110" all compare equal to
+            -- "1.91.3". Read the build tag to tell the newer +wip.NNNN commits (which adapt to
+            -- the imgui 1.92.8 ImDrawList argument swap) apart from the pre-existing 1.91.3+wip.
+            local build = package:version():build() -- e.g. {"wip", "0109"}
+            local wip = build and tonumber(build[#build])
+            if wip and wip >= 109 then
                 package:add("deps", "imgui >=1.92.8")
             else
                 package:add("deps", "imgui")
