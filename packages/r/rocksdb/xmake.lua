@@ -90,6 +90,35 @@ package("rocksdb")
             if vs_runtime then
                 table.insert(configs, "-DWITH_MD_LIBRARY=" .. (vs_runtime:startswith("MD") and "ON" or "OFF"))
             end
+            -- MSVC (clang-cl included) builds rocksdb with its thirdparty.inc
+            -- instead of find_package(), and thirdparty.inc takes the paths of
+            -- the libraries below from the environment, defaulting to a NuGet
+            -- style THIRDPARTY_HOME tree that is not there; point those at the
+            -- packages this recipe depends on. xpress comes from the system
+            -- (Cabinet.lib) and jemalloc has no windows support here.
+            for _, name in ipairs({"gflags", "snappy", "lz4", "zlib", "zstd"}) do
+                if package:config(name) then
+                    local depdir = package:dep(name):installdir()
+                    -- `<name>.lib`, for a shared dependency (import library) or
+                    -- one whose static library goes by that name, otherwise
+                    -- `<name>_static.lib`, which is what a static build of
+                    -- gflags produces.
+                    local libfile
+                    for _, file in ipairs({name .. ".lib", name .. "_static.lib"}) do
+                        if os.isfile(path.join(depdir, "lib", file)) then
+                            libfile = file
+                            break
+                        end
+                    end
+                    libfile      = libfile or (name .. ".lib")
+                    local dir    = depdir:gsub("\\", "/")
+                    local lib    = dir .. "/lib/" .. libfile
+                    local prefix = name:upper()
+                    os.setenv(prefix .. "_INCLUDE", dir .. "/include")
+                    os.setenv(prefix .. "_LIB_DEBUG", lib)
+                    os.setenv(prefix .. "_LIB_RELEASE", lib)
+                end
+            end
         end
         local cxflags
         if package:is_plat("mingw") then
