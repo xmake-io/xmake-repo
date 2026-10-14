@@ -84,18 +84,38 @@ package("rocksdb")
                 table.insert(configs, "-DWITH_" .. name:upper() .. "=" .. (enabled and "ON" or "OFF"))
             end
         end
+        local cxflags
+        local packagedeps
         if package:is_plat("windows") then
             io.replace("CMakeLists.txt", "/Zi", "", {plain = true})
             local vs_runtime = package:runtimes()
             if vs_runtime then
                 table.insert(configs, "-DWITH_MD_LIBRARY=" .. (vs_runtime:startswith("MD") and "ON" or "OFF"))
             end
-        end
-        local cxflags
-        if package:is_plat("mingw") then
+            -- MSVC (clang-cl included) builds rocksdb with its thirdparty.inc
+            -- instead of find_package(), and thirdparty.inc takes the paths of
+            -- the libraries below from the environment, defaulting to a NuGet
+            -- style THIRDPARTY_HOME tree that is not there. Skip thirdparty.inc
+            -- and pass the packages this recipe depends on to cmake, which puts
+            -- their include and library paths into the compile/link flags.
+            -- rocksdb only defines the compression macros in thirdparty.inc,
+            -- so add them here. xpress comes from the system (Cabinet.lib) and
+            -- jemalloc has no windows support here, so neither is listed.
+            table.insert(configs, "-DROCKSDB_SKIP_THIRDPARTY=ON")
+            cxflags = {}
+            for _, name in ipairs({"gflags", "snappy", "lz4", "zlib", "zstd"}) do
+                if package:config(name) then
+                    table.insert(cxflags, "-D" .. name:upper() .. "=1")
+                    if name == "zstd" then
+                        table.insert(cxflags, "-DZSTD_STATIC_LINKING_ONLY")
+                    end
+                    packagedeps = table.join2(packagedeps or {}, name)
+                end
+            end
+        elseif package:is_plat("mingw") then
             cxflags = "-DMINGW_HAS_SECURE_API"
         end
-        import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
+        import("package.tools.cmake").install(package, configs, {cxflags = cxflags, packagedeps = packagedeps})
     end)
 
     on_test(function (package)
