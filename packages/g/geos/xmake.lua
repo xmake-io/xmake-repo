@@ -6,6 +6,7 @@ package("geos")
     add_urls("https://github.com/libgeos/geos/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libgeos/geos.git")
 
+    add_versions("3.15.0", "134aaf78026f4311737e20ff1465cd31a48c4ca8858fb68e99d13ccd3d52753a")
     add_versions("3.14.1", "512118b3be3ccefbca66b36b0f3e895576d08d6ff330ba1511a31a306abbb477")
     add_versions("3.14.0", "47dbfad4e90073c7593ae5cfd560bc961f049af2b6868882cc1e7a9b9885a22c")
     add_versions("3.13.1", "724788988fa32a59b3853b876b3d865595c11dfcda7883e4e6a78e44334ac8ce")
