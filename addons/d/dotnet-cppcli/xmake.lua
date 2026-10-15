@@ -10,7 +10,7 @@ package("dotnet-cppcli")
     )
     add_versions("v1.0.1", "7a7a616fa2e7cece3fe30c759cdd9f00e25965560abf2c452493639d8650efa8")
     
-    add_deps("rats-utils v1.0.3", {kind = "addon"})
+    add_deps("rats-utils", {kind = "addon"})
 
     on_test(function (package)
         assert(package:has_addon({
