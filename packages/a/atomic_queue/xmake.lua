@@ -6,6 +6,7 @@ package("atomic_queue")
 
     add_urls("https://github.com/max0x7ba/atomic_queue/archive/refs/tags/$(version).tar.gz",
              "https://github.com/max0x7ba/atomic_queue.git")
+    add_versions("v1.9.4", "fecfa9ca12fc203e40fd967c2bfa8033f77d0bde0e3b21c8ca5f5f9eeeabe022")
     add_versions("v1.9.2", "7c3606f23cea69d39c3872996ffb83587bd4ab08da3c0c4c45aba7aa15eea9f8")
     add_versions("v1.9.1", "f488e320a028428d8e7f908ca8e4fdf948431d5a26273b8a25f288246f8ae374")
     add_versions("v1.7.1", "6eeff578f8b0499717bf890d90e2c58106ac2b8076084b73f2183a631742b4ab")
