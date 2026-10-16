@@ -88,8 +88,9 @@ package("tracy")
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
+            table.insert(configs, "-DTRACY_ENABLE=" .. (package:config("tracy_enable") and "ON" or "OFF"))
             table.insert(configs, "-DTRACY_ON_DEMAND=" .. (package:config("on_demand") and "ON" or "OFF"))
-            table.insert(configs, "-DTRACY_CALLSTACK=" .. (package:config("enforce_callstack") and "ON" or "OFF"))
+            table.insert(configs, "-DTRACY_CALLSTACK=" .. (package:config("enforce_callstack") and "1" or "0"))
             table.insert(configs, "-DTRACY_NO_CALLSTACK=" .. (package:config("callstack") and "OFF" or "ON"))
             table.insert(configs, "-DTRACY_NO_CALLSTACK_INLINES=" .. (package:config("callstack_inlines") and "OFF" or "ON"))
             table.insert(configs, "-DTRACY_ONLY_LOCALHOST=" .. (package:config("only_localhost") and "ON" or "OFF"))
@@ -116,7 +117,7 @@ package("tracy")
             -- collect tracy defines from cmake configs
             for _, config in ipairs(configs) do
                 local define, value = config:match("-D(TRACY_%S+)=(.*)")
-                if define and value and value == "ON" then
+                if define and (value == "ON" or value == "1") then
                     package:add("defines", define)
                 end
             end
@@ -209,8 +210,22 @@ package("tracy")
         if package:config("tracy_enable") then
             assert(package:check_cxxsnippets({test = [[
                 #include <tracy/Tracy.hpp>
-                void test() {
+                #ifndef TRACY_ENABLE
+                #error TRACY_ENABLE must be defined when profiling is enabled
+                #endif
+                int main() {
+                    ZoneScoped;
                     TracyPlotConfig("PlotConfig", tracy::PlotFormatType::Number, true, true, 0);
+                }
+            ]]}, {configs = {languages = "c++14"}}))
+        else
+            assert(package:check_cxxsnippets({test = [[
+                #include <tracy/Tracy.hpp>
+                #ifdef TRACY_ENABLE
+                #error TRACY_ENABLE must not be defined when profiling is disabled
+                #endif
+                int main() {
+                    ZoneScoped;
                 }
             ]]}, {configs = {languages = "c++14"}}))
         end
