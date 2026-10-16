@@ -23,7 +23,7 @@ package("libpsl")
         end
     end)
 
-    on_install("windows", "macosx", "linux", "mingw", function (package)
+    on_install("windows|!arm64", "macosx", "linux", "mingw", function (package)
         local configs = {"-Druntime=no"}
         if package:version():ge("0.21.5") then
             table.insert(configs, "-Dbuiltin=false")
