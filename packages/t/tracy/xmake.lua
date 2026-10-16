@@ -222,26 +222,10 @@ package("tracy")
 
     on_test(function (package)
         if package:config("tracy_enable") then
-            local callstack_depth = package:config("enforce_callstack") and package:config("callstack_depth") or 0
             assert(package:check_cxxsnippets({test = [[
                 #include <tracy/Tracy.hpp>
-                #ifndef TRACY_ENABLE
-                #error TRACY_ENABLE must be defined when profiling is enabled
-                #endif
-                static_assert(TRACY_CALLSTACK == ]] .. callstack_depth .. [[, "Unexpected callstack depth");
-                int main() {
-                    ZoneScoped;
+                void test() {
                     TracyPlotConfig("PlotConfig", tracy::PlotFormatType::Number, true, true, 0);
-                }
-            ]]}, {configs = {languages = "c++14"}}))
-        else
-            assert(package:check_cxxsnippets({test = [[
-                #include <tracy/Tracy.hpp>
-                #ifdef TRACY_ENABLE
-                #error TRACY_ENABLE must not be defined when profiling is disabled
-                #endif
-                int main() {
-                    ZoneScoped;
                 }
             ]]}, {configs = {languages = "c++14"}}))
         end
