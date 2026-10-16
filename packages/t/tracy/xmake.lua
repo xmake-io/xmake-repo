@@ -25,6 +25,9 @@ package("tracy")
     add_configs("tracy_enable",                     {type = "boolean", default = true,  description = "Enable profiling"})
     add_configs("on_demand",                        {type = "boolean", default = false, description = "On-demand profiling"})
     add_configs("enforce_callstack",                {type = "boolean", default = true,  description = "Enfore callstack collection for tracy regions"})
+    add_configs("callstack_depth",                  {type = "number", default = 1, description = "Callstack depth when enforced (1-62; CMake requires Tracy >=0.14 for depths >1)", restrict = function (depth)
+        return depth >= 1 and depth <= 62 and depth % 1 == 0
+    end})
     add_configs("callstack",                        {type = "boolean", default = true,  description = "Enable all callstack related functionality"})
     add_configs("callstack_inlines",                {type = "boolean", default = false, description = "Enable the inline functions in callstacks"})
     add_configs("only_localhost",                   {type = "boolean", default = false, description = "Only listen on the localhost interface"})
@@ -70,6 +73,9 @@ package("tracy")
 
     on_load(function (package)
         if package:config("cmake") then
+            if package:version() and package:version():lt("0.14") then
+                assert(package:config("callstack_depth") == 1, "callstack_depth requires Tracy >=0.14 with CMake")
+            end
             package:add("deps", "cmake")
         end
     end)
@@ -81,6 +87,10 @@ package("tracy")
 #define __except(filter) catch(...)
 #endif]], {plain = true})
         io.replace("public/client/TracyProfiler.cpp", [[RelationProcessorDie]], [[static_cast<LOGICAL_PROCESSOR_RELATIONSHIP>(5)]], {plain = true})
+        local callstack_depth = package:config("enforce_callstack") and package:config("callstack_depth") or 0
+        if callstack_depth > 0 then
+            package:add("defines", "TRACY_CALLSTACK=" .. callstack_depth)
+        end
         if package:config("cmake") then
             io.replace("CMakeLists.txt", [[/$<IF:$<CONFIG:Release>,,$<CONFIG>>]], "", {plain = true})
 
@@ -90,7 +100,11 @@ package("tracy")
 
             table.insert(configs, "-DTRACY_ENABLE=" .. (package:config("tracy_enable") and "ON" or "OFF"))
             table.insert(configs, "-DTRACY_ON_DEMAND=" .. (package:config("on_demand") and "ON" or "OFF"))
-            table.insert(configs, "-DTRACY_CALLSTACK=" .. (package:config("enforce_callstack") and "1" or "0"))
+            if package:version() and package:version():lt("0.14") then
+                table.insert(configs, "-DTRACY_CALLSTACK=" .. (package:config("enforce_callstack") and "ON" or "OFF"))
+            else
+                table.insert(configs, "-DTRACY_CALLSTACK=" .. callstack_depth)
+            end
             table.insert(configs, "-DTRACY_NO_CALLSTACK=" .. (package:config("callstack") and "OFF" or "ON"))
             table.insert(configs, "-DTRACY_NO_CALLSTACK_INLINES=" .. (package:config("callstack_inlines") and "OFF" or "ON"))
             table.insert(configs, "-DTRACY_ONLY_LOCALHOST=" .. (package:config("only_localhost") and "ON" or "OFF"))
@@ -117,7 +131,7 @@ package("tracy")
             -- collect tracy defines from cmake configs
             for _, config in ipairs(configs) do
                 local define, value = config:match("-D(TRACY_%S+)=(.*)")
-                if define and (value == "ON" or value == "1") then
+                if define and define ~= "TRACY_CALLSTACK" and value == "ON" then
                     package:add("defines", define)
                 end
             end
@@ -129,6 +143,7 @@ package("tracy")
                 tracy_enable = package:config("tracy_enable"),
                 on_demand = package:config("on_demand"),
                 enforce_callstack = package:config("enforce_callstack"),
+                callstack_depth = package:config("callstack_depth"),
                 callstack = not package:config("callstack"),
                 callstack_inlines = not package:config("callstack_inlines"),
                 only_localhost = package:config("only_localhost"),
@@ -158,7 +173,6 @@ package("tracy")
             local defines = {
                 tracy_enable = "TRACY_ENABLE",
                 on_demand = "TRACY_ON_DEMAND",
-                enforce_callstack = "TRACY_ENABLE_CALLSTACK",
                 callstack = { define = "TRACY_NO_CALLSTACK", invert = true },
                 callstack_inlines = { define = "TRACY_NO_CALLSTACK_INLINES", invert = true },
                 only_localhost = "TRACY_ONLY_LOCALHOST",
@@ -208,11 +222,13 @@ package("tracy")
 
     on_test(function (package)
         if package:config("tracy_enable") then
+            local callstack_depth = package:config("enforce_callstack") and package:config("callstack_depth") or 0
             assert(package:check_cxxsnippets({test = [[
                 #include <tracy/Tracy.hpp>
                 #ifndef TRACY_ENABLE
                 #error TRACY_ENABLE must be defined when profiling is enabled
                 #endif
+                static_assert(TRACY_CALLSTACK == ]] .. callstack_depth .. [[, "Unexpected callstack depth");
                 int main() {
                     ZoneScoped;
                     TracyPlotConfig("PlotConfig", tracy::PlotFormatType::Number, true, true, 0);
