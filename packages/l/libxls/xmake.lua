@@ -4,6 +4,7 @@ package("libxls")
 
     add_urls("https://github.com/libxls/libxls/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libxls/libxls.git")
+    add_versions("v1.6.4", "4e696731266e9475e93941746548a4180385b54cc649a221ea6a2729e7cb1ab6")
     add_versions("v1.6.3", "587c9f0ebb5647eb68ec1e0ed8c3f7f6102622d6dd83473a21d3a36dee04eed7")
 
     if is_plat("wasm") then
