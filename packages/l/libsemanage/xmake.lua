@@ -4,6 +4,7 @@ package("libsemanage")
     set_license("LGPL-2.1")
 
     add_urls("https://github.com/SELinuxProject/selinux/releases/download/$(version)/libsemanage-$(version).tar.gz")
+    add_versions("3.11", "e76160286bbfb0821602c6c0c3220ebcf366ad3246d3b9d0a0fbefcd35e86043")
     add_versions("3.10", "1978894c414769ad77438d26886eaae3fb7bb74578ef2a5ad3130c89cb5cb1fe")
     add_versions("3.9", "ec05850aef48bfb8e02135a7f4f3f7edba3670f63d5e67f2708d4bd80b9a4634")
 
