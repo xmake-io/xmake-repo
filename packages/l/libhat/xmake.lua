@@ -6,6 +6,7 @@ package("libhat")
     add_urls("https://github.com/BasedInc/libhat/archive/refs/tags/$(version).tar.gz",
              "https://github.com/BasedInc/libhat.git")
 
+    add_versions("v0.11.1", "0909e0fbd369a33cfb52b0791c89ba5a46aaa7d85b411e320d6fec945ab9203c")
     add_versions("v0.10.0", "6baa0856c5728c20b471751fcdd6cd69fb7385f822ee0592fdbdfafb8fb81e73")
     add_versions("v0.9.0", "b1e9e16e804d9f9bec7ccc4df4b8a1cdd281b6ec0c1377244ab28a7944a3e13a")
     add_versions("v0.7.0", "09c080be938d6e8901f1af8da74a66dc9d424393e071e1ada5ae13d86c2c9c9b")
