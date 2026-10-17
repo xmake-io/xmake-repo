@@ -4,6 +4,7 @@ package("tdtl")
     set_license("BSL-1.0")
 
     add_urls("https://github.com/tdlib/td.git")
+    add_versions("1.8.68", "c15d3f5a5de6e3ba5839822c451152e5e18bb700")
     add_versions("1.8.67", "bc9c263e2bfee06aaab41e82db51a103376030bc")
     add_versions("1.8.51", "bb474a201baa798784d696d2d9d762a9d2807f96")
 
