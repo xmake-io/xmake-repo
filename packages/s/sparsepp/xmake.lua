@@ -5,6 +5,7 @@ package("sparsepp")
 
     add_urls("https://github.com/greg7mdp/sparsepp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/greg7mdp/sparsepp.git")
+    add_versions("1.23", "3dca5bb8744e86d395f3d58846f4ac1fd9c0a3c261611750324f54a9d5268028")
     add_versions("1.22", "5516c814fe56c692aaa36f49e696f4a6292f04b5ae79f4ab7bd121e2cc48b917")
 
     on_install("linux", "macosx", "bsd", "windows", "android", "iphoneos", "cross", "mingw", function (package)
