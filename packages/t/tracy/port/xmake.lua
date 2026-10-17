@@ -4,6 +4,7 @@ add_rules("utils.install.cmake_importfiles")
 option("tracy_enable",                      {type = "boolean", default = true,  description = "Enable profiling"})
 option("on_demand",                         {type = "boolean", default = false, description = "On-demand profiling"})
 option("enforce_callstack",                 {type = "boolean", default = false, description = "Enfore callstack collection for tracy regions"})
+option("callstack_depth",                   {type = "number", default = 1, description = "Callstack depth when enforced"})
 option("callstack",                         {type = "boolean", default = false, description = "Enable all callstack related functionality"})
 option("callstack_inlines",                 {type = "boolean", default = false, description = "Enable the inline functions in callstacks"})
 option("only_localhost",                    {type = "boolean", default = false, description = "Only listen on the localhost interface"})
@@ -57,7 +58,7 @@ target("tracy")
     end
 
     if has_config("enforce_callstack") then
-        add_defines("TRACY_CALLSTACK")
+        add_defines("TRACY_CALLSTACK=" .. get_config("callstack_depth"))
     end
 
     if has_config("callstack") then
