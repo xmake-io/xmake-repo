@@ -12,39 +12,34 @@ package("sqlpp23")
 
     add_deps("cmake")
 
-    add_configs("sqlite3_connector",    { description = "Enable SQLite3 connector.", default = false, type = "boolean"})
-    add_configs("sqlcipher_connector",  { description = "Enable SQLite3 connector with SQLCipher.", default = false, type = "boolean"})
-    add_configs("mariadb_connector",    { description = "Enable MariaDB connector.", default = false, type = "boolean"})
-    add_configs("postgresql_connector", { description = "Enable PostgreSQL connector.", default = false, type = "boolean"})
-    add_configs("mysql_connector",      { description = "Enable MySQL connector.", default = false, type = "boolean"})
+    add_configs("sqlite3",    { description = "Enable SQLite3 connector.", default = false, type = "boolean"})
+    add_configs("mariadb",    { description = "Enable MariaDB connector.", default = false, type = "boolean"})
+    add_configs("postgresql", { description = "Enable PostgreSQL connector.", default = false, type = "boolean"})
+    add_configs("mysql",      { description = "Enable MySQL connector.", default = false, type = "boolean"})
 
     on_load("windows", "linux", "macosx", function (package)
-        if package:config("sqlite3_connector") then
+        if package:config("sqlite3") then
             package:add("deps", "sqlite3")
         end
-        if package:config("mariadb_connector") then
+        if package:config("mariadb") then
             package:add("deps", "mariadb-connector-c")
         end
-        if package:config("postgresql_connector") then
+        if package:config("postgresql") then
             package:add("deps", "libpq")
         end
-        if package:config("mysql_connector") then
+        if package:config("mysql") then
             package:add("deps", "mysql")
         end
     end)
 
     on_install("windows", "linux", "macosx", function (package)
-        local configs = {"-DBUILD_TESTING=OFF"}
+        local configs = {"-DBUILD_TESTING=OFF", "-DBUILD_sqlcipher=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        if package:config("sqlite3_connector") then
-            table.insert(configs, "-DBUILD_SQLITE3_CONNECTOR=ON")
+        if package:config("sqlite3") then
+            table.insert(configs, "-DBUILD_sqlite3=ON")
         end
-        -- TODO we need a sqlcipher package which installs its headers to `<includedir>/sqlcipher`
-        if package:config("sqlcipher_connector") then
-            table.insert(configs, "-DBUILD_SQLCIPHER_CONNECTOR=ON")
-        end
-        if package:config("mariadb_connector") then
-            table.insert(configs, "-DBUILD_MARIADB_CONNECTOR=ON")
+        if package:config("mariadb") then
+            table.insert(configs, "-DBUILD_mariadb=ON")
             local mariadb = package:dep("mariadb-connector-c")
             if mariadb then
                 table.insert(configs, "-DMariaDB_INCLUDE_DIR=" .. mariadb:installdir("include/mariadb"))
@@ -54,11 +49,11 @@ package("sqlpp23")
                 end
             end
         end
-        if package:config("postgresql_connector") then
-            table.insert(configs, "-DBUILD_POSTGRESQL_CONNECTOR=ON")
+        if package:config("postgresql") then
+            table.insert(configs, "-DBUILD_postgresql=ON")
         end
-        if package:config("mysql_connector") then
-            table.insert(configs, "-DBUILD_MYSQL_CONNECTOR=ON")
+        if package:config("mysql") then
+            table.insert(configs, "-DBUILD_mysql=ON")
             local libmysql = package:dep("mysql"):fetch()
             if libmysql then
                 table.insert(configs, "-DMySQL_INCLUDE_DIR=" .. table.concat(libmysql.includedirs or libmysql.sysincludedirs, ";"))
