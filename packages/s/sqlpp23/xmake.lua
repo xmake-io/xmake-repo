@@ -35,7 +35,7 @@ package("sqlpp23")
 
     on_install("windows", "linux", "macosx", function (package)
         local configs = {"-DBUILD_TESTING=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         if package:config("sqlite3_connector") then
             table.insert(configs, "-DBUILD_SQLITE3_CONNECTOR=ON")
         end
