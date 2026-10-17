@@ -4,12 +4,16 @@ package("yaml-cpp")
     set_license("MIT")
 
     add_urls("https://github.com/jbeder/yaml-cpp/archive/refs/tags/$(version).tar.gz", {version = function (version)
-        return version:le("0.7.0") and "yaml-cpp-" .. tostring(version) or version
+        if version:le("0.7.0") or version:ge("0.9.0") then
+            return "yaml-cpp-" .. tostring(version)
+        end
+        return version
     end})
     add_urls("https://github.com/jbeder/yaml-cpp.git")
     add_versions("0.6.3", "77ea1b90b3718aa0c324207cb29418f5bced2354c2e483a9523d98c3460af1ed")
     add_versions("0.7.0", "43e6a9fcb146ad871515f0d0873947e5d497a1c9c60c58cb102a97b47208b7c3")
     add_versions("0.8.0", "fbe74bbdcee21d656715688706da3c8becfd946d92cd44705cc6098bb23b3a16")
+    add_versions("0.9.0", "25cb043240f828a8c51beb830569634bc7ac603978e0f69d6b63558dadefd49a")
 
     add_patches("0.8.0", path.join(os.scriptdir(), "patches", "missing-gcc15-header.diff"), "77187131279f2ef470f473b3d4cf88a3e9075d1650f0abe8a791b260292dd86e")
 
@@ -22,13 +26,13 @@ package("yaml-cpp")
     end)
 
     on_install(function (package)
-        local configs = {"-DYAML_CPP_BUILD_TESTS=OFF"}
+        local configs = {"-DYAML_CPP_BUILD_TESTS=OFF", "-DYAML_CPP_BUILD_TOOLS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DYAML_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
             table.insert(configs, "-DYAML_MSVC_SHARED_RT=" .. (package:has_runtime("MT") and "OFF" or "ON"))
         end
-        import("package.tools.cmake").install(package, configs, {buildir = os.tmpfile() .. ".dir"})
+        import("package.tools.cmake").install(package, configs, {builddir = os.tmpfile() .. ".dir"})
         package:addenv("PATH", "bin")
     end)
 
