@@ -6,6 +6,7 @@ package("google-cloud-cpp")
     add_urls("https://github.com/googleapis/google-cloud-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/googleapis/google-cloud-cpp.git")
 
+    add_versions("v3.8.0", "d0a3a670f468ddd059ffb39780df958b3ffaca12ebcae63193072b759b95add2")
     add_versions("v2.46.0", "492734e092e5150d8395797f0d269f3d1e49ba3a959db4a332d15a1f382ff7ee")
     add_versions("v2.45.0", "3d1b5eb696832f9071bf7ef0b3f0c9fd27c1a39d5edcb8a9976c65193319fd01")
     add_versions("v2.43.0", "2aea914128db8a550bd926e1e08c155fae1caff8a451e1b644602952dd6d8b5c")
@@ -27,25 +28,58 @@ package("google-cloud-cpp")
     add_deps("cmake")
 
     on_check("mingw", function (package)
+        local version = package:version()
+        if version and version:ge("3.0.0") then
+            raise("package(google-cloud-cpp >=3.0.0) unsupported mingw because package(grpc) is unsupported")
+        end
         -- https://github.com/googleapis/google-cloud-cpp/issues/14436
         if is_subhost("msys") then
             raise("Unsupported msys2 mingw64, see https://github.com/rui314/mold/issues/613#issuecomment-1214294138")
         end
     end)
 
+    on_check("iphoneos", "cross", function (package)
+        local version = package:version()
+        if version and version:ge("3.0.0") then
+            raise("package(google-cloud-cpp >=3.0.0) unsupported %s because package(opentelemetry-cpp) is unsupported", package:plat())
+        end
+    end)
+
+    on_check("wasm", function (package)
+        local version = package:version()
+        if version and version:ge("3.0.0") then
+            raise("package(google-cloud-cpp >=3.0.0) unsupported wasm because package(grpc) is unsupported")
+        end
+    end)
+
     on_load(function (package)
-        package:add("deps", "abseil")
+        local version = package:version()
+        local is_v3 = version and version:ge("3.0.0")
+
+        -- Let on_check report unsupported platforms before loading their dependencies.
+        local unsupported_v3 = is_v3 and package:is_plat("mingw", "iphoneos", "cross", "wasm")
+        if unsupported_v3 or (package:is_plat("mingw") and is_subhost("msys")) then
+            return
+        end
+
+        package:add("deps", is_v3 and "abseil >=20250814.1" or "abseil")
         if not package:is_plat("windows", "mingw", "msys") then
             if package:is_plat("macosx") then
-                package:add("deps", "openssl3", {system = false})
+                package:add("deps", is_v3 and "openssl3 >=3.0.17" or "openssl3", {system = false})
             else
-                package:add("deps", "openssl3")
+                package:add("deps", is_v3 and "openssl3 >=3.0.17" or "openssl3")
             end
         end
 
         -- https://github.com/googleapis/google-cloud-cpp/blob/main/cmake/GoogleCloudCppFeatures.cmake
-        local libraries = package:config("libraries")
-        if libraries and #libraries ~= 0 then
+        local libraries = table.copy(package:config("libraries") or {})
+        if is_v3 then
+            -- v3 always enables these libraries, even when GOOGLE_CLOUD_CPP_ENABLE is empty.
+            for _, library in ipairs({"monitoring", "trace", "opentelemetry", "universe_domain"}) do
+                table.insert(libraries, library)
+            end
+        end
+        if #libraries ~= 0 then
             import("core.base.hashset")
 
             local has_grpc = false
@@ -75,29 +109,43 @@ package("google-cloud-cpp")
             end
 
             if has_grpc then
+                local grpc = is_v3 and "grpc >=1.76.0" or "grpc"
                 if package:config("shared") then
-                    package:add("deps", "grpc", {configs = {shared = true}})
+                    package:add("deps", grpc, {configs = {shared = true}})
                     wprint([[Build google-cloud-cpp shared library require protobuf shared too, Please use `add_requireconfs("**.protobuf-cpp", {configs = {shared = true}})`]])
                 else
-                    package:add("deps", "grpc")
+                    package:add("deps", grpc)
+                end
+                if is_v3 then
+                    -- gRPC v1.82.1 is not compatible with Protobuf 36.
+                    package:add("deps", "protobuf-cpp >=33.2 <36.0")
                 end
 
                 if package:is_cross() then
-                    package:add("deps", "grpc~binary", {private = true, kind = "binary"})
+                    package:add("deps", "grpc~binary", {host = true, private = true, kind = "binary"})
                 end
-                -- commit hash from https://github.com/googleapis/google-cloud-cpp/blob/main/cmake/GoogleapisConfig.cmake
-                package:add("resources", ">=2.33.0", "googleapis", "https://github.com/googleapis/googleapis.git", "c3556b45dc35a145e04b5692bc72e01a4f58a6b2")
+                -- Keep the v3 ref in sync with the release's cmake/GoogleapisConfig.cmake.
+                local googleapis_ref = is_v3 and "b8486a2f44f15dc578a9dc1e17b144253079d5c1" or "c3556b45dc35a145e04b5692bc72e01a4f58a6b2"
+                package:add("resources", ">=2.33.0", "googleapis", "https://github.com/googleapis/googleapis.git", googleapis_ref)
             end
 
             if has_rest then
-                package:add("deps", "nlohmann_json", {configs = {cmake = true}})
-                package:add("deps", "libcurl", "crc32c")
+                local nlohmann_json = is_v3 and "nlohmann_json >=3.12.0" or "nlohmann_json"
+                package:add("deps", nlohmann_json, {configs = {cmake = true}})
+                package:add("deps", "libcurl")
+                if not is_v3 then
+                    package:add("deps", "crc32c")
+                end
             end
 
             local hash_libraries = hashset.from(libraries)
             package:data_set("hash_libraries", hash_libraries)
             if hash_libraries:has("opentelemetry") then
-                package:add("deps", "opentelemetry-cpp")
+                if is_v3 then
+                    package:add("deps", "opentelemetry-cpp >=1.23.0", {configs = {abi_version_2 = true, cxx_standard = "17", stl = "cxx17"}})
+                else
+                    package:add("deps", "opentelemetry-cpp")
+                end
             end
         end
     end)
@@ -118,6 +166,9 @@ package("google-cloud-cpp")
             "-DGOOGLE_CLOUD_CPP_WITH_MOCKS=OFF",
             "-DGOOGLE_CLOUD_CPP_ENABLE_MACOS_OPENSSL_CHECK=OFF",
         }
+        if package:version() and package:version():ge("3.0.0") then
+            table.insert(configs, "-DCMAKE_CXX_STANDARD=17")
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DGOOGLE_CLOUD_CPP_ENABLE_CXX_EXCEPTIONS=" .. (package:config("exceptions") and "ON" or "OFF"))
