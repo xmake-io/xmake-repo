@@ -6,6 +6,7 @@ package("lief")
     set_urls("https://github.com/lief-project/LIEF/archive/refs/tags/$(version).tar.gz",
              "https://github.com/lief-project/LIEF.git")
 
+    add_versions("1.0.0", "2cf412695ff739d82e129db441e5c2025f3bb4873a3d3a1d3dd4cf300b682abd")
     add_versions("0.17.6", "5fbbd19c85912d417eabbaef2b98e70144496356964685b82e0792d708b9be87")
     add_versions("0.17.3", "00158beac9432b350fb528d571457a0bea8de154633a31735524a74fa69ea196")
     add_versions("0.17.2", "bece1be25aa657b94d1c97ddf88c47e0b94faa1d971c42532c4eb59fbb507fc2")
