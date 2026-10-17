@@ -6,6 +6,7 @@ package("qwindowkit")
     add_urls("https://github.com/stdware/qwindowkit/archive/refs/tags/$(version).tar.gz",
              "https://github.com/stdware/qwindowkit.git")
 
+    add_versions("1.5.0", "9a7029463fb819449cfd9235286ce76f90a7d896995282988aff089b9fea0350")
     add_versions("1.1", "a0102ee4c4fdd08ce35c29a5b9a27384005028b2ab6094f61e467c35917b8c5e")
     add_versions("1.2", "f06b4befc54c6e2c764dbec8a970ce7ffbe561e76a52ea121dca84598f4035b8")
 
