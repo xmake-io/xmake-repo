@@ -6,6 +6,7 @@ package("colmap")
     add_urls("https://github.com/colmap/colmap/archive/refs/tags/$(version).tar.gz", 
              "https://github.com/colmap/colmap.git")
 
+    add_versions("4.2.1", "15fb9e333541676e4ee9bc5d8ab95a3ed6e549a20eb13fc5aafd04ca06c76c88")
     add_versions("3.13.0", "98a8f8cf6358774be223239a9b034cc9d55bf66c43f54fc6ddea9128a1ee197a")
 
     add_patches(">3.0", "patches/deps.patch", "93f43c149b95195bf03f30b22710502faa4c26242e7a7059881464c0b1fde2e6")
