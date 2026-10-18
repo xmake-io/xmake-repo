@@ -7,6 +7,7 @@ package("citor")
     add_urls("https://github.com/Lallapallooza/citor/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Lallapallooza/citor.git")
 
+    add_versions("v0.6.2", "0d61cde52109f3f1b858a788259907bfe161f6f745aee2fae112137b85dceb42")
     add_versions("v0.6.1", "1a0f930881d064dbc0bde7d605b9c9ef970e07709dc95cdad858a1d6013fc39e")
     add_versions("v0.6.0", "db080e18e10f920d3e4097c031f2c2b152b1a784e300a8439d0dda09221b7829")
     add_versions("v0.5.0", "9a80af1eaf655066fabbe131bf5815a024efc7ea1d728f57243d2a6850fb854d")
