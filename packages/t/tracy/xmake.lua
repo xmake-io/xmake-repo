@@ -73,6 +73,11 @@ package("tracy")
     end
 
     on_load(function (package)
+        -- TracySystem.cpp only auto-links secur32 for MSVC. MinGW static
+        -- consumers need it for GetUserNameExA, added in 0.14.
+        if package:is_plat("mingw") and package:version() and package:version():ge("0.14") then
+            package:add("syslinks", "secur32")
+        end
         if package:config("cmake") then
             if package:version() and package:version():lt("0.14") then
                 assert(package:config("callstack_depth") == 1, "callstack_depth requires Tracy >=0.14 with CMake")
@@ -82,6 +87,13 @@ package("tracy")
     end)
 
     on_install(function (package)
+        -- initial-exec TLS on armeabi-v7a references __aeabi_read_tp, which the
+        -- NDK does not provide below API 29. Leave Android on its default model.
+        if package:version() and package:version():ge("0.14") then
+            io.replace("public/client/tracy_rpmalloc.cpp", [[#    elif !defined(__HAIKU__)
+#      define TLS_MODEL __attribute__((tls_model("initial-exec")))]], [[#    elif !defined(__HAIKU__) && !defined(__ANDROID__)
+#      define TLS_MODEL __attribute__((tls_model("initial-exec")))]], {plain = true})
+        end
         io.replace("public/client/TracyProfiler.cpp", [[#ifdef TRACY_ENABLE]], [[#ifdef TRACY_ENABLE
 #ifdef __MINGW32__
 #define __try try
