@@ -6,6 +6,7 @@ package("raygui")
 
     add_urls("https://github.com/raysan5/raygui/archive/refs/tags/$(version).tar.gz",
              "https://github.com/raysan5/raygui.git")
+    add_versions("5.0", "0f194c4a5e837c0930aca0b6315db45d00f76fa0052d841eea94598d390c39d6")
     add_versions("3.0", "a510eb6efb524dfc8a1a7072bab3d4182a550f9fe86d315ff13a59cfc707f877")
     add_versions("3.2", "23fb86a0c5fd8216e31c396c5f42de5f11c71f940078fb7d65aa1c39f3895c79")
     add_versions("4.0", "299c8fcabda68309a60dc858741b76c32d7d0fc533cdc2539a55988cee236812")
