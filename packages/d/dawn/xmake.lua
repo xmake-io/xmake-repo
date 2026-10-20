@@ -33,6 +33,9 @@ package("dawn")
     add_configs("opengles", {description = "Enable the OpenGL ES backend.", default = is_plat("linux", "android"), type = "boolean"})
     add_configs("x11", {description = "Enable X11 surfaces.", default = is_plat("linux"), type = "boolean"})
     add_configs("wayland", {description = "Enable Wayland surfaces.", default = is_plat("linux"), type = "boolean"})
+    if is_plat("windows", "linux", "macosx") then
+        add_configs("glfw", {description = "Enable GLFW windowing utilities.", default = false, type = "boolean"})
+    end
 
     if is_host("windows") then
         set_policy("platform.longpaths", true)
@@ -61,6 +64,12 @@ package("dawn")
         package:add("links", "webgpu_dawn")
         package:add("deps", "cmake", "python 3.x", {kind = "binary"})
         package:add("deps", "abseil")
+        if package:config("glfw") then
+            package:add("deps", "glfw", {configs = {shared = package:config("shared"), x11 = package:config("x11"), wayland = package:config("wayland")}})
+            if package:config("shared") then
+                package:add("defines", "WGPU_GLFW_SHARED_LIBRARY")
+            end
+        end
         if package:config("shared") then
             package:add("defines", "WGPU_SHARED_LIBRARY", "DAWN_NATIVE_SHARED_LIBRARY")
         end
@@ -116,6 +125,21 @@ package("dawn")
         -- abseil and the Vulkan headers come from their packages: Dawn only builds its own copies when
         -- these targets don't exist yet
         local deps = {"find_package(absl CONFIG REQUIRED GLOBAL)"}
+        if package:config("glfw") then
+            table.insert(deps, "find_package(glfw3 CONFIG REQUIRED GLOBAL)")
+            -- Dawn builds the GLFW helpers separately and does not install them. Include their objects
+            -- in webgpu_dawn so its static and shared variants both provide the GLFW entry points.
+            io.replace("src/dawn/glfw/CMakeLists.txt", "add_library(webgpu_glfw ALIAS dawn_glfw)", [[
+add_library(webgpu_glfw ALIAS dawn_glfw)
+target_compile_definitions(dawn_glfw PRIVATE GLFW_INCLUDE_NONE)
+target_sources(webgpu_dawn PRIVATE $<TARGET_OBJECTS:dawn_glfw>)
+target_link_libraries(webgpu_dawn PRIVATE glfw)
+if(DAWN_BUILD_MONOLITHIC_LIBRARY STREQUAL "SHARED")
+    target_compile_definitions(dawn_glfw PRIVATE WGPU_GLFW_SHARED_LIBRARY)
+endif()
+install(FILES ${headers} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/webgpu")
+]], {plain = true})
+        end
         if package:config("vulkan") then
             table.insert(deps, "find_package(VulkanHeaders CONFIG REQUIRED GLOBAL)")
             table.insert(deps, "find_package(VulkanUtilityLibraries CONFIG REQUIRED GLOBAL)")
@@ -148,7 +172,6 @@ package("dawn")
             "-DDAWN_BUILD_BENCHMARKS=OFF",
             "-DDAWN_BUILD_PROTOBUF=OFF",
             "-DDAWN_BUILD_NODE_BINDINGS=OFF",
-            "-DDAWN_USE_GLFW=OFF",
             "-DDAWN_USE_BUILT_DXC=OFF",
             "-DDAWN_ENABLE_NULL=ON",
             "-DDAWN_SUPPORTS_CXX_MODULES=OFF",
@@ -166,6 +189,7 @@ package("dawn")
         table.insert(configs, "-DDAWN_ENABLE_VULKAN=" .. (package:config("vulkan") and "ON" or "OFF"))
         table.insert(configs, "-DDAWN_ENABLE_DESKTOP_GL=" .. (package:config("opengl") and "ON" or "OFF"))
         table.insert(configs, "-DDAWN_ENABLE_OPENGLES=" .. (package:config("opengles") and "ON" or "OFF"))
+        table.insert(configs, "-DDAWN_USE_GLFW=" .. (package:config("glfw") and "ON" or "OFF"))
         table.insert(configs, "-DDAWN_USE_X11=" .. (package:config("x11") and "ON" or "OFF"))
         table.insert(configs, "-DDAWN_USE_WAYLAND=" .. (package:config("wayland") and "ON" or "OFF"))
 
@@ -206,5 +230,15 @@ package("dawn")
                     (void)procs;
                 }
             ]]}, {configs = {languages = "c++20"}}))
+            if package:config("glfw") then
+                assert(package:check_cxxsnippets({test = [[
+                    #include <webgpu/webgpu_glfw.h>
+                    int main() {
+                        wgpu::Instance instance;
+                        wgpu::Surface surface = wgpu::glfw::CreateSurfaceForWindow(instance, nullptr);
+                        return 0;
+                    }
+                ]]}, {configs = {languages = "c++20"}}))
+            end
         end
     end)
