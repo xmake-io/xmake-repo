@@ -6,6 +6,7 @@ package("xlsxio")
     add_urls("https://github.com/brechtsanders/xlsxio/archive/refs/tags/$(version).tar.gz",
              "https://github.com/brechtsanders/xlsxio.git")
 
+    add_versions("0.2.37", "b9fcb22e124d178f30d404e5a22ccac594353d71d845035795321cd53d6c4cee")
     add_versions("0.2.36", "80d3df95a7a108a41f83f0ce4c6706873fd2afafd92424fcccea475a8acbd044")
     add_versions("0.2.35", "03a4d1b1613953d46c8fc2ea048cd32007fbddcd376ab6d4156f72da2815adfa")
     add_versions("0.2.34", "726e3bc3cf571ac20e5c39b1f192f3793d24ebfdeaadcd210de74aa1ec100bb6")
