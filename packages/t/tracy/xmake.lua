@@ -6,6 +6,7 @@ package("tracy")
     add_urls("https://github.com/wolfpld/tracy/archive/refs/tags/$(version).tar.gz",
              "https://github.com/wolfpld/tracy.git")
 
+    add_versions("v0.14.1", "bf4af567e9c7524d07f3caa745fad02fb33bd5694f11910750382d1efbb251c1")
     add_versions("v0.13.1", "d4efc50ebcb0bfcfdbba148995aeb75044c0d80f5d91223aebfaa8fa9e563d2b")
     add_versions("v0.13.0", "b0e972dfeebe42470187c1a47b449c8ee9e8656900bcf87b403175ed50796918")
     add_versions("v0.12.2", "09617765ba5ff1aa6da128d9ba3c608166c5ef05ac28e2bb77f791269d444952")
@@ -72,6 +73,11 @@ package("tracy")
     end
 
     on_load(function (package)
+        -- TracySystem.cpp only auto-links secur32 for MSVC. MinGW static
+        -- consumers need it for GetUserNameExA, added in 0.14.
+        if package:is_plat("mingw") and package:version() and package:version():ge("0.14") then
+            package:add("syslinks", "secur32")
+        end
         if package:config("cmake") then
             if package:version() and package:version():lt("0.14") then
                 assert(package:config("callstack_depth") == 1, "callstack_depth requires Tracy >=0.14 with CMake")
@@ -81,6 +87,17 @@ package("tracy")
     end)
 
     on_install(function (package)
+        -- initial-exec TLS on armeabi-v7a references __aeabi_read_tp, which the
+        -- NDK does not provide below API 29. Leave Android on its default model.
+        if package:version() and package:version():ge("0.14") then
+            io.replace("public/client/tracy_rpmalloc.cpp", [[#    elif !defined(__HAIKU__)
+#      define TLS_MODEL __attribute__((tls_model("initial-exec")))]], [[#    elif !defined(__HAIKU__) && !defined(__ANDROID__)
+#      define TLS_MODEL __attribute__((tls_model("initial-exec")))]], {plain = true})
+            if package:is_plat("android") then
+                -- The ARM thread ID builtin also references __aeabi_read_tp below API 29.
+                io.replace("public/client/tracy_rpmalloc.cpp", "__builtin_thread_pointer()", "pthread_self()", {plain = true})
+            end
+        end
         io.replace("public/client/TracyProfiler.cpp", [[#ifdef TRACY_ENABLE]], [[#ifdef TRACY_ENABLE
 #ifdef __MINGW32__
 #define __try try
