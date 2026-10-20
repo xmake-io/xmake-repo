@@ -93,6 +93,10 @@ package("tracy")
             io.replace("public/client/tracy_rpmalloc.cpp", [[#    elif !defined(__HAIKU__)
 #      define TLS_MODEL __attribute__((tls_model("initial-exec")))]], [[#    elif !defined(__HAIKU__) && !defined(__ANDROID__)
 #      define TLS_MODEL __attribute__((tls_model("initial-exec")))]], {plain = true})
+            if package:is_plat("android") then
+                -- The ARM thread ID builtin also references __aeabi_read_tp below API 29.
+                io.replace("public/client/tracy_rpmalloc.cpp", "__builtin_thread_pointer()", "pthread_self()", {plain = true})
+            end
         end
         io.replace("public/client/TracyProfiler.cpp", [[#ifdef TRACY_ENABLE]], [[#ifdef TRACY_ENABLE
 #ifdef __MINGW32__
