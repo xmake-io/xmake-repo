@@ -6,6 +6,7 @@ package("libigl")
 
     add_urls("https://github.com/libigl/libigl/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libigl/libigl.git")
+    add_versions("v2.6.4", "09fa1b9b44e0ecbd8fbaa17ec8d9ac0cb4efcedcb2427970f8a4e90bc96e0970")
     add_versions("v2.6.0", "fe3bf58571cccbef774947261284ccf6b7fdf04fcab5f7181e31931e42a0b14f")
     add_versions("v2.2.0", "b336e548d718536956e2d6958a0624bc76d50be99039454072ecdc5cf1b2ede5")
     add_versions("v2.3.0", "9d6de3bdb9c1cfc61a0a0616fd96d14ef8465995600328c196fa672ee4579b70")
