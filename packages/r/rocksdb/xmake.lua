@@ -84,18 +84,28 @@ package("rocksdb")
                 table.insert(configs, "-DWITH_" .. name:upper() .. "=" .. (enabled and "ON" or "OFF"))
             end
         end
+        local cxflags = {}
+        local packagedeps = {}
         if package:is_plat("windows") then
             io.replace("CMakeLists.txt", "/Zi", "", {plain = true})
             local vs_runtime = package:runtimes()
             if vs_runtime then
                 table.insert(configs, "-DWITH_MD_LIBRARY=" .. (vs_runtime:startswith("MD") and "ON" or "OFF"))
             end
+            table.insert(configs, "-DROCKSDB_SKIP_THIRDPARTY=ON")
+            for _, name in ipairs({"gflags", "snappy", "lz4", "zlib", "zstd"}) do
+                if package:config(name) then
+                    table.insert(cxflags, "-D" .. name:upper() .. "=1")
+                    if name == "zstd" then
+                        table.insert(cxflags, "-DZSTD_STATIC_LINKING_ONLY")
+                    end
+                    table.insert(packagedeps, name)
+                end
+            end
+        elseif package:is_plat("mingw") then
+            table.insert(cxflags, "-DMINGW_HAS_SECURE_API")
         end
-        local cxflags
-        if package:is_plat("mingw") then
-            cxflags = "-DMINGW_HAS_SECURE_API"
-        end
-        import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
+        import("package.tools.cmake").install(package, configs, {cxflags = cxflags, packagedeps = packagedeps})
     end)
 
     on_test(function (package)
