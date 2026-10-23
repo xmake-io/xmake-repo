@@ -6,6 +6,7 @@ package("json-schema-validator")
     add_urls("https://github.com/pboettch/json-schema-validator/archive/refs/tags/$(version).tar.gz",
              "https://github.com/pboettch/json-schema-validator.git")
 
+    add_versions("2.4.1", "0c8bf7ba59bd50e312d82da4bab1d49cf3e2211cfbd659472f9c90505d2a4e4c")
     add_versions("2.4.0", "24cbb114609cc9b43d4018b8d03e082ff5d2f26f5dce8bd36538097267b63af9")
     add_versions("2.3.0", "2c00b50023c7d557cdaa71c0777f5bcff996c4efd7a539e58beaa4219fa2a5e1")
     add_versions("2.1.0", "83f61d8112f485e0d3f1e72d51610ba3924b179926a8376aef3c038770faf202")
