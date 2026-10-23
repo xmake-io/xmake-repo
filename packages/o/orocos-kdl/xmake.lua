@@ -5,6 +5,7 @@ package("orocos-kdl")
     add_urls("https://github.com/orocos/orocos_kinematics_dynamics/archive/refs/tags/$(version).tar.gz",
              "https://github.com/orocos/orocos_kinematics_dynamics.git", {submodules = false})
 
+    add_versions("1.5.4", "b47c75b03d5980a8b3a5382ab1176ae552f2f5418ad42b0e530a4178e3e1c301")
     add_versions("1.5.3", "3895eed1b51a6803c79e7ac4acd6a2243d621b887ac26a1a6b82a86a1131c3b6")
 
     add_configs("models", {description = "Build models for some well known robots", default = false, type = "boolean"})
