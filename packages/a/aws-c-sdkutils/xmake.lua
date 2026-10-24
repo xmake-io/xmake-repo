@@ -6,6 +6,7 @@ package("aws-c-sdkutils")
     add_urls("https://github.com/awslabs/aws-c-sdkutils/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-sdkutils.git")
 
+    add_versions("v1.0.1", "c74ce4e19304051d961255fdeb3cd431cfc81896c608a22f94c2321b5a19d6ba")
     add_versions("v1.0.0", "ddf9d09ba137ad0697afe1c09f5d778d6b2f1aadb277dffd231ff615ae34bc82")
     add_versions("v0.2.9", "14fe900f80c3b9f5e53a783d9ac0865ed9ba1ae63b67744b9f82a8b3194a4388")
     add_versions("v0.2.7", "802b8c4169da2b4cf5c48f9598fb778faccd3e052e443a482089193411c2b7bb")
