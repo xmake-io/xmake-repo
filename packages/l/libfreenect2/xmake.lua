@@ -38,6 +38,7 @@ package("libfreenect2")
 
     on_install("windows", "linux", "macosx", function (package)
         io.replace("CMakeLists.txt", "FIND_PACKAGE(LibUSB REQUIRED)", "", {plain = true})
+        io.replace("CMakeLists.txt", [[SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE STRING "installation path")]], [[SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "installation path")]], {plain = true})
 
         local configs = {}
         table.insert(configs, "-DBUILD_EXAMPLES=OFF")
