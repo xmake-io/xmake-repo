@@ -32,14 +32,14 @@ package("nepdate")
     on_install(function (package)
         if not package:config("patro") then
             os.cp("include/nepdate", package:installdir("include"))
-            return
+        else
+            -- upstream's internal size-check program, not part of the package
+            io.replace("CMakeLists.txt", "add_subdirectory(tools/coreonly)", "", {plain = true})
+            local configs = {"-DNEPDATE_BUILD_PATRO=ON", "-DNEPDATE_BUILD_TESTS=OFF", "-DNEPDATE_BUILD_TOOLS=OFF"}
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+            import("package.tools.cmake").install(package, configs)
         end
-        -- upstream's internal size-check program, not part of the package
-        io.replace("CMakeLists.txt", "add_subdirectory(tools/coreonly)", "", {plain = true})
-        local configs = {"-DNEPDATE_BUILD_PATRO=ON", "-DNEPDATE_BUILD_TESTS=OFF", "-DNEPDATE_BUILD_TOOLS=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
