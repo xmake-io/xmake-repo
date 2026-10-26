@@ -6,6 +6,7 @@ package("cdt")
     add_urls("https://github.com/artem-ogre/CDT/archive/refs/tags/$(version).tar.gz",
              "https://github.com/artem-ogre/CDT.git", {submodules = false})
 
+    add_versions("2.0.1", "5e3c45715e55b5f2d4390082c8c1ac026f635ddee233516fdcf94b197954367d")
     add_versions("2.0.0", "81ed0c7a8cbdc059b26948a160c3ce68c7a147976334093fe3175c8fa161a447")
     add_versions("1.4.5", "5b964a00147d17f5d6ffd9c800d4f12f1e540ce8e932655469f65aea9a3005d7")
     add_versions("1.4.4", "97e57bdd1cf8219dcc81634236a502390a20dda3599dd3414a74343b7f03427f")
