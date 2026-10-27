@@ -1,0 +1,31 @@
+--- a/dev/restinio/sendfile_defs_posix.hpp
++++ b/dev/restinio/sendfile_defs_posix.hpp
+@@ -100,7 +100,7 @@
+ 		throw exception_t{ "invalid file descriptor" };
+ 	}
+ 
+-#if !defined( _LARGEFILE64_SOURCE )
++#if !defined( _LARGEFILE64_SOURCE ) && !defined( __BIONIC__ )
+ 	struct stat file_stat;
+ 
+ 	const auto fstat_rc = ::fstat( fd, &file_stat );
+--- a/dev/restinio/impl/sendfile_operation_posix.ipp
++++ b/dev/restinio/impl/sendfile_operation_posix.ipp
+@@ -41,7 +41,7 @@
+ 		virtual void
+ 		start() override
+ 		{
+-#if !defined( _LARGEFILE64_SOURCE )
++#if !defined( _LARGEFILE64_SOURCE ) && !defined( __BIONIC__ )
+ 			auto const n = ::lseek( this->m_file_descriptor, this->m_next_write_offset, SEEK_SET );
+ #else
+ 			auto const n = ::lseek64( this->m_file_descriptor, this->m_next_write_offset, SEEK_SET );
+@@ -274,7 +274,7 @@
+ 		auto
+ 		call_native_sendfile() noexcept
+ 		{
+-#if defined( _LARGEFILE64_SOURCE )
++#if defined( _LARGEFILE64_SOURCE ) || defined( __BIONIC__ )
+ 			return ::sendfile64(
+ 					m_socket.native_handle(),
+ 					m_file_descriptor,

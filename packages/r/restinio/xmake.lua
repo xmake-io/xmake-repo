@@ -18,6 +18,10 @@ package("restinio")
     add_versions("0.6.18", "16fa041f4603746c6cd0f29ab126d02d220034535e7019c6ca1b8b9f58bfeee0")
     add_versions("0.6.19", "5a739cac8f3148e7e94f05bb08f5cf569dd31f6f3ea2b893eddfffb0a155eb52")
 
+    -- bionic doesn't define _LARGEFILE64_SOURCE, so 32-bit Android picks the 32-bit off_t
+    -- version of ::sendfile and fails to compile, @see sendfile_operation_posix.ipp
+    add_patches(">=0.7.4", "patches/0.7.4/bionic-sendfile.patch", "c947d1dd0b8c34f333c41681ff5688d0271fd5264e2323140b6c2bc127ed0b5a")
+
     if is_plat("mingw") then
         add_syslinks("ws2_32", "mswsock")
     elseif is_plat("linux", "bsd") then
