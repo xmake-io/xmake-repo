@@ -75,6 +75,29 @@ Follow a similar existing recipe (`packages/r/robin-map`, `packages/n/nanobench`
   ```
   Use `package:is_debug()` (not the older `package:debug()`), `package:config("x")`, `package:is_plat(...)`,
   `package:is_arch(...)`, `package:has_tool(...)`; never hard-code absolute paths, install into `package:installdir()`.
+* Build tool modules (`import("package.tools.<tool>").install(package, configs, opt)`); declare the tool as a dep
+  in the recipe (`add_deps(...)`) and let the module handle cross-compile/toolchain/env/install prefix/static-shared:
+  * `cmake` (most common): `add_deps("cmake")`; `configs` is a list of `-D` args (idiom above; also set
+    `-DCMAKE_POSITION_INDEPENDENT_CODE=ON` for static libs when needed). Optional 3rd arg `opt`:
+    `{packagedeps = {"zlib", "libogg"}}` (point cmake at xmake deps, the usual way to wire `add_deps` libs),
+    `{cxflags = ...}`/`{ldflags = ...}`/`{shflags = ...}` extra flags, `{buildir = "build"}`, `{cmake_generator = "Ninja"}`
+    (`add_deps("ninja")`). Disable tests/examples/docs/bundled-deps via `-D` options.
+  * `xmake`: for upstream xmake projects or your `port/xmake.lua`; `install(package, configs)` with `configs` a table
+    of project options, e.g. `configs.kind = package:config("shared") and "shared" or "static"`
+    (the common idiom is `local configs = {}` + `if package:config("shared") then configs.kind = "shared" end`),
+    `configs.cxflags = "-fPIC"`, or named options `{tools = package:config("tools")}` read by `option()` in the project.
+  * `meson`: `add_deps("meson", "ninja")`; `configs` is a list of `-D` args, always include
+    `"-Ddefault_library=" .. (package:config("shared") and "shared" or "static")`; `opt` like `{packagedeps = ...}`.
+  * `autoconf`: for `configure` projects; configs are `--enable-shared=` / `--enable-static=` etc. args:
+    `table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))`; pass `{cppflags = ..., ldflags = ...}`
+    via `opt`. System autotools exist on Unix; add `add_deps("autoconf", "automake", "libtool", "pkg-config")` only if
+    the source needs `autoreconf` (no pre-generated `configure`).
+  * `make`/`nmake`/`msbuild`: for plain Makefiles / `nmake` (`win32.mak`) / `.sln` projects with no better option:
+    `import("package.tools.make").build(package, configs, {envs = make.buildenvs(package)})`, then copy
+    headers/libs yourself with `os.cp(..., package:installdir("include"|"lib"))`; `msbuild.build(package, configs)` + `msbuild.buildenvs`.
+  * Others used rarely: `scons`, `gn`, `ninja`. Prefer cmake/xmake/meson/autoconf when upstream supports them.
+  * Always map `shared`, debug/release and (for toolchains) cross-compile via the module, not by hand-writing
+    `CC`/`CFLAGS`; use `package:config(...)` to switch upstream options.
 * Header-only libs without a build system: `os.cp("include/*", package:installdir("include"))`
   (or the specific header dir); with a CMake that only installs headers, `import("package.tools.cmake").install`.
 * `on_test`: as short as possible (one snippet, the minimum API calls that prove the header links/compiles; no loops, no extra setup, no long examples); `assert(package:check_cxxsnippets({test = [[ void test() { ... } ]]}, {configs = {languages = "c++17"}, includes = "x.h"}))`
