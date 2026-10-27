@@ -177,6 +177,25 @@ Follow a similar existing recipe (`packages/r/robin-map`, `packages/n/nanobench`
 * Prefer packages with no deps or deps already in the repo; do not bundle third-party sources.
 * Avoid unusual constructs (e.g. top-level `return`) in recipes.
 
+## Formatting and line breaks
+
+* `.editorconfig` (for `*.lua`): 4 spaces, `end_of_line = lf`, final newline. Write LF (never CRLF), no tabs, no
+  trailing whitespace, exactly one newline at EOF (no extra blank line at the end). A few old recipes violate this;
+  do not copy them and do not reformat unrelated lines (keeps diffs minimal; check with `git diff --check`).
+  Patch files and `port/` files are copied verbatim from upstream: keep their original line endings so patches apply.
+* Everything inside `package("x")` is indented 4 spaces; one blank line between logical blocks (header/urls,
+  versions, patches, configs, deps, `on_load`, `on_install`, `on_test`); no blank lines inside the version list.
+* A multi-argument call that does not fit on a line breaks after a comma, with continuation lines aligned under the
+  first argument (the dominant form for urls):
+  ```lua
+  add_urls("https://github.com/<o>/<r>/archive/refs/tags/$(version).tar.gz",
+           "https://github.com/<o>/<r>.git")
+  ```
+  Same for `add_deps("a", "b",\n             "c")`. `add_versions`/`add_patches`/`add_configs` stay on one line even
+  when long (sha256 included); do not wrap them. Long description strings stay on one line.
+* One statement per line; `on_install`/`on_test` bodies are indented one level more than the call; end with
+  `end)` aligned with the call.
+
 ## Comments
 
 * Keep recipes lean: do not comment every line or restate what the code does.
