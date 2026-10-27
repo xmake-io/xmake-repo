@@ -81,6 +81,28 @@ Follow a similar existing recipe (`packages/r/robin-map`, `packages/n/nanobench`
   or `check_csnippets`, `assert(package:has_cfuncs("f", {includes = "x.h"}))`, and for binaries
   `os.vrun("tool --version")` (add `if not package:is_cross()`). Set `languages` to what the library needs
   (`c++11/14/17/20`, `c11`), wrap the snippet in `void test() {}` and include the real public header.
+* Lifecycle scripts (all take `function (package)`; `on_fetch` takes `function (package, opt)`):
+  * `on_load`: runs at load time for every user (cheap, no building). Use it for config-dependent
+    `package:add("deps"|"defines"|"links"|"syslinks"|"frameworks"|"includedirs"|"cxxflags", ...)` and
+    `package:add("deps", ...)` that depend on `package:config(...)`/version/platform. Accepts platform filters.
+  * `on_check`: validates support early and fails fast: `assert(cond, "package(name): unsupported on <plat>|<arch>")`
+    or `raise(...)`; typical checks `package:is_plat/is_arch/version():eq/ge`, a compiler/VS version via
+    `toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})`, or a `check_cxxsnippets` for the
+    required C++ standard. Use it instead of a failing `on_install` for known-unsupported platforms/versions;
+    guard with `if on_check then` only if you need old xmake compatibility (the repo does for old clients).
+  * `on_install`: do the build/copy into `package:installdir()`; the source dir is the cwd. Filter by platform
+    instead of `if is_plat` inside when a whole platform is unsupported.
+  * `on_test`: runs after install; keep it minimal (see above). Filters allowed, e.g. `on_test("windows", ...)`.
+  * `on_fetch`: finds a system/prebuilt install; only when `opt.system` is set, return
+    `package:find_package("x", {...})`/`package:find_tool("x", {check = "--version"})`; otherwise prefer `add_extsources`.
+  * Platform filter strings (positional, before the function, OR-ed): `"linux"`, `"macosx"`, `"windows"`, `"mingw"`,
+    `"msys"`, `"bsd"`, `"android"`, `"iphoneos"`, `"wasm"`, `"cross"`; with arch `"windows|x64"`, `"macosx|arm64"`,
+    `"linux|x86_64"`; negation `"!wasm"`, `"windows|!arm64"`, patterns `"windows|!arm*"`; `"@linux"`/`"@macosx"`/`"@windows"`/`"@msys"`
+    mean the *host* platform (used by `on_fetch`/tools), not the target.
+  * Binaries/tools: `package:addenv("PATH", "bin")` (in `on_load` or `on_install`), `package:set("kind", ...)`
+    only inside `on_load`; run installed tools with `os.vrun("tool --version")` in `on_test` (`if not package:is_cross()`).
+  * `on_component` is only for multi-component packages (`add_components`); do not use it for ordinary libs.
+  * Do not use `before_*`/`after_*` hooks or `on_download`; they are not used in this repository.
 * Policies (`set_policy`, at package level after `set_license`/urls; use sparingly, only with a reason):
   * `package.precompiled` `false`: do not use precompiled binaries for this package.
   * `platform.longpaths` `true`: avoid Windows long path failures (also valid inside `on_install` for a platform).
