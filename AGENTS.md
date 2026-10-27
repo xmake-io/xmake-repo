@@ -82,6 +82,18 @@ Follow a similar existing recipe (`packages/r/robin-map`, `packages/n/nanobench`
     `{packagedeps = {"zlib", "libogg"}}` (point cmake at xmake deps, the usual way to wire `add_deps` libs),
     `{cxflags = ...}`/`{ldflags = ...}`/`{shflags = ...}` extra flags, `{buildir = "build"}`, `{cmake_generator = "Ninja"}`
     (`add_deps("ninja")`). Disable tests/examples/docs/bundled-deps via `-D` options.
+  * `packagedeps` (3rd-arg option of `cmake`/`meson`/`autoconf`): a dep name, a list of names, or dep objects
+    (`package:dep("x")`). The module fetches each library dep (`package:librarydep(name)`, unknown names are
+    skipped) and injects its defines/includedirs/linkdirs/links into the compiler and linker flags. Use it when
+    the upstream build cannot locate an xmake-provided dep by itself (no/odd `find_package`, pkg-config missing,
+    typically on Windows or for static deps and their transitive links), instead of hand-written `-DFOO_INCLUDE_DIR=`/
+    `-DFOO_LIBRARY=` paths. Do not add it when the dep is already found via the CMake/pkg-config prefix path.
+    ```lua
+    import("package.tools.cmake").install(package, configs, {packagedeps = {"zlib", "libogg"}})
+    -- all library deps, or only non-system ones, built in a loop:
+    local packagedeps = {}
+    for _, dep in ipairs(package:librarydeps()) do table.insert(packagedeps, dep:name()) end
+    ```
   * `xmake`: for upstream xmake projects or your `port/xmake.lua`; the module already handles `shared`/static
     (`kind`), debug/release and cross-compile, so do NOT set `configs.kind` yourself (older recipes still do; do not copy it).
     Call `import("package.tools.xmake").install(package)`, or pass a table of project options only when needed,
