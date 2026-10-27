@@ -24,17 +24,19 @@ package("restinio")
         add_syslinks("pthread")
     end
 
-    add_deps("cmake", "fmt", "expected-lite")
+    add_deps("cmake", "expected-lite")
 
     on_load(function (package)
+        -- fmt 12.2.0 and later is unsupported on mingw/i386
+        local fmt = package:is_plat("mingw") and package:is_arch("i386", "x86") and "fmt <12.2.0" or "fmt"
         -- restinio before 0.7.4 uses the deprecated asio APIs removed in asio 1.33.0,
         -- e.g. asio::buffer_cast and asio::socket_base::max_connections
         local asio = package:version():ge("0.7.4") and "asio" or "asio <1.33"
         if package:version():ge("0.7.0") then
             -- restinio 0.7.x requires C++17 and uses llhttp instead of http_parser
-            package:add("deps", asio, "llhttp")
+            package:add("deps", asio, "llhttp", fmt)
         else
-            package:add("deps", asio, "http_parser",
+            package:add("deps", asio, "http_parser", fmt,
                                    "optional-lite", "string-view-lite", "variant-lite")
             package:add("defines", "RESTINIO_EXTERNAL_EXPECTED_LITE",
                                     "RESTINIO_EXTERNAL_OPTIONAL_LITE",
