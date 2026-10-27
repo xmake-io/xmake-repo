@@ -77,7 +77,7 @@ Follow a similar existing recipe (`packages/r/robin-map`, `packages/n/nanobench`
   `package:is_arch(...)`, `package:has_tool(...)`; never hard-code absolute paths, install into `package:installdir()`.
 * Header-only libs without a build system: `os.cp("include/*", package:installdir("include"))`
   (or the specific header dir); with a CMake that only installs headers, `import("package.tools.cmake").install`.
-* `on_test`: short; `assert(package:check_cxxsnippets({test = [[ void test() { ... } ]]}, {configs = {languages = "c++17"}, includes = "x.h"}))`
+* `on_test`: as short as possible (one snippet, the minimum API calls that prove the header links/compiles; no loops, no extra setup, no long examples); `assert(package:check_cxxsnippets({test = [[ void test() { ... } ]]}, {configs = {languages = "c++17"}, includes = "x.h"}))`
   or `check_csnippets`, `assert(package:has_cfuncs("f", {includes = "x.h"}))`, and for binaries
   `os.vrun("tool --version")` (add `if not package:is_cross()`). Set `languages` to what the library needs
   (`c++11/14/17/20`, `c11`), wrap the snippet in `void test() {}` and include the real public header.
@@ -112,6 +112,52 @@ Follow a similar existing recipe (`packages/r/robin-map`, `packages/n/nanobench`
 * Cross-compiling: guard host-only steps (running built tools, CLI builds) with `package:is_cross()`.
 * Prefer packages with no deps or deps already in the repo; do not bundle third-party sources.
 * Avoid unusual constructs (e.g. top-level `return`) in recipes.
+
+## Comments
+
+* Keep recipes lean: do not comment every line or restate what the code does.
+* Comment only at key points that are not obvious: why a patch/`io.replace`/workaround exists (link the
+  upstream issue/commit or name the platform/compiler/version affected), version-specific hacks, and
+  non-obvious platform filters. One short line is enough.
+* Do not leave commented-out code, TODO noise, or generated boilerplate comments.
+
+## Fixing upstream sources: add_patches vs io.replace
+
+* `add_patches("<version or range>", "patches/<ver>/<desc>.patch", "<sha256>")`: for multi-line or structural
+  fixes (several hunks, new/removed files, anything that must track the upstream diff). The patch applies to
+  the unpacked source before `on_install`; the file sha256 is mandatory. Patch files must apply cleanly with
+  `git apply`/`patch -p1` from the source root. A remote upstream commit `.patch` url is allowed (with sha256).
+* `io.replace(file, old, new, {plain = true})` inside `on_install`: for small one-line tweaks, conditional by
+  platform/compiler/config/version (e.g. drop `-Werror`, remove `CMAKE_MSVC_RUNTIME_LIBRARY`, change a macro
+  or a link flag, force a runtime in a `.vcxproj` per `package:has_runtime("MT")`). Always pass `{plain = true}`
+  unless you really need a Lua pattern, keep the match string short but unique, and guard it with the
+  condition it applies to. If the same fix is needed for all platforms and spans many lines, use a patch.
+* Prefer passing a build option/config over patching when upstream provides one. Do not patch just to
+  silence warnings or fix style.
+
+## Custom build scripts (port xmake.lua)
+
+* When upstream has no usable build system (plain Makefile, hand-written/hostile CMake, only sources), ship a
+  small build script in the package dir: `packages/<l>/<name>/port/xmake.lua` (also `port/CMakeLists.txt`,
+  `port/config.h.in`, etc. for extra generated files, or `port/<version>/xmake.lua` if versions differ).
+* Copy it over the source in `on_install`, then build with the xmake tool:
+  ```lua
+  on_install(function (package)
+      os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+      local configs = {}
+      if package:config("shared") then configs.kind = "shared" end
+      import("package.tools.xmake").install(package, configs)
+  end)
+  ```
+  (`path.join(package:scriptdir(), ...)` is the dominant form; extra `configs` become `--name=value` options
+  that the port script reads via `option("name")`/`has_config`/`get_config`.)
+* The port script is a normal xmake project: `add_rules("mode.debug", "mode.release")`, `target("<name>")`,
+  `set_kind("$(kind)")` so `shared` works, `add_files`, `add_includedirs`, and `add_headerfiles("(include/**.h)")`
+  so headers are installed with their directory; use `add_requires("zlib")`/`add_packages` for deps declared
+  with `add_deps` in the recipe, `includes("@builtin/check")` + `configvar_check_*` for config.h checks, and
+  `add_rules("utils.symbols.export_all", {export_classes = true})` for Windows shared libs.
+* For a tiny script (a few lines) write it inline with `io.writefile("xmake.lua", [[ ... ]])` instead of a port file.
+* Keep the port script minimal: just what is needed to build and install the library.
 
 ## Updating existing packages
 
