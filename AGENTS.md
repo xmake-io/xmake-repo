@@ -14,6 +14,16 @@ See also [CONTRIBUTING.md](CONTRIBUTING.md) and [README.md](README.md).
   Bot PRs use `Auto-update <name> to <version>`; do not hand-edit those flows.
 * Check `.github/` for a PR template before opening a PR.
 
+## Package types: library vs addon
+
+* Library packages live in `packages/<l>/<name>/`; **addons** (`set_kind("addon")`) live in
+  `addons/<l>/<name>/xmake.lua` (e.g. `addons/e/esp32-devel`). Do not mix them in one PR.
+* Addon `on_test` uses `package:has_addon({rules=..., toolchains=..., templates=...})`, not compile snippets.
+* Addon deps must be declared in both the recipe (`add_deps("x", {kind = "addon"})`, authoritative) and
+  the addon's own manifest; `scripts/test_addons.lua` fails if they differ.
+* Test addons with `xmake l scripts/test.lua --addon <name>`; `scripts/test.lua` picks the test set from
+  `git diff HEAD^`: `packages/` -> package tests, `addons/` -> addon tests, `templates/` -> template tests.
+
 ## Package layout
 
 * Recipe: `packages/<first letter>/<name>/xmake.lua`, name lowercase, matching the upstream name.
@@ -28,6 +38,11 @@ Follow a similar existing recipe (`packages/r/robin-map`, `packages/n/nanobench`
   `add_versions`, configs, `add_deps`, `on_install`, `on_test`.
 * Prefer GitHub release/tag archives: `https://github.com/<o>/<r>/archive/refs/tags/$(version).tar.gz`
   plus the `.git` url as fallback. Use `$(version)` with a `{version = function ...}` only if tags need it.
+* Versions are checked by `scripts/check_versions.lua` (run first by `test.lua`, for `packages/` and `addons/`):
+  they must be `<major>[.<minor>[.<patch>]][-<prerelease>][+<build>]` with an optional `v` prefix.
+  Invalid ones like `1.92.9b` (parsed silently as prerelease `1.92.9-b`, older than `1.92.9`) or `1.2.3.4`
+  fail; use `1.0.0-beta1` / `1.0.0+b` and map back to the real tag via `{version = function ...}` in `add_urls`.
+  Never add to its `legacy_packages` list. Check with `xmake l scripts/check_versions.lua <pkg>` (`--all` for all).
 * `add_versions` lists newest first, with sha256 of the downloaded archive (verify it, do not guess).
 * Header-only libs: `set_kind("library", {headeronly = true})` and copy headers in `on_install`.
 * Use `import("package.tools.cmake|xmake|meson|autoconf").install(package, configs)` for builds; expose
