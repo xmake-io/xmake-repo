@@ -1,0 +1,17 @@
+diff --git a/src/contrib/dragonbox.h b/src/contrib/dragonbox.h
+--- a/src/contrib/dragonbox.h
++++ b/src/contrib/dragonbox.h
+@@ -1388,5 +1388,5 @@
+         // https://stackoverflow.com/questions/76438400/decltype-on-static-variable-in-template-class.
+         template <class Dummy>
+-        constexpr decltype(cache_holder<ieee754_binary32>::cache)
++        constexpr detail::array<detail::stdr::uint_least64_t, detail::stdr::size_t(cache_holder<ieee754_binary32, Dummy>::max_k - cache_holder<ieee754_binary32, Dummy>::min_k + 1)>
+             cache_holder<ieee754_binary32, Dummy>::cache;
+ #endif
+@@ -2024,5 +2024,5 @@
+         // https://stackoverflow.com/questions/76438400/decltype-on-static-variable-in-template-class.
+         template <class Dummy>
+-        constexpr decltype(cache_holder<ieee754_binary64>::cache)
++        constexpr detail::array<detail::wuint::uint128, detail::stdr::size_t(cache_holder<ieee754_binary64, Dummy>::max_k - cache_holder<ieee754_binary64, Dummy>::min_k + 1)>
+             cache_holder<ieee754_binary64, Dummy>::cache;
+ #endif
