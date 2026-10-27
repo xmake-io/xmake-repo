@@ -8,6 +8,7 @@ package("faad2")
     end})
     add_urls("https://github.com/knik0/faad2.git")
 
+    add_versions("2.11.4", "ee479ccbae4a8387ab696e6f21a481bd83fe3881471cafa81b4ae59d7d3aed43")
     add_versions("2.11.3", "860ab62087e336c1844a70e33196c1790b525fb9a9e7b6ac4fab1a1a4e4d5ce8")
     add_versions("2.11.2", "3fcbd305e4abd34768c62050e18ca0986f7d9c5eca343fb98275418013065c0e")
     add_versions("2.10.0", "0c6d9636c96f95c7d736f097d418829ced8ec6dbd899cc6cc82b728480a84bfb")
