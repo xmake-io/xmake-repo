@@ -14,10 +14,12 @@ package("nepdate")
         on_check(function (package)
             assert(package:check_cxxsnippets({test = [[
                 #include <chrono>
+                #include <ranges>
                 #include <span>
                 constexpr auto ymd = std::chrono::year{2024} / 7 / 30;
                 static_assert(std::chrono::sys_days{ymd}.time_since_epoch().count() == 19934);
-            ]]}, {configs = {languages = "c++20"}}), "package(nepdate) requires C++20 with <chrono> calendar support")
+                static_assert(std::ranges::range<std::ranges::empty_view<int>>);
+            ]]}, {configs = {languages = "c++20"}}), "package(nepdate) requires C++20 with <chrono> calendar and <ranges> support")
         end)
     end
 
@@ -35,6 +37,9 @@ package("nepdate")
         else
             -- upstream's internal size-check program, not part of the package
             io.replace("CMakeLists.txt", "add_subdirectory(tools/coreonly)", "", {plain = true})
+            -- The upstream size assertion assumes a 64-bit pointer.
+            io.replace("patro/include/nepdate/patro.hpp", "static_assert(sizeof(day_info) == 16);",
+                       "static_assert(sizeof(day_info) == (sizeof(void*) == 8 ? 16 : 8));", {plain = true})
             local configs = {"-DNEPDATE_BUILD_PATRO=ON", "-DNEPDATE_BUILD_TESTS=OFF", "-DNEPDATE_BUILD_TOOLS=OFF"}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
