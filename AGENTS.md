@@ -82,10 +82,10 @@ Follow a similar existing recipe (`packages/r/robin-map`, `packages/n/nanobench`
     `{packagedeps = {"zlib", "libogg"}}` (point cmake at xmake deps, the usual way to wire `add_deps` libs),
     `{cxflags = ...}`/`{ldflags = ...}`/`{shflags = ...}` extra flags, `{buildir = "build"}`, `{cmake_generator = "Ninja"}`
     (`add_deps("ninja")`). Disable tests/examples/docs/bundled-deps via `-D` options.
-  * `xmake`: for upstream xmake projects or your `port/xmake.lua`; `install(package, configs)` with `configs` a table
-    of project options, e.g. `configs.kind = package:config("shared") and "shared" or "static"`
-    (the common idiom is `local configs = {}` + `if package:config("shared") then configs.kind = "shared" end`),
-    `configs.cxflags = "-fPIC"`, or named options `{tools = package:config("tools")}` read by `option()` in the project.
+  * `xmake`: for upstream xmake projects or your `port/xmake.lua`; the module already handles `shared`/static
+    (`kind`), debug/release and cross-compile, so do NOT set `configs.kind` yourself (older recipes still do; do not copy it).
+    Call `import("package.tools.xmake").install(package)`, or pass a table of project options only when needed,
+    e.g. `{tools = package:config("tools")}` read by `option()` in the project, or extra flags like `configs.cxflags = "-fPIC"`.
   * `meson`: `add_deps("meson", "ninja")`; `configs` is a list of `-D` args, always include
     `"-Ddefault_library=" .. (package:config("shared") and "shared" or "static")`; `opt` like `{packagedeps = ...}`.
   * `autoconf`: for `configure` projects; configs are `--enable-shared=` / `--enable-static=` etc. args:
@@ -178,12 +178,10 @@ Follow a similar existing recipe (`packages/r/robin-map`, `packages/n/nanobench`
   ```lua
   on_install(function (package)
       os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-      local configs = {}
-      if package:config("shared") then configs.kind = "shared" end
-      import("package.tools.xmake").install(package, configs)
+      import("package.tools.xmake").install(package)
   end)
   ```
-  (`path.join(package:scriptdir(), ...)` is the dominant form; extra `configs` become `--name=value` options
+  (`path.join(package:scriptdir(), ...)` is the dominant form; extra options passed to `install` become `--name=value` options
   that the port script reads via `option("name")`/`has_config`/`get_config`.)
 * The port script is a normal xmake project: `add_rules("mode.debug", "mode.release")`, `target("<name>")`,
   `set_kind("$(kind)")` so `shared` works, `add_files`, `add_includedirs`, and `add_headerfiles("(include/**.h)")`
