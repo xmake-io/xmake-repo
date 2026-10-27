@@ -182,6 +182,77 @@ end)
 Alternatives: `check_csnippets`, `assert(package:has_cfuncs("f", {includes = "x.h"}))`, and for binaries
 `os.vrun("tool --version")` (guard with `if not package:is_cross()`).
 
+### Header-only packages
+
+* `set_kind("library", {headeronly = true})`; no `shared` option is needed. For these packages CI builds no
+  prebuilt binaries, and `package:is_headeronly()` is true.
+* No build system or nothing to compile: just copy headers in `on_install` (no platform filter unless the header
+  is platform specific): `os.cp("include", package:installdir())` (keeps the `include/` layout, most common),
+  `os.cp("include/*", package:installdir("include"))`, `os.cp("*.h", package:installdir("include"))`, or one
+  header `os.cp("foo.hpp", package:installdir("include"))`. Copy only what users include (no tests/docs/examples) and
+  keep the directory prefix users write in `#include` (e.g. `include/foo/x.h` -> `#include <foo/x.h>`).
+* The upstream CMake only installs headers or generates a config header: use `import("package.tools.cmake").install(package)`
+  (e.g. `robin-map`).
+* Header-only libs that need a language level: `on_test` sets the matching `languages`; use `on_check` (not a
+  filter) to reject compilers that cannot parse the headers. Put required defines for users in `on_load`:
+  `package:add("defines", "FOO_HEADER_ONLY")` / config-dependent defines.
+* Optional deps that change what the headers need: `add_deps("x", {optional = true})` and `package:add("deps", ...)` in `on_load`.
+
+### Toolchain and tool packages
+
+* **Tools** (`set_kind("binary")`): programs users run during builds (cmake, ninja, python, protoc, ...). Add
+  `package:addenv("PATH", "bin")` in `on_load` if the executables are not in `bin` (e.g. `"."`, `"upstream/emscripten"`),
+  and test with `os.vrun("tool --version")` in `on_test`. Mark extra env vars with `package:mark_as_pathenv("VAR")`.
+  Binary tools are installed for the host: use host filters (`"@windows"`, `"@linux"`, `"@macosx"`, `"@msys"`,
+  `"@cygwin"`, `"@bsd"`), and `add_deps("x", {kind = "binary"})` when another package needs them at build time.
+* **Toolchains** (`set_kind("toolchain")`, 33 packages: `c/cppfront`, `e/emscripten`, `c/cosmocc`, `c/cuda`, ...): a
+  compiler/SDK that users select with `set_toolchains(...)`/`add_requires`. Keep the same recipe shape:
+  * source tarball/prebuilt per host: `add_urls` (often per host with `if is_host("windows") then ... end` and
+    version mappers for platform file names), `add_versions` listed newest first as usual.
+  * install with `os.cp("*", package:installdir(), {symlink = true})` for prebuilt archives (keeps symlinks),
+    or build from source and install; unpack/activate vendor SDKs in `on_install` (see `emscripten`).
+  * `on_load`: `package:addenv("PATH", "bin")`; `package:mark_as_pathenv("...")` for SDK env vars.
+  * `on_check`: reject unsupported hosts/archs/versions with a clear message (see `emscripten`).
+  * `on_fetch(function (package, opt) if opt.system then return package:find_tool("x", {check = "--version"}) end end)`
+    lets xmake use a system installation.
+  * `on_test`: run the compiler/tool for real (`os.vrun("x --version")`), or compile a tiny file.
+  * `set_installtips("...")` (guarded with `if set_installtips then`) when the user must accept a license.
+  * Do not set the project toolchain from the package; users do that with `set_toolchains`.
+
+### Resources
+
+`add_resources("<version or range>", "<name>", "<url>", "<sha256 or git commit>")`: extra downloads that are
+part of the same package (e.g. a vendored third-party repo or a header zip that the main archive lacks). Prefer this
+over a second package only when the data is not usable on its own; if upstream has its own release or the code is
+reusable, make it a separate package and `add_deps` it. In `on_install`:
+
+* `package:resourcedir("<name>")` is the extracted directory (archives), `package:resourcefile("<name>")` the
+  downloaded file/checkout. Example: `os.cp(path.join(package:resourcefile("chromium_zlib"), "google"), "third_party/zlib")`.
+* The first arg is a version or range like `">=6288"`, `"2.4"`, `"*"`; give each version its own pinned commit/sha256.
+* Git resources use the commit hash, archives use sha256; never track a branch.
+
+### Using installed dependencies (`package:dep`)
+
+Declare the dependency with `add_deps` first; then in `on_install`/`on_load` get its instance with
+`package:dep("<name>")` (direct deps; `package:librarydep(name)` / `package:orderdeps()` / `package:librarydeps()` for
+transitive/library deps; each may be nil when the dep is optional/disabled, so guard it).
+
+* Paths: `dep:installdir()`, `dep:installdir("include")`, `dep:installdir("lib")`, `dep:installdir("bin")`,
+  `dep:installdir("lib", "cmake")`. Use them for upstream options that need explicit roots, e.g.
+  `-DOpenCL_ROOT=<dir>`, `-DOPENSSL_ROOT_DIR=<dir>`, `envs.SSL_ROOT = package:dep("openssl"):installdir()`, or
+  copying files from a tool dep (`os.cp(path.join(package:dep("winflexbison"):installdir(), "*"), package:installdir())`).
+* Prefer `import("package.tools.<tool>").install(package, configs, {packagedeps = {...}})` (see packagedeps) over
+  hand-written include/lib paths. When you must, use `dep:fetch()` which returns the dep's `includedirs`/
+  `sysincludedirs`/`linkdirs`/`links`/`syslinks`/`defines` (`dep:fetch({external = false})` to ignore the system
+  copy) and build the flags yourself.
+* The dep may be a system install: `dep:is_system()` is true, so `installdir()` is not meaningful; use `fetch()`.
+* Query the dep's state instead of guessing: `dep:config("shared")`, `dep:version()`, `dep:data("<key>")`
+  (set via `package:data_set`). Use it to match options (`-DFOO_STATIC=` from `dep:config("shared")`) and to
+  choose version-specific behaviour.
+* In `on_load` it is `package:add("deps", ...)` that changes deps (`package:dep()` may not be loaded there for
+  all cases); decide dep options from `package:config(...)`, and pass them in the dep table
+  `add_deps("zlib", {configs = {shared = true}})`.
+
 ### Advanced package APIs (rare)
 
 Use only when a simple recipe cannot work; copy the patterns from the existing users. Guard newer APIs with
