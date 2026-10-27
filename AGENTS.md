@@ -90,7 +90,7 @@ Follow a similar existing recipe (`packages/r/robin-map`, `packages/n/nanobench`
     `-DFOO_LIBRARY=` paths. Do not add it when the dep is already found via the CMake/pkg-config prefix path.
     ```lua
     import("package.tools.cmake").install(package, configs, {packagedeps = {"zlib", "libogg"}})
-    -- all library deps, or only non-system ones, built in a loop:
+    -- or pass all library deps:
     local packagedeps = {}
     for _, dep in ipairs(package:librarydeps()) do table.insert(packagedeps, dep:name()) end
     ```
