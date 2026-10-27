@@ -16,6 +16,7 @@ package("yaml-cpp")
     add_versions("0.9.0", "25cb043240f828a8c51beb830569634bc7ac603978e0f69d6b63558dadefd49a")
 
     add_patches("0.8.0", path.join(os.scriptdir(), "patches", "missing-gcc15-header.diff"), "77187131279f2ef470f473b3d4cf88a3e9075d1650f0abe8a791b260292dd86e")
+    add_patches("0.9.0", path.join(os.scriptdir(), "patches", "fix-ndk-r22-array-cache.diff"), "d12dc3b59f70501512a453aaefa0e258047bad981d138e714b911f792a5828f4")
 
     add_deps("cmake")
 
