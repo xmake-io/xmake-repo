@@ -24,32 +24,72 @@ See also [CONTRIBUTING.md](CONTRIBUTING.md) and [README.md](README.md).
 * Test addons with `xmake l scripts/test.lua --addon <name>`; `scripts/test.lua` picks the test set from
   `git diff HEAD^`: `packages/` -> package tests, `addons/` -> addon tests, `templates/` -> template tests.
 
-## Package layout
+## Package layout and naming
 
-* Recipe: `packages/<first letter>/<name>/xmake.lua`, name lowercase, matching the upstream name.
-* Patches: `packages/<l>/<name>/patches/[<version>/]*.patch|diff`, referenced with `add_patches`.
+* Recipe path: `packages/<first char>/<name>/xmake.lua`; the directory is the lowercase first character of
+  the name (digits too, e.g. `packages/7/7z`). Directory name == `package("<name>")` name.
+* Names are all lowercase (no uppercase anywhere in the repo), usually the upstream name; words are joined
+  with `-` (most common) or `_` as upstream does. Check existing/alternate names first to avoid duplicates
+  (e.g. `robin-map`, `tl_expected`, `toml++`).
+* Patches: `packages/<l>/<name>/patches/<version>/<desc>.patch|diff` (the `<version>` dir convention is used by
+  hundreds of packages). Reference with `add_patches("<version-range>", "patches/<version>/x.patch", "<sha256>")`
+  (a version or a range like `">=0.43.2 <1.0"`; a remote commit `.patch` url is also allowed), and when the
+  path is needed in a script use `path.join(os.scriptdir(), "patches", ...)`.
 * Use four spaces, LF, final newline (`.editorconfig`). No tabs, no comments that restate code.
 
 ## Recipe style
 
-Follow a similar existing recipe (`packages/r/robin-map`, `packages/n/nanobench`, `packages/z/zlib`):
+Follow a similar existing recipe (`packages/r/robin-map`, `packages/n/nanobench`, `packages/c/cpp-httplib`, `packages/z/zlib`):
 
-* Order: `set_kind` (if headeronly), `set_homepage`, `set_description`, `set_license`, `add_urls`,
-  `add_versions`, configs, `add_deps`, `on_install`, `on_test`.
-* Prefer GitHub release/tag archives: `https://github.com/<o>/<r>/archive/refs/tags/$(version).tar.gz`
-  plus the `.git` url as fallback. Use `$(version)` with a `{version = function ...}` only if tags need it.
-* Versions are checked by `scripts/check_versions.lua` (run first by `test.lua`, for `packages/` and `addons/`):
-  they must be `<major>[.<minor>[.<patch>]][-<prerelease>][+<build>]` with an optional `v` prefix.
-  Invalid ones like `1.92.9b` (parsed silently as prerelease `1.92.9-b`, older than `1.92.9`) or `1.2.3.4`
-  fail; use `1.0.0-beta1` / `1.0.0+b` and map back to the real tag via `{version = function ...}` in `add_urls`.
-  Never add to its `legacy_packages` list. Check with `xmake l scripts/check_versions.lua <pkg>` (`--all` for all).
-* `add_versions` lists newest first, with sha256 of the downloaded archive (verify it, do not guess).
-* Header-only libs: `set_kind("library", {headeronly = true})` and copy headers in `on_install`.
-* Use `import("package.tools.cmake|xmake|meson|autoconf").install(package, configs)` for builds; expose
-  `shared`/`debug` via the usual `-DBUILD_SHARED_LIBS` / `-DCMAKE_BUILD_TYPE` configs.
+* Order: `set_kind` (if not default), `set_homepage`, `set_description`, `set_license` (SPDX id, e.g. `MIT`,
+  `Apache-2.0`, `BSL-1.0`), `add_urls` (or `set_urls`), `add_versions`, `add_patches`, `add_configs`,
+  `add_deps`, `on_load`, `on_install`, `on_test`.
+* Sources: prefer GitHub tag archives `https://github.com/<o>/<r>/archive/refs/tags/$(version).tar.gz`
+  followed by the `.git` url as fallback (second arg of the same `add_urls`). Use a `{version = function ...}`
+  mapper only when the tag differs from the version string.
+* `add_versions("<version>", "<sha256>")`: the version string equals the tag minus `$(version)` prefix handling
+  (keep the `v` in `add_versions("v1.2.3", ...)` when the url uses plain `$(version)`); newest first;
+  the sha256 is of the downloaded archive (verify it, do not guess).
+* `set_kind`: `"library", {headeronly = true}` for header-only, `"binary"` for tools, `"toolchain"`, `"template"`,
+  `"addon"`; omit for ordinary libs.
+* Configs: `add_configs("<name>", {description = "...", default = false, type = "boolean"})`. For the common
+  build-type configs rely on the default `shared` (and `{readonly = true}` for header-only/static-only
+  libs: `add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})`).
+  Set dependent options in `on_load` (`package:add("deps", ...)`, `package:add("defines", ...)`, `package:add("links", ...)`),
+  not in `on_install`.
+* Deps: `add_deps("cmake")` for cmake builds (also `"ninja"`, `"meson"`, `"autoconf"`...); options go in a table,
+  e.g. `add_deps("zlib", {optional = true})`, `{kind = "binary"}`, `{configs = {shared = true}}`, `{private = true}`.
+  Use `add_extsources("brew::x", "pacman::x", "apt::x")` for system-package fallback.
+* `on_install`: platform filters are positional strings before the function, e.g.
+  `on_install("windows", "linux", "macosx", function (package) ... end)`, `on_install("!wasm", ...)`,
+  `on_install("windows|x64", ...)`; no filter if it works everywhere. Build with
+  `import("package.tools.cmake").install(package, configs)` (also `xmake`, `meson`, `autoconf`, `make`, `msbuild`...)
+  where `configs` is built by the standard idiom:
+  ```lua
+  local configs = {}
+  table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+  table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+  table.insert(configs, "-DFOO_BUILD_TESTS=OFF")   -- turn off tests/examples/docs
+  if package:config("bar") then table.insert(configs, "-DFOO_BAR=ON") end
+  import("package.tools.cmake").install(package, configs)
+  ```
+  Use `package:is_debug()` (not the older `package:debug()`), `package:config("x")`, `package:is_plat(...)`,
+  `package:is_arch(...)`, `package:has_tool(...)`; never hard-code absolute paths, install into `package:installdir()`.
+* Header-only libs without a build system: `os.cp("include/*", package:installdir("include"))`
+  (or the specific header dir); with a CMake that only installs headers, `import("package.tools.cmake").install`.
+* `on_test`: short; `assert(package:check_cxxsnippets({test = [[ void test() { ... } ]]}, {configs = {languages = "c++17"}, includes = "x.h"}))`
+  or `check_csnippets`, `assert(package:has_cfuncs("f", {includes = "x.h"}))`, and for binaries
+  `os.vrun("tool --version")` (add `if not package:is_cross()`). Set `languages` to what the library needs
+  (`c++11/14/17/20`, `c11`), wrap the snippet in `void test() {}` and include the real public header.
+* Policies (`set_policy`, at package level after `set_license`/urls; use sparingly, only with a reason):
+  * `package.precompiled` `false`: do not use precompiled binaries for this package.
+  * `platform.longpaths` `true`: avoid Windows long path failures (also valid inside `on_install` for a platform).
+  * `package.cmake_generator.ninja` `true|false`: force/avoid the Ninja generator for CMake builds.
+  * `package.strict_compatibility` `true`: require exact ABI/config match with dependents.
+  * `package.msbuild.multi_tool_task` / `build.fence`: rare build-system workarounds, copy from an existing user.
+* Cross-compiling: guard host-only steps (running built tools, CLI builds) with `package:is_cross()`.
 * Prefer packages with no deps or deps already in the repo; do not bundle third-party sources.
-* `on_test` must be short and real: `check_cxxsnippets`/`check_csnippets` with correct `includes`
-  and `languages`, or `has_cfuncs`. Avoid unusual constructs (e.g. top-level `return`) in recipes.
+* Avoid unusual constructs (e.g. top-level `return`) in recipes.
 
 ## Updating existing packages
 
