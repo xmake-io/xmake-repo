@@ -95,10 +95,21 @@ Follow a similar existing recipe (`packages/r/robin-map`, `packages/n/nanobench`
   * `on_test`: runs after install; keep it minimal (see above). Filters allowed, e.g. `on_test("windows", ...)`.
   * `on_fetch`: finds a system/prebuilt install; only when `opt.system` is set, return
     `package:find_package("x", {...})`/`package:find_tool("x", {check = "--version"})`; otherwise prefer `add_extsources`.
-  * Platform filter strings (positional, before the function, OR-ed): `"linux"`, `"macosx"`, `"windows"`, `"mingw"`,
-    `"msys"`, `"bsd"`, `"android"`, `"iphoneos"`, `"wasm"`, `"cross"`; with arch `"windows|x64"`, `"macosx|arm64"`,
-    `"linux|x86_64"`; negation `"!wasm"`, `"windows|!arm64"`, patterns `"windows|!arm*"`; `"@linux"`/`"@macosx"`/`"@windows"`/`"@msys"`
-    mean the *host* platform (used by `on_fetch`/tools), not the target.
+  * Platform filters (`on_load`/`on_check`/`on_install`/`on_test`/`on_fetch`): zero or more positional string
+    args before the function, OR-ed together. Syntax `plat|arch@host|hostarch`, every part optional:
+    * no filter = all platforms; `"linux"`, `"windows"`, `"macosx"`, `"mingw"`, `"msys"`, `"cygwin"`, `"bsd"`,
+      `"android"`, `"iphoneos"`, `"wasm"`, `"cross"`.
+    * arch after `|`, several with `,`: `"linux|x86_64"`, `"windows|x64"`, `"macosx|arm64"`, `"iphoneos|arm64"`.
+    * host after `@` (the machine running the build): `"mingw@windows"` = mingw target built on a Windows host;
+      `"@linux"`/`"@windows"`/`"@macosx"`/`"@msys"` = any target, only on that host (use for host-only tools,
+      e.g. `on_install("@windows", "@linux", "@macosx", ...)`, and for `on_fetch`).
+    * negation `!`, wildcard `*`: `"!wasm"`, `"windows|!arm64"`, `"windows|!arm*"`, `"@!windows"`, `"!linux|*"`.
+    * `native` arch = the host's own arch, i.e. not cross-compiling: `"linux|native"`, `"macosx|!native"` (cross only).
+    * logic (xmake >= 2.9.1) inside one string with `and`/`or`/`()`: `"!wasm and !bsd"`,
+      `"!wasm and (!windows or windows|!arm64)"`, `"@!windows and !wasm"`.
+  * Choosing the filter: list the platforms the package is actually known to build on (ones CI covers) rather than
+    guessing; use a negative filter (`"!wasm"`) when it works nearly everywhere; use `on_check` instead of a filter
+    when support depends on the compiler/toolchain/version, so users get a clear early error.
   * Binaries/tools: `package:addenv("PATH", "bin")` (in `on_load` or `on_install`), `package:set("kind", ...)`
     only inside `on_load`; run installed tools with `os.vrun("tool --version")` in `on_test` (`if not package:is_cross()`).
   * `on_component` is only for multi-component packages (`add_components`); do not use it for ordinary libs.
