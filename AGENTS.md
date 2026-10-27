@@ -25,6 +25,19 @@ latest version unless asked otherwise.
 
 * `xmake l scripts/test.lua --shallow -vD <pkg>` (options: `-p`, `-k`, `-m`, `--runtimes`, see README).
   If xmake is unavailable, say so in the PR and at least compile the `on_test` snippet by hand.
+* Local test flow (run in the repo root, needs xmake >= 2.8; the repo is used as the package source automatically):
+  1. `xmake l scripts/check_versions.lua <pkg>` - version/semver check only.
+  2. `xmake l scripts/test.lua --shallow -vD <pkg>` - runs `on_check` (`require --check`), `on_load` (`--info`),
+     then download + `on_install` + `on_test`. `--shallow` builds only the package, not its deps' tests;
+     `-v` shows progress, `-D` shows full build logs (use both when debugging a failure).
+  3. Variants: `-k shared` (default is static), `-m debug`, `-p <plat> -a <arch>` (e.g. `-p android`, `-p mingw`,
+     `-a arm64`), `--runtimes=MD|MT`, `-f "<cfg>=true,..."` (package configs, e.g. `-f "openssl=true"`; also
+     disables the system lookup), `--policies=...`, `--fetch` (only test `on_fetch`), `-j <n>` jobs.
+  4. Debug a failing build: `-d <dir>` keeps/uses a source dir; the build log and cache are under
+     `~/.xmake/cache/packages/` (first letter dir/pkg/version), installed files under `~/.xmake/packages/`.
+     Remove the cache entry (or use `xrepo remove -y <pkg>`) before re-testing after recipe edits.
+  5. Test every platform you claim in `on_install`; at least the host one. CI covers the rest, check its logs.
+  Without a package argument `test.lua` tests the packages changed in `git diff HEAD^`, so commit first.
 * `scripts/test.lua` first runs `scripts/check_versions.lua`, then picks tests from `git diff HEAD^`:
   `packages/` -> package tests, `addons/` -> addon tests (`--addon <name>`), `templates/` -> template tests.
 * Versions must be valid semver: `<major>[.<minor>[.<patch>]][-<prerelease>][+<build>]`, optional `v` prefix.
