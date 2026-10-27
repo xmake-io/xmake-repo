@@ -110,6 +110,24 @@ Follow a similar existing recipe (`packages/r/robin-map`, `packages/n/nanobench`
   * Others used rarely: `scons`, `gn`, `ninja`. Prefer cmake/xmake/meson/autoconf when upstream supports them.
   * Always map `shared`, debug/release and (for toolchains) cross-compile via the module, not by hand-writing
     `CC`/`CFLAGS`; use `package:config(...)` to switch upstream options.
+* Exporting symbols for Windows shared libs (upstream has no `__declspec(dllexport)` macros, or the exports are
+  incomplete, so the `.dll` has no import lib/symbols): only a fix for `windows` + `shared`; do not use it when
+  upstream already supports shared builds properly.
+  * CMake projects: `if package:is_plat("windows") and package:config("shared") then table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON") end`
+    (restrict by version with `package:version():le(...)` if newer upstream releases fixed it).
+  * xmake projects / `port/xmake.lua`:
+    ```lua
+    if is_plat("windows") and is_kind("shared") then
+        add_rules("utils.symbols.export_all", {export_classes = true})
+    end
+    ```
+    `export_classes = true` also exports C++ classes (needed for C++ libs, omit for pure C libs). The rule
+    works only for shared targets, rejects `set_optimize("smallest")`, and conflicts with `/GL` (whole program
+    optimization), so do not enable them together. It does not export data from non-DLL-safe designs; if
+    that is required, patch the source macros instead (`add_patches`/`io.replace`).
+  * Unix visibility: if upstream builds with `-fvisibility=hidden` and omits export macros, fix it with a patch/
+    `io.replace` (remove the flag) or a define, e.g. `add_defines("ZEXPORT=__attribute__((visibility(\"default\")))")`;
+    do not hide this behind a `check_*` in `on_test`.
 * Header-only libs without a build system: `os.cp("include/*", package:installdir("include"))`
   (or the specific header dir); with a CMake that only installs headers, `import("package.tools.cmake").install`.
 * `on_test`: as short as possible (one snippet, the minimum API calls that prove the header links/compiles; no loops, no extra setup, no long examples); `assert(package:check_cxxsnippets({test = [[ void test() { ... } ]]}, {configs = {languages = "c++17"}, includes = "x.h"}))`
