@@ -91,9 +91,21 @@ Order: `set_kind`, `set_homepage`, `set_description`, `set_license`, `add_urls`,
   For a `.git` alias the value is the tag/branch/commit: `add_versions("git:1.2.3", "v.1.2.3")`.
 * **Commit snapshots** (no releases): url `.../archive/<commit>.tar.gz`, version is the commit date `YYYY.MM.DD`
   (e.g. `2023.05.10`), not the hash.
-* `package:version_str()` gives the version string (e.g. for `os.cd(...)` into the extracted dir or in `format`);
-  `package:version()` is nil for git refs/branches, so guard: `if package:version() and package:version():ge("1.2")`.
-  Version-specific logic and ranges in `add_patches` use semver comparison (`">=1.2 <2"`, `"1.2.3"`, `"*"`).
+### Git refs vs release archives in scripts
+
+The same recipe installs from a tarball (`1.2.3`) or from the `.git` url (`add_requires("pkg master")`, a branch,
+or a commit). Tell them apart in scripts:
+
+* `package:gitref()` is set (branch/tag/commit string) only for git installs; `if package:gitref() then ... end`
+  handles layout differences of the head version (different subdir, no generated files, extra deps such as
+  flex/bison in `on_load`). Use `package:gitref() or package:version():ge("3.0")` when a branch should be treated
+  as "newest".
+* `package:version()` is **nil** for git refs: always guard, `if package:version() and package:version():lt("1.2")`,
+  or `if not package:version() or package:version():ge("2.11")` when a branch counts as new.
+* Comparison methods: `ge/gt/le/lt/eq` (accept a string such as `"1.2.3"`); parts via `major()/minor()/patch()`.
+  Use `package:version_str()` when you need the string (`os.cd("x-" .. package:version_str())`, `format`).
+* For other versions (compiler, SDK) use `import("core.base.semver")`: `semver.match(str):gt("10.0.19041")`.
+* Version ranges in `add_patches` and `add_deps` use the same semver rules (`">=1.2 <2"`, `"*"`).
 
 ## 4. Scripts
 
@@ -163,6 +175,26 @@ Examples: `on_install("windows", "linux", "macosx", function (package) ... end)`
 * Useful `package` APIs: `config("x")`, `is_plat(...)`, `is_arch(...)`, `is_debug()` (not the older `debug()`),
   `is_cross()`, `version()`, `has_tool(...)`, `has_runtime("MT", "MD")`, `installdir()`, `scriptdir()`.
   Guard host-only steps (running built tools, building a CLI) with `package:is_cross()`. No absolute paths.
+
+### on_fetch
+
+Looks for an already installed (system) copy so xmake can skip the build. Usually unnecessary: prefer
+`add_extsources("pacman::zlib", "apt::zlib1g-dev", "brew::zlib")` / `add_extsources("pkgconfig::foo")`; write
+`on_fetch` only for non-standard locations or custom detection.
+
+* Forms: `on_fetch(function (package, opt) ... end)`, with platform filters `on_fetch("linux", "macosx", function ...)`
+  (host filters `"@windows"` for registry/host-only lookups), or `on_fetch("fetch")` to load `fetch.lua`
+  next to `xmake.lua` (`function main(package, opt)`, see `b/boost`, `l/llvm`).
+* `opt.system` is true when looking for a system install; do the detection only then, and otherwise return
+  nothing: `if opt.system then ... end`. Other `opt` fields (`version`, `require_version`) are forwarded to `find_*`.
+* Return value: a table (`includedirs`, `linkdirs`, `links`, `libfiles`, `version`, `program` ...) meaning "found",
+  or `nil`/no return meaning "not found, build it". `{}` means found with no flags (e.g. a binary).
+  Typical results come straight from helpers:
+  * libraries: `return package:find_package("system::z", {includes = "zlib.h"})`, `"pkgconfig::gtk+-3.0"`.
+  * tools: `return package:find_tool("cppfront", {check = "-h"})` (`check = "--version"` is common).
+  * custom paths: `import("lib.detect.find_path")` / `find_library` / `find_program`, then
+    `return {includedirs = {dir}}`.
+* Guard APIs that older xmake lacks: `if package.find_package then ...`, `if xmake.version():lt("2.8.7") then return end`.
 
 ### on_test
 
@@ -252,6 +284,25 @@ transitive/library deps; each may be nil when the dep is optional/disabled, so g
 * In `on_load` it is `package:add("deps", ...)` that changes deps (`package:dep()` may not be loaded there for
   all cases); decide dep options from `package:config(...)`, and pass them in the dep table
   `add_deps("zlib", {configs = {shared = true}})`.
+
+### Common package instance APIs
+
+Full list: xmake-docs `api/scripts/package-instance`. Used in recipes (roughly by frequency):
+
+| Group | APIs |
+|---|---|
+| Info | `package:name()`, `version()`, `version_str()`, `gitref()`, `kind()` / `is_binary()` / `is_toolchain()` / `is_library()` |
+| Platform | `is_plat("windows", ...)`, `is_arch("x64", "arm64")`, `is_cross()`, `is_targetos()`; `plat()`, `arch()` |
+| Config | `config("shared")`, `is_debug()`, `configs()`, `has_runtime("MT", "MTd")`, `runtimes()` |
+| Toolchain | `has_tool("cc", "clang")`, `toolchain("msvc")`/`toolchain("ndk")` (`:config("vs")`, `:config("ndk_sdkver")`) |
+| Dirs | `installdir(...)` (creates subdirs), `scriptdir()` (patch/helper files), `buildir()`, `cachedir()` |
+| Deps | `dep("zlib")` (`:installdir()`, `:config()`), `deps()`, `add("deps", "x")` / `add("defines", ...)` / `add("links", ...)` (in `on_load`) |
+| Checks | `check_cxxsnippets`, `has_cfuncs`/`has_cxxfuncs`, `has_cincludes`/`has_cxxincludes`, `has_ctypes`, `check_sizeof("void*")` (mostly in `on_test`/`on_check`) |
+| Detect | `find_package("system::z", opt)`, `find_tool("x", opt)` (in `on_fetch`) |
+| State | `data_set("k", v)` / `data("k")`, `is_precompiled()` (skip source patching for prebuilt packages) |
+
+* `package:add(...)`/`package:set(...)` only in `on_load`; they modify the package, not the build.
+* Use `package:is_plat/is_arch` (target) rather than `is_host`/`os.host()` unless you really mean the build machine.
 
 ### Advanced package APIs (rare)
 
