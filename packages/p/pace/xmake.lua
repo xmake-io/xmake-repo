@@ -5,6 +5,8 @@ package("pace")
 
     add_urls("https://github.com/TabNahida/PACE/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/TabNahida/PACE.git")
+    add_versions("0.4.0", "46957eec8edaecc1d0806810f9114a8bfd3af685dad44018579288151afbeed6")
+    add_versions("0.3.1", "8688313d3051cfa9f034ae1ec34d0def94677754fb4336ccf7881ebfa3b95d39")
     add_versions("0.3.0", "b55a2ffeb917295159de7c8e753a7c8735a51a3ab7429612dde1a0f5b526a831")
 
     add_configs("shared", {description = "Build shared libraries.", default = false, type = "boolean", readonly = true})
