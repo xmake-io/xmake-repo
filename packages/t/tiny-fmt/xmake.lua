@@ -37,5 +37,5 @@ package("tiny-fmt")
             static void test() {
                 std::string s = tfmt::format("{}", 42);
             }
-        ]]}, {configs = {languages = "c++23"}}))
+        ]]}, {configs = {languages = "c++23", cxflags = package:has_tool("cxx", "cl") and "/utf-8" or nil}}))
     end)
