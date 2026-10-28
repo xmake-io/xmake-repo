@@ -1,5 +1,4 @@
 package("tiny-fmt")
-    set_kind("library")
     set_homepage("https://github.com/monjaris/tiny-fmt")
     set_description("A modern lightweight formatting/logging library with {fmt} core")
     set_license("MIT")
