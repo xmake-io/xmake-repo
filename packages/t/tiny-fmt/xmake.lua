@@ -7,8 +7,9 @@ package("tiny-fmt")
              "https://github.com/monjaris/tiny-fmt.git")
     add_versions("12.2.0-tiny-5", "634a2661ab518686a764657471a666c3d6e2a11dfe59861f014e95db0239e956")
 
+    add_links("tiny-fmt")
+
     on_load(function (package)
-        package:add("links", "tiny-fmt")
         if package:config("shared") then
             package:add("defines", "TFMT_SHARED")
         end
