@@ -66,7 +66,8 @@ Order: `set_kind`, `set_homepage`, `set_description`, `set_license`, `add_urls`,
 `set_policy`, `add_configs`, `add_deps`, `on_load`, `on_check`, `on_install`, `on_test`.
 
 * `set_kind`: `"library", {headeronly = true}` for header-only, `"binary"` for tools, also `"toolchain"`,
-  `"template"`, `"addon"`; omit for ordinary libraries.
+  `"template"`, `"addon"`. `"library"` is the default: do not write `set_kind("library")` for a normal
+  (non-header-only) library, only `set_kind("library", {headeronly = true})`.
 * `set_license`: SPDX id (`MIT`, `Apache-2.0`, `BSL-1.0`, ...).
 * `add_urls` / `add_versions`: see "Versions and urls" below.
 * `add_configs("<name>", {description = "...", default = false, type = "boolean"})`. `shared` and `debug` already exist;
