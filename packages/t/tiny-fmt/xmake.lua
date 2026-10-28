@@ -23,7 +23,7 @@ package("tiny-fmt")
         io.replace("include/tinyfmt/tfmt.hpp", "#  include <type_traits>  // std::enable_if",
                    "#  include <cstddef>  // std::ptrdiff_t\n#  include <type_traits>  // std::enable_if", {plain = true})
         io.replace("include/tinyfmt/tfmt.hpp", "#  include <iosfwd>  // std::string", "#  include <string>", {plain = true})
-        if package:is_plat("windows") and package:config("shared") then
+        if package:is_plat("windows", "mingw") and package:config("shared") then
             io.replace("xmake.lua", 'add_defines("TFMT_SHARED")', 'add_defines("TFMT_SHARED", "TFMT_LIB_EXPORT")', {plain = true})
         end
 
