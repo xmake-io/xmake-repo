@@ -6,14 +6,18 @@ package("tiny-fmt")
     add_urls("https://github.com/monjaris/tiny-fmt/archive/refs/tags/$(version).tar.gz", {version = function (version)
         return tostring(version) .. "-tiny-5"
     end})
-    add_urls("https://github.com/monjaris/tiny-fmt.git")
+    add_urls("https://github.com/monjaris/tiny-fmt.git", {version = function (version)
+        return tostring(version) .. "-tiny-5"
+    end})
 
     add_versions("12.2.0", "634a2661ab518686a764657471a666c3d6e2a11dfe59861f014e95db0239e956")
 
     add_links("tiny-fmt")
-    add_cxxflags("cl::/utf-8")
 
     on_load(function (package)
+        if package:has_tool("cxx", "cl") then
+            package:add("cxxflags", "/utf-8")
+        end
         if package:config("shared") then
             package:add("defines", "TFMT_SHARED")
         end
