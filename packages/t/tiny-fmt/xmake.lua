@@ -11,6 +11,7 @@ package("tiny-fmt")
     add_versions("12.2.0", "634a2661ab518686a764657471a666c3d6e2a11dfe59861f014e95db0239e956")
 
     add_links("tiny-fmt")
+    add_cxxflags("cl::/utf-8")
 
     on_load(function (package)
         if package:config("shared") then
@@ -21,11 +22,12 @@ package("tiny-fmt")
     on_install(function (package)
         io.replace("include/tinyfmt/tfmt.hpp", "#  include <type_traits>  // std::enable_if",
                    "#  include <cstddef>  // std::ptrdiff_t\n#  include <type_traits>  // std::enable_if", {plain = true})
+        io.replace("include/tinyfmt/tfmt.hpp", "#  include <iosfwd>  // std::string", "#  include <string>", {plain = true})
         if package:is_plat("windows") and package:config("shared") then
             io.replace("xmake.lua", 'add_defines("TFMT_SHARED")', 'add_defines("TFMT_SHARED", "TFMT_LIB_EXPORT")', {plain = true})
         end
 
-        import("package.tools.xmake").install(package)
+        import("package.tools.xmake").install(package, {}, {target = "tiny-fmt"})
     end)
 
     on_test(function (package)
