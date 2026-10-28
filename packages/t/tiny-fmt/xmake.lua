@@ -15,14 +15,10 @@ package("tiny-fmt")
     end)
 
     on_install(function (package)
-        local content, err = io.replace("include/tinyfmt/tfmt.hpp", "#  include <type_traits>  // std::enable_if",
-                                        "#  include <cstddef>  // std::ptrdiff_t\n#  include <type_traits>  // std::enable_if", {plain = true})
-        assert(content, err)
-
+        io.replace("include/tinyfmt/tfmt.hpp", "#  include <type_traits>  // std::enable_if",
+                   "#  include <cstddef>  // std::ptrdiff_t\n#  include <type_traits>  // std::enable_if", {plain = true})
         if package:is_plat("windows") and package:config("shared") then
-            content, err = io.replace("xmake.lua", 'add_defines("TFMT_SHARED")',
-                                      'add_defines("TFMT_SHARED", "TFMT_LIB_EXPORT")', {plain = true})
-            assert(content, err)
+            io.replace("xmake.lua", 'add_defines("TFMT_SHARED")', 'add_defines("TFMT_SHARED", "TFMT_LIB_EXPORT")', {plain = true})
         end
 
         import("package.tools.xmake").install(package)
