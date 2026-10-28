@@ -3,9 +3,12 @@ package("tiny-fmt")
     set_description("A modern lightweight formatting/logging library with {fmt} core")
     set_license("MIT")
 
-    add_urls("https://github.com/monjaris/tiny-fmt/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/monjaris/tiny-fmt.git")
-    add_versions("12.2.0-tiny-5", "634a2661ab518686a764657471a666c3d6e2a11dfe59861f014e95db0239e956")
+    add_urls("https://github.com/monjaris/tiny-fmt/archive/refs/tags/$(version).tar.gz", {version = function (version)
+        return tostring(version) .. "-tiny-5"
+    end})
+    add_urls("https://github.com/monjaris/tiny-fmt.git")
+
+    add_versions("12.2.0", "634a2661ab518686a764657471a666c3d6e2a11dfe59861f014e95db0239e956")
 
     add_links("tiny-fmt")
 
