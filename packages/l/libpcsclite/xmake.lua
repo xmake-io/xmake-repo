@@ -6,6 +6,7 @@ package("libpcsclite")
     add_urls("https://github.com/LudovicRousseau/PCSC/archive/refs/tags/$(version).tar.gz",
              "https://github.com/LudovicRousseau/PCSC.git")
 
+    add_versions("2.5.3", "c00ea09732bb46feb03eccc70d513c3b7922ea61954cfd0c0e691702bf1d579f")
     add_versions("2.5.2", "ca52f420194cef335114a10ca3b6369b64046f3d61d5b621595e0d487df18ce1")
     add_versions("2.5.1", "78cd514e1b549292696a5c549d42d69a44fd084aa06ccd1af2ff6c2208282581")
     add_versions("2.4.1", "e7b6737f68c3b9a763fb0b0370d899cea091cced9d762ca8a6032c959576d5be")
