@@ -31,8 +31,12 @@ package("coost")
 
     on_load(function (package)
         if package:gitref() or package:version():ge("4.0.0") then
-            -- ASM_MARMASM support for Windows ARM64 requires CMake 3.26.
-            package:add("deps", "cmake >=3.26")
+            if package:is_plat("windows") and package:is_arch("arm64") then
+                -- ASM_MARMASM support for Windows ARM64 requires CMake 3.26.
+                package:add("deps", "cmake >=3.26")
+            else
+                package:add("deps", "cmake >=3.15")
+            end
             if package:config("libbacktrace") then
                 package:add("deps", "libbacktrace")
             end
