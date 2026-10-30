@@ -27,6 +27,8 @@ package("libcbor")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSANITIZE=" .. (package:config("asan") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=" .. (package:config("lto") and "ON" or "OFF"))
+        -- libcbor 0.14.0 enables Release LTO by default, but GNU ld cannot link its LLVM bitcode.
+        table.insert(configs, "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE=" .. (package:config("lto") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
