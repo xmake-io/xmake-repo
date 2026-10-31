@@ -6,6 +6,7 @@ package("fastgltf")
     add_urls("https://github.com/spnda/fastgltf/archive/refs/tags/$(version).tar.gz",
              "https://github.com/spnda/fastgltf.git")
 
+    add_versions("v0.9.1", "d8705a496deb2831775baeef5009be36d24bf3d10f8d29ab016e977d0119c872")
     add_versions("v0.9.0", "0bb564e127b14c22f062db50f89381dd2e0a20dbaf4987ca138a4ae8728712f9")
     add_versions("v0.8.0", "0bc88a0858c88d94306443946a5a1606118b7d5e4960f1e6186a3632e9df38fb")
     add_versions("v0.7.2", "292fc9d0d5a6726c90db88c1aadf09e6d152ffc0ebffe6fb968736c47288511c")
