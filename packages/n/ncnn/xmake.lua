@@ -6,6 +6,7 @@ package("ncnn")
     add_urls("https://github.com/Tencent/ncnn/archive/refs/tags/$(version).tar.gz",
             "https://github.com/Tencent/ncnn.git", { submodules = false })
 
+    add_versions("20261020", "968d8d8e65ccadc803322f8238736176e0f9c929fcf484895f58a63e6b227127")
     add_versions("20260526", "da1ade826bc22858a9fb87ae052789bbd614d042b3ec2c22e6544ca83db6bc04")
     add_versions("20260113", "2fdc5c6e37f8552921a9daad498a1be54a6fa6edd32c1a9e3030b27fab253b47")
     add_versions("20250916", "7d463f1e5061facd02b8af5e792e059088695cdcfcc152c8f4892f6ffe5eab1a")
@@ -122,6 +123,9 @@ package("ncnn")
             if package:version() and package:version():lt("20260113") then
                 table.insert(configs, "-DVulkan_LIBRARY=" .. path.join(moltenvk:installdir("lib"), "libMoltenVK." .. (moltenvk:config("shared") and "dylib" or "a")))
             end
+        end
+        if package:is_plat("wasm") and package:config("pic") ~= false then
+            configs.cxflags = "-fPIC"
         end
         import("package.tools.cmake").install(package, configs)
     end)
