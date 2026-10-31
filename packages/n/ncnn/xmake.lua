@@ -124,6 +124,9 @@ package("ncnn")
                 table.insert(configs, "-DVulkan_LIBRARY=" .. path.join(moltenvk:installdir("lib"), "libMoltenVK." .. (moltenvk:config("shared") and "dylib" or "a")))
             end
         end
+        if package:is_plat("wasm") and package:config("pic") ~= false then
+            configs.cxflags = "-fPIC"
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
