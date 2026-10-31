@@ -6,6 +6,7 @@ package("libsolv")
     add_urls("https://github.com/openSUSE/libsolv/archive/refs/tags/$(version).tar.gz",
              "https://github.com/openSUSE/libsolv.git")
 
+    add_versions("0.7.41", "38b4ee1924f8bd1ec0f6b2ec147e4c54c6deac132db5f90b4214b43ccd32fdd6")
     add_versions("0.7.39", "2a74cbf1e49984cb01f75ac4b19a237f24de6ce199766858aeb9ab3aae2b95fa")
     add_versions("0.7.37", "ad6a38624dde26fc59c41427608536c443b76f90dcb6bb96c2e70b8e3ee20419")
     add_versions("0.7.36", "32b8a565b70b6ba81d9ad68070de4561dfc8462be12288725a267a90423c0fa6")
