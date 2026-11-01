@@ -7,6 +7,7 @@ package("lzav")
     add_urls("https://github.com/avaneev/lzav/archive/refs/tags/$(version).tar.gz",
              "https://github.com/avaneev/lzav.git")
 
+    add_versions("5.20", "92e363628e151d2c4d935959c697bddb6b5f133c62830a4a3a257a1bfde2c35d")
     add_versions("5.17", "b56a854a878fae9ca02793f9ac09a1b555d0801bde7897d8caace5cd88901b90")
     add_versions("5.9", "34cdd777ffa41753bbff50aa1d699e8b4153c2e11c57dc36a7b537a632152765")
     add_versions("5.8", "7b18b6550e6904ebf250ff165bb7088011a431b9cdfc36bdf69a4ece976bee94")
