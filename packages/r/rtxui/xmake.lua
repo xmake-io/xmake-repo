@@ -6,7 +6,8 @@ package("rtxui")
     add_urls("https://github.com/ArthurSonzogni/RTXUI/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ArthurSonzogni/RTXUI.git")
     add_versions("v0.1.3", "b9fdef7b50c8c70a74451e46d0a1a120d93a0badf6817e87ba33a5a72804cba4")
-    add_patches("v0.1.3", "https://github.com/ArthurSonzogni/RTXUI/commit/796aec61ea8dcbf819d098aa238798739820726b.patch", "0640d11efba4d79900bfdb5f2e75fd8e48f492e8b2ab5f30cd3f093b4248ba0d")
+    add_patches("v0.1.3", "patches/v0.1.3/float-charconv.diff", "a1bcc57575efd4927f62c96a2ef6f8c53830766d08e5080e1091a4558107fc8f")
+    add_patches("v0.1.3", "patches/v0.1.3/float-parse-portability.diff", "488af4a06dc0f5108e0081435e6e729b7fbf2b8e3cad1e0786aa62f335d87d73")
 
     add_deps("cmake")
 
