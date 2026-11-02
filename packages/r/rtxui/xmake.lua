@@ -24,13 +24,13 @@ package("rtxui")
             "-DRTXUI_BUILD_FUZZERS=OFF",
             "-DRTXUI_BUILD_BENCHMARKS=OFF",
         }
-        local cxflags = {}
+        local opt = {}
         if package:is_plat("macosx") then
-            table.insert(cxflags, "-D_LIBCPP_DISABLE_AVAILABILITY")
+            opt.cxflags = "-D_LIBCPP_DISABLE_AVAILABILITY"
         end
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
