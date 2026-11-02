@@ -6,6 +6,7 @@ package("rtxui")
     add_urls("https://github.com/ArthurSonzogni/RTXUI/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ArthurSonzogni/RTXUI.git")
     add_versions("v0.1.3", "b9fdef7b50c8c70a74451e46d0a1a120d93a0badf6817e87ba33a5a72804cba4")
+    add_patches("v0.1.3", "https://github.com/ArthurSonzogni/RTXUI/commit/796aec61ea8dcbf819d098aa238798739820726b.patch", "0640d11efba4d79900bfdb5f2e75fd8e48f492e8b2ab5f30cd3f093b4248ba0d")
 
     add_deps("cmake")
 
