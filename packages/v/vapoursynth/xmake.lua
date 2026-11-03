@@ -6,14 +6,17 @@ package("vapoursynth")
     add_urls("https://github.com/vapoursynth/vapoursynth/archive/refs/tags/R$(version).tar.gz")
     add_urls("https://github.com/vapoursynth/vapoursynth.git", {alias = "git"})
 
+    add_versions("82", "8994fbcfa2fcaa5dc94109e547060521f60829a0899747e98e351bed72bd9611")
     add_versions("79", "cb7ea3c75431176f8ce1f466e1c1fff7ffdacdd2d397be8fabc2d467194ab5a6")
     add_versions("73", "1bb8ffe31348eaf46d8f541b138f0136d10edaef0c130c1e5a13aa4a4b057280")
 
+    add_versions("git:82", "R82")
     add_versions("git:79", "R79")
     add_versions("git:73", "R73")
 
-    add_patches(">=75", "patches/79/meson.patch", "1b5b6035e6047e94175393f50930e6f2b6e3f30215e9cde9d9e502205baaf3ae")
-    add_patches(">=79", "patches/79/fix-arm.patch", "322990a2480bf082c36ebafcd468d5a8882ded53cd5fc65b08dbc1df3d34629a")
+    add_patches(">=82", "patches/82/meson.patch", "da8ac53c7b603ff12b7eb8e8576920baba002f97a0156becddd25f8cfd4b9981")
+    add_patches(">=75 <82", "patches/79/meson.patch", "1b5b6035e6047e94175393f50930e6f2b6e3f30215e9cde9d9e502205baaf3ae")
+    add_patches("79", "patches/79/fix-arm.patch", "322990a2480bf082c36ebafcd468d5a8882ded53cd5fc65b08dbc1df3d34629a")
     add_patches(">=79", "patches/79/fix-freebsd.patch", "6ac2375d41db918da3f29e2838fd7fe5c9ac237d97182c162100319a8b8b1c1d")
 
     if is_plat("wasm") then
