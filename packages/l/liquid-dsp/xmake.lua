@@ -6,6 +6,7 @@ package("liquid-dsp")
     add_urls("https://github.com/jgaeddert/liquid-dsp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jgaeddert/liquid-dsp.git")
 
+    add_versions("v1.8.3", "18fa83b73db8bb6fe6ea0376e4b5aecf8645970f4604d10d9dadbf609f3f95e2")
     add_versions("v1.7.0", "33c42ebc2e6088570421e282c6332e899705d42b4f73ebd1212e6a11da714dd4")
 
     add_configs("simd", {description = "Build SIMD extensions", default = false, type = "boolean"})
