@@ -6,6 +6,7 @@ package("grpc")
     add_urls("https://github.com/grpc/grpc/archive/refs/tags/$(version).zip",
              "https://github.com/grpc/grpc.git")
 
+    add_versions("v1.84.0", "465219a2a2510d667e3484c56ed8235b79628213ac4b32003c5509604ca76505")
     add_versions("v1.83.1", "cd95b3a71e29dc733e11af38c8f5a5c1e7bd8b54de6bf316a57afd5bb4438bb3")
     add_versions("v1.82.1", "dfd8a44d9a0c20908bb8083aacd56bd7861dd400ef171002fa63f9c3c426702e")
     add_versions("v1.69.0", "987763312292c8a6088108173ccde2b336a40f35ae22b5b7b3744e44929aaf9f")
