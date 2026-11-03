@@ -6,6 +6,7 @@ package("fluidsynth")
 
     add_urls("https://github.com/FluidSynth/fluidsynth/archive/refs/tags/$(version).zip",
              "https://github.com/FluidSynth/fluidsynth.git")
+    add_versions("v2.6.1", "0965a1132bf2dd20135687bee8b2034c110664b4b561fbacc9d515a92cad6031")
     add_versions("v2.3.3", "0ab6f1aae1c7652b9249de2d98070313f3083046fddd673277556f1cca65568e")
     add_versions("v2.3.5", "3cdaa24777f11fbc6da506d7f7b41fef31822006f83886dcf6e758a9941cae40")
 
