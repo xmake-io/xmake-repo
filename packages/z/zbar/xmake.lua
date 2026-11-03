@@ -5,6 +5,7 @@ package("zbar")
 
     add_urls("https://github.com/mchehab/zbar/archive/refs/tags/$(version).tar.gz",
              "https://github.com/mchehab/zbar.git")
+    add_versions("0.23.95", "3bad3fe7b8764c6e2131cba91d40e22567a1365352914b62b55247b49124ed33")
     add_versions("0.23.93", "212dfab527894b8bcbcc7cd1d43d63f5604a07473d31a5f02889e372614ebe28")
 
     if is_plat("mingw") and is_subhost("msys") then
