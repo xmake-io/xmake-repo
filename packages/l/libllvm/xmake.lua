@@ -29,14 +29,19 @@ package("libllvm")
     if is_plat("windows") then
         -- pre-built
 
-        local arch = is_arch("x64") and "64" or "32"
-        add_urls("https://github.com/xmake-mirror/llvm-windows/releases/download/$(version)/clang+llvm-$(version)-win" .. arch .. ".zip")
-        if is_arch("x64") then
-            add_versions("19.1.7", "c6e058c6012f499811caa1ec037cc1b5c2fd2f8c20cc3315cae602cbd6c81a5e")
-            add_versions("21.1.0", "130d0067de849be36c0ec84c6d515bd310cab324a4cc95d8cc71a1d3c6c730f4")
-        elseif is_arch("x86") then
-            add_versions("19.1.7", "8fded42dfa7fede876057e3a857073a5df15649df62a6f1c352588f65569d940")
-            add_versions("21.1.0", "36b9a55e237b2db404aa621aacb8538b56dabc6f49b8927dc1109e8123524d5f")
+        if is_arch("arm64") then
+            add_urls("https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/clang+llvm-$(version)-aarch64-pc-windows-msvc.tar.xz")
+            add_versions("21.1.0", "c2869e4173ed18185fa599174faeedab3fdaaf1fd86926d4b62df9bf137bef53")
+        else
+            local arch = is_arch("x64") and "64" or "32"
+            add_urls("https://github.com/xmake-mirror/llvm-windows/releases/download/$(version)/clang+llvm-$(version)-win" .. arch .. ".zip")
+            if is_arch("x64") then
+                add_versions("19.1.7", "c6e058c6012f499811caa1ec037cc1b5c2fd2f8c20cc3315cae602cbd6c81a5e")
+                add_versions("21.1.0", "130d0067de849be36c0ec84c6d515bd310cab324a4cc95d8cc71a1d3c6c730f4")
+            elseif is_arch("x86") then
+                add_versions("19.1.7", "8fded42dfa7fede876057e3a857073a5df15649df62a6f1c352588f65569d940")
+                add_versions("21.1.0", "36b9a55e237b2db404aa621aacb8538b56dabc6f49b8927dc1109e8123524d5f")
+            end
         end
 
         -- The LLVM shared library cannot be built under windows.
@@ -146,6 +151,12 @@ package("libllvm")
 
     on_install("windows|x64", function (package)
         os.cp("*", package:installdir())
+    end)
+
+    -- skip bin/, the llvm toolchain package provides the programs.
+    on_install("windows|arm64", function (package)
+        os.cp("include", package:installdir())
+        os.cp("lib", package:installdir())
     end)
 
     on_install("linux", "macosx", "bsd", "android", "iphoneos", "cross", function (package)
