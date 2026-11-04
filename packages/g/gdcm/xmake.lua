@@ -5,6 +5,7 @@ package("gdcm")
 
     add_urls("https://github.com/malaterre/GDCM/archive/refs/tags/$(version).tar.gz",
              "https://github.com/malaterre/GDCM.git")
+    add_versions("v3.2.11", "3969bd514674bcfeb8f09df58de86dbc8a5eb1bd8ad5d0b1061567da8ce10f78")
     add_versions("v3.2.10", "94549490048ef7125e8af35569c20e8106b96c3d955178135dc75be561a14b76")
     add_versions("v3.2.7", "b7b17b70c009677cf244cc7837b88386441e097f8861fdeee83aa27d1bc1b090")
     add_versions("v3.2.5", "1763d94228ef31babe68a2b5f3b0d4fc66bc0afae641d9a4c38ea5269e06ba5d")
