@@ -35,10 +35,29 @@ package("ngtcp2")
     add_versions("1.1.0", "051d23ce0128453687c240e6fa249e65134350b2b1cb1b5eadf49817849ec74d")
     add_versions("0.1.0", "9a5266544d083c332746450344ebd6c8d6bf3c75c492a54c79abc56f2c47415d")
 
+    add_configs("openssl", {description = "Select the OpenSSL crypto backend.", default = false, values = {false, "openssl3", "openssl4"}})
+
     add_deps("cmake")
 
+    on_load(function (package)
+        local openssl = package:config("openssl")
+        if openssl then
+            package:add("deps", openssl)
+        end
+    end)
+
     on_install("macosx", "linux", "windows", "android", "mingw", function (package)
-        local configs = {"-DENABLE_OPENSSL=OFF", "-DBUILD_TESTING=OFF"}
+        local configs = {"-DBUILD_TESTING=OFF"}
+        local openssl = package:config("openssl")
+        if openssl then
+            local openssl_dep = package:dep(openssl)
+            table.insert(configs, "-DENABLE_OPENSSL=ON")
+            if openssl_dep and not openssl_dep:is_system() then
+                table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl_dep:installdir())
+            end
+        else
+            table.insert(configs, "-DENABLE_OPENSSL=OFF")
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DENABLE_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_STATIC_LIB=" .. (package:config("shared") and "OFF" or "ON"))
