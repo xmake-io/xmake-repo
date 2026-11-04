@@ -7,6 +7,7 @@ package("fastmod")
     add_urls("https://github.com/lemire/fastmod/archive/refs/tags/$(version).tar.gz",
              "https://github.com/lemire/fastmod.git")
 
+    add_versions("v0.2.0", "ed6e6cb58bc126c503555100637fa8b2a2b9a1b53f71910c60988a6eeb3295be")
     add_versions("v0.1.0", "b80e759208d6b4318caa14b1851352c69e8c7a1f7895639e3af1d86944d2973b")
 
     add_deps("cmake")
