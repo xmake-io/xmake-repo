@@ -6,6 +6,7 @@ package("pocketpy")
 
     add_urls("https://github.com/pocketpy/pocketpy/releases/download/$(version)/pocketpy.h")
 
+    add_versions("v2.2.0", "43864cfa090d65b80915467900430dfae52c769f13d6edb137d0227d1fbe03ad")
     add_versions("v2.1.8", "b27e264e6dd3a7597f75452ee7980879cfcae88b0782d0b4ce0ad9315781f7b1")
     add_versions("v2.1.6", "c0386447b589f2234552caeb7ebd1bf0176f7184606c64f49f0003dd080451a2")
     add_versions("v2.1.3", "fb2d1b594ddc46084d5e090e3e907da0d6769287152dba5d51288ac231ff7dfa")
@@ -15,6 +16,7 @@ package("pocketpy")
     add_versions("v1.4.5", "144f63ed8a21fd2a65e252df53939f7af453d544eb35570603af319ce1af5a46")
     add_versions("v0.9.0", "0da63afb3ea4ebb8b686bfe33b4c7556c0a927cd98ccf3c7a3fb4aa216fbf30b")
 
+    add_resources("v2.2.0", "c", "https://github.com/pocketpy/pocketpy/releases/download/v2.2.0/pocketpy.c", "0f0c19071b4fd0b37cb292e15bea49ca163f151af901b00893d3a2005bb056e6")
     add_resources("v2.1.8", "c", "https://github.com/pocketpy/pocketpy/releases/download/v2.1.8/pocketpy.c", "78788bfc789c986cc67b2d1ca9cb5b6e08d4c6661cb433fcc5f99ab69b0afdf6")
     add_resources("v2.1.6", "c", "https://github.com/pocketpy/pocketpy/releases/download/v2.1.6/pocketpy.c", "effd2aa317f2e1086b999d0e2f7d882fc6ff21dc23d9397f2082abbbc042e8f7")
     add_resources("v2.1.3", "c", "https://github.com/pocketpy/pocketpy/releases/download/v2.1.3/pocketpy.c", "ab4cbf3edd50dbbc5ca5a7ec7e7f2d001169541d9912330596400e0d34980d6b")
