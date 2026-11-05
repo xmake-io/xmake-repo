@@ -6,6 +6,7 @@ package("libfido2")
     add_urls("https://github.com/Yubico/libfido2/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Yubico/libfido2.git")
 
+    add_versions("1.17.0", "ace062d14a482ff9325410ff63d06c8b5fe87e79ebc18dda07add2bc0188c77f")
     add_versions("1.15.0", "32e3e431cfe29b45f497300fdb7076971cb77fc584fcfa80084d823a6ed94fbb")
 
     add_patches("1.15.0", "patches/1.15.0/cmake-pkgconfig-find-deps.patch", "1d8c559529f8589e44f794b33d9216234d44ef857742db9ef94693dbd41c9486")
