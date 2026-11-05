@@ -71,7 +71,7 @@ package("freerdp")
             add_syslinks("uuid")
         end
     elseif is_plat("macosx") then
-        add_frameworks("CoreFoundation", "Carbon", "IOKit")
+        add_frameworks("CoreFoundation", "Carbon", "IOKit", "VideoToolbox", "CoreMedia", "CoreVideo")
     end
 
     add_deps("cmake")
