@@ -13,7 +13,7 @@ package("rtxui")
         add_syslinks("gdi32", "user32")
     end
 
-    on_install("linux", "macosx", "windows", "mingw", function (package)
+    on_install("linux", "windows", "mingw", function (package)
         local configs = {
             "-DRTXUI_BUILD_TESTS=OFF",
             "-DRTXUI_BUILD_EXAMPLES=OFF",
