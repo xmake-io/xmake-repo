@@ -6,6 +6,7 @@ package("nanobind")
     set_urls("https://github.com/wjakob/nanobind/archive/refs/tags/$(version).tar.gz",
              "https://github.com/wjakob/nanobind.git", {submodules = false})
 
+    add_versions("v3.1.0", "39659890a112e84e7263e4a263c71dd2621f866f7a4386ce95ef410e6c0e5c2f")
     add_versions("v3.0.1", "34ded7cf2292f08a92c45490a095e76334a57751bbae03a8c83241803bf19623")
     add_versions("v3.0.0", "1e6d9c2b2e746301b5cca1eec9a83338f3412cdec4ffae169fb7a2b2b2a9c734")
     add_versions("v2.15.0", "36c8760b3acb25643cd89d549782d8c67bd82ce54c6238608787c22a34fd490f")
