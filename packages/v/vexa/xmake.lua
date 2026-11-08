@@ -11,5 +11,13 @@ package("vexa")
     end)
 
     on_test(function (package)
-        assert(true)
+        assert(package:check_cxxsnippets({test = [[
+            #include <vexa/vexa.hpp>
+            void test() {
+                vexa::Window window;
+                vexa::Image image;
+                vexa::Font font;
+                vexa::Texture texture;
+            }
+        ]]}, {configs = {languages = "c++23"}}))
     end)
