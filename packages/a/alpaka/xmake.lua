@@ -7,6 +7,7 @@ package("alpaka")
     add_urls("https://github.com/alpaka-group/alpaka/archive/refs/tags/$(version).tar.gz",
              "https://github.com/alpaka-group/alpaka.git")
 
+    add_versions("3.0.0", "9afd1c14f445127aeeca9f29b5d17a33cdb0b9e974418a96d9f880b370b854f2")
     add_versions("2.1.1", "2d30a43594c55067297947b0ec83300e4f2899497464c5cc6f142c823f3ea1b2")
 
     add_deps("cmake")
