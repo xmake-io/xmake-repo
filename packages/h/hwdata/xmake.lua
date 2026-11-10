@@ -19,10 +19,12 @@ package("hwdata")
     add_versions("v0.397", "09eee39e73a63ab27af651ab6afdd13d6e5c3485872f2cd406b35e4d80ffdb0b")
 
     on_install("linux", "bsd", function (package)
+        local configs = {}
         if package:is_plat("bsd") then
-            io.replace("Makefile", "install -m 644", "ginstall -m 644", {plain = true})
+            -- The Linux modprobe blacklist requires GNU install's -T option.
+            table.insert(configs, "--disable-blacklist")
         end
-        import("package.tools.autoconf").install(package)
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)
