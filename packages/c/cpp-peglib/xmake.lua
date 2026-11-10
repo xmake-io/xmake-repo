@@ -8,6 +8,7 @@ package("cpp-peglib")
     set_urls("https://github.com/yhirose/cpp-peglib/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/yhirose/cpp-peglib.git")
 
+    add_versions("1.31.0", "78cf9fc9110af3775c967592f5269563e6f8ee21024eb3d81a572bc0866fcb91")
     add_versions("1.22.0", "6aa02ba5865f1020f194e2a911a2828d539588b922605032caf56ccd30a8c874")
     add_versions("1.17.0", "48145b73d080d4cad950ca6f89d5ccd3373ba4017ab488733f532a0d74afc67a")
     add_versions("1.10.3", "af654d345788715754cee3757433837620aed38a2efc30a3e94ee709bf407ba0")
