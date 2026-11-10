@@ -6,6 +6,7 @@ package("cglm")
     add_urls("https://github.com/recp/cglm/archive/refs/tags/$(version).tar.gz",
              "https://github.com/recp/cglm.git")
 
+    add_versions("v0.9.7", "cc0862eee2885d2a2b4870eb29b97c6e9b9ebc7c66e8854e1fa8f3d18d9d8475")
     add_versions("v0.9.6", "be5e7d384561eb0fca59724a92b7fb44bf03e588a7eae5123a7d796002928184")
     add_versions("v0.9.4", "101376d9f5db7139a54db35ccc439e40b679bc2efb756d3469d39ee38e69c41b")
     add_versions("v0.9.3", "4eda95e34f116c36203777f4fe770d64a3158b1450ea40364abb111cf4ba4773")
