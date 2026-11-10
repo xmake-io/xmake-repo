@@ -23,7 +23,8 @@ package("lsquic")
     add_versions("v4.0.8", "f18ff2fa0addc1c51833304b3d3ff0979ecf5f53f54f96bcd3442a40cfcd440b")
 
     add_patches(">=4.0.8 <4.5.0", "patches/4.0.8/cmake.patch", "c9b8412fbd7df511dee4d57ea5dfa50bc527e015fc808270235b91abfd9baa89")
-    add_patches(">=4.5.0", "patches/4.5.0/cmake.patch", "de37a5b5e13873a9af92fb69725e2dac60ca75354811e434cab52da50f8f694b")
+    add_patches(">=4.5.0 <4.11.1", "patches/4.5.0/cmake.patch", "de37a5b5e13873a9af92fb69725e2dac60ca75354811e434cab52da50f8f694b")
+    add_patches(">=4.11.1", "patches/4.11.1/cmake.patch", "64e63aacf791f67935fb521c87d9597256d1a5f6e0e24d35acd6a0aa42d64a9a")
 
     add_configs("fiu", {description = "Use Fault Injection in Userspace (FIU)", default = false, type = "boolean"})
     if is_plat("wasm") then
