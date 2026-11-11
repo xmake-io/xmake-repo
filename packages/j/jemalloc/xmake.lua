@@ -6,6 +6,7 @@ package("jemalloc")
     add_urls("https://github.com/jemalloc/jemalloc/releases/download/$(version)/jemalloc-$(version).tar.bz2",
              "https://github.com/jemalloc/jemalloc.git")
 
+    add_versions("5.4.0", "200776fac271093e7c2f21edd6d62657ecd2be578d9328633f2a86bfa6ef4f1d")
     add_versions("5.3.1", "3826bc80232f22ed5c4662f3034f799ca316e819103bdc7bb99018a421706f92")
     add_versions("5.3.0", "2db82d1e7119df3e71b7640219b6dfe84789bc0537983c3b7ac4f7189aecfeaa")
     add_versions("5.2.1", "34330e5ce276099e2e8950d9335db5a875689a4c6a56751ef3b1d8c537f887f6")
@@ -37,7 +38,7 @@ package("jemalloc")
             io.replace("configure", [[as_fn_error $? "cannot determine return type of strerror_r" "$LINENO" 5]], "true;", {plain = true})
         end
         local configs = {"--enable-doc=no"}
-        local cflags = {}
+        local cxflags = {}
         table.insert(configs, "--enable-debug=" .. (package:is_debug() and "yes" or "no"))
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
@@ -55,12 +56,12 @@ package("jemalloc")
                     char *error = strerror_r(EINVAL, buffer, 100);
                     printf("%s\n", error);
                 }
-            ]]})
+            ]]}, {configs = {cxflags = "-Werror=int-conversion"}})
             if has_gnu_strerror_r then
-                table.insert(cflags, "-DJEMALLOC_STRERROR_R_RETURNS_CHAR_WITH_GNU_SOURCE")
+                table.insert(cxflags, "-DJEMALLOC_STRERROR_R_RETURNS_CHAR_WITH_GNU_SOURCE")
             end
         end
-        import("package.tools.autoconf").install(package, configs, {cflags = cflags})
+        import("package.tools.autoconf").install(package, configs, {cxflags = cxflags})
     end)
 
     on_test(function(package)
