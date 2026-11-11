@@ -6,9 +6,16 @@ package("csv2")
 
     add_urls("https://github.com/p-ranav/csv2/archive/refs/tags/$(version).tar.gz",
              "https://github.com/p-ranav/csv2.git")
+    add_versions("v0.2", "30e9ac5e83520475a274ec04494ad24d602a15bb75839610b51432e50a98048d")
     add_versions("v0.1", "e185d0378a95edb2ad0f2473970d8fe8579c87326640340d42bdf6327fd96791")
 
     on_install(function (package)
+        if package:version() and package:version():ge("0.2") then
+            -- Use the scalar fallback where MSVC lacks _BitScanForward64.
+            io.replace("include/csv2/reader.hpp",
+                       "#elif defined(_MSC_VER)\n  unsigned long index;\n  _BitScanForward64",
+                       "#elif defined(_MSC_VER) && defined(_WIN64)\n  unsigned long index;\n  _BitScanForward64", {plain = true})
+        end
         os.cp("include/csv2", package:installdir("include"))
     end)
 
