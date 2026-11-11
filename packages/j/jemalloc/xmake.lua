@@ -56,7 +56,7 @@ package("jemalloc")
                     char *error = strerror_r(EINVAL, buffer, 100);
                     printf("%s\n", error);
                 }
-            ]]})
+            ]]}, {configs = {cxflags = "-Werror=int-conversion"}})
             if has_gnu_strerror_r then
                 table.insert(cxflags, "-DJEMALLOC_STRERROR_R_RETURNS_CHAR_WITH_GNU_SOURCE")
             end
