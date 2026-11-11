@@ -14,6 +14,7 @@ package("libpg_query")
         end
     })
 
+    add_versions("18.1.0", "2d3486cf6a9d3955b53e66235db39d62b54216c820cd392ab66dc842c5b1316d")
     add_versions("18.0.0", "6ad7783f272acfd116455c66a03298a0cac9a9168281df547969219112f0260f")
     add_versions("17.6.2", "e68962c18dbf5890821511be6c5c42261170bf8bfd51a82ea9176069f3d0df8b")
     add_versions("16.5.2", "92bbc9a628655df3de86db51de97446d8ed18b5d23b17039809364d5bc6a4a38")
