@@ -38,7 +38,7 @@ package("jemalloc")
             io.replace("configure", [[as_fn_error $? "cannot determine return type of strerror_r" "$LINENO" 5]], "true;", {plain = true})
         end
         local configs = {"--enable-doc=no"}
-        local cflags = {}
+        local cxflags = {}
         table.insert(configs, "--enable-debug=" .. (package:is_debug() and "yes" or "no"))
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
@@ -58,10 +58,10 @@ package("jemalloc")
                 }
             ]]})
             if has_gnu_strerror_r then
-                table.insert(cflags, "-DJEMALLOC_STRERROR_R_RETURNS_CHAR_WITH_GNU_SOURCE")
+                table.insert(cxflags, "-DJEMALLOC_STRERROR_R_RETURNS_CHAR_WITH_GNU_SOURCE")
             end
         end
-        import("package.tools.autoconf").install(package, configs, {cflags = cflags})
+        import("package.tools.autoconf").install(package, configs, {cxflags = cxflags})
     end)
 
     on_test(function(package)
