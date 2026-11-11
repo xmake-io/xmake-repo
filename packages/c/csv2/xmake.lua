@@ -10,6 +10,12 @@ package("csv2")
     add_versions("v0.1", "e185d0378a95edb2ad0f2473970d8fe8579c87326640340d42bdf6327fd96791")
 
     on_install(function (package)
+        if package:version() and package:version():ge("0.2") then
+            -- Use the scalar fallback where MSVC lacks _BitScanForward64.
+            io.replace("include/csv2/reader.hpp",
+                       "#elif defined(_MSC_VER)\n  unsigned long index;\n  _BitScanForward64",
+                       "#elif defined(_MSC_VER) && defined(_WIN64)\n  unsigned long index;\n  _BitScanForward64", {plain = true})
+        end
         os.cp("include/csv2", package:installdir("include"))
     end)
 
