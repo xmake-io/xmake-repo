@@ -51,7 +51,11 @@ package("libpg_query")
             table.insert(configs, "Makefile.msvc")
             import("package.tools.nmake").build(package, configs)
         else
-            import("package.tools.make").build(package, configs)
+            local make = import("package.tools.make")
+            local envs = make.buildenvs(package)
+            -- suppress ar errors when passing --toolchain=clang
+            envs.ARFLAGS = nil
+            make.build(package, configs, {envs = envs})
         end
 
         os.cp("*.h", package:installdir("include"))
