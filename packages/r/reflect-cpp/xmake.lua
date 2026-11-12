@@ -6,6 +6,7 @@ package("reflect-cpp")
     add_urls("https://github.com/getml/reflect-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/getml/reflect-cpp.git", {submodules = false})
 
+    add_versions("v0.27.1", "c50b221080687b42f852b58e651441d8130107ece17312218e5d31ce081206ea")
     add_versions("v0.25.0", "de74d3793fd3dde9105ebe0f40bffb28df7009d59e0714389e4d29fcb46a1a3f")
     add_versions("v0.24.0", "2185d45cca58f60bcdaca37a995c6f8e90c0105f312610333fed75f2efa6a996")
     add_versions("v0.22.0", "5756d74e7df640b4633a3ea5a3c0d7c4e096bdd3f67828f8b02f58b156ba39ec")
@@ -116,6 +117,9 @@ package("reflect-cpp")
 
         if package:gitref() or version:lt("0.11.1") or version:ge("0.13.0") then
             package:add("deps", "cmake")
+        end
+        if package:gitref() or version:ge("0.27.0") then
+            package:add("deps", "enchantum")
         end
     end)
 
