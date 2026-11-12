@@ -118,6 +118,9 @@ package("reflect-cpp")
         if package:gitref() or version:lt("0.11.1") or version:ge("0.13.0") then
             package:add("deps", "cmake")
         end
+        if package:gitref() or version:ge("0.27.0") then
+            package:add("deps", "enchantum")
+        end
     end)
 
     on_install(function (package)
