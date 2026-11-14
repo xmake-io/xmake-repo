@@ -7,6 +7,7 @@ package("frugally-deep")
     add_urls("https://github.com/Dobiasd/frugally-deep/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Dobiasd/frugally-deep.git")
 
+    add_versions("v0.21.1", "0b3390eb07d0e832e81956a63b942259f9e2c2326d956042f86cb2f91a57152c")
     add_versions("v0.20.0", "79a1f400523d629a5f7545f23c152f5b2ba17668a0e07edf8949658ee4066002")
     add_versions("v0.18.2", "e4274735261c89fd312e5a23e16bfa540752d1a61a190037f63f4d2612495c64")
     add_versions("v0.17.1", "f3130dc0d01640e12ea7cb88e440ec9ac716b89ce45eae3f1d1eb937194c305f")
