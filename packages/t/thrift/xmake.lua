@@ -6,6 +6,7 @@ package("thrift")
     add_urls("https://github.com/apache/thrift/archive/refs/tags/$(version).tar.gz",
              "https://github.com/apache/thrift.git")
 
+    add_versions("v0.25.0", "f6aa5fadd01320e17c73e0c1f3b22c858bd235fe5214a5dd9cd5c830822c4529")
     add_versions("v0.24.0", "d3a60676b1df3fb9850f6ce1e8a3df9a0efac036ceb4bce8ce46ee3eca735d2d")
     add_versions("v0.23.0", "087ba9517063c8252e9e7fb4e3891a9fd85e20af80e0309e2276eff16791d75c")
     add_versions("v0.22.0", "c4649c5879dd56c88f1e7a1c03e0fbfcc3b2a2872fb81616bffba5aa8a225a37")
