@@ -66,6 +66,11 @@ package("mimalloc")
             "-DMI_BUILD_OBJECT=OFF",
         }
 
+        if package:is_plat("android") and package:version() and package:version():eq("3.6.1") then
+            -- Android's execinfo.h may not provide backtrace; use the unwinder fallback.
+            table.insert(configs, "-DMI_HAS_EXECINFOH=OFF")
+        end
+
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DMI_DEBUG_FULL=" .. (package:is_debug() and "ON" or "OFF"))
         table.insert(configs, "-DMI_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
