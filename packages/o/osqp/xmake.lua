@@ -6,6 +6,7 @@ package("osqp")
     add_urls("https://github.com/osqp/osqp/releases/download/$(version)/osqp-$(version)-src.tar.gz",
              "https://github.com/osqp/osqp.git")
 
+    add_versions("v1.0.0", "ec0bb8fd34625d0ea44274ab3e991aa56e3e360ba30935ae62476557b101c646")
     add_versions("v0.6.3", "285b2a60f68d113a1090767ec8a9c81a65b3af2d258f8c78a31cc3f98ba58456")
 
     add_patches("0.6.3", "patches/0.6.3/cmake.patch", "ffe3809019eebae7559e8c4016431e9d3e9bc35776d9affe65b83904dd753999")
@@ -22,6 +23,15 @@ package("osqp")
         local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if not package:version() or package:version():ge("1.0.0") then
+            table.insert(configs, "-DOSQP_BUILD_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
+            table.insert(configs, "-DOSQP_BUILD_STATIC_LIB=" .. (package:config("shared") and "OFF" or "ON"))
+            table.insert(configs, "-DOSQP_BUILD_DEMO_EXE=OFF")
+            if package:is_plat("android", "iphoneos", "wasm", "bsd") then
+                -- Upstream has no interrupt handler for these CMake platforms.
+                table.insert(configs, "-DOSQP_ENABLE_INTERRUPT=OFF")
+            end
+        end
         if package:config("shared") and package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
