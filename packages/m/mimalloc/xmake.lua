@@ -52,6 +52,12 @@ package("mimalloc")
         add_syslinks("atomic")
     end
 
+    on_load(function (package)
+        if package:is_plat("bsd") and not package:config("shared") and package:version() and package:version():eq("3.6.1") then
+            package:add("syslinks", "execinfo", "util")
+        end
+    end)
+
     on_install(function (package)
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "MI_SHARED_LIB")
