@@ -7,6 +7,7 @@ package("microsoft-gsl")
     add_urls("https://github.com/microsoft/GSL/archive/refs/tags/$(version).tar.gz",
              "https://github.com/microsoft/GSL.git")
 
+    add_versions("v5.0.1", "733a87a7eea56db075ee060735ba7616a27c1c55955f264d5473bf9e83294ad0")
     add_versions("v5.0.0", "e646da6ac00a885cfae33dc935e52bb42bd1d05e41b8437cbc25ca3d74930f35")
     add_versions("v4.2.2", "59e2a0a0ea22e8bcf9db2dc4d4bd21212ac6595748295fc27a7e02cf75eac4b5")
     add_versions("v4.2.1", "d959f1cb8bbb9c94f033ae5db60eaf5f416be1baa744493c32585adca066fe1f")
