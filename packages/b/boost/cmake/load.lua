@@ -57,6 +57,8 @@ function _add_deps(package)
         package:add("deps", "icu4c")
     end
     if package:config("locale") then
+        -- https://github.com/boostorg/boost/issues/1162
+        package:add("patches", ">=1.86.0 <=1.92.0", "patches/1.86.0/locale-source-group.patch", "655272a1d49167e99cb254e899b502c5c50bb3219049a17971934a7d5ec7cd1e")
         package:add("deps", "libiconv")
         if package:config("icu") then
             package:add("deps", "icu4c")
