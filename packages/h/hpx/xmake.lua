@@ -44,6 +44,19 @@ package("hpx")
         end
     end)
 
+    if on_check then
+        on_check(function (package)
+            if package:gitref() or (package:version() and package:version():ge("2.0.0")) then
+                assert(package:check_cxxsnippets({test = [[
+                    #include <bit>
+                    void test() {
+                        (void) std::endian::native;
+                    }
+                ]]}, {configs = {languages = "c++20"}}), "package(hpx >=2.0.0): require at least C++20.")
+            end
+        end)
+    end
+
     on_install("windows|x64", function (package)
         local configs = {"-DHPX_WITH_EXAMPLES=OFF", "-DHPX_WITH_TESTS=OFF", "-DHPX_WITH_UNITY_BUILD=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
@@ -61,10 +74,14 @@ package("hpx")
     end)
 
     on_test(function (package)
+        local language = "c++17"
+        if package:gitref() or (package:version() and package:version():ge("2.0.0")) then
+            language = "c++20"
+        end
         assert(package:check_cxxsnippets({test = [[
             #include <hpx/iostream.hpp>
             void test() {
                 hpx::cout << "Hello World!\n" << std::flush;
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = {languages = language}}))
     end)
