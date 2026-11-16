@@ -6,6 +6,7 @@ package("libdeflate")
     add_urls("https://github.com/ebiggers/libdeflate/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ebiggers/libdeflate.git")
 
+    add_versions("v1.26", "bba03fffc5538576213675ce6968fcff6ce2e67d82e4d5febea2d05f9f13cf85")
     add_versions("v1.25", "d11473c1ad4c57d874695e8026865e38b47116bbcb872bfc622ec8f37a86017d")
     add_versions("v1.24", "ad8d3723d0065c4723ab738be9723f2ff1cb0f1571e8bfcf0301ff9661f475e8")
     add_versions("v1.23", "1ab18349b9fb0ce8a0ca4116bded725be7dcbfa709e19f6f983d99df1fb8b25f")
