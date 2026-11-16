@@ -6,6 +6,7 @@ package("hpx")
     add_urls("https://github.com/STEllAR-GROUP/hpx/archive/refs/tags/$(version).tar.gz",
              "https://github.com/STEllAR-GROUP/hpx.git")
 
+    add_versions("v2.0.0", "c755ab893e9fdcbc896c6eb735ad411cc78b9314e916d87119c3cd5304928211")
     add_versions("v1.11.0", "01ec47228a2253b41e318bb09c83325a75021eb6ef3262400fbda30ac7389279")
     add_versions("v1.10.0", "5720ed7d2460fa0b57bd8cb74fa4f70593fe8675463897678160340526ec3c19")
     add_versions("v1.9.1", "1adae9d408388a723277290ddb33c699aa9ea72defadf3f12d4acc913a0ff22d")
@@ -32,6 +33,13 @@ package("hpx")
     add_deps("cmake", "hwloc", "asio >=1.12.0 <=1.21.0")
 
     on_load("windows|x64", "linux|x86_64", "macosx|x86_64", function (package)
+        if package:has_tool("cxx", "cl") then
+            package:add("cxxflags", "/Zc:__cplusplus")
+            if package:gitref() or (package:version() and package:version():ge("2.0.0")) then
+                package:add("cxxflags", "/Zc:preprocessor")
+            end
+        end
+
         local malloc = package:config("malloc")
         if malloc ~= "system" then
             package:add("deps", malloc)
@@ -42,6 +50,19 @@ package("hpx")
             package:add("deps", "boost >=1.71.0", {configs = {iostreams = true, serialization = true, spirit = true}})
         end
     end)
+
+    if on_check then
+        on_check(function (package)
+            if package:gitref() or (package:version() and package:version():ge("2.0.0")) then
+                assert(package:check_cxxsnippets({test = [[
+                    #include <bit>
+                    void test() {
+                        (void) std::endian::native;
+                    }
+                ]]}, {configs = {languages = "c++20"}}), "package(hpx >=2.0.0): require at least C++20.")
+            end
+        end)
+    end
 
     on_install("windows|x64", function (package)
         local configs = {"-DHPX_WITH_EXAMPLES=OFF", "-DHPX_WITH_TESTS=OFF", "-DHPX_WITH_UNITY_BUILD=OFF"}
@@ -60,10 +81,14 @@ package("hpx")
     end)
 
     on_test(function (package)
+        local language = "c++17"
+        if package:gitref() or (package:version() and package:version():ge("2.0.0")) then
+            language = "c++20"
+        end
         assert(package:check_cxxsnippets({test = [[
             #include <hpx/iostream.hpp>
             void test() {
                 hpx::cout << "Hello World!\n" << std::flush;
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = {languages = language}}))
     end)
