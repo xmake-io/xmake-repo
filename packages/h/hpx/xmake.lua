@@ -33,6 +33,13 @@ package("hpx")
     add_deps("cmake", "hwloc", "asio >=1.12.0 <=1.21.0")
 
     on_load("windows|x64", "linux|x86_64", "macosx|x86_64", function (package)
+        if package:has_tool("cxx", "cl") then
+            package:add("cxxflags", "/Zc:__cplusplus")
+            if package:gitref() or (package:version() and package:version():ge("2.0.0")) then
+                package:add("cxxflags", "/Zc:preprocessor")
+            end
+        end
+
         local malloc = package:config("malloc")
         if malloc ~= "system" then
             package:add("deps", malloc)
