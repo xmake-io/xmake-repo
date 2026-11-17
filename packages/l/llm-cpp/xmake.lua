@@ -7,6 +7,7 @@ package("llm-cpp")
     add_urls("https://github.com/Mattbusel/llm-cpp/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/Mattbusel/llm-cpp.git")
 
+    add_versions("1.2.0", "08cda58c29ea66f392d03e15c674f1ab47e7c75f33a36f0dd5617beed1c1db72")
     add_versions("1.1.0", "64fd86d101d8ccbcefd9ac41aaf067ef2294de77c18d8746f0c267d14d1e71ca")
 
     add_configs("curl", {description = "Link libcurl, needed by the network headers (ab, agent, audio, batch, chat, embed, eval, finetune, rag, rank, stream, vision).", default = false, type = "boolean"})
