@@ -6,6 +6,7 @@ package("lz4")
     set_urls("https://github.com/lz4/lz4/archive/refs/tags/$(version).tar.gz",
              "https://github.com/lz4/lz4.git")
 
+    add_versions("v1.11.1", "683fed08a844ad012196381e40badf80c0bbe4962959761416d41c9e67d77ec7")
     add_versions("v1.11.0", "247e5fa64da5f7b75ee3dd3bed484076396c9ebe8254d9ccf693eb62800c5e26")
     add_versions("v1.10.0", "537512904744b35e232912055ccf8ec66d768639ff3abe5788d90d792ec5f48b")
     add_versions("v1.9.4", "0b0e3aa07c8c063ddf40b082bdf7e37a1562bda40a0ff5272957f3e987e0e54b")
