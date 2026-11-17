@@ -5,6 +5,7 @@ package("joltphysics")
 
     add_urls("https://github.com/jrouwe/JoltPhysics/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jrouwe/JoltPhysics.git")
+    add_versions("v5.7.0", "9a0a405f2375dc4bd9f72486c56e1cbc7794c6a62e42fc48fadea45dfc93dacc")
     add_versions("v5.6.0", "6e069ee0172478cc78182047aac87e5310ba14a67a53348ae14cc37801fd3f8e")
     add_versions("v5.5.0", "3dae862a32c9092fca5b17f8e5d32cd57e035d30c3145c00040f13ca58a866df")
     add_versions("v5.4.0", "1d2fdc33ef9a2da69efd704adc0a97da7c6ed698c2bded04b0c36f31207b0829")
@@ -36,7 +37,7 @@ package("joltphysics")
     add_configs("double_precision", { description = "Compiles the library so that all positions are stored in doubles instead of floats. This makes larger worlds possible", default = false, type = "boolean" })
     add_configs("exceptions", { description = "Compile the library with C++ exceptions enabled. This adds some overhead and Jolt doesn't use exceptions so by default it is off.", default = false, type = "boolean" })
     add_configs("gpu_api", { description = "Compute backends. Used to perform computations on the GPU", default = nil, type = "string", values = {"cpu", "dx12", "mtl", "vk"}})
-    add_configs("object_layer_bits", {description = "Number of bits to use in ObjectLayer. Can be 16 or 32.", default = "16", type = "string", values = {"16", "32"}})
+    add_configs("object_layer_bits", {description = "Number of bits to use in ObjectLayer. Can be 16, 32 or 64.", default = "16", type = "string", values = {"16", "32", "64"}})
     add_configs("object_stream", { description = "Compile the ObjectStream class and RTTI attribute information", default = true, type = "boolean" })
     add_configs("rtti", { description = "Compile the library with C++ RTTI enabled. This adds some overhead and Jolt doesn't use RTTI so by default it is off.", default = false, type = "boolean" })
     add_configs("symbols", { description = "When turning this option on, the library will be compiled with debug symbols", default = false, type = "boolean" })
@@ -87,7 +88,9 @@ package("joltphysics")
         if package:config("shared") then
             package:add("defines", "JPH_SHARED_LIBRARY")
         end
-        if not package:is_debug() then
+        if package:is_debug() then
+            package:add("defines", "JPH_DEBUG")
+        else
             package:add("defines", "JPH_NO_DEBUG")
         end
         if package:config("object_stream") then
