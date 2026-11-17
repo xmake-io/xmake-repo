@@ -33,7 +33,7 @@ package("assimp")
     add_patches("v5.2.3", path.join(os.scriptdir(), "patches", "5.2.3", "cmake_static_crt.patch"), "3872a69976055bed9e40814e89a24a3420692885b50e9f9438036e8d809aafb4")
     add_patches("v5.2.4", path.join(os.scriptdir(), "patches", "5.2.4", "fix_x86_windows_build.patch"), "becb4039c220678cf1e888e3479f8e68d1964c49d58f14c5d247c86b4a5c3293")
     add_patches("v5.4.3", path.join(os.scriptdir(), "patches", "5.4.3", "fix_mingw.patch"), "2498bb9438a0108becf1c514fcbfc103e012638914c9d21160572ed24a9fa3b3")
-    add_patches("<=v6.0.6", path.join(os.scriptdir(), "patches", "6.0.x", "fix_poly2tri_include.patch"), "84c1ab309fe73243be2d459a2e0cca32e1853de6c110f937bda41490e0595482")
+    add_patches(">=5.4.3", path.join(os.scriptdir(), "patches", "6.0.x", "fix_poly2tri_include.patch"), "84c1ab309fe73243be2d459a2e0cca32e1853de6c110f937bda41490e0595482")
 
     if not is_host("windows") then
         add_extsources("pkgconfig::assimp")
