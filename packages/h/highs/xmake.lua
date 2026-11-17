@@ -6,6 +6,7 @@ package("highs")
     add_urls("https://github.com/ERGO-Code/HiGHS/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ERGO-Code/HiGHS.git")
 
+    add_versions("v1.16.0", "0fa9da512955fb08c6cca7bfb274ca12e8a0e8a12e44189bd6e0c355ce7701bc")
     add_versions("v1.15.1", "a840d269dff2fafb371dd247df13ad5e026d7ce3b35ad3dc1eedd59bf0c2fb16")
     add_versions("v1.14.0", "05931e8dd8c8cac514da8297003c31a206a0004d542b7da500810b85c87c20b9")
     add_versions("v1.13.1", "d491448e585dbf08cd8945ca5dcbbe3b784d73b9c68eea4e7456274619d56164")
