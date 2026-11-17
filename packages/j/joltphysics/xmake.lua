@@ -37,7 +37,7 @@ package("joltphysics")
     add_configs("double_precision", { description = "Compiles the library so that all positions are stored in doubles instead of floats. This makes larger worlds possible", default = false, type = "boolean" })
     add_configs("exceptions", { description = "Compile the library with C++ exceptions enabled. This adds some overhead and Jolt doesn't use exceptions so by default it is off.", default = false, type = "boolean" })
     add_configs("gpu_api", { description = "Compute backends. Used to perform computations on the GPU", default = nil, type = "string", values = {"cpu", "dx12", "mtl", "vk"}})
-    add_configs("object_layer_bits", {description = "Number of bits to use in ObjectLayer. Can be 16 or 32.", default = "16", type = "string", values = {"16", "32"}})
+    add_configs("object_layer_bits", {description = "Number of bits to use in ObjectLayer. Can be 16, 32 or 64.", default = "16", type = "string", values = {"16", "32", "64"}})
     add_configs("object_stream", { description = "Compile the ObjectStream class and RTTI attribute information", default = true, type = "boolean" })
     add_configs("rtti", { description = "Compile the library with C++ RTTI enabled. This adds some overhead and Jolt doesn't use RTTI so by default it is off.", default = false, type = "boolean" })
     add_configs("symbols", { description = "When turning this option on, the library will be compiled with debug symbols", default = false, type = "boolean" })
@@ -88,7 +88,9 @@ package("joltphysics")
         if package:config("shared") then
             package:add("defines", "JPH_SHARED_LIBRARY")
         end
-        if not package:is_debug() then
+        if package:is_debug() then
+            package:add("defines", "JPH_DEBUG")
+        else
             package:add("defines", "JPH_NO_DEBUG")
         end
         if package:config("object_stream") then
