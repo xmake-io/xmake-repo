@@ -6,6 +6,7 @@ package("mimalloc")
     set_urls("https://github.com/microsoft/mimalloc/archive/refs/tags/$(version).zip",
              "https://github.com/microsoft/mimalloc.git")
 
+    add_versions("v3.6.1", "e260cf2fb7def925b3199c3ce881f81dbdc135c01092aee0e0002538a3ac8593")
     add_versions("v3.5.3", "97e672db18c36093378e30cc234f4625ad37b95ca9a270336752d3f3011323e9")
     add_versions("v3.5.0", "3590f85899561c005a5aacd756a3b555c731a700dc70c87f1642030a57653007")
     add_versions("v3.4.1", "694237baa860589f1bfbfebf099933eadc9217376da47aad2c99b4f57b651028")
@@ -51,6 +52,12 @@ package("mimalloc")
         add_syslinks("atomic")
     end
 
+    on_load(function (package)
+        if package:is_plat("bsd") and not package:config("shared") and package:version() and package:version():eq("3.6.1") then
+            package:add("syslinks", "execinfo", "util")
+        end
+    end)
+
     on_install(function (package)
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "MI_SHARED_LIB")
@@ -64,6 +71,11 @@ package("mimalloc")
             "-DMI_BUILD_TESTS=OFF",
             "-DMI_BUILD_OBJECT=OFF",
         }
+
+        if package:is_plat("android") and package:version() and package:version():eq("3.6.1") then
+            -- Android's execinfo.h may not provide backtrace; use the unwinder fallback.
+            table.insert(configs, "-DMI_HAS_EXECINFOH=OFF")
+        end
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DMI_DEBUG_FULL=" .. (package:is_debug() and "ON" or "OFF"))
