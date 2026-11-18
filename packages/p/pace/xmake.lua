@@ -5,6 +5,7 @@ package("pace")
 
     add_urls("https://github.com/TabNahida/PACE/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/TabNahida/PACE.git")
+    add_versions("0.6.0", "0e3ef6b154c0727c4eff241d1ad94df953465848e499d35d121ac04ac81317ec")
     add_versions("0.5.0", "cb5e24bb2fbf0667d5783afa46b9ede52f6dcbf74fb4920551eca0732126423b")
     add_versions("0.4.0", "46957eec8edaecc1d0806810f9114a8bfd3af685dad44018579288151afbeed6")
     add_versions("0.3.1", "8688313d3051cfa9f034ae1ec34d0def94677754fb4336ccf7881ebfa3b95d39")
@@ -15,6 +16,8 @@ package("pace")
     add_configs("websocket", {description = "Enable WebSocket.", default = true, type = "boolean"})
     add_configs("tls", {description = "Enable TLS/HTTPS with OpenSSL.", default = false, type = "boolean"})
     add_configs("dns", {description = "Enable asynchronous DNS with c-ares.", default = false, type = "boolean"})
+    add_configs("modules", {description = "Provide the C++20 named module (PACE >= 0.6.0).", default = false, type = "boolean"})
+    add_configs("quic_backend", {description = "Select the QUIC transport (auto uses the release default).", default = "auto", values = {"auto", "ngtcp2", "openssl"}})
     add_configs("quic", {description = "Enable QUIC (POSIX only).", default = false, type = "boolean"})
     add_configs("http2", {description = "Enable HTTP/2 with nghttp2.", default = false, type = "boolean"})
     add_configs("http3", {description = "Enable HTTP/3 and QUIC (POSIX only).", default = false, type = "boolean"})
@@ -38,6 +41,19 @@ package("pace")
         end
         if package:config("tls") or quic then
             package:add("deps", "openssl3 3.5.7")
+        end
+        local modern = not package:version() or package:version():ge("0.6.0")
+        if package:config("modules") then
+            assert(modern, "package(pace): named modules require PACE >= 0.6.0")
+            package:add("links", "pace_module")
+        end
+        if quic and package:config("quic_backend") ~= "openssl" then
+            if modern then
+                package:add("deps", "ngtcp2 1.26.0", {configs = {openssl = "openssl3"}})
+                package:add("defines", "PACE_QUIC_NGTCP2")
+            else
+                assert(package:config("quic_backend") == "auto", "package(pace): ngtcp2 requires PACE >= 0.6.0")
+            end
         end
         if package:config("dns") then
             package:add("deps", "c-ares 1.34.8")
@@ -83,6 +99,12 @@ package("pace")
         if not package:version() or package:version():ge("0.5.0") then
             configs.uring = package:config("uring")
         end
+        if not package:version() or package:version():ge("0.6.0") then
+            configs.modules = package:config("modules")
+            if package:config("quic_backend") ~= "auto" then
+                configs.quic_backend = package:config("quic_backend")
+            end
+        end
         import("package.tools.xmake").install(package, configs)
     end)
 
@@ -92,6 +114,9 @@ package("pace")
         assert(package:check_cxxsnippets({test = ([[
             void test() {
                 pace::run([]() -> pace::task<void> { co_await pace::yield(); });
+            #ifdef PACE_HAS_QUIC
+                pace::quic::context context;
+            #endif
             #ifdef PACE_HAS_HTTP1
                 pace::http::app app;
                 app.get("/", [] { return pace::http::text("ok"); });
