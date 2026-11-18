@@ -6,6 +6,7 @@ package("srtp")
     add_urls("https://github.com/cisco/libsrtp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/cisco/libsrtp.git")
 
+    add_versions("v2.8.2", "02e8326e12381e27a205ded888a803c6ff55ec7be170cd5e5506251f731fee92")
     add_versions("v2.8.1", "ef5569220749529d778013aae1178391d972570a2b4f7288dda22effa875b07c")
     add_versions("v2.8", "8d646ca48101373fd19c55363bfbc67e12dc66a36ce069ac3167a04d34a4acbb")
     add_versions("v2.7", "6ef3034c8facb39bf7fe1a4ff34ba5109725cc7c27b2bcb47ac7fdc58fba49d9")
