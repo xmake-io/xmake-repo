@@ -6,6 +6,7 @@ package("assimp")
     set_urls("https://github.com/assimp/assimp/archive/refs/tags/$(version).zip",
              "https://github.com/assimp/assimp.git")
 
+    add_versions("v6.0.6", "951667a2d0f2068456a34ef017645d82e0f3d0eabc36440384fbe3054f665407")
     add_versions("v6.0.5", "89e477e89df739ecc7dd21874897ac2e70c8944eb1074fbdbbdbf4dd2de6a403")
     add_versions("v6.0.4", "1eeb63f3e6f6c9d820cc52f7d44fa6b6557256330f45ddaa903aa658c47fece5")
     add_versions("v6.0.3", "e9b3208513aa4566955a45cc085e031f7053e28f2e6a0e33d1657450bd0519c5")
@@ -32,6 +33,7 @@ package("assimp")
     add_patches("v5.2.3", path.join(os.scriptdir(), "patches", "5.2.3", "cmake_static_crt.patch"), "3872a69976055bed9e40814e89a24a3420692885b50e9f9438036e8d809aafb4")
     add_patches("v5.2.4", path.join(os.scriptdir(), "patches", "5.2.4", "fix_x86_windows_build.patch"), "becb4039c220678cf1e888e3479f8e68d1964c49d58f14c5d247c86b4a5c3293")
     add_patches("v5.4.3", path.join(os.scriptdir(), "patches", "5.4.3", "fix_mingw.patch"), "2498bb9438a0108becf1c514fcbfc103e012638914c9d21160572ed24a9fa3b3")
+    add_patches(">=5.4.3", path.join(os.scriptdir(), "patches", "6.0.x", "fix_poly2tri_include.patch"), "6f87a8ba6207e843337311512833909153aef16cd57f8de6e5c51ae7f568b5a4")
 
     if not is_host("windows") then
         add_extsources("pkgconfig::assimp")

@@ -1,0 +1,12 @@
+diff --git a/contrib/poly2tri/poly2tri/common/shapes.h b/contrib/poly2tri/poly2tri/common/shapes.h
+index fe32a297c..470f63c8a 100644
+--- a/contrib/poly2tri/poly2tri/common/shapes.h
++++ b/contrib/poly2tri/poly2tri/common/shapes.h
+@@ -35,6 +35,7 @@
+ 
+ #include <cmath>
+ #include <cstddef>
++#include <ostream>
+ #include <stdexcept>
+ #include <vector>
+ 
