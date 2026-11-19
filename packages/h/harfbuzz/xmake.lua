@@ -77,6 +77,10 @@ package("harfbuzz")
         local configs = {"-Dtests=disabled", "-Ddocs=disabled", "-Dbenchmark=disabled", "-Dcairo=disabled"}
         if package:is_plat("macosx") then
             table.insert(configs, "-Dcoretext=enabled")
+        elseif package:is_plat("iphoneos") or package:is_plat("wasm") then
+            -- xmake's Meson cross file has no Objective-C++ compiler entry.
+            -- Emscripten cannot link hb-gpu-encode-all with its threaded setup.
+            table.insert(configs, "-Dgpu=disabled")
         end
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         table.insert(configs, "-Dicu=" .. (package:config("icu") and "enabled" or "disabled"))
@@ -92,7 +96,7 @@ package("harfbuzz")
             opt.cxxflags = {"-U_GLIBCXX_ASSERTIONS", "-D_GLIBCXX_NO_ASSERTIONS"}
         end
 
-        local envs
+        local envs = import("package.tools.meson").buildenvs(package, opt)
         -- meson may use cmake to find dependencies
         if xmake.version():lt("2.9.9") then
             local CMAKE_LIBRARY_PATH = {}
@@ -110,10 +114,18 @@ package("harfbuzz")
                     table.join2(CMAKE_PREFIX_PATH, dep:installdir())
                 end
             end
-            envs = import("package.tools.meson").buildenvs(package, opt)
             envs.CMAKE_LIBRARY_PATH = path.joinenv(CMAKE_LIBRARY_PATH)
             envs.CMAKE_INCLUDE_PATH = path.joinenv(CMAKE_INCLUDE_PATH)
             envs.CMAKE_PREFIX_PATH  = path.joinenv(CMAKE_PREFIX_PATH)
+        end
+
+        -- pkg-config on MSYS2 only accepts Cygwin paths and ':' separators.
+        if package:is_plat("windows", "mingw") and is_subhost("msys") then
+            local PKG_CONFIG_PATH = {}
+            for _, pkgconfig in ipairs(path.splitenv(envs.PKG_CONFIG_PATH or "")) do
+                table.insert(PKG_CONFIG_PATH, path.cygwin(pkgconfig))
+            end
+            envs.PKG_CONFIG_PATH = path.joinenv(PKG_CONFIG_PATH, ":")
         end
         opt.envs = envs
         import("package.tools.meson").install(package, configs, opt)
