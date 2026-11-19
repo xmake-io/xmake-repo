@@ -7,6 +7,7 @@ package("emhash")
     add_urls("https://github.com/ktprime/emhash/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ktprime/emhash.git")
 
+    add_versions("v1.3.0", "94327989a23eb6027d81b267c607a0a5c62d47deb0db3eb22cbdc580a165ba74")
     add_versions("v1.2.0", "dead6c7f83233eb0d1531353642728eba379a5bfbb2031dc01a11a923027c923")
     add_versions("v1.1.0", "16bc5c16eb3795e20930b7c613d2485dbac1db26f271aed865768c860511c601")
     add_versions("v1.0.1", "dbcce726c5ccce4a260a2c5ca9aa239e4d6109aacb3b5097ebfa465247708a7b")
