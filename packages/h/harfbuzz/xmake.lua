@@ -84,6 +84,14 @@ package("harfbuzz")
         table.insert(configs, "-Dglib=" .. (package:config("glib") and "enabled" or "disabled"))
         table.insert(configs, "-Dgobject=" .. (package:config("glib") and "enabled" or "disabled"))
 
+        local opt = {packagedeps = {"freetype", "libintl", "libiconv", "pcre2"}}
+        if package:has_tool("cxx", "gcc", "g++", "gxx", "clang", "clang++", "clangxx") then
+            -- HarfBuzz uses the C linker to avoid a libstdc++ runtime dependency.
+            -- Disable libstdc++ assertions that otherwise add unresolved symbols
+            -- to unoptimized C++ objects.
+            opt.cxxflags = {"-U_GLIBCXX_ASSERTIONS", "-D_GLIBCXX_NO_ASSERTIONS"}
+        end
+
         local envs
         -- meson may use cmake to find dependencies
         if xmake.version():lt("2.9.9") then
@@ -107,7 +115,8 @@ package("harfbuzz")
             envs.CMAKE_INCLUDE_PATH = path.joinenv(CMAKE_INCLUDE_PATH)
             envs.CMAKE_PREFIX_PATH  = path.joinenv(CMAKE_PREFIX_PATH)
         end
-        import("package.tools.meson").install(package, configs, {envs = envs, packagedeps = {"freetype", "libintl", "libiconv", "pcre2"}})
+        opt.envs = envs
+        import("package.tools.meson").install(package, configs, opt)
     end)
 
     on_test(function (package)
