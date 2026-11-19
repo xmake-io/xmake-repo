@@ -6,6 +6,7 @@ package("harfbuzz")
     add_urls("https://github.com/harfbuzz/harfbuzz/archive/refs/tags/$(version).tar.gz", {excludes = "**/README", "**/test"})
     add_urls("https://github.com/harfbuzz/harfbuzz.git")
 
+    add_versions("15.0.0", "fe4b8bad7afbbae75d61b2095c267c98f4ed04fe4a117680130ed253d2732efe")
     add_versions("13.1.1", "8497968914f415d633c7ff885f58862667c40b79d2f04031951a5d04e91d1090")
     add_versions("11.3.3", "5563e1eeea7399c37dc7f0f92a89bbc79d8741bbdd134d22d2885ddb95944314")
     add_versions("11.2.1", "057d5754c3ac0c499bbf4d729d52acf134c7bb4ba8868ba22e84ae96bc272816")
@@ -76,6 +77,10 @@ package("harfbuzz")
         local configs = {"-Dtests=disabled", "-Ddocs=disabled", "-Dbenchmark=disabled", "-Dcairo=disabled"}
         if package:is_plat("macosx") then
             table.insert(configs, "-Dcoretext=enabled")
+        elseif package:is_plat("iphoneos") or package:is_plat("wasm") then
+            -- xmake's Meson cross file has no Objective-C++ compiler entry.
+            -- Emscripten cannot link hb-gpu-encode-all with its threaded setup.
+            table.insert(configs, "-Dgpu=disabled")
         end
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         table.insert(configs, "-Dicu=" .. (package:config("icu") and "enabled" or "disabled"))
@@ -83,7 +88,15 @@ package("harfbuzz")
         table.insert(configs, "-Dglib=" .. (package:config("glib") and "enabled" or "disabled"))
         table.insert(configs, "-Dgobject=" .. (package:config("glib") and "enabled" or "disabled"))
 
-        local envs
+        local opt = {packagedeps = {"freetype", "libintl", "libiconv", "pcre2"}}
+        if package:has_tool("cxx", "gcc", "g++", "gxx", "clang", "clang++", "clangxx") then
+            -- HarfBuzz uses the C linker to avoid a libstdc++ runtime dependency.
+            -- Disable libstdc++ assertions that otherwise add unresolved symbols
+            -- to unoptimized C++ objects.
+            opt.cxxflags = {"-U_GLIBCXX_ASSERTIONS", "-D_GLIBCXX_NO_ASSERTIONS"}
+        end
+
+        local envs = import("package.tools.meson").buildenvs(package, opt)
         -- meson may use cmake to find dependencies
         if xmake.version():lt("2.9.9") then
             local CMAKE_LIBRARY_PATH = {}
@@ -101,12 +114,21 @@ package("harfbuzz")
                     table.join2(CMAKE_PREFIX_PATH, dep:installdir())
                 end
             end
-            envs = import("package.tools.meson").buildenvs(package, opt)
             envs.CMAKE_LIBRARY_PATH = path.joinenv(CMAKE_LIBRARY_PATH)
             envs.CMAKE_INCLUDE_PATH = path.joinenv(CMAKE_INCLUDE_PATH)
             envs.CMAKE_PREFIX_PATH  = path.joinenv(CMAKE_PREFIX_PATH)
         end
-        import("package.tools.meson").install(package, configs, {envs = envs, packagedeps = {"freetype", "libintl", "libiconv", "pcre2"}})
+
+        -- pkg-config on MSYS2 only accepts Cygwin paths and ':' separators.
+        if package:is_plat("windows", "mingw") and is_subhost("msys") then
+            local PKG_CONFIG_PATH = {}
+            for _, pkgconfig in ipairs(path.splitenv(envs.PKG_CONFIG_PATH or "")) do
+                table.insert(PKG_CONFIG_PATH, path.cygwin(pkgconfig))
+            end
+            envs.PKG_CONFIG_PATH = path.joinenv(PKG_CONFIG_PATH, ":")
+        end
+        opt.envs = envs
+        import("package.tools.meson").install(package, configs, opt)
     end)
 
     on_test(function (package)
