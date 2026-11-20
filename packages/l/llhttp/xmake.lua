@@ -5,6 +5,7 @@ package("llhttp")
 
     add_urls("https://github.com/nodejs/llhttp/archive/refs/tags/release/$(version).tar.gz")
 
+    add_versions("v9.4.4", "5600adb1498f82a9c719b8eb19310021737388e0d92362a6d47be532710d3c96")
     add_versions("v9.4.3", "1eb813c7437b31a87496a1cd3ed79f00746720f5e7e29c79b42c02cb69f36c39")
     add_versions("v9.4.2", "ba717a2f99f340a0ee9796aaf2b1acca057e1e37682ffd2bc4def4d3b6bc4005")
     add_versions("v9.4.1", "86a8c16759fdcc7aa2c9841fbe8ba2e77ea98be7d5d45615f2604776d0ff78c7")
