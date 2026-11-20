@@ -46,12 +46,17 @@ package("ngtcp2")
         end
     end)
 
-    on_install("macosx", "linux", "windows", "android", "mingw", function (package)
+    on_install("macosx", "linux", "bsd", "windows", "android", "mingw", function (package)
         local configs = {"-DBUILD_TESTING=OFF"}
         local openssl = package:config("openssl")
         if openssl then
             local openssl_dep = package:dep(openssl)
             table.insert(configs, "-DENABLE_OPENSSL=ON")
+            if package:is_plat("bsd") and openssl_dep and not openssl_dep:config("shared") then
+                -- The QUIC API probe links static libssl and libcrypto.
+                table.insert(configs, "-DOPENSSL_USE_STATIC_LIBS=TRUE")
+                table.insert(configs, "-DCMAKE_REQUIRED_LINK_OPTIONS=-pthread")
+            end
             if openssl_dep and not openssl_dep:is_system() then
                 table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl_dep:installdir())
             end
