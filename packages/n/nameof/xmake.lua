@@ -8,6 +8,7 @@ package("nameof")
     add_urls("https://github.com/Neargye/nameof/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/Neargye/nameof.git")
 
+    add_versions("0.12.0", "119e14d6a59414611cfc777b21223d86ccb1ea89235eb1463764d2c3ab97298a")
     add_versions("0.11.0", "df6b6c30dfd7dd41995af4fc30d341b318d048465aceebbf861fc441fa6b051d")
     add_versions("0.10.5", "f49711ae02f8f16477740818d95ee55632b60ca8dd6b5a607188e16cc8a594dd")
     add_versions("0.10.4", "b67ed2155a32760067eee0d33c727b9badfd8c12393ebbe3b7ab219b4faa0149")
