@@ -7,6 +7,7 @@ package("daw_header_libraries")
     add_urls("https://github.com/beached/header_libraries/archive/refs/tags/$(version).tar.gz",
              "https://github.com/beached/header_libraries.git")
 
+    add_versions("v2.136.0", "b219dddac0e66700b4e62ba3f531d6c7a5d1208c46494e0b28bd85e1c657f530")
     add_versions("v2.135.0", "212398602bb6c3f2fe3eb86b8ca0d1959934f51f4960e0c657490b6828beb319")
     add_versions("v2.132.2", "ed214d748c9c18418c939f42bd712fc57612214373836d9350320fa3841c39ef")
     add_versions("v2.132.1", "20bbb68aceb569810f7000fc804e205b32b06072dacdf10fc18c3d448bbd3ff6")
