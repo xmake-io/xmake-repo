@@ -5,6 +5,7 @@ package("hiredis")
 
     add_urls("https://github.com/redis/hiredis/archive/refs/tags/$(version).tar.gz",
              "https://github.com/redis/hiredis.git")
+    add_versions("v1.5.1", "f5ec19151c0f4f15ca018c22b17b6f6739a672a4fc0c085b692aef69a154ebef")
     add_versions("v1.5.0", "eec7ef8641d221e144a58d5ef8d733c8c75c7fd487097a233aacb4fa33981cfb")
     add_versions("v1.4.1", "ca3180359a8b1275838a45415851f8cd5c411e27bdbf18f4823012e45507d2e4")
     add_versions("v1.4.0", "5fa6e719e59cd4f8ae435c52a18ac4035d135251f9ee54e7a045bccf59107ed8")
