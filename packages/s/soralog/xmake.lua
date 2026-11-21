@@ -6,9 +6,8 @@ package("soralog")
     add_urls("https://github.com/xDimon/soralog/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/xDimon/soralog.git")
 
-    add_versions("0.3.2", "fbb408e0af7eb61557ee3386a3cb97a24ea6b968f922e3abb4089cb541fa1557")
+    add_versions("0.3.2", "ef217cfd4dc9cb578e06ac1cd4308417da9589ce28d13dcad0af88b401116d59")
 
-    add_linkdirs("lib/soralog")
     add_links("configurator_yaml", "fallback_configurator", "soralog", "logging_system",
               "sink_to_nowhere", "sink_to_console", "sink_to_file", "sink_to_syslog", "multisink")
     if is_plat("linux") then
