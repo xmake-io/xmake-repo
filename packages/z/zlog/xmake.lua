@@ -6,6 +6,7 @@ package("zlog")
     add_urls("https://github.com/HardySimpson/zlog/archive/refs/tags/$(version).tar.gz",
              "https://github.com/HardySimpson/zlog.git")
 
+    add_versions("1.2.20", "432723ccd9a5b07ec1e4b8cc985d9011d768633b1e4c4facfc0e3e9a7ad5fcf7")
     add_versions("1.2.19", "475df1b30be64190fd692de834ad4c45510f996188b5ecd4b6e3da2527c74a32")
     add_versions("1.2.18", "3977dc8ea0069139816ec4025b320d9a7fc2035398775ea91429e83cb0d1ce4e")
     add_versions("1.2.17", "7fe412130abbb75a0779df89ae407db5d8f594435cc4ff6b068d924e13fd5c68")
