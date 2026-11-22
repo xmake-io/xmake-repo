@@ -6,7 +6,7 @@ package("libsdl3")
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::SDL3")
     elseif is_plat("linux") then
-        add_extsources("pacman::sdl3", "apt::libsdl3-dev")
+        add_extsources("pacman::sdl3", "apt::libsdl3-dev", "dnf::SDL3-devel")
     elseif is_plat("macosx") then
         add_extsources("brew::sdl3")
     end
