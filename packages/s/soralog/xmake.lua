@@ -24,6 +24,12 @@ package("soralog")
     add_deps("cmake")
     add_deps("fmt", "yaml-cpp")
 
+    if on_check then
+        on_check("mingw", function (package)
+            assert(not package:is_arch("i386", "x86"), "package(soralog) unsupported on mingw/i386: package(fmt) does not support it")
+        end)
+    end
+
     on_install("linux", "macosx", "bsd", "cross", "windows", "mingw", function (package)
         local configs = {
             "-DPACKAGE_MANAGER=none",
