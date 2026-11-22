@@ -5,6 +5,7 @@ package("libbpf")
 
     add_urls("https://github.com/libbpf/libbpf/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libbpf/libbpf.git")
+    add_versions("v1.8.0", "b7a1e685f90f6a63ead0dd85d053694b222975da8d09c1a966041cff6f0055ff")
     add_versions("v1.7.0", "7ab5feffbf78557f626f2e3e3204788528394494715a30fc2070fcddc2051b7b")
     add_versions("v1.6.3", "989ed3c1a3db8ff0f7c08dd43953c6b9d0c3ac252653a48d566aaedf98bc80ca")
     add_versions("v1.6.2", "16f31349c70764cba8e0fad3725cc9f52f6cf952554326aa0229daaa21ef4fbd")
