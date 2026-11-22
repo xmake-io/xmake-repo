@@ -7,6 +7,7 @@ package("tabulate")
     add_urls("https://github.com/p-ranav/tabulate/archive/refs/tags/$(version).tar.gz",
              "https://github.com/p-ranav/tabulate.git")
 
+    add_versions("v2.2", "3c12853cbf103adf659c4821351a302351d139513f1c43528095da41e8a37044")
     add_versions("v1.5", "16b289f46306283544bb593f4601e80d6ea51248fde52e910cc569ef08eba3fb")
 
     on_install(function (package)
