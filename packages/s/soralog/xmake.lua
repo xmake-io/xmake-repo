@@ -6,10 +6,17 @@ package("soralog")
     add_urls("https://github.com/xDimon/soralog/archive/refs/tags/$(version).tar.gz",
              "https://github.com/xDimon/soralog.git")
 
-    add_versions("v0.3.2", "ef217cfd4dc9cb578e06ac1cd4308417da9589ce28d13dcad0af88b401116d59")
+    add_versions("v0.4.0", "37189982fc74d4586fd88cbf98a530dde0fd72a7cccea2e0419833b34a211770")
 
-    add_links("configurator_yaml", "fallback_configurator", "soralog", "logging_system",
-              "sink_to_nowhere", "sink_to_console", "sink_to_file", "sink_to_syslog", "multisink")
+    -- The syslog sink is built everywhere but on Windows, the Event Log sink on Windows only
+    if is_plat("windows", "mingw") then
+        add_links("configurator_yaml", "fallback_configurator", "soralog", "logging_system",
+                  "sink_to_nowhere", "sink_to_console", "sink_to_file", "sink_to_eventlog", "multisink", "sink")
+        add_syslinks("advapi32")
+    else
+        add_links("configurator_yaml", "fallback_configurator", "soralog", "logging_system",
+                  "sink_to_nowhere", "sink_to_console", "sink_to_file", "sink_to_syslog", "multisink", "sink")
+    end
     if is_plat("linux", "bsd", "cross") then
         add_syslinks("pthread")
     end
@@ -17,7 +24,7 @@ package("soralog")
     add_deps("cmake")
     add_deps("fmt", "yaml-cpp")
 
-    on_install("linux", "macosx", "bsd", "cross", function (package)
+    on_install("linux", "macosx", "bsd", "cross", "windows", "mingw", function (package)
         local configs = {
             "-DPACKAGE_MANAGER=none",
             "-DBUILD_TESTS=OFF",
