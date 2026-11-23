@@ -6,7 +6,7 @@ package("libsdl3")
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::SDL3")
     elseif is_plat("linux") then
-        add_extsources("pacman::sdl3", "apt::libsdl3-dev", "dnf::SDL3-devel")
+        add_extsources("pacman::sdl3", "apt::libsdl3-dev")
     elseif is_plat("macosx") then
         add_extsources("brew::sdl3")
     end
@@ -141,24 +141,14 @@ package("libsdl3")
         end
 
         if package:is_plat("linux", "bsd", "cross") then
-            if package:config("x11") then
-                packagedeps = table.join2(packagedeps or {}, {
-                    "libxcursor", "libxext", "libxfixes", "libxcb", "libx11",
-                    "libxi", "libxrandr", "libxrender", "libxss", "xorgproto"
-                })
-            end
-
-            if package:config("wayland") then
-                packagedeps = table.join2(packagedeps or {}, {"wayland"})
-            end
-
+            packagedeps = table.join2(packagedeps or {}, {"libxcursor", "libxext", "libxfixes", "libxcb", "libx11", "libxi", "libxrandr", "libxrender", "libxss", "xorgproto", "wayland"})
         elseif package:is_plat("wasm") then
             -- emscripten enables USE_SDL by default which will conflict with libsdl headers
             cflags = {"-sUSE_SDL=0"}
         end
 
         local includedirs = {}
-        for _, depname in ipairs(packagedeps or {}) do
+        for _, depname in ipairs(packagedeps) do
             local dep = package:dep(depname)
             if dep then
                 local depfetch = dep:fetch()
@@ -169,12 +159,10 @@ package("libsdl3")
                 end
             end
         end
-
         if #includedirs > 0 then
             includedirs = table.unique(includedirs)
             table.insert(configs, "-DCMAKE_INCLUDE_PATH=" .. table.concat(includedirs, ";"))
             cflags = cflags or {}
-
             for _, includedir in ipairs(includedirs) do
                 table.insert(cflags, "-I" .. includedir)
             end
