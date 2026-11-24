@@ -33,10 +33,17 @@ package("fastgltf")
         table.insert(configs, "-DFASTGLTF_USE_CUSTOM_SMALLVECTOR=" .. (package:config("small_vector") and "ON" or "OFF"))
         table.insert(configs, "-DFASTGLTF_DISABLE_CUSTOM_MEMORY_POOL=" .. (package:config("memory_pool") and "ON" or "OFF"))
         table.insert(configs, "-DFASTGLTF_USE_64BIT_FLOAT=" .. (package:config("f64") and "ON" or "OFF"))
-        table.insert(configs, "-DFASTGLTF_COMPILE_AS_CPP20=" .. ((package:config("cxx_standard") == "20") and "ON" or "OFF"))
+        if package:version() and package:version():lt("1.0.0") then
+            table.insert(configs, "-DFASTGLTF_COMPILE_AS_CPP20=" .. ((package:config("cxx_standard") == "20") and "ON" or "OFF"))
+        end
+        table.insert(configs, "-DFASTGLTF_DOWNLOAD_SIMDJSON=OFF")
         import("package.tools.cmake").install(package, configs, {packagedeps = "simdjson"})
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("fastgltf::Parser", {configs = {languages = "c++" .. package:config("cxx_standard")}, includes = "fastgltf/core.hpp"}))
+        local languages = "c++" .. package:config("cxx_standard")
+        if package:version() and package:version():ge("1.0.0") then
+            languages = "c++20"
+        end
+        assert(package:has_cxxtypes("fastgltf::Parser", {configs = {languages = languages}, includes = "fastgltf/core.hpp"}))
     end)
