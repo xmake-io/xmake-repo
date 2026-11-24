@@ -11,6 +11,7 @@ package("tabulate")
     add_versions("v1.5", "16b289f46306283544bb593f4601e80d6ea51248fde52e910cc569ef08eba3fb")
 
     on_install(function (package)
+        io.replace("include/tabulate/variant_lite.hpp", "#include <utility>", "#include <utility>\n#include <exception>", {plain = true})
         os.cp("include", package:installdir())
     end)
 
