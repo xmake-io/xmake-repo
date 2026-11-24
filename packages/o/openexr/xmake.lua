@@ -6,6 +6,7 @@ package("openexr")
     add_urls("https://github.com/AcademySoftwareFoundation/openexr/archive/refs/tags/$(version).tar.gz",
              "https://github.com/AcademySoftwareFoundation/openexr.git")
 
+    add_versions("v3.5.4", "cedafe3171176d20baea4e887ceacc74cbe3a5a06fbb30d9f0a394a4416e5f7b")
     add_versions("v3.4.14", "13c3327100a7b92e4c6a048db03ef07ee2db8e79baa4c517c6fae71e5b80034b")
     add_versions("v3.4.13", "1ed0cee48ac8c77da235c8ca8ab85d031d43cd790eda36af87fed4cf316cf2df")
     add_versions("v3.4.12", "a455779c389f65c64220d45b63ead2900081e5f6337cdf93431cb1032c3e2686")
@@ -81,6 +82,9 @@ package("openexr")
     on_load(function (package)
         local ver = assert(package:version(), "package(openexr) require version number")
         local suffix = format("-%d_%d", ver:major(), ver:minor())
+        if ver:ge("3.5.0") then
+            package:add("deps", "zstd >=1.5.0")
+        end
         if ver:ge("3.4.0") then
             package:add("deps", "openjph")
         end
