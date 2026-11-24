@@ -82,6 +82,9 @@ package("openexr")
     on_load(function (package)
         local ver = assert(package:version(), "package(openexr) require version number")
         local suffix = format("-%d_%d", ver:major(), ver:minor())
+        if ver:ge("3.5.0") then
+            package:add("deps", "zstd >=1.5.0")
+        end
         if ver:ge("3.4.0") then
             package:add("deps", "openjph")
         end
