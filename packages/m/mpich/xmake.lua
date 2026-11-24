@@ -5,6 +5,7 @@ package("mpich")
     add_urls("https://github.com/pmodels/mpich/releases/download/v$(version)/mpich-$(version).tar.gz",
              "https://www.mpich.org/static/downloads/$(version)/mpich-$(version).tar.gz")
 
+    add_versions("5.0.2", "928c2f18d350a91443fe8024ad01ce2c6009e9c551e0a73e797fc567f119137d")
     add_versions("3.4.2", "5c19bea8b84e8d74cca5f047e82b147ff3fba096144270e3911ad623d6c587bf")
     add_patches("3.4.2", "patches/3.4.2/fix-cacheline-mutex.patch", "a0e67d86e0691e962d2e34fee1a789fbd0b8f382eb064499e49a94d626206a26")
 
