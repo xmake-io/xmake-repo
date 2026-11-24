@@ -20,6 +20,8 @@ package("kokkos-kernels")
     add_versions("4.2.01", "058052b3a40f5d4e447b7ded5c480f1b0d4aa78373b0bc7e43804d0447c34ca8")
     add_versions("4.0.01", "3f493fcb0244b26858ceb911be64092fbf7785616ad62c81abde0ea1ce86688a")
 
+    add_patches("5.3.0", "patches/5.3.0/msvc-14.52-ice.patch", "0da010a66f655b6f4c20ee512f530bb7c148b870f0c96b8a0be05af75f3681fd")
+
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end

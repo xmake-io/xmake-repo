@@ -1,0 +1,20 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 3fc4bc8..d41f03d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -200,7 +200,14 @@ else()
+     "Enable building and installation of experimental KokkosKernels features. Default: OFF"
+     OFF)
+ 
+-  kokkoskernels_add_option("ADD_DEFAULT_ETI" ON BOOL
++  # MSVC 14.52 currently hits an internal compiler error in mdspan while
++  # compiling the default explicit template instantiations.
++  if(MSVC AND MSVC_VERSION GREATER_EQUAL 1952)
++    set(KOKKOSKERNELS_ADD_DEFAULT_ETI_DEFAULT OFF)
++  else()
++    set(KOKKOSKERNELS_ADD_DEFAULT_ETI_DEFAULT ON)
++  endif()
++  kokkoskernels_add_option("ADD_DEFAULT_ETI" ${KOKKOSKERNELS_ADD_DEFAULT_ETI_DEFAULT} BOOL
+     "Whether to include a set of default ETI instantiations (otherwise only those explicitly requested will be included")
+ 
+   kokkoskernels_add_option("ETI_ONLY" OFF BOOL
