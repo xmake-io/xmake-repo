@@ -6,6 +6,7 @@ package("kokkos-kernels")
     add_urls("https://github.com/kokkos/kokkos-kernels/archive/refs/tags/$(version).tar.gz",
              "https://github.com/kokkos/kokkos-kernels.git")
 
+    add_versions("5.3.0", "c09527d7f255c24ef285c5cf305f1b04c04a8ada2c1fc139bcb772ad27804012")
     add_versions("5.2.1", "e795ee926dfc7da3594aeea25152612afe761cfe34e3b4c032c2e30a2ca26882")
     add_versions("5.2.0", "083da4c4f69f0b4169c4b295c6dd09642aabbab455caff8d9614d178346e750f")
     add_versions("5.1.1", "d45c30388ff4d4e80edf320f905a6674f4f323a1e2c30d959c596de4623c6644")
@@ -18,6 +19,8 @@ package("kokkos-kernels")
     add_versions("4.3.00", "03c3226ee97dbca4fa56fe69bc4eefa0673e23c37f2741943d9362424a63950e")
     add_versions("4.2.01", "058052b3a40f5d4e447b7ded5c480f1b0d4aa78373b0bc7e43804d0447c34ca8")
     add_versions("4.0.01", "3f493fcb0244b26858ceb911be64092fbf7785616ad62c81abde0ea1ce86688a")
+
+    add_patches("5.3.0", "patches/5.3.0/msvc-14.52-ice.patch", "0da010a66f655b6f4c20ee512f530bb7c148b870f0c96b8a0be05af75f3681fd")
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
