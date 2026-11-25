@@ -176,7 +176,8 @@ install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/gladsources/glad/include/" TYPE I
             local api = package:config("api")
             local gl_version = package:config("gl_version")
             if (not api or api == "" or api:find("gl", 1, true)) and (not gl_version or gl_version:lower() ~= "none") then
-                assert(package:has_cfuncs("gladLoadGL", {includes = "glad/gl.h"}))
+                local func = package:config("multicontext") and "gladLoadGLContext" or "gladLoadGL"
+                assert(package:has_cfuncs(func, {includes = "glad/gl.h"}))
             end
         else
             assert(package:has_cfuncs("gladLoadGL", {includes = "glad/glad.h"}))
