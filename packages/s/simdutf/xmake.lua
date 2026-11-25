@@ -56,10 +56,14 @@ package("simdutf")
     end)
 
     on_test(function (package)
+        local languages = "c++11"
+        if package:version() and package:version():ge("9.0.0") then
+            languages = "c++17"
+        end
         assert(package:check_cxxsnippets({test = [[
             #include <simdutf.h>
             void test() {
                 bool validutf8 = simdutf::validate_utf8("1234", 4);
             }
-        ]]}, {configs = {languages = "c++11"}}))
+        ]]}, {configs = {languages = languages}}))
     end)
