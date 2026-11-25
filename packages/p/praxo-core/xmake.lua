@@ -5,6 +5,7 @@ package("praxo-core")
 
     add_urls("https://github.com/axisvela/praxo-core/archive/refs/tags/c/v$(version).tar.gz")
     add_versions("0.13.0", "ec14a35a635da7569ccc3d3a986cfbcd93d210c2a8e1c74f078654b18c92b136")
+    add_patches("0.13.0", "patches/0.13.0/mingw-time.patch", "a568b06946594effec7dca08f440ecdf09a2b788ddc9c79f95a05cc3b45ffe6a")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
@@ -24,29 +25,6 @@ package("praxo-core")
 
     on_install(function (package)
         os.cd("language/c")
-        if package:is_plat("mingw") then
-            -- Older MinGW runtimes may not provide the C11 timespec_get API.
-            io.replace("src/harmovela.c", [[    struct timespec now;
-    if (timespec_get(&now, TIME_UTC) != TIME_UTC) {
-        return (long long)time(NULL) * 1000000000LL;
-    }
-    return (long long)now.tv_sec * 1000000000LL + (long long)now.tv_nsec;]], [[#if defined(TIME_UTC)
-    struct timespec now;
-    if (timespec_get(&now, TIME_UTC) != TIME_UTC) {
-        return (long long)time(NULL) * 1000000000LL;
-    }
-    return (long long)now.tv_sec * 1000000000LL + (long long)now.tv_nsec;
-#else
-    return (long long)time(NULL) * 1000000000LL;
-#endif]], {plain = true})
-            io.replace("src/otel.c", [[    struct timespec now;
-    long long stamp;
-    if (timespec_get(&now, TIME_UTC) == TIME_UTC) {
-        stamp = (long long)now.tv_sec * 1000000000LL + (long long)now.tv_nsec;
-    } else {
-        stamp = (long long)time(NULL) * 1000000000LL;
-    }]], [[    long long stamp = (long long)time(NULL) * 1000000000LL;]], {plain = true})
-        end
         import("package.tools.cmake").install(package, {"-DBUILD_TESTING=OFF"})
     end)
 
