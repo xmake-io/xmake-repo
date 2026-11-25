@@ -7,6 +7,7 @@ package("magic_enum")
     add_urls("https://github.com/Neargye/magic_enum/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Neargye/magic_enum.git")
 
+    add_versions("v0.10.0", "931ff9bc24e6e0712d524692dc95943b2679048be7e1732b9637134f6f2a58c1")
     add_versions("v0.9.8", "1e54959a3f3cb675938d858603ad69d0f3f7c82439fc2bf86d7232daec2bd10e")
     add_versions("v0.7.3", "b8d0cd848546fee136dc1fa4bb021a1e4dc8fe98e44d8c119faa3ef387636bf7")
     add_versions("v0.8.0", "5e7680e877dd4cf68d9d0c0e3c2a683b432a9ba84fc1993c4da3de70db894c3c")
