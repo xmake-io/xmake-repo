@@ -39,6 +39,13 @@ package("praxo-core")
 #else
     return (long long)time(NULL) * 1000000000LL;
 #endif]], {plain = true})
+            io.replace("src/otel.c", [[    struct timespec now;
+    long long stamp;
+    if (timespec_get(&now, TIME_UTC) == TIME_UTC) {
+        stamp = (long long)now.tv_sec * 1000000000LL + (long long)now.tv_nsec;
+    } else {
+        stamp = (long long)time(NULL) * 1000000000LL;
+    }]], [[    long long stamp = (long long)time(NULL) * 1000000000LL;]], {plain = true})
         end
         import("package.tools.cmake").install(package, {"-DBUILD_TESTING=OFF"})
     end)
