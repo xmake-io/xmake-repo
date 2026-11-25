@@ -6,6 +6,7 @@ package("minizip")
     add_urls("https://github.com/madler/zlib/archive/refs/tags/$(version).tar.gz",
              "https://github.com/madler/zlib.git")
 
+    add_versions("v1.4", "4331355048e286908260fdbeaa0b8cf75ceaf2907c75855a093a6487c7032aaa")
     add_versions("v1.3.2", "b99a0b86c0ba9360ec7e78c4f1e43b1cbdf1e6936c8fa0f6835c0cd694a495a1")
     add_versions("v1.3.1", "17e88863f3600672ab49182f217281b6fc4d3c762bde361935e436a95214d05c")
     add_versions("v1.2.10", "42cd7b2bdaf1c4570e0877e61f2fdc0bce8019492431d054d3d86925e5058dc5")
