@@ -20,6 +20,9 @@ target("xgrammar")
     set_kind("$(kind)")
     add_files("cpp/*.cc")
     add_files("cpp/support/*.cc")
+    if os.isdir("cpp/converter_ext") then
+        add_files("cpp/converter_ext/*.cc")
+    end
     if has_config("python_bindings") then
         add_files("cpp/nanobind/*.cc")
         add_packages("nanobind")
