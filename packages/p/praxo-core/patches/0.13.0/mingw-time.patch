@@ -1,0 +1,34 @@
+diff --git a/language/c/src/harmovela.c b/language/c/src/harmovela.c
+--- a/language/c/src/harmovela.c
++++ b/language/c/src/harmovela.c
+@@ -9,7 +9,11 @@ static long long default_clock(void *ctx) {
+     (void)ctx;
++#if defined(TIME_UTC)
+     struct timespec now;
+     if (timespec_get(&now, TIME_UTC) != TIME_UTC) {
+         return (long long)time(NULL) * 1000000000LL;
+     }
+     return (long long)now.tv_sec * 1000000000LL + (long long)now.tv_nsec;
++#else
++    return (long long)time(NULL) * 1000000000LL;
++#endif
+ }
+diff --git a/language/c/src/otel.c b/language/c/src/otel.c
+--- a/language/c/src/otel.c
++++ b/language/c/src/otel.c
+@@ -57,11 +57,15 @@ char *px_otel_payload(PxArena *arena, const PxOtelSink *sink,
+     PxValue *data = event->data != NULL && event->data->type == PX_OBJ
+         ? event->data : px_obj(arena);
+     char nanos[32];
++#if defined(TIME_UTC)
+     struct timespec now;
+     long long stamp;
+     if (timespec_get(&now, TIME_UTC) == TIME_UTC) {
+         stamp = (long long)now.tv_sec * 1000000000LL + (long long)now.tv_nsec;
+     } else {
+         stamp = (long long)time(NULL) * 1000000000LL;
+     }
++#else
++    long long stamp = (long long)time(NULL) * 1000000000LL;
++#endif
+     snprintf(nanos, sizeof(nanos), "%lld", stamp);
