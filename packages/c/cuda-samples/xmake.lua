@@ -7,6 +7,7 @@ package("cuda-samples")
 
     add_urls("https://github.com/NVIDIA/cuda-samples/archive/refs/tags/$(version).tar.gz",
              "https://github.com/NVIDIA/cuda-samples.git")
+    add_versions("v13.5", "71b53daea5605de8cf9405e3b44dbd2ef6d0bbb601de2336510e7ee336c4e224")
     add_versions("v13.4", "1206bf1f1bc1c4176af17826a7c72ac94c4caf0a4fed7b61379f0041965ed707")
     add_versions("v13.2", "c7d8da987a43fd6ed7c2641df204dfc639768adbae070bc22f9df0e03005f7de")
     add_versions("v13.1", "03d7748a773fcd2350c2de88f2d167252c78ea90a52e229e7eb2a6922e3ba350")
