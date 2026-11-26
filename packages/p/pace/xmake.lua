@@ -5,6 +5,7 @@ package("pace")
 
     add_urls("https://github.com/TabNahida/PACE/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/TabNahida/PACE.git")
+    add_versions("0.6.1", "d321789bc9c4156098ad8f638584a3fb75e880d548f4643d5b60bd6a823712ee")
     add_versions("0.6.0", "0e3ef6b154c0727c4eff241d1ad94df953465848e499d35d121ac04ac81317ec")
     add_versions("0.5.0", "cb5e24bb2fbf0667d5783afa46b9ede52f6dcbf74fb4920551eca0732126423b")
     add_versions("0.4.0", "46957eec8edaecc1d0806810f9114a8bfd3af685dad44018579288151afbeed6")
