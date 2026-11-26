@@ -5,6 +5,7 @@ package("aws-sdk-cpp")
 
     add_urls("https://github.com/aws/aws-sdk-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/aws/aws-sdk-cpp.git")
+    add_versions("1.11.938", "1dfa200a5ced5e479b345d0b3488d6b1980b42709173fe2ed51e02ef7a95e509")
     add_versions("1.11.921", "b33e13c4cf2237bb7e1f1f0d10a0a9d68072565bf7a49b3152c57d6c54f589d2")
     add_versions("1.11.916", "299541bb05052d1e4f5f0c7d0377ee6dae806a2772e951d57809db54d7373fa6")
     add_versions("1.11.850", "c76d012925933a5e0006e2d9915c7451f180f1651b5e4cd0cac144d9e3f27ae3")
