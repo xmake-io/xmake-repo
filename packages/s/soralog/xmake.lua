@@ -6,6 +6,7 @@ package("soralog")
     add_urls("https://github.com/xDimon/soralog/archive/refs/tags/$(version).tar.gz",
              "https://github.com/xDimon/soralog.git")
 
+    add_versions("v0.4.1", "1fdf89cf921f7416fc23b75d84fe4a442d5260c38852d3447ac8f9930aeea352")
     add_versions("v0.4.0", "ac8657a1cbe34873032b30e24037a40abaf19a50523942dc97e248ed270197da")
 
     -- The syslog sink is built everywhere but on Windows, the Event Log sink on Windows only
