@@ -10,6 +10,7 @@ package("beman-inplace-vector")
 
     if on_check then
         on_check("android", function (package)
+            -- ndk r22 ships a libc++ without <ranges>, which the header includes
             local ndk = package:toolchain("ndk"):config("ndkver")
             assert(ndk and tonumber(ndk) >= 27, "package(beman-inplace-vector): require ndk >= 27")
         end)
