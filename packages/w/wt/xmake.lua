@@ -5,6 +5,7 @@ package("wt")
     add_urls("https://github.com/emweb/wt/archive/refs/tags/$(version).tar.gz",
              "https://github.com/emweb/wt.git")
 
+    add_versions("4.14.4", "9c81aacccb8ae306078bc5e4d4d0cd048082d8d92c5f7de34094adb934c7f2a7")
     add_versions("4.14.0", "c11b3b92377c5fa82a466e32618e7ae417c371e8aa294a455c67d497cb86b2ae")
 
     add_deps("cmake")
