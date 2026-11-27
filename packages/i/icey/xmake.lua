@@ -4,6 +4,7 @@ package("icey")
     set_license("LGPL-2.1-or-later")
 
     add_urls("https://github.com/auscaster/icey/archive/refs/tags/$(version).tar.gz")
+    add_versions("2.5.3", "5a31706c8c03097a7874bdd495659677f4c7e1077ac511110288f8515134c6fd")
     add_versions("2.5.1", "2df5f802db160212de78a1bdfba01c9275b5d5d0ca8f58b00298779d50a5e02a")
     add_patches("2.5.1", "patches/address-cstdint.patch", "054113c97dcee660e8a249013a5e2b422184e439d812f924e3be5b4723585fce")
     add_patches("2.5.1", "patches/avfoundation-ios.patch", "2e8ab393cc462c866e82ad9466278880002e9e9075e6f99ce0e4e5e6bb5d572d")
