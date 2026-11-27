@@ -6,6 +6,7 @@ package("node-api-stub")
     add_urls("https://github.com/napi-bindings/node-api-stub/archive/refs/tags/$(version).tar.gz",
              "https://github.com/napi-bindings/node-api-stub.git")
 
+    add_versions("9.0.0", "768a20ef96f3e7c99fcd49b1886942bf1389e1020701dbbcfbfc15203a521141")
     add_versions("8.0.0", "7fdf725a3122f4d86443e707227a30c663c7163c6d1b9f883cb2305f18e01740")
 
     on_install(function (package)
