@@ -5,6 +5,7 @@ package("flashlight")
 
     add_urls("https://github.com/flashlight/flashlight/archive/refs/tags/$(version).tar.gz",
              "https://github.com/flashlight/flashlight.git")
+    add_versions("v0.4.0", "bd33e8b9e39109905c682d549411edc748302d70bea11abb161b32462a9c22e9")
     add_versions("v0.3.2", "6557f65ef2fbacc867bb6721d9134d0bc15d29e7413cbce0ae5e28d857164029")
 
     add_configs("core",        {description = "Build flashlight core.", default = true, type = "boolean"})
