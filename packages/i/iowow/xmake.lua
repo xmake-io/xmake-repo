@@ -6,6 +6,7 @@ package("iowow")
     add_urls("https://github.com/Softmotions/iowow/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Softmotions/iowow.git")
 
+    add_versions("v1.7.2", "924b1d42020a09e41e76985db0f3796b90b811886df2efee52770a9830173dad")
     add_versions("v1.4.18", "ef4ee56dd77ce326fff25b6f41e7d78303322cca3f11cf5683ce9abfda34faf9")
     add_versions("v1.4.17", "13a851026dbc1f31583fba96986e86e94a7554f9e7d38aa12a9ea5dbebdf328b")
 
