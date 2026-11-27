@@ -20,7 +20,7 @@ package("wfrest")
         add_syslinks("pthread", "dl")
     end
 
-    on_install("linux", "macosx", "android", function (package)
+    on_install("linux", "macosx", "android", "windows", function (package)
         local configs = {}
         if package:config("shared") then
             configs.kind = "shared"
