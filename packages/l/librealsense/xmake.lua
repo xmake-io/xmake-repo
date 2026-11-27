@@ -6,6 +6,7 @@ package("librealsense")
     add_urls("https://github.com/realsenseai/librealsense/archive/refs/tags/$(version).tar.gz",
              "https://github.com/realsenseai/librealsense.git", {submodules = false})
 
+    add_versions("v2.59.2", "a41a1533795c582ea12ba652ac6fe7cb97eed08fe9c91ba4fefed5bc044bc88c")
     add_versions("v2.57.7", "02eae8aa49d52d39ea5483836116fee2596e1146254274db6b76d7a62092d9e8")
     add_versions("v2.57.6", "4c5eeafe004422e564df4ba74cab0e89a4b32282d0e0d6c1e9b33382bb5ed767")
     add_versions("v2.57.5", "6fe337090becb668289178b20dfce07d553d4a71fd54ffbfee18b45847bcdee4")
