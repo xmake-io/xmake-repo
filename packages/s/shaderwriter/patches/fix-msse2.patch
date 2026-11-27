@@ -1,0 +1,13 @@
+diff --git a/CMake/CompilationFlags.cmake b/CMake/CompilationFlags.cmake
+index 940587a..9c1ce0c 100644
+--- a/CMake/CompilationFlags.cmake
++++ b/CMake/CompilationFlags.cmake
+@@ -326,7 +326,7 @@ endfunction( compute_compiler_warning_flags )
+ function( compute_compiler_flags C_DEFINITIONS C_FLAGS CXX_DEFINITIONS CXX_FLAGS LNK_FLAGS )
+ 	compute_compiler_warning_flags( C_WARN_DEFS C_WARN_FLAGS CXX_WARN_DEFS CXX_WARN_FLAGS LNK_WARN_FLAGS )
+ 	if ( PROJECTS_COMPILER_GCC )
+-		if ( NOT ANDROID )
++		if ( NOT ANDROID AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(i.86|x86_64|AMD64)$" )
+ 			set( SSE2_FLAG -msse2 )
+ 		endif ()
+ 		set( _C_FLAGS
