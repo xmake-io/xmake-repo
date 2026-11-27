@@ -8,7 +8,8 @@ package("beman-transform-view")
              "https://github.com/bemanproject/transform_view.git")
     add_versions("0.2.2", "e84b3c6b863ae4f1ddbf36300a2ae0b9efcaacc20884dca049f8a5e2f42fef40")
 
-    on_install(function (package)
+    -- android is not listed: the header misses an <type_traits> include, which ndk libc++ does not provide transitively
+    on_install("linux", "macosx", "windows", "mingw", "msys", function (package)
         os.cp("include/beman/transform_view/*.hpp", package:installdir("include/beman/transform_view"))
     end)
 
