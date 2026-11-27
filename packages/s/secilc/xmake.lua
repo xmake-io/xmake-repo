@@ -4,6 +4,7 @@ package("secilc")
     set_description("SELinux Common Intermediate Language Compiler")
 
     add_urls("https://github.com/SELinuxProject/selinux/releases/download/$(version)/secilc-$(version).tar.gz")
+    add_versions("3.11", "1fb7de005d35ae0ac6ff8f8fc955d08a15b5c1a67e961b97ef987576af0db11a")
     add_versions("3.10", "6658071d6f1044184d3973062a798187537ae1c3ddb4c31afd417df333316c10")
     add_versions("3.9", "c53fb7218ac158c05f28de186e48404857eb191bd4f9415802f85449fdf6da7f")
 
