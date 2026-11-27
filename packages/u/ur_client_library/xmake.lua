@@ -9,15 +9,17 @@ package("ur_client_library")
 
     add_configs("asan", {description = "Compile with address sanitizer support.", default = false, type = "boolean"})
     add_configs("primary_client_strict_parsing", {description = "Enable strict parsing of primary client messages" , default = false, type = "boolean"})
-    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = is_plat("windows", "mingw")})
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = is_plat("windows")})
     add_deps("cmake")
 
-    if is_plat("windows", "mingw") then
+    if is_plat("windows") then
         add_syslinks("ws2_32")
     end
 
-    on_install("!bsd and !wasm", function (package)
+    on_install("!mingw", function (package)
         io.replace("CMakeLists.txt", "add_subdirectory(examples)", "# add_subdirectory(examples)", {plain = true})
+        io.replace("include/ur_client_library/ur/dashboard_client_implementation.h",
+                   "#include <variant>", "#include <variant>\n#include <unordered_map>", {plain = true})
         local configs = {
             "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"),
             "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
