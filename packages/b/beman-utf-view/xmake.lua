@@ -10,7 +10,6 @@ package("beman-utf-view")
 
     add_deps("beman-transform-view")
 
-    -- needs std::ranges::range_adaptor_closure and a C++23 std::forward_like, so libc++ >= 20 or libstdc++ >= 15
     on_install("linux", "windows", "mingw", "msys", function (package)
         os.cp("include/beman/utf_view/*.hpp", package:installdir("include/beman/utf_view"))
         os.cp("include/beman/utf_view/detail/*.hpp", package:installdir("include/beman/utf_view/detail"))
