@@ -6,6 +6,7 @@ package("licensecc")
     add_urls("https://github.com/open-license-manager/licensecc/archive/refs/tags/$(version).tar.gz",
              "https://github.com/open-license-manager/licensecc.git")
 
+    add_versions("v2.1.0", "289558f67f81638b74dbe0d252443c9423d4f7b6cea3e3d176343f65cf0d7b61")
     add_versions("v2.0.0", "7fc7843f9e6d700135ed1ee63d0f252b820c67da0b0d637d04cd4ea383339145")
     add_patches("v2.0.0", path.join(os.scriptdir(), "patches", "v2.0.0", "fix.patch"), "95e907848eca2f5d8f7338eaf20007a8b1adab35dae8b25acbdf860c5a405c59")
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
