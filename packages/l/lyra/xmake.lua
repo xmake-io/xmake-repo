@@ -6,6 +6,7 @@ package("lyra")
 
     add_urls("https://github.com/bfgroup/Lyra/archive/refs/tags/$(version).tar.gz",
              "https://github.com/bfgroup/Lyra.git")
+    add_versions("1.8.0", "cd657146167cd2f80c27e4414ecd1a6639537f5a6d527e608bcd0c633d8beca9")
     add_versions("1.5.1", "11ccdfc6f776b9a2ebe987d9b4e492981f88f3642546fd1c2e1115741863cae0")
     add_versions("1.6", "919e92a9c02fea3f365a3a7bdccd8b306311a28a7f2044dac8e7651106d7b644")
     add_versions("1.6.1", "a93f247ed89eba11ca36eb24c4f8ba7be636bf24e74aaaa8e1066e0954bec7e3")
