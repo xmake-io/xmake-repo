@@ -6,6 +6,7 @@ package("microsoft-kuku")
     add_urls("https://github.com/microsoft/Kuku/archive/refs/tags/$(version).tar.gz",
              "https://github.com/microsoft/Kuku.git")
 
+    add_versions("v4.0.0", "1d108e821121f4584378f8b3a99394b51ccb9c0cfa4eac4f2bf79ac5bf174b21")
     add_versions("v2.1.0", "96ed5fad82ea8c8a8bb82f6eaf0b5dce744c0c2566b4baa11d8f5443ad1f83b7")
 
     add_configs("c_api",  {description = "Builds C API", default = false, type = "boolean"})
