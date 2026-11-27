@@ -14,6 +14,8 @@ package("ur_client_library")
 
     if is_plat("windows") then
         add_syslinks("ws2_32")
+    elseif is_plat("linux", "bsd") then
+        add_syslinks("pthread")
     end
 
     on_install("!wasm and !mingw", function (package)
