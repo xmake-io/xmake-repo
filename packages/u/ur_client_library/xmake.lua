@@ -16,10 +16,12 @@ package("ur_client_library")
         add_syslinks("ws2_32")
     end
 
-    on_install("!mingw", function (package)
+    on_install("!wasm and !mingw", function (package)
         io.replace("CMakeLists.txt", "add_subdirectory(examples)", "# add_subdirectory(examples)", {plain = true})
         io.replace("include/ur_client_library/ur/dashboard_client_implementation.h",
-                   "#include <variant>", "#include <variant>\n#include <unordered_map>", {plain = true})
+                   "#include <variant>", "#include <variant>\n#include <unordered_map>", {plain = true}) -- for Android NDK r22
+        io.replace("include/ur_client_library/comm/socket_t.h",
+                   "#  include <arpa/inet.h>", "#  include <arpa/inet.h>\n#  include <netinet/in.h>", {plain = true}) -- for FreeBSD
         local configs = {
             "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"),
             "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
