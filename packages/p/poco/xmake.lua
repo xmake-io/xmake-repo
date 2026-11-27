@@ -15,6 +15,7 @@ package("poco")
     add_versions("1.12.4", "71ef96c35fced367d6da74da294510ad2c912563f12cd716ab02b6ed10a733ef")
     add_versions("1.12.5", "92b18eb0fcd2263069f03e7cc80f9feb43fb7ca23b8c822a48e42066b2cd17a6")
     add_versions("1.13.3", "9f074d230daf30f550c5bde5528037bdab6aa83b2a06c81a25e89dd3bcb7e419")
+    add_versions("1.14.2", "47394ea7ddb7b0a40e1a5be896f8f5dc77cfdc4f561d2e7131ecf582df5a0c3a")
 
     -- https://docs.pocoproject.org/current/00200-GettingStarted.html
     add_configs("foundation", {description = "Build Foundation support library.", default = true, type = "boolean", readonly = true})
