@@ -6,6 +6,7 @@ package("box2d")
     set_urls("https://github.com/erincatto/box2d/archive/refs/tags/$(version).tar.gz",
              "https://github.com/erincatto/box2d.git")
 
+    add_versions("v3.2.0", "ffec747b27a2267016f8d0240d658c82d187fb2271fa0f69fcbe53fbc067180d")
     add_versions("v3.1.1", "fb6ef914b50f4312d7d921a600eabc12318bb3c55a0b8c0b90608fa4488ef2e4")
     add_versions("v3.1.0", "7fac19801485efb31ee3745b2284d9d4601f9e8138a3383a7b0df6d788ea5785")
     add_versions("v3.0.0", "64ad759006cd2377c99367f51fb36942b57f0e9ad690ed41548dd620e6f6c8b1")
