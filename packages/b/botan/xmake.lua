@@ -74,9 +74,9 @@ package("botan")
             local deps = hashset.from(modules)
             if deps then
                 for _, dep in ipairs({"boost", "bzip2", "lzma", "sqlite3", "zlib"}) do
-                    if deps:has(dep) then
+                    if deps:has(dep) or (dep == "boost" and deps:has("asio")) then
                         if dep == "boost" then
-                            package:add("deps", "boost", {configs = {filesystem = true}})
+                            package:add("deps", "boost", {configs = {filesystem = true, asio = deps:has("asio")}})
                         elseif dep == "lzma" then
                             package:add("deps", "xz")
                         else
@@ -173,10 +173,15 @@ package("botan")
         local modules = package:config("modules")
         local needs_os_utils = package:version():ge("3.7.0")
         if modules then
-            if needs_os_utils and not table.contains(modules, "os_utils") then
-                table.insert(modules, "os_utils")
+            local enabled_modules = table.copy(modules)
+            if needs_os_utils and not table.contains(enabled_modules, "os_utils") then
+                table.insert(enabled_modules, "os_utils")
             end
-            table.insert(configs, "--enable-modules=" .. table.concat(modules, ","))
+            -- the asio module depends on the internal boost vendor module
+            if table.contains(enabled_modules, "asio") and not table.contains(enabled_modules, "boost") then
+                table.insert(enabled_modules, "boost")
+            end
+            table.insert(configs, "--enable-modules=" .. table.concat(enabled_modules, ","))
         elseif needs_os_utils then
             table.insert(configs, "--enable-modules=os_utils")
         end
