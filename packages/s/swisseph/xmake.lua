@@ -6,6 +6,7 @@ package("swisseph")
     add_urls("https://github.com/aloistr/swisseph/archive/refs/tags/$(version).tar.gz",
              "https://github.com/aloistr/swisseph.git")
 
+    add_versions("v2.10.04", "2523d238031036a71ffefa0460d26c84f8ff59876d8ff6268bc606a1934bcf28")
     add_versions("v2.10.03", "8c166796767a560691581575b6eb4b4383d849e542b16647dca2e0b127fb70b0")
 
     if is_plat("linux", "bsd") then
