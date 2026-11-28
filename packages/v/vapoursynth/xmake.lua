@@ -6,40 +6,49 @@ package("vapoursynth")
     add_urls("https://github.com/vapoursynth/vapoursynth/archive/refs/tags/R$(version).tar.gz")
     add_urls("https://github.com/vapoursynth/vapoursynth.git", {alias = "git"})
 
+    add_versions("82", "8994fbcfa2fcaa5dc94109e547060521f60829a0899747e98e351bed72bd9611")
     add_versions("79", "cb7ea3c75431176f8ce1f466e1c1fff7ffdacdd2d397be8fabc2d467194ab5a6")
     add_versions("73", "1bb8ffe31348eaf46d8f541b138f0136d10edaef0c130c1e5a13aa4a4b057280")
 
+    add_versions("git:82", "R82")
     add_versions("git:79", "R79")
     add_versions("git:73", "R73")
 
-    add_patches(">=75", "patches/79/meson.patch", "1b5b6035e6047e94175393f50930e6f2b6e3f30215e9cde9d9e502205baaf3ae")
-    add_patches(">=79", "patches/79/fix-arm.patch", "322990a2480bf082c36ebafcd468d5a8882ded53cd5fc65b08dbc1df3d34629a")
+    add_patches(">=82", "patches/82/meson.patch", "da8ac53c7b603ff12b7eb8e8576920baba002f97a0156becddd25f8cfd4b9981")
+    add_patches(">=75 <82", "patches/79/meson.patch", "1b5b6035e6047e94175393f50930e6f2b6e3f30215e9cde9d9e502205baaf3ae")
+    add_patches("79", "patches/79/fix-arm.patch", "322990a2480bf082c36ebafcd468d5a8882ded53cd5fc65b08dbc1df3d34629a")
     add_patches(">=79", "patches/79/fix-freebsd.patch", "6ac2375d41db918da3f29e2838fd7fe5c9ac237d97182c162100319a8b8b1c1d")
+
+    add_configs("header_only", {description = "Install only the C headers (no libraries).", default = false, type = "boolean"})
 
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    if is_plat("windows", "mingw") then
-        add_syslinks("advapi32", "shell32")
-    elseif is_plat("linux", "bsd") then
-        add_syslinks("pthread")
-    end
-
-    add_deps("meson", "ninja")
-    if is_subhost("windows") then
-        add_deps("pkgconf")
-    else
-        add_deps("pkg-config")
-    end
-    add_deps("zimg")
 
     on_check("android", function (package)
+        if package:config("header_only") then
+            return
+        end
         local ndk = package:toolchain("ndk"):config("ndkver")
         assert(ndk and tonumber(ndk) > 22, "package(vapoursynth) require ndk version > 22")
     end)
 
     on_load(function (package)
+        if package:config("header_only") then
+            package:set("kind", "library", {headeronly = true})
+            return
+        end
+
+        if package:is_plat("windows", "mingw") then
+            package:add("syslinks", "advapi32", "shell32")
+        elseif package:is_plat("linux", "bsd") then
+            package:add("syslinks", "pthread")
+        end
+
+        package:add("deps", "meson", "ninja", "zimg")
+        package:add("deps", is_subhost("windows") and "pkgconf" or "pkg-config")
+
         if package:version() and package:version():le("74") then
             package:add("configs", "vsscript", {description = "Build VSScript. Requires Python 3", default = false, type = "boolean"})
             package:add("configs", "vspipe", {description = "Build vspipe. Requires VSScript", default = false, type = "boolean"})
@@ -62,6 +71,11 @@ package("vapoursynth")
     end)
 
     on_install(function (package)
+        if package:config("header_only") then
+            os.cp("include/*.h", package:installdir("include/vapoursynth"))
+            return
+        end
+
         if package:config("python") then
             local pytool = package:find_tool("python") or package:find_tool("python3")
             local venv_dir = path.join(os.curdir(), ".venv")
@@ -154,5 +168,9 @@ package("vapoursynth")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("getVapourSynthAPI", {includes = "vapoursynth/VapourSynth4.h"}))
+        if package:config("header_only") then
+            assert(package:has_ctypes("VSAPI", {includes = "vapoursynth/VapourSynth4.h"}))
+        else
+            assert(package:has_cfuncs("getVapourSynthAPI", {includes = "vapoursynth/VapourSynth4.h"}))
+        end
     end)
